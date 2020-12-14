@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales;
 
-use App\Contracts\Reports\Section;
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Contracts\Section;
 
 /**
  * Created by PhpStorm.
@@ -21,7 +21,7 @@ abstract class SalesReportSection implements Section
     protected $end;
     protected $for;
     protected $start;
-
+    
     public function __construct(
         $for,
         Carbon $start,
@@ -31,6 +31,6 @@ abstract class SalesReportSection implements Section
         $this->start = $start;
         $this->end   = $end;
     }
-
+    
     abstract public function render();
 }

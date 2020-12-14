@@ -31,7 +31,7 @@ class SalesByLocationReport
     protected $reportLastMonthWithDifference;
     protected $startDate;
     protected $startDateString;
-
+    
     public function __construct(
         Practice $forProgram,
         Carbon $start,
@@ -41,17 +41,17 @@ class SalesByLocationReport
         $this->startDate       = $start;
         $this->startDateString = Carbon::parse($start)->toDateString();
         $this->endDate         = $end;
-
+        
         $this->location = '';
         $this->program  = '';
-
+        
         $this->diff = [];
-
+        
         $this->program = $forProgram;
-
+        
         $this->reportLastMonthWithDifference = true; //$withLastMonth;
     }
-
+    
     public function calculateMonthOverMonthChanges()
     {
         //Withdrawn Patients
@@ -63,7 +63,7 @@ class SalesByLocationReport
             $this->diff['withdrawn']['diff']    = 'N/A';
             $this->diff['withdrawn']['percent'] = 'N/A';
         }
-
+        
         //Paused Patients
         if (0 != $this->currentMonth['paused'] && 0 != $this->lastMonth['paused']) {
             $this->diff['paused']['diff']    = $this->currentMonth['paused'] - $this->lastMonth['paused'];
@@ -85,7 +85,7 @@ class SalesByLocationReport
 //            $this->diff['total enrolled']['percent'] = 'N/A';
 //
 //        }
-
+        
         //Enrolled Patients
         if (0 != $this->currentMonth['added'] && 0 != $this->lastMonth['added']) {
             $this->diff['added']['diff']    = $this->currentMonth['added'] - $this->lastMonth['added'];
@@ -95,7 +95,7 @@ class SalesByLocationReport
             $this->diff['added']['percent'] = 'N/A';
         }
     }
-
+    
     public function formatSalesData()
     {
         $this->data = [
@@ -110,19 +110,19 @@ class SalesByLocationReport
             //            't1end' => Carbon::parse($this->startDateString)->subMonth()->endOfMonth()->toFormattedDateString()
         ];
     }
-
+    
     public function generatePdf()
     {
         $pdfService = app(PdfService::class);
-
+        
         $name     = trim($this->program->name).'-'.Carbon::now()->toDateString();
         $filePath = storage_path("download/${name}.pdf");
-
+        
         $pdf = $pdfService->createPdfFromView('cpm-admin::sales.by-location.make', ['data' => $this->data], $filePath);
-
+        
         return $name.'.pdf';
     }
-
+    
     public function getEnrollmentNumbers()
     {
         $this->enrollmentCount = Patient::whereHas('user', function ($q) {
@@ -133,44 +133,44 @@ class SalesByLocationReport
             ->groupBy('ccm_status')
             ->get()
             ->toArray();
-
+        
         return $this->enrollmentCount;
     }
-
+    
     public function handle()
     {
         $this->patientsForProgram();
 
 //        $this->getStatsByProvider();
-
+        
         $this->getEnrollmentNumbers();
-
+        
         $this->formatSalesData();
-
+        
         return $this->generatePdf();
     }
-
+    
     public function introParagraph()
     {
     }
-
+    
     public function patientsForProgram()
     {
         $this->currentMonth = $this->program->enrollmentByProgram(
             Carbon::parse($this->startDateString),
             Carbon::parse($this->endDate)
         );
-
+        
         $this->currentMonth['month'] = Carbon::parse($this->startDateString)->format('F Y');
-
+        
         if ($this->reportLastMonthWithDifference) {
             $this->lastMonth = $this->program->enrollmentByProgram(
                 Carbon::parse($this->startDateString)->subMonth()->startOfMonth(),
                 Carbon::parse($this->startDateString)->subMonth()->endOfMonth()
             );
-
+            
             $this->lastMonth['month'] = Carbon::parse($this->startDateString)->subMonth()->endOfMonth()->format('F Y');
-
+            
             $this->calculateMonthOverMonthChanges();
         }
     }

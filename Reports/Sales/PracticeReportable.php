@@ -6,25 +6,24 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales;
 
-use App\Call;
-use App\Contracts\Reports\Reportable;
-use App\Note;
-use App\Observation;
-use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Contracts\Reportable;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 
 class PracticeReportable implements Reportable
 {
     protected $practice;
-
+    
     public function __construct(Practice $practice)
     {
         $this->practice = $practice;
     }
-
+    
     /**
      * Sum of activity time for this Reportable.
      *
@@ -39,7 +38,7 @@ class PracticeReportable implements Reportable
             ->where('performed_at', '<=', $end->toDateTimeString())
             ->sum('duration');
     }
-
+    
     /**
      * Total eligible-to-be-billed patients count (for given month) for this Reportable.
      *
@@ -49,7 +48,7 @@ class PracticeReportable implements Reportable
     {
         return $this->totalBilledPatientsCount($month);
     }
-
+    
     /**
      * Call count for this Reportable.
      *
@@ -68,14 +67,14 @@ class PracticeReportable implements Reportable
         })
             ->where('called_date', '>=', $start)
             ->where('called_date', '<=', $end);
-
+        
         if ($status) {
             $q->whereStatus($status);
         }
-
+        
         return $q->count();
     }
-
+    
     /**
      * Forwarded emergency notes count for this Reportable.
      *
@@ -88,7 +87,7 @@ class PracticeReportable implements Reportable
             ->forwarded($start, $end)
             ->count();
     }
-
+    
     /**
      * Forwarded notes count for this Reportable.
      *
@@ -100,7 +99,7 @@ class PracticeReportable implements Reportable
             ->patientPractice($this->practice->id)
             ->count();
     }
-
+    
     /**
      * The link to view this Reportable's notes.
      *
@@ -110,7 +109,7 @@ class PracticeReportable implements Reportable
     {
         return route('patient.note.listing');
     }
-
+    
     /**
      * Observation count for this Reportable.
      *
@@ -125,7 +124,7 @@ class PracticeReportable implements Reportable
             ->where('created_at', '<=', $end)
             ->count();
     }
-
+    
     /**
      * All patients for this Reportable.
      *
@@ -137,7 +136,7 @@ class PracticeReportable implements Reportable
             ->where('program_id', '=', $this->practice->id)
             ->get();
     }
-
+    
     /**
      * Total billed patients count (since the beginning of time) for this Reportable.
      *
@@ -149,11 +148,11 @@ class PracticeReportable implements Reportable
             $q->whereProgramId($this->practice->id);
         })
             ->where('total_time', '>', 1199);
-
+        
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());
         }
-
+        
         return $q->count();
     }
 }
