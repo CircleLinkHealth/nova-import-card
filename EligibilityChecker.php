@@ -6,20 +6,21 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use CircleLinkHealth\Customer\CpmConstants;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\Problem;
 use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Validator;
@@ -779,7 +780,9 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
-        $args['provider_id'] = $this->practice->user_id;
+        if ( ! $args['provider_id']) {
+            $args['provider_id'] = CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id);
+        }
 
         if (empty($args['email'])) {
             $timestamp     = now()->timestamp;
