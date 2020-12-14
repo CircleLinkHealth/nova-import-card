@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CpmAdmin\Contracts\Reportable;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
