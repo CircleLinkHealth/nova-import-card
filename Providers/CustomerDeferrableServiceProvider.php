@@ -42,7 +42,7 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
     public function register()
     {
         $this->registerFactories();
-        $this->registerConfig();
+
         if (class_exists(\App\User::class)) {
             Relation::morphMap([
                 \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
@@ -90,36 +90,5 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
      */
     protected function registerConfig()
     {
-        $this->publishes(
-            [
-                __DIR__.'/../Config/config.php' => config_path('customer.php'),
-            ],
-            'config'
-        );
-        $this->mergeConfigFrom(
-            __DIR__.'/../Config/config.php',
-            'customer'
-        );
-
-        $this->publishes(
-            [
-                __DIR__.'/../Config/cerberus.php' => config_path('cerberus.php'),
-            ],
-            'cerberus'
-        );
-
-        $this->mergeConfigFrom(
-            __DIR__.'/../Config/cerberus.php',
-            'cerberus'
-        );
-
-        $this->publishes([
-            __DIR__ . '/../Config/medialibrary.php' => config_path('medialibrary.php'),
-        ], 'medialibrary');
-
-        $this->mergeConfigFrom(
-            __DIR__ . '/../Config/medialibrary.php',
-            'medialibrary'
-        );
     }
 }
