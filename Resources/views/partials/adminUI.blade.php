@@ -293,7 +293,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 <script>
-    window['provider_app_url'] = @json(env('CPM_PROVIDER_APP_URL'))
     $(document).ready(function () {
         $('.select2').select2();
     });
