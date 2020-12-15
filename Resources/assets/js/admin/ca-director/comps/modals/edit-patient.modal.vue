@@ -191,7 +191,7 @@
                 Event.$emit('notifications-edit-patient-modal:dismissAll');
 
                 this.axios
-                    .post(rootUrl('/admin/ca-director/edit-enrollee'), this.enrolleeData)
+                    .post(rootUrl('/ca-director/edit-enrollee'), this.enrolleeData)
                     .then(() => {
                         this.loading = false;
                         Event.$emit('refresh-table');

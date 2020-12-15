@@ -60,7 +60,7 @@
 
                 this.loading = true;
 
-                this.axios.post(rootUrl('/admin/ca-director/mark-ineligible'), {
+                this.axios.post(rootUrl('/ca-director/mark-ineligible'), {
                     enrolleeIds: this.selectedEnrolleeIds
                 })
                     .then(resp => {

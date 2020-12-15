@@ -123,7 +123,7 @@
                 Event.$emit('notifications-add-custom-filter-modal:dismissAll');
 
                 this.axios
-                    .post(rootUrl('/admin/ca-director/add-enrollee-custom-filter'), this.customFilterData)
+                    .post(rootUrl('/ca-director/add-enrollee-custom-filter'), this.customFilterData)
                     .then(() => {
                         this.loading = false;
                         Event.$emit("refresh-table");

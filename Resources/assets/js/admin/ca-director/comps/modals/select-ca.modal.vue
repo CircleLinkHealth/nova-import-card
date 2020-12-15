@@ -77,7 +77,7 @@
 
                 this.loading = true;
 
-                this.axios.post(rootUrl('/admin/ca-director/assign-ambassador'), {
+                this.axios.post(rootUrl('/ca-director/assign-ambassador'), {
                     ambassadorId: this.selectedAmbassador.value,
                     enrolleeIds: this.selectedEnrolleeIds
                 })

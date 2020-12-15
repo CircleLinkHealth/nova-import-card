@@ -58,7 +58,7 @@
 
                 this.loading = true;
 
-                this.axios.post(rootUrl('/admin/ca-director/unassign-ca'), {
+                this.axios.post(rootUrl('/ca-director/unassign-ca'), {
                     enrolleeIds: this.selectedEnrolleeIds
                 })
                     .then(resp => {
