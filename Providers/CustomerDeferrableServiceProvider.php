@@ -111,5 +111,14 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             __DIR__.'/../Config/cerberus.php',
             'cerberus'
         );
+
+        $this->publishes([
+            __DIR__ . '/../Config/medialibrary.php' => config_path('medialibrary.php'),
+        ], 'medialibrary');
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../Config/medialibrary.php',
+            'medialibrary'
+        );
     }
 }
