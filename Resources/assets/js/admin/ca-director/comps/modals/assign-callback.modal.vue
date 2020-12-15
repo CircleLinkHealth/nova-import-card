@@ -204,7 +204,7 @@
                 this.loading = false
             },
             getList(inputValue) {
-                let url = rootUrl('admin/ca-director/searchEnrollables') + `?enrollables=${inputValue}`
+                let url = rootUrl('ca-director/searchEnrollables') + `?enrollables=${inputValue}`
                 this.$refs.suggestComponent.clearSuggestions()
                 return this.axios.get(url).then(response => {
                     if (response.status !== 200) {
@@ -265,7 +265,7 @@
                     return;
                 }
 
-                this.axios.post(rootUrl('/admin/ca-director/assign-callback'), {
+                this.axios.post(rootUrl('/ca-director/assign-callback'), {
                     care_ambassador_user_id: this.selectedAmbassador.value,
                     enrollee_id: this.selected.id,
                     callback_date: this.callback_date,
