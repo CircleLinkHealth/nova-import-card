@@ -152,7 +152,7 @@ class PdfService
 
     private function getPath(string $relative = null)
     {
-        return Storage::drive('local')->path($relative);
+        return storage_path($relative);
     }
 
     /**
