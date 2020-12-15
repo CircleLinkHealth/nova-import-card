@@ -42,6 +42,7 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
     public function register()
     {
         $this->registerFactories();
+        $this->registerConfig();
         if (class_exists(\App\User::class)) {
             Relation::morphMap([
                 \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
