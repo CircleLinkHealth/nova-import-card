@@ -40,7 +40,7 @@ class VaporUiServiceProvider extends ServiceProvider
     protected function gate()
     {
         Gate::define('viewVaporUI', function ($user = null) {
-            return $user && $user->isAdmin();
+            return optional($user)->isAdmin();
         });
     }
 }
