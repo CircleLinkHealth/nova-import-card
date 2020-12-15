@@ -25,7 +25,7 @@ class OfflineActivityTimeRequestController extends Controller
             ->whereNull('is_approved')
             ->get();
 
-        return view('care-center.offlineActivityTimeRequest.index')
+        return view('cpm-admin::admin.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
 
@@ -44,7 +44,7 @@ class OfflineActivityTimeRequestController extends Controller
             $timeRequest->reject();
         }
 
-        return redirect()->route('admin.offline-activity-time-requests.index');
+        return redirect()->route('cpm-admin::admin.offlineActivityTimeRequest.index');
     }
 
     public function create($patientId)
