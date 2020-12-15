@@ -31,9 +31,14 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/api2pdf/api2pdf.php"
         }
     ],
     "require": {
+        "api2pdf/api2pdf.php": "dev-master",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "daltcore/lara-pdf-merger": "2.0.6"
