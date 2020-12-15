@@ -179,11 +179,13 @@
             "dont-discover": [
                 "circlelinkhealth/eligibility-module"
             ]
-        }
+        },
+        "module-dir": "CircleLinkHealth"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "CircleLinkHealth\\": "CircleLinkHealth/"
         },
         "classmap": [
             "database/seeds",
@@ -198,7 +200,7 @@
             "Tests\\": "tests/"
         },
         "files": [
-            "Modules/Core/Helpers/helpers.php"
+            "CircleLinkHealth/Core/Helpers/helpers.php"
         ]
     },
     "minimum-stability": "dev",
