@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdatePracticeStaff;
+use CircleLinkHealth\CcmBilling\Http\Requests\UpdatePracticeStaff;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Permission;
