@@ -858,7 +858,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "e998cd4ee959ab3dbed30e3f6260b103ba8750d0"
+                "reference": "4a0e6de0e4f62265db39b1454beea63f77d416af"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -900,7 +900,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-15T19:17:02+00:00"
+            "time": "2020-12-15T19:47:29+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -908,7 +908,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "3a51bd01282faf7ac9ec486b7e8e8ea4ece1190e"
+                "reference": "197c26c599648691032ebb6720b685e3cbcac49e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -949,7 +949,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T19:17:02+00:00"
+            "time": "2020-12-15T19:51:42+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -4117,17 +4117,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.16.3",
+            "version": "3.17.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "6740802ca38de643a851a1ac5ff62e939860b73f"
+                "reference": "c9f9707b6ad79a5e3857af3c400a5473a929860b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-6740802ca38de643a851a1ac5ff62e939860b73f-zip-d298aa.zip",
-                "reference": "6740802ca38de643a851a1ac5ff62e939860b73f",
-                "shasum": "987f2c2ab5cd98721dc134af8c700e4c8dad93ea"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-c9f9707b6ad79a5e3857af3c400a5473a929860b-zip-d167bf.zip",
+                "reference": "c9f9707b6ad79a5e3857af3c400a5473a929860b",
+                "shasum": "2d85fe6f2c3e0749f8311186207984d894ca1ed7"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -4204,7 +4204,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-12-04T09:37:10+00:00"
+            "time": "2020-12-15T17:32:26+00:00"
         },
         {
             "name": "laravel/passport",
