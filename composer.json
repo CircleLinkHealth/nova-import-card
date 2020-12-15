@@ -41,7 +41,8 @@
         "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
         "propaganistas/laravel-phone": "^4.2.2",
-        "spatie/laravel-medialibrary": "^7.0.0"
+        "spatie/laravel-medialibrary": "^7.0.0",
+        "league/flysystem-aws-s3-v3": "*"
     },
     "repositories": [
         {
