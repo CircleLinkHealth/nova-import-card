@@ -70,6 +70,7 @@ class ServerlessPdfService implements HtmlToPdfService
 
         $this->resolvePath($filename);
         file_put_contents($filename, $body);
+        Log::debug("Saving pdf to $filename");
 
         return $this;
     }
