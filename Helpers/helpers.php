@@ -366,3 +366,12 @@ if ( ! function_exists('validateUsPhoneNumber')) {
         return $validator->passes();
     }
 }
+
+if ( ! function_exists('capitalizeWords')) {
+    function capitalizeWords(
+        string $string,
+        $delimiters = "- \t\r\n\f\v"
+    ) {
+        return ucwords(strtolower($string), $delimiters);
+    }
+}
