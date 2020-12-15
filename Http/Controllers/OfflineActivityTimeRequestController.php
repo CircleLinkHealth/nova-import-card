@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Http\Controllers;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Http\Requests\CreateOfflineActivityTimeRequest;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
 use Illuminate\Http\Request;
@@ -101,7 +102,7 @@ class OfflineActivityTimeRequestController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(\App\Http\Requests\CreateOfflineActivityTimeRequest $request, $patientId)
+    public function store(CreateOfflineActivityTimeRequest $request, $patientId)
     {
         $offlineActivityRequest = OfflineActivityTimeRequest::create(
             [

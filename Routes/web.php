@@ -208,7 +208,7 @@ Route::group([
                 'uses' => 'OfflineActivityTimeRequestController@adminRespond',
                 'as'   => 'admin.offline-activity-time-requests.respond',
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
-            Route::get('create', [
+            Route::get('create/{patientId}', [
                 'uses' => 'OfflineActivityTimeRequestController@create',
                 'as'   => 'offline-activity-time-requests.create',
             ])->middleware('permission:patient.read,offlineActivityRequest.create');
