@@ -16,7 +16,6 @@ use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Storage;
 
 class CreateFakeDataForDailyReportCommand extends Command
 {
@@ -136,7 +135,7 @@ class CreateFakeDataForDailyReportCommand extends Command
 
         $date     = Carbon::yesterday()->startOfDay();
         $fileName = "nurses-and-states-daily-report-{$date->toDateString()}.json";
-        $path     = Storage::drive('local')->path($fileName);
+        $path     = storage_path($fileName);
         $saved    = file_put_contents($path, json_encode(collect($dataToUpload)));
 
         SaasAccount::whereSlug('circlelink-health')

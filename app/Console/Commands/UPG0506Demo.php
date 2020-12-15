@@ -14,7 +14,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class UPG0506Demo extends Command
@@ -60,7 +59,7 @@ class UPG0506Demo extends Command
     {
         if ($this->option('pdf')) {
             $pdfDm = $this->createNewDemoDirectMessage();
-            $pdf   = new Pdf($pdfDm, file_get_contents(Storage::drive('local')->path('files-for-demos/upg0506/upg0506-care-plan.pdf')));
+            $pdf   = new Pdf($pdfDm, file_get_contents(storage_path('files-for-demos/upg0506/upg0506-care-plan.pdf')));
             $pdf->handle();
             event(new DirectMailMessageReceived($pdfDm));
 
@@ -69,7 +68,7 @@ class UPG0506Demo extends Command
 
         if ($this->option('ccd')) {
             $ccdDm = $this->createNewDemoDirectMessage();
-            $ccd   = new XML($ccdDm, file_get_contents(Storage::drive('local')->path('files-for-demos/upg0506/upg0506-ccda.xml')));
+            $ccd   = new XML($ccdDm, file_get_contents(storage_path('files-for-demos/upg0506/upg0506-ccda.xml')));
             $ccd->handle();
             event(new DirectMailMessageReceived($ccdDm));
 
