@@ -6,8 +6,8 @@
 
 namespace App\Algorithms\Calls;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 class NurseCallStatistics
 {

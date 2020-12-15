@@ -7,11 +7,6 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\ReArrangeActivityChargeableServices;
-use CircleLinkHealth\SharedModels\Services\PageTimerService;
-use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
-use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
-use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
-use CircleLinkHealth\SharedModels\DTO\CreatePageTimerParams;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
@@ -19,11 +14,16 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Algorithms\VisitFeePaymentAlgorithm;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeRangeEntry;
+use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
+use CircleLinkHealth\SharedModels\DTO\CreatePageTimerParams;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use Illuminate\Support\Collection;
 use ReflectionMethod;
 use Tests\TestCase;

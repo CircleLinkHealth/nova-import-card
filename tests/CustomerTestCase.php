@@ -11,8 +11,8 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Testing\WithFaker;
 use ReflectionObject;
 
@@ -67,6 +67,7 @@ class CustomerTestCase extends TestCase
      * Useful when wanting to add extra functionality (eg. assertions) to an object.
      *
      * @throws \ReflectionException
+     *
      * @return mixed|string
      */
     public function castToFake(object $instance, string $destinationClass)

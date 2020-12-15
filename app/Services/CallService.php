@@ -6,10 +6,10 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
-use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CallViewNurses;
 use App\Jobs\ProcessPostmarkInboundMailJob;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Support\Collection;
 
 class CallService
@@ -57,7 +57,7 @@ class CallService
         $patientSupplementaryData = PatientTimeAndCalls::get($calls->pluck('patient_id')->toArray());
 
         return $calls->transform(function ($c) use ($patientSupplementaryData) {
-            $suppl = $patientSupplementaryData->filter(fn (\App\ValueObjects\PatientTimeAndCalls $d) => $d->getPatientId() === $c->patient_id)->first();
+            $suppl = $patientSupplementaryData->filter(fn (\CircleLinkHealth\Customer\DTO\PatientTimeAndCalls $d) => $d->getPatientId() === $c->patient_id)->first();
 
             $c->ccm_total_time = $suppl->getCcmTotalTime();
             $c->bhi_total_time = $suppl->getBhiTotalTime();

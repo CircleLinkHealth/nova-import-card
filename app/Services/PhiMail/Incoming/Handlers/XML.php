@@ -6,9 +6,9 @@
 
 namespace App\Services\PhiMail\Incoming\Handlers;
 
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 
 class XML extends BaseHandler
 {

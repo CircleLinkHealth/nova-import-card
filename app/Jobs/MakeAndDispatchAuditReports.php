@@ -6,11 +6,11 @@
 
 namespace App\Jobs;
 
+use App\Notifications\SendAuditReport;
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
-use App\Notifications\SendAuditReport;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

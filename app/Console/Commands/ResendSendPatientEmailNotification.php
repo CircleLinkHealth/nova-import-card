@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Customer\Notifications\SendPatientEmail;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Customer\Notifications\SendPatientEmail;
 use Illuminate\Console\Command;
 
 class ResendSendPatientEmailNotification extends Command

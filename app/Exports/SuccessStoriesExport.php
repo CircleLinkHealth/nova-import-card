@@ -6,8 +6,8 @@
 
 namespace App\Exports;
 
-use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 

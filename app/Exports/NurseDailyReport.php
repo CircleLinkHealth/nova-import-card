@@ -6,9 +6,9 @@
 
 namespace App\Exports;
 
-use CircleLinkHealth\CpmAdmin\Services\NurseDailyReport as NurseStatsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\AttachableAsMedia;
+use CircleLinkHealth\CpmAdmin\Services\NurseDailyReport as NurseStatsService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;

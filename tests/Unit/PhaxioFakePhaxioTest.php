@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use App\Notifications\SendSms;
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\AnonymousNotifiable;

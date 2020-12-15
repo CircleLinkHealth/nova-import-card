@@ -5,6 +5,7 @@ environments:
     production:
         memory: 1024
         cli-memory: 512
+        cli-timeout: 900
         runtime: php-7.4
         queues:
             - high
@@ -26,6 +27,7 @@ environments:
         domain: cpm-provider.clh-staging.com
         memory: 1024
         cli-memory: 512
+        cli-timeout: 900
         runtime: php-7.4
         cache: cpm-staging-cache
         queues:

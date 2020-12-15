@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Repositories\CareplanRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
@@ -15,16 +14,17 @@ use App\Services\CPM\CpmLifestyleService;
 use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMiscService;
-use CircleLinkHealth\Customer\Services\NoteService;
-use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 use App\Services\CPM\CpmProblemUserService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
+use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 
 class CareplanService
 {

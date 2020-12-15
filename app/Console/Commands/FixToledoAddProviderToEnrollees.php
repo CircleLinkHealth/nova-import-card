@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Console\Command;
 
 class FixToledoAddProviderToEnrollees extends Command

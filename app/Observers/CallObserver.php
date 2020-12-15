@@ -6,17 +6,17 @@
 
 namespace App\Observers;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Events\CarePlanWasApproved;
 use App\Jobs\MatchCpmCallWithTwilioCallJob;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\CallCreated;
-use CircleLinkHealth\TimeTracking\Services\ActivityService;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 
 class CallObserver
 {

@@ -166,7 +166,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                 </div>
                                                 <div class="col-xs-4 text-right">
                                                     <br>
-                                                    <?= date('F d, Y'); ?>
+                                                    <?php echo date('F d, Y'); ?>
                                                 </div>
                                             </div>
 

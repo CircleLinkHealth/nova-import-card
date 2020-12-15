@@ -6,7 +6,6 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Console\Command;

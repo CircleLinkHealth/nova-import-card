@@ -336,7 +336,7 @@
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes since <?=\Carbon\Carbon::now()->subMonth($input['range'] ?? 0)->format('F, Y'); ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes since <?php echo \Carbon\Carbon::now()->subMonth($input['range'] ?? 0)->format('F, Y'); ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -351,7 +351,7 @@
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($input['range'])) since <?=\Carbon\Carbon::now()->subMonth($input['range'])->format('F, Y'); ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($input['range'])) since <?php echo \Carbon\Carbon::now()->subMonth($input['range'])->format('F, Y'); ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{

@@ -6,11 +6,11 @@
 
 namespace App\Observers;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\PracticeStaffCreatedNote;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Entities\Note;
 
 class NoteObserver
 {

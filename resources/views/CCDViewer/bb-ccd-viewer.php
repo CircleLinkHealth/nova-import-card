@@ -33,9 +33,9 @@
                     </div>
                 </div>
 
-                <form id="oldViewer" action="<?= route('ccd.old.viewer'); ?>" class="navbar-form navbar-left" method="post" target="_blank">
+                <form id="oldViewer" action="<?php echo route('ccd.old.viewer'); ?>" class="navbar-form navbar-left" method="post" target="_blank">
                     <div class="form-group">
-                        <input id="sendThis" type="text" name="xml" style="display: none;" value="<?= urlencode($ccd); ?>">
+                        <input id="sendThis" type="text" name="xml" style="display: none;" value="<?php echo urlencode($ccd); ?>">
                     </div>
                     <input type="submit" class="btn btn-default" value="View in Raw CCD Viewer" >
                 </form>
@@ -367,5 +367,5 @@
 
 
 
-<script style="display: none;" id="xmlBBData" type="text/plain"><?= $ccd; ?></script>
+<script style="display: none;" id="xmlBBData" type="text/plain"><?php echo $ccd; ?></script>
 

@@ -15,12 +15,12 @@ class RedirectToAdminApp extends Controller
 
     public function getCreateNotifications(string $practiceSlug)
     {
-        return redirect()->to(config('core.apps.cpm-admin.url')."/practices/$practiceSlug/notifications");
+        return redirect()->to($this->redirectToAdmin("/practices/$practiceSlug/notifications"));
     }
 
     public function getCreatePractice(string $practiceSlug)
     {
-        return redirect()->to(config('core.apps.cpm-admin.url')."/practices/$practiceSlug/practice");
+        return redirect()->to($this->redirectToAdmin("/practices/$practiceSlug/practice"));
     }
 
     public function getPAM()
@@ -28,7 +28,7 @@ class RedirectToAdminApp extends Controller
         return $this->redirectToAdmin('pam');
     }
 
-    public function redirectToAdmin($url)
+    private function redirectToAdmin($url)
     {
         return redirect()->to(rtrim(config('core.apps.cpm-admin.url'), '/')."/$url");
     }

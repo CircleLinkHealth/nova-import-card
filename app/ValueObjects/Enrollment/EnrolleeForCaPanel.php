@@ -6,11 +6,11 @@
 
 namespace App\ValueObjects\Enrollment;
 
-use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
-use CircleLinkHealth\SharedModels\Entities\TrixField;
 use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\TrixField;
 use Illuminate\Support\Facades\Log;
 
 class EnrolleeForCaPanel
@@ -334,7 +334,7 @@ class EnrolleeForCaPanel
                 $region = $tz->toRegionName();
                 $offset = $tz->toOffsetName();
 
-                return  "$region ($offset)";
+                return "$region ($offset)";
             } catch (\Exception $exception) {
                 Log::critical("Invalid timezone for enrollee: {$enrollable->id}");
 

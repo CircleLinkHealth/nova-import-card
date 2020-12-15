@@ -6,13 +6,13 @@
 
 namespace App\Notifications;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\Core\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;

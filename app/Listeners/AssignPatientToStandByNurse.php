@@ -6,12 +6,12 @@
 
 namespace App\Listeners;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\Events\CarePlanWasQAApproved;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Database\QueryException;
 
 class AssignPatientToStandByNurse

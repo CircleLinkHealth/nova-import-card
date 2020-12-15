@@ -6,10 +6,10 @@
 
 namespace App\Services\CPM;
 
-use CircleLinkHealth\SharedModels\Contracts\CpmModel;
 use App\Repositories\CpmMiscRepository;
 use App\Repositories\CpmMiscUserRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Contracts\CpmModel;
 use CircleLinkHealth\SharedModels\Services\CpmInstructionService;
 
 class CpmMiscService implements CpmModel

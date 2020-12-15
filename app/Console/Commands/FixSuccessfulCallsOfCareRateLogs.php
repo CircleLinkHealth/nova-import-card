@@ -6,12 +6,12 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Console\Command;
 
 class FixSuccessfulCallsOfCareRateLogs extends Command

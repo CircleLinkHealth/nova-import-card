@@ -6,8 +6,8 @@
 
 namespace App\Listeners;
 
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Core\Traits\RunsConsoleCommands;
+use CircleLinkHealth\Customer\CpmConstants;
 
 class RunComposerIde
 {

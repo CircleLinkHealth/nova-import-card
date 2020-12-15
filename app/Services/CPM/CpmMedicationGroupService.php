@@ -6,9 +6,9 @@
 
 namespace App\Services\CPM;
 
-use CircleLinkHealth\SharedModels\Contracts\CpmModel;
 use App\Repositories\CpmMedicationGroupRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Contracts\CpmModel;
 
 class CpmMedicationGroupService implements CpmModel
 {

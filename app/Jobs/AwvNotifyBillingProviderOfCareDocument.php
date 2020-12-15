@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCareDocument;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

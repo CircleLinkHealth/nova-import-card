@@ -50,7 +50,7 @@ class PostmarkInboundCallbackRequest
             throw new \Exception(self::INBOUND_CALLBACK_DAILY_REPORT);
         }
 
-        return  $this->arrayWithKeys($inboundCallbackArray);
+        return $this->arrayWithKeys($inboundCallbackArray);
     }
 
     /**

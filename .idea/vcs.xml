@@ -4,7 +4,6 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcdaParserProcessorPhp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcmBilling" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CerberusGatekeeper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/ConditionCodeLookup" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CpmAdmin" vcs="Git" />

@@ -6,8 +6,8 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 

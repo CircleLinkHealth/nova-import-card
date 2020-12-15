@@ -6,9 +6,9 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;

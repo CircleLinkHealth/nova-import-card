@@ -6,8 +6,8 @@
 
 namespace App\Observers;
 
-use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
 use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
 
 class MedicationObserver
 {

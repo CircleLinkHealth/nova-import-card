@@ -56,7 +56,7 @@ class UpdateCameronEnrolleeProviders extends Command
 
             return;
         }
-    
+
         $enrollees->each(function ($enrollee) {
             CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
         }, 100);
