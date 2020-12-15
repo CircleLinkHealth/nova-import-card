@@ -376,7 +376,6 @@ if ( ! function_exists('capitalizeWords')) {
     }
 }
 
-
 if ( ! function_exists('is_json')) {
     /**
      * Determine whether the given string is json.
@@ -394,12 +393,12 @@ if ( ! function_exists('is_json')) {
         if ('' === $string || ! is_string($string)) {
             return null;
         }
-        
+
         \json_decode($string);
         if (\json_last_error()) {
             return false;
         }
-        
+
         return true;
     }
 }
