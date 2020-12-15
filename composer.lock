@@ -858,7 +858,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "4a0e6de0e4f62265db39b1454beea63f77d416af"
+                "reference": "d44e8465d101417675bb5e7726712c635da470a5"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -900,7 +900,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-15T19:47:29+00:00"
+            "time": "2020-12-15T20:07:58+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
