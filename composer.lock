@@ -266,6 +266,38 @@
             "time": "2020-12-08T21:59:47+00:00"
         },
         {
+            "name": "api2pdf/api2pdf.php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Api2Pdf/api2pdf.php.git",
+                "reference": "6b06dcd53bd79e7224025fcce026d54c4cc7a4fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Api2Pdf/api2pdf.php/zipball/6b06dcd53bd79e7224025fcce026d54c4cc7a4fc",
+                "reference": "6b06dcd53bd79e7224025fcce026d54c4cc7a4fc",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Api2Pdf\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A client library for API2PDF service to convert HTML to PDF",
+            "homepage": "https://www.api2pdf.com",
+            "time": "2019-08-09T10:51:30+00:00"
+        },
+        {
             "name": "appstract/laravel-opcache",
             "version": "4.0.2",
             "source": {
@@ -771,7 +803,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "3a16173edb682dbfd144228884f57cb5136a0ede"
+                "reference": "ee0b3fa438a64cbf53d3626aa1f1923c137ce29b"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -819,7 +851,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-14T23:26:34+00:00"
+            "time": "2020-12-15T15:25:18+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -946,7 +978,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f9d5c70bfb2378945f2e7a9cf440b2ec23487330"
+                "reference": "4c088989929a5b73535e0575ef4e3d4fce8f3ceb"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -984,7 +1016,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T14:44:35+00:00"
+            "time": "2020-12-15T15:49:28+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1214,9 +1246,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "70b79143e75ab10df69de65fd044bd02f2797cba"
+                "reference": "c1779cb9b049bb75eeafa4969bac8326f1c440f4"
             },
             "require": {
+                "api2pdf/api2pdf.php": "dev-master",
                 "barryvdh/laravel-snappy": "0.4.7",
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
                 "daltcore/lara-pdf-merger": "2.0.6"
@@ -1245,7 +1278,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T15:18:02+00:00"
+            "time": "2020-12-15T16:12:16+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -15504,16 +15537,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.62",
+            "version": "0.12.63",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "632393159335bbbdd7ca07d19b3ad50d76aa7fd8"
+                "reference": "c97ec4754bd53099a06c24847bd2870b99966b6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/632393159335bbbdd7ca07d19b3ad50d76aa7fd8",
-                "reference": "632393159335bbbdd7ca07d19b3ad50d76aa7fd8",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c97ec4754bd53099a06c24847bd2870b99966b6a",
+                "reference": "c97ec4754bd53099a06c24847bd2870b99966b6a",
                 "shasum": ""
             },
             "require": {
@@ -15556,7 +15589,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-13T13:59:38+00:00"
+            "time": "2020-12-15T16:37:16+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
