@@ -300,6 +300,7 @@
       <path value="$PROJECT_DIR$/vendor/jeremykenedy/slack-laravel" />
       <path value="$PROJECT_DIR$/vendor/jeremykenedy/slack" />
       <path value="$PROJECT_DIR$/vendor/league/flysystem-aws-s3-v3" />
+      <path value="$PROJECT_DIR$/vendor/api2pdf/api2pdf.php" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
