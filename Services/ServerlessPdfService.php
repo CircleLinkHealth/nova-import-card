@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\PdfService\Services;
 
+use File;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
@@ -67,6 +68,7 @@ class ServerlessPdfService implements HtmlToPdfService
             throw new \Exception($body);
         }
 
+        $this->resolvePath($filename);
         file_put_contents($filename, $body);
 
         return $this;
@@ -77,5 +79,13 @@ class ServerlessPdfService implements HtmlToPdfService
         $this->options[$name] = $value;
 
         return $this;
+    }
+
+    private function resolvePath(string $path)
+    {
+        $folder = dirname($path);
+        if ( ! File::isDirectory($folder)) {
+            File::makeDirectory($folder);
+        }
     }
 }
