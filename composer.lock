@@ -745,7 +745,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4c088989929a5b73535e0575ef4e3d4fce8f3ceb"
+                "reference": "604c104f96b223fb7abb4cd8a74edb2ed5febcbc"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -767,7 +767,8 @@
                         "MichaelLedin\\LaravelJob\\LaravelJobServiceProvider"
                     ],
                     "aliases": []
-                }
+                },
+                "module-dir": "CircleLinkHealth"
             },
             "autoload": {
                 "psr-4": {
@@ -783,7 +784,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T15:49:28+00:00"
+            "time": "2020-12-15T22:56:58+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
