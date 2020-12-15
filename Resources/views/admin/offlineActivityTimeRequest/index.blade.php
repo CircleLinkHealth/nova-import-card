@@ -38,7 +38,11 @@
                                     <td>{{$r->durationInMinutes()}}</td>
                                     <td>
                                         @if($r->patient)
-                                            <a href="{{route('patient.careplan.print', [$r->patient->id])}}">{{$r->patient->getFullName()}}</a>
+                                            @if(!auth()->user()->isAdmin())
+                                                <a href="{{route('patient.careplan.print', [$r->patient->id])}}">{{$r->patient->getFullName()}}</a>
+                                            @else
+                                                {{$r->patient->getFullName()}}
+                                            @endif
                                         @else
                                             Deleted patient [{{$r->patient_id}}]
                                         @endif
