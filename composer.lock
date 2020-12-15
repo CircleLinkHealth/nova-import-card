@@ -1209,12 +1209,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "e355c23a55a5931c92a593bb847afc3851bfcb59"
+                "reference": "28f20e1c285c2744243bd05dbc45d92dc008b9f6"
             },
             "require": {
                 "barryvdh/laravel-snappy": "0.4.7",
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
-                "daltcore/lara-pdf-merger": "1.1.2"
+                "daltcore/lara-pdf-merger": "2.0.6"
             },
             "type": "laravel-module",
             "extra": {
@@ -1240,7 +1240,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T09:24:13+00:00"
+            "time": "2020-12-15T10:44:05+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1736,21 +1736,38 @@
         },
         {
             "name": "daltcore/lara-pdf-merger",
-            "version": "v1.1.2",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git",
-                "reference": "5e917fabdbbd478bd6cd47d9b9fe8b64a4c0d912"
+                "url": "https://github.com/DALTCORE/lara-pdf-merger.git",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DALTCORE/lara-pdf-merger/zipball/f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.4"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LynX39\\LaraPdfMerger\\PdfMergerServiceProvider"
+                    ],
+                    "aliases": {
+                        "PdfMerger": "LynX39\\LaraPdfMerger\\Facades\\PdfMerger"
+                    }
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "LynX39\\LaraPdfMerger": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1781,7 +1798,7 @@
                 "paginate",
                 "pdf"
             ],
-            "time": "2020-07-08T06:08:35+00:00"
+            "time": "2020-05-06T07:49:12+00:00"
         },
         {
             "name": "danielme85/laravel-log-to-db",
@@ -3046,16 +3063,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.14",
+            "version": "8.12.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "c42a963110b08b8a4a419c35566bf9d3456ba479"
+                "reference": "c1f328bface2745ff1a292639dd68cafc673a456"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c42a963110b08b8a4a419c35566bf9d3456ba479",
-                "reference": "c42a963110b08b8a4a419c35566bf9d3456ba479",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c1f328bface2745ff1a292639dd68cafc673a456",
+                "reference": "c1f328bface2745ff1a292639dd68cafc673a456",
                 "shasum": ""
             },
             "require": {
@@ -3110,7 +3127,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-12-02T10:54:10+00:00"
+            "time": "2020-12-15T10:15:17+00:00"
         },
         {
             "name": "giggsey/locale",
