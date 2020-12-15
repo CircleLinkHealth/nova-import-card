@@ -1096,7 +1096,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "67e715f87bf8a0f9d0fade5b9445f937b241856b"
+                "reference": "30ecad18b8311d8a1824d7021fe93f8bcc53acf6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1137,7 +1137,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T14:38:39+00:00"
+            "time": "2020-12-15T18:23:45+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
