@@ -15,12 +15,12 @@ class RedirectToAdminApp extends Controller
 
     public function getCreateNotifications(string $practiceSlug)
     {
-        return redirect()->to($this->redirectToAdmin("/practices/$practiceSlug/notifications"));
+        return $this->redirectToAdmin("practices/$practiceSlug/notifications");
     }
 
     public function getCreatePractice(string $practiceSlug)
     {
-        return redirect()->to($this->redirectToAdmin("/practices/$practiceSlug/practice"));
+        return $this->redirectToAdmin("practices/$practiceSlug/practice");
     }
 
     public function getPAM()
