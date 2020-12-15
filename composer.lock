@@ -1209,7 +1209,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "d7b790cdaa775236891b6a8827fbbb9838c0b4f3"
+                "reference": "27cde188472a4a2f2e3ca6f804721dccbdd1362f"
             },
             "require": {
                 "barryvdh/laravel-snappy": "0.4.7",
@@ -1240,7 +1240,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:18:00+00:00"
+            "time": "2020-12-15T08:44:07+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
