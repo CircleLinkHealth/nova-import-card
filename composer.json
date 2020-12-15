@@ -18,8 +18,7 @@
             "aliases": {
                 
             }
-        },
-        "module-dir": "CircleLinkHealth"
+        }
     },
     "autoload": {
         "psr-4": {
