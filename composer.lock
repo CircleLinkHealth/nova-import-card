@@ -292,16 +292,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.169.0",
+            "version": "3.170.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d15a231355e4435fc33bab83df075ec31edd0a9b"
+                "reference": "7f457a08219173eba4b856cb7aef3a903cd790cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d15a231355e4435fc33bab83df075ec31edd0a9b",
-                "reference": "d15a231355e4435fc33bab83df075ec31edd0a9b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7f457a08219173eba4b856cb7aef3a903cd790cc",
+                "reference": "7f457a08219173eba4b856cb7aef3a903cd790cc",
                 "shasum": ""
             },
             "require": {
@@ -373,7 +373,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-14T19:12:33+00:00"
+            "time": "2020-12-15T19:13:22+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -858,7 +858,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "b612e2bc154b316f396d995b71a4196ccaacf180"
+                "reference": "e998cd4ee959ab3dbed30e3f6260b103ba8750d0"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -900,7 +900,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-15T19:11:21+00:00"
+            "time": "2020-12-15T19:17:02+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -908,7 +908,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5f7d6f3446be7599f30b799c90389506ca8c330b"
+                "reference": "3a51bd01282faf7ac9ec486b7e8e8ea4ece1190e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -949,7 +949,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T18:37:12+00:00"
+            "time": "2020-12-15T19:17:02+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
