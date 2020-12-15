@@ -76,10 +76,6 @@ class OnboardingService
                 ];
             });
 
-        \JavaScript::put([
-            'existingLocations' => $existingLocations,
-        ]);
-
         return $existingLocations;
     }
 
@@ -205,8 +201,6 @@ class OnboardingService
             //this will help us get role names on the views: rolesMap[id]
             'rolesMap' => $roles->keyBy('id')->all(),
         ];
-
-        \JavaScript::put($result);
 
         return $result;
     }

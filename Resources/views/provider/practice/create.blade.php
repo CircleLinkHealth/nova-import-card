@@ -3,6 +3,12 @@
 @section('title', 'Manage Practice')
 
 @section('module')
+    @push('styles')
+        <script>
+            const existingLocations = @json($locations);
+            const chargeableServices = @json($existingStaffHelpers);
+        </script>
+    @endpush
     @include('core::partials.errors.errors')
 
     <div class="container">
