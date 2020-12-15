@@ -235,7 +235,7 @@
 
         input[type=checkbox]:checked:disabled + label span {
             cursor: default;
-            background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
+            background: url(../img/ui/checkbox-active-disabled_2.png) left top no-repeat;
         }
 
         .color-grey {
