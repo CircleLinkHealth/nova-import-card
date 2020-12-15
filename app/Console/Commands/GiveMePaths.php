@@ -46,6 +46,8 @@ class GiveMePaths extends Command
         $this->info("storage_path: $storagePath");
         $dirName = dirname(__FILE__);
         $this->info("dirname: $dirName");
+        $isWritable = is_writable('/mnt/local') ? 'true' : 'false';
+        $this->info("is_writable('/mnt/local'): $isWritable");
 
         return 0;
     }
