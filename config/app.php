@@ -193,6 +193,7 @@ return [
         CoreDeferredBindingsServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
+        CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
