@@ -242,7 +242,7 @@
                 this.$refs.table.refresh();
             },
             getUrl() {
-                return rootUrl('/admin/ca-director/enrollees');
+                return rootUrl('/ca-director/enrollees');
             },
             assignSelectedToCa() {
                 Event.$emit("modal-select-ca:show");
@@ -284,7 +284,7 @@
             },
             getAmbassadors() {
                 return this.axios
-                    .get(rootUrl('/admin/ca-director/ambassadors'))
+                    .get(rootUrl('/ca-director/ambassadors'))
                     .then(response => {
                         this.loading = false;
                         let ambassadorList = response.data.map(x => {
@@ -301,7 +301,7 @@
                     hideAssigned: this.hideAssigned,
                     isolateUploadedViaCsv: this.isolateUploadedViaCsv
                 };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
+                this.axios.get(rootUrl(`/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
                         this.$refs.table.setData(resp.data);
                         this.loading = false;
