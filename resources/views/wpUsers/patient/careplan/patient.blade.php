@@ -352,7 +352,7 @@ $url       = substr($rawUrl, strpos($rawUrl, ':') + 1);
                                                                 function populateBillingProviderDropdown(practiceId, locationId) {
                                                                     $('#provider_id_loader').removeClass('hide');
                                                                     return $.get({
-                                                                        url: 'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                        url: APP_URL+'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                         success: function (providers) {
                                                                             providers.forEach(function (provider) {
                                                                                 $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
@@ -397,7 +397,7 @@ $url       = substr($rawUrl, strpos($rawUrl, ':') + 1);
                                                                 $('#preferred_contact_location_loader').removeClass('hide');
 
                                                                 return $.get({
-                                                                    url: 'api/practices/' + practiceId + '/locations',
+                                                                    url: APP_URL+'api/practices/' + practiceId + '/locations',
                                                                     success: function (locations) {
                                                                         locations.forEach(function (location) {
                                                                             $('[name="preferred_contact_location"]').append($('<option />').val(location.id).text(location.name))
@@ -414,7 +414,7 @@ $url       = substr($rawUrl, strpos($rawUrl, ':') + 1);
                                                             function populateBillingProviderDropdown(practiceId, locationId) {
                                                                 $('#provider_id_loader').removeClass('hide');
                                                                 return $.get({
-                                                                    url: 'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                    url: APP_URL+'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                     success: function (providers) {
                                                                         providers.forEach(function (provider) {
                                                                             $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))

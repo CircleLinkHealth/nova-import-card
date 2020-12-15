@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <head>
+    <script type="text/javascript">
+        var APP_URL = {!! json_encode(rtrim(url('/'),'/').'/') !!}
+    </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
