@@ -142,7 +142,7 @@
 
                                                 <h2>Nurse Info</h2>
                                                 <hr>
-                                                @include('partials.admin.user.nurse-info')
+                                                @include('cpm-admin::admin.user.nurse-info')
                                             </div>
                                         @endif
                                     </div>
