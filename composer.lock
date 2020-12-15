@@ -161,6 +161,38 @@
             "time": "2020-04-13T12:32:35+00:00"
         },
         {
+            "name": "api2pdf/api2pdf.php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Api2Pdf/api2pdf.php.git",
+                "reference": "6b06dcd53bd79e7224025fcce026d54c4cc7a4fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Api2Pdf/api2pdf.php/zipball/6b06dcd53bd79e7224025fcce026d54c4cc7a4fc",
+                "reference": "6b06dcd53bd79e7224025fcce026d54c4cc7a4fc",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Api2Pdf\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A client library for API2PDF service to convert HTML to PDF",
+            "homepage": "https://www.api2pdf.com",
+            "time": "2019-08-09T10:51:30+00:00"
+        },
+        {
             "name": "asm89/stack-cors",
             "version": "v2.0.2",
             "source": {
@@ -1172,9 +1204,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "70b79143e75ab10df69de65fd044bd02f2797cba"
+                "reference": "c1779cb9b049bb75eeafa4969bac8326f1c440f4"
             },
             "require": {
+                "api2pdf/api2pdf.php": "dev-master",
                 "barryvdh/laravel-snappy": "0.4.7",
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
                 "daltcore/lara-pdf-merger": "2.0.6"
@@ -1203,7 +1236,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T15:18:02+00:00"
+            "time": "2020-12-15T16:12:16+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
