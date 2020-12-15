@@ -77,13 +77,13 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
         ];
-    
+
         if ($this->app->environment('testing')) {
             $arr[] = CreateAndSeedTestSuiteDB::class;
         }
-    
+
         $this->commands($arr);
-        
+
         $this->app->bind(LaravelDatabaseChannel::class, CircleLinkDatabaseChannel::class);
         $this->app->bind(LaravelHasDatabaseNotifications::class, CircleLinkHasDatabaseNotifications::class);
         $this->app->bind(LaravelNotifiable::class, CircleLinkNotifiable::class);

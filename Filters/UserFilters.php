@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Core\Filters;
 
-use CircleLinkHealth\Core\Filters\QueryFilters;
 use Illuminate\Http\Request;
 
 class UserFilters extends QueryFilters
