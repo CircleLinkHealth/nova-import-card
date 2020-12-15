@@ -1833,26 +1833,6 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
     }
 }
 
-if ( ! function_exists('validateUsPhoneNumber')) {
-    /**
-     * @param string
-     * @param mixed $phoneNumber
-     */
-    function validateUsPhoneNumber($phoneNumber): bool
-    {
-        $validator = \Validator::make(
-            [
-                'number' => (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumberE164($phoneNumber),
-            ],
-            [
-                'number' => ['required', \Illuminate\Validation\Rule::phone()->country(['US'])],
-            ]
-        );
-
-        return $validator->passes();
-    }
-}
-
 if ( ! function_exists('sanitizeString')) {
     /**
      * @param $string
