@@ -212,7 +212,7 @@ Route::group([
                 'uses' => 'OfflineActivityTimeRequestController@create',
                 'as'   => 'offline-activity-time-requests.create',
             ])->middleware('permission:patient.read,offlineActivityRequest.create');
-            Route::post('store', [
+            Route::post('store/{patientId}', [
                 'uses' => 'OfflineActivityTimeRequestController@store',
                 'as'   => 'offline-activity-time-requests.store',
             ])->middleware('permission:offlineActivityRequest.create');
