@@ -9,6 +9,7 @@ namespace CircleLinkHealth\PdfService\Services;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LynX39\LaraPdfMerger\PdfManage;
 
@@ -151,7 +152,7 @@ class PdfService
 
     private function getPath(string $relative = null)
     {
-        return storage_path($relative);
+        return Storage::drive('local')->path($relative);
     }
 
     /**

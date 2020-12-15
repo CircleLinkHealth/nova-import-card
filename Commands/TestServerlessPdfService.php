@@ -47,7 +47,7 @@ class TestServerlessPdfService extends Command
         $this->info("Blank Page generated: $path");
 
         $path2  = $pdfService->blankPage('pdf2.pdf');
-        $merged = $pdfService->mergeFiles([$path, $path2], storage_path('pdfs/pdf_merged.pdf'));
+        $merged = $pdfService->mergeFiles([$path, $path2], Storage::drive('local')->path('pdfs/pdf_merged.pdf'));
         $count  = $pdfService->countPages($merged);
         $this->info("Count of merged: $count");
 
