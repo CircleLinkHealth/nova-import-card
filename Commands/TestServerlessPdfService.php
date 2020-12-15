@@ -8,6 +8,7 @@ namespace CircleLinkHealth\PdfService\Commands;
 
 use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class TestServerlessPdfService extends Command
 {
@@ -41,12 +42,13 @@ class TestServerlessPdfService extends Command
      */
     public function handle()
     {
+        $storage    = Storage::drive('storage');
         $pdfService = app(PdfService::class);
         $path       = $pdfService->blankPage('pdf1.php');
         $this->info("Blank Page generated: $path");
 
         $path2  = $pdfService->blankPage('pdf2.php');
-        $merged = $pdfService->mergeFiles([$path, $path2], storage_path('pdfs/pdf_merged.php'));
+        $merged = $pdfService->mergeFiles([$path, $path2], $storage->path('pds/pdf_merged.php'));
         $count  = $pdfService->countPages($merged);
         $this->info("Count of merged: $count");
 

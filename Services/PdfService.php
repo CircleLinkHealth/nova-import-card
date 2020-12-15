@@ -8,6 +8,7 @@ namespace CircleLinkHealth\PdfService\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LynX39\LaraPdfMerger\PdfManage;
 
@@ -30,7 +31,7 @@ class PdfService
         if ( ! $fileName) {
             $fileName = 'blank_page.pdf';
         }
-        $blankPagePath = storage_path("pdfs/$fileName");
+        $blankPagePath = Storage::drive('storage')->path("pdfs/$fileName");
 
         if (file_exists($blankPagePath)) {
             return $blankPagePath;
@@ -104,7 +105,7 @@ class PdfService
             $outputFullPath = $this->mergeFiles(
                 [
                     $outputFullPath,
-                    storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
+                    Storage::drive('storage')->path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
                 ]
             );
         }
@@ -155,6 +156,6 @@ class PdfService
     {
         $name = Carbon::now()->toAtomString().Str::random(20);
 
-        return storage_path("pdfs/${name}.pdf");
+        return Storage::drive('storage')->path("pdfs/${name}.pdf");
     }
 }
