@@ -31,7 +31,7 @@ class PdfService
         if ( ! $fileName) {
             $fileName = 'blank_page.pdf';
         }
-        $blankPagePath = Storage::drive('storage')->path("pdfs/$fileName");
+        $blankPagePath = Storage::drive('s3')->path("pdfs/$fileName");
 
         if (file_exists($blankPagePath)) {
             return $blankPagePath;
@@ -105,7 +105,7 @@ class PdfService
             $outputFullPath = $this->mergeFiles(
                 [
                     $outputFullPath,
-                    Storage::drive('storage')->path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
+                    Storage::drive('s3')->path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
                 ]
             );
         }
@@ -156,6 +156,6 @@ class PdfService
     {
         $name = Carbon::now()->toAtomString().Str::random(20);
 
-        return Storage::drive('storage')->path("pdfs/${name}.pdf");
+        return Storage::drive('s3')->path("pdfs/${name}.pdf");
     }
 }

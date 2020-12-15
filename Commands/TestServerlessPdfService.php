@@ -42,7 +42,7 @@ class TestServerlessPdfService extends Command
      */
     public function handle()
     {
-        $storage    = Storage::drive('storage');
+        $storage    = Storage::drive('s3');
         $pdfService = app(PdfService::class);
         $path       = $pdfService->blankPage('pdf1.php');
         $this->info("Blank Page generated: $path");
