@@ -876,7 +876,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fd3b4b6315410d51744d3e1e8af9ae771000b031"
+                "reference": "f0654894cdc5cbe09fd2aed43c133705548e58a5"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -893,7 +893,10 @@
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [],
+                    "providers": [
+                        "CircleLinkHealth\\Customer\\Providers\\CustomerDeferrableServiceProvider",
+                        "CircleLinkHealth\\Customer\\Providers\\CustomerAuthServiceProvider"
+                    ],
                     "aliases": []
                 }
             },
@@ -912,7 +915,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T08:57:33+00:00"
+            "time": "2020-12-15T14:03:35+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
