@@ -11,9 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\Customer\\Providers\\CustomerDeferrableServiceProvider",
-                "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider",
-                "CircleLinkHealth\\Customer\\Providers\\CustomerAuthServiceProvider"
+
             ],
             "aliases": {
 
