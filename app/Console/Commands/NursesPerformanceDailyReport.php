@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class NursesPerformanceDailyReport extends Command
 {
@@ -60,7 +61,7 @@ class NursesPerformanceDailyReport extends Command
         $data = $this->service->collectData($date);
 
         $fileName = "nurses-and-states-daily-report-{$date->toDateString()}.json";
-        $path     = storage_path($fileName);
+        $path     = Storage::drive('local')->path($fileName);
         $saved    = file_put_contents($path, json_encode($data));
 
         if ( ! $saved) {
