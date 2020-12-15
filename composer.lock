@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84b9eaf507e1735f77615e742c53ae2b",
+    "content-hash": "0f5d8ef128f0eed47a01899cc7053de3",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -780,7 +780,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "42a85d20ed721977d865ce1e8bbbb1c16659129b"
+                "reference": "75e268c12cbe6fab0a75d26cbe1f1c15cb6548ef"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -818,7 +818,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:26:35+00:00"
+            "time": "2020-12-15T11:34:21+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -826,7 +826,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "534e4022d51883fcb6cd44d539dcb93144070f74"
+                "reference": "c2233322d7832e6b33bbf50879ceea203df22955"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -868,7 +868,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-14T23:43:29+00:00"
+            "time": "2020-12-15T10:49:29+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -876,7 +876,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "79fa0d452471e185cb4081dc8e46a39e3d742949"
+                "reference": "fd3b4b6315410d51744d3e1e8af9ae771000b031"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -912,7 +912,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:31:49+00:00"
+            "time": "2020-12-15T08:57:33+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1167,12 +1167,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "d7b790cdaa775236891b6a8827fbbb9838c0b4f3"
+                "reference": "28f20e1c285c2744243bd05dbc45d92dc008b9f6"
             },
             "require": {
                 "barryvdh/laravel-snappy": "0.4.7",
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
-                "daltcore/lara-pdf-merger": "1.1.2"
+                "daltcore/lara-pdf-merger": "2.0.6"
             },
             "type": "laravel-module",
             "extra": {
@@ -1198,7 +1198,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:18:00+00:00"
+            "time": "2020-12-15T10:44:05+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1324,7 +1324,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "9424b6f31a0ddf217ea250f670edb91cc0d9fdff"
+                "reference": "d77b067ad003af04a79eefb6b3b39f72f3c2230b"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1341,7 +1341,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T19:26:32+00:00"
+            "time": "2020-12-15T08:57:33+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1507,21 +1507,38 @@
         },
         {
             "name": "daltcore/lara-pdf-merger",
-            "version": "v1.1.2",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git",
-                "reference": "5e917fabdbbd478bd6cd47d9b9fe8b64a4c0d912"
+                "url": "https://github.com/DALTCORE/lara-pdf-merger.git",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DALTCORE/lara-pdf-merger/zipball/f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.4"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LynX39\\LaraPdfMerger\\PdfMergerServiceProvider"
+                    ],
+                    "aliases": {
+                        "PdfMerger": "LynX39\\LaraPdfMerger\\Facades\\PdfMerger"
+                    }
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "LynX39\\LaraPdfMerger": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1552,7 +1569,7 @@
                 "paginate",
                 "pdf"
             ],
-            "time": "2020-07-08T06:08:35+00:00"
+            "time": "2020-05-06T07:49:12+00:00"
         },
         {
             "name": "danielme85/laravel-log-to-db",
@@ -2779,16 +2796,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.14",
+            "version": "8.12.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "c42a963110b08b8a4a419c35566bf9d3456ba479"
+                "reference": "c1f328bface2745ff1a292639dd68cafc673a456"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c42a963110b08b8a4a419c35566bf9d3456ba479",
-                "reference": "c42a963110b08b8a4a419c35566bf9d3456ba479",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c1f328bface2745ff1a292639dd68cafc673a456",
+                "reference": "c1f328bface2745ff1a292639dd68cafc673a456",
                 "shasum": ""
             },
             "require": {
@@ -2843,7 +2860,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-12-02T10:54:10+00:00"
+            "time": "2020-12-15T10:15:17+00:00"
         },
         {
             "name": "giggsey/locale",

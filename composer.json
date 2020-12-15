@@ -149,7 +149,6 @@
         "circlelinkhealth/nurseinvoices-module": "dev-vaporizing-admin",
         "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
         "circlelinkhealth/synonyms-module": "*",
-        "daltcore/lara-pdf-merger": "1.1.2",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
