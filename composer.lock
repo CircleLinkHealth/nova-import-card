@@ -1064,7 +1064,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fd3b4b6315410d51744d3e1e8af9ae771000b031"
+                "reference": "bcd50bf19ba3e26121430d1eeb141d46977ad07f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1081,7 +1081,10 @@
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [],
+                    "providers": [
+                        "CircleLinkHealth\\Customer\\Providers\\CustomerDeferrableServiceProvider",
+                        "CircleLinkHealth\\Customer\\Providers\\CustomerAuthServiceProvider"
+                    ],
                     "aliases": []
                 }
             },
@@ -1100,7 +1103,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T08:57:33+00:00"
+            "time": "2020-12-15T14:22:27+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1385,7 +1388,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "d62affb06ddb3b4bec2d0e5a7532645eb4c8674e"
+                "reference": "cfc6d6cc016bdf054e8a7c03e1d16d4f1d4b7a3c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1405,7 +1408,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-14T23:43:14+00:00"
+            "time": "2020-12-15T13:25:43+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
