@@ -225,7 +225,7 @@
                             @if($patient->isCareCoach() && $patient->nurseInfo)
                                 <div role="tabpanel" class="tab-pane" id="nurseinfo">
                                     <h2>Nurse Info</h2>
-                                    @include('partials.admin.user.nurse-info', ['nurseInfo' =>  $patient->nurseInfo])
+                                    @include('cpm-admin::admin.user.nurse-info', ['nurseInfo' =>  $patient->nurseInfo])
                                 </div>
                             @endif
 
