@@ -8,7 +8,6 @@ namespace CircleLinkHealth\PdfService\Services;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 
 class ServerlessPdfService implements HtmlToPdfService
@@ -16,17 +15,14 @@ class ServerlessPdfService implements HtmlToPdfService
     private Client $client;
     private ?string $htmlString;
     private array $options;
-    private string $storage;
 
     /**
      * ServerlessPdfService constructor.
-     * @param mixed $storage
      */
-    public function __construct($storage)
+    public function __construct()
     {
-        $this->storage = $storage;
-        $url           = config('services.serverless-pdf-generator.api-url');
-        $this->client  = new Client([
+        $url          = config('services.serverless-pdf-generator.api-url');
+        $this->client = new Client([
             'base_uri' => $url,
             'headers'  => [
                 'x-api-key' => config('services.serverless-pdf-generator.api-key'),
@@ -71,7 +67,7 @@ class ServerlessPdfService implements HtmlToPdfService
             throw new \Exception($body);
         }
 
-        Storage::drive($this->storage)->put($filename, $body);
+        file_put_contents($filename, $body);
 
         return $this;
     }

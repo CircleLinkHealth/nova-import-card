@@ -42,13 +42,12 @@ class TestServerlessPdfService extends Command
      */
     public function handle()
     {
-        $storage    = Storage::drive('s3');
         $pdfService = app(PdfService::class);
         $path       = $pdfService->blankPage('pdf1.php');
         $this->info("Blank Page generated: $path");
 
         $path2  = $pdfService->blankPage('pdf2.php');
-        $merged = $pdfService->mergeFiles([$path, $path2], $storage->path('pds/pdf_merged.php'));
+        $merged = $pdfService->mergeFiles([$path, $path2], storage_path('pds/pdf_merged.php'));
         $count  = $pdfService->countPages($merged);
         $this->info("Count of merged: $count");
 

@@ -31,7 +31,7 @@ class PdfServiceDeferrableProvider extends ServiceProvider implements Deferrable
     public function register()
     {
         $this->app->bind(HtmlToPdfService::class, function () {
-            return new ServerlessPdfService('s3');
+            return new ServerlessPdfService();
             /*
                 $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
 
