@@ -103,6 +103,7 @@ return [
             ],
         ],
         'mail-vendor-envelope-options' => [
+            'scale'  => 0.7,
             'margin' => [
                 'top'    => '12mm',
                 'bottom' => '15mm',
