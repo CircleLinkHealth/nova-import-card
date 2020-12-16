@@ -7,7 +7,7 @@
 namespace Tests\Feature\SelfEnrollment;
 
 use App\Constants\ProviderClinicalTypes;
-use App\EnrollmentInvitationsBatch;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\LogSuccessfulLoginToDB;
 use App\LoginLogout;
