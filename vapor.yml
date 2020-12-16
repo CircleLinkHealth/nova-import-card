@@ -44,7 +44,6 @@ environments:
             - 'php artisan config:cache'
             - 'php artisan view:cache'
             - 'php artisan opcache:clear'
-            - 'php artisan opcache:compile'
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
             - 'php artisan queue:restart'
