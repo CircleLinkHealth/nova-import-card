@@ -43,8 +43,9 @@ class TestServerlessPdfService extends Command
     public function handle()
     {
         if ($this->hasArgument('requesterId') && $this->hasArgument('patientId')) {
-            $this->info('Generating PDF for patient');
-            $media = app(CarePlanGeneratorService::class)->pdfForUsers($this->argument('requesterId'), [$this->argument('patientId')], true);
+            $patientId = $this->argument('patientId');
+            $this->info("Generating PDF for patient[$patientId]");
+            $media = app(CarePlanGeneratorService::class)->pdfForUsers($this->argument('requesterId'), [$patientId], true);
             $this->info(json_encode($media));
 
             return 0;

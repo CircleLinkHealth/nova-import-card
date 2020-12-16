@@ -178,7 +178,7 @@ class PdfService
             }
         } else {
             $pdf->setOption('displayHeaderFooter', true)
-                ->setOption('footerTemplate', '<div style="text-align: center; font-size: 10px;">Page <span class="pageNumber"></span></div>')
+                ->setOption('footerTemplate', '<div style="margin: auto; text-align: center; font-size: 10px;">Page <span class="pageNumber"></span></div>')
                 ->setOption('margin', [
                     'top'    => '8mm',
                     'left'   => '8mm',
