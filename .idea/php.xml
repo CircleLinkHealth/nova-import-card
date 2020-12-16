@@ -68,7 +68,6 @@
       <path value="$PROJECT_DIR$/vendor/twilio/sdk" />
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-view-models" />
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-medialibrary" />
-      <path value="$PROJECT_DIR$/vendor/spatie/laravel-rate-limited-job-middleware" />
       <path value="$PROJECT_DIR$/vendor/spatie/phpunit-watcher" />
       <path value="$PROJECT_DIR$/vendor/hashids/hashids" />
       <path value="$PROJECT_DIR$/vendor/joshbrw/laravel-module-installer" />

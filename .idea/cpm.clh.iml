@@ -209,7 +209,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image-optimizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-medialibrary" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-rate-limited-job-middleware" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-slack-slash-command" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-view-models" />
