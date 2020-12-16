@@ -17,9 +17,11 @@ environments:
             - 'npm ci && npm run prod && rm -rf node_modules'
             - 'php artisan view:cache'
             - 'php artisan route:cache'
+            - 'php artisan config:cache'
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan queue:restart'
     staging:
         domain: cpm-provider.clh-staging.com
         storage: cpm-staging-vapor-storage
