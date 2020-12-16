@@ -6,8 +6,8 @@
 
 namespace App\Services\Postmark;
 
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use App\Entities\PostmarkSingleMatchData;
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -59,7 +59,9 @@ class InboundCallbackSingleMatchService
             return false;
         }
 
-        return Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status
+        return $patientUser->isSurveyOnly()
+            && Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status
+            && Patient::ENROLLED !== $patientUser->patientInfo->ccm_status
             && ! isset($enrollee->care_ambassador_user_id);
     }
 
