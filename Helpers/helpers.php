@@ -402,3 +402,29 @@ if ( ! function_exists('is_json')) {
         return true;
     }
 }
+
+if ( ! function_exists('minutesToHhMm')) {
+    /**
+     * @param $minutes
+     *
+     * @return string
+     */
+    function minutesToHhMm($minutes)
+    {
+        $h = 0;
+
+        if ($minutes >= 60) {
+            $h = floor($minutes / 60);
+        }
+
+        $i = round($minutes - ($h * 60));
+
+        //If 59 minutes rounds up to 60 we want to add an hour
+        if (60 == $i) {
+            $i = 0;
+            ++$h;
+        }
+
+        return sprintf('%02d:%02d', $h, $i);
+    }
+}
