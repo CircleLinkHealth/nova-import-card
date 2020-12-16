@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Jobs\CreateNurseInvoices;
+use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
 
 class NurseInvoiceDailyDisputeObserver

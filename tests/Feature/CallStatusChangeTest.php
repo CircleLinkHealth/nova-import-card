@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\CreateNurseInvoices;
+use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
