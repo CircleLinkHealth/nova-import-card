@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Jobs\CreateNurseInvoices;
+use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
