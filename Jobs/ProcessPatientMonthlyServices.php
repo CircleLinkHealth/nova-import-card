@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ProcessPatientMonthlyServices implements ShouldQueue
 {
@@ -57,19 +56,6 @@ class ProcessPatientMonthlyServices implements ShouldQueue
         (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
 
-    public function middleware()
-    {
-        if (isUnitTestingEnv()) {
-            return [];
-        }
-
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(50)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(20);
-
-        return [$rateLimitedMiddleware];
-    }
 
     public function retryUntil(): \DateTime
     {
