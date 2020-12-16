@@ -10,9 +10,9 @@ use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
-use App\Events\NoteFinalSaved;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
+use App\Jobs\ForwardNote;
 use App\Jobs\SendSingleNotification;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
@@ -642,12 +642,13 @@ class NotesController extends Controller
                 ->withErrors([$exception->getMessage()])
                 ->withInput();
         }
-
-        event(new NoteFinalSaved($note, [
-            'notifyCareTeam' => $input['notify_careteam'] ?? false,
-            'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
-            'forceNotify'    => false,
-        ]));
+        
+        ForwardNote::dispatch(
+            $note,
+            $input['notify_careteam'] ?? false,
+            $input['notify_circlelink_support'] ?? false,
+            false
+        );
 
         if ($hasRnApprovedCp) {
             event(new CarePlanWasApproved($patient, $author));

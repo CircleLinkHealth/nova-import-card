@@ -10,7 +10,6 @@ use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
 use App\Events\CarePlanWasRNApproved;
-use App\Events\NoteFinalSaved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
@@ -22,7 +21,6 @@ use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
-use App\Listeners\ForwardNote;
 use App\Listeners\LogScheduledTask;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
@@ -91,9 +89,6 @@ class CpmEventServiceProvider extends ServiceProvider
         MessageSending::class => [
             LogMailSmtpId::class, //this needs to be first
             CheckBeforeSendMessageListener::class,
-        ],
-        NoteFinalSaved::class => [
-            ForwardNote::class,
         ],
         MessageSent::class => [
             LogSentMailNotification::class,

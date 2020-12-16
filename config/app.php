@@ -238,6 +238,8 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
+        CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider::class,
+        Mpbarlow\LaravelQueueDebouncer\ServiceProvider::class
     ],
 
     /*x

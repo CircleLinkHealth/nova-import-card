@@ -136,9 +136,6 @@ class Kernel extends ConsoleKernel
             ->everyFifteenMinutes()
             ->onOneServer();
 
-        $schedule->command('horizon:snapshot')
-            ->everyThirtyMinutes();
-
         $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
 
