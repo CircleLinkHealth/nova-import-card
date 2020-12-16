@@ -26,7 +26,7 @@ class OfflineActivityTimeRequestController extends Controller
             ->whereNull('is_approved')
             ->get();
 
-        return view('cpm-admin::admin.offlineActivityTimeRequest.index')
+        return view('customer::admin.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
 
@@ -91,7 +91,7 @@ class OfflineActivityTimeRequestController extends Controller
             ->where('requester_id', auth()->id())
             ->get();
 
-        return view('cpm-admin::admin.offlineActivityTimeRequest.index')
+        return view('customer::admin.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
 

@@ -27,6 +27,7 @@ class CustomerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
+        $this->registerViews();
     }
 
     /**
@@ -66,4 +67,35 @@ class CustomerServiceProvider extends ServiceProvider
             'medialibrary'
         );
     }
+    
+    /**
+     * Register views.
+     */
+    public function registerViews()
+    {
+        $viewPath = resource_path('views/modules/customer');
+        
+        $sourcePath = __DIR__.'/../Resources/views';
+        
+        $this->publishes(
+            [
+                $sourcePath => $viewPath,
+            ],
+            'views'
+        );
+        
+        $this->loadViewsFrom(
+            array_merge(
+                array_map(
+                    function ($path) {
+                        return $path.'/modules/customer';
+                    },
+                    \Config::get('view.paths')
+                ),
+                [$sourcePath]
+            ),
+            'customer'
+        );
+    }
+    
 }
