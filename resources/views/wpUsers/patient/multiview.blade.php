@@ -236,7 +236,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <!-- /OTHER INFORMATION -->
             </section>
         </div>
-        <div class="row pb-before"></div>
+        <div class="row"></div>
         @endif
 
         @push('styles')
