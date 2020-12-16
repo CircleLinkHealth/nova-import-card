@@ -50,6 +50,8 @@ class GeneratePatientsCarePlans implements ShouldQueue
      */
     public function handle(CarePlanGeneratorService $service)
     {
+        Log::debug('Ready to run GeneratePatientsCarePlans');
+
         /** @var Media $media */
         $media = $service->pdfForUsers($this->requesterId, $this->userIds, $this->letter);
         Log::debug("Pdf for users generated. See media[$media->id]");

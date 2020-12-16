@@ -33,6 +33,7 @@ use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -258,6 +259,7 @@ class PatientCareplanController extends Controller
             return app(CarePlanGeneratorService::class)->renderForUser(auth()->id(), $userIds[0], $letter);
         }
 
+        Log::debug('Dispatching GeneratePatientsCarePlans');
         GeneratePatientsCarePlans::dispatch(auth()->id(), now(), $userIds, $letter);
 
         return response()->json('The Care Plan(s) are being generated. You will receive an email when they are ready!');
