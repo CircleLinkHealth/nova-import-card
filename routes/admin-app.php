@@ -28,5 +28,5 @@ Route::get('calls-v2', [
 
 Route::get('ca/index', [
     'uses' => 'RedirectToAdminApp@getCADirectorIndex',
-    'as'   => 'ca-director.index',
+    'as'   => 'ca-director.provider.index',
 ]);

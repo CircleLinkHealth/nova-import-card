@@ -103,7 +103,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('ca-director.index') }}" style="color: #fff;">
+                                        <a href="{{ route('ca-director.provider.index') }}" style="color: #fff;">
                                             Care Ambassador Panel
                                         </a>
                                     </li>
