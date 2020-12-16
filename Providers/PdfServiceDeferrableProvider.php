@@ -32,13 +32,6 @@ class PdfServiceDeferrableProvider extends ServiceProvider implements Deferrable
     {
         $this->app->bind(HtmlToPdfService::class, function () {
             return new ServerlessPdfService();
-            /*
-                $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
-
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'))
-                    ->handler();
-                */
         });
     }
 }

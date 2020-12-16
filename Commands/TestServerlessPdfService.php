@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\PdfService\Commands;
 
+use App\Services\CarePlanGeneratorService;
 use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Console\Command;
 
@@ -22,7 +23,7 @@ class TestServerlessPdfService extends Command
      *
      * @var string
      */
-    protected $signature = 'test:serverless-pdf-service';
+    protected $signature = 'test:serverless-pdf-service {requesterId?} {patientId?}';
 
     /**
      * Create a new command instance.
@@ -41,6 +42,14 @@ class TestServerlessPdfService extends Command
      */
     public function handle()
     {
+        if ($this->hasArgument('requesterId') && $this->hasArgument('patientId')) {
+            $this->info('Generating PDF for patient');
+            $media = app(CarePlanGeneratorService::class)->pdfForUsers($this->argument('requesterId'), [$this->argument('patientId')], true);
+            $this->info(json_encode($media));
+
+            return 0;
+        }
+
         $pdfService = app(PdfService::class);
         $path       = $pdfService->blankPage('pdf1.pdf');
         $this->info("Blank Page generated: $path");

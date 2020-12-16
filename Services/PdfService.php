@@ -9,7 +9,6 @@ namespace CircleLinkHealth\PdfService\Services;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LynX39\LaraPdfMerger\PdfManage;
 
@@ -59,6 +58,19 @@ class PdfService
         return preg_match_all('/\\/Page\\W/', $pdftext, $dummy);
     }
 
+    public function createPdfFromHtml(string $html, $outputFullPath = null, array $options = [])
+    {
+        $pdf = $this->htmlToPdfService->loadHTML($html);
+        $this->setOptions($pdf, $options);
+        $pdf->save($outputFullPath, true);
+
+        if ( ! file_exists($outputFullPath)) {
+            throw new FileNotFoundException("File not found at `$outputFullPath`. Seems like PDF was not generated.");
+        }
+
+        return $outputFullPath;
+    }
+
     /**
      * Create a PDF from a View.
      *
@@ -66,7 +78,6 @@ class PdfService
      * @param null $outputFullPath
      *
      * @throws \Exception
-     *
      * @return string|null
      */
     public function createPdfFromView($view, array $args, $outputFullPath = null, array $options = [])
@@ -83,24 +94,9 @@ class PdfService
         //check that pdfCareplan is provided with $args and is not null
         $args['generatePdfCareplan'] = empty($args['pdfCareplan']);
 
-        $pdf = $this->htmlToPdfService
-            ->loadView($view, $args);
-        if ( ! empty($options)) {
-            foreach ($options as $key => $value) {
-                $pdf = $pdf->setOption($key, $value);
-            }
-        } else {
-            $pdf->setOption('displayHeaderFooter', true)
-                ->setOption('footerTemplate', '<div style="text-align: center; font-size: 10px;">Page <span class="pageNumber"></span></div>')
-                ->setOption('margin', [
-                    'top'    => '8mm',
-                    'left'   => '8mm',
-                    'bottom' => '8mm',
-                    'right'  => '8mm',
-                ]);
-        }
-
-        $pdf = $pdf->save($outputFullPath, true);
+        $pdf = $this->htmlToPdfService->loadView($view, $args);
+        $this->setOptions($pdf, $options);
+        $pdf->save($outputFullPath, true);
 
         if ( ! $args['generatePdfCareplan']) {
             $outputFullPath = $this->mergeFiles(
@@ -125,7 +121,6 @@ class PdfService
      * @param null $outputFullPath
      *
      * @throws \Exception
-     *
      * @return string|null
      */
     public function mergeFiles(
@@ -172,6 +167,24 @@ class PdfService
         $folder = dirname($path);
         if ( ! File::isDirectory($folder)) {
             File::makeDirectory($folder);
+        }
+    }
+
+    private function setOptions(HtmlToPdfService $pdf, array $options = [])
+    {
+        if ( ! empty($options)) {
+            foreach ($options as $key => $value) {
+                $pdf = $pdf->setOption($key, $value);
+            }
+        } else {
+            $pdf->setOption('displayHeaderFooter', true)
+                ->setOption('footerTemplate', '<div style="text-align: center; font-size: 10px;">Page <span class="pageNumber"></span></div>')
+                ->setOption('margin', [
+                    'top'    => '8mm',
+                    'left'   => '8mm',
+                    'bottom' => '8mm',
+                    'right'  => '8mm',
+                ]);
         }
     }
 }

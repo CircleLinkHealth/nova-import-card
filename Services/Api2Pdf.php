@@ -6,31 +6,25 @@
 
 namespace CircleLinkHealth\PdfService\Services;
 
+use Api2Pdf\Exception\ConversionException;
+use Api2Pdf\Exception\ProtocolException;
 use File;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
-class ServerlessPdfService implements HtmlToPdfService
+class Api2Pdf implements HtmlToPdfService
 {
-    private Client $client;
     private ?string $htmlString;
     private array $options;
 
     /**
-     * ServerlessPdfService constructor.
+     * Api2Pdf constructor.
      */
     public function __construct()
     {
-        $url          = config('services.serverless-pdf-generator.api-url');
-        $this->client = new Client([
-            'base_uri' => $url,
-            'headers'  => [
-                'x-api-key' => config('services.serverless-pdf-generator.api-key'),
-            ],
-        ]);
         $this->htmlString = null;
-        $this->options    = config('services.serverless-pdf-generator.default-options') ?? [];
+        $this->options    = [];
     }
 
     public function loadHTML(string $htmlString): HtmlToPdfService
@@ -48,39 +42,32 @@ class ServerlessPdfService implements HtmlToPdfService
         return $this;
     }
 
+    /**
+     * @throws ConversionException
+     * @throws ProtocolException
+     */
     public function save(string $filename, bool $overwrite = false): HtmlToPdfService
     {
-        $url        = $this->client->getConfig('base_uri');
-        $optionsStr = json_encode($this->options);
-        Log::debug("Calling: $url with options: $optionsStr");
-
-        $result = $this->client->post(
-            '',
-            [
-                'json' => [
-                    'html'     => $this->htmlString,
-                    'fileName' => basename($filename),
-                    'options'  => $this->options,
-                ],
-            ]
-        );
-        $body = $result->getBody();
-        if (200 !== $result->getStatusCode()) {
-            throw new \Exception($body);
+        $api = new \Api2Pdf\Api2Pdf(config('services.api2pdf.api-key'));
+        try {
+            $result = $api->wkHtmlToPdfFromHtml($this->htmlString);
+        } catch (ConversionException|ProtocolException $e) {
+            throw $e;
         }
 
         $this->resolvePath($filename);
+
         Log::debug("Saving pdf to $filename");
-        file_put_contents($filename.'.html', $this->htmlString);
-        file_put_contents($filename, $body);
+        $pdfLink = $result->getPdf();
+        Log::debug("Pdf link: $pdfLink");
+        file_put_contents($filename, (new Client())->get($pdfLink)->getBody());
 
         return $this;
     }
 
     public function setOption(string $name, $value): HtmlToPdfService
     {
-        $this->options[$name] = $value;
-
+        // TODO: Implement setOption() method.
         return $this;
     }
 
