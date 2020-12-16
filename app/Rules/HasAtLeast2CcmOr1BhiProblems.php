@@ -6,6 +6,7 @@
 
 namespace App\Rules;
 
+use CircleLinkHealth\SharedModels\Rules\HasEnoughProblems;
 use Illuminate\Contracts\Validation\Rule;
 
 /**
