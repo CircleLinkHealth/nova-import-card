@@ -38,9 +38,11 @@
         }
     ],
     "require": {
-        "api2pdf/api2pdf.php": "dev-master",
-        "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "daltcore/lara-pdf-merger": "2.0.6"
+    },
+    "suggest": {
+        "api2pdf/api2pdf.php": "Required to use Api2Pdf",
+        "barryvdh/laravel-snappy": "Required to use SnappyPdf (wkhtmltopdf)"
     }
 }
