@@ -125,7 +125,7 @@ class CarePlanGeneratorService
         return SaasAccount::whereSlug('circlelink-health')
             ->firstOrFail()
             ->addMedia($filePath)
-            ->toMediaCollection('care-plans-pdf');
+            ->toMediaCollection('care-plans-pdf', 'media');
     }
 
     private function getBlankPage()

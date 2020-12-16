@@ -72,7 +72,7 @@ class WelcomeController extends Controller
         }
 
         if ($user->isCallbacksAdmin()) {
-            return redirect()->route('patientCallManagement.v2.index');
+            return redirect()->route('patientCallManagement.v2.provider.index');
         }
 
         if ($user->isSaasAdmin()) {

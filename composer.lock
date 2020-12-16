@@ -220,12 +220,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/amnuts/opcache-gui.git",
-                "reference": "d07fa787984ca70ea2a39b6b2bca139c58867fef"
+                "reference": "240b9650cd53e2a5484289570746a27f82ac48d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/d07fa787984ca70ea2a39b6b2bca139c58867fef",
-                "reference": "d07fa787984ca70ea2a39b6b2bca139c58867fef",
+                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/240b9650cd53e2a5484289570746a27f82ac48d4",
+                "reference": "240b9650cd53e2a5484289570746a27f82ac48d4",
                 "shasum": ""
             },
             "require": {
@@ -263,39 +263,7 @@
                 "interface",
                 "opcodes"
             ],
-            "time": "2020-12-08T21:59:47+00:00"
-        },
-        {
-            "name": "api2pdf/api2pdf.php",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Api2Pdf/api2pdf.php.git",
-                "reference": "6b06dcd53bd79e7224025fcce026d54c4cc7a4fc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Api2Pdf/api2pdf.php/zipball/6b06dcd53bd79e7224025fcce026d54c4cc7a4fc",
-                "reference": "6b06dcd53bd79e7224025fcce026d54c4cc7a4fc",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=5.6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Api2Pdf\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A client library for API2PDF service to convert HTML to PDF",
-            "homepage": "https://www.api2pdf.com",
-            "time": "2019-08-09T10:51:30+00:00"
+            "time": "2020-12-16T11:10:48+00:00"
         },
         {
             "name": "appstract/laravel-opcache",
@@ -645,67 +613,6 @@
             "time": "2020-06-06T16:24:31+00:00"
         },
         {
-            "name": "barryvdh/laravel-snappy",
-            "version": "v0.4.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/barryvdh/laravel-snappy.git",
-                "reference": "c412d0c8f40b1326ba0fb16e94957fd1e68374f0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-snappy/zipball/c412d0c8f40b1326ba0fb16e94957fd1e68374f0",
-                "reference": "c412d0c8f40b1326ba0fb16e94957fd1e68374f0",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/filesystem": "^5.5|^6|^7",
-                "illuminate/support": "^5.5|^6|^7",
-                "knplabs/knp-snappy": "^1",
-                "php": ">=7"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.4-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Barryvdh\\Snappy\\ServiceProvider"
-                    ],
-                    "aliases": {
-                        "PDF": "Barryvdh\\Snappy\\Facades\\SnappyPdf",
-                        "SnappyImage": "Barryvdh\\Snappy\\Facades\\SnappyImage"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Barryvdh\\Snappy\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Barry vd. Heuvel",
-                    "email": "barryvdh@gmail.com"
-                }
-            ],
-            "description": "Snappy PDF/Image for Laravel",
-            "keywords": [
-                "image",
-                "laravel",
-                "pdf",
-                "snappy",
-                "wkhtmltoimage",
-                "wkhtmltopdf"
-            ],
-            "time": "2020-02-25T20:52:15+00:00"
-        },
-        {
             "name": "brick/math",
             "version": "0.9.1",
             "source": {
@@ -978,7 +885,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4c088989929a5b73535e0575ef4e3d4fce8f3ceb"
+                "reference": "b9f379daadac97e3c753810302a3db00e84565ab"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -1016,7 +923,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T15:49:28+00:00"
+            "time": "2020-12-15T23:02:00+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1102,7 +1009,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "197c26c599648691032ebb6720b685e3cbcac49e"
+                "reference": "dcece49c003cdadd3ae43d8983209f6e1f8788b2"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1120,11 +1027,7 @@
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\Customer\\Providers\\CustomerDeferrableServiceProvider",
-                        "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider",
-                        "CircleLinkHealth\\Customer\\Providers\\CustomerAuthServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -1143,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T19:51:42+00:00"
+            "time": "2020-12-16T12:03:04+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1151,7 +1054,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "424d734a90426aff2832a7dfa008877c045dde71"
+                "reference": "076f14aba082f54435fc6f7599710a87013cc23a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1178,7 +1081,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:26:34+00:00"
+            "time": "2020-12-16T13:33:16+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1246,13 +1149,15 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "c1779cb9b049bb75eeafa4969bac8326f1c440f4"
+                "reference": "c944203c9e7ca77ff2d58c9bb463511ed4ff9e96"
             },
             "require": {
-                "api2pdf/api2pdf.php": "dev-master",
-                "barryvdh/laravel-snappy": "0.4.7",
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
                 "daltcore/lara-pdf-merger": "2.0.6"
+            },
+            "suggest": {
+                "api2pdf/api2pdf.php": "Required to use Api2Pdf",
+                "barryvdh/laravel-snappy": "Required to use SnappyPdf (wkhtmltopdf)"
             },
             "type": "laravel-module",
             "extra": {
@@ -1278,7 +1183,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T16:12:16+00:00"
+            "time": "2020-12-16T09:21:03+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -2577,10 +2482,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8.0"
+                "php": "^7.0|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
+                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
             },
             "type": "library",
             "extra": {
@@ -2614,13 +2519,7 @@
                 "cron",
                 "schedule"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/dragonmantank",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-10-12T18:35:36+00:00"
+            "time": "2020-10-13T00:52:37+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -4170,72 +4069,6 @@
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
-            "name": "knplabs/knp-snappy",
-            "version": "v1.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/KnpLabs/snappy.git",
-                "reference": "7bac60fb729147b7ccd8532c07df3f52a4afa8a4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/snappy/zipball/7bac60fb729147b7ccd8532c07df3f52a4afa8a4",
-                "reference": "7bac60fb729147b7ccd8532c07df3f52a4afa8a4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1",
-                "psr/log": "^1.0",
-                "symfony/process": "~3.4||~4.3||~5.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~7.4"
-            },
-            "suggest": {
-                "h4cc/wkhtmltoimage-amd64": "Provides wkhtmltoimage-amd64 binary for Linux-compatible machines, use version `~0.12` as dependency",
-                "h4cc/wkhtmltoimage-i386": "Provides wkhtmltoimage-i386 binary for Linux-compatible machines, use version `~0.12` as dependency",
-                "h4cc/wkhtmltopdf-amd64": "Provides wkhtmltopdf-amd64 binary for Linux-compatible machines, use version `~0.12` as dependency",
-                "h4cc/wkhtmltopdf-i386": "Provides wkhtmltopdf-i386 binary for Linux-compatible machines, use version `~0.12` as dependency",
-                "wemersonjanuario/wkhtmltopdf-windows": "Provides wkhtmltopdf executable for Windows, use version `~0.12` as dependency"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Knp\\Snappy\\": "src/Knp/Snappy"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "KnpLabs Team",
-                    "homepage": "http://knplabs.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://github.com/KnpLabs/snappy/contributors"
-                }
-            ],
-            "description": "PHP5 library allowing thumbnail, snapshot or PDF generation from a url or a html page. Wrapper for wkhtmltopdf/wkhtmltoimage.",
-            "homepage": "http://github.com/KnpLabs/snappy",
-            "keywords": [
-                "knp",
-                "knplabs",
-                "pdf",
-                "snapshot",
-                "thumbnail",
-                "wkhtmltopdf"
-            ],
-            "time": "2020-01-20T08:30:30+00:00"
-        },
-        {
             "name": "lab404/laravel-impersonate",
             "version": "1.7.2",
             "source": {
@@ -4436,12 +4269,6 @@
                 "autoloading",
                 "laminas",
                 "zf"
-            ],
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
             ],
             "time": "2020-09-14T14:23:00+00:00"
         },
@@ -5030,16 +4857,16 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.9.11",
+            "version": "v2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "5b03dd3994128684053c0c56a6c78c941fcc98f4"
+                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/5b03dd3994128684053c0c56a6c78c941fcc98f4",
-                "reference": "5b03dd3994128684053c0c56a6c78c941fcc98f4",
+                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
+                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
                 "shasum": ""
             },
             "require": {
@@ -5094,7 +4921,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-11-20T15:01:58+00:00"
+            "time": "2020-12-15T16:50:13+00:00"
         },
         {
             "name": "laravel/vapor-ui",
@@ -6114,12 +5941,6 @@
             "keywords": [
                 "stream",
                 "zip"
-            ],
-            "funding": [
-                {
-                    "url": "https://opencollective.com/zipstream",
-                    "type": "open_collective"
-                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -8748,12 +8569,6 @@
                 "queue",
                 "set"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
-            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -9793,12 +9608,6 @@
             "keywords": [
                 "laravel-schedule-monitor",
                 "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
             ],
             "time": "2020-09-08T20:04:19+00:00"
         },

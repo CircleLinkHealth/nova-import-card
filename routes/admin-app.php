@@ -23,10 +23,10 @@ Route::group([
 
 Route::get('calls-v2', [
     'uses' => 'RedirectToAdminApp@getPAM',
-    'as'   => 'patientCallManagement.v2.index',
+    'as'   => 'patientCallManagement.v2.provider.index',
 ]);
 
 Route::get('ca/index', [
     'uses' => 'RedirectToAdminApp@getCADirectorIndex',
-    'as'   => 'ca-director.index',
+    'as'   => 'ca-director.provider.index',
 ]);

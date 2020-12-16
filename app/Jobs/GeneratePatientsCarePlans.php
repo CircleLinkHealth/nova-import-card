@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class GeneratePatientsCarePlans implements ShouldQueue
 {
@@ -49,8 +50,12 @@ class GeneratePatientsCarePlans implements ShouldQueue
      */
     public function handle(CarePlanGeneratorService $service)
     {
+        Log::debug('Ready to run GeneratePatientsCarePlans');
+
         /** @var Media $media */
         $media = $service->pdfForUsers($this->requesterId, $this->userIds, $this->letter);
+        Log::debug("Pdf for users generated. See media[$media->id]");
+
         User::find($this->requesterId)->notify(new CarePlansGeneratedNotification(optional($media)->id, $this->dateRequested));
     }
 }
