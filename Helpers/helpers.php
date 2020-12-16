@@ -428,3 +428,19 @@ if ( ! function_exists('minutesToHhMm')) {
         return sprintf('%02d:%02d', $h, $i);
     }
 }
+
+if ( ! function_exists('getDatesForRange')) {
+    /**
+     * @return array
+     */
+    function getDatesForRange(Carbon $from, Carbon $to)
+    {
+        $dates = [];
+        for ($date = $from; $date->lte($to); $date->addDay(1)) {
+//            If i dont format here they mutate AF.
+            $dates[] = $date->format('Y-m-d');
+        }
+        
+        return $dates;
+    }
+}
