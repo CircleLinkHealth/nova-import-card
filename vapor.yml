@@ -21,6 +21,7 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
             - 'php artisan queue:restart'
     staging:
         domain: cpm-provider.clh-staging.com
