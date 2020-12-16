@@ -12,7 +12,7 @@ use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Notification;
-use PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
 use Tests\Helpers\CustomerTestCaseHelper;
 
