@@ -98,7 +98,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                     <ul class="nav navbar-nav navbar-right">
                         @if (auth()->user()->isCallbacksAdmin())
                                     <li>
-                                        <a href="{{ route('patientCallManagement.v2.index') }}" style="color: #fff;">
+                                        <a href="{{ route('patientCallManagement.v2.provider.index') }}" style="color: #fff;">
                                             Patient Activity Management
                                         </a>
                                     </li>
@@ -160,7 +160,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                             <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -179,7 +179,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                         <li>
-                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
