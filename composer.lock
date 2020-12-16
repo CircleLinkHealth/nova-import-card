@@ -606,18 +606,17 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ee0b3fa438a64cbf53d3626aa1f1923c137ce29b"
+                "reference": "43d0f35de7e01561a035845a3d3abea351389779"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
-                "circlelinkhealth/customer-module": "*"
+                "circlelinkhealth/customer-module": "*",
+                "mpbarlow/laravel-queue-debouncer": "^2.0"
             },
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\CcmBilling\\Providers\\CcmBillingServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -654,7 +653,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-15T15:25:18+00:00"
+            "time": "2020-12-16T16:00:55+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -819,7 +818,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c964678a461b6711995fa5001bb41d60d4a479ce"
+                "reference": "bc337081e07c456f6e891497daa58caeba798882"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -856,7 +855,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-15T22:43:47+00:00"
+            "time": "2020-12-16T15:52:23+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -864,7 +863,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "424d734a90426aff2832a7dfa008877c045dde71"
+                "reference": "076f14aba082f54435fc6f7599710a87013cc23a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -891,7 +890,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:26:34+00:00"
+            "time": "2020-12-16T13:33:16+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -4271,16 +4270,16 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.9.11",
+            "version": "v2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "5b03dd3994128684053c0c56a6c78c941fcc98f4"
+                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/5b03dd3994128684053c0c56a6c78c941fcc98f4",
-                "reference": "5b03dd3994128684053c0c56a6c78c941fcc98f4",
+                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
+                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
                 "shasum": ""
             },
             "require": {
@@ -4335,7 +4334,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-11-20T15:01:58+00:00"
+            "time": "2020-12-15T16:50:13+00:00"
         },
         {
             "name": "laravel/vapor-ui",
@@ -5510,6 +5509,66 @@
             ],
             "abandoned": "brick/math",
             "time": "2017-02-16T16:54:46+00:00"
+        },
+        {
+            "name": "mpbarlow/laravel-queue-debouncer",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mpbarlow/laravel-queue-debouncer.git",
+                "reference": "be9da0171d528fea50d8496fa948a9c618698823"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/be9da0171d528fea50d8496fa948a9c618698823",
+                "reference": "be9da0171d528fea50d8496fa948a9c618698823",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^6.0|^7.0|^8.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mpbarlow\\LaravelQueueDebouncer\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Debouncer": "Mpbarlow\\LaravelQueueDebouncer\\Facade\\Debouncer"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mpbarlow\\LaravelQueueDebouncer\\": "src/"
+                },
+                "files": [
+                    "src/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Barlow",
+                    "email": "matt@barlow.coffee"
+                }
+            ],
+            "description": "A wrapper job for debouncing other queue jobs.",
+            "keywords": [
+                "debounce",
+                "job",
+                "laravel",
+                "queue"
+            ],
+            "time": "2020-10-03T19:31:30+00:00"
         },
         {
             "name": "mremi/url-shortener",
