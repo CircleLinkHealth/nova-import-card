@@ -29,12 +29,12 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use Tests\CustomerTestCase;
 
 class CcdaImporterTest extends CustomerTestCase
