@@ -220,12 +220,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/amnuts/opcache-gui.git",
-                "reference": "240b9650cd53e2a5484289570746a27f82ac48d4"
+                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/240b9650cd53e2a5484289570746a27f82ac48d4",
-                "reference": "240b9650cd53e2a5484289570746a27f82ac48d4",
+                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/d660fbee43ad12a1a5114bdedad88625cf4db91c",
+                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c",
                 "shasum": ""
             },
             "require": {
@@ -263,7 +263,7 @@
                 "interface",
                 "opcodes"
             ],
-            "time": "2020-12-16T11:10:48+00:00"
+            "time": "2020-12-16T15:55:55+00:00"
         },
         {
             "name": "appstract/laravel-opcache",
@@ -704,7 +704,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "e8272708f8eabf5f0ee65624f1f33deac2e39373"
+                "reference": "43d0f35de7e01561a035845a3d3abea351389779"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -714,9 +714,7 @@
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\CcmBilling\\Providers\\CcmBillingServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -753,7 +751,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-16T15:51:40+00:00"
+            "time": "2020-12-16T16:00:55+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1329,7 +1327,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "cfc6d6cc016bdf054e8a7c03e1d16d4f1d4b7a3c"
+                "reference": "00ca4ee2240f3c6432da150d6260b29331813bf2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1349,7 +1347,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-15T13:25:43+00:00"
+            "time": "2020-12-16T16:17:58+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1422,7 +1420,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "aa153ff264eaa83e3ecbcf2b09022bdde034b582"
+                "reference": "360ddd769e691d0caee96b8d6bde0b85ba45bec5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1448,7 +1446,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:26:34+00:00"
+            "time": "2020-12-16T18:06:39+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
