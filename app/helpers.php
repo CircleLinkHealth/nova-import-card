@@ -1533,21 +1533,6 @@ if ( ! function_exists('sendPatientBypassedAttestationWarning')) {
         );
     }
 }
-if ( ! function_exists('getDatesForRange')) {
-    /**
-     * @return array
-     */
-    function getDatesForRange(Carbon $from, Carbon $to)
-    {
-        $dates = [];
-        for ($date = $from; $date->lte($to); $date->addDay(1)) {
-//            If i dont format here they mutate AF.
-            $dates[] = $date->format('Y-m-d');
-        }
-
-        return $dates;
-    }
-}
 if ( ! function_exists('createWeekMap')) {
     /**
      * Date parameter is the date the user saved the event for. Take that to startOfWeek and create the dates of that week?
