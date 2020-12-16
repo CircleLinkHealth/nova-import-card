@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 use App\Contracts\Reports\PracticeDataExportInterface;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Exception;
@@ -20,7 +21,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Spatie\MediaLibrary\Helpers\RemoteFile;
-use Spatie\MediaLibrary\Models\Media;
 
 class StoreReportAsMedia implements ShouldQueue
 {
