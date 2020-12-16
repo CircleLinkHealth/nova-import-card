@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use App\Console\Commands\ManuallyCreateEnrollmentTestData;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InviteUnreachablePatients;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
@@ -71,7 +74,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function triggerEnrollmentSeederTest(Request $request)
     {
         try {
-            Artisan::call('create:selfEnrollmentTestData', ['practiceName' => $request->input('practice-select')]);
+            Artisan::call(ManuallyCreateEnrollmentTestData::class, ['practiceName' => $request->input('practice-select')]);
         } catch (\Exception $e) {
             return 'Somethings Wrong. Please try one more time...';
         }
