@@ -959,7 +959,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "52a422dac70f70253bf5a98b2ecaf7dabdac11a7"
+                "reference": "f0df8cef124179c0f20198375a8608b3d6d130e8"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -996,7 +996,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T20:58:38+00:00"
+            "time": "2020-12-16T21:15:22+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1377,11 +1377,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "060190df31c3d0c94e32a19d15dd6a430f53ffc5"
+                "reference": "60f284c21cdf24af5c23b225a73943e779c82cdd"
             },
             "require": {
-                "circlelinkhealth/customer-module": "*",
-                "spatie/laravel-rate-limited-job-middleware": "*"
+                "circlelinkhealth/customer-module": "*"
             },
             "type": "laravel-module",
             "extra": {
@@ -1403,7 +1402,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T20:37:36+00:00"
+            "time": "2020-12-16T21:21:59+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -2468,6 +2467,12 @@
             "keywords": [
                 "cron",
                 "schedule"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
             ],
             "time": "2020-10-13T00:52:37+00:00"
         },
@@ -3941,11 +3946,17 @@
         },
         {
             "name": "jeremykenedy/slack-laravel",
-            "version": "v7.0.0",
+            "version": "v2.6.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/slack-laravel.git",
-                "reference": "c93248a892480df0a1f8c76c65e5f41fa958f0e6"
+                "url": "https://github.com/jeremykenedy/slack-laravel.git",
+                "reference": "447485a9309831a8830bb4291445fed36450b053"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeremykenedy/slack-laravel/zipball/447485a9309831a8830bb4291445fed36450b053",
+                "reference": "447485a9309831a8830bb4291445fed36450b053",
+                "shasum": ""
             },
             "require": {
                 "jeremykenedy/slack": "~2.0",
@@ -3967,6 +3978,7 @@
                     "jeremykenedy\\Slack\\Laravel\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3980,12 +3992,22 @@
                     "email": "jeremykenedy@gmail.com"
                 }
             ],
-            "description": "Laravel 5 integration for the jeremykenedy/slack package, including facades and service providers.",
+            "description": "Laravel integration for the jeremykenedy/slack package, including facades and service providers.",
             "keywords": [
                 "laravel",
                 "slack"
             ],
-            "time": "2020-04-21T06:33:14+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/jeremykenedy",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/jeremykenedy",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-10-19T17:05:23+00:00"
         },
         {
             "name": "joshbrw/laravel-module-installer",
@@ -4219,6 +4241,12 @@
                 "autoloading",
                 "laminas",
                 "zf"
+            ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
             ],
             "time": "2020-09-14T14:23:00+00:00"
         },
@@ -5956,6 +5984,12 @@
             "keywords": [
                 "stream",
                 "zip"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/zipstream",
+                    "type": "open_collective"
+                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -8584,6 +8618,12 @@
                 "queue",
                 "set"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/ramsey",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -9506,62 +9546,6 @@
             "time": "2020-11-04T21:08:45+00:00"
         },
         {
-            "name": "spatie/laravel-rate-limited-job-middleware",
-            "version": "1.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-rate-limited-job-middleware.git",
-                "reference": "7b72592e0d823e2948c413f5e661de0fd3431db5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/7b72592e0d823e2948c413f5e661de0fd3431db5",
-                "reference": "7b72592e0d823e2948c413f5e661de0fd3431db5",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/redis": "^6.0|^7.0|^8.0",
-                "php": "^7.3|^8.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^4.0|^5.0|^6.0",
-                "phpunit/phpunit": "^8.2|^9.0",
-                "symfony/var-dumper": "^4.3|^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\RateLimitedMiddleware\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A middleware that can rate limit jobs",
-            "homepage": "https://github.com/spatie/laravel-rate-limited-job-middleware",
-            "keywords": [
-                "laravel-rate-limited-job-middleware",
-                "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.patreon.com/spatie",
-                    "type": "patreon"
-                }
-            ],
-            "time": "2020-11-27T09:36:55+00:00"
-        },
-        {
             "name": "spatie/laravel-schedule-monitor",
             "version": "1.0.4",
             "source": {
@@ -9623,6 +9607,12 @@
             "keywords": [
                 "laravel-schedule-monitor",
                 "spatie"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
             ],
             "time": "2020-09-08T20:04:19+00:00"
         },
