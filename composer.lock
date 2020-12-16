@@ -1168,7 +1168,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "c944203c9e7ca77ff2d58c9bb463511ed4ff9e96"
+                "reference": "db23a14038f47d2169b1d5952658f1dfcfdb5d6e"
             },
             "require": {
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
@@ -1202,7 +1202,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T09:21:03+00:00"
+            "time": "2020-12-16T19:14:42+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
