@@ -9,7 +9,7 @@ namespace CircleLinkHealth\CpmAdmin\Services;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
+use CircleLinkHealth\NurseInvoices\Time\AggregatedTotalTimePerNurse;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 
 class NurseDailyReport
