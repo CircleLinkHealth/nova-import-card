@@ -16,7 +16,6 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioSmsMessage;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
 class SelfEnrollmentInviteNotification extends Notification
 {
@@ -45,16 +44,6 @@ class SelfEnrollmentInviteNotification extends Notification
         $this->isReminder = $isReminder;
         $this->url        = $url;
         $this->channels   = $channels;
-    }
-
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(300)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(90);
-
-        return [$rateLimitedMiddleware];
     }
 
     public function retryUntil(): \DateTime
