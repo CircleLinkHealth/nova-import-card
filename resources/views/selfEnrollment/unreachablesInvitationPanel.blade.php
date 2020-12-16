@@ -10,7 +10,7 @@
             </div>
         @endif
 
-        <h4 style="text-align: center">Test Dashboard</h4>
+        <h4 style="text-align: center">Test Dashboard (styling temporarily disabled)</h4>
         <ul class="browser-default">
             <li>
                 <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">You should follow this flow
