@@ -112,15 +112,15 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
-        $result     = $this->onboardingService->getExistingStaff($this->primaryPractice);
+        $result    = $this->onboardingService->getExistingStaff($this->primaryPractice);
         $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
 
         return view('cpm-admin::provider.practice.create', array_merge([
-            'practiceSlug' => $this->practiceSlug,
-            'staff'        => $result['existingUsers'],
-            'existingStaffHelpers'        => $result,
-            'locations'    => $locations,
-            'userScopes'   => [
+            'practiceSlug'         => $this->practiceSlug,
+            'staff'                => $result['existingUsers'],
+            'existingStaffHelpers' => $result,
+            'locations'            => $locations,
+            'userScopes'           => [
                 User::SCOPE_LOCATION => 'Their Location only',
                 User::SCOPE_PRACTICE => 'The entire Practice',
             ],

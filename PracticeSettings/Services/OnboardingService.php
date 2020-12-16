@@ -39,7 +39,7 @@ class OnboardingService
      */
     public function getExistingLocations(Practice $primaryPractice)
     {
-        $existingLocations = $primaryPractice->locations
+        return $primaryPractice->locations
             ->sortBy('name')
             ->map(function ($loc) use (
                 $primaryPractice
@@ -75,8 +75,6 @@ class OnboardingService
                     'sameEHRLogin'              => $primaryPractice->same_ehr_login,
                 ];
             });
-
-        return $existingLocations;
     }
 
     /**
@@ -192,7 +190,7 @@ class OnboardingService
             ])
             ->sortBy('display_name');
 
-        $result = [
+        return [
             'existingUsers' => $existingUsers,
             'locations'     => $locations,
             'locationIds'   => $locationIds,
@@ -201,8 +199,6 @@ class OnboardingService
             //this will help us get role names on the views: rolesMap[id]
             'rolesMap' => $roles->keyBy('id')->all(),
         ];
-
-        return $result;
     }
 
     public function postStoreLocations(
