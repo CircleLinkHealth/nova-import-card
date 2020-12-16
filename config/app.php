@@ -20,7 +20,6 @@ use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Illuminate\Support\Arr;
-use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 
 $appUrl = env('APP_URL', 'http://cpm.dev');
 
@@ -227,7 +226,6 @@ return [
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
         CcmBillingServiceProvider::class,
-        CpmAdminServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
