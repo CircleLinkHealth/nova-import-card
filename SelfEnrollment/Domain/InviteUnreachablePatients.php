@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Domain;
 
-use App\EnrollmentInvitationsBatch;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\SelfEnrollment\AbstractSelfEnrollableUserIterator;
