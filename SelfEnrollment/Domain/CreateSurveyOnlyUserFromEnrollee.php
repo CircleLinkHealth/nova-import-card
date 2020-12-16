@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Domain;
 
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -14,6 +15,7 @@ use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
+use CircleLinkHealth\Eligibility\DTOs\Address;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
@@ -94,10 +96,10 @@ class CreateSurveyOnlyUserFromEnrollee
         }
 
         $phones = array_filter([
-            formatPhoneNumberE164($this->enrollee->primary_phone),
-            formatPhoneNumberE164($this->enrollee->cell_phone),
-            formatPhoneNumberE164($this->enrollee->home_phone),
-            formatPhoneNumberE164($this->enrollee->other_phone),
+            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->primary_phone),
+            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->cell_phone),
+            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->home_phone),
+            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->other_phone),
         ]);
 
         $address = new Address($this->enrollee->address, $this->enrollee->city, $this->enrollee->state, $this->enrollee->zip, $this->enrollee->address_2);
