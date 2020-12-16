@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use App\Jobs\CreateNurseInvoices;
+use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
