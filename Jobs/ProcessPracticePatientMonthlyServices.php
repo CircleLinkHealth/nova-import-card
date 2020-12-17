@@ -46,7 +46,7 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
                 ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth);
             });
     }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();

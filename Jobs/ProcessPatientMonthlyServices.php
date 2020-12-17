@@ -56,7 +56,6 @@ class ProcessPatientMonthlyServices implements ShouldQueue
         (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
 
-
     public function retryUntil(): \DateTime
     {
         return now()->addDay();

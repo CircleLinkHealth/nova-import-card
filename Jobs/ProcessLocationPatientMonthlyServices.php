@@ -63,7 +63,7 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
     {
         $this->getProcessor()->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
     }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();

@@ -60,7 +60,7 @@ class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdenti
 
         (app(ProcessPatientSummaries::class))->execute($this->getPatientId(), $this->getMonth());
     }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();
