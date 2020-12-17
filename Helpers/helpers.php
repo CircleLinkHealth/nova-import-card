@@ -444,3 +444,24 @@ if ( ! function_exists('getDatesForRange')) {
         return $dates;
     }
 }
+
+if ( ! function_exists('secondsToHMS')) {
+    /**
+     * Converts a string of time in seconds to H:m:s.
+     *
+     * @param $totalTimeInSeconds
+     * @param string $delimiter
+     *
+     * @return string
+     */
+    function secondsToHMS(
+        $totalTimeInSeconds,
+        $delimiter = ':'
+    ) {
+        $H2 = floor($totalTimeInSeconds / 3600);
+        $m2 = ($totalTimeInSeconds / 60) % 60;
+        $s2 = $totalTimeInSeconds % 60;
+        
+        return sprintf("%02d${delimiter}%02d${delimiter}%02d", $H2, $m2, $s2);
+    }
+}
