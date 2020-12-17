@@ -14,16 +14,15 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
-use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Boolean;
@@ -52,17 +51,17 @@ class ModifyPatientTime extends Action implements ShouldQueue
     {
         return [
             Select::make('Chargeable Service', 'chargeable_service')
-                  ->required(true)
-                  ->options([
-                      ChargeableService::CCM                     => 'CCM',
-                      ChargeableService::GENERAL_CARE_MANAGEMENT => 'CCM (RHC/FQHC)',
-                      ChargeableService::BHI                     => 'BHI',
-                      ChargeableService::PCM                     => 'PCM',
-                      ChargeableService::RPM                     => 'RPM',
-                  ]),
+                ->required(true)
+                ->options([
+                    ChargeableService::CCM                     => 'CCM',
+                    ChargeableService::GENERAL_CARE_MANAGEMENT => 'CCM (RHC/FQHC)',
+                    ChargeableService::BHI                     => 'BHI',
+                    ChargeableService::PCM                     => 'PCM',
+                    ChargeableService::RPM                     => 'RPM',
+                ]),
 
             Number::make('Enter new duration (minutes)', 'durationMinutes')
-                  ->required(true),
+                ->required(true),
 
             Boolean::make('Force (even if less than 20 minutes)', 'allow_accrued_towards'),
         ];
@@ -82,8 +81,8 @@ class ModifyPatientTime extends Action implements ShouldQueue
         /** @var string $chargeableServiceCode */
         $chargeableServiceCode     = $fields->get('chargeable_service');
         $this->chargeableServiceId = ChargeableService::cached()
-                                                      ->where('code', '=', $chargeableServiceCode)
-                                                      ->first()
+            ->where('code', '=', $chargeableServiceCode)
+            ->first()
             ->id;
 
         /** @var User $patient */
@@ -128,37 +127,37 @@ class ModifyPatientTime extends Action implements ShouldQueue
     private function getActivities(): Collection
     {
         return Activity::wherePatientId($this->patientId)
-                       ->where('chargeable_service_id', '=', $this->chargeableServiceId)
-                       ->whereBetween('performed_at', [
-                           $this->monthYear->copy()->startOfMonth(),
-                           $this->monthYear->copy()->endOfMonth(),
-                       ])
-                       ->orderBy('performed_at', 'desc')
-                       ->get();
+            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
+            ->whereBetween('performed_at', [
+                $this->monthYear->copy()->startOfMonth(),
+                $this->monthYear->copy()->endOfMonth(),
+            ])
+            ->orderBy('performed_at', 'desc')
+            ->get();
     }
 
     private function getNurseCareRateLogs(): Collection
     {
         return NurseCareRateLog::wherePatientUserId($this->patientId)
-                               ->where('chargeable_service_id', '=', $this->chargeableServiceId)
-                               ->whereBetween('performed_at', [
-                                   $this->monthYear->copy()->startOfMonth(),
-                                   $this->monthYear->copy()->endOfMonth(),
-                               ])
-                               ->orderBy('time_before', 'asc')
-                               ->get();
+            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
+            ->whereBetween('performed_at', [
+                $this->monthYear->copy()->startOfMonth(),
+                $this->monthYear->copy()->endOfMonth(),
+            ])
+            ->orderBy('time_before', 'asc')
+            ->get();
     }
 
     private function getPageTimers(): Collection
     {
         return PageTimer::wherePatientId($this->patientId)
-                        ->where('chargeable_service_id', '=', $this->chargeableServiceId)
-                        ->whereBetween('start_time', [
-                            $this->monthYear->copy()->startOfMonth(),
-                            $this->monthYear->copy()->endOfMonth(),
-                        ])
-                        ->orderBy('start_time', 'desc')
-                        ->get();
+            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
+            ->whereBetween('start_time', [
+                $this->monthYear->copy()->startOfMonth(),
+                $this->monthYear->copy()->endOfMonth(),
+            ])
+            ->orderBy('start_time', 'desc')
+            ->get();
     }
 
     private function modifyActivities(): array
@@ -167,7 +166,7 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $result    = collect();
 
         $this->getActivities()
-             ->each(function (Activity $activity) use ($result, &$remaining) {
+            ->each(function (Activity $activity) use ($result, &$remaining) {
                  if ($remaining <= 0) {
                      return false;
                  }
@@ -195,11 +194,11 @@ class ModifyPatientTime extends Action implements ShouldQueue
         NurseCareRateLog::with([
             'activity' => fn ($q) => $q->select(['id', 'duration']),
         ])
-                        ->whereIn('activity_id', $activityIds)
-                        ->orderByDesc('performed_at')
-                        ->get()
-                        ->groupBy('activity_id')
-                        ->each(function (Collection $group) use ($result) {
+            ->whereIn('activity_id', $activityIds)
+            ->orderByDesc('performed_at')
+            ->get()
+            ->groupBy('activity_id')
+            ->each(function (Collection $group) use ($result) {
                             $hasMoreThanOne = $group->count() > 1;
                             $remainingTime = $group->first()->activity->duration;
                             $group->each(function (NurseCareRateLog $nurseCareRateLog) use ($result, $hasMoreThanOne, &$remainingTime) {
@@ -222,7 +221,7 @@ class ModifyPatientTime extends Action implements ShouldQueue
 
         $timeBefore = 0;
         $this->getNurseCareRateLogs()
-             ->each(function (NurseCareRateLog $nurseCareRateLog) use (&$timeBefore) {
+            ->each(function (NurseCareRateLog $nurseCareRateLog) use (&$timeBefore) {
                  if ($nurseCareRateLog->time_before !== $timeBefore) {
                      $nurseCareRateLog->time_before = $timeBefore;
                      $nurseCareRateLog->save();
@@ -238,10 +237,10 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $result = collect();
 
         PageTimer::with('activity')
-                 ->whereHas('activity', function ($q) use ($activityIds) {
+            ->whereHas('activity', function ($q) use ($activityIds) {
                      $q->whereIn('id', $activityIds);
                  })
-                 ->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
+            ->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
                      $pageTimer->duration = $pageTimer->activity->duration;
                      $pageTimer->save();
                      $result->push($pageTimer->id);
@@ -254,8 +253,8 @@ class ModifyPatientTime extends Action implements ShouldQueue
     {
         /** @var PatientMonthlySummary $pms */
         $pms = PatientMonthlySummary::where('patient_id', '=', $this->patientId)
-                                    ->where('month_year', '=', now()->startOfMonth()->toDateString())
-                                    ->first();
+            ->where('month_year', '=', now()->startOfMonth()->toDateString())
+            ->first();
 
         if (in_array($chargeableServiceCode, [ChargeableService::CCM, ChargeableService::GENERAL_CARE_MANAGEMENT, ChargeableService::PCM, ChargeableService::RPM])) {
             $pms->ccm_time = $this->newTimeSeconds;

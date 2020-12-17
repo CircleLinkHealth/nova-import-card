@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
 
 class HomeController extends Controller
 {
@@ -26,17 +28,15 @@ class HomeController extends Controller
         if (auth()->guest()) {
             return redirect()->to(config('core.apps.cpm-provider.url'));
         }
-    
+
         $user = auth()->user();
-        
-        if ($user->isAdmin())
-        {
+
+        if ($user->isAdmin()) {
             return view('cpm-admin::dashboard');
         }
-    
+
         if ($user->isCallbacksAdmin()) {
             return redirect()->route('patientCallManagement.v2.index');
         }
-        
     }
 }

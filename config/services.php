@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -15,8 +18,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain'   => env('MAILGUN_DOMAIN'),
+        'secret'   => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
 
@@ -25,17 +28,16 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key'    => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    
+
     'cpm-app' => [
         'url' => env('CPM_APP_URL', null),
     ],
 
     'twilio' => [
-        'enabled'          => env('TWILIO_ENABLED', false),
+        'enabled' => env('TWILIO_ENABLED', false),
     ],
-
 ];

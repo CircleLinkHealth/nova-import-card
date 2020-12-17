@@ -6,9 +6,9 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\PracticePull\ImportAllergies;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
-use App\Nova\Actions\PracticePull\ImportAllergies;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;

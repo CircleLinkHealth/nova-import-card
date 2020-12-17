@@ -6,14 +6,14 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\Customer\Http\Controllers\CallController;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Http\Controllers\CallController;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Tests\CustomerTestCase;
 
 class CallSchedulerTest extends CustomerTestCase

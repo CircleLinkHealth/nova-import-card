@@ -7,9 +7,9 @@
 namespace App\Nova\Actions;
 
 use Carbon\Carbon;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Generator;
 use CircleLinkHealth\NurseInvoices\Notifications\DisputeResolved;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
