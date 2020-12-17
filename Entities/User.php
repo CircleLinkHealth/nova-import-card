@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\ForeignId;
-use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -58,6 +57,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use CircleLinkHealth\SharedModels\Entities\CpmWeight;
 use CircleLinkHealth\SharedModels\Entities\Dispute;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
@@ -303,7 +303,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                       $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                             $enrollableInfoRequest
- * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                             $loginEvents
+ * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection          $loginEvents
  * @property int|null                                                                                                $login_events_count
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                                   $enrollee
  * @property int|null                                                                                                $enrollment_invitation_links_count
