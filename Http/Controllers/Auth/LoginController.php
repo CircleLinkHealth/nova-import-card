@@ -104,7 +104,6 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        Debugbar::info('LoginController@login: cp1');
         $shouldUsePasswordless = Route::is('passwordless.login.for.careplan.approval');
 
         if ( ! $shouldUsePasswordless) {
@@ -135,8 +134,6 @@ class LoginController extends Controller
                 ->withErrors(['old-password' => "Your password has not been changed for the last ${days} days. Please reset it to continue."]);
         }
 
-        Debugbar::info('LoginController@login: cp2');
-
         return $loginResponse;
     }
 
@@ -165,8 +162,6 @@ class LoginController extends Controller
      */
     public function showLoginForm(Request $request)
     {
-        Debugbar::info('LoginController@showLoginForm: cp1');
-
         $this->setUrlIntendedIfYouMust($request);
 
         $this->checkPracticeNameCookie($request);
