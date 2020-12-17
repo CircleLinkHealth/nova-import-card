@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment;
 
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use App\Console\Commands\ManuallyCreateEnrollmentTestData;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InviteUnreachablePatients;
