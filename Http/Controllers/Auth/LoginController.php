@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Traits\ManagesPatientCookies;
 use CircleLinkHealth\Customer\Traits\PasswordLessAuth;
 use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
+use Debugbar;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -103,6 +104,7 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
+        Debugbar::info('LoginController@login: cp1');
         $shouldUsePasswordless = Route::is('passwordless.login.for.careplan.approval');
 
         if ( ! $shouldUsePasswordless) {
@@ -133,6 +135,8 @@ class LoginController extends Controller
                 ->withErrors(['old-password' => "Your password has not been changed for the last ${days} days. Please reset it to continue."]);
         }
 
+        Debugbar::info('LoginController@login: cp2');
+
         return $loginResponse;
     }
 
@@ -161,12 +165,9 @@ class LoginController extends Controller
      */
     public function showLoginForm(Request $request)
     {
-        /** @var Session $session */
-        $session  = $request->session();
-        $previous = $session->previousUrl();
-        if (empty($session->get('url.intended')) && ! Str::contains($previous, ['login', 'logout'])) {
-            $session->put('url.intended', $session->previousUrl());
-        }
+        Debugbar::info('LoginController@showLoginForm: cp1');
+
+        $this->setUrlIntendedIfYouMust($request);
 
         $this->checkPracticeNameCookie($request);
 
@@ -375,5 +376,19 @@ class LoginController extends Controller
         }
 
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+    }
+
+    private function setUrlIntendedIfYouMust(Request $request)
+    {
+        /** @var Session $session */
+        $session        = $request->session();
+        $previous       = $session->previousUrl();
+        $parsedPrevious = parse_url($previous);
+        $intended       = $session->get('url.intended');
+        $parsedIntended = parse_url($intended);
+
+        if ((empty($intended) || ! isset($parsedIntended['path'])) && isset($parsedPrevious['path']) && ! Str::contains($parsedPrevious['path'], ['login', 'logout'])) {
+            app('redirect')->setIntendedUrl($previous);
+        }
     }
 }
