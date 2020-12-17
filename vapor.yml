@@ -3,7 +3,7 @@ name: app-cpm-web
 separate-vendor: true
 environments:
     production:
-        domain: www.careplanmanager.com
+        domain: provider.careplanmanager.com
         storage: cpm-provider-production-vapor-storage
         cache: cpm-production-cache
         memory: 1024
