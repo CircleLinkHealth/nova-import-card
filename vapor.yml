@@ -9,9 +9,9 @@ environments:
         runtime: php-7.4
         queue-timeout: 600
         queues:
-            - high
-            - default
-            - low
+            - cpm-provider-high-production
+            - cpm-provider-default-production
+            - cpm-provider-low-production
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
             - 'php artisan event:cache'
@@ -34,9 +34,9 @@ environments:
         cache: cpm-staging-cache
         queue-timeout: 600
         queues:
-            - default
-            - high
-            - low
+            - cpm-provider-default-staging
+            - cpm-provider-high-staging
+            - cpm-provider-low-staging
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
             - 'php artisan event:cache'
