@@ -17,6 +17,7 @@ use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
+use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
