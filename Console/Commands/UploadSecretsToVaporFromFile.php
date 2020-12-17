@@ -9,7 +9,6 @@ namespace CircleLinkHealth\Core\Console\Commands;
 use CircleLinkHealth\Core\Traits\RunsCommands;
 use Dotenv\Dotenv;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class UploadSecretsToVaporFromFile extends Command
 {
