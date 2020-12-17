@@ -1,14 +1,17 @@
+@php
+    $url = rtrim(url('/'),'/').'/';
+@endphp
 <!DOCTYPE html>
 <head>
     <script type="text/javascript">
-        var APP_URL = {!! json_encode(rtrim(url('/'),'/').'/') !!}
+        var APP_URL = {!! json_encode($url) !!}
     </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="content-language" content="en-US"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="base-url" content="{{ url('/') }}">
+    <meta name="base-url" content="{{ $url }}">
     <base href="{{asset('')}}">
 
     <title>CarePlanManager - @yield('title')</title>
