@@ -58,7 +58,7 @@
             <!-- Daily Report Modal End-->
 
             <!-- Modal -->
-            <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
+            <div class="modal" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -1228,7 +1228,7 @@
         padding-top: 20px;
     }
 
-    .modal-backdrop.fade {
+    .modal-backdrop {
         opacity: 0.1;
     }
 
