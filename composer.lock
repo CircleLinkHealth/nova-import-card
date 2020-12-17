@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b89066967c2b4184a01acbe189a3b742",
+    "content-hash": "4793bf90ac8388b793111dd39da9828b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -924,6 +924,56 @@
                 }
             ],
             "time": "2020-12-16T21:00:09+00:00"
+        },
+        {
+            "name": "circlelinkhealth/cpm-admin-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
+                "reference": "b3d9682b1fdfc79eb345281232ccb6ba92e88199"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/raygun-module": "*",
+                "circlelinkhealth/shared-models-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmAdmin\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Constantinos Kakoushias",
+                    "email": "constantinos@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                }
+            ],
+            "time": "2020-12-16T21:15:22+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -17351,6 +17401,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/core-module": 20,
+        "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
