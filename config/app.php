@@ -2,6 +2,7 @@
 
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
+use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
@@ -197,6 +198,7 @@ return [
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
+        CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
     ],
 
     /*
