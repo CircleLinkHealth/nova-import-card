@@ -6,6 +6,7 @@ environments:
     memory: 1024
     cli-memory: 512
     runtime: php-7.4
+    queue-timeout: 600
     queues:
       - cpm-admin-default-prod
       - cpm-admin-high-prod
@@ -28,6 +29,7 @@ environments:
     cli-memory: 512
     runtime: php-7.4
     cache: cpm-staging-cache
+    queue-timeout: 600
     queues:
       - cpm-admin-default-staging
       - cpm-admin-high-staging
