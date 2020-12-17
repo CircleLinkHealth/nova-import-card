@@ -3,11 +3,22 @@ name: app-cpm-web
 separate-vendor: true
 environments:
     production:
+        domain: www.careplanmanager.com
+        storage: cpm-provider-production-vapor-storage
+        cache: cpm-production-cache
+        subnets:
+            - subnet-4d375177
+            - subnet-080c2d4e
+            - subnet-a1cf8e89
+            - subnet-d4f5f1a0
+        security-groups:
+            - sg-33f03356
         memory: 1024
         cli-memory: 512
-        cli-timeout: 900
         runtime: php-7.4
         queue-timeout: 600
+        scheduler: false
+        mail: false
         queues:
             - cpm-provider-high-production
             - cpm-provider-default-production
@@ -16,23 +27,22 @@ environments:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod && rm -rf node_modules'
-            - 'php artisan view:cache'
             - 'php artisan route:cache'
-            - 'php artisan config:cache'
         deploy:
+            - 'php artisan config:cache'
+            - 'php artisan view:cache'
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
-            - 'php artisan schedule-monitor:sync'
             - 'php artisan queue:restart'
     staging:
         domain: cpm-provider.clh-staging.com
         storage: cpm-provider-staging-vapor-storage
+        cache: cpm-staging-cache
         memory: 1024
         cli-memory: 512
-        cli-timeout: 900
         runtime: php-7.4
-        cache: cpm-staging-cache
         queue-timeout: 600
+        mail: false
         queues:
             - cpm-provider-default-staging
             - cpm-provider-high-staging
@@ -45,7 +55,6 @@ environments:
         deploy:
             - 'php artisan config:cache'
             - 'php artisan view:cache'
-            - 'php artisan opcache:clear'
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
             - 'php artisan queue:restart'
