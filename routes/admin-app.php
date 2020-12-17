@@ -30,3 +30,8 @@ Route::get('ca/index', [
     'uses' => 'RedirectToAdminApp@getCADirectorIndex',
     'as'   => 'ca-director.provider.index',
 ]);
+
+Route::get('admin/nurses/windows', [
+    'uses' => 'RedirectToAdminApp@getAdminNurseSchedules',
+    'as'   => 'get.admin.nurse.schedules',
+]);

@@ -27,6 +27,11 @@ class RedirectToAdminApp extends Controller
     {
         return $this->redirectToAdmin('pam');
     }
+    
+    public function getAdminNurseSchedules()
+    {
+        return $this->redirectToAdmin('admin/nurses/windows');
+    }
 
     private function redirectToAdmin($url)
     {
