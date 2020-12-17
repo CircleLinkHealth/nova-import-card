@@ -193,8 +193,7 @@
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "~5.16",
     "wildbit/swiftmailer-postmark": "^3.1",
-    "willdurand/email-reply-parser": "^2.9",
-    "yajra/laravel-datatables-oracle": "~9.0"
+    "willdurand/email-reply-parser": "^2.9"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
