@@ -931,7 +931,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "d7c233fc9ae463604ef7b70878d533e29d1a18e9"
+                "reference": "41582f22c7db3794920f01f284a89f174738783e"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -973,7 +973,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-17T00:34:45+00:00"
+            "time": "2020-12-17T01:13:47+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1334,7 +1334,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "00ca4ee2240f3c6432da150d6260b29331813bf2"
+                "reference": "696375fdb5249ee16183409869bd573bf745c3d7"
             },
             "type": "laravel-module",
             "extra": {
@@ -1354,7 +1354,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-16T16:17:58+00:00"
+            "time": "2020-12-17T01:54:14+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
