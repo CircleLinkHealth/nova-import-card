@@ -5,7 +5,7 @@ environments:
   production:
     domain: superadmin.careplanmanager.com
     storage: cpm-superadmin-production-vapor-storage
-    cache: cpm-production-cache
+    cache: cpm-production-vapor-cache
     network: cpm-production
     memory: 1024
     cli-memory: 512
@@ -27,10 +27,11 @@ environments:
       - 'php artisan view:cache'
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'
+      - 'php artisan queue:restart'
   staging:
     domain: cpm-admin.clh-staging.com
     storage: cpm-admin-staging-vapor-storage
-    cache: cpm-staging-cache
+    cache: cpm-staging-vapor-cache
     network: cpm-staging
     memory: 1024
     cli-memory: 512
