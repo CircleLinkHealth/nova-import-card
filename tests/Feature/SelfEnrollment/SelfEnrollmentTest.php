@@ -6,26 +6,26 @@
 
 namespace Tests\Feature\SelfEnrollment;
 
-use App\Constants\ProviderClinicalTypes;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use CircleLinkHealth\Customer\CpmConstants\ProviderClinicalTypes;
 use App\Jobs\LogSuccessfulLoginToDB;
-use App\LoginLogout;
-use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
-use App\SelfEnrollment\Domain\RemindEnrollees;
-use App\SelfEnrollment\Domain\UnreachablesFinalAction;
-use App\SelfEnrollment\Helpers;
-use App\SelfEnrollment\Jobs\SendInvitation;
-use App\SelfEnrollment\Jobs\SendReminder;
-use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendReminder;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use App\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\SelfEnrollment\AppConfig\Reminders;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;

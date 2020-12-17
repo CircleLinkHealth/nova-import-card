@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\LoginLogout;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -214,7 +214,7 @@ namespace App;
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                                    $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                          $enrollableInfoRequest
- * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                                          $loginEvents
+ * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                                          $loginEvents
  * @property int|null                                                                                                             $login_events_count
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                                                $enrollee
  * @property int|null                                                                                                             $enrollment_invitation_links_count
