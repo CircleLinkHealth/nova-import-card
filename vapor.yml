@@ -6,13 +6,6 @@ environments:
         domain: www.careplanmanager.com
         storage: cpm-provider-production-vapor-storage
         cache: cpm-production-cache
-        subnets:
-            - subnet-4d375177
-            - subnet-080c2d4e
-            - subnet-a1cf8e89
-            - subnet-d4f5f1a0
-        security-groups:
-            - sg-33f03356
         memory: 1024
         cli-memory: 512
         runtime: php-7.4
