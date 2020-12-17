@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\NurseInvoices\Algorithms;
 
-use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
@@ -20,6 +19,7 @@ use CircleLinkHealth\NurseInvoices\Time\TimeSplitter;
 use CircleLinkHealth\NurseInvoices\ValueObjects\PatientPayCalculationResult;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeRangeEntry;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeSlots;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
