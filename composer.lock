@@ -744,7 +744,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f5d9b9fd8fbb2b497499cfb176adf974353d09b1"
+                "reference": "75c1932853f18b08891c03fd13fe4b176d040163"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -783,7 +783,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T21:00:09+00:00"
+            "time": "2020-12-17T05:23:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -819,7 +819,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f0df8cef124179c0f20198375a8608b3d6d130e8"
+                "reference": "2415837c63db8d4b9fdd864aa3cc26db670cf9df"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -856,7 +856,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T21:15:22+00:00"
+            "time": "2020-12-17T02:29:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -946,7 +946,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "6d7b6cda017ccc5be4de7474aeb457fda22bef51"
+                "reference": "53ee4a69f6de016874650161bd88aa0ec75aca79"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -963,7 +963,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T20:10:10+00:00"
+            "time": "2020-12-17T00:34:04+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
