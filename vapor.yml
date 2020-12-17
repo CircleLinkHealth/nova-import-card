@@ -16,6 +16,8 @@ environments:
     cli-memory: 512
     runtime: php-7.4
     queue-timeout: 600
+    scheduler: false
+    mail: false
     queues:
       - cpm-admin-default-prod
       - cpm-admin-high-prod
@@ -25,6 +27,12 @@ environments:
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
       - 'php artisan route:cache'
+    deploy:
+      - 'php artisan config:cache'
+      - 'php artisan view:cache'
+      - 'php artisan migrate --force'
+      - 'php artisan migrate:views'
+      - 'php artisan queue:restart'
   staging:
     domain: cpm-admin.clh-staging.com
     storage: cpm-admin-staging-vapor-storage
@@ -33,6 +41,7 @@ environments:
     runtime: php-7.4
     cache: cpm-staging-cache
     queue-timeout: 600
+    mail: false
     queues:
       - cpm-admin-default-staging
       - cpm-admin-high-staging
