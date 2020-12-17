@@ -17,6 +17,7 @@ use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Console\Commands\StoreJiraTicketsDeployed;
 use CircleLinkHealth\Core\Console\Commands\StoreRelease;
+use CircleLinkHealth\Core\Console\Commands\UploadSecretsToVaporFromFile;
 use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
@@ -80,6 +81,10 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
 
         if ($this->app->environment('testing')) {
             $arr[] = CreateAndSeedTestSuiteDB::class;
+        }
+        
+        if ($this->app->environment('local')) {
+            $arr[] = UploadSecretsToVaporFromFile::class;
         }
 
         $this->commands($arr);
