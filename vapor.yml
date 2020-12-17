@@ -3,6 +3,8 @@ name: cpm-admin
 separate-vendor: true
 environments:
   production:
+    domain: superadmin.careplanmanager.com
+    storage: cpm-superadmin-production-vapor-storage
     memory: 1024
     cli-memory: 512
     runtime: php-7.4
