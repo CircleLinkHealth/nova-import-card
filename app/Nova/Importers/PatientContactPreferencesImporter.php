@@ -6,9 +6,9 @@
 
 namespace App\Nova\Importers;
 
+use App\Practice;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
-use App\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;

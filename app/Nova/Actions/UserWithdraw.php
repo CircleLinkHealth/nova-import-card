@@ -6,9 +6,9 @@
 
 namespace App\Nova\Actions;
 
-use CircleLinkHealth\SharedModels\Entities\Note;
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Epartment\NovaDependencyContainer\HasDependencies;
 use Epartment\NovaDependencyContainer\NovaDependencyContainer;
 use Illuminate\Bus\Queueable;

@@ -126,6 +126,9 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null                     $provider_name
  * @property string|null                     $dob
  * @property string|null                     $enrollee_last_name
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|CcdaView whereDob($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|CcdaView whereEnrolleeLastName($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|CcdaView whereProviderName($value)
  */
 class CcdaView extends SqlViewModel
 {

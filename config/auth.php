@@ -17,12 +17,12 @@ return [
     | as required, but they're a perfect start for most applications.
     |
     */
-    
+
     'defaults' => [
         'guard'     => 'web',
         'passwords' => 'users',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
@@ -39,20 +39,20 @@ return [
     | Supported: "session", "token"
     |
     */
-    
+
     'guards' => [
         'web' => [
             'driver'   => 'session',
             'provider' => 'users',
         ],
-        
+
         'api' => [
             'driver'   => 'passport',
             'provider' => 'users',
             'hash'     => false,
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -69,19 +69,19 @@ return [
     | Supported: "database", "eloquent"
     |
     */
-    
+
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model'  => User::class,
         ],
-        
+
         //        'enrollables' => [
         //            'driver' => 'enrollmentLogin',
         //            'table'  => User::class,
         //        ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
@@ -96,7 +96,7 @@ return [
     | they have less time to be guessed. You may change this as needed.
     |
     */
-    
+
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -106,7 +106,7 @@ return [
             'throttle' => 60,
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
@@ -117,9 +117,9 @@ return [
     | confirmation screen. By default, the timeout lasts for three hours.
     |
     */
-    
+
     'password_timeout' => 10800,
-    
+
     /*
    |--------------------------------------------------------------------------
    | Enable 2 Factor Authentication (2FA)
@@ -128,8 +128,8 @@ return [
    | Set this to true if you want 2FA enabled.
    |
    */
-    
+
     'two_fa_enabled' => env('TWO_FA_ENABLED', false),
-    
+
     'force_password_change' => env('FORCE_PASSWORD_CHANGE', true),
 ];

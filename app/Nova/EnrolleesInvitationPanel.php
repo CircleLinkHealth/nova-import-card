@@ -12,8 +12,8 @@ use App\Nova\Metrics\SelfEnrolledButtonColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
@@ -174,7 +174,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
 
             Date::make('Date Enrolled', function () use ($enrolledDate) {
-                return  $enrolledDate;
+                return $enrolledDate;
             }),
 
             Boolean::make('Invited', function () use ($firstEnrollmentInvitationLink) {

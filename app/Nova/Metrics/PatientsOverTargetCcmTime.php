@@ -6,11 +6,11 @@
 
 namespace App\Nova\Metrics;
 
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Practice;
 use App\PracticeRoleUser;
 use App\User;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Request;
 use Laravel\Nova\Metrics\Value;

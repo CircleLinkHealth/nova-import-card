@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -7,15 +11,6 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array
-     */
-    protected $dontReport = [
-        //
-    ];
-
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
@@ -25,31 +20,34 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
-
     /**
-     * Report or log an exception.
+     * A list of the exception types that are not reported.
      *
-     * @param  \Throwable  $exception
-     * @return void
-     *
-     * @throws \Throwable
+     * @var array
      */
-    public function report(Throwable $exception)
-    {
-        parent::report($exception);
-    }
+    protected $dontReport = [
+    ];
 
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
+     * @param  \Illuminate\Http\Request                   $request
      * @throws \Throwable
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Throwable $exception)
     {
         return parent::render($request, $exception);
+    }
+
+    /**
+     * Report or log an exception.
+     *
+     * @throws \Throwable
+     * @return void
+     */
+    public function report(Throwable $exception)
+    {
+        parent::report($exception);
     }
 }

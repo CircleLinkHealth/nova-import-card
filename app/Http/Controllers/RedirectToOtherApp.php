@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
 
 class RedirectToOtherApp extends Controller
 {
-    public function ccdImporter() {
+    public function ccdImporter()
+    {
         return redirect()->to('');
     }
 }

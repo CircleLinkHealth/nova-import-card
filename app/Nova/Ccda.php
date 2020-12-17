@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\Customer\CpmConstants;
+use App\Models\CcdaView;
 use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Actions\ReimportCcda;
@@ -14,7 +14,7 @@ use App\Nova\Filters\CcdaView\ImportedCcdaViewFilter;
 use App\Nova\Filters\CcdaView\ValidationErrorsCcdaFilter;
 use App\Nova\Filters\CpmDateFilter;
 use App\Nova\Filters\PracticeFilter;
-use App\Models\CcdaView;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\Date;

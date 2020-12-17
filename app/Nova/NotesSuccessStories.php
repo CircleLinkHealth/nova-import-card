@@ -6,8 +6,8 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\SharedModels\Entities\Note;
 use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReport;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;

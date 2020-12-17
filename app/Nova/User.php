@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\API\PracticeStaffController;
 use App\Nova\Actions\UserEnroll;
 use App\Nova\Actions\UserUnreachable;
 use App\Nova\Actions\UserWithdraw;

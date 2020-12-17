@@ -6,8 +6,8 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Core\Entities\AppConfig as AppConfigModel;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 
