@@ -1,5 +1,6 @@
 id: 13482
 name: app-cpm-web
+separate-vendor: true
 environments:
     production:
         memory: 1024
