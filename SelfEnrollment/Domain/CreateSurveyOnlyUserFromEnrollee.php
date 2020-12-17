@@ -96,10 +96,10 @@ class CreateSurveyOnlyUserFromEnrollee
         }
 
         $phones = array_filter([
-            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->primary_phone),
-            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->cell_phone),
-            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->home_phone),
-            (new StringManipulation)->formatPhoneNumberE164($this->enrollee->other_phone),
+            (new StringManipulation())->formatPhoneNumberE164($this->enrollee->primary_phone),
+            (new StringManipulation())->formatPhoneNumberE164($this->enrollee->cell_phone),
+            (new StringManipulation())->formatPhoneNumberE164($this->enrollee->home_phone),
+            (new StringManipulation())->formatPhoneNumberE164($this->enrollee->other_phone),
         ]);
 
         $address = new Address($this->enrollee->address, $this->enrollee->city, $this->enrollee->state, $this->enrollee->zip, $this->enrollee->address_2);

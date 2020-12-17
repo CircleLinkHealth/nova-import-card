@@ -155,7 +155,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'location_id'   => $location->id,
             ]);
 
-            if (is_null($enrollee->user_id)){
+            if (is_null($enrollee->user_id)) {
                 CreateSurveyOnlyUserFromEnrollee::execute($enrollee);
             }
 

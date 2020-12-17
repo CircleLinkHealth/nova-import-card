@@ -78,7 +78,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
             $enrollee->user->patientInfo->save();
         }
     }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();
