@@ -440,7 +440,7 @@ if ( ! function_exists('getDatesForRange')) {
 //            If i dont format here they mutate AF.
             $dates[] = $date->format('Y-m-d');
         }
-        
+
         return $dates;
     }
 }
@@ -461,7 +461,7 @@ if ( ! function_exists('secondsToHMS')) {
         $H2 = floor($totalTimeInSeconds / 3600);
         $m2 = ($totalTimeInSeconds / 60) % 60;
         $s2 = $totalTimeInSeconds % 60;
-        
+
         return sprintf("%02d${delimiter}%02d${delimiter}%02d", $H2, $m2, $s2);
     }
 }
