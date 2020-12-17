@@ -7,9 +7,9 @@
 namespace App\Nova\Actions;
 
 use App\EnrollmentInvitationsBatch;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
-use App\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
