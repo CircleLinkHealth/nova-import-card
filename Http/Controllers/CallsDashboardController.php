@@ -40,7 +40,7 @@ class CallsDashboardController extends Controller
         if ($note) {
             $call = $note->call;
             if ($call) {
-                return view('cpm-admin::admin.allsDashboard.edit', compact(['note', 'call']));
+                return view('cpm-admin::admin.callsDashboard.edit', compact(['note', 'call']));
             }
             $nurses = User::ofType('care-center')->get();
 
@@ -72,7 +72,7 @@ class CallsDashboardController extends Controller
             ->first();
         $call = $note->call;
         if ($call) {
-            return view('cpm-admin::admin.allsDashboard.edit', compact(['note', 'call']));
+            return view('cpm-admin::admin.callsDashboard.edit', compact(['note', 'call']));
         }
 
         $status  = $request['status'];
