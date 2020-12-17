@@ -876,7 +876,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f0df8cef124179c0f20198375a8608b3d6d130e8"
+                "reference": "2415837c63db8d4b9fdd864aa3cc26db670cf9df"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -913,7 +913,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T21:15:22+00:00"
+            "time": "2020-12-17T02:29:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1138,7 +1138,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "c5eb71695ff856ffcf6b1c09e453e054d284b67d"
+                "reference": "36a4c8d412ffaca584bab3555f67890cdab08e9f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1160,7 +1160,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T20:37:36+00:00"
+            "time": "2020-12-17T04:26:42+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
@@ -1353,7 +1353,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "00ca4ee2240f3c6432da150d6260b29331813bf2"
+                "reference": "99d4eed7e3a32d432faa606ff95db5afede19cfa"
             },
             "type": "laravel-module",
             "extra": {
@@ -1373,7 +1373,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-16T16:17:58+00:00"
+            "time": "2020-12-17T02:37:48+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
