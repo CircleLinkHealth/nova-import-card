@@ -56,7 +56,7 @@ Route::group([
             'uses' => 'CallController@edit',
             'as'   => 'call.edit',
         ]);
-        Route::post('reschedule', [
+        Route::post('reschedule/{patientId}', [
             'uses' => 'CallController@reschedule',
             'as'   => 'call.reschedule',
         ])->middleware('permission:call.update');
