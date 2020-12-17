@@ -13,7 +13,7 @@ environments:
             - cpm-provider-default-production
             - cpm-provider-low-production
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod && rm -rf node_modules'
             - 'php artisan view:cache'
@@ -38,7 +38,7 @@ environments:
             - cpm-provider-high-staging
             - cpm-provider-low-staging
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod && rm -rf node_modules'
             - 'php artisan route:cache'
