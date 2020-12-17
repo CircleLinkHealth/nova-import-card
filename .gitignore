@@ -4,6 +4,9 @@
 .idea/shelf/
 .idea/dictionaries/
 .idea/workspace.xml
+.idea/laravel-idea.xml
+.idea/laravel-tinker-plugin.xml
+.idea/blade.xml
 .env
 .env.staging
 .env.prod

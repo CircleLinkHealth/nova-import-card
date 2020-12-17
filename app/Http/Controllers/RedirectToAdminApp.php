@@ -8,6 +8,11 @@ namespace App\Http\Controllers;
 
 class RedirectToAdminApp extends Controller
 {
+    public function getAdminNurseSchedules()
+    {
+        return $this->redirectToAdmin('admin/nurses/windows');
+    }
+
     public function getCADirectorIndex()
     {
         return $this->redirectToAdmin('ca-director');
@@ -26,11 +31,6 @@ class RedirectToAdminApp extends Controller
     public function getPAM()
     {
         return $this->redirectToAdmin('pam');
-    }
-    
-    public function getAdminNurseSchedules()
-    {
-        return $this->redirectToAdmin('admin/nurses/windows');
     }
 
     private function redirectToAdmin($url)

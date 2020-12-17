@@ -6,12 +6,12 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Tests\TestCase;
 

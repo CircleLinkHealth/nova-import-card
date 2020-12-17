@@ -642,7 +642,7 @@ class NotesController extends Controller
                 ->withErrors([$exception->getMessage()])
                 ->withInput();
         }
-        
+
         ForwardNote::dispatch(
             $note,
             $input['notify_careteam'] ?? false,
