@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Traits\ManagesPatientCookies;
 use CircleLinkHealth\Customer\Traits\PasswordLessAuth;
 use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
-use Debugbar;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
