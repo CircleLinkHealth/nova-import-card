@@ -99,11 +99,13 @@
                                         Patient Activity Management
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="{{ route('ca-director.index') }}">
-                                        Care Ambassador Panel
-                                    </a>
-                                </li>
+                                @if (! auth()->user()->isClhCcmAdmin())
+                                    <li>
+                                        <a href="{{ route('ca-director.index') }}">
+                                            Care Ambassador Panel
+                                        </a>
+                                    </li>
+                                @endif
                             @endif
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
