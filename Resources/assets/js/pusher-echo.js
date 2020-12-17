@@ -6,7 +6,7 @@ const options = {
     cluster: process.env.MIX_PUSHER_CLUSTER,
     encrypted: true,
     forceTLS: ! ['local', 'testing'].includes(process.env.MIX_APP_ENV),
-    authEndpoint: document.querySelector('meta[name="base-url"]').content+'/broadcasting/auth'
+    authEndpoint: document.querySelector('meta[name="base-url"]').content+'broadcasting/auth'
 };
 
 let keyExists = options.key !== undefined && options.key !== null
