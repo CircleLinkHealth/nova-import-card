@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Algorithms;
 
-use App\Services\ActivityService;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
