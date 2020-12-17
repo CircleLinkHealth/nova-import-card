@@ -232,7 +232,6 @@
       <path value="$PROJECT_DIR$/vendor/onelogin/php-saml" />
       <path value="$PROJECT_DIR$/vendor/aacotroneo/laravel-saml2" />
       <path value="$PROJECT_DIR$/vendor/phlak/semver" />
-      <path value="$PROJECT_DIR$/vendor/spatie/laravel-rate-limited-job-middleware" />
       <path value="$PROJECT_DIR$/vendor/daltcore/lara-pdf-merger" />
       <path value="$PROJECT_DIR$/vendor/danielme85/laravel-log-to-db" />
       <path value="$PROJECT_DIR$/vendor/dillingham/nova-button" />
@@ -302,6 +301,8 @@
       <path value="$PROJECT_DIR$/vendor/league/flysystem-aws-s3-v3" />
       <path value="$PROJECT_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-view-models" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-cli" />
+      <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
