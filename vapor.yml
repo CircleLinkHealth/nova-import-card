@@ -4,6 +4,13 @@ separate-vendor: true
 environments:
   production:
     domain: superadmin.careplanmanager.com
+    subnets:
+      - subnet-4d375177
+      - subnet-080c2d4e
+      - subnet-a1cf8e89
+      - subnet-d4f5f1a0
+      security-groups:
+        - sg-33f03356
     storage: cpm-superadmin-production-vapor-storage
     memory: 1024
     cli-memory: 512
