@@ -7,9 +7,9 @@ environments:
     cli-memory: 512
     runtime: php-7.4
     queues:
-      - default
-      - high
-      - low
+      - cpm-admin-default-prod
+      - cpm-admin-high-prod
+      - cpm-admin-low-prod
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
       - 'php artisan event:cache'
@@ -29,9 +29,9 @@ environments:
     runtime: php-7.4
     cache: cpm-staging-cache
     queues:
-      - default
-      - high
-      - low
+      - cpm-admin-default-staging
+      - cpm-admin-high-staging
+      - cpm-admin-low-staging
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
       - 'php artisan event:cache'
