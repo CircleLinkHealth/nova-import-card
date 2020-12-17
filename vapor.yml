@@ -12,7 +12,7 @@ environments:
       - awv-default-production
       - awv-low-production
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
       - 'php artisan view:cache'
@@ -34,7 +34,7 @@ environments:
       - awv-high-staging
       - awv-low-staging
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
       - 'php artisan view:cache'
