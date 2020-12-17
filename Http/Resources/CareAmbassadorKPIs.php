@@ -121,7 +121,7 @@ class CareAmbassadorKPIs
             ->whereNotNull('enrollee_id')
             ->where('start_time', '>=', $this->start)
             ->where('end_time', '<=', $this->end)
-            ->groupBy('enrollee_id')
+            ->groupBy('enrollee_id', 'lv_page_timer.provider_id', 'lv_page_timer.start_time', 'lv_page_timer.end_time')
             ->get();
 
         return $this;
