@@ -24,9 +24,6 @@ environments:
     deploy:
       - 'php artisan config:cache'
       - 'php artisan view:cache'
-      - 'php artisan migrate --force'
-      - 'php artisan migrate:views'
-      - 'php artisan queue:restart'
   staging:
     domain: cpm-admin.clh-staging.com
     storage: cpm-admin-staging-vapor-storage
