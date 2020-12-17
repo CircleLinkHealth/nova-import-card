@@ -931,7 +931,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "4293682e6b4033ea8f53584cab1c91e6d94a5777"
+                "reference": "7823c50a979d596800072bc805f51c8802ba3e73"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -973,7 +973,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-17T06:05:21+00:00"
+            "time": "2020-12-17T10:28:40+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1009,7 +1009,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c6790d54788bdfaf67004ff8734a46ca10fb165c"
+                "reference": "e86422ffd69cb8bc21a83f63315890b5f054eb62"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T10:16:40+00:00"
+            "time": "2020-12-17T10:28:40+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1054,7 +1054,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "0ca128d40f6b02bcfb597d7cd78513e0b9d0590f"
+                "reference": "4c409c77ee39c83ee1a4d03f2655b13b6dd121b4"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1081,7 +1081,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T09:50:27+00:00"
+            "time": "2020-12-17T10:30:45+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1309,7 +1309,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "def61e6e24fae2235454541969ccb25e4d8e8559"
+                "reference": "87f36988d40da5c82e2e8c77d6518d4c93ee6d96"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1326,7 +1326,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T10:16:40+00:00"
+            "time": "2020-12-17T10:28:40+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -2481,10 +2481,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2518,7 +2518,13 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -3990,11 +3996,17 @@
         },
         {
             "name": "jeremykenedy/slack-laravel",
-            "version": "v7.0.0",
+            "version": "v2.6.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/slack-laravel.git",
-                "reference": "c93248a892480df0a1f8c76c65e5f41fa958f0e6"
+                "url": "https://github.com/jeremykenedy/slack-laravel.git",
+                "reference": "447485a9309831a8830bb4291445fed36450b053"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeremykenedy/slack-laravel/zipball/447485a9309831a8830bb4291445fed36450b053",
+                "reference": "447485a9309831a8830bb4291445fed36450b053",
+                "shasum": ""
             },
             "require": {
                 "jeremykenedy/slack": "~2.0",
@@ -4016,6 +4028,7 @@
                     "jeremykenedy\\Slack\\Laravel\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4029,12 +4042,22 @@
                     "email": "jeremykenedy@gmail.com"
                 }
             ],
-            "description": "Laravel 5 integration for the jeremykenedy/slack package, including facades and service providers.",
+            "description": "Laravel integration for the jeremykenedy/slack package, including facades and service providers.",
             "keywords": [
                 "laravel",
                 "slack"
             ],
-            "time": "2020-04-21T06:33:14+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/jeremykenedy",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/jeremykenedy",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-10-19T17:05:23+00:00"
         },
         {
             "name": "joshbrw/laravel-module-installer",
@@ -4268,6 +4291,12 @@
                 "autoloading",
                 "laminas",
                 "zf"
+            ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
             ],
             "time": "2020-09-14T14:23:00+00:00"
         },
@@ -6005,6 +6034,12 @@
             "keywords": [
                 "stream",
                 "zip"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/zipstream",
+                    "type": "open_collective"
+                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -8633,6 +8668,12 @@
                 "queue",
                 "set"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/ramsey",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -9616,6 +9657,12 @@
             "keywords": [
                 "laravel-schedule-monitor",
                 "spatie"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
             ],
             "time": "2020-09-08T20:04:19+00:00"
         },
