@@ -34,4 +34,8 @@ return [
         'url' => env('CPM_APP_URL', null),
     ],
 
+    'twilio' => [
+        'enabled'          => env('TWILIO_ENABLED', false),
+    ],
+
 ];
