@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Services;
 
-use App\LoginLogout;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
