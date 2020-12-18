@@ -13,6 +13,7 @@ use App\Jobs\CreateAuditReportForPatientForMonth;
 use App\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -189,7 +190,7 @@ class DownloadController extends Controller
 
                 foreach ($patients as $patient) {
                     CreateAuditReportForPatientForMonth::dispatch($patient, $date)
-                        ->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE)->delay(now()->addSeconds($delay));
+                        ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))->delay(now()->addSeconds($delay));
                     ++$delay;
                 }
             });
