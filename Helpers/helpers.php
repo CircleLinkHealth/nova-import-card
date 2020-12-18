@@ -325,7 +325,7 @@ if ( ! function_exists('sendSlackMessage')) {
             return;
         }
 
-        SendSlackMessage::dispatch($to, $message)->onQueue(\CircleLinkHealth\Customer\CpmConstants::HIGH_QUEUE);
+        SendSlackMessage::dispatch($to, $message)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
     }
 }
 
