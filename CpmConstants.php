@@ -11,6 +11,16 @@ use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class CpmConstants
 {
+    /**
+     * See "CPM Queues" in config/queue.php
+     * Jobs can live in a module, and therefore dispatched by different apps.
+     * Consider StoreTimeTracking. It may be dispatched from admin or provider app
+     * to queue "high". For this reason we need a unique name for "high" and "low"
+     * queues in each app.
+     */
+    const HIGH_QUEUE = 'high';
+    const LOW_QUEUE = 'low';
+    
     const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
     /**
      * Redis Cache Keys.
