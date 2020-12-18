@@ -14,9 +14,9 @@ environments:
     scheduler: false
     mail: false
     queues:
-      - awv-high-production
-      - awv-default-production
       - awv-low-production
+      - awv-high-production
+      - awv-revisionable-production
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
@@ -39,9 +39,9 @@ environments:
     queue-timeout: 600
     mail: false
     queues:
-      - awv-default-staging
-      - awv-high-staging
       - awv-low-staging
+      - awv-high-staging
+      - awv-revisionable-staging
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
