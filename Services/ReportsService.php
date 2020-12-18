@@ -285,7 +285,7 @@ class ReportsService
         $i           = 0;
         foreach ($user->ccdProblems as $problem) {
             if (empty($problem->name)) {
-                continue 1;
+                continue;
             }
             if ($i > 0) {
                 $ccdProblems .= '<br>';
