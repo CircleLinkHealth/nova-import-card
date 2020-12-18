@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d3768f7a2b6e02182909b689891f6541",
+    "content-hash": "7ef5586999bf6033278618a7729d6722",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1221,11 +1221,11 @@
         },
         {
             "name": "circlelinkhealth/revisionable-module",
-            "version": "v6.1.1",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "5d833c8a7d28b84f92ca1cc71f4987dbcfc42c73"
+                "reference": "8fa2f9b081979ccf436db86c40994269b430f9e2"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0",
@@ -1264,7 +1264,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-04-24T08:46:54+00:00"
+            "time": "2020-12-18T06:44:04+00:00"
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
@@ -17411,6 +17411,7 @@
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/pdf-service-module": 20,
+        "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/saml-sp-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
