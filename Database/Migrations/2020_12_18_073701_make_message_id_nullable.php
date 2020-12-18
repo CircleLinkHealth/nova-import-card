@@ -18,7 +18,7 @@ class MakeMessageIdNullable extends Migration
     public function down()
     {
         Schema::table('lv_activitymeta', function (Blueprint $table) {
-            $table->integer('message_id')->nullable(false)->change();
+            $table->string('message_id')->nullable(false)->change();
         });
     }
 
@@ -30,7 +30,7 @@ class MakeMessageIdNullable extends Migration
     public function up()
     {
         Schema::table('lv_activitymeta', function (Blueprint $table) {
-            $table->integer('message_id')->nullable(true)->default(null)->change();
+            $table->string('message_id')->nullable(true)->default(null)->change();
         });
     }
 }
