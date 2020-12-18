@@ -21,23 +21,24 @@
         rg4js('enableCrashReporting', {{\Config::get('cpm-module-raygun.enable_crash_reporting') ? 'true' : 'false'}});
         rg4js('enablePulse', {{\Config::get('cpm-module-raygun.enable_real_user_monitoring_pulse') ? 'true' : 'false'}});
         rg4js('logContentsOfXhrCalls', {{\Config::get('cpm-module-raygun.log_contents_of_xhr_calls') ? 'true' : 'false'}})
+        rg4js('withTags', ['{{\Config::get('cpm-module-raygun.grouping_key')}}', '{{auth()->guest() ? 'unauthenticated' : auth()->id()}}', '{{config('app.env')}}', '{{config('app.url')}}']);
 
         @if(auth()->check())
-            rg4js('setUser', {!! json_encode($raygunUser()) !!});
+        rg4js('setUser', {!! json_encode($raygunUser()) !!});
 
-            function addLogoutListener() {
-                if (typeof App === 'undefined') {
-                    setTimeout(addLogoutListener, 500);
-                    return;
-                }
-
-                if (App.EventBus) {
-                    App.EventBus.$on('user:logout', function () {
-                        rg4js('endSession');
-                    });
-                }
+        function addLogoutListener() {
+            if (typeof App === 'undefined') {
+                setTimeout(addLogoutListener, 500);
+                return;
             }
-            addLogoutListener();
+
+            if (App.EventBus) {
+                App.EventBus.$on('user:logout', function () {
+                    rg4js('endSession');
+                });
+            }
+        }
+        addLogoutListener();
         @endif
     </script>
 @endif
