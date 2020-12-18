@@ -325,7 +325,7 @@ if ( ! function_exists('sendSlackMessage')) {
             return;
         }
 
-        SendSlackMessage::dispatch($to, $message);
+        SendSlackMessage::dispatch($to, $message)->onQueue('default');
     }
 }
 
