@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Requests;
 
-use App\Rules\DateEqualOrAfterUsingCarbon;
+use CircleLinkHealth\Core\Rules\DateEqualOrAfterUsingCarbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AssignCallbackToEnrollee extends FormRequest
