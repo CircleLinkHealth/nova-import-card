@@ -36,5 +36,17 @@ return [
             'key'    => env('PHAXIO_KEY', null),
             'secret' => env('PHAXIO_SECRET', null),
         ],
+        'emr-direct' => [
+            'user'                 => env('EMR_DIRECT_USER'),
+            'test_user'            => env('EMR_DIRECT_TEST_USER'),
+            'password'             => env('EMR_DIRECT_PASSWORD'),
+            'conc-keys-pem-path'   => env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+            'pass-phrase'          => env('EMR_DIRECT_PASS_PHRASE'),
+            'server-cert-pem-path' => env('EMR_DIRECT_SERVER_CERT_PEM_PATH'),
+            'mail-server'          => env('EMR_DIRECT_MAIL_SERVER'),
+            'port'                 => env('EMR_DIRECT_PORT'),
+            'client-cert-filename' => env('EMR_CLIENT_CERT_FILENAME'),
+            'server-cert-filename' => env('EMR_SERVER_CERT_FILENAME'),
+        ],
     ],
 ];
