@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -243,7 +244,7 @@ class PracticeInvoiceController extends Controller
         $format    = $request['format'];
         $practices = $request['practices'];
 
-        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
 
