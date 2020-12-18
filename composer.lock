@@ -884,7 +884,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8e764d819aad2790a415b34cc11ae48487a766fb"
+                "reference": "16a4460b48d18bbb1bb6c35531c448e130823539"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -924,7 +924,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T14:47:00+00:00"
+            "time": "2020-12-18T17:27:15+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -2482,10 +2482,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8.0"
+                "php": "^7.0|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
+                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
             },
             "type": "library",
             "extra": {
@@ -2525,7 +2525,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-12T18:35:36+00:00"
+            "time": "2020-10-13T00:52:37+00:00"
         },
         {
             "name": "egulias/email-validator",
