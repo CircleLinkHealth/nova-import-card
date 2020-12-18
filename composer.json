@@ -144,7 +144,7 @@
     "circlelinkhealth/patientapi-module": "dev-vaporizing-admin",
     "circlelinkhealth/pdf-service-module": "dev-master",
     "circlelinkhealth/raygun-module": "1.2",
-    "circlelinkhealth/revisionable-module": "6.1.1",
+    "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
     "circlelinkhealth/saml-sp-module": "dev-vaporizing-admin",
     "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
     "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
