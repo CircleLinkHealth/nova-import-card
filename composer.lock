@@ -884,7 +884,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "e9ce429cf8bd012a2ce47985cb9f1b10fbd42506"
+                "reference": "c536c6707326cfd0a530842bd70ba1b9ed38efa4"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -905,11 +905,7 @@
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider",
-                        "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider",
-                        "MichaelLedin\\LaravelJob\\LaravelJobServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -927,7 +923,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T21:09:18+00:00"
+            "time": "2020-12-18T22:28:31+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
