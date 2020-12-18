@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
@@ -188,6 +189,7 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
+        CcmBillingServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
