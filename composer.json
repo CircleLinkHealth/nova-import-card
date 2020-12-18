@@ -127,7 +127,7 @@
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
-        "circlelinkhealth/revisionable-module": "6.1.1",
+        "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "circlelinkhealth/timetracking-module": "dev-vaporizing-admin",
