@@ -29,5 +29,5 @@ Route::get('pinfo', [
 ])->middleware(['auth', 'role:administrator']);
 
 Route::get('config', [
-    'uses' => 'RedirectToOtherApp@pinfo',
+    'uses' => 'RedirectToOtherApp@config',
 ])->middleware(['auth', 'role:administrator']);
