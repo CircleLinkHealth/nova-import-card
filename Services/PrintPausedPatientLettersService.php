@@ -33,18 +33,21 @@ class PrintPausedPatientLettersService
      */
     public function getPausedPatients()
     {
+        $isAdmin = auth()->user()->isAdmin();
         return $this->patientReadRepository
             ->paused()
             ->pausedLetterNotPrinted()
             ->fetch()
             ->map(
-                function ($patient) {
+                function ($patient) use ($isAdmin) {
                     return [
                         'id'           => $patient->id,
                         'patient_name' => $patient->getFullName(),
                         'first_name'   => $patient->getFirstName(),
                         'last_name'    => $patient->getLastName(),
-                        'link'         => route('patient.careplan.print', ['patientId' => $patient->id]),
+                        'link'         => $isAdmin ?
+                            env('CPM_PROVIDER_APP_URL')."manage-patients/{$patient->id}/view-careplan" :
+                            route('patient.careplan.print', ['patientId' => $patient->id]),
                         'reg_date'     => optional($patient->user_registered)->format('m/d/Y'),
                         'paused_date'  => optional($patient->getDatePaused())->format('m/d/Y'),
                         'provider'     => $patient->getBillingProviderName(),
