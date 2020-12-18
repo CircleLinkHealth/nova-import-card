@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Core\Console\Commands;
+namespace CircleLinkHealth\Core\Console\Commands\Vapor;
 
 use CircleLinkHealth\Core\Traits\RunsCommands;
 use Dotenv\Dotenv;
 use Illuminate\Console\Command;
 
-class UploadSecretsToVaporFromFile extends Command
+class UploadSecretsFromFile extends Command
 {
     use RunsCommands;
 
