@@ -39,6 +39,7 @@
         "jeremykenedy/slack-laravel": "*",
         "mxl/laravel-job": "^1.2",
         "laravel/vapor-ui": "*",
+        "laravel/vapor-cli": "^1.11",
         "yajra/laravel-datatables-oracle": "~9.0"
     }
 }
