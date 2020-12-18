@@ -17,4 +17,9 @@ class RedirectToOtherApp extends Controller
     {
         dd(phpinfo());
     }
+    
+    public function config()
+    {
+        dd(config());
+    }
 }

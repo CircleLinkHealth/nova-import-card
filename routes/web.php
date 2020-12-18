@@ -26,4 +26,8 @@ Route::get('ccd-importer', [
 
 Route::get('pinfo', [
     'uses' => 'RedirectToOtherApp@pinfo',
-])->middleware('auth');
+])->middleware(['auth', 'role:administrator']);
+
+Route::get('config', [
+    'uses' => 'RedirectToOtherApp@pinfo',
+])->middleware(['auth', 'role:administrator']);
