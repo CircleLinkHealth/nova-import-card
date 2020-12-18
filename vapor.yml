@@ -13,10 +13,6 @@ environments:
     queue-timeout: 600
     scheduler: false
     mail: false
-    queues:
-      - cpm-admin-default-prod
-      - cpm-admin-high-prod
-      - cpm-admin-low-prod
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
@@ -38,10 +34,6 @@ environments:
     runtime: php-7.4
     queue-timeout: 600
     mail: false
-    queues:
-      - cpm-admin-default-staging
-      - cpm-admin-high-staging
-      - cpm-admin-low-staging
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
