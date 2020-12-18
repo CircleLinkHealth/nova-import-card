@@ -294,7 +294,7 @@ class EligibilityBatch extends BaseModel
                         $job,
                         $this,
                         $this->practice
-                    );
+                    )->onQueue($onQueue);
                 });
             });
     }

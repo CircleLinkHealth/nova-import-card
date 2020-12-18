@@ -66,7 +66,7 @@ class CreateAndPostPdfCareplan
                     $ccdaRequest->successful_call = true;
                     $ccdaRequest->save();
 
-                    ImportCcda::dispatch($ccda);
+                    ImportCcda::dispatch($ccda)->onQueue('low');
 
                     if (isProductionEnv()) {
                         $link = route('import.ccd.remix');

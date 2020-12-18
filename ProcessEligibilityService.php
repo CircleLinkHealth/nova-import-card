@@ -413,10 +413,10 @@ class ProcessEligibilityService
                                         (bool) $filterLastEncounter,
                                         (bool) $filterInsurance,
                                         (bool) $filterProblems
-                                    )),
+                                    ))->onQueue('low'),
                                 ]
                             )->dispatch($ccda->id)
-                                ;
+                                ->onQueue('low');
                         } else {
                             $pathWithUnderscores = str_replace('/', '_', $path);
                             $put = $cloudDisk->put(

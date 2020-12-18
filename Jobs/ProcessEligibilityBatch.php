@@ -393,7 +393,7 @@ class ProcessEligibilityBatch implements ShouldQueue
                 continue;
             }
 
-            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration);
+            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue('low');
         }
     }
 }
