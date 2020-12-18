@@ -1285,9 +1285,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return string
      */
-    public function getBillingProviderName()
+    public function getBillingProviderName(bool $lookInCareTeam = false)
     {
-        $billingProvider = $this->billingProviderUser();
+        if ($lookInCareTeam && $this->relationLoaded('careTeamMembers')) {
+            $billingProvider = optional($this->careTeamMembers->firstWhere('type', '=', CarePerson::BILLING_PROVIDER))->user;
+        } else {
+            $billingProvider = $this->billingProviderUser();
+        }
 
         return $billingProvider
             ? $billingProvider->getFullName()

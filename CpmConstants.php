@@ -11,16 +11,6 @@ use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class CpmConstants
 {
-    /**
-     * See "CPM Queues" in config/queue.php
-     * Jobs can live in a module, and therefore dispatched by different apps.
-     * Consider StoreTimeTracking. It may be dispatched from admin or provider app
-     * to queue "high". For this reason we need a unique name for "high" and "low"
-     * queues in each app.
-     */
-    const HIGH_QUEUE = 'high';
-    const LOW_QUEUE = 'low';
-    
     const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
     /**
      * Redis Cache Keys.
@@ -41,8 +31,16 @@ class CpmConstants
         CpmConstants::SNOMED_NAME => 3,
     ];
     const FIVE_MINUTES_IN_SECONDS = 300;
-    const ICD10                   = ProblemCodeSystem::ICD10;
-    const ICD10_NAME              = ProblemCodeSystem::ICD10_NAME;
+    /**
+     * See "CPM Queues" in config/queue.php
+     * Jobs can live in a module, and therefore dispatched by different apps.
+     * Consider StoreTimeTracking. It may be dispatched from admin or provider app
+     * to queue "high". For this reason we need a unique name for "high" and "low"
+     * queues in each app.
+     */
+    const HIGH_QUEUE = 'high';
+    const ICD10      = ProblemCodeSystem::ICD10;
+    const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
 
     /**
      * Problem Codes.
@@ -50,6 +48,7 @@ class CpmConstants
     const ICD9 = ProblemCodeSystem::ICD9;
 
     const ICD9_NAME                                      = ProblemCodeSystem::ICD9_NAME;
+    const LOW_QUEUE                                      = 'low';
     const MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS = 2400;
     const MONTHLY_BILLABLE_CCM_60_TIME_TARGET_IN_SECONDS = 3600;
     const MONTHLY_BILLABLE_PCM_TIME_TARGET_IN_SECONDS    = 1800;

@@ -133,7 +133,7 @@ class ItemizedBillablePatientsReport
                         $q->where('is_billable', true)
                             ->where('year', $this->month->year);
                     },
-                    'billingProvider',
+                    'billingProvider.user',
                 ]
             )
             ->chunk(

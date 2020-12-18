@@ -45,8 +45,7 @@ class PatientReadRepository
                         'type',
                         [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
                     )->with(['user' => function ($q) {
-                        $q->without(['perms', 'roles'])
-                            ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                        $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
                     }]);
                 },
                 'observations' => function ($q) {
@@ -60,7 +59,6 @@ class PatientReadRepository
                     $q->patientsPendingCLHApproval(auth()->user());
                 }
             })
-            ->without(['perms', 'roles'])
             ->when(
                 false === $showPracticePatients,
                 function ($query) {
