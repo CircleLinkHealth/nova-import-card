@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="main-form-container col-lg-10 col-lg-offset-1">
                     <div class="row">
-                        <div class="main-form-title">Print Paused Patients' Letters</div>
+                        <h3>Print Paused Patients' Letters</h3>
                     </div>
                 </div>
             </div>
