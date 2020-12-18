@@ -32,14 +32,16 @@
         "laravel/passport": "^8.0 || ^7.3.0",
         "lcobucci/jwt": "3.3.3",
         "maatwebsite/excel": "^3.1",
-        "laravel/vapor-core": "^2.9",
         "laravelcollective/html": "^6.1",
+        "laravel/vapor-core": "^2.9",
         "friendsofcat/laravel-feature-flag": "^3.2",
         "spatie/laravel-view-models": "^1.3",
         "jeremykenedy/slack-laravel": "*",
         "mxl/laravel-job": "^1.2",
         "laravel/vapor-ui": "*",
-        "laravel/vapor-cli": "^1.11",
         "yajra/laravel-datatables-oracle": "~9.0"
+    },
+    "require-dev": {
+        "laravel/vapor-cli": "^1.11"
     }
 }
