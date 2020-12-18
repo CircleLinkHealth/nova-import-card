@@ -15,6 +15,8 @@ use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Console\Commands\Vapor\DeleteAllSecrets;
+use CircleLinkHealth\Core\Console\Commands\Vapor\UploadSecretsFromFile;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
@@ -169,6 +171,13 @@ class AppServiceProvider extends ServiceProvider
                     }
                 };
             });
+        }
+    
+        if ($this->app->environment('local')) {
+            $this->commands([
+                DeleteAllSecrets::class,
+                UploadSecretsFromFile::class,
+            ]);
         }
     }
 
