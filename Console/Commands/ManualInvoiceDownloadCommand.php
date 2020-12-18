@@ -48,7 +48,7 @@ class ManualInvoiceDownloadCommand extends Command
 
         $adminToReceiveMail = User::findOrFail($toReceiveMailId);
 
-        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail);
+        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail)->onQueue('low');
     }
 
     private function validateArgs(string $downloadFormat, string $month, int $adminToReceiveMail)
