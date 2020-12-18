@@ -1321,7 +1321,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "a267c8a4224ad4b2d4dda89f283c90e13dc24e72"
+                "reference": "ddbc5cb46c9f2ebb971b6bfc9561133992f2981f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1341,7 +1341,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-17T19:58:39+00:00"
+            "time": "2020-12-18T16:46:12+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
