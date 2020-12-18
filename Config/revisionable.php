@@ -11,4 +11,11 @@ return [
     |--------------------------------------------------------------------------
     */
     'model' => \CircleLinkHealth\Revisionable\Entities\Revision::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Queue to dispatch revisionable jobs to
+    |--------------------------------------------------------------------------
+    */
+    'queue' => env('REVISIONABLE_QUEUE', 'revisionable'),
 ];
