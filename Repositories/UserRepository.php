@@ -381,7 +381,7 @@ class UserRepository
             if ('date_paused' == $key
                 || 'date_withdrawn' == $key
             ) {
-                continue 1;
+                continue;
             }
 
             if ('ccm_status' == $key) {
