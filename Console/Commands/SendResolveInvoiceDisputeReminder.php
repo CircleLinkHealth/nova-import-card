@@ -10,6 +10,7 @@ use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
@@ -65,7 +66,7 @@ class SendResolveInvoiceDisputeReminder extends Command
         }
 
         GenerateNurseMonthlyInvoiceCsv::dispatch($month)
-            ->onQueue('high');
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
 
         $this->info('Command finished');
     }
