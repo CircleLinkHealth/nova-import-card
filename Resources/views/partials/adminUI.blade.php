@@ -157,9 +157,9 @@
                                         (export)</a>
                                 </li>
 
-                                <li>
-                                    <a href="{{route('get.print.paused.letters')}}">Print Paused Patient Letters</a>
-                                </li>
+{{--                                <li>--}}
+{{--                                    <a href="{{route('get.print.paused.letters')}}">Print Paused Patient Letters</a>--}}
+{{--                                </li>--}}
 
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
