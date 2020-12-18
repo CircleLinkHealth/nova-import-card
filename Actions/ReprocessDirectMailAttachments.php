@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Actions;
 
 use App\DirectMailMessage;
-use App\Services\PhiMail\IncomingMessageHandler;
+use CircleLinkHealth\Core\Services\PhiMail\IncomingMessageHandler;
 use CircleLinkHealth\Customer\Entities\Media;
 
 class ReprocessDirectMailAttachments
