@@ -14,9 +14,6 @@ Route::post('webhooks/on-sent-fax', [
     'as'   => 'webhook.on-fax-sent',
 ]);
 
-Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
-
-Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
 Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
 Route::post('care/enroll/{enrollUserId}', 'CareController@store');

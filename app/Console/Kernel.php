@@ -43,7 +43,6 @@ use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
-use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -70,7 +69,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RunScheduler::class,
     ];
 
     /**
