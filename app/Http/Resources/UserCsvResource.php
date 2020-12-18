@@ -28,7 +28,6 @@ class UserCsvResource extends JsonResource
             \Log::critical("Patient with id:{$this->id} does not have Practice attached.");
         }
 
-        /** @var Patient $patientInfo */
         $patient  = $this->patientInfo;
         $careplan = $this->carePlan;
 
@@ -38,7 +37,7 @@ class UserCsvResource extends JsonResource
         }
 
         return ('"'.$this->display_name ?? $this->name()).'",'.
-               '"'.$this->getBillingProviderName().'",'.
+               '"'.$this->getBillingProviderName(true).'",'.
                '"'.optional($practice)->display_name.'",'.
                '"'.$locationName.'",'.
                '"'.$patient->ccm_status.'",'.
@@ -51,8 +50,6 @@ class UserCsvResource extends JsonResource
                 ? Carbon::parse($patient->birth_date)->age
                 : 0).'",'.
                '"'.$this->created_at.'",'.
-               '"'.$this->getTimeInDecimals($this->getBhiTime()).'",'.
-               '"'.$this->getTimeInDecimals($this->getCcmTime()).'",'.
                '"'.$this->getPatientCcmStatusDate($patient).'"';
     }
 
@@ -73,21 +70,5 @@ class UserCsvResource extends JsonResource
             default:
                 return '';
         }
-    }
-
-    /**
-     * Get CCM time in minutes (decimal form) from seconds.
-     *
-     * @param string|null $ccmTime in seconds
-     *
-     * @return string CCM minutes in decimal
-     */
-    private function getTimeInDecimals(string $ccmTime = null)
-    {
-        if ( ! $ccmTime) {
-            return '0.00';
-        }
-
-        return number_format($ccmTime / 60, 2, '.', '');
     }
 }

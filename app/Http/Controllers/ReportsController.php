@@ -290,8 +290,7 @@ class ReportsController extends Controller
                         },
                         'careTeamMembers' => function ($q) {
                             $q->with(['user' => function ($q) {
-                                $q->without(['perms', 'roles'])
-                                    ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                                $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
                             }])->where('member_user_id', auth()->user()->id)
                                 ->whereIn(
                                     'type',

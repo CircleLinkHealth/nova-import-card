@@ -108,8 +108,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
         }
 
         /** @var User $careCoach */
-        $careCoach = User::without(['roles', 'perms'])
-            ->where('id', '=', $task->outbound_cpm_id)
+        $careCoach = User::where('id', '=', $task->outbound_cpm_id)
             ->select(['id', 'first_name'])
             ->first();
 
