@@ -21,7 +21,7 @@ class InvoicesDownloadController
         $month        = Carbon::parse($date['label'])->startOfMonth();
         $monthToHuman = Carbon::parse($month)->format('M-Y');
 
-        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, $auth)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, $auth);
 
         return response()->json(
             [
