@@ -65,6 +65,6 @@ class QueueGenerateNurseDailyReport extends Command
         }
 
         GenerateNurseDailyReportCsv::dispatch($forDate)
-            ;
+            ->onQueue('high');
     }
 }

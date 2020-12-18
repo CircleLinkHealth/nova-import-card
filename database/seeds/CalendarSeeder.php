@@ -95,7 +95,7 @@ class CalendarSeeder extends Seeder
                 ];
 
                 $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $windowData);
-                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours']);
+                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
 //                $this->command->info("nurse id $nurseInfoId seeded");
             }
 //            $this->command->info("Calendar Seeder DONE!!");

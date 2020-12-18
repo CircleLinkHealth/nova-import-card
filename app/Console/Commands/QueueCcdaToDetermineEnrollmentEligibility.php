@@ -51,7 +51,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                     }
 
                     CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $ccda->batch)
-                        ;
+                        ->onQueue('low');
                 }
             }
         );

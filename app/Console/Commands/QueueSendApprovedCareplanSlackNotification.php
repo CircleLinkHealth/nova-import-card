@@ -39,6 +39,6 @@ class QueueSendApprovedCareplanSlackNotification extends Command
      */
     public function handle()
     {
-        SendApprovedCareplanSlackNotification::dispatch();
+        SendApprovedCareplanSlackNotification::dispatch()->onQueue('high');
     }
 }

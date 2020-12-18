@@ -63,7 +63,7 @@ class IncomingMessageHandler
                     [
                         new DecorateUPG0506CcdaWithPdfData($ccda),
                     ]
-                )->dispatch($ccda);
+                )->dispatch($ccda)->onQueue('low');
 
                 return;
             }

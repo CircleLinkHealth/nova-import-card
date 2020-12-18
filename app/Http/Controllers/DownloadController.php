@@ -189,7 +189,7 @@ class DownloadController extends Controller
 
                 foreach ($patients as $patient) {
                     CreateAuditReportForPatientForMonth::dispatch($patient, $date)
-                        ->delay(now()->addSeconds($delay));
+                        ->onQueue('low')->delay(now()->addSeconds($delay));
                     ++$delay;
                 }
             });

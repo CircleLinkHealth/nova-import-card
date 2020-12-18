@@ -76,7 +76,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                         ];
 
                         $recurringEventsToSave = $this->service->createRecurringEvents($nurseInfoId, $windowData);
-                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours']);
+                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
                     });
             });
 

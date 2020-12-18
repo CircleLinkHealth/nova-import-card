@@ -225,7 +225,7 @@ class CreateFakeDataForDailyReportCommand extends Command
         ];
 
         $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $windowData);
-        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours']);
+        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
     }
 
     private function getExistingWindows(Nurse $nurseInfo)
