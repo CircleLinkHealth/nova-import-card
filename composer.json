@@ -183,7 +183,6 @@
         "barryvdh/laravel-ide-helper": "^2.8",
         "facade/ignition": "^2.0",
         "friendsofphp/php-cs-fixer": "^2.17",
-        "laravel/vapor-core": "^2.9",
         "laravel/vapor-cli": "^1.11",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^4.1",
