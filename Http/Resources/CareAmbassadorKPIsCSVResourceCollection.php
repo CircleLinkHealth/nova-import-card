@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Resources;
 
-use App\Http\Resources\CareAmbassadorKPIsCSVResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CareAmbassadorKPIsCSVResourceCollection extends ResourceCollection
