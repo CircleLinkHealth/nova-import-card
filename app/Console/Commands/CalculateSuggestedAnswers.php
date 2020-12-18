@@ -47,7 +47,7 @@ class CalculateSuggestedAnswers extends Command
         }
 
         foreach ($patientIds as $patientId) {
-            SurveyAnswersCalculateSuggestionsJob::dispatch($patientId);
+            SurveyAnswersCalculateSuggestionsJob::dispatch($patientId)->onQueue('awv-high');
         }
 
         $this->info('Done.');
