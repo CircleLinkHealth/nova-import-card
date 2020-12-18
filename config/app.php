@@ -5,6 +5,7 @@
  */
 
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
+use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
@@ -196,6 +197,7 @@ return [
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
+        DirectMailServiceProvider::class
     ],
 
     /*
