@@ -80,12 +80,12 @@
                                     $("#firstName_btn").hide();
                                 }
 
-                                webix.locale.pager = {
-                                    first: "<<",// the first button
-                                    last: ">>",// the last button
-                                    next: ">",// the next button
-                                    prev: "<"// the previous button
-                                };
+                                // webix.locale.pager = {
+                                //     first: "<<",// the first button
+                                //     last: ">>",// the last button
+                                //     next: ">",// the next button
+                                //     prev: "<"// the previous button
+                                // };
                                 paused_patients_letters_table = new webix.ui({
                                     container: "paused_patients_letters_container",
                                     view: "datatable",
