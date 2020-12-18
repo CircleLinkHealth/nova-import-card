@@ -11,8 +11,7 @@ use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class EnrollmentInvitationsBatch
- * @package CircleLinkHealth\Eligibility\SelfEnrollment\Entities
+ * Class EnrollmentInvitationsBatch.
  */
 class EnrollmentInvitationsBatch extends Model
 {
