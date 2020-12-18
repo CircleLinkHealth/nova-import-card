@@ -325,7 +325,7 @@ if ( ! function_exists('sendSlackMessage')) {
             return;
         }
 
-        SendSlackMessage::dispatch($to, $message)->onQueue('default');
+        SendSlackMessage::dispatch($to, $message)->onQueue(\CircleLinkHealth\Customer\CpmConstants::HIGH_QUEUE);
     }
 }
 
@@ -2285,5 +2285,16 @@ if ( ! function_exists('isUnsuccessfulCallPatientNotificationEnabled')) {
         }
 
         return $val;
+    }
+}
+
+if ( ! function_exists('getCpmQueueName')) {
+    function getCpmQueueName(string $name)
+    {
+        if ($result = config("queue.cpm_queues.$name.name")) {
+            return $result;
+        }
+
+        throw new \Exception("Could not find CPM Queue with name `$name`");
     }
 }
