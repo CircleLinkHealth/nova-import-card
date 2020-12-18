@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ddd615c1dd3a580618afc6fc8304fc92",
+    "content-hash": "8c96f49a8742099525b883403cb8091f",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -297,16 +297,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.0",
+            "version": "3.171.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e88837e34fe798484f4589ad30c597a231750b10"
+                "reference": "01407effc918634048346d8bd6513b2db0d07ad8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e88837e34fe798484f4589ad30c597a231750b10",
-                "reference": "e88837e34fe798484f4589ad30c597a231750b10",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/01407effc918634048346d8bd6513b2db0d07ad8",
+                "reference": "01407effc918634048346d8bd6513b2db0d07ad8",
                 "shasum": ""
             },
             "require": {
@@ -378,7 +378,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-16T19:12:20+00:00"
+            "time": "2020-12-17T19:16:51+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -606,7 +606,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "fc7bd95b485a44c86537a1931301f21c91bb007c"
+                "reference": "b07ae97211898b58e60ce4fa8f654aca3c4588a4"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -653,7 +653,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-17T09:50:27+00:00"
+            "time": "2020-12-18T06:45:12+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -744,7 +744,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "1355a199509cddba78f8d6e53f79832e1dd2b5f1"
+                "reference": "f1bec2f252de6962081cc8d6b9996305b0073f82"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -756,7 +756,8 @@
                 "lcobucci/jwt": "3.3.3",
                 "maatwebsite/excel": "^3.1",
                 "mxl/laravel-job": "^1.2",
-                "spatie/laravel-view-models": "^1.3"
+                "spatie/laravel-view-models": "^1.3",
+                "yajra/laravel-datatables-oracle": "~9.0"
             },
             "type": "laravel-module",
             "extra": {
@@ -783,7 +784,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T09:50:27+00:00"
+            "time": "2020-12-18T06:45:13+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -819,7 +820,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5a30b381d71e90682a96799f4e68e7e344cbcc2e"
+                "reference": "f75cc1ed89a12507a833decebcad0cdcbee57f07"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -856,7 +857,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T13:31:01+00:00"
+            "time": "2020-12-18T06:45:12+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -864,7 +865,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4c409c77ee39c83ee1a4d03f2655b13b6dd121b4"
+                "reference": "5630112cda4fc0a5a4f6b85ab1ea6ed9fd6cf4fc"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -891,15 +892,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T10:30:45+00:00"
+            "time": "2020-12-18T06:45:12+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
-            "version": "v6.1.1",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "5d833c8a7d28b84f92ca1cc71f4987dbcfc42c73"
+                "reference": "8fa2f9b081979ccf436db86c40994269b430f9e2"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0",
@@ -938,7 +939,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-04-24T08:46:54+00:00"
+            "time": "2020-12-18T06:44:04+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -2344,16 +2345,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v2.17.1",
+            "version": "v2.17.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "5198b7308ed63f26799387fd7f3901c3db6bd7fd"
+                "reference": "aaee4f3d16a996fc0b570be0c69d3b80c909c507"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/5198b7308ed63f26799387fd7f3901c3db6bd7fd",
-                "reference": "5198b7308ed63f26799387fd7f3901c3db6bd7fd",
+                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/aaee4f3d16a996fc0b570be0c69d3b80c909c507",
+                "reference": "aaee4f3d16a996fc0b570be0c69d3b80c909c507",
                 "shasum": ""
             },
             "require": {
@@ -2383,9 +2384,11 @@
                 "php-cs-fixer/accessible-object": "^1.0",
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.2",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.2.1",
-                "phpunit/phpunit": "^5.7.27 || ^6.5.14 || ^7.1",
+                "phpspec/prophecy-phpunit": "^1.1 || ^2.0",
+                "phpunit/phpunit": "^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.13 || ^9.4.4 <9.5",
                 "phpunitgoodpractices/polyfill": "^1.5",
                 "phpunitgoodpractices/traits": "^1.9.1",
+                "sanmai/phpunit-legacy-adapter": "^6.4 || ^8.2.1",
                 "symfony/phpunit-bridge": "^5.1",
                 "symfony/yaml": "^3.0 || ^4.0 || ^5.0"
             },
@@ -2438,7 +2441,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-08T13:47:02+00:00"
+            "time": "2020-12-17T16:41:55+00:00"
         },
         {
             "name": "fruitcake/laravel-cors",
@@ -11663,6 +11666,87 @@
                 "waavi"
             ],
             "time": "2020-04-01T08:49:12+00:00"
+        },
+        {
+            "name": "yajra/laravel-datatables-oracle",
+            "version": "v9.15.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables.git",
+                "reference": "e0b416d8b7d4472b16217c40e74284074cc34dde"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/e0b416d8b7d4472b16217c40e74284074cc34dde",
+                "reference": "e0b416d8b7d4472b16217c40e74284074cc34dde",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "5.8.*|^6|^7|^8",
+                "illuminate/filesystem": "5.8.*|^6|^7|^8",
+                "illuminate/http": "5.8.*|^6|^7|^8",
+                "illuminate/support": "5.8.*|^6|^7|^8",
+                "illuminate/view": "5.8.*|^6|^7|^8",
+                "php": "^7.1.3|^8"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.8"
+            },
+            "suggest": {
+                "yajra/laravel-datatables-buttons": "Plugin for server-side exporting of dataTables.",
+                "yajra/laravel-datatables-editor": "Plugin to use DataTables Editor (requires a license).",
+                "yajra/laravel-datatables-fractal": "Plugin for server-side response using Fractal.",
+                "yajra/laravel-datatables-html": "Plugin for server-side HTML builder of dataTables."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "9.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\DataTablesServiceProvider"
+                    ],
+                    "aliases": {
+                        "DataTables": "Yajra\\DataTables\\Facades\\DataTables"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                },
+                "files": [
+                    "src/helper.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "jQuery DataTables API for Laravel 4|5|6|7",
+            "keywords": [
+                "datatables",
+                "jquery",
+                "laravel"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/yajra",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/yajra",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-12-09T15:42:04+00:00"
         }
     ],
     "packages-dev": [
@@ -14282,6 +14366,7 @@
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/timetracking-module": 20,
