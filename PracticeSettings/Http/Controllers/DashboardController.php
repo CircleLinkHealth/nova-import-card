@@ -28,6 +28,7 @@ class DashboardController extends Controller
     protected $onboardingService;
     protected $practiceSlug;
     protected $primaryPractice;
+    protected $returnWithAll;
 
     public function __construct(
         OnboardingService $onboardingService
@@ -76,7 +77,7 @@ class DashboardController extends Controller
 
     public function getCreateEnrollment()
     {
-        return view('provider.enrollment.create', array_merge([
+        return view('cpm-admin::provider.enrollment.create', array_merge([
             'practice'         => $this->primaryPractice,
             'practiceSlug'     => $this->practiceSlug,
             'practiceSettings' => $this->primaryPractice->cpmSettings(),
