@@ -511,7 +511,7 @@ class PatientController extends Controller
                 //$obs_date = date_create($observation['obs_date']);
                 //if( (($obs_date->format('Y-m-d')) < date("Y-m-d")) && $observation['obs_key'] == 'Call' ) {
                 if ('Call' != $observation['obs_key']) { // skip NR's, which are any obs that has no value (other than call)
-                    continue 1;
+                    continue;
                 }
             }
             $observation['parent_item_text'] = '---';

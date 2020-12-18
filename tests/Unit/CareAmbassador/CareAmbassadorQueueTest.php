@@ -15,8 +15,8 @@ use Tests\TestCase;
 
 class CareAmbassadorQueueTest extends TestCase
 {
-    use CareAmbassadorHelpers;
     use \CircleLinkHealth\Customer\Traits\UserHelpers;
+    use CareAmbassadorHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;

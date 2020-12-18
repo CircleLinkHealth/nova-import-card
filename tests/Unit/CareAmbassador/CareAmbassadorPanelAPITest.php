@@ -15,8 +15,8 @@ use Tests\TestCase;
 
 class CareAmbassadorPanelAPITest extends TestCase
 {
-    use CareAmbassadorHelpers;
     use \CircleLinkHealth\Customer\Traits\UserHelpers;
+    use CareAmbassadorHelpers;
     protected $admin;
 
     protected $careAmbassadorUser;

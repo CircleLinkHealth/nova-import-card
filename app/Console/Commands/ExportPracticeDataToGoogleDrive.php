@@ -8,6 +8,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\QueuePatientToExport;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
@@ -56,7 +57,7 @@ class ExportPracticeDataToGoogleDrive extends Command
                     \Log::debug("Queuing {$user->first_name} {$user->last_name} CLH ID:{$user->id} for Export.");
 
                     QueuePatientToExport::dispatch($user, $folderId)
-                        ->onQueue('high')
+                        ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
                         ->delay(Carbon::now()->addSeconds($i * 3)); //temporary way to deal with
 
                     ++$i;

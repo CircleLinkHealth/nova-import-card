@@ -236,7 +236,7 @@ class DatamonitorService
                                 $obs_date = $date = date('Y-m-d', strtotime($item_obs['obs_date']));
                                 // prevent more than one per day being processed (desc so most recent gets first)
                                 if (in_array($obs_date, $dates_processed)) {
-                                    continue 1;
+                                    continue;
                                 }
                                 $dates_processed[] = $obs_date;
 
