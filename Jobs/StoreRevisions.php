@@ -30,7 +30,6 @@ class StoreRevisions implements ShouldQueue
      */
     public function __construct(array $revisions)
     {
-        $this->queue     = 'low';
         $this->revisions = $revisions;
     }
 
