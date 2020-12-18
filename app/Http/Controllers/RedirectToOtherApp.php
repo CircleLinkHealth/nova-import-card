@@ -12,4 +12,8 @@ class RedirectToOtherApp extends Controller
     {
         return redirect()->to('');
     }
+    
+    public function pinfo() {
+        dd(phpinfo());
+    }
 }
