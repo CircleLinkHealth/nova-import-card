@@ -76,7 +76,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                         ];
 
                         $recurringEventsToSave = $this->service->createRecurringEvents($nurseInfoId, $windowData);
-                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
+                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
                     });
             });
 

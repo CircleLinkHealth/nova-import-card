@@ -4,6 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\CpmConstants;
+
+$lowCpmQueueName  = env('LOW_CPM_QUEUE_NAME');
+$highCpmQueueName = env('HIGH_CPM_QUEUE_NAME');
+
+if ( ! $lowCpmQueueName || ! $highCpmQueueName) {
+    throw new \Exception('You need to define "LOW_CPM_QUEUE_NAME" and "HIGH_CPM_QUEUE_NAME" in your .env');
+}
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -85,5 +94,25 @@ return [
         'driver'   => env('QUEUE_FAILED_DRIVER', 'database'),
         'database' => env('DB_CONNECTION', 'mysql'),
         'table'    => 'failed_jobs',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CPM queues
+    |--------------------------------------------------------------------------
+    |
+    | Jobs can live in a module, and therefore dispatched by different apps.
+    | Consider StoreTimeTracking. It may be dispatched from admin or provider app
+    | to queue "high". For this reason we need a unique name for "high" and "low"
+    | queues in each app.
+    |
+    */
+    'cpm_queues' => [
+        CpmConstants::LOW_QUEUE => [
+            'name' => $lowCpmQueueName,
+        ],
+        CpmConstants::HIGH_QUEUE => [
+            'name' => $highCpmQueueName,
+        ],
     ],
 ];

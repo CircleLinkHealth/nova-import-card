@@ -189,7 +189,7 @@ class DownloadController extends Controller
 
                 foreach ($patients as $patient) {
                     CreateAuditReportForPatientForMonth::dispatch($patient, $date)
-                        ->onQueue('low')->delay(now()->addSeconds($delay));
+                        ->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE)->delay(now()->addSeconds($delay));
                     ++$delay;
                 }
             });

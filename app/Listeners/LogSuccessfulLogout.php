@@ -17,6 +17,6 @@ class LogSuccessfulLogout implements ShouldQueue
 
     public function handle(Logout $event)
     {
-        LogSuccessfulLogoutToDB::dispatch($event)->onQueue('low');
+        LogSuccessfulLogoutToDB::dispatch($event)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
     }
 }

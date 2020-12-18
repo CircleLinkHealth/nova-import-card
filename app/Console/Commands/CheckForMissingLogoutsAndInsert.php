@@ -51,7 +51,7 @@ class CheckForMissingLogoutsAndInsert extends Command
             ->orderBy('created_at', 'asc')
             ->chunk(50, function ($yesterdaysActivities) use ($date) {
                 foreach ($yesterdaysActivities as $loginActivity) {
-                    CheckLogoutEventAndSave::dispatch($date, $loginActivity)->onQueue('low');
+                    CheckLogoutEventAndSave::dispatch($date, $loginActivity)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
                 }
             });
     }

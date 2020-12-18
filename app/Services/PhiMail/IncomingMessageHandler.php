@@ -63,7 +63,7 @@ class IncomingMessageHandler
                     [
                         new DecorateUPG0506CcdaWithPdfData($ccda),
                     ]
-                )->dispatch($ccda)->onQueue('low');
+                )->dispatch($ccda)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
 
                 return;
             }
