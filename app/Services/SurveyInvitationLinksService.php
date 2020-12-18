@@ -138,7 +138,7 @@ class SurveyInvitationLinksService
 
         //in case job runs synchronously
         try {
-            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('awv-high');
+            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id);
         } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
         }
