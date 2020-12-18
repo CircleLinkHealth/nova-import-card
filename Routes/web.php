@@ -855,3 +855,6 @@ Route::group([
         ]);
     });
 });
+
+Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
+Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
