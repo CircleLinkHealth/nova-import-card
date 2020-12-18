@@ -87,8 +87,8 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
         }
 
         if ($this->app->environment('local')) {
-            $arr[] = UploadSecretsFromFile::class;
             $arr[] = DeleteAllSecrets::class;
+            $arr[] = UploadSecretsFromFile::class;
         }
 
         $this->commands($arr);

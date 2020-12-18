@@ -21,15 +21,25 @@ class DeleteAllSecrets extends Command
     public function handle()
     {
         Helpers::ensure_api_token_is_available();
-
-        collect($this->vapor->secrets(
+        
+        $secrets = $this->vapor->secrets(
             Manifest::id(),
             $this->argument('environment')
-        ))->each(function (array $secret) {
+        );
+    
+        $bar = $this->output->createProgressBar($secrets->count());
+    
+        $bar->start();
+
+        collect($secrets)->each(function (array $secret, $bar) {
             $this->vapor->deleteSecret($secret['id']);
             
             Helpers::info("Secret[{$secret['name']}] deleted successfully.");
+            
+            $bar->advance();
         });
+    
+        $bar->finish();
     
         Helpers::info('Command finished.');
     }
@@ -45,31 +55,6 @@ class DeleteAllSecrets extends Command
             ->setName('cpmvapor:clearsecrets')
             ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
             ->setDescription('Delete all the secrets for a given environment');
-    }
-    
-    /**
-     * Get the ID for the secret that should be deleted.
-     *
-     * @param array $secrets
-     *
-     * @return string
-     */
-    protected function getSecretId(array $secrets)
-    {
-        if (empty($secrets)) {
-            Helpers::abort('This environment does not have any secrets.');
-        }
-        
-        if ($this->option('name')) {
-            return $this->getSecretIdByName($secrets, $this->option('name'));
-        }
-        
-        return $this->menu(
-            'Which secret would you like to delete?',
-            collect($secrets)->mapWithKeys(function ($secret) {
-                return [$secret['id'] => $secret['name']];
-            })->all()
-        );
     }
     
     /**
