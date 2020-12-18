@@ -67,7 +67,7 @@ class QueueGenerateOpsDailyReport extends Command
             $jobsToChain
         )
             ->dispatch($practicesIds[0], $endDate)
-            ->onQueue('high');
+            ;
         
         $this->info("Ops Dashboard Jobs dispatched for date:{$endDate}");
     }

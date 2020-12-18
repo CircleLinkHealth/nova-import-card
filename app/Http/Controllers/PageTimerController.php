@@ -78,7 +78,7 @@ class PageTimerController extends Controller
         $params->add(['userAgent' => $request->userAgent()]);
 
         StoreTimeTracking::dispatch($params)
-            ->onQueue('high');
+            ;
 
         return response('PageTimer activities logged.', 201);
     }

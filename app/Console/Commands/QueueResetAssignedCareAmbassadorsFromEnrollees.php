@@ -39,6 +39,6 @@ class QueueResetAssignedCareAmbassadorsFromEnrollees extends Command
      */
     public function handle()
     {
-        ResetAssignedCareAmbassadorsFromEnrollees::dispatch()->onQueue('low');
+        ResetAssignedCareAmbassadorsFromEnrollees::dispatch();
     }
 }
