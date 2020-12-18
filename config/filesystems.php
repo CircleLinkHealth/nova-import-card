@@ -74,6 +74,14 @@ return [
             'region' => env('S3_CPM_STORAGE_REGION'),
             'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
         ],
+
+        'secrets' => [
+            'driver' => 's3',
+            'key'    => env('S3_SECRETS_KEY'),
+            'secret' => env('S3_SECRETS_SECRET'),
+            'region' => env('S3_SECRETS_REGION'),
+            'bucket' => env('S3_SECRETS_BUCKET'),
+        ],
     ],
 
     /*
