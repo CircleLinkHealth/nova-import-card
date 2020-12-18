@@ -27,7 +27,7 @@ class UploadSecretsFromFile extends Command
      */
     protected $signature = 'cpmvapor:uploadsecrets {--path= : The full path to the .env file\'s dir.}
                                                    {--file= : The filename of the .env file.}
-                                                   {--vaporenv= : The environment to upload to.}
+                                                   {--environment= : The environment to upload to.}
                                                    ';
 
     /**
@@ -40,7 +40,7 @@ class UploadSecretsFromFile extends Command
         collect((Dotenv::createImmutable($this->option('path'), $this->option('file')))->load())->each(function ($secret, $name) {
             $this->warn("Uploading $name");
             file_put_contents($tmp = storage_path(now()->timestamp.$name), $secret);
-            $this->runCpmCommand("vapor secret {$this->option('vaporenv')} --file=$tmp --name=$name");
+            $this->runCpmCommand("vapor secret {$this->option('environment')} --file=$tmp --name=$name");
             $this->runCpmCommand("rm -rf $tmp");
             $this->line("Uploaded $name");
         });
