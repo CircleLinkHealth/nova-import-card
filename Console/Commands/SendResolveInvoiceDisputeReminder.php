@@ -65,7 +65,7 @@ class SendResolveInvoiceDisputeReminder extends Command
         }
 
         GenerateNurseMonthlyInvoiceCsv::dispatch($month)
-            ->onQueue('high');
+            ;
 
         $this->info('Command finished');
     }
