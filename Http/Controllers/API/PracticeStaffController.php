@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\CcmBilling\Http\Requests\UpdatePracticeStaff;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Permission;
@@ -58,7 +59,7 @@ class PracticeStaffController extends Controller
     {
         $primaryPractice = Practice::find($primaryPracticeId);
 
-        $practiceUsers = User::ofType(self::PRACTICE_STAFF_ROLES)
+        $practiceUsers = User::ofType(CpmConstants::PRACTICE_STAFF_ROLES)
             ->whereHas('practices', function ($q) use ($primaryPractice) {
                 $q->where('practices.id', '=', $primaryPractice->id);
             })
