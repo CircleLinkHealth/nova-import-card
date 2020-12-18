@@ -884,7 +884,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f1bec2f252de6962081cc8d6b9996305b0073f82"
+                "reference": "abe2103a15d11ad9631ea3690b5462537c8206e2"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -924,7 +924,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T06:45:13+00:00"
+            "time": "2020-12-18T09:35:47+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1010,7 +1010,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f75cc1ed89a12507a833decebcad0cdcbee57f07"
+                "reference": "d0856a1644a94df45e6dda9ac44af5e1b6fbdc4a"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1047,7 +1047,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T06:45:12+00:00"
+            "time": "2020-12-18T09:35:47+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1055,7 +1055,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "5630112cda4fc0a5a4f6b85ab1ea6ed9fd6cf4fc"
+                "reference": "bf852ab0900ebbd07af6938a620611abb8d53bd7"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1082,7 +1082,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T06:45:12+00:00"
+            "time": "2020-12-18T09:35:47+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -2482,10 +2482,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2525,7 +2525,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
