@@ -87,6 +87,8 @@ class RaygunServiceProvider extends ServiceProvider implements DeferrableProvide
                     if ($appVersion = Config::get('cpm-module-raygun.app_version')) {
                         $client->SetVersion($appVersion);
                     }
+    
+                    $client->SetGroupingKey(Config::get('cpm-module-raygun.grouping_key'));
 
                     return $client;
                 }
