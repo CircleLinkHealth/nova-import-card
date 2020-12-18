@@ -13,6 +13,10 @@ environments:
         queue-timeout: 600
         scheduler: false
         mail: false
+        queues:
+            - cpm-provider-low-production
+            - cpm-provider-high-production
+            - cpm-provider-revisionable-production
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
             - 'php artisan event:cache'
@@ -34,6 +38,10 @@ environments:
         runtime: php-7.4
         queue-timeout: 600
         mail: false
+        queues:
+            - cpm-provider-low-staging
+            - cpm-provider-high-staging
+            - cpm-provider-revisionable-staging
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
             - 'php artisan event:cache'

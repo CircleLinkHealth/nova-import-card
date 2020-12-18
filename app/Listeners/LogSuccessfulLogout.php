@@ -7,6 +7,7 @@
 namespace App\Listeners;
 
 use App\Jobs\LogSuccessfulLogoutToDB;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,6 +18,6 @@ class LogSuccessfulLogout implements ShouldQueue
 
     public function handle(Logout $event)
     {
-        LogSuccessfulLogoutToDB::dispatch($event);
+        LogSuccessfulLogoutToDB::dispatch($event)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 }

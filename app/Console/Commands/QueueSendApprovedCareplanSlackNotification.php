@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendApprovedCareplanSlackNotification;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Console\Command;
 
 class QueueSendApprovedCareplanSlackNotification extends Command
@@ -39,6 +40,6 @@ class QueueSendApprovedCareplanSlackNotification extends Command
      */
     public function handle()
     {
-        SendApprovedCareplanSlackNotification::dispatch();
+        SendApprovedCareplanSlackNotification::dispatch()->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
     }
 }

@@ -9,6 +9,7 @@ namespace App\Console\Commands;
 use App\Jobs\GenerateOpsDailyPracticeReport;
 use App\Jobs\GenerateOpsDailyReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
@@ -67,8 +68,7 @@ class QueueGenerateOpsDailyReport extends Command
             $jobsToChain
         )
             ->dispatch($practicesIds[0], $endDate)
-            ;
-
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
         $this->info("Ops Dashboard Jobs dispatched for date:{$endDate}");
     }
 }

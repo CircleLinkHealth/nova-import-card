@@ -9,6 +9,7 @@ namespace App\Services\PhiMail;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Jobs\ImportCcda;
 use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
@@ -63,7 +64,7 @@ class IncomingMessageHandler
                     [
                         new DecorateUPG0506CcdaWithPdfData($ccda),
                     ]
-                )->dispatch($ccda);
+                )->dispatch($ccda)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
                 return;
             }

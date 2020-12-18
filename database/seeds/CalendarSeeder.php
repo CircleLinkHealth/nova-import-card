@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -95,7 +96,7 @@ class CalendarSeeder extends Seeder
                 ];
 
                 $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $windowData);
-                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours']);
+                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 //                $this->command->info("nurse id $nurseInfoId seeded");
             }
 //            $this->command->info("Calendar Seeder DONE!!");
