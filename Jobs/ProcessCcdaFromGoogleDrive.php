@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -90,8 +91,8 @@ class ProcessCcdaFromGoogleDrive implements ShouldQueue
         $this->batch->loadMissing('practice');
 
         ProcessCcda::withChain([
-            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE),
+            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE)),
         ])->dispatch($ccda->id)
-            ->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 }

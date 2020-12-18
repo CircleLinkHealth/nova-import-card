@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
@@ -24,7 +25,7 @@ class EnrolleesController extends Controller
             $input = [$input];
         }
 
-        ImportConsentedEnrollees::dispatch($input, $batch)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+        ImportConsentedEnrollees::dispatch($input, $batch)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
@@ -41,7 +42,7 @@ class EnrolleesController extends Controller
         })->filter()->unique()->values();
 
         $ids->each(function ($id) {
-            ImportConsentedEnrollees::dispatch([$id])->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+            ImportConsentedEnrollees::dispatch([$id])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         });
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
@@ -63,7 +64,7 @@ class EnrolleesController extends Controller
 
         $practice = Practice::findOrFail($request->input('practice_id'));
 
-        ImportMedicalRecordsById::dispatch($ids, $practice)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+        ImportMedicalRecordsById::dispatch($ids, $practice)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 

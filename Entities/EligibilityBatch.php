@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
@@ -280,7 +281,7 @@ class EligibilityBatch extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
-    public function processPendingJobs($pageSize = 100, $onQueue = 'low')
+    public function processPendingJobs($pageSize = 100, $onQueue = CpmConstants::LOW_QUEUE)
     {
         $this->eligibilityJobs()
             ->where('status', '=', 0)

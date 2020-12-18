@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
@@ -393,7 +394,7 @@ class ProcessEligibilityBatch implements ShouldQueue
                 continue;
             }
 
-            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         }
     }
 }

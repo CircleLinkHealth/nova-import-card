@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
@@ -413,10 +414,10 @@ class ProcessEligibilityService
                                         (bool) $filterLastEncounter,
                                         (bool) $filterInsurance,
                                         (bool) $filterProblems
-                                    ))->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE),
+                                    ))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE)),
                                 ]
                             )->dispatch($ccda->id)
-                                ->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+                                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
                         } else {
                             $pathWithUnderscores = str_replace('/', '_', $path);
                             $put = $cloudDisk->put(

@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\Services\AthenaAPI;
 use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
@@ -66,7 +67,7 @@ class CreateAndPostPdfCareplan
                     $ccdaRequest->successful_call = true;
                     $ccdaRequest->save();
 
-                    ImportCcda::dispatch($ccda)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+                    ImportCcda::dispatch($ccda)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
                     if (isProductionEnv()) {
                         $link = route('import.ccd.remix');

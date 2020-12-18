@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use App\Jobs\ImportCcda;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -50,7 +51,7 @@ class ImportMedicalRecordsById implements ShouldQueue
             ->wherePracticeId($this->practice->id)
             ->get()
             ->map(function ($ccda) {
-                ImportCcda::dispatch($ccda)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+                ImportCcda::dispatch($ccda)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
             });
     }
 }
