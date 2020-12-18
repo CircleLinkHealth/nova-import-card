@@ -59,6 +59,10 @@
             "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
         },
         {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
+        },
+        {
             "type": "path",
             "url": "./nova-components/InvoicesDownload"
         },
@@ -130,6 +134,7 @@
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
+        "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
         "circlelinkhealth/enrollment-invites": "*",

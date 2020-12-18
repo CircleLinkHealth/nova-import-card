@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
+use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
@@ -180,6 +181,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        CpmMigrationsServiceProvider::class,
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
         CpmAdminServiceProvider::class,

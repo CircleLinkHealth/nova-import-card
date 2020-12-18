@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67a9bdca263659bd90e02c926652facf",
+    "content-hash": "077146ee005c94e647d3f01ff749c3e4",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -809,6 +809,34 @@
                 }
             ],
             "time": "2020-12-17T19:58:39+00:00"
+        },
+        {
+            "name": "circlelinkhealth/cpm-migrations-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
+                "reference": "52740bef317c610b07296569038d83a557df1a55"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmMigrations\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-12-18T12:02:16+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -14587,6 +14615,7 @@
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
