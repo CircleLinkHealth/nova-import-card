@@ -393,7 +393,7 @@ class ProcessEligibilityBatch implements ShouldQueue
                 continue;
             }
 
-            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue('low');
+            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
         }
     }
 }

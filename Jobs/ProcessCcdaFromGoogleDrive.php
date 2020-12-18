@@ -90,8 +90,8 @@ class ProcessCcdaFromGoogleDrive implements ShouldQueue
         $this->batch->loadMissing('practice');
 
         ProcessCcda::withChain([
-            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue('low'),
+            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE),
         ])->dispatch($ccda->id)
-            ->onQueue('low');
+            ->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
     }
 }

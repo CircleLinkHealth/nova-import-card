@@ -85,7 +85,7 @@ class DetermineEnrollmentEligibility
 
         foreach ($departments['departments'] as $department) {
             if ( ! empty($department['departmentid'])) {
-                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId)->onQueue('low');
+                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
             }
         }
     }
