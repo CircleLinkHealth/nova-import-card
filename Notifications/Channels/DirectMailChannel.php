@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
-use App\Services\PhiMail\SendResult;
+use CircleLinkHealth\Core\Services\PhiMail\SendResult;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
