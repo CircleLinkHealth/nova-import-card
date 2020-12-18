@@ -283,12 +283,12 @@ class PhiMail implements DirectMail
      */
     private function initPhiMailConnection($dmUserAddress = null)
     {
-        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('services.emr-direct.user');
-        $phiMailPass        = config('services.emr-direct.password');
-        $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
-        $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
-        $clientCertFileName = config('services.emr-direct.client-cert-filename');
-        $serverCertFileName = config('services.emr-direct.server-cert-filename');
+        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('core.services.emr-direct.user');
+        $phiMailPass        = config('core.services.emr-direct.password');
+        $clientCertPath     = base_path(config('core.services.emr-direct.conc-keys-pem-path'));
+        $serverCertPath     = base_path(config('core.services.emr-direct.server-cert-pem-path'));
+        $clientCertFileName = config('core.services.emr-direct.client-cert-filename');
+        $serverCertFileName = config('core.services.emr-direct.server-cert-filename');
 
         $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
         $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
@@ -302,15 +302,15 @@ class PhiMail implements DirectMail
         //   <root_CA_certificate.pem>
         PhiMailConnector::setClientCertificate(
             $clientCertPath,
-            config('services.emr-direct.pass-phrase')
+            config('core.services.emr-direct.pass-phrase')
         );
 
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
         PhiMailConnector::setServerCertificate($serverCertPath);
 
-        $phiMailServer = config('services.emr-direct.mail-server');
-        $phiMailPort   = config('services.emr-direct.port');
+        $phiMailServer = config('core.services.emr-direct.mail-server');
+        $phiMailPort   = config('core.services.emr-direct.port');
 
         $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);

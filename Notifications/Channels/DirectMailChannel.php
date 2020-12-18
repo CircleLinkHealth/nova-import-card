@@ -61,7 +61,7 @@ class DirectMailChannel
                 $dm     = DirectMailMessage::create(
                     [
                         'message_id'      => $msgObj->messageId,
-                        'from'            => config('services.emr-direct.user'),
+                        'from'            => config('core.services.emr-direct.user'),
                         'to'              => $msgObj->recipient,
                         'body'            => $notification->directMailBody($notifiable),
                         'subject'         => $notification->directMailSubject($notifiable),
