@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "077146ee005c94e647d3f01ff749c3e4",
+    "content-hash": "76f5f87973951adb0b1c498e3d62f674",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -260,16 +260,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.1",
+            "version": "3.171.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "01407effc918634048346d8bd6513b2db0d07ad8"
+                "reference": "742663a85ec84647f74dea454d2dc45bba180f9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/01407effc918634048346d8bd6513b2db0d07ad8",
-                "reference": "01407effc918634048346d8bd6513b2db0d07ad8",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/742663a85ec84647f74dea454d2dc45bba180f9d",
+                "reference": "742663a85ec84647f74dea454d2dc45bba180f9d",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-17T19:16:51+00:00"
+            "time": "2020-12-18T19:12:13+00:00"
         },
         {
             "name": "brick/math",
@@ -1174,11 +1174,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v1.2",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "965b144632d44c25f3c34839b1b6d58093d4e907"
+                "reference": "994652a254207ae244c8a56765c3c8a3b8652e97"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1203,7 +1203,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:06:34+00:00"
+            "time": "2020-12-18T20:10:27+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -14620,6 +14620,7 @@
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/pdf-service-module": 20,
+        "circlelinkhealth/raygun-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/saml-sp-module": 20,
         "circlelinkhealth/shared-models-module": 20,
