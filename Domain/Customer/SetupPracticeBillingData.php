@@ -44,6 +44,6 @@ class SetupPracticeBillingData
             new ProcessPracticePatientMonthlyServices($practiceId),
         ])
             ->dispatch($practiceId)
-            ->onQueue('high');
+            ;
     }
 }
