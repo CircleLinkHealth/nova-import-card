@@ -461,7 +461,7 @@ class WorkScheduleController extends Controller
             ], 422);
         }
 
-        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions, $workScheduleData['work_hours'])->onQueue('low');
+        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions, $workScheduleData['work_hours']);
 
         return response()->json([
             'success' => true,
