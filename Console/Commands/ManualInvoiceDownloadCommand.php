@@ -48,7 +48,7 @@ class ManualInvoiceDownloadCommand extends Command
 
         $adminToReceiveMail = User::findOrFail($toReceiveMailId);
 
-        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail)->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
     }
 
     private function validateArgs(string $downloadFormat, string $month, int $adminToReceiveMail)
