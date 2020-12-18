@@ -37,12 +37,19 @@ class UploadSecretsFromFile extends Command
      */
     public function handle()
     {
-        collect((Dotenv::createImmutable($this->option('path'), $this->option('file')))->load())->each(function ($secret, $name) {
-            $this->warn("Uploading $name");
+        $secrets = collect((Dotenv::createImmutable($this->option('path'), $this->option('file')))->load());
+    
+        $bar = $this->output->createProgressBar($secrets->count());
+    
+        $bar->start();
+        
+        $secrets->each(function ($secret, $name) use ($bar){
             file_put_contents($tmp = storage_path(now()->timestamp.$name), $secret);
             $this->runCpmCommand("vapor secret {$this->option('environment')} --file=$tmp --name=$name");
             $this->runCpmCommand("rm -rf $tmp");
-            $this->line("Uploaded $name");
+            $bar->advance();
         });
+    
+        $bar->finish();
     }
 }
