@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8e764d819aad2790a415b34cc11ae48487a766fb"
+                "reference": "16a4460b48d18bbb1bb6c35531c448e130823539"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -758,7 +758,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T14:47:00+00:00"
+            "time": "2020-12-18T17:27:15+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -766,7 +766,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "df3b0ecd3d721e84f7da18fed1317c312c5be79b"
+                "reference": "f7865902a467d1bd6d432d7a5ea21d5f1e3f930a"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -808,7 +808,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-18T16:29:48+00:00"
+            "time": "2020-12-18T17:00:56+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -844,7 +844,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "43159aed759d21af3f452a9244d5799c35c8bbb9"
+                "reference": "5e7aa41f389ad58a70b1932dbbdbc7ed69b09501"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -881,7 +881,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T16:04:15+00:00"
+            "time": "2020-12-18T17:00:24+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
