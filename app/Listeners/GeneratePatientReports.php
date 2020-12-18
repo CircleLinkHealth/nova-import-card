@@ -12,6 +12,7 @@ use App\Jobs\GeneratePatientReportsJob as GenerateReports;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
+use CircleLinkHealth\Customer\CpmConstants;
 
 class GeneratePatientReports
 {
@@ -50,7 +51,7 @@ class GeneratePatientReports
             } else {
                 $otherInstance = $patient->surveyInstances->first();
                 if ($otherInstance) {
-                    GenerateReports::dispatch($patient->id, $instance->year)->onQueue('awv-high');
+                    GenerateReports::dispatch($patient->id, $instance->year)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
                 }
             }
         }
