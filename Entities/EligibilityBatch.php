@@ -280,7 +280,7 @@ class EligibilityBatch extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
-    public function processPendingJobs($pageSize = 100, $onQueue = 'low')
+    public function processPendingJobs($pageSize = 100)
     {
         $this->eligibilityJobs()
             ->where('status', '=', 0)
@@ -288,13 +288,13 @@ class EligibilityBatch extends BaseModel
                 ['status', '=', 1],
                 ['updated_at', '<', now()->subMinutes(10)],
             ])
-            ->chunkById($pageSize, function ($ejs) use ($onQueue) {
-                $ejs->each(function ($job) use ($onQueue) {
+            ->chunkById($pageSize, function ($ejs) {
+                $ejs->each(function ($job) {
                     ProcessSinglePatientEligibility::dispatch(
                         $job,
                         $this,
                         $this->practice
-                    )->onQueue($onQueue);
+                    );
                 });
             });
     }
