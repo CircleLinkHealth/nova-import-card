@@ -1225,7 +1225,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "8fa2f9b081979ccf436db86c40994269b430f9e2"
+                "reference": "2c1d9d04b98d1e10c81f93ed524760e52c5c31a9"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0",
@@ -1264,7 +1264,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-12-18T06:44:04+00:00"
+            "time": "2020-12-18T07:32:07+00:00"
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
