@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "16a4460b48d18bbb1bb6c35531c448e130823539"
+                "reference": "6e2d89522ec0da7899525532c6d2e8a4badefc36"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -758,7 +758,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T17:27:15+00:00"
+            "time": "2020-12-18T18:57:44+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -844,7 +844,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5e7aa41f389ad58a70b1932dbbdbc7ed69b09501"
+                "reference": "5443e7b71820773f776597b1e4997e88933b7f05"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -881,7 +881,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T17:00:24+00:00"
+            "time": "2020-12-18T18:57:44+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
