@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Http\Controllers\CareCenter;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
@@ -461,7 +462,7 @@ class WorkScheduleController extends Controller
             ], 422);
         }
 
-        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions, $workScheduleData['work_hours'])->onQueue(\CircleLinkHealth\Customer\CpmConstants::LOW_QUEUE);
+        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions, $workScheduleData['work_hours'])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return response()->json([
             'success' => true,
