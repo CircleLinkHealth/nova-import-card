@@ -14,6 +14,7 @@ use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
+use MichaelLedin\LaravelJob\LaravelJobServiceProvider;
 
 return [
     /*
@@ -192,6 +193,7 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
+        LaravelJobServiceProvider::class,
         CcmBillingServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
