@@ -34,7 +34,7 @@ use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;

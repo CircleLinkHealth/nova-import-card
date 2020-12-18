@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Adapters\Ccda\PracticePullMedicalRecordToXmlAdapter;
+use CircleLinkHealth\Core\DirectMail\Adapters\Ccda\PracticePullMedicalRecordToXmlAdapter;
 use App\Models\PracticePull\Demographics;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

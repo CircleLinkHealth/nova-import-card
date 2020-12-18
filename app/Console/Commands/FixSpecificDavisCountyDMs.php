@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\PhiMail\IncomingMessageHandler;
+use CircleLinkHealth\Core\Services\PhiMail\IncomingMessageHandler;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;

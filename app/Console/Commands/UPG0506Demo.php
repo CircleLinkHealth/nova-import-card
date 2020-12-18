@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\XML;
 use CircleLinkHealth\Customer\Entities\Media;

@@ -11,7 +11,7 @@ use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;

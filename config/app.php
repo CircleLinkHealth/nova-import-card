@@ -210,7 +210,7 @@ return [
 
         App\Providers\BroadcastServiceProvider::class,
 
-        App\Providers\DirectMailServiceProvider::class,
+        \CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider::class,
         FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,

@@ -6,8 +6,8 @@
 
 namespace App\Listeners;
 
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
-use App\Services\PhiMail\IncomingMessageHandler;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Core\Services\PhiMail\IncomingMessageHandler;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
