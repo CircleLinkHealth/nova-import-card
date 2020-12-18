@@ -56,8 +56,7 @@ class CallsDashboardController extends Controller
         /** @var Note $note */
         $note = Note::with([
             'patient' => function ($q) {
-                $q->without(['roles', 'perms'])
-                    ->with(['patientInfo']);
+                $q->with(['patientInfo']);
             },
             'author',
             'call' => function ($q) {
