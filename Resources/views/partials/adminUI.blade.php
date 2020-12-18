@@ -35,6 +35,7 @@
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 
+    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <style>
         body {
             font-family: Roboto, sans-serif;
