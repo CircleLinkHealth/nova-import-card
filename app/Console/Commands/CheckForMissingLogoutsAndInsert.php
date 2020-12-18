@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CheckLogoutEventAndSave;
-use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Illuminate\Console\Command;
 
 class CheckForMissingLogoutsAndInsert extends Command

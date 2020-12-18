@@ -68,7 +68,7 @@ class QueueGenerateOpsDailyReport extends Command
         )
             ->dispatch($practicesIds[0], $endDate)
             ;
-        
+
         $this->info("Ops Dashboard Jobs dispatched for date:{$endDate}");
     }
 }

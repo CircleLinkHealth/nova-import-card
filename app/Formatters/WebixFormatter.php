@@ -368,7 +368,7 @@ class WebixFormatter implements ReportFormatter
             $i                                      = 0;
             foreach ($allergies as $allergy) {
                 if (empty($allergy->allergen_name)) {
-                    continue 1;
+                    continue;
                 }
                 if ($i > 0) {
                     $careplanReport[$user->id]['allergies'] .= '<br>';
@@ -545,7 +545,7 @@ class WebixFormatter implements ReportFormatter
         foreach ($patients as $patient) {
             // skip if patient has no name
             if (empty($patient->first_name)) {
-                continue 1;
+                continue;
             }
 
             $careplanStatus     = $patient->carePlan->status ?? '';
