@@ -169,7 +169,6 @@
         "laravel/framework": "^7.24",
         "laravel/nova": "^3.0",
         "laravel/tinker": "^2.0",
-        "laravel/vapor-cli": "^1.11",
         "maatwebsite/laravel-nova-excel": "^1.2",
         "phaxio/phaxio": "^2.0",
         "sparclex/nova-import-card": "^7.0.1",
