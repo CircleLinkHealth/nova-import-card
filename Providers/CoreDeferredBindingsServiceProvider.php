@@ -82,7 +82,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
         if ($this->app->environment('testing')) {
             $arr[] = CreateAndSeedTestSuiteDB::class;
         }
-        
+
         if ($this->app->environment('local')) {
             $arr[] = UploadSecretsToVaporFromFile::class;
         }

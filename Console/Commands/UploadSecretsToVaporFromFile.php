@@ -44,6 +44,5 @@ class UploadSecretsToVaporFromFile extends Command
             $this->runCpmCommand("rm -rf $tmp");
             $this->line("Uploaded $name");
         });
-        
     }
 }
