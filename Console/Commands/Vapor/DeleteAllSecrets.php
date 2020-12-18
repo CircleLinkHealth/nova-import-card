@@ -21,25 +21,15 @@ class DeleteAllSecrets extends Command
     public function handle()
     {
         Helpers::ensure_api_token_is_available();
-        
-        $secrets = $this->vapor->secrets(
+
+        collect($this->vapor->secrets(
             Manifest::id(),
             $this->argument('environment')
-        );
-    
-        $bar = $this->output->createProgressBar($secrets->count());
-    
-        $bar->start();
-
-        collect($secrets)->each(function (array $secret, $bar) {
+        ))->each(function (array $secret) {
             $this->vapor->deleteSecret($secret['id']);
             
             Helpers::info("Secret[{$secret['name']}] deleted successfully.");
-            
-            $bar->advance();
         });
-    
-        $bar->finish();
     
         Helpers::info('Command finished.');
     }
