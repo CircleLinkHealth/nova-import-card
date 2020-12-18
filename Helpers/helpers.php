@@ -26,7 +26,7 @@ if ( ! function_exists('isProductionEnv')) {
      *
      * @return \Illuminate\Config\Repository|mixed
      */
-    function isProductionEnv(): bool
+    function isProductionEnv(): ?bool
     {
         return config('core.is_production_env');
     }
