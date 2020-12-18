@@ -59,6 +59,8 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
             CreateAndSeedTestSuiteDB::class,
+            UploadSecretsFromFile::class,
+            DeleteAllSecrets::class,
         ];
     }
 
