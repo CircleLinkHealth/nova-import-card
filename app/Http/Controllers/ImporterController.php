@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Jobs\ImportCcda;
+use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
