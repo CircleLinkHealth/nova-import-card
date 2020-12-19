@@ -884,7 +884,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "5d4cf47568e08e4ad5fe4616a671851d62ccae01"
+                "reference": "ba481d7f1a4af3a03ce1483ab7af5adaaf59ef87"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -923,7 +923,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-19T01:01:30+00:00"
+            "time": "2020-12-19T01:20:51+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
