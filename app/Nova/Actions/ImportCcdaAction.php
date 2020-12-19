@@ -6,7 +6,7 @@
 
 namespace App\Nova\Actions;
 
-use App\Jobs\ImportCcdas;
+use CircleLinkHealth\Eligibility\Jobs\ImportCcdas;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
