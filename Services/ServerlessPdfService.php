@@ -69,7 +69,7 @@ class ServerlessPdfService implements HtmlToPdfService
             throw new \Exception($body);
         }
 
-        $this->resolvePath($filename);
+        resolvePath($filename);
         Log::debug("Saving pdf to $filename");
         file_put_contents($filename.'.html', $this->htmlString);
         file_put_contents($filename, $body);
@@ -82,13 +82,5 @@ class ServerlessPdfService implements HtmlToPdfService
         $this->options[$name] = $value;
 
         return $this;
-    }
-
-    private function resolvePath(string $path)
-    {
-        $folder = dirname($path);
-        if ( ! File::isDirectory($folder)) {
-            File::makeDirectory($folder);
-        }
     }
 }
