@@ -2298,3 +2298,15 @@ if ( ! function_exists('getCpmQueueName')) {
         throw new \Exception("Could not find CPM Queue with name `$name`");
     }
 }
+
+if ( ! function_exists('resolvePath')) {
+    function resolvePath(string $path)
+    {
+        $folder = dirname($path);
+        if ( ! File::isDirectory($folder)) {
+            File::makeDirectory($folder);
+        }
+        
+        return $path;
+    }
+}
