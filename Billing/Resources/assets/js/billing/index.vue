@@ -294,7 +294,7 @@
 
                     const errorKey = 'approve_reject'
                     tablePatient.promises['approve_reject'] = true
-                    this.axios.post(rootUrl('admin/reports/monthly-billing/v2/status/update'), {
+                    this.axios.post(rootUrl('reports/monthly-billing/v2/status/update'), {
                         report_id: tablePatient.reportId,
                         approved: Number(tablePatient.approved),
                         rejected: Number(tablePatient.rejected)
@@ -354,7 +354,7 @@
                 if (isDetach) {
                     data.detach = true
                 }
-                return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updatePracticeServices'), data).then(response => {
+                return this.axios.post(rootUrl('reports/monthly-billing/v2/updatePracticeServices'), data).then(response => {
                     (response.data || []).forEach(summary => {
                         const tableItem = this.tableData.find(row => row.id == summary.id)
                         if (tableItem) {
@@ -390,7 +390,7 @@
             getCounts() {
                 this.loaders.counts = true;
                 return this.axios
-                    .get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`))
+                    .get(rootUrl(`reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`))
                     .then(response => {
                         this.loaders.counts = false;
                         console.log('billing:counts', response.data)
@@ -414,7 +414,7 @@
                 }
 
                 this.axios
-                    .post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
+                    .post(this.url || rootUrl(`reports/monthly-billing/v2/data`), {
                         practice_id: this.selectedPractice,
                         date: this.selectedMonth
                     })
@@ -490,7 +490,7 @@
                         item.chargeable_services = serviceIDs
                         console.log('service-ids', serviceIDs, item)
                         item.promises.update_chargeables = true
-                        return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
+                        return this.axios.post(rootUrl('reports/monthly-billing/v2/updateSummaryServices'), {
                             report_id: item.reportId,
                             patient_chargeable_services: serviceIDs
                         }).then(response => {
@@ -621,7 +621,7 @@
             },
             openMonth() {
                 this.loaders.openMonth = true
-                return this.$http.post(rootUrl('admin/reports/monthly-billing/v2/open'), {
+                return this.$http.post(rootUrl('reports/monthly-billing/v2/open'), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
@@ -653,7 +653,7 @@
             },
             closeMonth() {
                 this.loaders.closeMonth = true
-                return this.$http.post(rootUrl('admin/reports/monthly-billing/v2/close'), {
+                return this.$http.post(rootUrl('reports/monthly-billing/v2/close'), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
