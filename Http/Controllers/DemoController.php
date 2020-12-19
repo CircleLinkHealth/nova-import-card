@@ -19,7 +19,7 @@ class DemoController extends Controller
     {
         $number  = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
         $faxTest = $fax->createFaxFor($number)
-            ->setOption('file', [public_path('assets/pdf/sample-note.pdf')])
+            ->setOption('file', [base_path('sample-note.pdf')])
             ->send();
         dd($faxTest);
     }
@@ -28,7 +28,7 @@ class DemoController extends Controller
     {
         $test = $dm->send(
             $request->input('direct_address'),
-            public_path('assets/pdf/sample-note.pdf'),
+            base_path('sample-note.pdf'),
             'sample-note.pdf'
         );
         dd($test);
