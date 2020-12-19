@@ -508,7 +508,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "0cde32e320f928deb5d24ef7a714c784b5675b45"
+                "reference": "f6aa61f5558e8782e353e3c322499efab320faa7"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -555,7 +555,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-18T14:34:15+00:00"
+            "time": "2020-12-19T17:39:20+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -844,7 +844,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5443e7b71820773f776597b1e4997e88933b7f05"
+                "reference": "fef42cb04e8358b3cc586106ac250db25d3532fb"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -881,7 +881,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T18:57:44+00:00"
+            "time": "2020-12-19T16:19:59+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1296,7 +1296,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "87f36988d40da5c82e2e8c77d6518d4c93ee6d96"
+                "reference": "e0c7a98ac95fa489ce0d44be2c58318ee1380885"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1313,7 +1313,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-17T10:28:40+00:00"
+            "time": "2020-12-19T17:39:20+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
