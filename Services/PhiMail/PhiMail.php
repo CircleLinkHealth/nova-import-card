@@ -200,16 +200,6 @@ class PhiMail implements DirectMail
         $storage = Storage::disk('secrets');
 
         if ( ! is_readable($certPath)) {
-            touch($certPath);
-
-            if ( ! is_writeable($certPath)) {
-                throw new \Exception("$certPath is not writable");
-            }
-
-            if ( ! $storage->has($certFileName)) {
-                throw new \Exception("$certFileName not found on remote drive.");
-            }
-
             $contents = $storage->get($certFileName);
 
             $written = file_put_contents($certPath, $contents);
