@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Core\Services\PhiMail;
 
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\DirectMail\Actions\Ccda\GetOrCreateCcdaXml;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
-use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -283,6 +283,8 @@ class PhiMail implements DirectMail
         $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
         $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
 
+        $storage = Storage::drive('storage');
+
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
         // PEM data concatenated into one file:
@@ -291,13 +293,13 @@ class PhiMail implements DirectMail
         //   <intermediate_CA_certificate.pem>
         //   <root_CA_certificate.pem>
         PhiMailConnector::setClientCertificate(
-            $clientCertPath,
+            $storage->path($clientCertPath),
             config('core.services.emr-direct.pass-phrase')
         );
 
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
-        PhiMailConnector::setServerCertificate($serverCertPath);
+        PhiMailConnector::setServerCertificate($storage->path($serverCertPath));
 
         $phiMailServer = config('core.services.emr-direct.mail-server');
         $phiMailPort   = config('core.services.emr-direct.port');
