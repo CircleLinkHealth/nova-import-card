@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Services\AthenaAPI;
 
 use App\Entities\CcdaRequest;
-use App\Jobs\ImportCcda;
+use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
