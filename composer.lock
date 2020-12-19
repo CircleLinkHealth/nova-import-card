@@ -884,7 +884,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "70581de8fd0f195703e28b1d70249b042690ede5"
+                "reference": "5d4cf47568e08e4ad5fe4616a671851d62ccae01"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -923,7 +923,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T23:29:23+00:00"
+            "time": "2020-12-19T01:01:30+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1149,7 +1149,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "db23a14038f47d2169b1d5952658f1dfcfdb5d6e"
+                "reference": "8de0ab7fa7590c62d21b971644bc9ada92efa755"
             },
             "require": {
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
@@ -1183,7 +1183,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-16T19:14:42+00:00"
+            "time": "2020-12-19T01:01:30+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
