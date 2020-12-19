@@ -7,14 +7,12 @@
 namespace CircleLinkHealth\Core\Services\PhiMail;
 
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
-use App\Jobs\ImportCcda;
-use CircleLinkHealth\Core\Services\PhiMail\CheckResult;
 use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
-use CircleLinkHealth\Core\Services\PhiMail\ShowResult;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Support\Str;
