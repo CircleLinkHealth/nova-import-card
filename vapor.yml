@@ -13,6 +13,8 @@ environments:
         queue-timeout: 600
         scheduler: false
         mail: false
+        warm: 10
+        timeout: 30
         queues:
             - cpm-provider-low-production
             - cpm-provider-high-production
@@ -38,6 +40,8 @@ environments:
         runtime: php-7.4
         queue-timeout: 600
         mail: false
+        warm: 10
+        timeout: 30
         queues:
             - cpm-provider-low-staging
             - cpm-provider-high-staging

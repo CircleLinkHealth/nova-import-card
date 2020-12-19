@@ -6,20 +6,35 @@
 
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
+use App\Providers\TwilioClientServiceProvider;
+use App\View\Composers\FabComposer;
+use App\View\Composers\ProviderUITimerComposer;
+use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
+use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\AuthServiceProvider;
+use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
+use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
+use CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider;
+use CircleLinkHealth\Customer\Providers\CustomerServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
+use Collective\Html\HtmlServiceProvider;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
 use Illuminate\Support\Arr;
+use Macellan\Zip\ZipServiceProvider;
+use MichaelLedin\LaravelJob\LaravelJobServiceProvider;
+use Mpbarlow\LaravelQueueDebouncer\ServiceProvider;
+use Spatie\SlashCommand\SlashCommandServiceProvider;
 
 $appUrl = env('APP_URL', 'http://cpm.dev');
 
@@ -210,14 +225,14 @@ return [
 
         App\Providers\BroadcastServiceProvider::class,
 
-        \CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider::class,
+        DirectMailServiceProvider::class,
         FaxServiceProvider::class,
-        App\Providers\TwilioClientServiceProvider::class,
-        \Collective\Html\HtmlServiceProvider::class,
+        TwilioClientServiceProvider::class,
+        HtmlServiceProvider::class,
 
-        App\View\Composers\ProviderUITimerComposer::class,
-        App\View\Composers\FabComposer::class,
-        App\View\Composers\SAAS\Admin\ManageInternalUser::class,
+        ProviderUITimerComposer::class,
+        FabComposer::class,
+        ManageInternalUser::class,
         PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,
@@ -227,18 +242,21 @@ return [
         CpmArtisanServiceProvider::class,
         CcmBillingServiceProvider::class,
 
-        Spatie\SlashCommand\SlashCommandServiceProvider::class,
+        SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
-        Macellan\Zip\ZipServiceProvider::class,
-        FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
+        ZipServiceProvider::class,
+        FeatureFlagsProvider::class,
         CustomerAuthServiceProvider::class,
         CpmMigrationsServiceProvider::class,
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
-        CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
-        CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
-        CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
-        Mpbarlow\LaravelQueueDebouncer\ServiceProvider::class,
+        CustomerAuthServiceProvider::class,
+        CustomerDeferrableServiceProvider::class,
+        CustomerServiceProvider::class,
+        ServiceProvider::class,
+        LaravelJobServiceProvider::class,
+        CoreServiceProvider::class,
+        CoreDeferredBindingsServiceProvider::class,
     ],
 
     /*x
