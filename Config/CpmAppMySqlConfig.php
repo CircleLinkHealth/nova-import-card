@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Core\Config;
 
 use Illuminate\Support\Str;
+use PDO;
 
 class CpmAppMySqlConfig
 {
@@ -36,6 +37,9 @@ class CpmAppMySqlConfig
             'prefix_indexes' => true,
             'strict'         => false,
             'engine'         => null,
+            'options'        => extension_loaded('pdo_mysql') ? array_filter([
+                                                                                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                                                                             ]) : [],
         ];
 
         if (true === env('MYSQL_CLUSTER_MODE')) {
