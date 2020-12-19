@@ -19,30 +19,30 @@ class DemoController extends Controller
     {
         $number  = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
         $faxTest = $fax->createFaxFor($number)
-            ->setOption('file', [public_path('assets/pdf/sample-note.pdf')])
-            ->send();
+                       ->setOption('file', [storage_path('sample-note.pdf')])
+                       ->send();
         dd($faxTest);
     }
-
+    
     public function sendSampleEMRNote(Request $request, DirectMail $dm)
     {
         $test = $dm->send(
             $request->input('direct_address'),
-            public_path('assets/pdf/sample-note.pdf'),
+            storage_path('sample-note.pdf'),
             'sample-note.pdf'
         );
         dd($test);
     }
-
+    
     public function sentry()
     {
         throw new \Exception('My first Sentry error!');
     }
-
+    
     public function sentryLog()
     {
         Log::error('Log that should reach both stderr and Sentry!');
-
+        
         return response([]);
     }
 }
