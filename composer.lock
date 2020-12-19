@@ -766,7 +766,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "df769f0d478bf6deb9c8998fb2cc4a12c9a8b0b4"
+                "reference": "4fb5abed9fcb75b31ec6ece394d8de365375b59e"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -808,7 +808,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-19T06:08:38+00:00"
+            "time": "2020-12-19T06:21:15+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
