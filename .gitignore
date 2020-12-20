@@ -32,3 +32,4 @@ CLHPackages/
 .phpunit.result.cache
 .vapor/
 .env.test
+lsp/log
