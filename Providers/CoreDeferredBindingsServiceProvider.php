@@ -62,6 +62,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             CreateAndSeedTestSuiteDB::class,
             UploadSecretsFromFile::class,
             DeleteAllSecrets::class,
+            SyncEnvFiles::class
         ];
     }
 
@@ -82,8 +83,6 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
             SyncEnvFiles::class,
-            UploadSecretsFromFile::class,
-            DeleteAllSecrets::class,
         ];
 
         if ($this->app->environment('testing')) {
