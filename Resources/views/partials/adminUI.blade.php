@@ -244,7 +244,7 @@
                             </li>
                             @if(config('core.apps.cpm-provider.url'))
                                 <li class="dropdown">
-                                    <a href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}"
+                                    <a href="{{ rtrim(config('core.apps.cpm-provider.url'), '/').'/'.'manage-patients/dashboard' }}"
                                        style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
                                 </li>
                             @endif
