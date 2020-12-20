@@ -2292,7 +2292,7 @@ if ( ! function_exists('isUnsuccessfulCallPatientNotificationEnabled')) {
 if ( ! function_exists('getCpmQueueName')) {
     function getCpmQueueName(string $name)
     {
-        if ($result = config("queue.cpm_queues.$name.name")) {
+        if ($result = config("core.cpm_queues.$name.name")) {
             return $result;
         }
 
