@@ -6,9 +6,8 @@
 
 namespace CircleLinkHealth\TimeTracking\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ShowPatientActivities;
-use App\Reports\PatientDailyAuditReport;
+use CircleLinkHealth\TimeTracking\Http\Requests\ShowPatientActivities;
+use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
@@ -27,6 +26,7 @@ use CircleLinkHealth\Timetracking\Requests\AdminCreateOfflineActivityTimeRequest
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
 /**
