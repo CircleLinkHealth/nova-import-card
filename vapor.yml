@@ -2,17 +2,27 @@ id: 16123
 name: app-cpm-caller-laravel
 environments:
   production:
-    memory: 1024
-    cli-memory: 512
+    domain: caller.careplanmanager.com
+    memory: 128
+    cache: cpm-production-vapor-cache
+    network: cpm-production
+    cli-memory: 128
     runtime: 'php-7.4'
+    queues: false,
+    scheduler: false
+    mail: false
+    warm: 10
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
-    deploy:
-      - 'php artisan migrate --force'
   staging:
     domain: cpm-caller-laravel.clh-staging.com
-    memory: 1024
-    cli-memory: 512
+    cache: cpm-staging-vapor-cache
+    network: cpm-staging
+    memory: 128
+    cli-memory: 128
     runtime: 'php-7.4'
+    queues: false,
+    scheduler: false
+    mail: false
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
