@@ -71,7 +71,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
      */
     public function register()
     {
-        $arr = [
+        $register = [
             CreateMySqlDB::class,
             CreatePostgreSQLDB::class,
             HerokuOnRelease::class,
@@ -86,16 +86,16 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
         ];
 
         if ($this->app->environment('testing')) {
-            $arr[] = CreateAndSeedTestSuiteDB::class;
+            $register[] = CreateAndSeedTestSuiteDB::class;
         }
 
         if ($this->app->environment('local')) {
-            $arr[] = DeleteAllSecrets::class;
-            $arr[] = UploadSecretsFromFile::class;
-            $arr[] = SyncEnvFiles::class;
+            $register[] = DeleteAllSecrets::class;
+            $register[] = UploadSecretsFromFile::class;
+            $register[] = SyncEnvFiles::class;
         }
 
-        $this->commands($arr);
+        $this->commands($register);
 
         $this->app->bind(LaravelDatabaseChannel::class, CircleLinkDatabaseChannel::class);
         $this->app->bind(LaravelHasDatabaseNotifications::class, CircleLinkHasDatabaseNotifications::class);
