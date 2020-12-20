@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\CpmConstants;
+
 return [
     'name' => 'Core',
 
@@ -47,6 +49,26 @@ return [
             'port'                 => env('EMR_DIRECT_PORT'),
             'client-cert-filename' => env('EMR_CLIENT_CERT_FILENAME'),
             'server-cert-filename' => env('EMR_SERVER_CERT_FILENAME'),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CPM queues
+    |--------------------------------------------------------------------------
+    |
+    | Jobs can live in a module, and therefore dispatched by different apps.
+    | Consider StoreTimeTracking. It may be dispatched from admin or provider app
+    | to queue "high". For this reason we need a unique name for "high" and "low"
+    | queues in each app.
+    |
+    */
+    'cpm_queues' => [
+        CpmConstants::LOW_QUEUE => [
+            'name' => env('LOW_CPM_QUEUE_NAME', null),
+        ],
+        CpmConstants::HIGH_QUEUE => [
+            'name' => env('HIGH_CPM_QUEUE_NAME', null),
         ],
     ],
 ];
