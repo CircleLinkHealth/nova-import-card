@@ -1,0 +1,13 @@
+{
+    "name": "VaporDevOpsHelpers",
+    "alias": "VaporDevOpsHelpers",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "CircleLinkHealth\\VaporDevOpsHelpers\\Providers\\VaporDevOpsHelpersServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
