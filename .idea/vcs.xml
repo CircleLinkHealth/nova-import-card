@@ -2,6 +2,10 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/.vapor/build/app/CircleLinkHealth/CcmBilling" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/.vapor/build/app/CircleLinkHealth/Core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/.vapor/build/app/CircleLinkHealth/Customer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/.vapor/build/app/CircleLinkHealth/Twofa" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcmBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CpmMigrations" vcs="Git" />

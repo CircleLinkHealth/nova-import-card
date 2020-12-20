@@ -8,12 +8,12 @@ environments:
     network: cpm-production
     cli-memory: 128
     runtime: 'php-7.4'
-    queues: false,
+    queues: false
     scheduler: false
     mail: false
     warm: 10
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
   staging:
     domain: cpm-caller-laravel.clh-staging.com
     cache: cpm-staging-vapor-cache
@@ -21,8 +21,8 @@ environments:
     memory: 128
     cli-memory: 128
     runtime: 'php-7.4'
-    queues: false,
+    queues: false
     scheduler: false
     mail: false
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
