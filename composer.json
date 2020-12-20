@@ -57,7 +57,7 @@
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
-        "circlelinkhealth/revisionable-module": "6.1.1",
+        "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
@@ -68,7 +68,6 @@
         "laravel/vapor-core": "^2.9",
         "nwidart/laravel-modules": "dev-master",
         "propaganistas/laravel-phone": "^4.1",
-        "sentry/sentry-laravel": "1.7.0",
         "fakerphp/faker": "^1.9.1",
         "twilio/sdk": "5.31.3"
     },
@@ -106,7 +105,7 @@
             "CircleLinkHealth\\": "CircleLinkHealth/"
         },
         "files": [
-            "app/helpers.php"
+
         ]
     },
     "autoload-dev": {
