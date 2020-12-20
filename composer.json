@@ -1,5 +1,5 @@
 {
-    "name": "circlelinkhealth/vapor-devops-helpers",
+    "name": "circlelinkhealth/vapor-devops-helpers-module",
     "type": "laravel-module",
     "description": "A collection of helpers to assist with various devops tasks.",
     "authors": [
