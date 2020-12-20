@@ -22,4 +22,9 @@ class RedirectToOtherApp extends Controller
     {
         dd(config());
     }
+    
+    private function redirectToProvider($url)
+    {
+        return redirect()->to(rtrim(config('core.apps.cpm-provider.url'), '/')."/$url");
+    }
 }
