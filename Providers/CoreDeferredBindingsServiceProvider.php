@@ -62,7 +62,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             CreateAndSeedTestSuiteDB::class,
             UploadSecretsFromFile::class,
             DeleteAllSecrets::class,
-            SyncEnvFiles::class
+            SyncEnvFiles::class,
         ];
     }
 
