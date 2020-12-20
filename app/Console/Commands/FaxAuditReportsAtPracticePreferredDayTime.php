@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Notifications\SendAuditReport;
-use App\Reports\PatientDailyAuditReport;
+use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Services\Phaxio\PhaxioFaxService;

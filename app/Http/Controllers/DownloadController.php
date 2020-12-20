@@ -10,7 +10,7 @@ use App\Http\Requests\DownloadMediaWithSignedRequest;
 use App\Http\Requests\DownloadPracticeAuditReports;
 use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use App\Jobs\CreateAuditReportForPatientForMonth;
-use App\Reports\PatientDailyAuditReport;
+use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\CpmConstants;

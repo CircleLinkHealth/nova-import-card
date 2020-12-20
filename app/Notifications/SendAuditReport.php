@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\Reports\PatientDailyAuditReport;
+use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
