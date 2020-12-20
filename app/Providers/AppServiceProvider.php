@@ -7,8 +7,6 @@
 namespace App\Providers;
 
 use App\Observers\OutgoingSmsObserver;
-use CircleLinkHealth\Core\Console\Commands\Vapor\DeleteAllSecrets;
-use CircleLinkHealth\Core\Console\Commands\Vapor\UploadSecretsFromFile;
 use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,11 +29,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->environment('local')) {
-            $this->commands([
-                DeleteAllSecrets::class,
-                UploadSecretsFromFile::class,
-            ]);
-        }
+    
     }
 }
