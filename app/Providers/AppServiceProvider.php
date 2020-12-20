@@ -172,13 +172,6 @@ class AppServiceProvider extends ServiceProvider
                 };
             });
         }
-    
-        if ($this->app->environment('local')) {
-            $this->commands([
-                DeleteAllSecrets::class,
-                UploadSecretsFromFile::class,
-            ]);
-        }
     }
 
     /**
