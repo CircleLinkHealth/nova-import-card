@@ -21,9 +21,6 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNot
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
 use CircleLinkHealth\Core\Traits\Notifiable as CircleLinkNotifiable;
-use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\DeleteAllSecrets;
-use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\SyncEnvFiles;
-use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\UploadSecretsFromFile;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Notifications\Channels\DatabaseChannel as LaravelDatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification as LaravelDatabaseNotification;
@@ -60,9 +57,6 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
             CreateAndSeedTestSuiteDB::class,
-            UploadSecretsFromFile::class,
-            DeleteAllSecrets::class,
-            SyncEnvFiles::class,
         ];
     }
 
@@ -82,17 +76,10 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             RunScheduler::class,
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
-            SyncEnvFiles::class,
         ];
 
         if ($this->app->environment('testing')) {
             $register[] = CreateAndSeedTestSuiteDB::class;
-        }
-
-        if ($this->app->environment('local')) {
-            $register[] = DeleteAllSecrets::class;
-            $register[] = UploadSecretsFromFile::class;
-            $register[] = SyncEnvFiles::class;
         }
 
         $this->commands($register);
