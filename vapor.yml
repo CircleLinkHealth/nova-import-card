@@ -35,12 +35,11 @@ environments:
         storage: cpm-staging-vapor-storage
         cache: cpm-staging-vapor-cache
         network: cpm-staging
-        memory: 2048
-        cli-memory: 2048
+        memory: 512
+        cli-memory: 512
         runtime: php-7.4
         queue-timeout: 600
         mail: false
-        warm: 10
         timeout: 30
         queues:
             - cpm-provider-low-staging
@@ -57,5 +56,4 @@ environments:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
             - 'php artisan queue:restart'
-
 
