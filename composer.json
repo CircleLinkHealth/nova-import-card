@@ -113,6 +113,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
     }
   ],
   "require": {
@@ -208,6 +212,7 @@
     "nunomaduro/collision": "^4.1",
     "nwidart/laravel-modules": "dev-master",
     "orangehill/iseed": "dev-master",
+    "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
     "phpstan/phpstan": "^0.12.5",
     "phpunit/phpunit": "^8.5",
     "spatie/db-dumper": "^2.16",
