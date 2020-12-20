@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Core\Console\Commands\Vapor;
+namespace CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands;
 
 use CircleLinkHealth\Core\Traits\RunsCommands;
 use Dotenv\Dotenv;
@@ -25,8 +25,7 @@ class UploadSecretsFromFile extends Command
      *
      * @var string
      */
-    protected $signature = 'cpmvapor:uploadsecrets {--path= : The full path to the .env file\'s dir.}
-                                                   {--file= : The filename of the .env file.}
+    protected $signature = 'cpmvapor:uploadsecrets {--file= : The absolute path to the .env file.}
                                                    {--environment= : The environment to upload to.}
                                                    ';
 
@@ -37,13 +36,16 @@ class UploadSecretsFromFile extends Command
      */
     public function handle()
     {
-        $secrets = collect((Dotenv::createImmutable($this->option('path'), $this->option('file')))->load());
+        $secrets = collect((Dotenv::createImmutable(dirname($this->option('file')), basename($this->option('file'))))->load());
     
         $bar = $this->output->createProgressBar($secrets->count());
     
         $bar->start();
         
         $secrets->each(function ($secret, $name) use ($bar){
+            if (empty($secret)) {
+                $secret = '""';
+            }
             file_put_contents($tmp = storage_path(now()->timestamp.$name), $secret);
             $this->runCpmCommand("vapor secret {$this->option('environment')} --file=$tmp --name=$name");
             $this->runCpmCommand("rm -rf $tmp");

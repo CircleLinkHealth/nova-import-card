@@ -17,8 +17,9 @@ use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Console\Commands\StoreJiraTicketsDeployed;
 use CircleLinkHealth\Core\Console\Commands\StoreRelease;
-use CircleLinkHealth\Core\Console\Commands\Vapor\DeleteAllSecrets;
-use CircleLinkHealth\Core\Console\Commands\Vapor\UploadSecretsFromFile;
+use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\DeleteAllSecrets;
+use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\SyncEnvFiles;
+use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\UploadSecretsFromFile;
 use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
@@ -80,6 +81,9 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             RunScheduler::class,
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
+            SyncEnvFiles::class,
+            UploadSecretsFromFile::class,
+            DeleteAllSecrets::class,
         ];
 
         if ($this->app->environment('testing')) {
@@ -89,6 +93,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
         if ($this->app->environment('local')) {
             $arr[] = DeleteAllSecrets::class;
             $arr[] = UploadSecretsFromFile::class;
+            $arr[] = SyncEnvFiles::class;
         }
 
         $this->commands($arr);
