@@ -106,16 +106,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.2",
+            "version": "3.171.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "742663a85ec84647f74dea454d2dc45bba180f9d"
+                "reference": "7469c8e7f8db5dec544937677d08d8fff4f2f4e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/742663a85ec84647f74dea454d2dc45bba180f9d",
-                "reference": "742663a85ec84647f74dea454d2dc45bba180f9d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7469c8e7f8db5dec544937677d08d8fff4f2f4e9",
+                "reference": "7469c8e7f8db5dec544937677d08d8fff4f2f4e9",
                 "shasum": ""
             },
             "require": {
@@ -187,7 +187,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-18T19:12:13+00:00"
+            "time": "2020-12-21T19:14:02+00:00"
         },
         {
             "name": "brick/math",
@@ -385,11 +385,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4e7861f843cdca13f4dda422e43b484c148700da"
+                "reference": "8ab47d830a2d20af87cc0d5a278dca54cd33a7c3"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
                 "jeremykenedy/slack-laravel": "*",
+                "laravel-notification-channels/twilio": "^2.1",
                 "laravel/passport": "^8.0 || ^7.3.0",
                 "laravel/vapor-core": "^2.9",
                 "laravel/vapor-ui": "*",
@@ -399,6 +400,7 @@
                 "mxl/laravel-job": "^1.2",
                 "sentry/sentry-laravel": "^2.3",
                 "spatie/laravel-view-models": "^1.3",
+                "twilio/sdk": "~5.16",
                 "yajra/laravel-datatables-oracle": "~9.0"
             },
             "require-dev": {
@@ -425,7 +427,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-20T16:44:57+00:00"
+            "time": "2020-12-21T19:42:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -433,7 +435,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "5d4a714d4ea054d8b0fe36711c174fc122d38982"
+                "reference": "ba08af93b877284788106cb1ce541d5775104e68"
             },
             "type": "laravel-module",
             "extra": {
@@ -453,7 +455,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T13:22:42+00:00"
+            "time": "2020-12-21T15:08:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -461,7 +463,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "38b8153412a62f021c60ea423e2762bbc680333f"
+                "reference": "263ea29ed7b42f11e90fb420f9a1a174c5295f1b"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -498,7 +500,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-20T07:23:05+00:00"
+            "time": "2020-12-21T10:37:47+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -506,7 +508,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "538d3594fc5779eec86a9968dc75bf9c8de385eb"
+                "reference": "c82bf28eb65db13d80c16fe740791aaff59739b6"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -533,7 +535,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-19T15:51:42+00:00"
+            "time": "2020-12-21T20:10:56+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -2083,21 +2085,21 @@
         },
         {
             "name": "jeremykenedy/slack",
-            "version": "v2.0.0",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeremykenedy/slack.git",
-                "reference": "b862ea0f65585cec3ffe065296f0de56afd61763"
+                "reference": "943923fe5e5eeaefab6db760b0e1877ef1432cf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeremykenedy/slack/zipball/b862ea0f65585cec3ffe065296f0de56afd61763",
-                "reference": "b862ea0f65585cec3ffe065296f0de56afd61763",
+                "url": "https://api.github.com/repos/jeremykenedy/slack/zipball/943923fe5e5eeaefab6db760b0e1877ef1432cf9",
+                "reference": "943923fe5e5eeaefab6db760b0e1877ef1432cf9",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "guzzlehttp/guzzle": "~6.0|~5.0|~4.0",
+                "guzzlehttp/guzzle": "~7.0|~6.0|~5.0|~4.0",
                 "php": ">=5.5.0"
             },
             "require-dev": {
@@ -2133,7 +2135,7 @@
                 "laravel",
                 "slack"
             ],
-            "time": "2017-07-21T17:13:29+00:00"
+            "time": "2020-12-21T09:04:01+00:00"
         },
         {
             "name": "jeremykenedy/slack-laravel",
@@ -2440,6 +2442,68 @@
                 }
             ],
             "time": "2020-09-14T14:23:00+00:00"
+        },
+        {
+            "name": "laravel-notification-channels/twilio",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-notification-channels/twilio.git",
+                "reference": "f424ebce4fd587ffecf653246564899e930f9b4f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-notification-channels/twilio/zipball/f424ebce4fd587ffecf653246564899e930f9b4f",
+                "reference": "f424ebce4fd587ffecf653246564899e930f9b4f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/events": "^5.5 || ^6.0 || ^7.0",
+                "illuminate/notifications": "^5.5 || ^6.0 || ^7.0",
+                "illuminate/queue": "^5.5 || ^6.0 || ^7.0",
+                "illuminate/support": "^5.5 || ^6.0 || ^7.0",
+                "php": ">=7.2",
+                "twilio/sdk": "~5.16"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NotificationChannels\\Twilio\\TwilioProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NotificationChannels\\Twilio\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gregorio Hernández Caso",
+                    "email": "gregoriohc@gmail.com",
+                    "homepage": "https://github.com/gregoriohc",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Provides Twilio notification channel for Laravel.",
+            "keywords": [
+                "call",
+                "laravel",
+                "mms",
+                "notification",
+                "sms",
+                "twilio"
+            ],
+            "time": "2020-03-07T01:23:03+00:00"
         },
         {
             "name": "laravel/framework",
