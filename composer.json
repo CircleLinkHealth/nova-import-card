@@ -14,7 +14,7 @@
 
             ],
             "aliases": {
-                
+
             }
         }
     },
@@ -32,13 +32,15 @@
         "maatwebsite/excel": "^3.1",
         "laravelcollective/html": "^6.1",
         "laravel/vapor-core": "^2.9",
+        "laravel-notification-channels/twilio": "^2.1",
         "friendsofcat/laravel-feature-flag": "^3.2",
         "spatie/laravel-view-models": "^1.3",
         "jeremykenedy/slack-laravel": "*",
         "mxl/laravel-job": "^1.2",
         "laravel/vapor-ui": "*",
         "yajra/laravel-datatables-oracle": "~9.0",
-        "sentry/sentry-laravel": "^2.3"
+        "sentry/sentry-laravel": "^2.3",
+        "twilio/sdk": "~5.16"
     },
     "require-dev": {
         "laravel/vapor-cli": "^1.11"
