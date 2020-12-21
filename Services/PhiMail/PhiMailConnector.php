@@ -281,9 +281,8 @@ class PhiMailConnector
     /**
      * Check message queue for new status notification or incoming mail message.
      *
-     * @return \CircleLinkHealth\Core\Services\PhiMail\CheckResult|null the first item on queue, or null if queue is empty
      *@throws \Exception on unexpected failure
-     *
+     * @return \CircleLinkHealth\Core\Services\PhiMail\CheckResult|null the first item on queue, or null if queue is empty
      */
     public function check()
     {
@@ -406,9 +405,8 @@ class PhiMailConnector
     /**
      * Send the current outgoing message.
      *
+     * @throws \Exception                                           on unexpected failure
      * @return \CircleLinkHealth\Core\Services\PhiMail\SendResult[] one for each recipient
-     * @throws \Exception on unexpected failure
-     *
      */
     public function send()
     {
@@ -522,9 +520,8 @@ class PhiMailConnector
      *
      * @param int $messagePart the message part 0..n-1
      *
+     * @throws \Exception                                         on time-out reading message data
      * @return \CircleLinkHealth\Core\Services\PhiMail\ShowResult the requested content
-     * @throws \Exception on time-out reading message data
-     *
      */
     public function show($messagePart)
     {

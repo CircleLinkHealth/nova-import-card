@@ -2307,7 +2307,7 @@ if ( ! function_exists('resolvePath')) {
         if ( ! File::isDirectory($folder)) {
             File::makeDirectory($folder);
         }
-        
+
         return $path;
     }
 }

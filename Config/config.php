@@ -51,7 +51,7 @@ return [
             'server-cert-filename' => env('EMR_SERVER_CERT_FILENAME'),
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | CPM queues

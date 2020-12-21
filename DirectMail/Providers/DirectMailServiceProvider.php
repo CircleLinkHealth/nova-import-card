@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Core\DirectMail\Providers;
 
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Services\PhiMail\IncomingMessageHandler;
 use CircleLinkHealth\Core\Services\PhiMail\PhiMail;
-use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;

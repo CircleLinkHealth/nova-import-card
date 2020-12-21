@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
-use CircleLinkHealth\Core\Services\PhiMail\SendResult;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
 use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
+use CircleLinkHealth\Core\Services\PhiMail\SendResult;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 
 class DirectMailChannel

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Core\Services\PhiMail;
 
 class ShowResult
@@ -41,22 +45,22 @@ class ShowResult
      * @var string
      */
     public $mimeType;
-    
+
     /**
      * The message part returned: 0..n-1.
      *
      * @var int
      */
     public $partNum;
-    
+
     public function __construct($p, $h, $f, $m, $l, $d, $ai)
     {
-        $this->partNum = $p;
-        $this->headers = $h;
-        $this->filename = $f;
-        $this->mimeType = $m;
-        $this->length = $l;
-        $this->data = $d;
+        $this->partNum        = $p;
+        $this->headers        = $h;
+        $this->filename       = $f;
+        $this->mimeType       = $m;
+        $this->length         = $l;
+        $this->data           = $d;
         $this->attachmentInfo = $ai;
     }
 }

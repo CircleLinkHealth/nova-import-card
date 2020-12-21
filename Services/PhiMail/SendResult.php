@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Core\Services\PhiMail;
 
 class SendResult
@@ -19,7 +23,7 @@ class SendResult
      * @var string|null
      */
     public $messageId;
-    
+
     /**
      * The recipient to whom this result object pertains.
      *
@@ -32,7 +36,7 @@ class SendResult
      * @var bool
      */
     public $succeeded;
-    
+
     public function __construct($r, $s, $m)
     {
         $this->recipient = $r;
