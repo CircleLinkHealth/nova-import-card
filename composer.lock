@@ -1166,7 +1166,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "754afb862cec1398f74eaf2d207cabc8bc16fa38"
+                "reference": "3c5f07578a21f6d40a67b629c4e0675710745241"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1191,7 +1191,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T20:47:59+00:00"
+            "time": "2020-12-21T11:06:46+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
