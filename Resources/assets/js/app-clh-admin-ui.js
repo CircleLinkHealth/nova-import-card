@@ -39,6 +39,9 @@ const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ '../.
 const EnrolleeList = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/enrollment-kpis/enrollee-list')
 const PracticeKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/enrollment-kpis/practice-kpis')
 const CareAmbassadorKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/enrollment-kpis/careambassador-kpis')
+const PassportClients = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/passport/Clients')
+const PassportAuthorizedClients = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/passport/AuthorizedClients')
+const PassportPersonalAccessTokens = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/passport/PersonalAccessTokens')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/pages/work-schedule/daily-hours')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2')
 const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/time-tracker/time-tracker-events')
@@ -74,6 +77,9 @@ Vue.component('calendar-loader', CalendarLoader);
 Vue.component('calendar-daily-report', CalendarDailyReport);
 Vue.component('user-account-settings', UserAccountSettings);
 Vue.component('authy-perform-2fa', AuthyPerform2FA);
+Vue.component('passport-clients', PassportClients);
+Vue.component('passport-authorized-clients', PassportAuthorizedClients);
+Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokens);
 
 
 
