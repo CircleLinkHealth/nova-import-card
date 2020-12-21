@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Excel;
 
 class NursePerformanceRepController extends Controller
 {
@@ -210,8 +211,7 @@ class NursePerformanceRepController extends Controller
         });
 
         return (new FromArray($filename, $data->toArray()))
-            ->download($filename)
-            ->withHeaders([
+            ->download($filename, Excel::XLSX, [
                 'X-Vapor-Base64-Encode' => 'True',
             ]);
     }
