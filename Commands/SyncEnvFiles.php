@@ -20,7 +20,7 @@ class SyncEnvFiles extends Command
      * @var string
      */
     protected $description = 'This command takes in a source env file, and a blueprint env file. It will create a new file that will contain all keys from the blueprint, and fill in any values that exist in the source file.';
-    
+
     /**
      * The name and signature of the console command.
      *

@@ -37,12 +37,12 @@ class UploadSecretsFromFile extends Command
     public function handle()
     {
         $secrets = collect((Dotenv::createImmutable(dirname($this->option('file')), basename($this->option('file'))))->load());
-    
+
         $bar = $this->output->createProgressBar($secrets->count());
-    
+
         $bar->start();
-        
-        $secrets->each(function ($secret, $name) use ($bar){
+
+        $secrets->each(function ($secret, $name) use ($bar) {
             if (empty($secret)) {
                 $secret = '""';
             }
@@ -51,7 +51,7 @@ class UploadSecretsFromFile extends Command
             $this->runCpmCommand("rm -rf $tmp");
             $bar->advance();
         });
-    
+
         $bar->finish();
     }
 }
