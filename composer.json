@@ -169,7 +169,6 @@
     "joshbrw/laravel-module-installer": "^0.1.5",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~3.0",
-    "laravel-notification-channels/twilio": "^2.1",
     "laravel/framework": "^7.6",
     "laravel/scout": "^8.0",
     "laravel/tinker": "^2.0",
@@ -193,7 +192,6 @@
     "spatie/laravel-slack-slash-command": "^1.10",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
-    "twilio/sdk": "~5.16",
     "wildbit/swiftmailer-postmark": "^3.1",
     "willdurand/email-reply-parser": "^2.9"
   },
