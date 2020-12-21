@@ -13,7 +13,8 @@ environments:
     queue-timeout: 600
     scheduler: false
     mail: false
-    warm: 30
+    warm: 10
+    timeout: 45
     queues:
       - cpm-admin-low-production
       - cpm-admin-high-production
@@ -37,7 +38,7 @@ environments:
     queue-timeout: 600
     scheduler: false
     mail: false
-    warm: 10
+    timeout: 45
     queues:
       - cpm-admin-low-staging
       - cpm-admin-high-staging
