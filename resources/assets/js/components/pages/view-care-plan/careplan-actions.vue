@@ -43,7 +43,7 @@ export default {
     created() {
         self = this;
         this.getPatientCarePlan(this.patientId)
-        this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
+        this.apiUrl = rootUrl('care-plans/' + this.patientCareplanId + '/pdfs');
     },
     mounted() {
         App.$on('set-patient-problems', (problems) => {
