@@ -35,6 +35,7 @@ environments:
     cli-memory: 1024
     runtime: php-7.4
     queue-timeout: 600
+    scheduler: false
     mail: false
     warm: 10
     queues:
