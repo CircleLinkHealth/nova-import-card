@@ -34,6 +34,7 @@ class PrintPausedPatientLettersService
     public function getPausedPatients()
     {
         $isAdmin = auth()->user()->isAdmin();
+
         return $this->patientReadRepository
             ->paused()
             ->pausedLetterNotPrinted()
