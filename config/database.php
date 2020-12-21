@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-
 use CircleLinkHealth\Core\Config\CpmAppMySqlConfig;
 
 // for heroku

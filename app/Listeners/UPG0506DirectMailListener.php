@@ -6,9 +6,9 @@
 
 namespace App\Listeners;
 
-use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\UPG\UPGPdfCarePlan;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;

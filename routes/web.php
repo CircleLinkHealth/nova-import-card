@@ -14,7 +14,6 @@ Route::post('webhooks/on-sent-fax', [
     'as'   => 'webhook.on-fax-sent',
 ]);
 
-
 Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
 Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 

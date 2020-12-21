@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
