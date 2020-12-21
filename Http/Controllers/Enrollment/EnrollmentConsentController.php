@@ -23,6 +23,9 @@ class EnrollmentConsentController extends Controller
      */
     public function index(Request $request, EnrolleeFilters $filters)
     {
+        if ($filters->isCsv()){
+            return response()->json(['status'=> 'entered controller']);
+        }
         $fields = ['*'];
 
         $byColumn  = $request->get('byColumn');
