@@ -28,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        //todo: revisit/remove, these have been added to admin app
         Passport::routes();
 
         Passport::enableImplicitGrant();
