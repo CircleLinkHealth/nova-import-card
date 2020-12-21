@@ -5,6 +5,7 @@
  */
 
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
+use Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider;
 use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
@@ -184,7 +185,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         CpmMigrationsServiceProvider::class,
-        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
+        ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
         CpmAdminServiceProvider::class,
         RaygunServiceProvider::class,
