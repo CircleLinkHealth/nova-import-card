@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\PdfService\Services;
 
-use File;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
