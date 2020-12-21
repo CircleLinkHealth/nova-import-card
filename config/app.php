@@ -201,6 +201,8 @@ return [
         BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
         DirectMailServiceProvider::class,
+
+        CircleLinkHealth\Core\Providers\AuthServiceProvider::class
     ],
 
     /*
