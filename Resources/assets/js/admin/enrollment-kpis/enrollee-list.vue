@@ -172,7 +172,7 @@
                 let stringHideStatus = JSON.stringify(hideStatus);
 
                 const download = (page = 1) => {
-                    return this.axios.get( rootUrl(`/admin/enrollment/list/data?query=${stringHideStatus}&rows=50&page=${page}&csv${filters}`)).then(response => {
+                    return this.axios.get(encodeURIComponent(rootUrl(`/admin/enrollment/list/data?query=${stringHideStatus}&rows=50&page=${page}&csv${filters}`))).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
