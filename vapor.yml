@@ -7,8 +7,8 @@ environments:
         storage: cpm-production-vapor-storage
         cache: cpm-production-vapor-cache
         network: cpm-production
-        memory: 2048
-        cli-memory: 2048
+        memory: 1024
+        cli-memory: 1024
         runtime: php-7.4
         queue-timeout: 600
         scheduler: false
@@ -25,11 +25,8 @@ environments:
             - 'npm ci && npm run prod && rm -rf node_modules'
             - 'php artisan route:cache'
         deploy:
-            - 'php artisan config:cache'
-            - 'php artisan view:cache'
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
-            - 'php artisan queue:restart'
     staging:
         domain: cpm-provider.clh-staging.com
         storage: cpm-staging-vapor-storage
@@ -51,9 +48,6 @@ environments:
             - 'npm ci && npm run prod && rm -rf node_modules'
             - 'php artisan route:cache'
         deploy:
-            - 'php artisan config:cache'
-            - 'php artisan view:cache'
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
-            - 'php artisan queue:restart'
 
