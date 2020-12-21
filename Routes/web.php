@@ -861,5 +861,11 @@ Route::group([
     ])->middleware('permission:practice.read');
 });
 
-Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
-Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
+Route::post('send-sample-direct-mail', [
+    'uses' => 'DemoController@sendSampleEMRNote',
+    'as' => 'send.sample.note.via.dm'
+]);
+Route::post('send-sample-fax', [
+    'uses' => 'DemoController@sendSampleEfaxNote',
+    'as' => 'send.sample.note.via.efax'
+]);
