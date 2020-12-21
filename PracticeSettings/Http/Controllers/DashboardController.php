@@ -220,7 +220,7 @@ class DashboardController extends Controller
             $providers = $this->primaryPractice->getProviders($this->primaryPractice->id)->filter(function ($p) {
                 return ! (bool) $p->emr_direct_address;
             });
-            $route = route('cpm-admin::provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
+            $route = route('provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
 
             if ($providers->count() > 0) {
                 $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT. 
