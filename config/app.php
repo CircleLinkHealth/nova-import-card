@@ -199,7 +199,7 @@ return [
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
-        DirectMailServiceProvider::class
+        DirectMailServiceProvider::class,
     ],
 
     /*

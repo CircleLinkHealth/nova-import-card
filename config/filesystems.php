@@ -52,7 +52,7 @@ return [
             'driver' => 'local',
             'root'   => $useLambdaStorage ? ($lambdaRoot.'/app') : storage_path('app'),
         ],
-    
+
         'storage' => [
             'driver' => 'local',
             'root'   => $useLambdaStorage ? $lambdaRoot : storage_path(),
