@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "c74ef76f96b37c902927b24fd3320c6b51aab64e"
+                "reference": "8ab47d830a2d20af87cc0d5a278dca54cd33a7c3"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -760,7 +760,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-21T14:10:56+00:00"
+            "time": "2020-12-21T19:42:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1323,7 +1323,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "0fb275babe55340d288f3403a6eacbb9b9596238"
+                "reference": "cc29f3f19ece3dd2a5101d3436007d4b8be1701a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1343,7 +1343,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-21T19:26:45+00:00"
+            "time": "2020-12-21T19:28:40+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
