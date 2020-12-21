@@ -209,7 +209,11 @@ class NursePerformanceRepController extends Controller
             return $item['Day'].'-'.$item['Name'];
         });
 
-        return (new FromArray($filename, $data->toArray()))->download($filename);
+        return (new FromArray($filename, $data->toArray()))
+            ->download($filename)
+            ->withHeaders([
+                'X-Vapor-Base64-Encode' => 'True',
+            ]);
     }
 
     /**
