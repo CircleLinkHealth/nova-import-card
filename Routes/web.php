@@ -149,7 +149,7 @@ Route::group([
         )->middleware('permission:saas.create');
         Route::post('saas-accounts', 'CRUD\SaasAccountController@store')->middleware('permission:saas.create');
 
-        Route::view('api-clients', 'admin.manage-api-clients');
+        Route::view('api-clients', 'cpm-admin::admin.manage-api-clients');
 
         Route::get('medication-groups-maps', [
             'uses' => 'MedicationGroupsMapController@index',
