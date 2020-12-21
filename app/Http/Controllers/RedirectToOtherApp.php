@@ -13,16 +13,16 @@ class RedirectToOtherApp extends Controller
         return redirect()->to('');
     }
 
-    public function pinfo()
-    {
-        dd(phpinfo());
-    }
-    
     public function config()
     {
         dd(config());
     }
-    
+
+    public function pinfo()
+    {
+        dd(phpinfo());
+    }
+
     private function redirectToProvider($url)
     {
         return redirect()->to(rtrim(config('core.apps.cpm-provider.url'), '/')."/$url");
