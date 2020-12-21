@@ -108,7 +108,7 @@ class PracticeReportable implements Reportable
      */
     public function linkToNotes()
     {
-        return route('patient.note.listing');
+        return rtrim(config('core.apps.cpm-provider.url'), '/')."/manage-patients/provider-notes";
     }
 
     /**

@@ -107,7 +107,7 @@ class ProviderReportable implements Reportable
      */
     public function linkToNotes()
     {
-        return route('patient.note.listing')."/?provider={$this->provider->id}";
+        return rtrim(config('core.apps.cpm-provider.url'), '/')."/manage-patients/provider-notes?provider={$this->provider->id}";
     }
 
     /**
