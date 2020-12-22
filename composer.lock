@@ -756,7 +756,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "6ea7c9b4a8b72ef023e17fe57cf8ae03f7489736"
+                "reference": "a67fd6bb2f72bb5d4c8b9a8bc2067503514ae1cc"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -798,7 +798,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-22T11:07:17+00:00"
+            "time": "2020-12-22T12:34:19+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -12327,7 +12327,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git",
-                "reference": "59e0ffbb0b8e2d6719232a5857873388b1552d93"
+                "reference": "acbe59b4886beb77e3f4281111d73a759addd135"
             },
             "type": "laravel-module",
             "extra": {
@@ -12350,7 +12350,7 @@
                 }
             ],
             "description": "A collection of helpers to assist with various devops tasks.",
-            "time": "2020-12-22T07:32:34+00:00"
+            "time": "2020-12-22T12:46:56+00:00"
         },
         {
             "name": "composer/ca-bundle",
