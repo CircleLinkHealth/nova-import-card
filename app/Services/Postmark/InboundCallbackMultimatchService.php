@@ -6,12 +6,11 @@
 
 namespace App\Services\Postmark;
 
-use App\ValueObjects\PostmarkCallback\InboundCallbackNameFields;
-use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use App\Entities\PostmarkMultipleMatchData;
-use CircleLinkHealth\SharedModels\Entities\PostmarkSingleMatchData;
+use App\ValueObjects\PostmarkCallback\InboundCallbackNameFields;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -31,7 +30,7 @@ class InboundCallbackMultimatchService
     }
 
     /**
-     * @return array|PostmarkMultipleMatchData|\CircleLinkHealth\SharedModels\Entities\PostmarkSingleMatchData|void
+     * @return array|\CircleLinkHealth\SharedModels\Entities\PostmarkSingleMatchData|PostmarkMultipleMatchData|void
      */
     public function tryToMatchByName(Collection $matchedWithPhone, PostmarkCallbackInboundData $inboundPostmarkData, int $recordId)
     {

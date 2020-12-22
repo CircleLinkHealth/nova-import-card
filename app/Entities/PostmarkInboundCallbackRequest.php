@@ -38,8 +38,8 @@ class PostmarkInboundCallbackRequest
     }
 
     /**
-     * @return \CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData
      *@throws \Exception
+     * @return \CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData
      */
     public function run(string $inboundCallback, int $postmarkId)
     {

@@ -41,8 +41,6 @@ Route::get('admin/nurses/windows', [
     'as'   => 'get.admin.nurse.schedules',
 ]);
 
-
-
 Route::prefix('admin')->group(
     function () {
         Route::prefix('users')->group(
