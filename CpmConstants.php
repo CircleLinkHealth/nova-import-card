@@ -30,7 +30,8 @@ class CpmConstants
         CpmConstants::ICD10_NAME  => 2,
         CpmConstants::SNOMED_NAME => 3,
     ];
-    const FIVE_MINUTES_IN_SECONDS = 300;
+    const CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS = ['participant', 'survey-only'];
+    const FIVE_MINUTES_IN_SECONDS               = 300;
     /**
      * See "CPM Queues" in config/queue.php
      * Jobs can live in a module, and therefore dispatched by different apps.
@@ -41,7 +42,6 @@ class CpmConstants
     const HIGH_QUEUE = 'high';
     const ICD10      = ProblemCodeSystem::ICD10;
     const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
-    const CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS = ['participant', 'survey-only'];
 
     /**
      * Problem Codes.

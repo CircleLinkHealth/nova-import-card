@@ -6,13 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\ForeignId;
-use CircleLinkHealth\SharedModels\Entities\Message;
-use CircleLinkHealth\SharedModels\Entities\EmailSettings;
-use CircleLinkHealth\Customer\Notifications\CarePlanApprovalReminder;
-use CircleLinkHealth\Customer\Notifications\ResetPassword;
-use CircleLinkHealth\Customer\Repositories\EmptyUserNotificationList;
-use CircleLinkHealth\Customer\Services\UserService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
@@ -28,8 +21,12 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Notifications\CarePlanApprovalReminder;
+use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Repositories\Cache\UserNotificationList;
+use CircleLinkHealth\Customer\Repositories\EmptyUserNotificationList;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
+use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
@@ -56,9 +53,12 @@ use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
 use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use CircleLinkHealth\SharedModels\Entities\CpmWeight;
 use CircleLinkHealth\SharedModels\Entities\Dispute;
+use CircleLinkHealth\SharedModels\Entities\EmailSettings;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\ForeignId;
 use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Message;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
@@ -175,10 +175,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $disputes_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
- * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                                                       $emailSettings
+ * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                           $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
  * @property int|null                                                                                                        $emr_direct_count
- * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
+ * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                    $foreignId
  * @property int|null                                                                                                        $foreign_id_count
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardAlertsTo
  * @property int|null                                                                                                        $forward_alerts_to_count
@@ -196,7 +196,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $inbound_activities_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundCalls
  * @property int|null                                                                                                        $inbound_calls_count
- * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $inboundMessages
  * @property int|null                                                                                                        $inbound_messages_count
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $locations
  * @property int|null                                                                                                        $locations_count
@@ -213,7 +213,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $observations_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count
- * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $outboundMessages
  * @property int|null                                                                                                        $outbound_messages_count
  * @property \CircleLinkHealth\SharedModels\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
  * @property int|null                                                                                                        $page_timers_as_provider_count
@@ -329,6 +329,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -3400,6 +3401,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function scopeOfTypePatients($query)
+    {
+        return $query->ofType(Constants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+    }
+
     /**
      * @param mixed $query
      *
@@ -3484,11 +3490,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopePracticeStaff($query)
     {
         return $query->ofType(CpmConstants::PRACTICE_STAFF_ROLE_NAMES);
-    }
-    
-    public function scopeOfTypePatients($query)
-    {
-        return $query->ofType(Constants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
     }
 
     /**

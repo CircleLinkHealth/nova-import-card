@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Customer\Notifications;
 
-use CircleLinkHealth\Customer\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Channels\MailChannel;

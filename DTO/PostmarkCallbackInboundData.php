@@ -88,6 +88,14 @@ class PostmarkCallbackInboundData implements Arrayable
         return $this->$key ?? null;
     }
 
+    /**
+     * @return array
+     */
+    public function rawInboundCallbackData()
+    {
+        return $this->rawInboundDataArray;
+    }
+
     public function toArray()
     {
         return [
@@ -102,13 +110,5 @@ class PostmarkCallbackInboundData implements Arrayable
             'taken'                           => $this->taken,
             self::CANCELLATION_REASON_NEW_KEY => $this->callbackCancellationMessage(),
         ];
-    }
-    
-    /**
-     * @return array
-     */
-    public function rawInboundCallbackData()
-    {
-        return $this->rawInboundDataArray;
     }
 }
