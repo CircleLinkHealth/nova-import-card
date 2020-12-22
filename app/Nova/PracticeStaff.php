@@ -8,8 +8,9 @@ namespace App\Nova;
 
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
 use App\User;
-use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
+use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
+use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -92,6 +93,11 @@ class PracticeStaff extends Resource
     {
         return [
             ClhImportCardExtended::forUser(auth()->user(), self::class),
+            (new LinkableAway())
+                ->title('Create Practice Staff CSV Template')
+                ->url('https://drive.google.com/file/d/1rdjIAgSKbsyjCc_oLg0j3ISsywAUMA1t/view?usp=sharing')
+                ->subtitle('Click to download.')
+                ->target('_self'),
         ];
     }
 
