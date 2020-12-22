@@ -19,6 +19,11 @@ Route::group([
         'uses' => 'RedirectToAdminApp@getCreatePractice',
         'as'   => 'provider.dashboard.manage.practice',
     ]);
+
+    Route::get('staff', [
+        'uses' => 'RedirectToAdminApp@getCreatePracticeStaff',
+        'as'   => 'provider.dashboard.manage.staff',
+    ]);
 });
 
 Route::get('calls-v2', [
@@ -35,3 +40,21 @@ Route::get('admin/nurses/windows', [
     'uses' => 'RedirectToAdminApp@getAdminNurseSchedules',
     'as'   => 'get.admin.nurse.schedules',
 ]);
+
+
+
+Route::prefix('admin')->group(
+    function () {
+        Route::prefix('users')->group(
+            function () {
+                Route::get(
+                    '{id}/destroy',
+                    [
+                        'uses' => 'RedirectToAdminApp@destroyUser',
+                        'as'   => 'admin.users.destroy',
+                    ]
+                )->middleware('permission:user.delete');
+            }
+        );
+    }
+);
