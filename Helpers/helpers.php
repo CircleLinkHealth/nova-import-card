@@ -2311,3 +2311,28 @@ if ( ! function_exists('resolvePath')) {
         return $path;
     }
 }
+
+if ( ! function_exists('boolValue')) {
+    function boolValue($val): bool
+    {
+        if (is_bool($val)) {
+            return boolval($val);
+        }
+        if (is_string($val)) {
+            return in_array($val, ['1', 'true', 'TRUE']);
+        }
+
+        return false;
+    }
+}
+
+if ( ! function_exists('intValue')) {
+    function intValue($val, $default = 0): ?int
+    {
+        if (is_numeric($val)) {
+            return intval($val);
+        }
+
+        return $default;
+    }
+}
