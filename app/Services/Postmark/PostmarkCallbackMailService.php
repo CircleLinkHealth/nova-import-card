@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Log;
 class PostmarkCallbackMailService
 {
     /**
-     * @return array|void
+     * @throws \Exception
+     * @return PostmarkCallbackInboundData|void
      */
     public function postmarkInboundData(int $postmarkRecordId)
     {
@@ -26,16 +27,14 @@ class PostmarkCallbackMailService
 
             return;
         }
-
-        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($postmarkRecord->body, $postmarkRecordId);
-
-        if (empty($inboundDataArray)) {
+        
+        if (empty($postmarkRecord->body)) {
             Log::error("Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
             sendSlackMessage('#carecoach_ops_alerts', "Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
 
             return;
         }
 
-        return (new PostmarkCallbackInboundData())->getInboundDataArray($inboundDataArray);
+        return (new PostmarkInboundCallbackRequest())->run($postmarkRecord->body, $postmarkRecordId);
     }
 }
