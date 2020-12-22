@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\ForeignId;
-use App\Message;
-use App\Models\EmailSettings;
-use App\Notifications\CarePlanApprovalReminder;
+use CircleLinkHealth\SharedModels\Entities\ForeignId;
+use CircleLinkHealth\SharedModels\Entities\Message;
+use CircleLinkHealth\SharedModels\Entities\EmailSettings;
+use CircleLinkHealth\Customer\Notifications\CarePlanApprovalReminder;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
-use App\Repositories\Cache\EmptyUserNotificationList;
-use App\Services\UserService;
+use CircleLinkHealth\Customer\Repositories\EmptyUserNotificationList;
+use CircleLinkHealth\Customer\Services\UserService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
@@ -175,10 +175,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $disputes_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
- * @property \App\Models\EmailSettings                                                                                       $emailSettings
+ * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                                                       $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
  * @property int|null                                                                                                        $emr_direct_count
- * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
+ * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
  * @property int|null                                                                                                        $foreign_id_count
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardAlertsTo
  * @property int|null                                                                                                        $forward_alerts_to_count
@@ -196,7 +196,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $inbound_activities_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundCalls
  * @property int|null                                                                                                        $inbound_calls_count
- * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
  * @property int|null                                                                                                        $inbound_messages_count
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $locations
  * @property int|null                                                                                                        $locations_count
@@ -213,7 +213,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $observations_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count
- * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
  * @property int|null                                                                                                        $outbound_messages_count
  * @property \CircleLinkHealth\SharedModels\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
  * @property int|null                                                                                                        $page_timers_as_provider_count
