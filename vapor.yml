@@ -34,7 +34,7 @@ environments:
         network: cpm-staging
         memory: 1024
         cli-memory: 1024
-        runtime: php-7.4:al2
+        runtime: php-7.4
         queue-timeout: 600
         mail: false
         timeout: 45
