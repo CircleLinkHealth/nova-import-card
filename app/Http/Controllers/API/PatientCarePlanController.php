@@ -34,7 +34,7 @@ class PatientCarePlanController extends Controller
         $headers = [
             'Content-Type'          => 'application/pdf',
             'Content-Disposition'   => 'inline; filename="'.$fileName.'"',
-            'X-Vapor-Base64-Encode' => 'False', //already base64 encoded
+            'X-Vapor-Base64-Encode' => 'True',
         ];
 
         if ('local' === env('APP_ENV')) {
@@ -42,7 +42,7 @@ class PatientCarePlanController extends Controller
             return Response::make(file_get_contents(storage_path("patient/pdf-careplans/${fileName}")), 200, $headers);
         }
 
-        return response($pdf->file, 200, $headers);
+        return response(base64_decode($pdf->file), 200, $headers);
     }
 
     /**
