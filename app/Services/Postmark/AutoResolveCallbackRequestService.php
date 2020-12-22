@@ -9,12 +9,12 @@ namespace App\Services\Postmark;
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
-use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -115,7 +115,7 @@ class AutoResolveCallbackRequestService
 
     /**
      * @throws \Exception
-     * @return \App\Call
+     * @return \CircleLinkHealth\SharedModels\Entities\Call
      */
     private function assignCallbackToNurse(User $user, PostmarkCallbackInboundData $postmarkCallbackData)
     {
@@ -125,11 +125,11 @@ class AutoResolveCallbackRequestService
         return $service->scheduleAsapCallbackTask(
             $user,
             (new AutomatedCallbackMessageValueObject(
-                    $postmarkCallbackData->get('phone'),
-                    $postmarkCallbackData->get('message'),
-                    $user->first_name,
-                    $user->last_name
-                ))->constructCallbackMessage(),
+                $postmarkCallbackData->get('phone'),
+                $postmarkCallbackData->get('message'),
+                $user->first_name,
+                $user->last_name
+            ))->constructCallbackMessage(),
             ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
             null,
             SchedulerService::CALL_BACK_TYPE,

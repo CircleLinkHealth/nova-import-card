@@ -6,7 +6,6 @@
 
 namespace Tests\Feature;
 
-use App\Call;
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
@@ -14,6 +13,7 @@ use App\Notifications\CallCreated;
 use App\PostmarkInboundMail;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\UnresolvedPostmarkCallback;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
