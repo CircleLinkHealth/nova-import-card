@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
-use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
