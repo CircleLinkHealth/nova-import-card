@@ -26,8 +26,8 @@ class SyncEnvFiles extends Command
      *
      * @var string
      */
-    protected $signature = 'cpmvapor:syncenvfiles {--source= : The absolute path to the source .env file.}
-                                                   {--blueprint= : The absolute path to the blueprint .env file.}
+    protected $signature = 'cpmvapor:syncenvfiles {source: The absolute path to the source .env file.}
+                                                   {blueprint: The absolute path to the blueprint .env file.}
                                                    ';
 
     /**
@@ -37,9 +37,9 @@ class SyncEnvFiles extends Command
      */
     public function handle()
     {
-        $source       = $this->toCollection($this->option('source'));
-        $blueprint    = $this->toCollection($this->option('blueprint'));
-        $destFilename = $this->option('source').now()->timestamp;
+        $source       = $this->toCollection($this->argument('source'));
+        $blueprint    = $this->toCollection($this->argument('blueprint'));
+        $destFilename = $this->argument('source').now()->timestamp;
 
         $bar = $this->output->createProgressBar($blueprint->count());
 
