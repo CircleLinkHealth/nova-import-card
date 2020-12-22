@@ -6,7 +6,9 @@
 
 namespace CircleLinkHealth\Core\Providers;
 
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class CoreServiceProvider extends ServiceProvider
@@ -21,6 +23,10 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        Relation::morphMap([
+            Call::class => '\App\Call',
+        ]);
+        
         $this->registerViews();
         $this->registerFactories();
 
