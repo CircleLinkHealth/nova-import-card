@@ -37,11 +37,6 @@ class PatientCarePlanController extends Controller
             'X-Vapor-Base64-Encode' => 'True',
         ];
 
-        if ('local' === env('APP_ENV')) {
-            //todo: this should not read from disk
-            return Response::make(file_get_contents(storage_path("patient/pdf-careplans/${fileName}")), 200, $headers);
-        }
-
         return response(base64_decode($pdf->file), 200, $headers);
     }
 
