@@ -27,7 +27,7 @@ class PatientTime extends Resource
      * @var string
      */
     public static $model = \CircleLinkHealth\Customer\Entities\User::class;
-
+    
     /**
      * The columns that should be searched.
      *
@@ -37,14 +37,14 @@ class PatientTime extends Resource
         'id',
         'display_name',
     ];
-
+    
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'id';
-
+    
     /**
      * Get the actions available for the resource.
      *
@@ -60,7 +60,7 @@ class PatientTime extends Resource
                 ->onlyOnDetail(true),
         ];
     }
-
+    
     /**
      * @return bool
      */
@@ -68,7 +68,7 @@ class PatientTime extends Resource
     {
         return false;
     }
-
+    
     /**
      * @return bool
      */
@@ -76,7 +76,7 @@ class PatientTime extends Resource
     {
         return false;
     }
-
+    
     /**
      * @return bool
      */
@@ -84,7 +84,7 @@ class PatientTime extends Resource
     {
         return true;
     }
-
+    
     /**
      * @return bool
      */
@@ -92,7 +92,7 @@ class PatientTime extends Resource
     {
         return auth()->user()->isAdmin();
     }
-
+    
     /**
      * Get the cards available for the request.
      *
@@ -102,7 +102,7 @@ class PatientTime extends Resource
     {
         return [];
     }
-
+    
     /**
      * Get the fields displayed by the resource.
      *
@@ -112,35 +112,35 @@ class PatientTime extends Resource
     {
         return [
             ID::make('Patient ID', 'id')->sortable(),
-
+            
             Text::make('Name', 'display_name')
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('CCM', function (\CircleLinkHealth\Customer\Entities\User $row) {
                 return $row->formattedTime($row->getCcmTime());
             })
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('CCM (RHC/FQHC)', function (\CircleLinkHealth\Customer\Entities\User $row) {
                 return $row->formattedTime($row->getRhcTime());
             })
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('BHI', function (\CircleLinkHealth\Customer\Entities\User $row) {
                 return $row->formattedTime($row->getBhiTime());
             })
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('RPM', function (\CircleLinkHealth\Customer\Entities\User $row) {
                 return $row->formattedTime($row->getRpmTime());
             })
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('PCM', function (\CircleLinkHealth\Customer\Entities\User $row) {
                 return $row->formattedTime($row->getPcmTime());
             })
@@ -148,7 +148,7 @@ class PatientTime extends Resource
                 ->readonly(true),
         ];
     }
-
+    
     /**
      * Get the filters available for the resource.
      *
@@ -158,12 +158,12 @@ class PatientTime extends Resource
     {
         return [];
     }
-
+    
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->ofType('participant');
     }
-
+    
     /**
      * Get the lenses available for the resource.
      *
