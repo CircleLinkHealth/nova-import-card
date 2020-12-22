@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class ProcessUnresolvedPostmarkCallback
 {
-    private bool $isMultiMatch;
-    private bool $isUniqueMatch;
-    private $matchedUsersFromDatabase;
+    private array $matchedUsersFromDatabase;
     private int $recordId;
 
     /**
@@ -37,11 +35,11 @@ class ProcessUnresolvedPostmarkCallback
         $suggestions = collect();
 
         if ($this->matchedWithMultipleUsers()) {
-            $suggestions->push(...$this->matchedUsersFromDatabase['matchUsersResult']->pluck('id'));
+            $suggestions->push(...$this->matchedUsersFromDatabase['matchedData']->pluck('id'));
         }
 
         if ($this->matchedWithUniqueUser()) {
-            $suggestions->push($this->matchedUsersFromDatabase['matchUsersResult']->id);
+            $suggestions->push($this->matchedUsersFromDatabase['matchedData']->id);
         }
 
         return $suggestions;
@@ -53,7 +51,7 @@ class ProcessUnresolvedPostmarkCallback
     public function getUserIdIfMatched()
     {
         if ($this->matchedWithUniqueUser()) {
-            return isset($this->matchedUsersFromDatabase['matchUsersResult']->id) ? $this->matchedUsersFromDatabase['matchUsersResult']->id : null;
+            return null;
         }
 
         return null;
@@ -96,8 +94,8 @@ class ProcessUnresolvedPostmarkCallback
      */
     private function matchedWithMultipleUsers()
     {
-        return $this->isMultiMatch = $this->matchedUsersFromDatabase['matchUsersResult'] instanceof Collection
-            || $this->matchedUsersFromDatabase['matchUsersResult'] instanceof \Illuminate\Support\Collection;
+        return $isMultiMatch = $this->matchedUsersFromDatabase['matchedData'] instanceof Collection
+            || $this->matchedUsersFromDatabase['matchedData'] instanceof \Illuminate\Support\Collection;
     }
 
     /**
@@ -105,6 +103,6 @@ class ProcessUnresolvedPostmarkCallback
      */
     private function matchedWithUniqueUser()
     {
-        return $this->matchedUsersFromDatabase['matchUsersResult'] instanceof User;
+        return $this->matchedUsersFromDatabase['matchedData'] instanceof User;
     }
 }

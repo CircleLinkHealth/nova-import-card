@@ -94,8 +94,13 @@ class InboundCallbackDataForTesterService
     {
         return $this->dataOfStatusType(Patient::ENROLLED, true, true, $save, Enrollee::ENROLLED);
     }
-
+    
     /**
+     * @param string $patientType
+     * @param bool $requestToWithdraw
+     * @param bool $nameIsSelf
+     * @param bool $save
+     * @param string $enrolleeType
      * @return array
      */
     public function dataOfStatusType(string $patientType, bool $requestToWithdraw, bool $nameIsSelf, bool $save = false, string $enrolleeType)
