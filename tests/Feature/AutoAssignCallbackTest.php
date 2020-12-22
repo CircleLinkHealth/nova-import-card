@@ -14,7 +14,7 @@ use App\Notifications\CallCreated;
 use App\PostmarkInboundMail;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\UnresolvedPostmarkCallback;
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;

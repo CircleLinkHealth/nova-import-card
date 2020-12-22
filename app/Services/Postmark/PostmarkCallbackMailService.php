@@ -8,14 +8,14 @@ namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\PostmarkInboundMail;
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
 {
     /**
-     * @throws \Exception
-     * @return PostmarkCallbackInboundData|void
+     * @return \CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData|void
+     *@throws \Exception
      */
     public function postmarkInboundData(int $postmarkRecordId)
     {

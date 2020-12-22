@@ -9,7 +9,7 @@ namespace App\Services\Postmark;
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;

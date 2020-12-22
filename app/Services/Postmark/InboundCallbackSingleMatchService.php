@@ -6,8 +6,8 @@
 
 namespace App\Services\Postmark;
 
-use App\Entities\PostmarkSingleMatchData;
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
+use CircleLinkHealth\SharedModels\Entities\PostmarkSingleMatchData;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;

@@ -6,7 +6,7 @@
 
 namespace App\Entities;
 
-use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
+use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 

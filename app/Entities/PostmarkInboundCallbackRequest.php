@@ -6,7 +6,7 @@
 
 namespace App\Entities;
 
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -38,8 +38,8 @@ class PostmarkInboundCallbackRequest
     }
 
     /**
-     * @throws \Exception
-     * @return PostmarkCallbackInboundData
+     * @return \CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData
+     *@throws \Exception
      */
     public function run(string $inboundCallback, int $postmarkId)
     {
