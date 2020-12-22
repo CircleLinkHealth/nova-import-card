@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
 use Illuminate\Console\Command;
 
