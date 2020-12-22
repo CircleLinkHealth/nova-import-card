@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -15,8 +18,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain'   => env('MAILGUN_DOMAIN'),
+        'secret'   => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
 
@@ -25,19 +28,19 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key'    => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
     'twilio' => [
         'enabled'          => env('TWILIO_ENABLED', false),
-        'sid'              => env('TWILIO_SID', 'somerandomstring'),
-        'token'            => env('TWILIO_TOKEN', 'somerandomstring'),
+        'account_sid'      => env('TWILIO_SID', 'somerandomstring'),
+        'auth_token'       => env('TWILIO_TOKEN', 'somerandomstring'),
         'from'             => env('TWILIO_FROM', 'somerandomstring'),
         'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
         'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
         'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
+        'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
     ],
-
 ];
