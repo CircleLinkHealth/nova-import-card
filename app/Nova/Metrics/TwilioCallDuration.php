@@ -6,7 +6,7 @@
 
 namespace App\Nova\Metrics;
 
-use CircleLinkHealth\SharedModels\Entities\TwilioCall;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
