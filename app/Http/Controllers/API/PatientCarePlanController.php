@@ -32,9 +32,9 @@ class PatientCarePlanController extends Controller
             return "Could not find PDF with filename: ${fileName}";
         }
         $headers = [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$fileName.'"',
-            //'X-Vapor-Base64-Encode' => 'True',
+            'Content-Type'          => 'application/pdf',
+            'Content-Disposition'   => 'inline; filename="'.$fileName.'"',
+            'X-Vapor-Base64-Encode' => 'False', //already base64 encoded
         ];
 
         if ('local' === env('APP_ENV')) {
