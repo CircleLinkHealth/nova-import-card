@@ -8,6 +8,11 @@ namespace App\Http\Controllers;
 
 class RedirectToAdminApp extends Controller
 {
+    public function destroyUser(string $practiceSlug)
+    {
+        return $this->redirectToAdmin("admin/users/$practiceSlug/destroy");
+    }
+
     public function getAdminNurseSchedules()
     {
         return $this->redirectToAdmin('admin/nurses/windows');
@@ -28,21 +33,16 @@ class RedirectToAdminApp extends Controller
         return $this->redirectToAdmin("practices/$practiceSlug/practice");
     }
 
+    public function getCreatePracticeStaff(string $practiceSlug)
+    {
+        return $this->redirectToAdmin("practices/$practiceSlug/staff");
+    }
+
     public function getPAM()
     {
         return $this->redirectToAdmin('pam');
     }
 
-    public function destroyUser(string $practiceSlug)
-    {
-        return $this->redirectToAdmin("admin/users/$practiceSlug/destroy");
-    }
-    
-    public function getCreatePracticeStaff(string $practiceSlug)
-    {
-        return $this->redirectToAdmin("practices/$practiceSlug/staff");
-    }
-    
     private function redirectToAdmin($url)
     {
         return redirect()->to(rtrim(config('core.apps.cpm-admin.url'), '/')."/$url");

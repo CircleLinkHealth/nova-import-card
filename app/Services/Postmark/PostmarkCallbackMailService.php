@@ -8,14 +8,13 @@ namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\PostmarkInboundMail;
-use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
 {
     /**
-     * @return \CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData|void
      *@throws \Exception
+     * @return \CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData|void
      */
     public function postmarkInboundData(int $postmarkRecordId)
     {
@@ -27,7 +26,7 @@ class PostmarkCallbackMailService
 
             return;
         }
-        
+
         if (empty($postmarkRecord->body)) {
             Log::error("Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
             sendSlackMessage('#carecoach_ops_alerts', "Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");

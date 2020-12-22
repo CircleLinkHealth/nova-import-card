@@ -8,12 +8,10 @@ namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
-use App\ValueObjects\Athena\Patient;
-use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 
 trait PostmarkCallbackHelpers
 {
@@ -47,7 +45,7 @@ trait PostmarkCallbackHelpers
         Taken: Not relevant";
 
         if ($requestsToWithdraw) {
-            $key = PostmarkCallbackInboundData::CANCELLATION_REASON_KEY;
+            $key                = PostmarkCallbackInboundData::CANCELLATION_REASON_KEY;
             $withdrawReasonText = "$key:| I want to Cancel |";
             $extraValues        = "\n".' '.$withdrawReasonText;
             $callbackMailData   = $callbackMailData.$extraValues;

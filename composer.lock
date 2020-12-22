@@ -934,7 +934,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "5461f78fa4d13bcb8b100b47d74766dc67c91514"
+                "reference": "b774c4ad4b124b79222b99b8f723c6a69fe76f3e"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -976,7 +976,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-22T20:08:24+00:00"
+            "time": "2020-12-22T19:57:20+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -2518,10 +2518,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2561,7 +2561,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",

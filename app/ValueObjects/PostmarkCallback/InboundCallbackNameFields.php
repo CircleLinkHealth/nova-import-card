@@ -33,7 +33,7 @@ class InboundCallbackNameFields
             $this->ptnNameField,
         ];
     }
-    
+
     /**
      * @return string
      */
@@ -41,7 +41,7 @@ class InboundCallbackNameFields
     {
         return $this->callerNameField;
     }
-    
+
     /**
      * @return string
      */
@@ -49,6 +49,7 @@ class InboundCallbackNameFields
     {
         return $this->fromNameField;
     }
+
     /**
      * @return string
      */

@@ -94,10 +94,10 @@ namespace App;
  * @property int|null                                                                                                        $disputes_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
- * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                                                       $emailSettings
+ * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                           $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
  * @property int|null                                                                                                        $emr_direct_count
- * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
+ * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                    $foreignId
  * @property int|null                                                                                                        $foreign_id_count
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardAlertsTo
  * @property int|null                                                                                                        $forward_alerts_to_count
@@ -115,7 +115,7 @@ namespace App;
  * @property int|null                                                                                                        $inbound_activities_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundCalls
  * @property int|null                                                                                                        $inbound_calls_count
- * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $inboundMessages
  * @property int|null                                                                                                        $inbound_messages_count
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $locations
  * @property int|null                                                                                                        $locations_count
@@ -132,7 +132,7 @@ namespace App;
  * @property int|null                                                                                                        $observations_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count
- * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $outboundMessages
  * @property int|null                                                                                                        $outbound_messages_count
  * @property \CircleLinkHealth\SharedModels\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
  * @property int|null                                                                                                        $page_timers_as_provider_count
@@ -241,6 +241,7 @@ namespace App;
  * @property \CircleLinkHealth\SamlSp\Entities\SamlUser[]|\Illuminate\Database\Eloquent\Collection                                $samlUsers
  * @property int|null                                                                                                             $saml_users_count
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
