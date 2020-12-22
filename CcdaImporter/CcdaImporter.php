@@ -230,7 +230,7 @@ class CcdaImporter
             ->pluck('number')
             ->map(fn ($num) => formatPhoneNumberE164($num))
             ->when($enrollee, function ($col) use ($enrollee) {
-                $col->merge([
+                return $col->merge([
                     formatPhoneNumberE164($enrollee->primary_phone),
                     formatPhoneNumberE164($enrollee->cell_phone),
                     formatPhoneNumberE164($enrollee->home_phone),
