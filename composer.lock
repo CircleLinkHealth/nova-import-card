@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e061247d3734e1fb190d21205068c98",
+    "content-hash": "8e5663011229dc04db4aada2f91b7b60",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -385,7 +385,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8ab47d830a2d20af87cc0d5a278dca54cd33a7c3"
+                "reference": "34b9515f8b01a4d14633d48bea48d5744b0e7fc3"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -427,7 +427,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-21T19:42:38+00:00"
+            "time": "2020-12-22T11:41:08+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -463,7 +463,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "263ea29ed7b42f11e90fb420f9a1a174c5295f1b"
+                "reference": "a369a66af60b2d9bb72bf5156a541f27ed2f3c7f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -500,7 +500,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-21T10:37:47+00:00"
+            "time": "2020-12-22T08:00:51+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -590,7 +590,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "e0c7a98ac95fa489ce0d44be2c58318ee1380885"
+                "reference": "cdd6bbbd798bd87b5d70a15d1e0b3a0eef6ec8ae"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -607,7 +607,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-19T17:39:20+00:00"
+            "time": "2020-12-22T11:07:17+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -637,6 +637,40 @@
             ],
             "description": "Add synonyms for a specific Model and Field.",
             "time": "2020-09-30T13:48:52+00:00"
+        },
+        {
+            "name": "circlelinkhealth/twilio-integration-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
+                "reference": "a5c272f10d957e70711c1c6a339881581a480167"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/shared-models-module": "*",
+                "laravel-notification-channels/twilio": "^2.1"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\TwilioIntegration\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-12-22T11:24:33+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -13324,6 +13358,7 @@
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/twilio-integration-module": 20,
         "nwidart/laravel-modules": 20
     },
     "prefer-stable": true,

@@ -21,6 +21,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         },
         {
@@ -59,6 +63,8 @@
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
+        "circlelinkhealth/twilio-integration-module": "dev-master",
+        "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
@@ -68,7 +74,6 @@
         "laravel/vapor-core": "^2.9",
         "nwidart/laravel-modules": "dev-master",
         "propaganistas/laravel-phone": "^4.1",
-        "fakerphp/faker": "^1.9.1",
         "twilio/sdk": "5.31.3"
     },
     "require-dev": {

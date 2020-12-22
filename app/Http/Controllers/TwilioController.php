@@ -7,13 +7,13 @@
 namespace App\Http\Controllers;
 
 use App\RedisEvents\TwilioDebuggerEvent;
-use App\Services\TwilioClientable;
-use App\TwilioCall;
-use App\TwilioConferenceCallParticipant;
-use App\TwilioRawLog;
-use App\TwilioRecording;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioConferenceCallParticipant;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioDebuggerLog;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioRawLog;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioRecording;
+use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Response;
