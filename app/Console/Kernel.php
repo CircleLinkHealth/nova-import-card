@@ -16,7 +16,6 @@ use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
-use App\Console\Commands\CheckVoiceCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
@@ -136,10 +135,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
-
-        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
-            ->hourly()
-            ->between('7:00', '23:00');
 
         $schedule->command('schedule-monitor:clean')
             ->daily();

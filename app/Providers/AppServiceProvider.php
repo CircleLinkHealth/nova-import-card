@@ -16,7 +16,6 @@ use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
-use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
@@ -138,9 +137,6 @@ class AppServiceProvider extends ServiceProvider
         $cm = $this->app->make(ChannelManager::class);
         $cm->extend('phaxio', function (Application $app) {
             return $app->make(FaxChannel::class);
-        });
-        $cm->extend('twilio', function (Application $app) {
-            return $app->make(CustomTwilioChannel::class);
         });
         $cm->extend('mail', function (Application $app) {
             return $app->make(CustomMailChannel::class);

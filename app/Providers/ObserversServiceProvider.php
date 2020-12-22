@@ -29,7 +29,6 @@ use App\Observers\ProblemCodeObserver;
 use App\Observers\ProblemObserver;
 use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
-use App\Observers\TwilioCallObserver;
 use App\Observers\UserObserver;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Holiday;
@@ -54,7 +53,6 @@ use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
-use CircleLinkHealth\SharedModels\Entities\TwilioCall;
 use Illuminate\Support\ServiceProvider;
 
 class ObserversServiceProvider extends ServiceProvider
@@ -87,7 +85,6 @@ class ObserversServiceProvider extends ServiceProvider
         NurseInvoiceDailyDispute::observe(NurseInvoiceDailyDisputeObserver::class);
         Addendum::observe(AddendumObserver::class);
         Enrollee::observe(EnrolleeObserver::class);
-        TwilioCall::observe(TwilioCallObserver::class);
         Location::observe(LocationObserver::class);
     }
 

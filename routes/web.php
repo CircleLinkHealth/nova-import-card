@@ -910,20 +910,6 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'twilio',
-], function () {
-    Route::post('/sms/status', [
-        'uses' => 'Twilio\TwilioController@smsStatusCallback',
-        'as'   => 'twilio.sms.status',
-    ]);
-
-    Route::post('/sms/inbound', [
-        'uses' => 'Twilio\TwilioController@smsInbound',
-        'as'   => 'twilio.sms.inbound',
-    ]);
-});
-
-Route::group([
     'prefix' => 'sendgrid',
 ], function () {
     Route::post('/status', [

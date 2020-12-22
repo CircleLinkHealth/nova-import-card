@@ -21,6 +21,7 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Synonyms" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Timetracking" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/TwilioIntegration" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Twofa" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/VaporDevopsHelpers" vcs="Git" />
   </component>
