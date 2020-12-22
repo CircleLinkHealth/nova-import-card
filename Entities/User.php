@@ -3485,6 +3485,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->ofType(CpmConstants::PRACTICE_STAFF_ROLE_NAMES);
     }
+    
+    public function scopeOfTypePatients($query)
+    {
+        return $query->ofType(Constants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+    }
 
     /**
      * Scope the query to practices for which the user has at least one of the given roles.
