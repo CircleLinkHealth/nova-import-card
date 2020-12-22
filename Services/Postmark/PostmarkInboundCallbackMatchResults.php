@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Services\Postmark;
 
-use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
-use App\Entities\PostmarkSingleMatchData;
+use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
+use CircleLinkHealth\SharedModels\Entities\PostmarkSingleMatchData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -40,7 +40,7 @@ class PostmarkInboundCallbackMatchResults
     /**
      * Doing the checks separately.
      *
-     * @return PostmarkSingleMatchData
+     * @return \CircleLinkHealth\SharedModels\Entities\PostmarkSingleMatchData
      */
     public function matchedPatientsData()
     {
