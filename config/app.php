@@ -6,7 +6,6 @@
 
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
-use App\Providers\TwilioClientServiceProvider;
 use App\View\Composers\FabComposer;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
@@ -227,7 +226,7 @@ return [
 
         DirectMailServiceProvider::class,
         FaxServiceProvider::class,
-        TwilioClientServiceProvider::class,
+        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class,
         HtmlServiceProvider::class,
 
         ProviderUITimerComposer::class,

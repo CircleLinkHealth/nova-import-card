@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Storage;
 
@@ -30,11 +31,18 @@ class PatientCarePlanController extends Controller
         if ( ! $pdf) {
             return "Could not find PDF with filename: ${fileName}";
         }
+        $headers = [
+            'Content-Type'          => 'application/pdf',
+            'Content-Disposition'   => 'inline; filename="'.$fileName.'"',
+            'X-Vapor-Base64-Encode' => 'False', //already base64 encoded
+        ];
 
-        return response(base64_decode($pdf->file), 200, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$fileName.'"',
-        ]);
+        if ('local' === env('APP_ENV')) {
+            //todo: this should not read from disk
+            return Response::make(file_get_contents(storage_path("patient/pdf-careplans/${fileName}")), 200, $headers);
+        }
+
+        return response($pdf->file, 200, $headers);
     }
 
     /**

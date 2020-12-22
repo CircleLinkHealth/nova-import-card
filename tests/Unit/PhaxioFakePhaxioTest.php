@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
-use App\Notifications\SendSms;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\TwilioIntegration\Notifications\SendSms;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;

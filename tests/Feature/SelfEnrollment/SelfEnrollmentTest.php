@@ -26,6 +26,7 @@ use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\LoginLogout;
+use CircleLinkHealth\TwilioIntegration\Notifications\Channels\CustomTwilioChannel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
