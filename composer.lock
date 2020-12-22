@@ -1012,7 +1012,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6de3ff616f7fb278d2745da90077cbb9a195da4d"
+                "reference": "a369a66af60b2d9bb72bf5156a541f27ed2f3c7f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1049,7 +1049,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T04:09:32+00:00"
+            "time": "2020-12-22T08:00:51+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1312,7 +1312,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "ff10b180ec738c46070e61f6befada9e04c159d3"
+                "reference": "b9572cdc30eb5ccace4d60e26ad12a6624ef4d33"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1329,7 +1329,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T00:29:08+00:00"
+            "time": "2020-12-22T08:00:51+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -13011,7 +13011,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git",
-                "reference": "d06bdf467752027432247e45a991a213cf859e21"
+                "reference": "59e0ffbb0b8e2d6719232a5857873388b1552d93"
             },
             "type": "laravel-module",
             "extra": {
@@ -13034,7 +13034,7 @@
                 }
             ],
             "description": "A collection of helpers to assist with various devops tasks.",
-            "time": "2020-12-21T10:37:47+00:00"
+            "time": "2020-12-22T07:32:34+00:00"
         },
         {
             "name": "clue/stdio-react",
