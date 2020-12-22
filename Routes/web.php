@@ -863,9 +863,9 @@ Route::group([
 
 Route::post('send-sample-direct-mail', [
     'uses' => 'DemoController@sendSampleEMRNote',
-    'as' => 'send.sample.note.via.dm'
+    'as'   => 'send.sample.note.via.dm',
 ]);
 Route::post('send-sample-fax', [
     'uses' => 'DemoController@sendSampleEfaxNote',
-    'as' => 'send.sample.note.via.efax'
+    'as'   => 'send.sample.note.via.efax',
 ]);
