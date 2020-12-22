@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Services\Postmark;
 
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
+use App\Entities\PostmarkSingleMatchData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -20,43 +22,45 @@ class PostmarkInboundCallbackMatchResults
     const QUEUED_AND_UNASSIGNED       = 'queue_auto_enrollment_and_unassigned';
     const SELF                        = 'SELF';
     const WITHDRAW_REQUEST            = 'withdraw_request';
-
-    private array $postmarkCallbackData;
+    const MATCHED_DATA            = 'matchedData';
+    const REASONING = 'reasoning';
+    
+    private PostmarkCallbackInboundData $postmarkCallbackData;
     private int $recordId;
-
+    
     /**
      * PostmarkInboundCallbackMatchResults constructor.
      */
-    public function __construct(array $postmarkCallbackData, int $recordId)
+    public function __construct(PostmarkCallbackInboundData $postmarkCallbackData, int $recordId)
     {
         $this->postmarkCallbackData = $postmarkCallbackData;
         $this->recordId             = $recordId;
     }
-
+    
     /**
      * Doing the checks separately.
      *
-     * @return array|Builder|void
+     * @return PostmarkSingleMatchData
      */
     public function matchedPatientsData()
     {
         /** @var Builder $inboundDataMatchedWithPhone */
-        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData['phone'], $this->postmarkCallbackData['callerId']);
-
+        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData->get('phone'), $this->postmarkCallbackData->get('callerId'));
+        
         if (1 === $inboundDataMatchedWithPhone->count()) {
             /** @var User $matchedPatient */
             $matchedPatient = $inboundDataMatchedWithPhone->first();
-
+            
             return app(InboundCallbackSingleMatchService::class)
                 ->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
         }
-
+        
         if ($inboundDataMatchedWithPhone->count() > 1) {
             return app(InboundCallbackMultimatchService::class)
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
     }
-
+    
     /**
      * @param string $phone
      * @param string $callerIdField
@@ -65,16 +69,16 @@ class PostmarkInboundCallbackMatchResults
      */
     private function matchByPhone(string $phoneNumber, string $callerIdFieldPhone)
     {
-        return User::withTrashed()->ofType(['participant', 'survey-only'])->with([
-            'patientInfo' => function ($q) {
-                return $q->select(['id', 'ccm_status', 'user_id']);
-            },
-
-            'enrollee',
-
-            'phoneNumbers' => function ($q) {
-                return $q->select(['id', 'user_id', 'number']);
-            },
-        ])->searchPhoneNumber([$phoneNumber, $callerIdFieldPhone]);
+        return User::withTrashed()->ofTypePatients()->with([
+                                                               'patientInfo' => function ($q) {
+                                                                   return $q->select(['id', 'ccm_status', 'user_id']);
+                                                               },
+            
+                                                               'enrollee',
+            
+                                                               'phoneNumbers' => function ($q) {
+                                                                   return $q->select(['id', 'user_id', 'number']);
+                                                               },
+                                                           ])->searchPhoneNumber([$phoneNumber, $callerIdFieldPhone]);
     }
 }
