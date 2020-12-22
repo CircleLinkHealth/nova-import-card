@@ -333,6 +333,7 @@ class CcdaImporterWrapper
         if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
             return $provider;
         }
+
         return null;
     }
 
