@@ -203,6 +203,7 @@ return [
         DirectMailServiceProvider::class,
 
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
+        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class
     ],
 
     /*
