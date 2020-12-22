@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Relationships;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 
 class BillableCPMPatientRelations
 {
