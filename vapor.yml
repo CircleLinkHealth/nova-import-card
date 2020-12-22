@@ -13,7 +13,7 @@ environments:
         queue-timeout: 600
         scheduler: false
         mail: false
-        warm: 20
+        warm: 40
         timeout: 45
         queues:
             - cpm-provider-low-production
