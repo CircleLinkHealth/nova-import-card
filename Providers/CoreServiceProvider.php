@@ -24,9 +24,11 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         Relation::morphMap([
-            Call::class => '\App\Call',
+            Call::class                                     => 'App\Call',
+            PatientUnsuccessfulCallNotification::class      => 'App\Notifications\PatientUnsuccessfulCallNotification',
+            PatientUnsuccessfulCallReplyNotification::class => 'App\Notifications\PatientUnsuccessfulCallReplyNotification',
         ]);
-        
+
         $this->registerViews();
         $this->registerFactories();
 
