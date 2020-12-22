@@ -3,7 +3,7 @@
 To update secrets
 - Clear all existing secrets using command `php artisan cpmvapor:clearsecrets production` (CircleLinkHealth\Core\Console\Commands\Vapor\DeleteAllSecrets)
 - Download production-secrets.env from https://s3.console.aws.amazon.com/s3/buckets/cpm-production-keys?region=us-east-1&tab=objects.
-- Upload new secrets using `php artisan cpmvapor:uploadsecrets --path=/path/to/secrets/ --file=production-secrets.env --environment=production`
+- Upload new secrets using `php artisan cpmvapor:uploadsecrets --file=/absolute/path/to/secrets/production-secrets.env --environment=production`
 - Download production-vars.env from https://s3.console.aws.amazon.com/s3/buckets/cpm-production-keys?region=us-east-1&tab=objects.
 - Make sure below vars are correct for the environment we are deploying to
 ```
