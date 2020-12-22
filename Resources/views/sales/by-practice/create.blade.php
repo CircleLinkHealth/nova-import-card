@@ -131,13 +131,14 @@
 
                         </form>
 
-                        <div class="row">
-                            <div class="col-md-6 col-md-offset-3">
-                                <div class="jumbotron text-center">
-                                    <h1><span id="result"></span></h1>
-                                </div>
-                            </div>
-                        </div>
+{{--                        todo: revisit/remove, cannot find usage--}}
+{{--                        <div class="row">--}}
+{{--                            <div class="col-md-6 col-md-offset-3">--}}
+{{--                                <div class="jumbotron text-center">--}}
+{{--                                    <h1><span id="result"></span></h1>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
                     </div>
                 </div>
