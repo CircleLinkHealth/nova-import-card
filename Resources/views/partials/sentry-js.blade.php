@@ -5,7 +5,7 @@
 
 <script>
     function init() {
-        const apiKey = @json(env('SENTRY_LARAVEL_DSN', null));
+        const apiKey = @json(config('sentry.dsn'));
         if (!apiKey) {
             return;
         }
