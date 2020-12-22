@@ -41,18 +41,7 @@ Route::get('admin/nurses/windows', [
     'as'   => 'get.admin.nurse.schedules',
 ]);
 
-Route::prefix('admin')->group(
-    function () {
-        Route::prefix('users')->group(
-            function () {
-                Route::get(
-                    '{id}/destroy',
-                    [
-                        'uses' => 'RedirectToAdminApp@destroyUser',
-                        'as'   => 'admin.users.destroy',
-                    ]
-                )->middleware('permission:user.delete');
-            }
-        );
-    }
-);
+Route::get('admin/users/{id}/destroy', [
+    'uses' => 'RedirectToAdminApp@destroyUser',
+    'as'   => 'admin.users.destroy',
+])->middleware('permission:user.delete');
