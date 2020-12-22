@@ -10,8 +10,10 @@ use App\Search\LocationByName;
 use App\Search\RoleByName;
 use App\User;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -184,7 +186,9 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
 
     private function createUser($row)
     {
-        $role = RoleByName::first($row['role']);
+        $role = Role::where('name',$row['role'])
+        ->orWhere('display_name', $row['role'])
+        ->firstOrFail();
 
         if ( ! $role) {
             throw new \Exception("Role: {$row['role']} not found.");

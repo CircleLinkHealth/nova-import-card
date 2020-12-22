@@ -11,7 +11,7 @@ use Validator;
 
 abstract class ReportsErrorsToSlack
 {
-    protected $channel         = '#background-tasks';
+    protected $channel         = '#cpm_general_alerts';
     protected $importingErrors = [];
 
     protected $rowNumber = 2;

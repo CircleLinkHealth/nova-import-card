@@ -8,7 +8,7 @@ namespace App\Nova;
 
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
 use App\User;
-use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
+use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasOne;
