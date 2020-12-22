@@ -5,7 +5,7 @@
  */
 
 use App\Notifications\AddendumCreated;
-use App\Notifications\CarePlanApprovalReminder;
+use CircleLinkHealth\Customer\Notifications\CarePlanApprovalReminder;
 use App\Notifications\InvoiceReminder;
 use CircleLinkHealth\NurseInvoices\Notifications\DisputeResolved;
 use CircleLinkHealth\NurseInvoices\Notifications\InvoiceBeforePayment;

@@ -38,22 +38,22 @@
 
                                         <div class="radio-inline col-md-3">
                                             <input type="radio" id="daily" name="frequency"
-                                                   {{ !($settings->frequency == App\Models\EmailSettings::DAILY) ?: 'checked' }}
-                                                   value="{{ App\Models\EmailSettings::DAILY }}">
+                                                   {{ !($settings->frequency == CircleLinkHealth\SharedModels\Entities\EmailSettings::DAILY) ?: 'checked' }}
+                                                   value="{{ CircleLinkHealth\SharedModels\Entities\EmailSettings::DAILY }}">
                                             <label for="daily"><span></span>Daily</label>
                                         </div>
 
                                         <div class="radio-inline col-md-3">
                                             <input type="radio" id="weekly" name="frequency"
-                                                   {{ !($settings->frequency == App\Models\EmailSettings::WEEKLY) ?: 'checked' }}
-                                                   value="{{ App\Models\EmailSettings::WEEKLY }}">
+                                                   {{ !($settings->frequency == CircleLinkHealth\SharedModels\Entities\EmailSettings::WEEKLY) ?: 'checked' }}
+                                                   value="{{ CircleLinkHealth\SharedModels\Entities\EmailSettings::WEEKLY }}">
                                             <label for="weekly"><span></span>Weekly</label>
                                         </div>
 
                                         <div class="radio-inline col-md-3">
                                             <input type="radio" id="mwf" name="frequency"
-                                                   {{ !($settings->frequency == App\Models\EmailSettings::MWF) ?: 'checked' }}
-                                                   value="{{ App\Models\EmailSettings::MWF }}">
+                                                   {{ !($settings->frequency == CircleLinkHealth\SharedModels\Entities\EmailSettings::MWF) ?: 'checked' }}
+                                                   value="{{ CircleLinkHealth\SharedModels\Entities\EmailSettings::MWF }}">
                                             <label for="mwf"><span></span>Monday, Wednesday, Friday</label>
                                         </div>
 

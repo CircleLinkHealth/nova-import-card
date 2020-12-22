@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CCD\CcdProblemService;
 use App\Services\CPM\CpmProblemUserService;
-use App\Services\UserService;
+use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\SharedModels\Services\CpmInstructionService;
 use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 use Illuminate\Http\Request;
