@@ -1012,7 +1012,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "935f2b94ea878e661fc22390def5a4699069bc4e"
+                "reference": "538653e2eaf5ef947d833dd6464fdb2fd5d33f6a"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1049,7 +1049,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T16:42:53+00:00"
+            "time": "2020-12-22T19:07:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1057,7 +1057,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1769d8f65b01dc0294a3f0936ae39a40feb72f0f"
+                "reference": "66a64ea7e944f9bf456e8dd84d7b948df49ed7a9"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1084,7 +1084,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T14:18:33+00:00"
+            "time": "2020-12-22T19:05:27+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1122,7 +1122,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "794de84b0bec61468c0cdb053333aa16231d18df"
+                "reference": "7c5860ab6092ee4665fbe3f3d325e6312326f01a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1144,7 +1144,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:26:35+00:00"
+            "time": "2020-12-22T19:05:45+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
@@ -2518,10 +2518,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2561,7 +2561,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
