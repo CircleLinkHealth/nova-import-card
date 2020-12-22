@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -84,7 +85,7 @@ class ResetPassword extends Notification implements ShouldQueue
     public function viaQueues()
     {
         return [
-            'mail' => 'high',
+            'mail' => getCpmQueueName(CpmConstants::HIGH_QUEUE),
         ];
     }
 
