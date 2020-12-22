@@ -10,7 +10,7 @@ use App\ForeignId;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
-use App\Notifications\ResetPassword;
+use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
