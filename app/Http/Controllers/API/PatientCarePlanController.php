@@ -32,12 +32,13 @@ class PatientCarePlanController extends Controller
             return "Could not find PDF with filename: ${fileName}";
         }
         $headers = [
-            'Content-Type'          => 'application/pdf',
-            'Content-Disposition'   => 'inline; filename="'.$fileName.'"',
-            'X-Vapor-Base64-Encode' => 'True',
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$fileName.'"',
+            //'X-Vapor-Base64-Encode' => 'True',
         ];
 
-        if (env('local')) {
+        if ('local' === env('APP_ENV')) {
+            //todo: this should not read from disk
             return Response::make(file_get_contents(storage_path("patient/pdf-careplans/${fileName}")), 200, $headers);
         }
 
