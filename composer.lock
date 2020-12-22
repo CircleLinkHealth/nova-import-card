@@ -2518,10 +2518,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2561,7 +2561,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -4458,16 +4458,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.30.0",
+            "version": "v7.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "629c36a0fe87b66d8dccd3c82927950d0f59d3f9"
+                "reference": "e73855b18dcfc645c36d2474f437e4e73dd3c11d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/629c36a0fe87b66d8dccd3c82927950d0f59d3f9",
-                "reference": "629c36a0fe87b66d8dccd3c82927950d0f59d3f9",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/e73855b18dcfc645c36d2474f437e4e73dd3c11d",
+                "reference": "e73855b18dcfc645c36d2474f437e4e73dd3c11d",
                 "shasum": ""
             },
             "require": {
@@ -4612,7 +4612,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-12-01T15:01:25+00:00"
+            "time": "2020-12-22T17:00:45+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -4742,16 +4742,16 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v8.5.0",
+            "version": "v8.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "2f528597910f1c68e577a283afd99a9af51c9d26"
+                "reference": "b8b8a35cc3ac82cbc07dfa83955492d2ef6e237b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/2f528597910f1c68e577a283afd99a9af51c9d26",
-                "reference": "2f528597910f1c68e577a283afd99a9af51c9d26",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/b8b8a35cc3ac82cbc07dfa83955492d2ef6e237b",
+                "reference": "b8b8a35cc3ac82cbc07dfa83955492d2ef6e237b",
                 "shasum": ""
             },
             "require": {
@@ -4803,7 +4803,7 @@
                 "laravel",
                 "search"
             ],
-            "time": "2020-12-10T14:58:57+00:00"
+            "time": "2020-12-22T17:29:20+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -4990,16 +4990,16 @@
         },
         {
             "name": "laravel/vapor-ui",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-ui.git",
-                "reference": "148f3b5145062971d6e6f9c5f69f51d8af6bd45d"
+                "reference": "6be49e569374ece53802cb1f6d4e572e185ec211"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/148f3b5145062971d6e6f9c5f69f51d8af6bd45d",
-                "reference": "148f3b5145062971d6e6f9c5f69f51d8af6bd45d",
+                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/6be49e569374ece53802cb1f6d4e572e185ec211",
+                "reference": "6be49e569374ece53802cb1f6d4e572e185ec211",
                 "shasum": ""
             },
             "require": {
@@ -5048,7 +5048,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-11-03T13:49:28+00:00"
+            "time": "2020-12-22T17:35:47+00:00"
         },
         {
             "name": "laravelcollective/html",
