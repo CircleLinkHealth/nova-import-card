@@ -7,6 +7,8 @@
 namespace CircleLinkHealth\Core\Providers;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallReplyNotification;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
