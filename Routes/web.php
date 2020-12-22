@@ -43,6 +43,7 @@ Route::group([
 Route::group([
     'middleware' => ['web', 'auth'],
 ], function () {
+    Route::get('sentrydemo', 'SentryDemoController@throw');
     Route::group(['prefix' => 'calls'], function () {
         Route::get('', [
             'uses' => 'CallController@index',
