@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
 use Illuminate\Console\Command;
 
@@ -42,6 +42,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        UnreachablesFinalAction::dispatch(now()->subDays(CpmConstants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
+        UnreachablesFinalAction::dispatch(now()->subDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
     }
 }
