@@ -294,6 +294,7 @@
       "php artisan --env=testing migrate:fresh",
       "php artisan --env=testing migrate:views",
       "php artisan --env=testing db:seed --class=TestSuiteSeeder",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=UserScope --colors --testdox",
       "./vendor/phpunit/phpunit/phpunit --testsuite=SamlSpModule --colors --testdox",
       "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
       "./vendor/phpunit/phpunit/phpunit --testsuite=CcmBillingModule --colors --testdox",
