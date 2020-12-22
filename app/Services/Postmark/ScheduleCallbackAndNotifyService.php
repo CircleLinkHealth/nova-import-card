@@ -9,10 +9,10 @@ namespace App\Services\Postmark;
 use App\Entities\EmailAddressParts;
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
-use App\Notifications\PatientUnsuccessfulCallNotification;
-use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallReplyNotification;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 
 class ScheduleCallbackAndNotifyService
