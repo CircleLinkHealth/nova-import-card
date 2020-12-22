@@ -142,9 +142,11 @@ class Kernel extends ConsoleKernel
         $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
 
+        /*
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
             ->hourly()
             ->between('7:00', '23:00');
+        */
 
         $schedule->command('schedule-monitor:clean')
             ->daily();
