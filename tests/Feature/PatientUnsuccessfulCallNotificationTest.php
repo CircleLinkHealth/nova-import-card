@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use Illuminate\Support\Facades\Mail;

@@ -11,9 +11,9 @@ use App\Listeners\AssignPatientToStandByNurse;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
-use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 
 class PatientObserver

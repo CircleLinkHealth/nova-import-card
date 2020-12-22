@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
