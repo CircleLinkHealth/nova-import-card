@@ -15,10 +15,13 @@ use Illuminate\Support\ServiceProvider;
 
 class TwilioIntegrationServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function boot()
     {
         TwilioCall::observe(TwilioCallObserver::class);
+    }
 
+    public function register()
+    {
         $cm = $this->app->make(ChannelManager::class);
         $cm->extend('twilio', function (Application $app) {
             return $app->make(CustomTwilioChannel::class);
