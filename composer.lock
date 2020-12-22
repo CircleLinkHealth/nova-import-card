@@ -846,7 +846,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1aa842957e08016f150c3afab3a8cbe253497c40"
+                "reference": "935f2b94ea878e661fc22390def5a4699069bc4e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -883,7 +883,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T16:28:29+00:00"
+            "time": "2020-12-22T16:42:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1298,7 +1298,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "cdd6bbbd798bd87b5d70a15d1e0b3a0eef6ec8ae"
+                "reference": "5862b152bcbcff4e241990d1385fb2e8907ace52"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1315,7 +1315,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T11:07:17+00:00"
+            "time": "2020-12-22T16:42:53+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
