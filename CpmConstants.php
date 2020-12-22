@@ -41,6 +41,7 @@ class CpmConstants
     const HIGH_QUEUE = 'high';
     const ICD10      = ProblemCodeSystem::ICD10;
     const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
+    const CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS = ['participant', 'survey-only'];
 
     /**
      * Problem Codes.
