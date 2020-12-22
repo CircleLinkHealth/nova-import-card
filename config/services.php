@@ -38,7 +38,14 @@ return [
     ],
 
     'twilio' => [
-        'enabled' => env('TWILIO_ENABLED', false),
+        'enabled'          => env('TWILIO_ENABLED', false),
+        'account_sid'      => env('TWILIO_SID', 'somerandomstring'),
+        'auth_token'       => env('TWILIO_TOKEN', 'somerandomstring'),
+        'from'             => env('TWILIO_FROM', 'somerandomstring'),
+        'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
+        'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
+        'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
+        'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
     ],
 
     'serverless-pdf-generator' => [
