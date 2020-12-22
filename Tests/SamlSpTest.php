@@ -52,7 +52,7 @@ class SamlSpTest extends CustomerTestCase
         $route = route('saml2_acs', [
             'idpName' => 'testing',
         ]);
-        $targetRoute = route('patientCallManagement.v2.index');
+        $targetRoute = route('patientCallManagement.v2.provider.index');
         $resp        = $this->post($route, [
             'RelayState'   => $targetRoute,
             'SAMLResponse' => '',
