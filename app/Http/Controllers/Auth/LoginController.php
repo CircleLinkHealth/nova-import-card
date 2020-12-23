@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\RedirectToVaporRequest;
 use App\Traits\ManagesPatientCookies;
 use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
@@ -17,7 +18,6 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -385,18 +385,12 @@ class LoginController extends Controller
 
     private function redirectToVapor()
     {
-        $vaporLogin = AppConfig::pull('vapor_login_endpoint');
-
-        $response = Http::post($vaporLogin, [
-            'token'   => AppConfig::pull('login_from_heroku_key'),
+        $request = RedirectToVaporRequest::create([
             'user_id' => auth()->id(),
+            'token'   => Str::uuid(),
         ]);
 
-        if ($redirectTo = $response['redirect_to'] ?? null) {
-            return redirect()->to($redirectTo);
-        }
-
-        return redirect()->to('/');
+        return redirect()->to(rtrim(AppConfig::pull('vapor_login_endpoint'), '/')."/{$request->token}");
     }
 
     private function shouldRedirectToVapor()
