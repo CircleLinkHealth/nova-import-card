@@ -1084,3 +1084,5 @@ Route::post('callcreate-multi', [
     'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CallController@createMulti',
     'as'   => 'api.callcreate-multi',
 ])->middleware('auth');
+
+Route::post('login-from-heroku', 'LoginFromHerokuController@loginUser');
