@@ -7,7 +7,7 @@
 namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
-use App\PostmarkInboundMail;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;

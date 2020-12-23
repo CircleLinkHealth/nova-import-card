@@ -10,7 +10,7 @@ use App\Entities\PostmarkInboundCallbackRequest;
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Notifications\CallCreated;
-use App\PostmarkInboundMail;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
 use Carbon\Carbon;

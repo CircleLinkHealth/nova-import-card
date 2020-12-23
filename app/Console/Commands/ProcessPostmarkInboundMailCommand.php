@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
-use App\PostmarkInboundMail;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use Illuminate\Console\Command;
 
 class ProcessPostmarkInboundMailCommand extends Command

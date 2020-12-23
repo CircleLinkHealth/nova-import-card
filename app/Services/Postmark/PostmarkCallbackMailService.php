@@ -7,7 +7,7 @@
 namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
-use App\PostmarkInboundMail;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService

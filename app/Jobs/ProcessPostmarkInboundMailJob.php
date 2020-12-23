@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\Entities\EmailAddressParts;
 use App\Entities\PostmarkInboundMailRequest;
-use App\PostmarkInboundMail;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use App\Services\Postmark\AutoResolveCallbackRequestService;
 use App\Services\Postmark\ScheduleCallbackAndNotifyService;
 use Illuminate\Bus\Queueable;
