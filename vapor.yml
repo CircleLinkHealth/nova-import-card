@@ -10,7 +10,6 @@ environments:
         cli-memory: 2048
         runtime: docker
         queue-timeout: 600
-        scheduler: false
         mail: false
         warm: 40
         timeout: 45
