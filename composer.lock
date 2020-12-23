@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "b857ca2d5860ff0244783730ab5158e388d936e9"
+                "reference": "17f00a987d70db9cfa71ff10f3bc58a215d6d07c"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -761,7 +761,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-23T14:02:30+00:00"
+            "time": "2020-12-23T14:17:39+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1109,7 +1109,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "4307aca186b30fb9926c0f02da2ce3972c18b6eb"
+                "reference": "dca0976cbfaae151bf27683be2d096b62c2ae36d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1131,7 +1131,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-18T14:34:15+00:00"
+            "time": "2020-12-23T15:03:34+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
