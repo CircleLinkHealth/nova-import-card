@@ -11,6 +11,8 @@ environments:
     cli-memory: 1024
     runtime: docker
     queue-timeout: 600
+    warm: 20
+    timeout: 45
     scheduler: false
     mail: false
     queues:
@@ -34,6 +36,7 @@ environments:
     cli-memory: 1024
     runtime: docker
     queue-timeout: 600
+    timeout: 45
     mail: false
     queues:
       - awv-low-staging
