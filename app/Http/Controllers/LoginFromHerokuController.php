@@ -14,6 +14,8 @@ class LoginFromHerokuController extends Controller
     {
         auth()->loginUsingId($request->input('user_id'));
 
-        return redirect()->to('/');
+        return response()->json([
+            'redirect_to' => url('/'),
+        ]);
     }
 }
