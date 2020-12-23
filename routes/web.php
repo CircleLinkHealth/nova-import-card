@@ -1085,4 +1085,4 @@ Route::post('callcreate-multi', [
     'as'   => 'api.callcreate-multi',
 ])->middleware('auth');
 
-Route::post('login-from-heroku', 'LoginFromHerokuController@loginUser');
+Route::get('login-from-heroku/{token}', 'LoginFromHerokuController@loginUser');
