@@ -6,11 +6,13 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendSlackMessage implements ShouldQueue
 {
@@ -39,6 +41,10 @@ class SendSlackMessage implements ShouldQueue
      */
     public function handle()
     {
-        \Slack::to($this->to)->send($this->message);
+        try {
+            \Slack::to($this->to)->send($this->message);
+        } catch (ClientException $e) {
+            Log::error($e->getMessage()." `To:{$this->to}` `Message:{$this->message}`");
+        }
     }
 }
