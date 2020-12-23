@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19d41e0ff1df250b3e841f3d6b4ecf54",
+    "content-hash": "644c88770fd179c049fefc584d50b549",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -6014,6 +6014,42 @@
                 }
             ],
             "time": "2020-05-30T13:11:16+00:00"
+        },
+        {
+            "name": "mantas-done/laravel-apm",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mantas-done/laravel-apm.git",
+                "reference": "e225b43602bf1ebd71506b09365cfdd901554f21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mantas-done/laravel-apm/zipball/e225b43602bf1ebd71506b09365cfdd901554f21",
+                "reference": "e225b43602bf1ebd71506b09365cfdd901554f21",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Done\\LaravelAPM\\ApmServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Done\\LaravelAPM\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Mantas Donelavičius"
+                }
+            ],
+            "description": "Application monitoring for Laravel",
+            "time": "2020-01-26T13:22:49+00:00"
         },
         {
             "name": "markbaker/complex",
