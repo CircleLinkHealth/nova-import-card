@@ -1,6 +1,5 @@
 id: 13482
 name: app-cpm-web
-separate-vendor: true
 environments:
     production:
         domain: provider.careplanmanager.com
@@ -34,7 +33,7 @@ environments:
         network: cpm-staging
         memory: 2048
         cli-memory: 2048
-        runtime: php-7.4
+        runtime: docker
         queue-timeout: 600
         mail: false
         timeout: 45
@@ -50,4 +49,3 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
-
