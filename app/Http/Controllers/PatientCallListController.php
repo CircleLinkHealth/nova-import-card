@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Call;
+use App\Http\Controllers\Auth\LoginController;
 use App\Models\Addendum;
 use App\Services\CallService;
 use App\Services\NoteService;
@@ -41,6 +42,10 @@ class PatientCallListController extends Controller
      */
     public function index(Request $request, NoteService $noteService)
     {
+        if (LoginController::shouldRedirectToVapor()) {
+            return LoginController::redirectToVapor();
+        }
+
         $nurseId        = \Auth::user()->id;
         $today          = Carbon::parse(now())->copy()->toDateString();
         $draftNotes     = $noteService->getUserDraftNotes($nurseId);

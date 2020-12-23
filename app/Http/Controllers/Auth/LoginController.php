@@ -119,8 +119,8 @@ class LoginController extends Controller
             \Log::debug('User['.auth()->id().'] logged in using Username.');
         }
 
-        if ($this->shouldRedirectToVapor()) {
-            return $this->redirectToVapor();
+        if (self::shouldRedirectToVapor()) {
+            return self::redirectToVapor();
         }
 
         $agent = new Agent();
@@ -383,7 +383,7 @@ class LoginController extends Controller
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
     }
 
-    private function redirectToVapor()
+    public static function redirectToVapor()
     {
         $request = RedirectToVaporRequest::create([
             'user_id' => auth()->id(),
@@ -393,7 +393,7 @@ class LoginController extends Controller
         return redirect()->to(rtrim(AppConfig::pull('vapor_login_endpoint'), '/')."/{$request->token}");
     }
 
-    private function shouldRedirectToVapor()
+    public static function shouldRedirectToVapor()
     {
         return 'on' === AppConfig::pull('redirect_to_vapor_status') && AppConfig::where(function ($q) {
             $q->where('config_key', 'redirect_user_to_vapor')
