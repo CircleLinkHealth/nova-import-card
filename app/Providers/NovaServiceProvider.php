@@ -74,10 +74,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             new \Vink\NovaCacheCard\CacheCard(),
-            new \Kreitje\NovaHorizonStats\JobsPastHour(),
-            new \Kreitje\NovaHorizonStats\FailedJobsPastHour(),
-            new \Kreitje\NovaHorizonStats\Processes(),
-            new \Kreitje\NovaHorizonStats\Workload(),
         ];
     }
 
