@@ -183,6 +183,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        \App\Providers\ObserversServiceProvider::class,
 
         CpmMigrationsServiceProvider::class,
         ThemeServiceProvider::class,
@@ -203,7 +204,7 @@ return [
         DirectMailServiceProvider::class,
 
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
-        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class
+        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class,
     ],
 
     /*

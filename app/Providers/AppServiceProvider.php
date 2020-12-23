@@ -6,8 +6,6 @@
 
 namespace App\Providers;
 
-use App\Observers\OutgoingSmsObserver;
-use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        OutgoingSms::observe(OutgoingSmsObserver::class);
+
     }
 
     /**
