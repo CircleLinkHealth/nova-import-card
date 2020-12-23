@@ -6,7 +6,7 @@
 
 namespace App\Services\Postmark;
 
-use App\UnresolvedPostmarkCallback;
+use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
@@ -65,7 +65,7 @@ class ProcessUnresolvedPostmarkCallback
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model|UnresolvedPostmarkCallback|void
+     * @return \Illuminate\Database\Eloquent\Model|\CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback|void
      */
     public function saveAsUnresolved(array $suggestedUsersIds)
     {
