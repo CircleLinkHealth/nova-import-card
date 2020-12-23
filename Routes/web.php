@@ -5,3 +5,5 @@
  */
 
 Route::get('health-check', 'HealthCheckController@isSiteUp');
+
+Route::get('/apm', '\Done\LaravelAPM\ApmController@index')->name('apm')->middleware('auth');

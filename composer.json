@@ -28,6 +28,7 @@
     },
     "require": {
         "laravel/passport": "^8.0 || ^7.3.0",
+        "mantas-done/laravel-apm": "^1.0",
         "lcobucci/jwt": "3.3.3",
         "maatwebsite/excel": "^3.1",
         "laravelcollective/html": "^6.1",
