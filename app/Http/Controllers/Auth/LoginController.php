@@ -12,12 +12,12 @@ use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -118,7 +118,7 @@ class LoginController extends Controller
         if ('username' === $this->username) {
             \Log::debug('User['.auth()->id().'] logged in using Username.');
         }
-        
+
         if ($this->shouldRedirectToVapor()) {
             return $this->redirectToVapor();
         }
@@ -382,7 +382,23 @@ class LoginController extends Controller
 
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
     }
-    
+
+    private function redirectToVapor()
+    {
+        $vaporLogin = AppConfig::pull('vapor_login_endpoint');
+
+        $response = Http::post($vaporLogin, [
+            'token'   => AppConfig::pull('login_from_heroku_key'),
+            'user_id' => auth()->id(),
+        ]);
+
+        if ($redirectTo = $response['redirect_to'] ?? null) {
+            return redirect()->to($redirectTo);
+        }
+
+        return redirect()->to('/');
+    }
+
     private function shouldRedirectToVapor()
     {
         return 'on' === AppConfig::pull('redirect_to_vapor_status') && AppConfig::where(function ($q) {
@@ -392,22 +408,5 @@ class LoginController extends Controller
             $q->where('config_key', 'redirect_role_to_vapor')
                 ->where('config_value', auth()->user()->practiceOrGlobalRole()->name);
         })->exists();
-    }
-    
-    private function redirectToVapor()
-    {
-        $vaporHome = AppConfig::pull('vapor_home');
-        
-        $client = new Client();
-        $response = $client->post($vaporHome, [
-            'token' => AppConfig::pull('login_from_heroku_key'),
-            'user_id' => auth()->id()
-        ]);
-        
-        if ($redirectTo = json_decode($response->getBody()->getContents())['redirect_to'] ?? null) {
-            return redirect()->to($redirectTo);
-        }
-        
-        return redirect()->to('/');
     }
 }
