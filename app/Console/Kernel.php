@@ -33,7 +33,7 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Jobs\OverwritePatientMrnsFromSupplementalData;
-use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
+use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\CheckLocationSummariesHaveBeenCreated;

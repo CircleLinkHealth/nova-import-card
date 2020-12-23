@@ -8,7 +8,7 @@ namespace App\Providers;
 
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
-use App\Events\CarePlanWasQAApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasQAApproved;
 use App\Events\CarePlanWasRNApproved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
