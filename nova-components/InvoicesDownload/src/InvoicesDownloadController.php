@@ -8,7 +8,7 @@ namespace Circlelinkhealth\InvoicesDownload;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
-use Circlelinkhealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
+use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 
 class InvoicesDownloadController
 {
