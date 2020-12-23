@@ -10,7 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Traits\ManagesPatientCookies;
 use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -115,6 +117,10 @@ class LoginController extends Controller
 
         if ('username' === $this->username) {
             \Log::debug('User['.auth()->id().'] logged in using Username.');
+        }
+        
+        if ($this->shouldRedirectToVapor()) {
+            return $this->redirectToVapor();
         }
 
         $agent = new Agent();
@@ -375,5 +381,33 @@ class LoginController extends Controller
         }
 
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+    }
+    
+    private function shouldRedirectToVapor()
+    {
+        return 'on' === AppConfig::pull('redirect_to_vapor_status') && AppConfig::where(function ($q) {
+            $q->where('config_key', 'redirect_user_to_vapor')
+                ->where('config_value', auth()->id());
+        })->orWhere(function ($q) {
+            $q->where('config_key', 'redirect_role_to_vapor')
+                ->where('config_value', auth()->user()->practiceOrGlobalRole()->name);
+        })->exists();
+    }
+    
+    private function redirectToVapor()
+    {
+        $vaporHome = AppConfig::pull('vapor_home');
+        
+        $client = new Client();
+        $response = $client->post($vaporHome, [
+            'token' => AppConfig::pull('login_from_heroku_key'),
+            'user_id' => auth()->id()
+        ]);
+        
+        if ($redirectTo = json_decode($response->getBody()->getContents())['redirect_to'] ?? null) {
+            return redirect()->to($redirectTo);
+        }
+        
+        return redirect()->to('/');
     }
 }
