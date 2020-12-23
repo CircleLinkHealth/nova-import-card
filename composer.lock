@@ -260,16 +260,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.4",
+            "version": "3.171.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6a6b5b2e48ad18c2bfa48b7035e09d220d0e3984"
+                "reference": "848923bc9ce5f8c5ede2df7175b090e382bba699"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6a6b5b2e48ad18c2bfa48b7035e09d220d0e3984",
-                "reference": "6a6b5b2e48ad18c2bfa48b7035e09d220d0e3984",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/848923bc9ce5f8c5ede2df7175b090e382bba699",
+                "reference": "848923bc9ce5f8c5ede2df7175b090e382bba699",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-22T19:23:05+00:00"
+            "time": "2020-12-22T21:56:27+00:00"
         },
         {
             "name": "brick/math",
@@ -818,7 +818,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7caaf0b773c4bc63692b9bc037b046875e2fb7a6"
+                "reference": "c5a36a46c63fa0361ac8bc9c0f703849c75309b0"
             },
             "type": "laravel-module",
             "extra": {
@@ -838,7 +838,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-22T20:05:46+00:00"
+            "time": "2020-12-22T21:33:19+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
