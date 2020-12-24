@@ -5,7 +5,7 @@
  */
 
 use App\Models\PracticePull\Demographics;
-use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
+use CircleLinkHealth\SharedModels\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;

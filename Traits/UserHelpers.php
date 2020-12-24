@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\Services\CCD\CcdProblemService;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
