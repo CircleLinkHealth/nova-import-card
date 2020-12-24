@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Core\Contracts;
 
-use CircleLinkHealth\Core\Contracts\PdfReportHandler;
-
 interface PdfReport extends Pdfable
 {
     /**
