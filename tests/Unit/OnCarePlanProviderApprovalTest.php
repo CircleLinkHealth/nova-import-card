@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Notifications\CarePlanProviderApproved;
+use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\CarePerson;

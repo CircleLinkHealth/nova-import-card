@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Notifications\CarePlanProviderApproved;
+use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

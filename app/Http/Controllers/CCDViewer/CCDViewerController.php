@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\CCDViewer;
 
-use App\CLH\Repositories\CCDImporterRepository;
+use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

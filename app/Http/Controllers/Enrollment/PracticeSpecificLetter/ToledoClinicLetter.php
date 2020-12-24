@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 use App\Contracts\SelfEnrollmentLetter;
 use App\Http\Controllers\Enrollment\PracticeLetterHelper\LettersHelper;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
-use App\ProviderSignature;
+use CircleLinkHealth\SharedModels\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
