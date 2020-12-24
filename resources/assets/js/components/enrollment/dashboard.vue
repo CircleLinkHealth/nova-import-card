@@ -67,7 +67,7 @@
                     <div class="col cookie">
                         <div class="card horizontal">
                             <div class="card-image">
-                                <img src="../../../../img/cookie.png">
+                                <img :src="cookieImgUrl">
                             </div>
                             <div class="card-stacked">
                                 <div class="card-content">
@@ -122,7 +122,8 @@ export default {
         'cpmToken',
         'cpmCallerUrl',
         'timeTracker',
-        'debug'
+        'debug',
+        'cookieImgUrl'
     ],
     components: {
         'loader': Loader,
