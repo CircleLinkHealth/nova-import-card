@@ -7,7 +7,6 @@
 namespace Tests\Feature;
 
 use App\AppConfig\DMDomainForAutoApproval;
-use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;

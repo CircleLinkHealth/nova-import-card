@@ -15,7 +15,7 @@ class LoginFromHerokuRequest extends FormRequest
      * @var mixed
      */
     private RedirectToVaporRequest $loginRequest;
-    
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,6 +24,14 @@ class LoginFromHerokuRequest extends FormRequest
     public function authorize()
     {
         return $this->findRequest();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLoginRequest()
+    {
+        return $this->loginRequest;
     }
 
     /**
@@ -42,13 +50,5 @@ class LoginFromHerokuRequest extends FormRequest
         $this->loginRequest = RedirectToVaporRequest::where('token', $this->token)->first();
 
         return (bool) $this->loginRequest;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getLoginRequest()
-    {
-        return $this->loginRequest;
     }
 }

@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\Postmark;
 
-use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\Core\Jobs\ProcessPostmarkMailStatusCallbackJob;
+use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use Illuminate\Http\Request;
 
 class PostmarkController extends Controller

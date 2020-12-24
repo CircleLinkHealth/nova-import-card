@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers;
 
+use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use CircleLinkHealth\SharedModels\Services\CPM\CpmProblemUserService;
-use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\SharedModels\Services\CpmInstructionService;
 use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 use Illuminate\Http\Request;

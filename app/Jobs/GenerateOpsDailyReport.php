@@ -6,11 +6,11 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\SharedModels\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\CpmAdmin\Charts\OpsChart;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\SharedModels\Services\OpsDashboardReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

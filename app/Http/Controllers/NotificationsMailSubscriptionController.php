@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Services\NotificationsForRole;
 use App\Traits\NotificationSubscribable;
+use CircleLinkHealth\SharedModels\Services\NotificationsForRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 

@@ -7,11 +7,11 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\NotesController;
-use CircleLinkHealth\Customer\Notifications\NotifyPatientCarePlanApproved;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\NotifyPatientCarePlanApproved;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;

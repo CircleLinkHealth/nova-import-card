@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Services\Observations\ObservationConstants;
-use CircleLinkHealth\SharedModels\Services\Observations\ObservationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Observation;
+use CircleLinkHealth\SharedModels\Services\Observations\ObservationConstants;
+use CircleLinkHealth\SharedModels\Services\Observations\ObservationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
