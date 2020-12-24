@@ -4,6 +4,6 @@
 ## How to use
 1. Publish the view using
 ```
- php artisan vendor:publish --provider="CircleLinkHealth\Raygun\Providers\RaygunServiceProvider" 
+ php artisan vendor:publish --provider="CircleLinkHealth\Raygun\Providers\RaygunDeferredServiceProvider" 
 ```
 2. Include the view wherever you need to.
