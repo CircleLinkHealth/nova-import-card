@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Core\Providers;
 use CircleLinkHealth\Core\Console\Commands\CreateAndSeedTestSuiteDB;
 use CircleLinkHealth\Core\Console\Commands\CreateMySqlDB;
 use CircleLinkHealth\Core\Console\Commands\CreatePostgreSQLDB;
+use CircleLinkHealth\Core\Console\Commands\GenerateInboundCallbackDataFeedbackToTester;
 use CircleLinkHealth\Core\Console\Commands\HerokuOnRelease;
 use CircleLinkHealth\Core\Console\Commands\PostDeploymentTasks;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppCreateDb;
@@ -57,6 +58,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
             CreateAndSeedTestSuiteDB::class,
+            GenerateInboundCallbackDataFeedbackToTester::class,
         ];
     }
 
@@ -76,6 +78,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             RunScheduler::class,
             StoreJiraTicketsDeployed::class,
             StoreRelease::class,
+            GenerateInboundCallbackDataFeedbackToTester::class,
         ];
 
         if ($this->app->environment('testing')) {
