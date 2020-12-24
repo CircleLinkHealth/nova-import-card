@@ -12,10 +12,12 @@ class LoginFromHerokuController extends Controller
 {
     public function loginUser(LoginFromHerokuRequest $request)
     {
-        auth()->loginUsingId($request->input('user_id'));
+        $loginRequest = $request->getLoginRequest();
 
-        return response()->json([
-            'redirect_to' => url('/'),
-        ]);
+        auth()->loginUsingId($loginRequest->user_id);
+
+        $loginRequest->delete();
+
+        return redirect()->to('/');
     }
 }

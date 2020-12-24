@@ -10,14 +10,10 @@ use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Services\PhiMail\IncomingMessageHandler;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Str;
 
-class NotifySlackChannel implements ShouldQueue
+class NotifySlackChannel
 {
-    use InteractsWithQueue;
-
     const ELIGIBILITY_PROCESSING_PURPOSE = 'Eligibility Processing';
     const IMPORTING_PURPOSE              = 'Importing';
 
@@ -48,7 +44,10 @@ class NotifySlackChannel implements ShouldQueue
     private function notifyAdmins(
         DirectMailMessage $dm
     ) {
-        if ( ! app()->environment('production')) {
+        \Log::debug('Running NotifySlackChannel');
+        \Log::debug('isProductionEnv='.isProductionEnv());
+
+        if ( ! isProductionEnv()) {
             return;
         }
 

@@ -7,10 +7,10 @@
 namespace App\Jobs;
 
 use App\Notifications\CarePlansGeneratedNotification;
-use App\Services\CarePlanGeneratorService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Services\CarePlanGeneratorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

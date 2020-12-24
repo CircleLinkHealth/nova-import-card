@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Addendum;
-use App\Services\CallService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
 use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Services\CallService;
 use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller

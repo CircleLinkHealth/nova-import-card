@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\CallViewNurses;
 use CircleLinkHealth\SharedModels\Entities\CallView;
+use CircleLinkHealth\SharedModels\Entities\CallViewNurses;
 use Illuminate\Console\Command;
 
 class CallsViewVsCallsViewNurses extends Command

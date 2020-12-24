@@ -6,18 +6,18 @@
 
 namespace App\Formatters;
 
-use App\Contracts\ReportFormatter;
-use App\Relationships\PatientCareplanRelations;
-use App\Services\CPM\CpmMiscService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Relationships\PatientCareplanRelations;
 use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\Customer\Services\ReportsService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmMiscService;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter

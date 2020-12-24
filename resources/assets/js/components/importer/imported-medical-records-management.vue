@@ -136,7 +136,7 @@
     import LoaderComponent from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import ErrorModal from '../../../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing/comps/error-modal'
     import ErrorModalButton from '../../../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing/comps/error-modal-button'
-    import NotificationComponent from '../notifications'
+    import NotificationComponent from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import VueCache from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/vue-cache'
     import {mapGetters} from 'vuex'
     import {currentUser} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/getters';

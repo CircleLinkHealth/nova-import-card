@@ -6,8 +6,8 @@
 
 namespace App\Providers;
 
-use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 

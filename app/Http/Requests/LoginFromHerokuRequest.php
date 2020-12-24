@@ -6,12 +6,16 @@
 
 namespace App\Http\Requests;
 
-use CircleLinkHealth\Core\Entities\AppConfig;
+use App\RedirectToVaporRequest;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class LoginFromHerokuRequest extends FormRequest
 {
+    /**
+     * @var mixed
+     */
+    private RedirectToVaporRequest $loginRequest;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -19,7 +23,15 @@ class LoginFromHerokuRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return $this->findRequest();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLoginRequest()
+    {
+        return $this->loginRequest;
     }
 
     /**
@@ -30,16 +42,13 @@ class LoginFromHerokuRequest extends FormRequest
     public function rules()
     {
         return [
-            'token' => [
-                Rule::in([AppConfig::pull('login_from_heroku_key')]),
-                'required',
-                'filled',
-            ],
-            'user_id' => [
-                Rule::exists('users', 'id'),
-                'required',
-                'filled',
-            ],
         ];
+    }
+
+    private function findRequest()
+    {
+        $this->loginRequest = RedirectToVaporRequest::where('token', $this->token)->first();
+
+        return (bool) $this->loginRequest;
     }
 }

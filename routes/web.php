@@ -77,26 +77,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::view('jobs/completed', 'admin.jobsCompleted.manage');
 
-    Route::get('download/{filePath}', [
-        'uses' => 'DownloadController@file',
-        'as'   => 'download',
-    ]);
-
-    Route::get('download-media-collection-zip/{collectionName}', [
-        'uses' => 'DownloadController@downloadUserMediaCollectionAsZip',
-        'as'   => 'download.collection-as-zip',
-    ]);
-
-    Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
-        'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
-        'as'   => 'download.google.csv',
-    ]);
-
-    Route::get('download-zipped-media/{user_id}/{media_ids}', [
-        'uses' => 'DownloadController@downloadZippedMedia',
-        'as'   => 'download.zipped.media',
-    ])->middleware('signed');
-
     Route::group([
         'prefix'     => 'patient-user',
         'middleware' => ['auth', 'checkPatientUserData'],
@@ -229,11 +209,6 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'patients',
             'middleware' => ['patientProgramSecurity'],
         ], function () {
-            Route::get('download/{media_id}/{user_id}/{practice_id}', [
-                'uses' => 'DownloadController@downloadMediaFromSignedUrl',
-                'as'   => 'download.media.from.signed.url',
-            ])->middleware('signed');
-
             Route::post(
                 '{patientId}/problems/cpm/{cpmId}/instructions',
                 'ProblemInstructionController@addInstructionProblem'
@@ -528,12 +503,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'upload.ccda',
         ]);
     });
-
-    //
-    // PROVIDER UI (/manage-patients, /reports, ect)
-    //
-    Route::get('reports/audit/monthly', ['uses' => 'DownloadController@downloadAuditReportsForMonth', 'as' => 'download.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
-    Route::get('reports/audit/make', ['uses' => 'DownloadController@makeAuditReportsForMonth', 'as' => 'make.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
 
     // **** PATIENTS (/manage-patients/
     Route::group([
@@ -1085,4 +1054,4 @@ Route::post('callcreate-multi', [
     'as'   => 'api.callcreate-multi',
 ])->middleware('auth');
 
-Route::post('login-from-heroku', 'LoginFromHerokuController@loginUser');
+Route::get('login-from-heroku/{token}', 'LoginFromHerokuController@loginUser');

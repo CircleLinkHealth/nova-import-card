@@ -109,7 +109,7 @@
                     this.setOpenModal({
                         name: 'add-task-modal',
                         props: {
-                            patientId: window['patientId'],
+                            patientId: String(window['patientId']),
                             practice: {
                                 id: window['patientPractice'].id,
                                 name: window['patientPractice'].name,

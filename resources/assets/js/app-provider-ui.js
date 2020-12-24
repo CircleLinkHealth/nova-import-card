@@ -46,7 +46,6 @@ const UpdateCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ '
 const Select2Component = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/select2')
 const FabComponent = () => import(/* webpackChunkName: "chunk-provider" */ './components/fab')
 const OpenModalComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/open-modal')
-const NotificationsComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications')
 const CareplanActions = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/view-care-plan/careplan-actions')
 const CareDocsIndex = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/care-docs/index')
 const MedicationsListComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './ccd-models/medications')
@@ -108,7 +107,6 @@ Vue.component('select2', Select2Component);
 Vue.component('send-email-to-patient', SendEmailToPatientComponent);
 Vue.component('fab', FabComponent);
 Vue.component('openModal', OpenModalComponent);
-Vue.component('notifications', NotificationsComponent);
 Vue.component('careplanActions', CareplanActions);
 Vue.component('careDocsIndex', CareDocsIndex);
 Vue.component('medicationsList', MedicationsListComponent);

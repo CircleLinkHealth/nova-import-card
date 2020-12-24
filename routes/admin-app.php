@@ -45,3 +45,8 @@ Route::get('admin/users/{id}/destroy', [
     'uses' => 'RedirectToAdminApp@destroyUser',
     'as'   => 'admin.users.destroy',
 ])->middleware('permission:user.delete');
+
+Route::get('direct-mail/show/{dmId}', [
+    'uses' => 'RedirectToAdminApp@dmShow',
+    'as'   => 'direct-mail.show',
+]);

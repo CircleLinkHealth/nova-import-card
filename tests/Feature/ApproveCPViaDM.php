@@ -7,7 +7,6 @@
 namespace Tests\Feature;
 
 use App\AppConfig\DMDomainForAutoApproval;
-use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -96,7 +96,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->assertDatabaseHas(
             (new DirectMailMessage())->getTable(),
             [
-                'from'       => config('services.emr-direct.user'),
+                'from'       => config('core.services.emr-direct.user'),
                 'to'         => 'circlelinkhealth'.self::TEST_DM_DOMAIN,
                 'subject'    => $this->directMailSubject($this->patient()),
                 'status'     => DirectMailMessage::STATUS_SUCCESS,

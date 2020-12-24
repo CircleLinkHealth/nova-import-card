@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Events\CarePlanWasProviderApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

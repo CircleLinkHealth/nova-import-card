@@ -19,13 +19,13 @@
         login here</a>. Then, on the homepage, click "Approve Now" in the “Pending Care Plans” list, for the first patient you wish to approve:
 </p>
 
-<img src="{{ $message->embed(public_path('/img/emails/careplan-pending-approvals/approval-box.png')) }}" alt="Approve CarePlans table example image.">
+<img src="{{ $message->embed(asset('/img/emails/careplan-pending-approvals/approval-box.png')) }}" alt="Approve CarePlans table example image.">
 
 <p>
     You will be taken to the Care Plan page where you will review the care plan (below):
 </p>
 
-<img src="{{ $message->embed(public_path('/img/emails/careplan-pending-approvals/view-care-plan-example.png')) }}" alt="View CarePlan example image.">
+<img src="{{ $message->embed(asset('/img/emails/careplan-pending-approvals/view-care-plan-example.png')) }}" alt="View CarePlan example image.">
 
 <p>
     If you agree with the care plan, please click the "Approve and View Next" button in the top right, and you will be taken to the next care plan to approve.

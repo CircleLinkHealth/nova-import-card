@@ -67,7 +67,7 @@
                     <div class="col cookie">
                         <div class="card horizontal">
                             <div class="card-image">
-                                <img :src="'/img/cookie.png'">
+                                <img src="../../../../img/cookie.png">
                             </div>
                             <div class="card-stacked">
                                 <div class="card-content">

@@ -31,7 +31,8 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-customer.git"
-    },{
+    },
+    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
     },
@@ -253,10 +254,7 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/"
-    },
-    "files": [
-      "CircleLinkHealth/Core/Helpers/helpers.php"
-    ]
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

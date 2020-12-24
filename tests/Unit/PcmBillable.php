@@ -6,11 +6,11 @@
 
 namespace Tests\Feature;
 
-use App\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Services\ApproveBillablePatientsService;
 use Tests\CustomerTestCase;
 use Tests\Helpers\Users\Patient\Problems;
 

@@ -6,21 +6,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\ReportFormatter;
 use App\Http\Requests\GetUnder20MinutesReport;
-use App\Relationships\PatientCareplanRelations;
-use App\Services\CareplanAssessmentService;
-use App\Services\CareplanService;
-use App\Services\CCD\CcdInsurancePolicyService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Relationships\PatientCareplanRelations;
 use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use CircleLinkHealth\Customer\Services\PrintPausedPatientLettersService;
 use CircleLinkHealth\Customer\Services\ReportsService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\CareplanAssessmentService;
+use CircleLinkHealth\SharedModels\Services\CareplanService;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdInsurancePolicyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
