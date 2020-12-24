@@ -5,7 +5,7 @@
  */
 
 use App\ObservationMeta;
-use App\Services\Observations\ObservationConstants;
+use CircleLinkHealth\SharedModels\Services\Observations\ObservationConstants;
 use CircleLinkHealth\SharedModels\Entities\Observation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
