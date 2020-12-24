@@ -25,7 +25,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     public int $tries = 1;
 
     /**

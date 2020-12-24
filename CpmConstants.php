@@ -32,6 +32,9 @@ class CpmConstants
     ];
     const CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS = ['participant', 'survey-only'];
     const FIVE_MINUTES_IN_SECONDS               = 300;
+    public const FROM_CALLBACK_EMAIL_DOMAIN     = 'callcenterusa.net';
+    public const FROM_CALLBACK_MAIL             = 'message.dispatch@callcenterusa.net';
+    public const FROM_ETHAN_MAIL                = 'ethan@circlelinkhealth.com';
     /**
      * See "CPM Queues" in config/queue.php
      * Jobs can live in a module, and therefore dispatched by different apps.
@@ -78,7 +81,8 @@ class CpmConstants
         'software-only',
         'care-center-external',
     ];
-    const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
+    const SAAS_INTERNAL_USER_ROLE_NAMES          = ['saas-admin', 'care-center'];
+    public const SCHEDULER_POSTMARK_INBOUND_MAIL = 'postmark_inbound_mail';
 
     const SNOMED                 = ProblemCodeSystem::SNOMED;
     const SNOMED_NAME            = ProblemCodeSystem::SNOMED_NAME;
@@ -90,11 +94,7 @@ class CpmConstants
     const TRIX_FIELDS                = ['patient-email-body'];
     const TWENTY_MINUTES_IN_SECONDS  = 1200;
     const VIEWING_PATIENT            = 'viewing-patient';
-    public const FROM_CALLBACK_EMAIL_DOMAIN = 'callcenterusa.net';
-    public const SCHEDULER_POSTMARK_INBOUND_MAIL = 'postmark_inbound_mail';
-    public const FROM_ETHAN_MAIL = 'ethan@circlelinkhealth.com';
-    public const FROM_CALLBACK_MAIL = 'message.dispatch@callcenterusa.net';
-    
+
     public static function athenaEhrId()
     {
         return \Cache::remember('athena_ehr_id_in_cpm', 2, function () {

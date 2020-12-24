@@ -27,7 +27,7 @@ use Spatie\MediaLibrary\MediaStream;
 class DownloadController extends Controller
 {
     use ApiReturnHelpers;
-    
+
     private $googleDrive;
 
     public function __construct(GoogleDrive $googleDrive)

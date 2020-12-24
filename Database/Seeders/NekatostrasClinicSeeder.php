@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 use Illuminate\Database\Seeder;
 use Illuminate\Validation\ValidationException;
 

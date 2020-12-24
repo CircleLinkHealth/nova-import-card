@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Http\Resources;
 
-use CircleLinkHealth\Customer\Http\Resources\PatientContactWindows;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PatientInfo extends JsonResource

@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
-use CircleLinkHealth\SharedModels\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
@@ -20,6 +18,8 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 
 $factory->define(
     \CircleLinkHealth\Customer\Entities\User::class,
