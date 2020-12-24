@@ -757,7 +757,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "d7bee55c81703ae9aba391722f733db7f96fb8c8"
+                "reference": "31db8c5d9c0aae2c32527134a0b05a37f81f14c4"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -799,7 +799,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-24T08:58:58+00:00"
+            "time": "2020-12-24T10:51:21+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -835,7 +835,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f43dd37f4393356e5a350ed0247a862cbb5696f7"
+                "reference": "dee42ec395e7be151909badd2e4b4d95323d697d"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -872,7 +872,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:58+00:00"
+            "time": "2020-12-24T10:28:28+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1312,7 +1312,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "cc29f3f19ece3dd2a5101d3436007d4b8be1701a"
+                "reference": "202e85679dc7381ab802720ce624a7b55a29471c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1332,7 +1332,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-21T19:28:40+00:00"
+            "time": "2020-12-24T10:51:21+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
