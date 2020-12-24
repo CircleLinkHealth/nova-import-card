@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Notifications;
 
-use App\Contracts\LiveNotification;
-use App\Traits\ArrayableNotification;
+use CircleLinkHealth\Core\Contracts\LiveNotification;
+use CircleLinkHealth\Core\Traits\ArrayableNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
