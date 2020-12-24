@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\CpmAdmin\Http\Resources\PamCsvResource;
@@ -16,6 +15,7 @@ use CircleLinkHealth\SharedModels\Entities\CallView;
 use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
 class CallReportController extends Controller
 {
