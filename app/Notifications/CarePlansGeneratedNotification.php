@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\Contracts\LiveNotification;
+use CircleLinkHealth\Core\Contracts\LiveNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Customer\Entities\Media;

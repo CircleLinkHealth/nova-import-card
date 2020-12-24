@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CPM\CpmLifestyleService;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmLifestyleService;
 
 class LifestyleController extends Controller
 {

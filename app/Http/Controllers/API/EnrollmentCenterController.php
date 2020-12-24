@@ -7,9 +7,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\Enrollable;
-use App\Services\Enrollment\EnrollableCallQueue;
-use App\Services\Enrollment\SuggestEnrollable;
-use App\Services\Enrollment\UpdateEnrollable;
+use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
+use CircleLinkHealth\SharedModels\Services\Enrollment\SuggestEnrollable;
+use CircleLinkHealth\SharedModels\Services\Enrollment\UpdateEnrollable;
 use App\ValueObjects\Enrollment\EnrolleeForCaPanel;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest as Request;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;

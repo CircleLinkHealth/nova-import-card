@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\NotificationService;
+use CircleLinkHealth\SharedModels\Services\NotificationService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;

@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Services\OpsDashboardReport;
+use CircleLinkHealth\SharedModels\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\CpmAdmin\Charts\OpsChart;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;

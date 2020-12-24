@@ -6,8 +6,8 @@
 
 namespace App\Notifications;
 
-use App\Contracts\LiveNotification;
-use App\Traits\ArrayableNotification;
+use CircleLinkHealth\Core\Contracts\LiveNotification;
+use CircleLinkHealth\Core\Traits\ArrayableNotification;
 use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;

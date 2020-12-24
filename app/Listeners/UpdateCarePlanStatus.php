@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Log;

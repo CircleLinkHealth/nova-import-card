@@ -6,8 +6,8 @@
 
 namespace App\Notifications;
 
-use App\Contracts\LiveNotification;
-use App\Traits\ArrayableNotification;
+use CircleLinkHealth\Core\Contracts\LiveNotification;
+use CircleLinkHealth\Core\Traits\ArrayableNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;

@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\AppConfig\DMDomainForAutoApproval;
-use App\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;

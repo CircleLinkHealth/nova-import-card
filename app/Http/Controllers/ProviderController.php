@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\CarePlanWasApproved;
-use App\Services\ProviderInfoService;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
+use CircleLinkHealth\SharedModels\Services\ProviderInfoService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Note;

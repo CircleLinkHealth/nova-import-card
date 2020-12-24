@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use CircleLinkHealth\Customer\Events\CarePlanWasQAApproved;
 use App\Events\CarePlanWasRNApproved;

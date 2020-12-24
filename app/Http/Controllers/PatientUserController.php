@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ReportFormatter;
 use App\Relationships\PatientCareplanRelations;
-use App\Services\CareplanService;
+use CircleLinkHealth\SharedModels\Services\CareplanService;
 use Illuminate\Http\Request;
 
 class PatientUserController extends Controller

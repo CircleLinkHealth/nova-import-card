@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
-use App\Notifications\CallCreated;
+use CircleLinkHealth\SharedModels\Notifications\CallCreated;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;

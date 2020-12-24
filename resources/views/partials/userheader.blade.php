@@ -157,7 +157,7 @@
                 </ul>
                 <?php
 
-                $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
+                $ccdProblemService = app(CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService::class);
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 

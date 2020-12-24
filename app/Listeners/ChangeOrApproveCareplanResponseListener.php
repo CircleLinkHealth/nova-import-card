@@ -7,7 +7,7 @@
 namespace App\Listeners;
 
 use App\AppConfig\DMDomainForAutoApproval;
-use App\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\CarePerson;

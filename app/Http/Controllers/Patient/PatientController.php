@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
 use App\Http\Requests\ContactDetailsRequest;
 use App\Http\Requests\MarkPrimaryPhoneRequest;
-use App\Services\Observations\ObservationConstants;
+use CircleLinkHealth\SharedModels\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;

@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Postmark\InboundCallbackDataForTesterService;
+use CircleLinkHealth\SharedModels\Services\Postmark\InboundCallbackDataForTesterService;
 use Illuminate\Console\Command;
 
 class GenerateInboundCallbackDataFeedbackToTester extends Command

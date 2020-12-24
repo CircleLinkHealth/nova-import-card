@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Services\CCD\CcdProblemService;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;

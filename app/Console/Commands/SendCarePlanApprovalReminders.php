@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\CarePlanApprovalRequestsReceivers;
+use CircleLinkHealth\SharedModels\Services\CarePlanApprovalRequestsReceivers;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;

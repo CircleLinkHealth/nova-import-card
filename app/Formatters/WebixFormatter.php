@@ -8,7 +8,7 @@ namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
 use App\Relationships\PatientCareplanRelations;
-use App\Services\CPM\CpmMiscService;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmMiscService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;

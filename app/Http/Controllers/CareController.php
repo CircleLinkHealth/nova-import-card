@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CareplanService;
+use CircleLinkHealth\SharedModels\Services\CareplanService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\UserService;
 use Illuminate\Http\Request;

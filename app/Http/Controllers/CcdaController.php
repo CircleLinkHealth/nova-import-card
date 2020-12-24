@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CcdaService;
+use CircleLinkHealth\SharedModels\Services\CcdaService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 

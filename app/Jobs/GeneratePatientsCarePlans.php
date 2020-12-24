@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Notifications\CarePlansGeneratedNotification;
-use App\Services\CarePlanGeneratorService;
+use CircleLinkHealth\SharedModels\Services\CarePlanGeneratorService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;

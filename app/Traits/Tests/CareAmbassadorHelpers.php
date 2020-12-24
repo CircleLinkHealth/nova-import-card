@@ -6,7 +6,7 @@
 
 namespace App\Traits\Tests;
 
-use App\Services\Enrollment\UpdateEnrollable;
+use CircleLinkHealth\SharedModels\Services\Enrollment\UpdateEnrollable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
