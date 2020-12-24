@@ -16,7 +16,7 @@ return [
         App\Notifications\AddendumCreated::class,
         \CircleLinkHealth\SharedModels\Notifications\CallCreated::class,
         \CircleLinkHealth\CpmAdmin\Notifications\InvoicesCreatedNotification::class,
-        App\Notifications\PracticeStaffCreatedNote::class,
+        \CircleLinkHealth\Customer\Notifications\PracticeStaffCreatedNote::class,
         App\Notifications\SendSignedUrlToDownloadPracticeReport::class,
         App\Notifications\CarePlansGeneratedNotification::class,
     ],

@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PdfableCreated;
+use CircleLinkHealth\Customer\Events\PdfableCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

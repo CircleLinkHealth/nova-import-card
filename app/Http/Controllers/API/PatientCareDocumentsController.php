@@ -8,7 +8,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendSingleNotification;
-use App\Notifications\NotificationStrategies\SendsNotification;
+use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;

@@ -10,7 +10,7 @@ use App\Contracts\ChunksEloquentBuilder;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
-use App\Notifications\NotificationStrategies\SendsNotification;
+use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
 use CircleLinkHealth\SharedModels\Services\AWV\DirectPatientDocument;
 use CircleLinkHealth\SharedModels\Services\AWV\EmailPatientDocument;
 use CircleLinkHealth\SharedModels\Services\AWV\FaxPatientDocument;

@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PatientUserCreated;
+use CircleLinkHealth\Customer\Events\PatientUserCreated;
 
 class AttachUPG0506CarePlanToPatientUser
 {

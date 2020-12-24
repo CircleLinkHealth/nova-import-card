@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Notifications\NotificationStrategies\SendsNotification;
+use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,7 +21,7 @@ class SendSingleNotification implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @var SendsNotification
+     * @var \CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification
      */
     private $service;
 

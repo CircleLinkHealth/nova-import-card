@@ -6,8 +6,8 @@
 
 namespace App\Listeners;
 
-use App\Events\CarePlanWasProviderApproved;
-use App\Events\CarePlanWasRNApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasRNApproved;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -32,7 +32,7 @@ class NotifyPatientOfCarePlanApproval implements ShouldQueue
     }
 
     /**
-     * This listener is raised on both {@link CarePlanWasRNApproved} and {@link CarePlanWasProviderApproved}.
+     * This listener is raised on both {@link CarePlanWasRNApproved} and {@link \CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved}.
      * If auto-approve is enabled, these events will happen almost at the same time.
      * With this check, we skip notifying when first event is raised.
      *

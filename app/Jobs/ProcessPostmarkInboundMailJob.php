@@ -6,8 +6,9 @@
 
 namespace App\Jobs;
 
-use App\Entities\EmailAddressParts;
-use App\Entities\PostmarkInboundMailRequest;
+use CircleLinkHealth\SharedModels\Entities\EmailAddressParts;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use CircleLinkHealth\SharedModels\Services\Postmark\AutoResolveCallbackRequestService;
 use CircleLinkHealth\SharedModels\Services\Postmark\ScheduleCallbackAndNotifyService;
@@ -24,12 +25,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    const FROM_CALLBACK_EMAIL_DOMAIN      = 'callcenterusa.net';
-    const FROM_CALLBACK_MAIL              = 'message.dispatch@callcenterusa.net';
-    const FROM_ETHAN_MAIL                 = 'ethan@circlelinkhealth.com';
-    const SCHEDULER_POSTMARK_INBOUND_MAIL = 'postmark_inbound_mail';
-
+    
     public int $tries = 1;
 
     /**
@@ -71,7 +67,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             return;
         }
 
-        if (self::FROM_ETHAN_MAIL === $email || self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
+        if (CpmConstants::FROM_ETHAN_MAIL === $email || CpmConstants::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
             $autoScheduleCallbackService = app(AutoResolveCallbackRequestService::class);
             $autoScheduleCallbackService->processCreateCallback($recordId);
 

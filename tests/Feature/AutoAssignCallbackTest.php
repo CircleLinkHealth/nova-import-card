@@ -6,8 +6,8 @@
 
 namespace Tests\Feature;
 
-use App\Entities\PostmarkInboundCallbackRequest;
-use App\Entities\PostmarkInboundMailRequest;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundCallbackRequest;
+use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\SharedModels\Notifications\CallCreated;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;

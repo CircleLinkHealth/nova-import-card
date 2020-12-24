@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Notifications\SendCareDocument;
+use CircleLinkHealth\Customer\Notifications\SendCareDocument;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;

@@ -7,6 +7,7 @@
 namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -30,7 +31,7 @@ trait PostmarkCallbackHelpers
             $clrId = $number.' '.$number.' '.'Pavlos Tsokkos';
         }
 
-        $inboundMailDomain = ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_DOMAIN;
+        $inboundMailDomain = CpmConstants::FROM_CALLBACK_EMAIL_DOMAIN;
         $primary           = $patient->getBillingProviderName() ?: 'Salah';
 
         $callbackMailData = "For: GROUP DISTRIBUTION
