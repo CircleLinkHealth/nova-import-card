@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -45,7 +46,7 @@ class UserResource extends JsonResource
                 ? $this->deleted_at->format('c')
                 : null,
             'timezone' => $this->timezone
-                ? \Carbon::now()->setTimezone($this->timezone)->format('T')
+                ? Carbon::now()->setTimezone($this->timezone)->format('T')
                 : null,
             'billing_provider'  => BillingProvider::make($this->whenLoaded('billingProvider')),
             'notes'             => Note::collection($this->whenLoaded('notes')),
