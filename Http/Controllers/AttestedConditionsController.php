@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Illuminate\Routing\Controller;
 
 class AttestedConditionsController extends Controller

@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Services\AppointmentService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Appointment;
+use CircleLinkHealth\SharedModels\Services\AppointmentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
