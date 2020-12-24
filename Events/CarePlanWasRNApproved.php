@@ -6,29 +6,24 @@
 
 namespace CircleLinkHealth\Customer\Events;
 
+use App\Events\Event;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Queue\SerializesModels;
 
-class CarePlanWasApproved
+class CarePlanWasRNApproved extends Event
 {
     use SerializesModels;
-    /**
-     * @var User
-     */
-    public $approver;
-
     /**
      * @var User
      */
     public $patient;
 
     /**
-     * Create a new event instance.
+     * CarePlanWasQAApproved constructor.
      */
-    public function __construct(User $patient, User $approver)
+    public function __construct(User $patient)
     {
-        $this->patient  = $patient;
-        $this->approver = $approver;
+        $this->patient = $patient;
     }
 
     /**
