@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\PdfService\Commands;
 
-use CircleLinkHealth\SharedModels\Services\CarePlanGeneratorService;
 use CircleLinkHealth\PdfService\Services\PdfService;
+use CircleLinkHealth\SharedModels\Services\CarePlanGeneratorService;
 use Illuminate\Console\Command;
 
 class TestServerlessPdfService extends Command
