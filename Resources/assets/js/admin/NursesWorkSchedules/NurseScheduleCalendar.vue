@@ -1,42 +1,44 @@
 <template>
     <div>
-        <div class="calendar-menu">
+        <notifications class="text-left"></notifications>
+        <div class="container">
+          <div class="calendar-menu">
             <div v-if="authIsAdmin"
                  class="col-lg-2">
-                <div class="show-holidays">
-                    <input id="holidaysCheckbox"
-                           type="checkbox"
-                           class="holidays-button"
-                           @click="refetchEvents()"
-                           v-model="showHolidays">
-                    Holidays
-                </div>
-                <div class="show-work">
-                    <input id="workCheckbox"
-                           type="checkbox"
-                           class="work-button"
-                           @click="refetchEvents()"
-                           v-model="showWorkEvents">
-                    Work Events
-                </div>
+              <div class="show-holidays">
+                <input id="holidaysCheckbox"
+                       type="checkbox"
+                       class="holidays-button"
+                       @click="refetchEvents()"
+                       v-model="showHolidays">
+                Holidays
+              </div>
+              <div class="show-work">
+                <input id="workCheckbox"
+                       type="checkbox"
+                       class="work-button"
+                       @click="refetchEvents()"
+                       v-model="showWorkEvents">
+                Work Events
+              </div>
             </div>
 
             <div class="search-filter">
-                <vue-select ref="searchFilter"
-                            v-if="authIsAdmin"
-                            multiple v-model="searchFilter"
-                            @input="refetchEvents()"
-                            :options="nursesForSearchFilter()"
-                            placeholder="Filter RN"
-                            required>
-                </vue-select>
+              <vue-select ref="searchFilter"
+                          v-if="authIsAdmin"
+                          multiple v-model="searchFilter"
+                          @input="refetchEvents()"
+                          :options="nursesForSearchFilter()"
+                          placeholder="Filter RN"
+                          required>
+              </vue-select>
             </div>
-        </div>
+          </div>
 
-        <div class="calendar">
+          <div class="calendar">
             <!-- Add new event - main button-->
             <div class="add-event-main col-md-3">
-                <button class="btn btn-primary" @click="openMainEventModal">{{this.addMainEventButtonName}}</button>
+              <button class="btn btn-primary" @click="openMainEventModal">{{this.addMainEventButtonName}}</button>
             </div>
             <full-calendar ref="calendar"
                            :event-sources="eventSources"
@@ -50,207 +52,209 @@
             <!-- Daily Report Modal -->
 
             <calendar-daily-report
-                    :report-data="reportData"
-                    :report-date="reportDate"
-                    :report-flags="reportFlags"
-                    :pop-up-now="false">
+                :report-data="reportData"
+                :report-date="reportDate"
+                :report-flags="reportFlags"
+                :pop-up-now="false">
             </calendar-daily-report>
             <!-- Daily Report Modal End-->
 
             <!-- Modal -->
             <div class="modal" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
 
-                            <div class="modal-title" id="exampleModalLabel">
-                                <div class="row">
-                                    <div class="col-md-12" style="text-align: center">
-                                        <h3>{{this.modalTitle}}</h3>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <div class="modal-title" id="exampleModalLabel">
+                      <div class="row">
+                        <div class="col-md-12" style="text-align: center">
+                          <h3>{{this.modalTitle}}</h3>
                         </div>
-
-                        <div class="modal-body-custom col-md-12">
-                            <!--  Filter Options-->
-                            <div class="row">
-                                <div v-if="authIsAdmin && !clickedToViewEvent" class="col-md-6">
-                                    <vue-select v-model="nurseData"
-                                                :options="dataForDropdown"
-                                                placeholder="Choose RN"
-                                                required>
-                                    </vue-select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="holiday-on-off">
-                                    <div v-if="! authIsAdmin && (clickedOnDay || addNewEventMainClicked)">
-
-                                        <div class="event-toggle">
-                                            <button id="workDayToggle"
-                                                    type="button"
-                                                    class="btn btn-primary"
-                                                    :class="{disableToggleButtons : disableAddWorkDayToggle}"
-                                                    style="background-color: white; font-size: 20px; color: #5b5858;"
-                                                    @click="toggleEventSwitch(true)">Work Day
-                                            </button>
-
-                                            <div class="toggle-switch">
-                                                <label class="switch">
-                                                    <input id="toggleSwitch"
-                                                           type="checkbox"
-                                                           v-model="addHolidays"
-                                                           checked>
-                                                    <span class="slider round"></span>
-                                                </label>
-
-                                                <button type="button"
-                                                        class="btn btn-primary"
-                                                        :class="{disableToggleButtons : disableAddDayOffToggle}"
-                                                        style="background-color: white; font-size: 20px; color: #5b5858;"
-                                                        @click="toggleEventSwitch(false)">Day Off
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div v-if="!clickedToViewEvent" class="filter-options col-md-3">
-                                <div class="row">
-                                    <div class="choose-event-date">
-                                        <div v-if="addNewEventMainClicked">
-                                            <span class="modal-inputs-labels">{{this.addFromMainButtonDateLabel}}</span>
-                                            <input type="date"
-                                                   id="eventDate"
-                                                   class="event-date-field"
-                                                   name="event_date"
-                                                   :min="calculateMinDate()"
-                                                   v-model="selectedDate">
-                                        </div>
-                                    </div>
-
-
-                                    <div class="work-hours">
-                                        <span class="modal-inputs-labels">For:</span>
-                                        <input v-model="hoursToWork"
-                                               type="number"
-                                               :class="{disable: addHolidays}"
-                                               :disabled="addHolidays"
-                                               class="work-hours-input"
-                                               placeholder="5"
-                                               min="1" max="12">
-                                        <span class="modal-inputs-labels" style="padding-left:1%">hours</span>
-                                    </div>
-
-
-                                    <div class="start-time">
-                                        <span class="modal-inputs-labels">Start Time:</span>
-                                        <input v-model="workRangeStarts"
-                                               type="time"
-                                               :class="{disable: addHolidays}"
-                                               style="height: 30px;width: 105px;"
-                                               :disabled="addHolidays"
-                                               class="time-input">
-                                    </div>
-
-                                    <div class="end-time">
-                                        <span class="modal-inputs-labels">End Time:</span>
-                                        <input v-model="workRangeEnds"
-                                               type="time"
-                                               :class="{disable: addHolidays}"
-                                               style="height: 30px;width: 105px;"
-                                               :disabled="addHolidays"
-                                               class="time-input"></div>
-                                </div>
-
-                                <div v-if="!clickedToViewEvent" class="repeat-day-frequency">
-                                    <span class="modal-inputs-labels">Repeat Frequency:</span>
-                                    <vue-select :options="frequency"
-                                                :class="{disable: addHolidays}"
-                                                :disabled="addHolidays"
-                                                style="width: 188px;"
-                                                v-model="eventFrequency"
-                                                placeholder="Doesn't Repeat">
-                                    </vue-select>
-                                </div>
-
-
-                                <div v-if="repeatFrequencyHasSelected">
-                                    <div class="repeat-until">
-                                        <span class="modal-inputs-labels">Keep repeating until:</span>
-                                        <input type="date"
-                                               :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
-                                               :disabled="!repeatFrequencyHasSelected || addHolidays"
-                                               class="repeat-until-input"
-                                               name="until"
-                                               :min="calculateMinDate()"
-                                               :max="calculateMaxDate()"
-                                               v-model="repeatUntil">
-                                    </div>
-
-                                    <div class="exclude-weekends">
-                                        <input id="excludeWeekends"
-                                               type="checkbox"
-                                               class="exclude-weekends"
-                                               v-model="excludeWeekends">
-                                        Exclude Weekends
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
-                                 class="view-event">
-                                <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
-                            </div>
-                            <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'workDay'"
-                                 class="view-event">
-                                <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
-                                <div class="work-hours-read">Work for {{this.eventToViewData[0].workHours}} hours
-                                    between {{this.eventToViewData[0].start}} and {{this.eventToViewData[0].end}}
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Filters End-->
-                        <div class="modal-footer">
-                            <button v-if="clickedToViewEvent"
-                                    type="button"
-                                    class="btn btn-primary"
-                                    style="float: left; background-color: rgba(255, 133, 28, 0.94);"
-                                    @click="deleteEvent(false)">Delete this event
-                            </button>
-
-                            <button v-if="clickedToViewEvent && isRecurringEvent"
-                                    type="button"
-                                    class="btn btn-primary"
-                                    style="background-color: crimson; border-color: crimson; float: left;"
-                                    @click="deleteEvent(true)">Delete all repeating events
-                            </button>
-
-                            <button v-if="!clickedToViewEvent" type="button"
-                                    class="btn btn-primary"
-                                    @click="addNewEvent">{{this.modalSubmitButton}}
-                            </button>
-                            <button type="button"
-                                    class="btn btn-primary"
-                                    style="float: right; background-color:#d9534f;"
-                                    @click="cancelModalAction">Cancel
-                            </button>
-                        </div>
+                      </div>
                     </div>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body-custom col-md-12">
+                    <!--  Filter Options-->
+                    <div class="row">
+                      <div v-if="authIsAdmin && !clickedToViewEvent" class="col-md-6">
+                        <vue-select v-model="nurseData"
+                                    :options="dataForDropdown"
+                                    placeholder="Choose RN"
+                                    required>
+                        </vue-select>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="holiday-on-off">
+                        <div v-if="! authIsAdmin && (clickedOnDay || addNewEventMainClicked)">
+
+                          <div class="event-toggle">
+                            <button id="workDayToggle"
+                                    type="button"
+                                    class="btn btn-primary"
+                                    :class="{disableToggleButtons : disableAddWorkDayToggle}"
+                                    style="background-color: white; font-size: 20px; color: #5b5858;"
+                                    @click="toggleEventSwitch(true)">Work Day
+                            </button>
+
+                            <div class="toggle-switch">
+                              <label class="switch">
+                                <input id="toggleSwitch"
+                                       type="checkbox"
+                                       v-model="addHolidays"
+                                       checked>
+                                <span class="slider round"></span>
+                              </label>
+
+                              <button type="button"
+                                      class="btn btn-primary"
+                                      :class="{disableToggleButtons : disableAddDayOffToggle}"
+                                      style="background-color: white; font-size: 20px; color: #5b5858;"
+                                      @click="toggleEventSwitch(false)">Day Off
+                              </button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+
+                    <div v-if="!clickedToViewEvent" class="filter-options col-md-3">
+                      <div class="row">
+                        <div class="choose-event-date">
+                          <div v-if="addNewEventMainClicked">
+                            <span class="modal-inputs-labels">{{this.addFromMainButtonDateLabel}}</span>
+                            <input type="date"
+                                   id="eventDate"
+                                   class="event-date-field"
+                                   name="event_date"
+                                   :min="calculateMinDate()"
+                                   v-model="selectedDate">
+                          </div>
+                        </div>
+
+
+                        <div class="work-hours">
+                          <span class="modal-inputs-labels">For:</span>
+                          <input v-model="hoursToWork"
+                                 type="number"
+                                 :class="{disable: addHolidays}"
+                                 :disabled="addHolidays"
+                                 class="work-hours-input"
+                                 placeholder="5"
+                                 min="1" max="12">
+                          <span class="modal-inputs-labels" style="padding-left:1%">hours</span>
+                        </div>
+
+
+                        <div class="start-time">
+                          <span class="modal-inputs-labels">Start Time:</span>
+                          <input v-model="workRangeStarts"
+                                 type="time"
+                                 :class="{disable: addHolidays}"
+                                 style="height: 30px;width: 105px;"
+                                 :disabled="addHolidays"
+                                 class="time-input">
+                        </div>
+
+                        <div class="end-time">
+                          <span class="modal-inputs-labels">End Time:</span>
+                          <input v-model="workRangeEnds"
+                                 type="time"
+                                 :class="{disable: addHolidays}"
+                                 style="height: 30px;width: 105px;"
+                                 :disabled="addHolidays"
+                                 class="time-input"></div>
+                      </div>
+
+                      <div v-if="!clickedToViewEvent" class="repeat-day-frequency">
+                        <span class="modal-inputs-labels">Repeat Frequency:</span>
+                        <vue-select :options="frequency"
+                                    :class="{disable: addHolidays}"
+                                    :disabled="addHolidays"
+                                    style="width: 188px;"
+                                    v-model="eventFrequency"
+                                    placeholder="Doesn't Repeat">
+                        </vue-select>
+                      </div>
+
+
+                      <div v-if="repeatFrequencyHasSelected">
+                        <div class="repeat-until">
+                          <span class="modal-inputs-labels">Keep repeating until:</span>
+                          <input type="date"
+                                 :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
+                                 :disabled="!repeatFrequencyHasSelected || addHolidays"
+                                 class="repeat-until-input"
+                                 name="until"
+                                 :min="calculateMinDate()"
+                                 :max="calculateMaxDate()"
+                                 v-model="repeatUntil">
+                        </div>
+
+                        <div class="exclude-weekends">
+                          <input id="excludeWeekends"
+                                 type="checkbox"
+                                 class="exclude-weekends"
+                                 v-model="excludeWeekends">
+                          Exclude Weekends
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
+                         class="view-event">
+                      <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
+                    </div>
+                    <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'workDay'"
+                         class="view-event">
+                      <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
+                      <div class="work-hours-read">Work for {{this.eventToViewData[0].workHours}} hours
+                        between {{this.eventToViewData[0].start}} and {{this.eventToViewData[0].end}}
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Filters End-->
+                  <div class="modal-footer">
+                    <button v-if="clickedToViewEvent"
+                            type="button"
+                            class="btn btn-primary"
+                            style="float: left; background-color: rgba(255, 133, 28, 0.94);"
+                            @click="deleteEvent(false)">Delete this event
+                    </button>
+
+                    <button v-if="clickedToViewEvent && isRecurringEvent"
+                            type="button"
+                            class="btn btn-primary"
+                            style="background-color: crimson; border-color: crimson; float: left;"
+                            @click="deleteEvent(true)">Delete all repeating events
+                    </button>
+
+                    <button v-if="!clickedToViewEvent" type="button"
+                            class="btn btn-primary"
+                            @click="addNewEvent">{{this.modalSubmitButton}}
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            style="float: right; background-color:#d9534f;"
+                            @click="cancelModalAction">Cancel
+                    </button>
+                  </div>
                 </div>
+              </div>
             </div>
             <!-- modal end-->
+          </div>
         </div>
+
     </div>
 </template>
 
@@ -264,6 +268,8 @@
     import CalendarLoader from './FullScreenLoader';
     import axios from "../../bootstrap-axios";
     import CalendarDailyReport from "./CalendarDailyReport";
+    import Notifications from '../../components/shared/notifications/notifications';
+
     // import VModal from 'vue-js-modal';
     //
     // Vue.use(VModal);
@@ -294,7 +300,7 @@
         components: {
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
-            'addNotification': addNotification,
+            'notifications': Notifications,
             CalendarLoader,
             RRule,
             'calendar-daily-report': CalendarDailyReport
