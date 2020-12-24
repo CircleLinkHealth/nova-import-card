@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\PdfService\Commands;
 
-use App\Services\CarePlanGeneratorService;
+use CircleLinkHealth\SharedModels\Services\CarePlanGeneratorService;
 use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Console\Command;
 
