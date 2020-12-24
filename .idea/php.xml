@@ -354,6 +354,7 @@
       <path value="$PROJECT_DIR$/vendor/joshgaber/novaunit" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-token-stream" />
       <path value="$PROJECT_DIR$/vendor/mantas-done/laravel-apm" />
+      <path value="$PROJECT_DIR$/vendor/api2pdf/api2pdf.php" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
