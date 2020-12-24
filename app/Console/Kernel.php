@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
-                 ->hourly()
-                 ->between('7:00', '23:00');
+            ->hourly()
+            ->between('7:00', '23:00');
     }
 }
