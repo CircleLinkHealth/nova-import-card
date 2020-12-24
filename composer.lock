@@ -387,12 +387,6 @@
                 "brick",
                 "math"
             ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/math",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-08-18T23:57:15+00:00"
         },
         {
@@ -438,12 +432,6 @@
                 "brick",
                 "currency",
                 "money"
-            ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/money",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-08-19T22:52:38+00:00"
         },
@@ -508,7 +496,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "4e27e831e043b9398f65484e5883c3dc5cd3106f"
+                "reference": "535b49de86788096e51ad28ef766bf2e07e96a59"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -555,7 +543,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-24T05:11:03+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -718,7 +706,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "60f1552dc6325a1e3ee83b8dcd5925fafa8ffb6e"
+                "reference": "7c21c54cd61bba0f81904a00cfedf8a5405a50e0"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -761,7 +749,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T05:30:06+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -769,7 +757,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "310e5c31856d6dda13e125bac2d968bf3085ad51"
+                "reference": "d7bee55c81703ae9aba391722f733db7f96fb8c8"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -811,7 +799,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-24T06:09:06+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -819,7 +807,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b114280ae6b9d4f27c7acd4d4cda6ab068e47cd7"
+                "reference": "91bbc3b53c1579b2297c31480f2aefa7cfe054dd"
             },
             "type": "laravel-module",
             "extra": {
@@ -839,7 +827,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T05:34:09+00:00"
+            "time": "2020-12-24T08:58:57+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -847,7 +835,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "3d137d8cc3ee6be850b8f4f63d98cc7ed499ffa7"
+                "reference": "f43dd37f4393356e5a350ed0247a862cbb5696f7"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -884,7 +872,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T06:23:03+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -892,7 +880,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "bfa0f199c2237d476988de6087fe7f500f516a60"
+                "reference": "73b2f15376890789fe104d73aa213c2e1a11218a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -919,7 +907,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T05:30:06+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1109,7 +1097,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "abee6898bd7e3a65711d40175f2baf1031e09d16"
+                "reference": "e77365dbdd128a564f9a91267e9585c57c54f4ad"
             },
             "type": "laravel-module",
             "extra": {
@@ -1131,7 +1119,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T05:34:09+00:00"
+            "time": "2020-12-24T08:58:57+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
@@ -1139,7 +1127,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "c4b8b37118c62471c77d6d5f9d70c3c2aab555c1"
+                "reference": "6cb92099e509507bd5e86227161bc9a1e84a736a"
             },
             "require": {
                 "circlelinkhealth/core-module": "dev-vaporizing-admin",
@@ -1173,7 +1161,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T04:03:26+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1261,7 +1249,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "a2a4ad3330aee4b90b2aaf7e7d31e596fec4c5d9"
+                "reference": "eca34af59e5448312f3532c8aaebc271d92b2036"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1291,7 +1279,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T05:34:10+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1299,7 +1287,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "cb3a8889a7a92b668fa7d6ad064b3307b637a850"
+                "reference": "6c5268963754f7a74671b06a6605b4c4440ffadb"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1316,7 +1304,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T05:30:06+00:00"
+            "time": "2020-12-24T08:58:57+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1417,7 +1405,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "dc1efbc1be3fd31a0b793cde239d846395cb39be"
+                "reference": "b7d332c33c4f64acc3a08485e4ac267d8f3a5124"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1442,7 +1430,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T04:38:04+00:00"
+            "time": "2020-12-24T08:58:57+00:00"
         },
         {
             "name": "circlelinkhealth/twilio-integration-module",
@@ -1484,7 +1472,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "498bf31e9cfb021facbb54a17069d9c54ed93d4f"
+                "reference": "c274f3d1e8b1a307036fa11fa69ab6013e2b1f53"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1511,7 +1499,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T04:38:05+00:00"
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -1990,20 +1978,6 @@
                 "redis",
                 "xcache"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcache",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-07T18:54:01+00:00"
         },
         {
@@ -2187,20 +2161,6 @@
                 "event system",
                 "events"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fevent-manager",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T18:28:51+00:00"
         },
         {
@@ -2278,20 +2238,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T15:13:26+00:00"
         },
         {
@@ -2353,20 +2299,6 @@
                 "lexer",
                 "parser",
                 "php"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Flexer",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-05-25T17:44:05+00:00"
         },
@@ -3632,16 +3564,6 @@
                 "user agent",
                 "useragent"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/jenssegers",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/jenssegers/agent",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-13T08:05:20+00:00"
         },
         {
@@ -4043,12 +3965,6 @@
                 "autoloading",
                 "laminas",
                 "zf"
-            ],
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
             ],
             "time": "2020-09-14T14:23:00+00:00"
         },
@@ -4924,16 +4840,6 @@
                 "JWS",
                 "jwt"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/lcobucci",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/lcobucci",
-                    "type": "patreon"
-                }
-            ],
             "time": "2020-08-20T13:22:28+00:00"
         },
         {
@@ -5163,12 +5069,6 @@
                 "s3",
                 "sftp",
                 "storage"
-            ],
-            "funding": [
-                {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
-                }
             ],
             "time": "2020-08-23T07:39:11+00:00"
         },
@@ -5458,12 +5358,6 @@
                 "resource",
                 "secure",
                 "server"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/sephster",
-                    "type": "github"
-                }
             ],
             "time": "2020-07-01T11:33:50+00:00"
         },
@@ -7313,16 +7207,6 @@
                 "php",
                 "type"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/GrahamCampbell",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpoption/phpoption",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-20T17:29:33+00:00"
         },
         {
@@ -8062,12 +7946,6 @@
                 "queue",
                 "set"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
-            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -8148,12 +8026,6 @@
                 "guid",
                 "identifier",
                 "uuid"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
             ],
             "time": "2020-08-18T17:17:46+00:00"
         },
@@ -9289,20 +9161,6 @@
             ],
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-07T11:33:47+00:00"
         },
         {
@@ -9512,20 +9370,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-07T11:33:47+00:00"
         },
@@ -11291,20 +11135,6 @@
                 "interoperability",
                 "standards"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-07T11:33:47+00:00"
         },
         {
@@ -11886,16 +11716,6 @@
                 "dotenv",
                 "env",
                 "environment"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/GrahamCampbell",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/vlucas/phpdotenv",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-07-14T19:22:52+00:00"
         },
@@ -16519,12 +16339,6 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "funding": [
-                {
-                    "url": "https://github.com/theseer",
-                    "type": "github"
-                }
-            ],
             "time": "2020-07-12T23:59:07+00:00"
         },
         {
