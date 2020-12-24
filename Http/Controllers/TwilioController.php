@@ -6,19 +6,15 @@
 
 namespace CircleLinkHealth\TwilioIntegration\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\TwilioIntegration\Http\Requests\TwilioInboundSmsRequest;
 use CircleLinkHealth\TwilioIntegration\Jobs\ProcessCpmTwilioSmsStatusCallbackJob;
 use CircleLinkHealth\TwilioIntegration\Jobs\ProcessTwilioInboundSmsJob;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 
 class TwilioController extends Controller
 {
-    public function __construct()
-    {
-    }
-
     /**
      * Route called from Twilio whenever we receive an SMS.
      */
