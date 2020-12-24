@@ -878,11 +878,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "7c21c54cd61bba0f81904a00cfedf8a5405a50e0"
+                "reference": "30f50afc1add2654fce2c231ec4a058865e75a25"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
                 "jeremykenedy/slack-laravel": "*",
+                "joshbrw/laravel-module-installer": "*",
                 "laravel-notification-channels/twilio": "^2.1",
                 "laravel/passport": "^8.0 || ^7.3.0",
                 "laravel/vapor-core": "^2.9",
@@ -921,7 +922,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:58+00:00"
+            "time": "2020-12-24T17:31:30+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -929,7 +930,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "31db8c5d9c0aae2c32527134a0b05a37f81f14c4"
+                "reference": "b64a2de2e450cbd3b253e8e0b941a8fecbc7d814"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -971,7 +972,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-24T10:51:21+00:00"
+            "time": "2020-12-24T18:14:20+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1007,7 +1008,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a4f21a4313c50aa9f3c9b3f72a50c04eda92a17c"
+                "reference": "e89b6abb501bd6607733cbaac93c66a4f623c02f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1018,6 +1019,7 @@
                 "lab404/laravel-impersonate": "^1.2",
                 "laravel/passport": "^8.0",
                 "laravel/scout": "^7.1|^8.0",
+                "laravel/ui": "^2.0",
                 "league/flysystem-aws-s3-v3": "*",
                 "propaganistas/laravel-phone": "^4.2.2",
                 "spatie/laravel-medialibrary": "^7.0.0"
@@ -1044,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T15:37:27+00:00"
+            "time": "2020-12-24T18:06:54+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
