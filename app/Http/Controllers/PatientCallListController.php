@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Addendum;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
 use CircleLinkHealth\SharedModels\Services\CallService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Services\NoteService;

@@ -37,7 +37,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
     }
 
     /**
-     * Gets the notification attachment type. eg. App\Models\Addendum.
+     * Gets the notification attachment type. eg. CircleLinkHealth\SharedModels\Entities\Addendum.
      */
     public function attachmentType(): string
     {

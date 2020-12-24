@@ -7,7 +7,7 @@
 namespace App\Notifications;
 
 use CircleLinkHealth\Core\Contracts\LiveNotification;
-use App\Models\Addendum;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
 use App\Notifications\Channels\CircleLinkMailChannel;
 use CircleLinkHealth\SharedModels\Services\NotificationService;
 use CircleLinkHealth\Core\Traits\ArrayableNotification;
@@ -36,7 +36,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      */
     public $addendum;
     /**
-     * @var Addendum
+     * @var \CircleLinkHealth\SharedModels\Entities\Addendum
      */
     public $attachment;
     /**

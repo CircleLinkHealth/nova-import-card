@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Models\Addendum;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
 use App\Notifications\AddendumCreated;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;

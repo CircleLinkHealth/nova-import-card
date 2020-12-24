@@ -6,6 +6,7 @@
 
 namespace App\Search;
 
+use CircleLinkHealth\Core\Search\BaseScoutSearch;
 use CircleLinkHealth\Customer\Entities\Location;
 use Laravel\Scout\Builder;
 
