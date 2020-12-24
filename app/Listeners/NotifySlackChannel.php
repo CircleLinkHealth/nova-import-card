@@ -47,6 +47,10 @@ class NotifySlackChannel
         \Log::debug('Running NotifySlackChannel');
         \Log::debug('isProductionEnv='.isProductionEnv());
 
+        if ( ! isProductionEnv()) {
+            return;
+        }
+
         $dm->loadMissing('ccdas.practice');
 
         $greeting = 'DM Received';
