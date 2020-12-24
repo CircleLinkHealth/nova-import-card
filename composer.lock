@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "505e3e7a8a6ad1939059351a0f34025f",
+    "content-hash": "994249267a9e311688be0fafef2dc55d",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -714,11 +714,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v1.2",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "965b144632d44c25f3c34839b1b6d58093d4e907"
+                "reference": "912498aceb7e6e29cdb8df3649c161a900e7c10f"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -727,6 +727,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
+                        "CircleLinkHealth\\Raygun\\Providers\\RaygunDeferredServiceProvider",
                         "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
                     ],
                     "aliases": []
@@ -743,7 +744,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:06:34+00:00"
+            "time": "2020-12-24T18:22:19+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -12728,6 +12729,7 @@
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/raygun-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
