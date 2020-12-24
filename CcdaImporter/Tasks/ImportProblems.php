@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
-use App\Importer\Section\Validators\NameNotNull;
-use App\Importer\Section\Validators\ValidStatus;
+use CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
+use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus;
 use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;

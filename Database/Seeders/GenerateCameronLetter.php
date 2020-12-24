@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\Database\Seeders;
 
-use App\ValueObjects\SelfEnrolment\CameronLetterProductionValueObject;
-use App\ValueObjects\SelfEnrolment\CameronLetterTestValueObject;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\Eligibility\DTO\CameronLetterProductionValueObject;
+use CircleLinkHealth\Eligibility\DTO\CameronLetterTestValueObject;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
