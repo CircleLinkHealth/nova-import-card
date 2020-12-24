@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Core\Services\PhiMail;
 
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
-use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
+use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
