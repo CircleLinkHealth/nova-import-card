@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
-use App\Services\CCD\CcdProblemService;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
