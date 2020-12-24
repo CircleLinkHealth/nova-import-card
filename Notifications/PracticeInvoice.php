@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Notifications;
 
-use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
+use CircleLinkHealth\Customer\Mail\PracticeInvoice as PracticeInvoiceMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
