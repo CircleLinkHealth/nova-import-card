@@ -48,6 +48,9 @@ class NotifySlackChannel implements ShouldQueue
     private function notifyAdmins(
         DirectMailMessage $dm
     ) {
+        \Log::debug('Running NotifySlackChannel');
+        \Log::debug('isProductionEnv='.isProductionEnv());
+
         if ( ! isProductionEnv()) {
             return;
         }
