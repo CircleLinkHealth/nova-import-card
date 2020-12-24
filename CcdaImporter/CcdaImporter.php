@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\Events\PatientUserCreated;
+use CircleLinkHealth\Customer\Events\PatientUserCreated;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
