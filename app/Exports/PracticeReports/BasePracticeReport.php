@@ -6,6 +6,7 @@
 
 namespace App\Exports\PracticeReports;
 
+use CircleLinkHealth\Core\Contracts\Mediable;
 use CircleLinkHealth\Customer\Contracts\PracticeDataExportInterface;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
