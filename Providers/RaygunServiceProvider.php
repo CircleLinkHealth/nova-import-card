@@ -10,7 +10,7 @@ use Illuminate\Contracts\Logging\Log;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class RaygunServiceProvider extends ServiceProvider implements DeferrableProvider
+class RaygunServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
