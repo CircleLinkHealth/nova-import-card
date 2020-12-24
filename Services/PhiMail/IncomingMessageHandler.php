@@ -6,15 +6,15 @@
 
 namespace CircleLinkHealth\Core\Services\PhiMail;
 
-use CircleLinkHealth\Customer\Jobs\DecorateUPG0506CcdaWithPdfData;
-use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Jobs\DecorateUPG0506CcdaWithPdfData;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
 use Illuminate\Support\Str;
 
 /**
