@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TimeTracking\Jobs;
 
-use App\Jobs\ProcessCareAmbassadorTime;
+use CircleLinkHealth\Customer\Jobs\ProcessCareAmbassadorTime;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
@@ -88,7 +88,7 @@ class StoreTimeTracking implements ShouldQueue
             }
 
             if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
-                ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
+                \CircleLinkHealth\Customer\Jobs\ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
     }
