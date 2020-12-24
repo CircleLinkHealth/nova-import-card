@@ -7,9 +7,10 @@
 namespace App\Nova;
 
 use App\Nova\User as NovaUser;
+use CircleLinkHealth\Customer\CpmConstants;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class CareCoachUser extends NovaUser
+class PatientUser extends NovaUser
 {
     /**
      * Indicates if the resource should be displayed in the sidebar.
@@ -23,7 +24,7 @@ class CareCoachUser extends NovaUser
      *
      * @var string
      */
-    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
+    public static $group = CpmConstants::NOVA_GROUP_ADMIN;
 
     /**
      * Build an "index" query for the given resource.
@@ -34,12 +35,12 @@ class CareCoachUser extends NovaUser
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->careCoaches();
+        return $query->ofType('participant');
     }
 
     public static function label()
     {
-        return 'Care Coaches';
+        return 'Patients';
     }
 
     /**
@@ -53,6 +54,6 @@ class CareCoachUser extends NovaUser
      */
     public static function relatableQuery(NovaRequest $request, $query)
     {
-        return $query->careCoaches();
+        return $query->ofType('participant');
     }
 }
