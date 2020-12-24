@@ -14,9 +14,6 @@ use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
 class ExportTwilioCalls extends DownloadExcel implements WithMapping
 {
-    use InteractsWithQueue;
-    use Queueable;
-
     protected $headings = [
         'ID',
         'Twilio ID',
