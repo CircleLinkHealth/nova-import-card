@@ -16,7 +16,7 @@ use Illuminate\Routing\Controller;
 class AuthyController extends Controller
 {
     use ApiReturnHelpers;
-    
+
     /**
      * @var \CircleLinkHealth\TwoFA\Services\AuthyService
      */
