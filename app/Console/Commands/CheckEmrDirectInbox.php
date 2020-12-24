@@ -59,7 +59,7 @@ class CheckEmrDirectInbox extends Command
             $this->warn('Checking Test EMR Direct Inbox.'." Address: $address");
             $this->directMail->receive($address);
             $this->comment('Checked Test EMR Direct Inbox.'." Address: $address");
-        }else {
+        } else {
             $this->warn('DM Test User Address not set');
         }
     }

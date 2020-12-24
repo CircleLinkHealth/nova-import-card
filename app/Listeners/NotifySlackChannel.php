@@ -48,7 +48,7 @@ class NotifySlackChannel implements ShouldQueue
     private function notifyAdmins(
         DirectMailMessage $dm
     ) {
-        if ( ! app()->environment('production')) {
+        if ( ! isProductionEnv()) {
             return;
         }
 
