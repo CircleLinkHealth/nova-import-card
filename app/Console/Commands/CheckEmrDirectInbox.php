@@ -50,6 +50,8 @@ class CheckEmrDirectInbox extends Command
             $this->warn('Checking EMR Direct Inbox.'." Address: $address");
             $this->directMail->receive($address);
             $this->comment('Checked EMR Direct Inbox.'." Address: $address");
+        } else {
+            $this->warn('DM Address not set');
         }
 
         $address = config('core.services.emr-direct.test_user');
@@ -57,6 +59,8 @@ class CheckEmrDirectInbox extends Command
             $this->warn('Checking Test EMR Direct Inbox.'." Address: $address");
             $this->directMail->receive($address);
             $this->comment('Checked Test EMR Direct Inbox.'." Address: $address");
+        }else {
+            $this->warn('DM Test User Address not set');
         }
     }
 }
