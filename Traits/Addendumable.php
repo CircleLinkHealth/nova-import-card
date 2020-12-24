@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\Models\Addendum;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
 
 trait Addendumable
 {

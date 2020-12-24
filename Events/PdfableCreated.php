@@ -6,11 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Events;
 
-use App\Events\Event;
 use CircleLinkHealth\Core\Contracts\PdfReport;
 use Illuminate\Queue\SerializesModels;
 
-class PdfableCreated extends Event
+class PdfableCreated
 {
     use SerializesModels;
     /**
