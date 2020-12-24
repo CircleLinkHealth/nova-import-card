@@ -204,7 +204,7 @@
     import Select2Component from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2'
     import Loader from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/loader'
     import timeDisplay from '../../../../../../Sharedvuecomponents/Resources/assets/js/util/time-display'
-    import NotificationsComponent from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
+    import NotificationsComponent from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import SERVICES from '../../../../../../Sharedvuecomponents/Resources/assets/js/constants/services.types'
 
     export default {
