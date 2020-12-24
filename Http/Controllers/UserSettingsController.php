@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Twofa\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 
 class UserSettingsController extends Controller
 {

@@ -6,14 +6,17 @@
 
 namespace CircleLinkHealth\TwoFA\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAuthyPhoneNumber;
-use App\Http\Requests\VerifyAuthyTokenRequest;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
+use CircleLinkHealth\TwoFA\Http\Requests\StoreAuthyPhoneNumber;
+use CircleLinkHealth\TwoFA\Http\Requests\VerifyAuthyTokenRequest;
 use CircleLinkHealth\TwoFA\Services\AuthyService;
+use Illuminate\Routing\Controller;
 
 class AuthyController extends Controller
 {
+    use ApiReturnHelpers;
+    
     /**
      * @var \CircleLinkHealth\TwoFA\Services\AuthyService
      */
