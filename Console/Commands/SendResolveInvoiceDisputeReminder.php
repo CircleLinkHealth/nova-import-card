@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
-use App\Notifications\ResolveDisputeReminder;
+use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseMonthlyInvoiceCsv;
+use CircleLinkHealth\NurseInvoices\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\CpmConstants;
