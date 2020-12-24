@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Http\Requests\AdminShowNurseInvoice;
@@ -18,6 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 
 class InvoiceReviewController extends Controller

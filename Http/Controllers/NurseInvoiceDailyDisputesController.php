@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Http\Requests\StoreSuggestedTime;
 use CircleLinkHealth\SharedModels\Services\NurseInvoiceDailyDisputeTimeService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
 class NurseInvoiceDailyDisputesController extends Controller
 {
