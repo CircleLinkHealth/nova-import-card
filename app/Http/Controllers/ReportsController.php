@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\ReportFormatter;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use App\Http\Requests\GetUnder20MinutesReport;
-use App\Relationships\PatientCareplanRelations;
+use CircleLinkHealth\Customer\Relationships\PatientCareplanRelations;
 use CircleLinkHealth\SharedModels\Services\CareplanAssessmentService;
 use CircleLinkHealth\SharedModels\Services\CareplanService;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdInsurancePolicyService;

@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
-use App\Jobs\ProcessPostmarkInboundMailJob;
+use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use Illuminate\Console\Command;
 

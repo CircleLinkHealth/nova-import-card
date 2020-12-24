@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
-use App\Contracts\ReportFormatter;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;

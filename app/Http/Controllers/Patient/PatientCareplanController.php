@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CarePlanPrintListView;
-use App\Contracts\ReportFormatter;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Http\Requests\DeleteAlternateContactRequest;

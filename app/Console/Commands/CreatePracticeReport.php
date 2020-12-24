@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\Reports\PracticeDataExportInterface;
-use App\Jobs\StoreReportAsMedia;
+use CircleLinkHealth\Customer\Contracts\PracticeDataExportInterface;
+use CircleLinkHealth\Customer\Jobs\StoreReportAsMedia;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -28,7 +28,7 @@ class CreatePracticeReport extends Command
     protected $name = 'reports:create';
 
     /**
-     * @var PracticeDataExportInterface
+     * @var \CircleLinkHealth\Customer\Contracts\PracticeDataExportInterface
      */
     private $report;
 

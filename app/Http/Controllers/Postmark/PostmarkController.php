@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Postmark;
 
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use App\Http\Controllers\Controller;
-use App\Jobs\ProcessPostmarkInboundMailJob;
+use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\Core\Jobs\ProcessPostmarkMailStatusCallbackJob;
 use Illuminate\Http\Request;
 

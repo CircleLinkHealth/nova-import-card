@@ -6,7 +6,7 @@
 
 namespace App\Exports\PracticeReports;
 
-use App\Contracts\Reports\PracticeDataExportInterface;
+use CircleLinkHealth\Customer\Contracts\PracticeDataExportInterface;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\Contracts\ReportFormatter;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
 use App\Http\Requests\ContactDetailsRequest;

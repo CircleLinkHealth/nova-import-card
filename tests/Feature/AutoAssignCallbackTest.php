@@ -8,10 +8,10 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundCallbackRequest;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
-use App\Jobs\ProcessPostmarkInboundMailJob;
+use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\SharedModels\Notifications\CallCreated;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
-use App\Traits\Tests\PostmarkCallbackHelpers;
+use CircleLinkHealth\SharedModels\Traits\Tests\PostmarkCallbackHelpers;
 use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;

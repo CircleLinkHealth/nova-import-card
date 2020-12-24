@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\Exports\PracticeReports\PracticeCallsReport;
-use App\Notifications\SendSignedUrlToDownloadPracticeReport;
+use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport;
 use App\Traits\SetupTestCustomerTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;

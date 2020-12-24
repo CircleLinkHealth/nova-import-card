@@ -6,8 +6,8 @@
 
 namespace App\Providers;
 
-use App\Contracts\ChunksEloquentBuilder;
-use App\Contracts\ReportFormatter;
+use CircleLinkHealth\Core\ChunksEloquentBuilder;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
 use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
