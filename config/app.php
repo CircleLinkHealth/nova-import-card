@@ -17,6 +17,7 @@ use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Collective\Html\HtmlServiceProvider;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
+use Illuminate\Support\Arr;
 use MichaelLedin\LaravelJob\LaravelJobServiceProvider;
 use Mpbarlow\LaravelQueueDebouncer\ServiceProvider;
 
@@ -271,4 +272,18 @@ return [
 
     ],
 
+    // Hide these variables from debug screens (Whoops, Raygun, etc)
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV'    => Arr::except(array_keys($_ENV), [
+            'APP_ENV',
+            'SCOUT_DRIVER',
+            'BROADCAST_DRIVER',
+            'CACHE_DRIVER',
+            'SESSION_DRIVER',
+            'SESSION_DOMAIN',
+            'TWO_FA_ENABLED',
+        ]),
+    ],
 ];
