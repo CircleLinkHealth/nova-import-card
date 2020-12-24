@@ -60,10 +60,14 @@
 </template>
 
 <script>
+    import Notifications from '../../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
     import {addNotification} from '../../../../../Sharedvuecomponents/Resources/assets/js/store/actions'
     import {mapActions} from 'vuex'
 
     export default {
+        components: {
+          'notifications': Notifications
+        },
         computed: {
             isValid() {
                 return this.newMap.keyword && this.newMap.medication_group_id;

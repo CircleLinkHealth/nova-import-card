@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\CcmBilling\Http\Requests\UpdatePracticeStaff;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Ehr;
@@ -18,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
+use Illuminate\Routing\Controller;
 
 class PracticeStaffController extends Controller
 {

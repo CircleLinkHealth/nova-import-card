@@ -46,7 +46,6 @@ const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ '../.
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2')
 const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/time-tracker/time-tracker-events')
 const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ './admin/cpm-medication-groups-maps-settings')
-const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/loader')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader');
@@ -70,7 +69,6 @@ Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
 Vue.component('time-tracker-events', TimeTrackerEventsComponent)
 Vue.component('cpm-medication-groups-maps-settings', CpmMedicationGroupsMapsSettings)
-Vue.component('notifications', NotificationsComponent);
 Vue.component('loader', LoaderComponent);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
 Vue.component('calendar-loader', CalendarLoader);

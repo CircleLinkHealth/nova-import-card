@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\StringManipulation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 
 class DemoController extends Controller

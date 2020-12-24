@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\PhiMail\CheckResult;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Services\PhiMail\CheckResult;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class DirectMailController extends Controller
 {
@@ -57,7 +57,7 @@ class DirectMailController extends Controller
     public function show($directMailId)
     {
         if ('new' === $directMailId) {
-            return view('direct-mail.show-message');
+            return view('cpm-admin::direct-mail.show-message');
         }
         $dm = DirectMailMessage::query()
             ->with('ccdas', 'media')
@@ -67,7 +67,7 @@ class DirectMailController extends Controller
             return link_to_route('patient.note.index', "Patient ID: $patientId", [$patientId]);
         });
 
-        return view('direct-mail.show-message')
+        return view('cpm-admin::direct-mail.show-message')
             ->with('dm', $dm)
             ->with('links', $linksToPatients);
     }
