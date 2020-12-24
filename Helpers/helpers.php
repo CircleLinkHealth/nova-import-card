@@ -29,7 +29,7 @@ if ( ! function_exists('isProductionEnv')) {
      */
     function isProductionEnv(): ?bool
     {
-        return config('core.is_production_env');
+        return boolval(config('core.is_production_env'));
     }
 }
 
