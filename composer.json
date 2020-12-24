@@ -71,6 +71,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
         }
     ],
     "require": {
@@ -83,6 +87,7 @@
         "ashallendesign/short-url": "3.0.3",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.9",
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
+        "circlelinkhealth/saml-sp-module": "dev-vaporizing-admin",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
@@ -92,8 +97,7 @@
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "circlelinkhealth/synonyms-module": "*",
-        "circlelinkhealth/twilio-integration-module": "dev-master"
-    },
+        "circlelinkhealth/twilio-integration-module": "dev-master"},
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
         "facade/ignition": "^2.0",

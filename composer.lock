@@ -4,8 +4,69 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8088695d7ae0d624a6a1a2f19a9535c9",
+    "content-hash": "505e3e7a8a6ad1939059351a0f34025f",
     "packages": [
+        {
+            "name": "aacotroneo/laravel-saml2",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aacotroneo/laravel-saml2.git",
+                "reference": "6ed350b37aec3470655335a33e24496e15bde9b7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aacotroneo/laravel-saml2/zipball/6ed350b37aec3470655335a33e24496e15bde9b7",
+                "reference": "6ed350b37aec3470655335a33e24496e15bde9b7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "illuminate/support": ">=5.0.0",
+                "onelogin/php-saml": "^3.0.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Aacotroneo\\Saml2\\Saml2ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Aacotroneo\\Saml2\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "aacotroneo",
+                    "email": "aacotroneo@gmail.com"
+                },
+                {
+                    "name": "Niraj Patkar",
+                    "email": "niraj@alphonso.in"
+                }
+            ],
+            "description": "A Laravel package for Saml2 integration as a SP (service provider) for multiple IdPs, based on OneLogin toolkit which is much more lightweight than simplesamlphp.",
+            "homepage": "https://github.com/aacotroneo/laravel-saml2",
+            "keywords": [
+                "SAML2",
+                "laravel",
+                "onelogin",
+                "saml"
+            ],
+            "time": "2019-10-01T23:05:14+00:00"
+        },
         {
             "name": "ashallendesign/short-url",
             "version": "v3.0.3",
@@ -576,7 +637,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a4f21a4313c50aa9f3c9b3f72a50c04eda92a17c"
+                "reference": "e89b6abb501bd6607733cbaac93c66a4f623c02f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -587,6 +648,7 @@
                 "lab404/laravel-impersonate": "^1.2",
                 "laravel/passport": "^8.0",
                 "laravel/scout": "^7.1|^8.0",
+                "laravel/ui": "^2.0",
                 "league/flysystem-aws-s3-v3": "*",
                 "propaganistas/laravel-phone": "^4.2.2",
                 "spatie/laravel-medialibrary": "^7.0.0"
@@ -613,7 +675,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T15:37:27+00:00"
+            "time": "2020-12-24T18:06:54+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -729,6 +791,44 @@
                 "revision"
             ],
             "time": "2020-12-23T16:05:51+00:00"
+        },
+        {
+            "name": "circlelinkhealth/saml-sp-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
+                "reference": "eca34af59e5448312f3532c8aaebc271d92b2036"
+            },
+            "require": {
+                "aacotroneo/laravel-saml2": "^2.1",
+                "circlelinkhealth/core-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\SamlSp\\Providers\\SamlSpServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "Database/Seeders",
+                    "Database/Factories"
+                ],
+                "psr-4": {
+                    "CircleLinkHealth\\Saml\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@circlelinkhealth.com"
+                }
+            ],
+            "time": "2020-12-24T08:58:58+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -3234,6 +3334,57 @@
             "time": "2020-10-29T13:07:12+00:00"
         },
         {
+            "name": "laravel/ui",
+            "version": "v2.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/ui.git",
+                "reference": "d01a705763c243b07be795e9d1bb47f89260f73d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/ui/zipball/d01a705763c243b07be795e9d1bb47f89260f73d",
+                "reference": "d01a705763c243b07be795e9d1bb47f89260f73d",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^7.0",
+                "illuminate/filesystem": "^7.0",
+                "illuminate/support": "^7.0",
+                "php": "^7.2.5|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Ui\\UiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Ui\\": "src/",
+                    "Illuminate\\Foundation\\Auth\\": "auth-backend/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel UI utilities and presets.",
+            "keywords": [
+                "laravel",
+                "ui"
+            ],
+            "time": "2020-11-03T19:45:19+00:00"
+        },
+        {
             "name": "laravel/vapor-core",
             "version": "v2.10.0",
             "source": {
@@ -5006,6 +5157,56 @@
             "time": "2020-11-14T17:35:34+00:00"
         },
         {
+            "name": "onelogin/php-saml",
+            "version": "3.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/onelogin/php-saml.git",
+                "reference": "593aca859b67d607923fe50d8ad7315373f5b6dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/593aca859b67d607923fe50d8ad7315373f5b6dd",
+                "reference": "593aca859b67d607923fe50d8ad7315373f5b6dd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "robrichards/xmlseclibs": ">=3.1.1"
+            },
+            "require-dev": {
+                "pdepend/pdepend": "^2.5.0",
+                "php-coveralls/php-coveralls": "^1.0.2 || ^2.0",
+                "phploc/phploc": "^2.1 || ^3.0 || ^4.0",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5 || ^7.1",
+                "sebastian/phpcpd": "^2.0 || ^3.0 || ^4.0",
+                "squizlabs/php_codesniffer": "^3.1.1"
+            },
+            "suggest": {
+                "ext-curl": "Install curl lib to be able to use the IdPMetadataParser for parsing remote XMLs",
+                "ext-gettext": "Install gettext and php5-gettext libs to handle translations",
+                "ext-openssl": "Install openssl lib in order to handle with x509 certs (require to support sign and encryption)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OneLogin\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "OneLogin PHP SAML Toolkit",
+            "homepage": "https://developers.onelogin.com/saml/php",
+            "keywords": [
+                "SAML2",
+                "onelogin",
+                "saml"
+            ],
+            "time": "2020-12-03T20:08:41+00:00"
+        },
+        {
             "name": "opis/closure",
             "version": "3.6.1",
             "source": {
@@ -6520,6 +6721,44 @@
                 "parser"
             ],
             "time": "2020-01-24T09:39:24+00:00"
+        },
+        {
+            "name": "robrichards/xmlseclibs",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/robrichards/xmlseclibs.git",
+                "reference": "f8f19e58f26cdb42c54b214ff8a820760292f8df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/f8f19e58f26cdb42c54b214ff8a820760292f8df",
+                "reference": "f8f19e58f26cdb42c54b214ff8a820760292f8df",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": ">= 5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RobRichards\\XMLSecLibs\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "A PHP library for XML Security",
+            "homepage": "https://github.com/robrichards/xmlseclibs",
+            "keywords": [
+                "security",
+                "signature",
+                "xml",
+                "xmldsig"
+            ],
+            "time": "2020-09-05T13:00:25+00:00"
         },
         {
             "name": "sentry/sdk",
@@ -12484,6 +12723,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "circlelinkhealth/cpm-admin-module": 20,
+        "circlelinkhealth/saml-sp-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
