@@ -152,7 +152,7 @@
     "circlelinkhealth/nurseinvoices-module": "dev-vaporizing-admin",
     "circlelinkhealth/patientapi-module": "dev-vaporizing-admin",
     "circlelinkhealth/pdf-service-module": "dev-master",
-    "circlelinkhealth/raygun-module": "1.2",
+    "circlelinkhealth/raygun-module": "dev-vaporizing-admin",
     "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
     "circlelinkhealth/saml-sp-module": "dev-vaporizing-admin",
     "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
