@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\TimeTracking\Jobs;
 
-use CircleLinkHealth\Customer\Jobs\ProcessCareAmbassadorTime;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
