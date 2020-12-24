@@ -3403,7 +3403,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopeOfTypePatients($query)
     {
-        return $query->ofType(Constants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+        return $query->ofType(CpmConstants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
     }
 
     /**
