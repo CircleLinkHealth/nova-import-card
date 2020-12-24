@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Customer\Notifications\SendAssessmentNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\SendAssessmentNotification;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 

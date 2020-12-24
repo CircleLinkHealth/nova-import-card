@@ -13,7 +13,7 @@ class LoginFromHerokuController extends Controller
     public function loginUser(LoginFromHerokuRequest $request)
     {
         $loginRequest = $request->getLoginRequest();
-        
+
         auth()->loginUsingId($loginRequest->user_id);
 
         $loginRequest->delete();

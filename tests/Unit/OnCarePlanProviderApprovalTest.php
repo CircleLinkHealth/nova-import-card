@@ -6,12 +6,12 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;

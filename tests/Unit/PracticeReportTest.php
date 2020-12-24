@@ -7,8 +7,8 @@
 namespace Tests\Unit;
 
 use App\Exports\PracticeReports\PracticeCallsReport;
-use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport;
 use App\Traits\SetupTestCustomerTrait;
+use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

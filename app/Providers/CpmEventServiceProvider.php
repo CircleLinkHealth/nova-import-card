@@ -6,9 +6,6 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
-use CircleLinkHealth\Customer\Events\CarePlanWasRNApproved;
-use CircleLinkHealth\Customer\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
@@ -47,9 +44,12 @@ use CircleLinkHealth\Core\Listeners\LogSentNotification;
 use CircleLinkHealth\Core\Listeners\PostmarkAddSmtpIdOnHeader;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
 use CircleLinkHealth\Customer\Events\CarePlanWasQAApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasRNApproved;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
 use CircleLinkHealth\Customer\Events\PatientUserCreated;
+use CircleLinkHealth\Customer\Events\PdfableCreated;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;

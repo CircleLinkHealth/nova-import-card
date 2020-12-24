@@ -6,10 +6,10 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Customer\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use Tests\CustomerTestCase;

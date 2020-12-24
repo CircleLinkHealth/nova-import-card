@@ -6,8 +6,8 @@
 
 namespace App\Notifications;
 
-use CircleLinkHealth\NurseInvoices\Mail\NurseInvoiceMailer;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Mail\NurseInvoiceMailer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

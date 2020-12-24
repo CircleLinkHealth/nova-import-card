@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use Illuminate\Http\Request;
 
 class ImporterController extends Controller

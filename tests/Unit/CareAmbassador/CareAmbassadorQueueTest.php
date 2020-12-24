@@ -6,11 +6,11 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
 use Tests\TestCase;
 
 class CareAmbassadorQueueTest extends TestCase

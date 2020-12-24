@@ -13,6 +13,11 @@ class RedirectToAdminApp extends Controller
         return $this->redirectToAdmin("admin/users/$practiceSlug/destroy");
     }
 
+    public function dmShow(int $dmId)
+    {
+        return $this->redirectToAdmin("admin/direct-mail/$dmId");
+    }
+
     public function getAdminNurseSchedules()
     {
         return $this->redirectToAdmin('admin/nurses/windows');
@@ -41,11 +46,6 @@ class RedirectToAdminApp extends Controller
     public function getPAM()
     {
         return $this->redirectToAdmin('pam');
-    }
-    
-    public function dmShow(int $dmId)
-    {
-        return $this->redirectToAdmin("admin/direct-mail/$dmId");
     }
 
     private function redirectToAdmin($url)

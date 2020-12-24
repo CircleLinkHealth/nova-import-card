@@ -206,6 +206,7 @@
     import {Logger} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
+    import Notifications from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
 
     let self;
 
@@ -214,6 +215,7 @@
     export default {
         name: 'call-number',
         components: {
+            'notifications': Notifications,
             loader: LoaderComponent,
             'call-numpad': CallNumpad,
         },

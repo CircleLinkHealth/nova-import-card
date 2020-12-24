@@ -18,6 +18,7 @@ use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
+use CircleLinkHealth\CpmAdmin\Providers\CommandsServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
@@ -256,6 +257,7 @@ return [
         LaravelJobServiceProvider::class,
         CoreServiceProvider::class,
         CoreDeferredBindingsServiceProvider::class,
+        CommandsServiceProvider::class,
     ],
 
     /*x

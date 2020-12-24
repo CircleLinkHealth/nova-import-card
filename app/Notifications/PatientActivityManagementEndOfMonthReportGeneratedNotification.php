@@ -6,9 +6,9 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\LiveNotification;
 use CircleLinkHealth\Core\Traits\ArrayableNotification;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
