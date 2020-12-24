@@ -6,11 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Http\Resources;
 
-use CircleLinkHealth\Customer\Http\Resources\BillingProvider;
-use CircleLinkHealth\Customer\Http\Resources\PatientInfo;
-use CircleLinkHealth\Customer\Http\Resources\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Http\Resources\PracticeResource;
-use CircleLinkHealth\Customer\Http\Resources\ProviderInfo;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource

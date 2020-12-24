@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\Customer\Jobs;
 
 use CircleLinkHealth\Customer\Contracts\PracticeDataExportInterface;
-use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

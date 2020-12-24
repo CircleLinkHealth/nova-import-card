@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Jobs;
 
-use CircleLinkHealth\Customer\Notifications\SendCareDocument;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\SendCareDocument;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

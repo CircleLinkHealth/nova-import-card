@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
@@ -32,6 +31,7 @@ use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Faker\Factory;
 use Illuminate\Support\Str;

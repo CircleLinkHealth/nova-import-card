@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\Customer\Invoices;
 
-use CircleLinkHealth\SharedModels\DTO\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\DTO\PatientReportData;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
