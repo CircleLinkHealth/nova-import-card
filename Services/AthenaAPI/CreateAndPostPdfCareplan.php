@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\Services\AthenaAPI;
 
-use CircleLinkHealth\SharedModels\Entities\CcdaRequest;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\CcdaRequest;
 use Illuminate\Support\Str;
 
 class CreateAndPostPdfCareplan

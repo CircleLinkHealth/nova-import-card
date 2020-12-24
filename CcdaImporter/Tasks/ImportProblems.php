@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
-use CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
-use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus;
 use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
+use CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
+use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesProblemInfo;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;

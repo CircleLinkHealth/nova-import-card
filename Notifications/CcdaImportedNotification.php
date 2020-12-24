@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Notifications;
 
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Core\Contracts\LiveNotification;
 use CircleLinkHealth\Core\Traits\ArrayableNotification;
-use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
