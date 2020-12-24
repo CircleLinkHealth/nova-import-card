@@ -10,7 +10,7 @@
                             </div>
                             <div class="col-sm-12 top-20 text-right">
                                 <loader class="absolute" v-if="loaders.addInstruction"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected margin-0" value="Save" 
+                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected margin-0" value="Save"
                                     title="add this instruction for this cpm problem" />
                             </div>
                         </form>
@@ -26,7 +26,7 @@
     import { Event } from 'vue-tables-2'
     import Modal from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/common/modal'
     import EventBus from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import NotificationsComponent from '../../notifications'
+    import NotificationsComponent from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import CareplanMixin from '../mixins/careplan.mixin'
     import DisableEditingMixin from '../mixins/disable-editing.mixin'
 
