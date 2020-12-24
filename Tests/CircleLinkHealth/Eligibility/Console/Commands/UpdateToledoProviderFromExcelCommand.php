@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Commands;
 
-use CircleLinkHealth\Eligibility\Console\Commands\ToledoPracticeProviders\UpdateProvidersFromExcel;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Console\Commands\ToledoPracticeProviders\UpdateProvidersFromExcel;
 use GenerateToledoSignatures;
 use Illuminate\Console\Command;
 
