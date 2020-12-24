@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
-use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Tests\CustomerTestCase;
 
 class LocationProblemServiceDatabaseTest extends CustomerTestCase

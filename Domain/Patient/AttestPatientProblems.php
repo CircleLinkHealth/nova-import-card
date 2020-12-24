@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
-use CircleLinkHealth\SharedModels\Entities\Addendum;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Entities\Problem;
