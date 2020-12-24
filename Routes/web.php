@@ -43,6 +43,33 @@ Route::group([
 Route::group([
     'middleware' => ['web', 'auth'],
 ], function () {
+    Route::get('reports/audit/monthly', ['uses' => 'DownloadController@downloadAuditReportsForMonth', 'as' => 'download.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
+    Route::get('reports/audit/make', ['uses' => 'DownloadController@makeAuditReportsForMonth', 'as' => 'make.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
+    
+    Route::get('download/{filePath}', [
+        'uses' => 'DownloadController@file',
+        'as'   => 'download',
+    ]);
+    Route::get('download-media-collection-zip/{collectionName}', [
+        'uses' => 'DownloadController@downloadUserMediaCollectionAsZip',
+        'as'   => 'download.collection-as-zip',
+    ]);
+    
+    Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
+        'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
+        'as'   => 'download.google.csv',
+    ]);
+    
+    Route::get('download-zipped-media/{user_id}/{media_ids}', [
+        'uses' => 'DownloadController@downloadZippedMedia',
+        'as'   => 'download.zipped.media',
+    ])->middleware('signed');
+    
+    Route::get('download/{media_id}/{user_id}/{practice_id}', [
+        'uses' => 'DownloadController@downloadMediaFromSignedUrl',
+        'as'   => 'download.media.from.signed.url',
+    ])->middleware('signed');
+    
     Route::get('sentrydemo', 'SentryDemoController@throw');
     Route::group(['prefix' => 'calls'], function () {
         Route::get('', [
