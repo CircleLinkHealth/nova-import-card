@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -25,6 +26,8 @@ use Spatie\MediaLibrary\MediaStream;
 
 class DownloadController extends Controller
 {
+    use ApiReturnHelpers;
+    
     private $googleDrive;
 
     public function __construct(GoogleDrive $googleDrive)
