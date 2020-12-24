@@ -42,6 +42,11 @@ class RedirectToAdminApp extends Controller
     {
         return $this->redirectToAdmin('pam');
     }
+    
+    public function dmShow(int $dmId)
+    {
+        return $this->redirectToAdmin("admin/direct-mail/$dmId");
+    }
 
     private function redirectToAdmin($url)
     {
