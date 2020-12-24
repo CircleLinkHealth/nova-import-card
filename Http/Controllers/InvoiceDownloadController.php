@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
-use CircleLinkHealth\Customer\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use Illuminate\Routing\Controller;
 use Spatie\MediaLibrary\MediaStream;
 

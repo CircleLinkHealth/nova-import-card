@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReminder;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
