@@ -103,7 +103,7 @@
                                     </li>
                                 </ul>
                             </li>
-                            @include('resources.views.partials.user-account-dropdown', ['user' => auth()->user()])
+                            @include('partials.user-account-dropdown', ['user' => auth()->user()])
                         </ul>
                     </div>
                 </div>
