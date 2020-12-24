@@ -185,7 +185,6 @@
     "maatwebsite/excel": "^3.1.19",
     "macellan/laravel-zip": "^1.0",
     "moontoast/math": "1.1.2 as 1.999.999",
-    "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^2.0",
     "propaganistas/laravel-phone": "^4.2.2",
