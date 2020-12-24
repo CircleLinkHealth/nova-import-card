@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -19,6 +18,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EligibilityBatchController extends Controller

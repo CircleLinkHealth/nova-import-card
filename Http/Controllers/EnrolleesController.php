@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Jobs\ImportMedicalRecordsById;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class EnrolleesController extends Controller
 {
