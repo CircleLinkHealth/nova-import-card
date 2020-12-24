@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\SharedModels\Services\PatientService;
 use CircleLinkHealth\Customer\Filters\PatientFilters;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class PatientController extends Controller
 {
