@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
+use CircleLinkHealth\Customer\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use CircleLinkHealth\Customer\Entities\Media;
+use Illuminate\Routing\Controller;
 use Spatie\MediaLibrary\MediaStream;
 
 class InvoiceDownloadController extends Controller
