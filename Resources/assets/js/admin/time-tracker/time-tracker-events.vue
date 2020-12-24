@@ -7,7 +7,7 @@
 </template>
 
 <script>
-    import Notifications from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
+    import NotificationsEventBased from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import EventBus from './comps/event-bus'
     import timeDisplay from '../../util/time-display'
 
@@ -16,7 +16,7 @@
             wsRootUrl: String
         },
         computed: {
-            
+
         },
         data () {
             return {
@@ -24,7 +24,7 @@
             }
         },
         components: {
-            Notifications
+            'notifications': NotificationsEventBased
         },
         methods: {
             createWsRootUrl (url) {
@@ -36,7 +36,7 @@
                     self.socketReloadCount = (self.socketReloadCount || 0) + 1;
                     this.socket = this.socket || (function () {
                         const socket = new WebSocket(self.createWsRootUrl('/events'));
-        
+
                         socket.onmessage = (res) => {
                             if (res.data) {
                                 const data = JSON.parse(res.data)
@@ -53,7 +53,7 @@
                                 console.log(data);
                             }
                         }
-                
+
                         socket.onopen = (ev) => {
                             EventBus.$emit('notifications:create', ({
                                 text: 'connection opened',
@@ -62,7 +62,7 @@
                             }))
                             console.log('socket connection opened', ev)
                         }
-                
+
                         socket.onclose = (ev) => {
                             EventBus.$emit('notifications:create', ({
                                 text: 'connection closed',
@@ -82,7 +82,7 @@
                             }))
                             console.error('socket-error:', err)
                         }
-        
+
                         return socket;
                     })()
                 }
@@ -104,5 +104,5 @@
 </script>
 
 <style>
-    
+
 </style>

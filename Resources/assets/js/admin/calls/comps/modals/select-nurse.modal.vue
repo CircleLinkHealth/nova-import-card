@@ -66,7 +66,7 @@
     import Modal from '../../../common/modal'
     import {Event} from 'vue-tables-2'
     import {rootUrl} from '../../../../app.config'
-    import Notifications from '../../../../components/shared/notifications/notifications'
+    import Notifications from '../../../../components/shared/notifications/notifications-event-based'
     import Loader from '../../../../components/loader'
     import VueCache from '../../../../util/vue-cache'
 

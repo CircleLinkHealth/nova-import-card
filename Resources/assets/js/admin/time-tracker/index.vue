@@ -52,7 +52,7 @@
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import ChargeableServicesSwitch from './comps/chargeable-services-switch';
-    import Notifications from '../../components/shared/notifications/notifications';
+    import Notifications from '../../components/shared/notifications/notifications-event-based';
 
     import {registerHandler, sendRequest} from "../../components/bc-job-manager";
     import TimeDisplayAllChargeableServicesStatic from "./comps/time-display-all-chargeable-services-static";

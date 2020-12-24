@@ -22,7 +22,7 @@
 <script>
     import {rootUrl} from '../../../../app.config.js';
     import Modal from '../../../common/modal';
-    import Notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications';
+    import Notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
     import Loader from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'

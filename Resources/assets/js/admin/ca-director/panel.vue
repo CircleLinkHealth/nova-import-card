@@ -114,7 +114,7 @@
     import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
     import EditPatientModal from "./comps/modals/edit-patient.modal";
     import Loader from '../../components/loader';
-    import Notifications from '../../components/shared/notifications/notifications'
+    import Notifications from '../../components/shared/notifications/notifications-event-based'
     import Multiselect from 'vue-multiselect';
 
     let self;
