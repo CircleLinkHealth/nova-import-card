@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class EhrController extends Controller
 {
