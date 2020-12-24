@@ -218,8 +218,6 @@ return [
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
 
-        \CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
-
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
 

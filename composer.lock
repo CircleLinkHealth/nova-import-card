@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19d41e0ff1df250b3e841f3d6b4ecf54",
+    "content-hash": "0ad190267682cfb627108104cb578653",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1187,11 +1187,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v1.2",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "965b144632d44c25f3c34839b1b6d58093d4e907"
+                "reference": "77d0b35e689e2782804da820d74bba3957f9376a"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1200,6 +1200,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
+                        "CircleLinkHealth\\Raygun\\Providers\\RaygunDeferredServiceProvider",
                         "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
                     ],
                     "aliases": []
@@ -1216,7 +1217,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:06:34+00:00"
+            "time": "2020-12-24T18:30:07+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -17271,6 +17272,7 @@
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/pdf-service-module": 20,
+        "circlelinkhealth/raygun-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/saml-sp-module": 20,
         "circlelinkhealth/shared-models-module": 20,
