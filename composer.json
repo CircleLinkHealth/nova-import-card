@@ -42,7 +42,7 @@
         "yajra/laravel-datatables-oracle": "~9.0",
         "sentry/sentry-laravel": "^2.3",
         "twilio/sdk": "~5.16",
-        "joshbrw/laravel-module-installer": "^0.1.5"
+        "joshbrw/laravel-module-installer": "*"
     },
     "require-dev": {
         "laravel/vapor-cli": "^1.11"
