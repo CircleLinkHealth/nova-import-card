@@ -91,7 +91,7 @@ class EhrReportWriterController extends Controller
             }
         }
 
-        return view('ehrReportWriter.index', compact(['files', 'practices']))->withErrors($messages);
+        return view('eligibility::ehrReportWriter.index', compact(['files', 'practices']))->withErrors($messages);
     }
 
     /**
