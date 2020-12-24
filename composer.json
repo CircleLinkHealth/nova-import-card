@@ -97,7 +97,8 @@
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "circlelinkhealth/synonyms-module": "*",
-        "circlelinkhealth/twilio-integration-module": "dev-master"},
+        "circlelinkhealth/twilio-integration-module": "dev-master"
+    },
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
         "facade/ignition": "^2.0",
