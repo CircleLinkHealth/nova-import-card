@@ -5,14 +5,10 @@
     <div style="position: fixed;bottom: 0;width: 100%;z-index: 100;opacity: 0.95;">
         @include('core::partials.errors.errors')
     </div>
-    <notifications class="text-left"></notifications>
-    <div class="container">
-
-        <nurse-schedule-calendar
-                :auth-data="{{json_encode($authData)}}"
-                :today="{{json_encode($today)}}">
-        </nurse-schedule-calendar>
-    </div>
+    <nurse-schedule-calendar
+            :auth-data="{{json_encode($authData)}}"
+            :today="{{json_encode($today)}}">
+    </nurse-schedule-calendar>
 @endsection
 
 @push('scripts')
