@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\CCD\CcdAllergyService;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdAllergyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;

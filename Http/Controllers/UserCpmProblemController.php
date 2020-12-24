@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\CCD\CcdProblemService;
-use App\Services\CPM\CpmProblemUserService;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmProblemUserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;

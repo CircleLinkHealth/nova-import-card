@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\CPM\CpmBiometricService;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmBiometricService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 

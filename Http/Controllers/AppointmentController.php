@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\AppointmentService;
+use CircleLinkHealth\SharedModels\Services\AppointmentService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Appointment;
 use Illuminate\Http\Request;

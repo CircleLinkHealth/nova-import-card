@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\ProviderInfoService;
+use CircleLinkHealth\SharedModels\Services\ProviderInfoService;
 use Illuminate\Routing\Controller;
 
 class ProviderInfoController extends Controller

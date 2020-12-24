@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\CPM\CpmLifestyleService;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmLifestyleService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
