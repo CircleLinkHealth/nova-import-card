@@ -173,7 +173,7 @@ class UPG0506Demo extends Command
             [
                 'message_id'      => Str::uuid(),
                 'from'            => $this->argument('providerDm') ?: 'drraph@upg.ssdirect.aprima.com',
-                'to'              => config('services.emr-direct.user'),
+                'to'              => config('core.services.emr-direct.user'),
                 'body'            => 'This is a demo message.',
                 'num_attachments' => collect([$this->option('ccd'), $this->option('pdf')])->filter()->count(),
             ]

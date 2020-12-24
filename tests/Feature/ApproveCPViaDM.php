@@ -96,7 +96,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->assertDatabaseHas(
             (new DirectMailMessage())->getTable(),
             [
-                'from'       => config('services.emr-direct.user'),
+                'from'       => config('core.services.emr-direct.user'),
                 'to'         => 'circlelinkhealth'.self::TEST_DM_DOMAIN,
                 'subject'    => $this->directMailSubject($this->patient()),
                 'status'     => DirectMailMessage::STATUS_SUCCESS,

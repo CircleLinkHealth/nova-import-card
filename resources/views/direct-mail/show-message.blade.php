@@ -68,7 +68,7 @@
                     </div>
                     <div class="form-group">
                         <label for="dm_from_address">From</label>
-                        <input type="email" class="form-control" id="dm_from_address" name="dm_from_address" placeholder="DM Address" value="{{isset($dm) ? $dm->to : config('services.emr-direct.user')}}" required>
+                        <input type="email" class="form-control" id="dm_from_address" name="dm_from_address" placeholder="DM Address" value="{{isset($dm) ? $dm->to : config('core.services.emr-direct.user')}}" required>
                     </div>
                     <div class="form-group">
                         <label for="dm_to_address">To</label>
