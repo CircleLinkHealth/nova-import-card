@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Time;
 
-use CircleLinkHealth\NurseInvoices\Entities\TimeTrackedPerDayView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\NurseInvoices\Entities\TimeTrackedPerDayView;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
