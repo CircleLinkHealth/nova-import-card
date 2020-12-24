@@ -6,11 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Events;
 
-use App\Events\Event;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Queue\SerializesModels;
 
-class CarePlanWasRNApproved extends Event
+class CarePlanWasRNApproved
 {
     use SerializesModels;
     /**

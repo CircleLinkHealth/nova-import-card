@@ -151,7 +151,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $clients_count
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $clinicalEmergencyContactLocations
  * @property int|null                                                                                                        $clinical_emergency_contact_locations_count
- * @property \App\Comment[]|\Illuminate\Database\Eloquent\Collection                                                         $comment
+ * @property \CircleLinkHealth\SharedModels\Entities\Comment[]|\Illuminate\Database\Eloquent\Collection                                                         $comment
  * @property int|null                                                                                                        $comment_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                 $cpmBiometrics
  * @property int|null                                                                                                        $cpm_biometrics_count
@@ -951,7 +951,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function comment()
     {
-        return $this->hasMany('App\Comment', 'user_id', 'id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\Comment', 'user_id', 'id');
     }
 
     /**

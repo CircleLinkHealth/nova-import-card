@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\SharedModels\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;

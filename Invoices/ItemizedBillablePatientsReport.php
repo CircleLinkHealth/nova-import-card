@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Invoices;
 
-use App\ValueObjects\PatientReportData;
+use CircleLinkHealth\SharedModels\DTO\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
