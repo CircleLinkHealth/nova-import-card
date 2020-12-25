@@ -8,16 +8,13 @@ namespace CircleLinkHealth\Core\Providers;
 
 use CircleLinkHealth\Core\Console\Commands\CreateAndSeedTestSuiteDB;
 use CircleLinkHealth\Core\Console\Commands\CreateMySqlDB;
+use CircleLinkHealth\Core\Console\Commands\CreateOpPreloadPreloadFilePlaceholder;
 use CircleLinkHealth\Core\Console\Commands\CreatePostgreSQLDB;
 use CircleLinkHealth\Core\Console\Commands\GenerateInboundCallbackDataFeedbackToTester;
 use CircleLinkHealth\Core\Console\Commands\HerokuOnRelease;
-use CircleLinkHealth\Core\Console\Commands\PostDeploymentTasks;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppCreateDb;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppPreDestroy;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
-use CircleLinkHealth\Core\Console\Commands\RunScheduler;
-use CircleLinkHealth\Core\Console\Commands\StoreJiraTicketsDeployed;
-use CircleLinkHealth\Core\Console\Commands\StoreRelease;
 use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
@@ -50,15 +47,12 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             CreateMySqlDB::class,
             CreatePostgreSQLDB::class,
             HerokuOnRelease::class,
-            PostDeploymentTasks::class,
             ReviewAppCreateDb::class,
             ReviewAppPreDestroy::class,
             ReviewAppSeedDb::class,
-            RunScheduler::class,
-            StoreJiraTicketsDeployed::class,
-            StoreRelease::class,
             CreateAndSeedTestSuiteDB::class,
             GenerateInboundCallbackDataFeedbackToTester::class,
+            CreateOpPreloadPreloadFilePlaceholder::class,
         ];
     }
 
@@ -71,14 +65,11 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             CreateMySqlDB::class,
             CreatePostgreSQLDB::class,
             HerokuOnRelease::class,
-            PostDeploymentTasks::class,
             ReviewAppCreateDb::class,
             ReviewAppPreDestroy::class,
             ReviewAppSeedDb::class,
-            RunScheduler::class,
-            StoreJiraTicketsDeployed::class,
-            StoreRelease::class,
             GenerateInboundCallbackDataFeedbackToTester::class,
+            CreateOpPreloadPreloadFilePlaceholder::class,
         ];
 
         if ($this->app->environment('testing')) {
