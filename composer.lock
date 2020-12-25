@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "57de04d61cead6e4b49e60f4d6165809",
+    "content-hash": "0cb761eccf2b8173b851976f8303e83b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -710,7 +710,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "535b49de86788096e51ad28ef766bf2e07e96a59"
+                "reference": "7c5084b0331648ac44a694ba434f15041f93ad88"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -757,7 +757,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-24T08:58:58+00:00"
+            "time": "2020-12-25T17:49:52+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -884,9 +884,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "803462bb83e633901958fe5907fd07529dbb6152"
+                "reference": "5b1fae0a2ac3b469460866f7e6b0141bab7ecfd0"
             },
             "require": {
+                "darkghosthunter/laraload": "^2.1",
                 "friendsofcat/laravel-feature-flag": "^3.2",
                 "jeremykenedy/slack-laravel": "*",
                 "joshbrw/laravel-module-installer": "*",
@@ -929,7 +930,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-25T09:20:53+00:00"
+            "time": "2020-12-25T18:02:51+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -937,7 +938,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "00179f33eac5448ce7088441472d29832185861f"
+                "reference": "610b8f21d10ab36258449a1f63410a54a8a11335"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -979,7 +980,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-25T09:41:42+00:00"
+            "time": "2020-12-25T17:55:33+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1015,7 +1016,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0f3ace55b3f720213b8ab55c8bdd42e021c91e49"
+                "reference": "cbb497706a6ea3407722a35a35020e7287d95f09"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1053,7 +1054,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-25T09:41:42+00:00"
+            "time": "2020-12-25T17:49:52+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1061,7 +1062,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4412915fe8b93a42cfedd6f11dce8074aade4bbd"
+                "reference": "f4aa02a526a597c31902526dc8ea98494345574e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1088,7 +1089,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T18:46:18+00:00"
+            "time": "2020-12-25T17:49:52+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1096,7 +1097,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "e77365dbdd128a564f9a91267e9585c57c54f4ad"
+                "reference": "0dac592b81b3cbccca188114ea06d658d2f79780"
             },
             "type": "laravel-module",
             "extra": {
@@ -1118,7 +1119,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:57+00:00"
+            "time": "2020-12-25T17:49:52+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1198,7 +1199,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "77d0b35e689e2782804da820d74bba3957f9376a"
+                "reference": "f8c59df6ce1c8f285d5712ab71d80e62bb4d2820"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1224,7 +1225,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T18:30:07+00:00"
+            "time": "2020-12-25T17:55:34+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -1279,7 +1280,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "eca34af59e5448312f3532c8aaebc271d92b2036"
+                "reference": "ec3499c15be9a888c760102d04b5b84b61c8cfbe"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1309,7 +1310,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:58+00:00"
+            "time": "2020-12-25T17:49:52+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
