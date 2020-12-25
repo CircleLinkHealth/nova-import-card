@@ -18,7 +18,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\PhaxioFake\Phaxio;
 use Tests\Concerns\PhaxioFake\WithPhaxioMock;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PhaxioFakeTest extends CustomerTestCase
 {

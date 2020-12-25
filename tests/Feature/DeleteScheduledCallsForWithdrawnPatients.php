@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class DeleteScheduledCallsForWithdrawnPatients extends CustomerTestCase
 {

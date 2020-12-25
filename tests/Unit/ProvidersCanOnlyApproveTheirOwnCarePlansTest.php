@@ -9,7 +9,7 @@ namespace Tests\Unit;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ProvidersCanOnlyApproveTheirOwnCarePlansTest extends CustomerTestCase
 {

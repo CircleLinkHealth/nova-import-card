@@ -23,7 +23,7 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class BHIReconsentTest extends CustomerTestCase
 {

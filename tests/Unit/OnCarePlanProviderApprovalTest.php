@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Tests\Concerns\PhaxioFake\Phaxio;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class OnCarePlanProviderApprovalTest extends CustomerTestCase

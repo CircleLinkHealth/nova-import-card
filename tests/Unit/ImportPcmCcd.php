@@ -16,7 +16,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ImportPcmCcd extends CustomerTestCase
 {

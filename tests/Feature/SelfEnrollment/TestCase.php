@@ -6,7 +6,7 @@
 
 namespace Tests\Feature\SelfEnrollment;
 
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class TestCase extends CustomerTestCase
 {

@@ -17,7 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Support\Facades\Notification;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientLoginTest extends CustomerTestCase
 {

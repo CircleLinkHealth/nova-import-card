@@ -22,7 +22,7 @@ use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Str;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
 {

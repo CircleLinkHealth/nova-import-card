@@ -17,7 +17,7 @@ use NotificationChannels\Twilio\TwilioSmsMessage;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\Concerns\TwilioFake\WithTwilioMock;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class TwilioFakeTest extends CustomerTestCase
 {

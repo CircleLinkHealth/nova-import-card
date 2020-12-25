@@ -10,7 +10,7 @@ use App\Models\PracticePull\Demographics;
 use CircleLinkHealth\Core\DirectMail\Adapters\Ccda\PracticePullMedicalRecordToXmlAdapter;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PracticePullToCcdaAdapterTest extends CustomerTestCase
 {

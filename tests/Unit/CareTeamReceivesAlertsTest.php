@@ -10,7 +10,7 @@ use App\Traits\SetupTestCustomerTrait;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class CareTeamReceivesAlertsTest extends CustomerTestCase

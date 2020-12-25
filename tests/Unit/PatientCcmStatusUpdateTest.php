@@ -15,7 +15,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientCcmStatusUpdateTest extends CustomerTestCase
 {

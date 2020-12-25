@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Note;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase
 {

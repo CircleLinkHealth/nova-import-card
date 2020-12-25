@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class InboundSmsAndMailTest extends CustomerTestCase
 {

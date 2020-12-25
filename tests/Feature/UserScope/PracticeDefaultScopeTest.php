@@ -7,7 +7,7 @@
 namespace Tests\Feature\UserScope;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PracticeDefaultScopeTest extends CustomerTestCase
 {

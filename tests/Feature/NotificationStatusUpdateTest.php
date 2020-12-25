@@ -11,7 +11,7 @@ use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class NotificationStatusUpdateTest extends CustomerTestCase
 {

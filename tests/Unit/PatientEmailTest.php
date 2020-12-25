@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientEmailTest extends CustomerTestCase
 {

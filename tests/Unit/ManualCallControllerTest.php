@@ -14,7 +14,7 @@ use App\Http\Controllers\ManualCallController;
 use App\ValueObjects\CreateManualCallAfterNote;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ManualCallControllerTest extends CustomerTestCase
 {
