@@ -13,7 +13,7 @@ use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use Mockery;
 use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class SamlSpTest extends CustomerTestCase
 {
