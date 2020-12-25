@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "637af5384a5b33a98355b129e08607198e0e8a21"
+                "reference": "e1ddefd908e54e30fa9df3560131d1e27deeef4a"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
@@ -731,9 +731,9 @@
                 "laravelcollective/html": "^6.1",
                 "lcobucci/jwt": "3.3.3",
                 "maatwebsite/excel": "^3.1",
-                "mantas-done/laravel-apm": "^1.0",
                 "mxl/laravel-job": "^1.2",
                 "nao-pon/flysystem-google-drive": "~1.1",
+                "scoutapp/scout-apm-laravel": "^1.8",
                 "sentry/sentry-laravel": "^2.3",
                 "spatie/laravel-view-models": "^1.3",
                 "twilio/sdk": "~5.16",
@@ -763,7 +763,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T19:58:24+00:00"
+            "time": "2020-12-25T08:42:15+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -5997,42 +5997,6 @@
             "time": "2020-05-30T13:11:16+00:00"
         },
         {
-            "name": "mantas-done/laravel-apm",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mantas-done/laravel-apm.git",
-                "reference": "e225b43602bf1ebd71506b09365cfdd901554f21"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mantas-done/laravel-apm/zipball/e225b43602bf1ebd71506b09365cfdd901554f21",
-                "reference": "e225b43602bf1ebd71506b09365cfdd901554f21",
-                "shasum": ""
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Done\\LaravelAPM\\ApmServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Done\\LaravelAPM\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Mantas Donelavičius"
-                }
-            ],
-            "description": "Application monitoring for Laravel",
-            "time": "2020-01-26T13:22:49+00:00"
-        },
-        {
             "name": "markbaker/complex",
             "version": "2.0.0",
             "source": {
@@ -8716,6 +8680,131 @@
                 "xmldsig"
             ],
             "time": "2020-09-05T13:00:25+00:00"
+        },
+        {
+            "name": "scoutapp/scout-apm-laravel",
+            "version": "v1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/scoutapp/scout-apm-laravel.git",
+                "reference": "1e32c315a32fc5436622494ffb7412365f13a3f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/scoutapp/scout-apm-laravel/zipball/1e32c315a32fc5436622494ffb7412365f13a3f8",
+                "reference": "1e32c315a32fc5436622494ffb7412365f13a3f8",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^5.5.0|^6.0|^7.0|^8.0",
+                "illuminate/http": "^5.5.0|^6.0|^7.0|^8.0",
+                "illuminate/routing": "^5.5.0|^6.0|^7.0|^8.0",
+                "illuminate/support": "^5.5.0|^6.0|^7.0|^8.0",
+                "illuminate/view": "^5.5.0|^6.0|^7.0|^8.0",
+                "php": ">=7.1.0,<7.5.0",
+                "psr/log": "^1.0",
+                "ramsey/uuid": "^3.0|^4.0",
+                "scoutapp/scout-apm-php": "^5.3.0"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0",
+                "laravel/framework": "^5.5.0|^6.0|^7.0|^8.0",
+                "mockery/mockery": "^1.2|^1.3",
+                "phpunit/phpunit": "^7.5.15|^8.4",
+                "roave/security-advisories": "dev-master",
+                "spatie/phpunit-watcher": "^1.10",
+                "vimeo/psalm": "^3.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Scoutapm\\Laravel\\Providers\\ScoutApmServiceProvider"
+                    ],
+                    "aliases": {
+                        "ScoutApm": "Scoutapm\\Laravel\\Facades\\ScoutApm"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Scoutapm\\Laravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Scout Application Performance Monitoring Agent - https://scoutapm.com",
+            "homepage": "https://scoutapm.com/",
+            "keywords": [
+                "apm",
+                "development",
+                "laravel",
+                "monitoring",
+                "performance"
+            ],
+            "time": "2020-12-16T10:06:14+00:00"
+        },
+        {
+            "name": "scoutapp/scout-apm-php",
+            "version": "v5.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/scoutapp/scout-apm-php.git",
+                "reference": "f8594bd3b18e8770e20ad29c7fb0a2c1553f17d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/scoutapp/scout-apm-php/zipball/f8594bd3b18e8770e20ad29c7fb0a2c1553f17d8",
+                "reference": "f8594bd3b18e8770e20ad29c7fb0a2c1553f17d8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "ext-sockets": "*",
+                "ext-zlib": "*",
+                "php": ">=7.1.0,<7.5.0",
+                "psr/log": "^1.0",
+                "psr/simple-cache": "^1.0",
+                "ralouphie/getallheaders": "^2.0.5|^3.0",
+                "ramsey/uuid": "^3.0|^4.0",
+                "webmozart/assert": "^1.0"
+            },
+            "require-dev": {
+                "composer-plugin-api": "^2.0",
+                "doctrine/coding-standard": "^6.0",
+                "monolog/monolog": "^1.25",
+                "phpunit/phpunit": "^7.5.20",
+                "psalm/plugin-phpunit": "^0.15.0",
+                "psr/log": "^1.1",
+                "roave/doctrine-simplecache": "^2.2",
+                "vimeo/psalm": "^4.3.1"
+            },
+            "suggest": {
+                "composer-runtime-api": "Composer v2 is required for seeing version information in metadata",
+                "ext-scoutapm": "Recommended for additional recording capability of IO-bound PHP internal functions"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Scoutapm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Scout Application Performance Monitoring Agent - https://scoutapm.com",
+            "homepage": "https://scoutapm.com/",
+            "keywords": [
+                "apm",
+                "development",
+                "monitoring",
+                "performance"
+            ],
+            "time": "2020-12-16T09:15:18+00:00"
         },
         {
             "name": "sentry/sdk",
@@ -12486,6 +12575,55 @@
                 "nova"
             ],
             "time": "2019-07-25T15:45:09+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozart/assert.git",
+                "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0 || ^8.0",
+                "symfony/polyfill-ctype": "^1.8"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<0.12.20",
+                "vimeo/psalm": "<3.9.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.36 || ^7.5.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "time": "2020-07-08T17:02:28+00:00"
         },
         {
             "name": "wildbit/swiftmailer-postmark",
@@ -17097,55 +17235,6 @@
                 "php"
             ],
             "time": "2020-12-03T16:44:10+00:00"
-        },
-        {
-            "name": "webmozart/assert",
-            "version": "1.9.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
-                "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
-                "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.3.3 || ^7.0 || ^8.0",
-                "symfony/polyfill-ctype": "^1.8"
-            },
-            "conflict": {
-                "phpstan/phpstan": "<0.12.20",
-                "vimeo/psalm": "<3.9.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.36 || ^7.5.13"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Webmozart\\Assert\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                }
-            ],
-            "description": "Assertions to validate method input/output with nice error messages.",
-            "keywords": [
-                "assert",
-                "check",
-                "validate"
-            ],
-            "time": "2020-07-08T17:02:28+00:00"
         },
         {
             "name": "webmozart/path-util",
