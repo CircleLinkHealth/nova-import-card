@@ -141,7 +141,6 @@ class Preloader
         __DIR__.'/bootstrap',
         __DIR__.'/routes',
         __DIR__.'/storage/framework/views',
-        __DIR__.'/vendor/composer',
         __DIR__.'/vendor/laravel/framework',
         __DIR__.'/vendor/laravel/passport',
         __DIR__.'/vendor/laravel/ui',
@@ -154,7 +153,8 @@ class Preloader
         \Illuminate\Http\UploadedFile::class,
         \Illuminate\Support\Carbon::class,
         ClassLoader::class,
-        Laravel\Nova\Testing\Browser\Components\IndexComponent::class
+        Laravel\Nova\Testing\Browser\Components\IndexComponent::class,
+        \PackageVersions\Installer::class,
     )->ingoreIfContains(
         'Autoload',
         'test',
@@ -167,6 +167,7 @@ class Preloader
         'Stubs',
         'dumper',
         'Seeder',
-        'Command'
+        'Command',
+        'Installer'
     )
     ->load();
