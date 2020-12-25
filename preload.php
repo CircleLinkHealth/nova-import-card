@@ -165,6 +165,8 @@ class Preloader
         'Stub',
         'stubs',
         'Stubs',
-        'dumper'
+        'dumper',
+        'Seeder',
+        'Command'
     )
     ->load();
