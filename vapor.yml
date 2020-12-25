@@ -39,6 +39,7 @@ environments:
         scheduler: false
         mail: false
         timeout: 60
+        cli-timeout: 600
         queues:
             - cpm-admin-low-staging
             - cpm-admin-high-staging
