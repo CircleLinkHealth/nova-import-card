@@ -10,6 +10,8 @@ environments:
         cli-memory: 2048
         runtime: docker
         queue-timeout: 600
+        cli-timeout: 900
+        concurrency: 500
         mail: false
         warm: 40
         timeout: 45
@@ -48,3 +50,4 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+
