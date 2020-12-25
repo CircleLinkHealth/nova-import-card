@@ -40,11 +40,6 @@ class CreateOpPreloadPreloadFilePlaceholder extends Command
      */
     public function handle()
     {
-        $this->warn('Running as user '.get_current_user());
-        $this->warn('Checking user 1001 '.json_encode(posix_getpwnam(1001)));
-        $this->warn('Checking user sbx_user1051 '.json_encode(posix_getpwnam('sbx_user1051')));
-        $this->warn('Checking user www-data '.json_encode(posix_getpwnam('www-data')));
-        
         $path = config('laraload.output');
         $this->line('Evaluating if file exists at '.realpath($path));
 
