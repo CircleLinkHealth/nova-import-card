@@ -48,8 +48,6 @@ class CountPatientMonthlySummaryCalls extends Command
 
     public function countCalls(Carbon $date, array $userIds)
     {
-        $printComment = ! empty($this->output);
-
         PatientMonthlySummary::where('month_year', $date)
             ->when(
                 ! empty($userIds),
@@ -57,33 +55,9 @@ class CountPatientMonthlySummaryCalls extends Command
                     $q->whereIn('patient_id', $userIds);
                 }
             )
-            ->chunkById(500, function ($summaries) use ($date, $printComment) {
+            ->chunkById(500, function ($summaries) use ($date) {
                 foreach ($summaries as $pms) {
-                    $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
-                        $pms->patient_id,
-                        $date
-                    );
-
-                    if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
-                        if ($printComment) {
-                            $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
-                        }
-                        $pms->no_of_successful_calls = $noOfSuccessfulCalls;
-                    }
-
-                    $noOfCalls = $this->callRepository->numberOfCalls($pms->patient_id, $date);
-
-                    if ($noOfCalls != $pms->no_of_calls) {
-                        if ($printComment) {
-                            $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_calls changing from {$pms->no_of_calls} to ${noOfCalls}");
-                        }
-                        $pms->no_of_calls = $noOfCalls;
-                    }
-
-                    if ($pms->isDirty()) {
-                        $pms->save();
-                        ++$this->changedCount;
-                    }
+                    \CircleLinkHealth\Customer\Jobs\CountPatientMonthlySummaryCalls::dispatch($pms->id, $date);
                 }
             });
     }
@@ -107,7 +81,6 @@ class CountPatientMonthlySummaryCalls extends Command
 
         $this->countCalls($date, $userIds);
 
-        $this->info('Calls were counted successfully!');
-        $this->info("{$this->changedCount} patient summaries changed.");
+        $this->info('Jobs dispatched!');
     }
 }
