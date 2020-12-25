@@ -11,7 +11,7 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientRepositoryTest extends CustomerTestCase
 {
