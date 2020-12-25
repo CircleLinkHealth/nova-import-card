@@ -163,6 +163,7 @@
         "circlelinkhealth/twilio-integration-module": "dev-master",
         "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
         "danielme85/laravel-log-to-db": "^2.3",
+        "darkghosthunter/laraload": "^2.1",
         "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
         "fideloper/proxy": "^4.2",
