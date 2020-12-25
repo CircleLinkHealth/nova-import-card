@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "a830f9fd3caa13cd26c4502d7be40411bf1e5984"
+                "reference": "d28b428043db85b1c6862908c75c0f4b681aabbb"
             },
             "require": {
                 "darkghosthunter/laraload": "^2.1",
@@ -764,7 +764,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-25T10:12:05+00:00"
+            "time": "2020-12-25T17:12:55+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
