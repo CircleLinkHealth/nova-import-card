@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\PdfService\Services\SnappyPdfWrapper;
 use Composer\Autoload\ClassLoader;
 
 require __DIR__.'/vendor/autoload.php';
@@ -142,8 +143,6 @@ class Preloader
         __DIR__.'/routes',
         __DIR__.'/storage/framework/views',
         __DIR__.'/vendor/laravel/framework',
-        __DIR__.'/vendor/laravel/passport',
-        __DIR__.'/vendor/laravel/ui',
         __DIR__.'/CircleLinkHealth'
     )
     ->ignore(
@@ -154,6 +153,7 @@ class Preloader
         \Illuminate\Support\Carbon::class,
         ClassLoader::class,
         Laravel\Nova\Testing\Browser\Components\IndexComponent::class,
+        SnappyPdfWrapper::class,
         \PackageVersions\Installer::class,
     )->ingoreIfContains(
         'Autoload',
