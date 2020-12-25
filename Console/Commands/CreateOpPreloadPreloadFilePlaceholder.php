@@ -40,18 +40,27 @@ class CreateOpPreloadPreloadFilePlaceholder extends Command
      */
     public function handle()
     {
+        $this->warn('Running as user '.get_current_user());
         $path = config('laraload.output');
-        
-        $this->warn("Creating `$path`");
-        $created = file_put_contents($path, '<?php');
-        
-        if (!! $created) {
-            $this->line("Created `$path`");
+        $this->line('Evaluating if file exists at '.realpath($path));
+
+        if (file_exists($path)) {
+            $this->warn('File already exists. Bailing.');
+
             return 0;
         }
-        
+
+        $this->warn("Creating `$path`");
+        $created = file_put_contents($path, '<?php');
+
+        if ((bool) $created) {
+            $this->line("Created `$path`");
+
+            return 0;
+        }
+
         $this->error("Could not create `$path`");
-        
+
         return 0;
     }
 }
