@@ -113,7 +113,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/maatwebsite/excel" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/macellan/laravel-zip" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maennchen/zipstream-php" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/mantas-done/laravel-apm" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/markbaker/complex" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/markbaker/matrix" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maximebf/debugbar" />

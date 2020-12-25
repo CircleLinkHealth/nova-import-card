@@ -345,7 +345,6 @@
       <path value="$PROJECT_DIR$/vendor/vink/nova-cache-card" />
       <path value="$PROJECT_DIR$/vendor/joshgaber/novaunit" />
       <path value="$PROJECT_DIR$/vendor/laravie/serialize-queries" />
-      <path value="$PROJECT_DIR$/vendor/mantas-done/laravel-apm" />
       <path value="$PROJECT_DIR$/vendor/scoutapp/scout-apm-php" />
       <path value="$PROJECT_DIR$/vendor/scoutapp/scout-apm-laravel" />
     </include_path>
