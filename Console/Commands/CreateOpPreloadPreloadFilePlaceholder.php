@@ -41,10 +41,11 @@ class CreateOpPreloadPreloadFilePlaceholder extends Command
     public function handle()
     {
         $path = config('laraload.output');
-        $this->line('Evaluating if file exists at '.realpath($path));
+        $this->line('Evaluating if file exists at '.$path);
 
         if (file_exists($path)) {
-            $this->warn('File already exists. Bailing.');
+            $this->warn('File already exists. See contents below');
+            $this->line(file_get_contents($path));
 
             return 0;
         }
