@@ -38,7 +38,7 @@
         }
     ],
     "require": {
-        "circlelinkhealth/core-module": "dev-vaporizing-admin",
+        "circlelinkhealth/core-module": "*",
         "daltcore/lara-pdf-merger": "2.0.6"
     },
     "suggest": {
