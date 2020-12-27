@@ -31,8 +31,8 @@
         "sort-packages": true
     },
     "require": {
-        "circlelinkhealth/core-module": "dev-vaporizing-admin",
-        "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/ccm-billing-module": "*",
         "laravel/ui": "^2.0",
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
