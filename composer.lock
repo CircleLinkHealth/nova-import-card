@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cb761eccf2b8173b851976f8303e83b",
+    "content-hash": "022d4bdff3457e443cbc766978b896b8",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -884,9 +884,11 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "81eef28dc1ed435159b9687714bde9e7ff621fd4"
+                "reference": "2880ea1f826143c7a3d2fa514bd53e62713983c5"
             },
             "require": {
+                "amnuts/opcache-gui": "dev-master",
+                "appstract/laravel-opcache": "^4.0",
                 "darkghosthunter/laraload": "^2.1",
                 "friendsofcat/laravel-feature-flag": "^3.2",
                 "jeremykenedy/slack-laravel": "*",
@@ -930,7 +932,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-27T00:08:28+00:00"
+            "time": "2020-12-27T00:24:39+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -17600,7 +17602,6 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "amnuts/opcache-gui": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
