@@ -718,7 +718,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "59059ad83a80eae0a814a6bbd456a0873d1aca5d"
+                "reference": "eb8feec52fbf1dd3ba6dc5050ec9547b2fe6a83e"
             },
             "require": {
                 "darkghosthunter/laraload": "^2.1",
@@ -764,7 +764,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-26T18:29:13+00:00"
+            "time": "2020-12-27T00:03:00+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -772,7 +772,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "610b8f21d10ab36258449a1f63410a54a8a11335"
+                "reference": "2e14b94dd2ee5d66b7a360746af1aecf10dca3ad"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -814,7 +814,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-25T17:55:33+00:00"
+            "time": "2020-12-27T00:03:00+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
