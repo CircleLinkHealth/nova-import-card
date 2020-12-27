@@ -175,73 +175,37 @@ return [
     */
 
     'redis' => [
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => env('ENCR_REDIS_CLIENT', env('REDIS_CLIENT', 'phpredis')),
 
         'options' => [
-            'cluster' => env('REDIS_CLUSTER', 'redis'),
+            'cluster' => env('ENCR_REDIS_CLUSTER', env('REDIS_CLUSTER', 'redis')),
             'prefix'  => 'cpm_database', //same as AWV
         ],
 
         'default' => [
-            'url'      => env('REDIS_URL'),
-            'host'     => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port'     => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_DB', '0'),
+            'url'      => env('ENCR_REDIS_URL', env('REDIS_URL')),
+            'host'     => env('ENCR_REDIS_HOST', env('REDIS_HOST', '127.0.0.1')),
+            'password' => env('ENCR_REDIS_PASSWORD', env('REDIS_PASSWORD', null)),
+            'port'     => env('ENCR_REDIS_PORT', env('REDIS_PORT', '6379')),
+            'database' => env('ENCR_REDIS_DB', env('REDIS_DB', '0')),
         ],
 
         'cache' => [
-            'url'      => env('REDIS_URL'),
-            'host'     => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port'     => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
+            'url'      => env('ENCR_REDIS_URL', env('REDIS_URL')),
+            'host'     => env('ENCR_REDIS_HOST', env('REDIS_HOST', '127.0.0.1')),
+            'password' => env('ENCR_REDIS_PASSWORD', env('REDIS_PASSWORD', null)),
+            'port'     => env('ENCR_REDIS_PORT', env('REDIS_PORT', '6379')),
+            'database' => env('ENCR_REDIS_CACHE_DB', env('REDIS_CACHE_DB', '1')),
         ],
 
         // need a specific connection for the pub/sub channel
         // otherwise, we get errors (tried both phpredis and predis)
         'pub_sub' => [
-            'url'                => env('REDIS_URL'),
-            'host'               => env('REDIS_HOST', '127.0.0.1'),
-            'password'           => env('REDIS_PASSWORD', null),
-            'port'               => env('REDIS_PORT', 6379),
-            'database'           => env('REDIS_DB', 0),
-            'read_write_timeout' => -1,
-        ],
-    ],
-
-    'encrypted_redis' => [
-        'client' => env('ENCR_REDIS_CLIENT', 'phpredis'),
-
-        'options' => [
-            'cluster' => env('ENCR_REDIS_CLUSTER', 'redis'),
-            'prefix'  => 'cpm_database', //same as AWV
-        ],
-
-        'default' => [
-            'url'      => env('ENCR_REDIS_URL'),
-            'host'     => env('ENCR_REDIS_HOST', '127.0.0.1'),
-            'password' => env('ENCR_REDIS_PASSWORD', null),
-            'port'     => env('ENCR_REDIS_PORT', '6379'),
-            'database' => env('ENCR_REDIS_DB', '0'),
-        ],
-
-        'cache' => [
-            'url'      => env('ENCR_REDIS_URL'),
-            'host'     => env('ENCR_REDIS_HOST', '127.0.0.1'),
-            'password' => env('ENCR_REDIS_PASSWORD', null),
-            'port'     => env('ENCR_REDIS_PORT', '6379'),
-            'database' => env('ENCR_REDIS_CACHE_DB', '1'),
-        ],
-
-        // need a specific connection for the pub/sub channel
-        // otherwise, we get errors (tried both phpredis and predis)
-        'pub_sub' => [
-            'url'                => env('ENCR_REDIS_URL'),
-            'host'               => env('ENCR_REDIS_HOST', '127.0.0.1'),
-            'password'           => env('ENCR_REDIS_PASSWORD', null),
-            'port'               => env('ENCR_REDIS_PORT', 6379),
-            'database'           => env('ENCR_REDIS_DB', 0),
+            'url'                => env('ENCR_REDIS_URL', env('REDIS_URL')),
+            'host'               => env('ENCR_REDIS_HOST', env('REDIS_HOST', '127.0.0.1')),
+            'password'           => env('ENCR_REDIS_PASSWORD', env('REDIS_PASSWORD', null)),
+            'port'               => env('ENCR_REDIS_PORT', env('REDIS_PORT', 6379)),
+            'database'           => env('ENCR_REDIS_DB', env('REDIS_DB', 0)),
             'read_write_timeout' => -1,
         ],
     ],
