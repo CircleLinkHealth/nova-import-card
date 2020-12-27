@@ -76,6 +76,11 @@ return [
             'driver'     => 'redis',
             'connection' => 'cache',
         ],
+    
+        'encrypted_redis' => [
+            'driver'     => 'encrypted_redis',
+            'connection' => 'cache',
+        ],
 
         'dynamodb' => [
             'driver'   => 'dynamodb',

@@ -209,4 +209,40 @@ return [
             'read_write_timeout' => -1,
         ],
     ],
+
+    'encrypted_redis' => [
+        'client' => env('ENCR_REDIS_CLIENT', 'phpredis'),
+
+        'options' => [
+            'cluster' => env('ENCR_REDIS_CLUSTER', 'redis'),
+            'prefix'  => 'cpm_database', //same as AWV
+        ],
+
+        'default' => [
+            'url'      => env('ENCR_REDIS_URL'),
+            'host'     => env('ENCR_REDIS_HOST', '127.0.0.1'),
+            'password' => env('ENCR_REDIS_PASSWORD', null),
+            'port'     => env('ENCR_REDIS_PORT', '6379'),
+            'database' => env('ENCR_REDIS_DB', '0'),
+        ],
+
+        'cache' => [
+            'url'      => env('ENCR_REDIS_URL'),
+            'host'     => env('ENCR_REDIS_HOST', '127.0.0.1'),
+            'password' => env('ENCR_REDIS_PASSWORD', null),
+            'port'     => env('ENCR_REDIS_PORT', '6379'),
+            'database' => env('ENCR_REDIS_CACHE_DB', '1'),
+        ],
+
+        // need a specific connection for the pub/sub channel
+        // otherwise, we get errors (tried both phpredis and predis)
+        'pub_sub' => [
+            'url'                => env('ENCR_REDIS_URL'),
+            'host'               => env('ENCR_REDIS_HOST', '127.0.0.1'),
+            'password'           => env('ENCR_REDIS_PASSWORD', null),
+            'port'               => env('ENCR_REDIS_PORT', 6379),
+            'database'           => env('ENCR_REDIS_DB', 0),
+            'read_write_timeout' => -1,
+        ],
+    ],
 ];
