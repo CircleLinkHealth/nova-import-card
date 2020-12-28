@@ -879,7 +879,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "b36e6c79f6f4e4f14bd051ba3e0fbef2c9490d66"
+                "reference": "d606d332c8798412578e50fe435aed694584c54d"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -921,7 +921,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-28T07:57:43+00:00"
+            "time": "2020-12-28T11:16:40+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1562,7 +1562,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "be93c1f5cb4308a8e0181fed15c2ddc217a15a41"
+                "reference": "69a38127a8f3ff8e03e4209aa9e1d2921b3b4ba9"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1588,7 +1588,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T09:15:06+00:00"
+            "time": "2020-12-28T11:16:40+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
