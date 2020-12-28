@@ -493,16 +493,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.6",
+            "version": "3.171.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5587d22e63ef82ef74dffca5d47f307b84137b51"
+                "reference": "6c32f57bc381b46c783f70a20060fde1a95f4ab5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5587d22e63ef82ef74dffca5d47f307b84137b51",
-                "reference": "5587d22e63ef82ef74dffca5d47f307b84137b51",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6c32f57bc381b46c783f70a20060fde1a95f4ab5",
+                "reference": "6c32f57bc381b46c783f70a20060fde1a95f4ab5",
                 "shasum": ""
             },
             "require": {
@@ -574,7 +574,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-23T19:12:28+00:00"
+            "time": "2020-12-28T19:12:41+00:00"
         },
         {
             "name": "brick/math",
@@ -846,7 +846,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "11f952b2c44d8a5070973aad8c9cc931730aedba"
+                "reference": "41b34566d7700f6481c0650798c545f61888031a"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -896,7 +896,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T18:36:32+00:00"
+            "time": "2020-12-28T19:48:35+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -982,7 +982,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b2a81a3ecc1652f8cd35566d5bf96b7661043217"
+                "reference": "332d6805643a5a5beddea795c88dbc9c6c5dbb23"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1020,7 +1020,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T16:45:04+00:00"
+            "time": "2020-12-28T20:12:27+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1246,7 +1246,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "f81e359c08b0e909f831144f96bba2ffe08c9ff4"
+                "reference": "46119690b1c61f0991a1af9ea0b2d3621f3c7b24"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1276,7 +1276,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T09:15:06+00:00"
+            "time": "2020-12-28T19:48:11+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1284,7 +1284,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b641cccf06c737f62911059507816de8a1a10008"
+                "reference": "fa9ca1de7a8c07343cd7ecc60f8da6055e1e931b"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1301,7 +1301,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T11:59:16+00:00"
+            "time": "2020-12-28T19:48:11+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1435,7 +1435,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "d665ae0564f308a752aa07fe66b75da2e9176974"
+                "reference": "e96041062a9a2508ebbd7475a37d6d63614520da"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1461,7 +1461,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T16:45:04+00:00"
+            "time": "2020-12-28T19:48:35+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -4103,17 +4103,11 @@
         },
         {
             "name": "joshbrw/laravel-module-installer",
-            "version": "v0.1.4",
+            "version": "v0.1.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/joshbrw/laravel-module-installer.git",
-                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/joshbrw/laravel-module-installer/zipball/06bf72e947c313ba7d84c498fb6947a00ba313ef",
-                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef",
-                "shasum": ""
+                "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
             "require": {
                 "composer-plugin-api": "^1.1",
@@ -4133,11 +4127,10 @@
                     "Joshbrw\\LaravelModuleInstaller\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "time": "2017-11-08T10:06:42+00:00"
+            "time": "2020-01-16T16:56:46+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
