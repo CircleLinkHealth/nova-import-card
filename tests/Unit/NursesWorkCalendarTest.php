@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Http\Controllers\CareCenter\WorkScheduleController;
+use CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\CareCenter\WorkScheduleController;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
 

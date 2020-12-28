@@ -64,7 +64,7 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {setOpenModal} from "../store/actions";
+    import {setOpenModal} from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions";
 
     export default {
         data() {
@@ -109,7 +109,7 @@
                     this.setOpenModal({
                         name: 'add-task-modal',
                         props: {
-                            patientId: window['patientId'],
+                            patientId: String(window['patientId']),
                             practice: {
                                 id: window['patientPractice'].id,
                                 name: window['patientPractice'].name,

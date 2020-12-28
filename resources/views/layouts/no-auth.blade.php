@@ -7,10 +7,10 @@
     <title>CarePlanManager | Log In</title>
 
     @include('modules.raygun.partials.real-user-monitoring')
-    @include('partials.new-relic-tracking')
+    @include('core::partials.new-relic-tracking')
 
-    <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
-    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
     <style type="text/css">
         input[type=text], input[type=password] {
             display: inline-block;
@@ -52,8 +52,8 @@
     <section class="main-form col-lg-12 col-sm-11">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
-                @include('errors.errors')
-                @include('errors.messages')
+                @include('core::partials.errors.errors')
+                @include('core::partials.errors.messages')
             </div>
             <div class="main-form-container col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4">
                 <div class="row">
@@ -66,7 +66,7 @@
                                     @elseif(isset($_COOKIE['practice_name_as_logo']) && ! empty($_COOKIE['practice_name_as_logo']))
                                         <h2 class="auth-pages-title">{{$_COOKIE['practice_name_as_logo']}}</h2>
                                     @else
-                                        <img class="img-responsive" src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
+                                        <img class="img-responsive" src="{{ asset('img/logos/LogoHorizontal_Color.svg') }}"
                                              alt="CarePlan Manager">
                                     @endif
                                 </div>
@@ -82,7 +82,7 @@
     </section>
 </div>
 
-<script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
-@include('partials.sentry-js')
+<script src="{{asset('js/prevent-multiple-submits.js')}}"></script>
+@include('core::partials.sentry-js')
 </body>
 </html>

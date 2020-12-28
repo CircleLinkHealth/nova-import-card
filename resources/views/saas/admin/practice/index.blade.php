@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -58,7 +58,7 @@
                                            class=""><strong>{{ $practice->display_name }}</strong></a></td>
                                     <td>{{ date('F d, Y g:i A', strtotime($practice->created_at)) }}</td>
                                     <td class="text-right">
-                                        <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
+                                        <a href="{{ route('provider.dashboard.manage.notifications', ['practiceSlug' => $practice->name]) }}"
                                            class="btn btn-xs btn-success">
                                             Edit Settings / Add Staff
                                         </a>

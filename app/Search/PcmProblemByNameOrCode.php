@@ -6,6 +6,7 @@
 
 namespace App\Search;
 
+use CircleLinkHealth\Core\Search\BaseScoutSearch;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Laravel\Scout\Builder;
 

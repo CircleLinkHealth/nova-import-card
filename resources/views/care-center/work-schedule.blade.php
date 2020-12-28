@@ -5,7 +5,7 @@
 
 @section('content')
     <notifications></notifications>
-    @include('errors.errors')
+    @include('core::partials.errors.errors')
 
     <div class="container" style="margin-top: 2%">
         <nurse-schedule-calendar

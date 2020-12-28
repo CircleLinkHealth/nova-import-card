@@ -8,6 +8,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\MakeAndDispatchAuditReports;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
@@ -76,7 +77,7 @@ class QueueSendAuditReports extends Command
 
                     if ( ! $this->option('dry')) {
                         MakeAndDispatchAuditReports::dispatch($patient, $date, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
-                            ->onQueue('high');
+                            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
                     }
 
                     if ( ! is_null($this->argument('limit')) && ++self::$dispatched >= (int) $this->argument('limit')) {

@@ -6,14 +6,15 @@
 
 namespace App\Console\Commands;
 
-use App\FullCalendar\NurseCalendarService;
-use App\Jobs\CreateCalendarRecurringEventsJob;
-use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 
@@ -225,7 +226,7 @@ class CreateFakeDataForDailyReportCommand extends Command
         ];
 
         $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $windowData);
-        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
+        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     private function getExistingWindows(Nurse $nurseInfo)

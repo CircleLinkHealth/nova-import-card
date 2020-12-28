@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
+use CircleLinkHealth\SharedModels\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;

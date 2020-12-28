@@ -6,13 +6,6 @@
 
 namespace App\Providers;
 
-use App\Events\CarePlanWasApproved;
-use App\Events\CarePlanWasProviderApproved;
-use App\Events\CarePlanWasQAApproved;
-use App\Events\CarePlanWasRNApproved;
-use App\Events\NoteFinalSaved;
-use App\Events\PatientUserCreated;
-use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
@@ -22,7 +15,6 @@ use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
-use App\Listeners\ForwardNote;
 use App\Listeners\LogScheduledTask;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
@@ -36,7 +28,6 @@ use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
@@ -51,7 +42,14 @@ use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
 use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
 use CircleLinkHealth\Core\Listeners\LogSentNotification;
 use CircleLinkHealth\Core\Listeners\PostmarkAddSmtpIdOnHeader;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasQAApproved;
+use CircleLinkHealth\Customer\Events\CarePlanWasRNApproved;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
+use CircleLinkHealth\Customer\Events\PatientUserCreated;
+use CircleLinkHealth\Customer\Events\PdfableCreated;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
@@ -91,9 +89,6 @@ class CpmEventServiceProvider extends ServiceProvider
         MessageSending::class => [
             LogMailSmtpId::class, //this needs to be first
             CheckBeforeSendMessageListener::class,
-        ],
-        NoteFinalSaved::class => [
-            ForwardNote::class,
         ],
         MessageSent::class => [
             LogSentMailNotification::class,

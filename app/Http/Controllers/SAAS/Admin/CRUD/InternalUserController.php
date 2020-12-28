@@ -6,26 +6,27 @@
 
 namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
-use App\Notifications\SAAS\SendInternalUserSignupInvitation;
-use App\ValueObjects\SAAS\Admin\InternalUser;
 use Auth;
+use CircleLinkHealth\Customer\DTO\InternalUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\SAAS\SendInternalUserSignupInvitation;
+use CircleLinkHealth\Customer\Services\SAAS\UserManagementService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InternalUserController extends Controller
 {
     /**
-     * @var \App\Services\SAAS\Admin\UserManagementService
+     * @var \CircleLinkHealth\CpmAdmin\Services\SAAS\UserManagementService
      */
     private $userManagementService;
 
-    public function __construct(\App\Services\SAAS\Admin\UserManagementService $userManagementService)
+    public function __construct(UserManagementService $userManagementService)
     {
         $this->userManagementService = $userManagementService;
     }

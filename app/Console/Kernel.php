@@ -16,8 +16,6 @@ use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
-use App\Console\Commands\CheckVoiceCalls;
-use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
@@ -34,9 +32,7 @@ use App\Console\Commands\RemoveDuplicateScheduledCalls;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
-use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Jobs\OverwritePatientMrnsFromSupplementalData;
-use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\CheckLocationSummariesHaveBeenCreated;
@@ -45,16 +41,18 @@ use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
-use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
@@ -70,7 +68,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RunScheduler::class,
+        CountPatientMonthlySummaryCalls::class,
     ];
 
     /**
@@ -136,15 +134,14 @@ class Kernel extends ConsoleKernel
             ->everyFifteenMinutes()
             ->onOneServer();
 
-        $schedule->command('horizon:snapshot')
-            ->everyThirtyMinutes();
-
         $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
 
+        /*
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
             ->hourly()
             ->between('7:00', '23:00');
+        */
 
         $schedule->command('schedule-monitor:clean')
             ->daily();

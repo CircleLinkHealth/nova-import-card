@@ -199,13 +199,14 @@
     </div>
 </template>
 <script>
-    import {rootUrl} from "../app.config";
-    import EventBus from '../admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../components/loader';
-    import {registerHandler, sendRequest} from "./bc-job-manager";
-    import {Logger} from '../logger-logdna';
+    import {rootUrl} from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config";
+    import EventBus from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
+    import {registerHandler, sendRequest} from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/bc-job-manager";
+    import {Logger} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
+    import Notifications from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
 
     let self;
 
@@ -214,6 +215,7 @@
     export default {
         name: 'call-number',
         components: {
+            'notifications': Notifications,
             loader: LoaderComponent,
             'call-numpad': CallNumpad,
         },

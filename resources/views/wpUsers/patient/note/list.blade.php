@@ -121,7 +121,7 @@
                      style="border-top: 3px solid #50b2e2">
 
                     <div style="margin-top:2px">
-                        @include('errors.errors')
+                        @include('core::partials.errors.messages')
                     </div>
 
                     @if($isProviderSelected)
@@ -332,11 +332,11 @@
                                     </li>
                                 </div>
                                 <div class="col-sm-6">
-                                    @if( auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) )
+                                    @if( auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) )
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes since <?=\Carbon\Carbon::now()->subMonth($input['range'] ?? 0)->format('F, Y'); ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes since <?php echo \Carbon\Carbon::now()->subMonth($input['range'] ?? 0)->format('F, Y'); ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -351,7 +351,7 @@
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($input['range'])) since <?=\Carbon\Carbon::now()->subMonth($input['range'])->format('F, Y'); ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($input['range'])) since <?php echo \Carbon\Carbon::now()->subMonth($input['range'])->format('F, Y'); ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{

@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;

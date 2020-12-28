@@ -6,12 +6,12 @@
 
 namespace App\Exports;
 
-use App\Reports\NurseDailyReport as NurseStatsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\AttachableAsMedia;
+use CircleLinkHealth\CpmAdmin\Services\NurseDailyReport as NurseStatsService;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;

@@ -6,13 +6,13 @@
 
 namespace Tests\Unit;
 
-use App\Notifications\NoteForwarded;
-use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Notifications\NoteForwarded;
+use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class OnNoteForwardedTest extends CustomerTestCase
 {

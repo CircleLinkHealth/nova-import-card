@@ -6,9 +6,9 @@
 
 namespace App\Listeners;
 
-use App\Services\PageTimerService;
-use App\ValueObjects\CreatePageTimerParams;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\DTO\CreatePageTimerParams;
+use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

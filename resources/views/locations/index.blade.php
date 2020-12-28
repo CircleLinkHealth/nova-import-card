@@ -16,7 +16,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         <h3>Locations:</h3>
                         <table class="table table-striped">

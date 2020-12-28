@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CPM\CpmMedicationService;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmMedicationService;
 use Illuminate\Http\Request;
 
 class MedicationController extends Controller

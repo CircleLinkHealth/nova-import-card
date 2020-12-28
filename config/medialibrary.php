@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\MediaLibrary\CPMURLGenerator;
+
 return [
     /*
      * The disk on which to store added files and derived images by default. Choose
@@ -72,7 +74,7 @@ return [
      * When urls to files get generated, this class will be called. Leave empty
      * if your files are stored locally above the site root or on s3.
      */
-    'url_generator' => App\MediaLibrary\CPMURLGenerator::class,
+    'url_generator' => CPMURLGenerator::class,
 
     // The class that contains the strategy for determining a media file's path.
     'path_generator' => null,

@@ -6,7 +6,6 @@
 
 namespace Tests\Unit;
 
-use App\Call;
 use App\Http\Controllers\NotesController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;

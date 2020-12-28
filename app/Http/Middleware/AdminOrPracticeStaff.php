@@ -6,8 +6,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Constants;
 use App\User;
+use CircleLinkHealth\Customer\CpmConstants;
 use Closure;
 
 class AdminOrPracticeStaff
@@ -28,7 +28,7 @@ class AdminOrPracticeStaff
             return redirect()->guest('login');
         }
 
-        if ($loggedInUser->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES) || $loggedInUser->isAdmin()) {
+        if ($loggedInUser->hasRole(CpmConstants::PRACTICE_STAFF_ROLE_NAMES) || $loggedInUser->isAdmin()) {
             return $next($request);
         }
 

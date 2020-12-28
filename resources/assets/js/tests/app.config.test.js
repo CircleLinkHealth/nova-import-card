@@ -1,11 +1,11 @@
-import DocumentMock from '../util/tests/mocks/document.mock'
-import ElementMock from '../util/tests/mocks/element.mock'
+import DocumentMock from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/tests/mocks/document.mock'
+import ElementMock from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/tests/mocks/element.mock'
 import {
     rootUrl,
     baseValue,
     csrfToken,
     testRootUrl
-} from '../app.config'
+} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
 
 const base = new ElementMock({
     tagName: 'base',

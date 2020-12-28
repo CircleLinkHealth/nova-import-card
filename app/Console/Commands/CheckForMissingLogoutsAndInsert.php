@@ -7,8 +7,9 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CheckLogoutEventAndSave;
-use App\LoginLogout;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Illuminate\Console\Command;
 
 class CheckForMissingLogoutsAndInsert extends Command
@@ -51,7 +52,7 @@ class CheckForMissingLogoutsAndInsert extends Command
             ->orderBy('created_at', 'asc')
             ->chunk(50, function ($yesterdaysActivities) use ($date) {
                 foreach ($yesterdaysActivities as $loginActivity) {
-                    CheckLogoutEventAndSave::dispatch($date, $loginActivity)->onQueue('low');
+                    CheckLogoutEventAndSave::dispatch($date, $loginActivity)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
                 }
             });
     }

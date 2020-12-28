@@ -5,7 +5,7 @@
         {{-- Create a new key --}}
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                @include('errors.errors')
+                @include('core::partials.errors.errors')
             </div>
         </div>
         <div class="row">

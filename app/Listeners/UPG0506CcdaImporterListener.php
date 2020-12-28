@@ -6,10 +6,10 @@
 
 namespace App\Listeners;
 
-use App\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Str;

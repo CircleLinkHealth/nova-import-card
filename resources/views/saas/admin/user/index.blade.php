@@ -20,7 +20,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">All Users</div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
 
                         {!! Form::open(array('url' => route('saas-admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}

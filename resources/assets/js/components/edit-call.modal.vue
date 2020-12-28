@@ -99,13 +99,13 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 
 <script>
     import {Event} from 'vue-tables-2'
-    import Modal from '../admin/common/modal'
-    import LoaderComponent from './loader'
-    import {rootUrl} from '../app.config'
-    import {today} from '../util/today'
-    import notifications from './notifications'
+    import Modal from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/common/modal'
+    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import {rootUrl} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
+    import {today} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/today'
+    import Notifications from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import VueSelect from 'vue-select'
-    import VueCache from '../util/vue-cache'
+    import VueCache from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/vue-cache'
 
     const defaultFormData = {
         id: null,
@@ -138,7 +138,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
             'modal': Modal,
             'loader': LoaderComponent,
             'v-select': VueSelect,
-            notifications
+            'notifications': Notifications
         },
         data() {
             return {
@@ -220,7 +220,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                 Event.$emit('notifications-edit-call-modal:dismissAll');
 
                 this.loaders.submit = true;
-                return this.axios.post(rootUrl(`manage-patients/${formData.inbound_cpm_id}/calls/reschedule`), formData)
+                return this.axios.post(rootUrl(`calls/reschedule/${formData.inbound_cpm_id}`), formData)
                     .then((response, status) => {
                         if (response) {
                             this.loaders.submit = false;

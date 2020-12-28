@@ -6,11 +6,11 @@
 
 namespace Tests\Unit;
 
-use App\Call;
-use App\Console\Commands\CountPatientMonthlySummaryCalls;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class CallCountTest extends CustomerTestCase
 {

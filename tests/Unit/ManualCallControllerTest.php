@@ -14,7 +14,7 @@ use App\Http\Controllers\ManualCallController;
 use App\ValueObjects\CreateManualCallAfterNote;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ManualCallControllerTest extends CustomerTestCase
 {
@@ -79,7 +79,7 @@ class ManualCallControllerTest extends CustomerTestCase
         $patient = $this->fakePatient();
         $nurse   = $this->fakeNurse();
 
-        $this->mock(Suggestor::class, function ($m) use ($nurse, $patient, $handler) {
+        $this->mock(Suggestor::class, function ($m) use ($patient, $handler) {
             $m->shouldReceive('handle')
                 ->with($patient, $handler)
                 ->once()

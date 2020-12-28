@@ -1,17 +1,17 @@
-require('./bootstrap');
+require('../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap');
 
 import 'es6-string-polyfills'
-import './prototypes/array.prototype'
+import '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/prototypes/array.prototype'
 
 import Vue from 'vue'
-import axios from './bootstrap-axios'
+import axios from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
-import store from "./store";
+import store from "../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store";
 import {ClientTable, ServerTable} from 'vue-tables-2'
 import "vue-trix"
-import EventBus from './admin/time-tracker/comps/event-bus'
-import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
+import EventBus from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+import {BindWindowFocusChange, BindWindowVisibilityChange} from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/events/window.event'
 
 Vue.use(ClientTable, {}, false)
 Vue.use(ServerTable, {}, false)
@@ -37,28 +37,28 @@ Vue.use(VueForm, {
         invalid: 'form-control-danger'
     }
 })
-const BillingComponent = () => import(/* webpackChunkName: "chunk-billing" */ './admin/billing')
-const ComponentProxy = () => import(/* webpackChunkName: "chunk" */ './components/shared/component-proxy')
-const CareTeamComponent = () => import(/* webpackChunkName: "chunk-careteam" */ './components/pages/view-care-plan/care-team')
-const CreateAppointmentsAddCarePerson = () => import(/* webpackChunkName: "chunk-careteam" */ './components/CareTeam/create-appointments-add-care-person')
-const CreateCarePerson = () => import(/* webpackChunkName: "chunk-careteam" */ './components/CareTeam/create-care-person')
-const UpdateCarePerson = () => import(/* webpackChunkName: "chunk-careteam" */ './components/pages/view-care-plan/update-care-person')
-const Select2Component = () => import(/* webpackChunkName: "chunk-misc" */ './components/src/select2')
-const FabComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/fab')
-const OpenModalComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/open-modal')
-const NotificationsComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/notifications/notifications')
-const CareplanActions = () => import(/* webpackChunkName: "chunk" */ './components/pages/view-care-plan/careplan-actions')
-const CareDocsIndex = () => import(/* webpackChunkName: "chunk" */ './components/pages/care-docs/index')
-const MedicationsListComponent = () => import(/* webpackChunkName: "chunk" */ './ccd-models/medications')
-const ProblemsList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/problems')
-const AllergiesList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/allergies')
-const NurseDailyHours = () => import(/* webpackChunkName: "chunk" */ './components/pages/work-schedule/daily-hours')
-const QuestionnaireApp = () => import(/* webpackChunkName: "chunk-assessment" */ './admin/questionnaire/app')
-const TimeTracker = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker')
-const TimeTrackerCallModeComponent = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker/time-tracker-call-mode')
-const TimeDisplayAllChargeableServicesStatic = () => import(/* webpackChunkName: "chunk" */ './admin/time-tracker/comps/time-display-all-chargeable-services-static')
-const LoaderComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/loader')
-const PersistentTextArea = () => import(/* webpackChunkName: "chunk-misc" */ './components/persistent-textarea')
+const BillingComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing')
+const ComponentProxy = () => import(/* webpackChunkName: "chunk-careplan" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/component-proxy')
+const CareTeamComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/view-care-plan/care-team')
+const CreateAppointmentsAddCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ './components/CareTeam/create-appointments-add-care-person')
+const CreateCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ './components/CareTeam/create-care-person')
+const UpdateCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/view-care-plan/update-care-person')
+const Select2Component = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/select2')
+const FabComponent = () => import(/* webpackChunkName: "chunk-provider" */ './components/fab')
+const OpenModalComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/open-modal')
+const CareplanActions = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/view-care-plan/careplan-actions')
+const CareDocsIndex = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/care-docs/index')
+const MedicationsListComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './ccd-models/medications')
+const ProblemsList = () => import(/* webpackChunkName: "chunk-careplan" */ './ccd-models/problems')
+const AllergiesList = () => import(/* webpackChunkName: "chunk-careplan" */ './ccd-models/allergies')
+const NurseDailyHours = () => import(/* webpackChunkName: "chunk-careplan" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/pages/work-schedule/daily-hours')
+const QuestionnaireApp = () => import(/* webpackChunkName: "chunk-careplan" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/questionnaire/app')
+const TimeTracker = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker')
+const TimeTrackerCallModeComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/time-tracker-call-mode')
+const ServerTimeDisplay = () => import(/* webpackChunkName: "chunk-careplan" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/server-time-display')
+const TimeDisplayAllChargeableServicesStatic = () => import(/* webpackChunkName: "chunk" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/time-display-all-chargeable-services-static')
+const LoaderComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader')
+const PersistentTextArea = () => import(/* webpackChunkName: "chunk-provider" */ './components/persistent-textarea')
 const CareAreasComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/care-areas')
 const DiabetesCheckModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/diabetes-check.modal')
 const HealthGoalsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/health-goals')
@@ -74,28 +74,26 @@ const AppointmentsComponent = () => import(/* webpackChunkName: "chunk-careplan"
 const AddTaskModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/add-task.modal');
 const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */ './components/patients/listing')
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
-const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/importer/trainer')
-const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
-const PatientSpouseComponent = () => import(/* webpackChunkName: "chunk-patient-spouse" */ './components/patient-spouse');
-const CallNumberComponent = () => import(/* webpackChunkName: "chunk-call-number" */ './components/call-number');
-const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');
-const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
-const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
-const ImportedMedicalRecordsManagement = () => import(/* webpackChunkName: "chunk-imported-medical-records-management" */ './components/importer/imported-medical-records-management');
-const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
-const SchedulePatientActivity = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/comps/schedule-patient-activity')
-const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
-const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
+const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient" */ './components/patient-next-call');
+const PatientSpouseComponent = () => import(/* webpackChunkName: "chunk-patient" */ './components/patient-spouse');
+const CallNumberComponent = () => import(/* webpackChunkName: "chunk-patient" */ './components/call-number');
+const UserAccountSettings = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Twofa/Resources/assets/js/user-account-settings');
+const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Twofa/Resources/assets/js/authy-perform-2fa');
+const CcdUploader = () => import(/* webpackChunkName: "chunk-importer" */ './components/importer/ccd-upload');
+const ImportedMedicalRecordsManagement = () => import(/* webpackChunkName: "chunk-importer" */ './components/importer/imported-medical-records-management');
+const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/NurseScheduleCalendar');
+const CalendarLoader = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader');
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../CircleLinkHealth/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
 const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../CircleLinkHealth/Nurseinvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
-const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
-const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
+const PusherNotifications = () => import(/* webpackChunkName: "chunk-provider" */ './components/pusher-notifications')
+const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-provider" */ './components/pusher-see-all-notifications')
 const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
-const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-attest-call-conditions" */  './components/attest-call-conditions.modal');
-const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
+const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-patient" */  './components/attest-call-conditions.modal');
+const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
 const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
 const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
-const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
+const SchedulePatientActivity = () => import(/* webpackChunkName: "chunk-callbacks-admin" */  '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/calls/comps/schedule-patient-activity.vue');
+
 
 
 Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
@@ -109,7 +107,6 @@ Vue.component('select2', Select2Component);
 Vue.component('send-email-to-patient', SendEmailToPatientComponent);
 Vue.component('fab', FabComponent);
 Vue.component('openModal', OpenModalComponent);
-Vue.component('notifications', NotificationsComponent);
 Vue.component('careplanActions', CareplanActions);
 Vue.component('careDocsIndex', CareDocsIndex);
 Vue.component('medicationsList', MedicationsListComponent);
@@ -119,6 +116,7 @@ Vue.component('nurseDailyHours', NurseDailyHours);
 Vue.component('questionnaire-app', QuestionnaireApp);
 Vue.component('time-tracker', TimeTracker);
 Vue.component('time-tracker-call-mode', TimeTrackerCallModeComponent);
+Vue.component('server-time-display', ServerTimeDisplay);
 Vue.component('time-display-all-chargeable-services-static', TimeDisplayAllChargeableServicesStatic);
 Vue.component('loader', LoaderComponent);
 Vue.component('persistent-textarea', PersistentTextArea);
@@ -136,7 +134,6 @@ Vue.component('diabetes-check-modal', DiabetesCheckModalComponent);
 Vue.component('appointments', AppointmentsComponent);
 Vue.component('patient-list', PatientList);
 Vue.component('v-datepicker', DatepickerComponent);
-Vue.component('importer-trainer', ImporterTrainerComponent);
 Vue.component('patient-next-call', PatientNextCallComponent);
 Vue.component('patient-spouse', PatientSpouseComponent);
 Vue.component('add-task-modal', AddTaskModalComponent);
@@ -145,8 +142,6 @@ Vue.component('user-account-settings', UserAccountSettings);
 Vue.component('authy-perform-2fa', AuthyPerform2FA);
 Vue.component('ccd-upload', CcdUploader);
 Vue.component('imported-medical-records-management', ImportedMedicalRecordsManagement);
-Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
-Vue.component('schedule-patient-activity', SchedulePatientActivity);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
@@ -156,7 +151,7 @@ Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 Vue.component('calendar-daily-report', CalendarDailyReport);
 Vue.component('edit-patient-number', EditPatientNumber);
 Vue.component('edit-patient-alternate-contact', EditPatientAlternateContact);
-Vue.component('ca-director-panel', CaDirectorPanel)
+Vue.component('schedule-patient-activity', SchedulePatientActivity);
 
 
 const App = new Vue({

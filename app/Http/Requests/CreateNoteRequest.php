@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\Policies\CreateNoteForPatient;
+use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateNoteRequest extends FormRequest

@@ -121,12 +121,12 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config.js'
+    import {rootUrl} from "../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config";
     import {Event} from 'vue-tables-2'
     import {CancelToken} from 'axios'
     import moment from 'moment'
-    import loader from '../loader'
-    import UserRolesHelperMixin from '../../mixins/user-roles-helpers.mixin'
+    import loader from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import UserRolesHelperMixin from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/mixins/user-roles-helpers.mixin'
 
     /**
      * Determines whether to show patient name format as
@@ -548,7 +548,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,practice,location,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,ccm status change\n'
+                    const str = 'name,provider,practice,location,ccm status,careplan status,withdrawn reason,dob,mrn,phone,age,registered on,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);

@@ -8,7 +8,7 @@
     </div>
     <ul class="dropdown-menu" role="menu" style="background: white !important;">
 
-        @include('partials.last-login')
+        @include('core::partials.last-login')
 
         @impersonating
         <li>
@@ -38,9 +38,9 @@
                 </a>
             </li>
         @endif
-        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
+        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas() && $url = config('core.apps.cpm-admin.url'))
             <li><a style="color: #47beab"
-                   href="{{ route('admin.dashboard') }}">
+                   href="{{ $url }}">
                     Admin Panel
                 </a>
             </li>

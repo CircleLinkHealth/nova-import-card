@@ -1,6 +1,6 @@
 @if ($enableTimeTracking)
     @push('prescripts')
-        <script src="{{mix('/js/date-in-server-timezone.js')}}"></script>
+        <script src="{{asset('/js/date-in-server-timezone.js')}}"></script>
         <script>
             var timeTrackerInfo = {
                 "patientId": '{{$patientId}}' === '' ? '0' : '{{$patientId}}',

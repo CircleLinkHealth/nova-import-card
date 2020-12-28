@@ -1,12 +1,12 @@
 <script>
 import {mapActions} from 'vuex'
-import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../store/actions'
-import modal from '../../shared/modal.vue'
+import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions'
+import modal from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/modal.vue'
 import Dropzone from 'vue2-dropzone'
 
 import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
-import CarePlanApi from '../../../api/patient-care-plan'
-import {rootUrl} from '../../../app.config'
+import CarePlanApi from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/api/patient-care-plan'
+import {rootUrl} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
 
 export default {
     components: {
@@ -43,7 +43,7 @@ export default {
     created() {
         self = this;
         this.getPatientCarePlan(this.patientId)
-        this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
+        this.apiUrl = rootUrl('care-plans/' + this.patientCareplanId + '/pdfs');
     },
     mounted() {
         App.$on('set-patient-problems', (problems) => {

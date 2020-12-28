@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\CareplanAssessment;
-use App\Services\CareplanAssessmentService;
-use App\Services\CareplanService;
-use App\Services\NoteService;
+use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Services\CareplanAssessmentService;
+use CircleLinkHealth\SharedModels\Services\CareplanService;
 use Illuminate\Http\Request;
 
 class CareplanAssessmentController extends Controller

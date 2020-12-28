@@ -6,33 +6,33 @@
 
 namespace Tests\Feature\SelfEnrollment;
 
-use App\Constants\ProviderClinicalTypes;
-use App\EnrollmentInvitationsBatch;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\LogSuccessfulLoginToDB;
-use App\LoginLogout;
-use App\SelfEnrollment\AppConfig\Reminders;
-use App\SelfEnrollment\Constants;
-use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
-use App\SelfEnrollment\Domain\RemindEnrollees;
-use App\SelfEnrollment\Domain\UnreachablesFinalAction;
-use App\SelfEnrollment\Helpers;
-use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
-use App\SelfEnrollment\Jobs\SendInvitation;
-use App\SelfEnrollment\Jobs\SendReminder;
-use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use App\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\CpmConstants\ProviderClinicalTypes;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\SelfEnrollment\AppConfig\Reminders;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendReminder;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
+use CircleLinkHealth\TwilioIntegration\Notifications\Channels\CustomTwilioChannel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Notification;
-use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends TestCase
@@ -358,9 +358,9 @@ class SelfEnrollmentTest extends TestCase
         });
 
         $initialInviteSentAt  = now();
-        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
-        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
-        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
+        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
+        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
+        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
 
         Carbon::setTestNow($firstReminderSentAt);
         RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);

@@ -69,7 +69,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                 <div class="row">
                     <div class="col-md-3 col-xs-12">
                         <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
-                                    src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
+                                    src="{{asset('/img/logos/LogoHorizontal_White.svg')}}"
                                     alt="Care Plan Manager"
                                     style="position:relative;top:-7px"
                                     height="50"
@@ -98,19 +98,19 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                     <ul class="nav navbar-nav navbar-right">
                         @if (auth()->user()->isCallbacksAdmin())
                                     <li>
-                                        <a href="{{ route('patientCallManagement.v2.index') }}" style="color: #fff;">
+                                        <a href="{{ route('patientCallManagement.v2.provider.index') }}" style="color: #fff;">
                                             Patient Activity Management
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('ca-director.index') }}" style="color: #fff;">
+                                        <a href="{{ route('ca-director.provider.index') }}" style="color: #fff;">
                                             Care Ambassador Panel
                                         </a>
                                     </li>
                         @endif
 
                         @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
                                                             :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
@@ -160,7 +160,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                             <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -179,7 +179,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                         <li>
-                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -289,15 +289,6 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
-                                @if($user->hasRole('developer') || $user->isAdmin())
-                                    <li>
-                                        <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('admin.reports.nurse.metrics') }}">
-                                            Nurse Performance Report</a>
-                                    </li>
-                                @endif
                             </ul>
                         </li>
                                 @endif

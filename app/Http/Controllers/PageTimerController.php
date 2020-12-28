@@ -6,10 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\StoreTimeTracking;
 use App\ValueObjects\PatientChargeableServiceForTimeTracker;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -78,7 +79,7 @@ class PageTimerController extends Controller
         $params->add(['userAgent' => $request->userAgent()]);
 
         StoreTimeTracking::dispatch($params)
-            ->onQueue('high');
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
 
         return response('PageTimer activities logged.', 201);
     }

@@ -6,22 +6,22 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Contracts\ReportFormatter;
-use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
 use App\Http\Requests\ContactDetailsRequest;
 use App\Http\Requests\MarkPrimaryPhoneRequest;
-use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Services\Observations\ObservationConstants;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
@@ -511,7 +511,7 @@ class PatientController extends Controller
                 //$obs_date = date_create($observation['obs_date']);
                 //if( (($obs_date->format('Y-m-d')) < date("Y-m-d")) && $observation['obs_key'] == 'Call' ) {
                 if ('Call' != $observation['obs_key']) { // skip NR's, which are any obs that has no value (other than call)
-                    continue 1;
+                    continue;
                 }
             }
             $observation['parent_item_text'] = '---';

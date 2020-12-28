@@ -8,12 +8,12 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor as NextCallDateSuggestor;
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Http\Requests\ShowCreateManualCallForm;
 use App\Http\Requests\StoreManualScheduledCall;
-use App\Services\Calls\SchedulerService;
 use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

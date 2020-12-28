@@ -8,35 +8,35 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
-use App\Call;
-use App\Contracts\ReportFormatter;
-use App\Events\CarePlanWasApproved;
-use App\Events\NoteFinalSaved;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
-use App\Http\Requests\SafeRequest;
+use App\Jobs\ForwardNote;
 use App\Jobs\SendSingleNotification;
-use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
 use App\Rules\ValidatePatientCustomEmail;
-use App\Services\Calls\SchedulerService;
-use App\Services\CPM\CpmMedicationService;
-use App\Services\CPM\CpmProblemService;
-use App\Services\NoteService;
-use App\Services\PatientCustomEmail;
 use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestationRequirements;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
+use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmMedicationService;
+use CircleLinkHealth\SharedModels\Services\CpmProblemService;
+use CircleLinkHealth\SharedModels\Services\PatientCustomEmail;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -643,11 +643,12 @@ class NotesController extends Controller
                 ->withInput();
         }
 
-        event(new NoteFinalSaved($note, [
-            'notifyCareTeam' => $input['notify_careteam'] ?? false,
-            'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
-            'forceNotify'    => false,
-        ]));
+        ForwardNote::dispatch(
+            $note,
+            $input['notify_careteam'] ?? false,
+            $input['notify_circlelink_support'] ?? false,
+            false
+        );
 
         if ($hasRnApprovedCp) {
             event(new CarePlanWasApproved($patient, $author));

@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PhoneNumbersTest extends CustomerTestCase
 {

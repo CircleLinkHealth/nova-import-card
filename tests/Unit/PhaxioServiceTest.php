@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Contracts\Efax;
+use CircleLinkHealth\Core\Contracts\Efax;
 use Tests\TestCase;
 
 class PhaxioServiceTest extends TestCase

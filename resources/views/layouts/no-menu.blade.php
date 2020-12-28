@@ -6,11 +6,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CPM API</title>
 
-	<link href="{{ mix('/css/app.css') }}" rel="stylesheet">
-	<link href="{{ mix('/img/favicon.png') }}" rel="icon">
+	<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
+	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
 	<!-- Fonts -->
-	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
 	<!-- Scripts -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
@@ -25,7 +25,7 @@
 			<div class="navbar-header">
 
 				<a class="navbar-brand" href="">
-					<img src="{{mix('/img/cpm-logo.png')}}" height="40" width="70">
+					<img src="{{asset('/img/cpm-logo.png')}}" height="40" width="70">
 				</a>
 			</div>
 

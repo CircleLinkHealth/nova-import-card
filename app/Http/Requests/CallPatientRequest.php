@@ -22,7 +22,7 @@ class CallPatientRequest extends FormRequest
             return true;
         }
 
-        return app(\App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
+        return app(\CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
     }
 
     /**

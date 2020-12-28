@@ -8,9 +8,9 @@ namespace App\Algorithms\Calls\NextCallSuggestor\Handlers;
 
 use App\Algorithms\Calls\NextCallSuggestor\HandlerResponse;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
-use App\Call;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 class UnsuccessfulCall implements CallHandler
 {

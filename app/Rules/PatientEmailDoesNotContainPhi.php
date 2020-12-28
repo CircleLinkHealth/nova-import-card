@@ -6,7 +6,7 @@
 
 namespace App\Rules;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
@@ -80,8 +80,8 @@ class PatientEmailDoesNotContainPhi implements Rule
         }
 
         //For Relationships
-        $this->patientUser->loadMissing(Constants::PATIENT_PHI_RELATIONSHIPS);
-        foreach (Constants::PATIENT_PHI_RELATIONSHIPS as $relation) {
+        $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
+        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
             foreach ($this->patientUser->{$relation}->phi as $phi) {
                 $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
                 if ($string) {

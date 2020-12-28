@@ -6,18 +6,18 @@
 
 namespace App\Formatters;
 
-use App\Contracts\ReportFormatter;
-use App\Note;
-use App\Relationships\PatientCareplanRelations;
-use App\Services\CPM\CpmMiscService;
-use App\Services\NoteService;
-use App\Services\ReportsService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Relationships\PatientCareplanRelations;
+use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\Customer\Services\ReportsService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\CPM\CpmMiscService;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
@@ -34,7 +34,7 @@ class WebixFormatter implements ReportFormatter
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
-            function (Note $note) use ($patient, $billingProvider) {
+            function (Note $note) use ($billingProvider) {
                 $result = [
                     'id'          => $note->id,
                     'logger_id'   => $note->author_id,
@@ -235,7 +235,7 @@ class WebixFormatter implements ReportFormatter
     public function formatDataForViewPrintCareplanReport($user)
     {
         $careplanReport    = [];
-        $cpmProblemService = app(\App\Services\CPM\CpmProblemService::class);
+        $cpmProblemService = app(\CircleLinkHealth\SharedModels\Services\CpmProblemService::class);
 
         $user->loadMissing(PatientCareplanRelations::get());
 
@@ -368,7 +368,7 @@ class WebixFormatter implements ReportFormatter
             $i                                      = 0;
             foreach ($allergies as $allergy) {
                 if (empty($allergy->allergen_name)) {
-                    continue 1;
+                    continue;
                 }
                 if ($i > 0) {
                     $careplanReport[$user->id]['allergies'] .= '<br>';
@@ -545,7 +545,7 @@ class WebixFormatter implements ReportFormatter
         foreach ($patients as $patient) {
             // skip if patient has no name
             if (empty($patient->first_name)) {
-                continue 1;
+                continue;
             }
 
             $careplanStatus     = $patient->carePlan->status ?? '';

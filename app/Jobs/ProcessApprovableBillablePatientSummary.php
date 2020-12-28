@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\Repositories\PatientSummaryEloquentRepository;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

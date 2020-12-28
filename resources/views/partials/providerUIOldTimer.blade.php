@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 <p style="font-size:125%;">We haven’t heard from you in a while <img
-                            src="{{ mix('/img/emoji-disappointed-but-relieved.png') }}"
+                            src="{{ asset('/img/emoji-disappointed-but-relieved.png') }}"
                             style="width:25px; height:25px; margin-bottom:5px;"/>. Were you working on a specific
                     patient while we were idle?</p>
             </div>

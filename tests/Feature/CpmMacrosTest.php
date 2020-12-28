@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class CpmMacrosTest extends CustomerTestCase
 {

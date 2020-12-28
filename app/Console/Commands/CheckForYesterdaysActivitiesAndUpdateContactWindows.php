@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Console\Command;
 
 class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command

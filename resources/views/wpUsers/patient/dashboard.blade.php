@@ -86,7 +86,7 @@ $hasAwv              = in_array('awv', $patientListDropdown);
                 </ul>
             </div>
         </div>
-        @include('errors.errors')
+        @include('core::partials.errors.errors')
     </div>
 
         @if($showPatientsPendingApprovalBox)

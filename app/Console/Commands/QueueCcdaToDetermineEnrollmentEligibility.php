@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
@@ -51,7 +52,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                     }
 
                     CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $ccda->batch)
-                        ->onQueue('low');
+                        ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
                 }
             }
         );

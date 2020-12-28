@@ -1,4 +1,4 @@
-import UserRolesHelpers from '../../../mixins/user-roles-helpers.mixin'
+import UserRolesHelpers from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/mixins/user-roles-helpers.mixin'
 export default {
     mixins: [UserRolesHelpers],
     methods: {

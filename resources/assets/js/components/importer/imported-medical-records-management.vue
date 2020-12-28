@@ -130,18 +130,18 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config'
-    import TextEditable from '../../admin/calls/comps/text-editable'
-    import EventBus from '../../admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../loader'
-    import ErrorModal from '../../admin/billing/comps/error-modal'
-    import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
-    import NotificationComponent from '../notifications'
-    import VueCache from '../../util/vue-cache'
+    import {rootUrl} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
+    import TextEditable from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/calls/comps/text-editable'
+    import EventBus from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import ErrorModal from '../../../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing/comps/error-modal'
+    import ErrorModalButton from '../../../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing/comps/error-modal-button'
+    import NotificationComponent from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
+    import VueCache from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/vue-cache'
     import {mapGetters} from 'vuex'
-    import {currentUser} from '../../store/getters';
+    import {currentUser} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/getters';
     import VueSelect from "vue-select";
-    import GetsNurses from '../../mixins/gets-nurses'
+    import GetsNurses from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/mixins/gets-nurses'
     import moment from "moment";
 
     export default {
