@@ -14,7 +14,7 @@ environments:
         concurrency: 500
         mail: false
         warm: 40
-        timeout: 45
+        timeout: 65
         queues:
             - cpm-provider-low-production
             - cpm-provider-high-production
