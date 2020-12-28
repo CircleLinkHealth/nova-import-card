@@ -38,12 +38,11 @@ class CustomTwilioChannel extends TwilioChannel
      * Send the given notification.
      *
      * @param mixed $notifiable
-     * @param Notification $notification
      *
-     * @return mixed
      * @throws CannotSendNotificationException
      * @throws CouldNotSendNotification
      * @throws \Twilio\Exceptions\TwilioException
+     * @return mixed
      */
     public function send($notifiable, Notification $notification)
     {
