@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Core\Console\Commands;
 
+use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailCommand;
 use CircleLinkHealth\SharedModels\Services\Postmark\InboundCallbackDataForTesterService;
 use Illuminate\Console\Command;
 
@@ -75,7 +76,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
             if ($this->confirm('Do you wish to process the generated data?
             This will run ProcessPostmarkInboundMailJob foreach generated data and populate [calls and unresolved_postmark_callbacks].')) {
-                \Artisan::call('process:postmark-inbound-mail', [
+                $this->call(ProcessPostmarkInboundMailCommand::class, [
                     'recordIds' => $postmarkGeneratedDataIds->toArray(),
                 ]);
             }
@@ -133,7 +134,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $this->info("Generated $limit patients of type:[NOT CONSENTED AND CA NOT ASSIGNED.] AVAILABLE IN DASHBOARD");
         }
 
-        if ($this->isTrue('patients_have_same_number_same_phone')) {
+        if ($this->isTrue('patients_have_same_name_same_phone')) {
             $limit       = self::LIMIT;
             $inboundData = $this->service->multiMatchPatientsWithSameNumberAndName($this->save);
             $this->info("Generated $limit patients of type:[Same name and number]. AVAILABLE IN DASHBOARD");
