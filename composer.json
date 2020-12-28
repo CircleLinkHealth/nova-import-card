@@ -23,7 +23,7 @@
         }
     },
     "require": {
-        "laravel-notification-channels/twilio": "^2.1",
+        "laravel-notification-channels/twilio": "^3.0",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/shared-models-module": "*"
