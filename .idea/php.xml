@@ -267,6 +267,7 @@
       <path value="$PROJECT_DIR$/vendor/aacotroneo/laravel-saml2" />
       <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
