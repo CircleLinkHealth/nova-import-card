@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a64104034f2694aedc7443371952335",
+    "content-hash": "ec7696da2f1b61e896317856452d88d3",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -5413,83 +5413,6 @@
                 "php"
             ],
             "time": "2020-12-20T10:01:03+00:00"
-        },
-        {
-            "name": "nwidart/laravel-modules",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "1cf42203ec137d10fd43066984a8d8adca61e16f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/1cf42203ec137d10fd43066984a8d8adca61e16f",
-                "reference": "1cf42203ec137d10fd43066984a8d8adca61e16f",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": ">=7.3"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
-                "laravel/framework": "^8.0",
-                "mockery/mockery": "~1.0",
-                "orchestra/testbench": "^6.2",
-                "phpstan/phpstan": "^0.12.14",
-                "phpunit/phpunit": "^8.5",
-                "spatie/phpunit-snapshot-assertions": "^2.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Nwidart\\Modules\\LaravelModulesServiceProvider"
-                    ],
-                    "aliases": {
-                        "Module": "Nwidart\\Modules\\Facades\\Module"
-                    }
-                },
-                "branch-alias": {
-                    "dev-master": "8.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Nwidart\\Modules\\": "src"
-                },
-                "files": [
-                    "src/helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Widart",
-                    "email": "n.widart@gmail.com",
-                    "homepage": "https://nicolaswidart.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Laravel Module management",
-            "keywords": [
-                "laravel",
-                "module",
-                "modules",
-                "nwidart",
-                "rad"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/nwidart",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-12-17T12:54:57+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -12252,6 +12175,83 @@
             "time": "2020-10-29T14:50:40+00:00"
         },
         {
+            "name": "nwidart/laravel-modules",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nWidart/laravel-modules.git",
+                "reference": "1cf42203ec137d10fd43066984a8d8adca61e16f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/1cf42203ec137d10fd43066984a8d8adca61e16f",
+                "reference": "1cf42203ec137d10fd43066984a8d8adca61e16f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "laravel/framework": "^8.0",
+                "mockery/mockery": "~1.0",
+                "orchestra/testbench": "^6.2",
+                "phpstan/phpstan": "^0.12.14",
+                "phpunit/phpunit": "^8.5",
+                "spatie/phpunit-snapshot-assertions": "^2.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nwidart\\Modules\\LaravelModulesServiceProvider"
+                    ],
+                    "aliases": {
+                        "Module": "Nwidart\\Modules\\Facades\\Module"
+                    }
+                },
+                "branch-alias": {
+                    "dev-master": "8.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nwidart\\Modules\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Widart",
+                    "email": "n.widart@gmail.com",
+                    "homepage": "https://nicolaswidart.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel Module management",
+            "keywords": [
+                "laravel",
+                "module",
+                "modules",
+                "nwidart",
+                "rad"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/nwidart",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-12-17T12:54:57+00:00"
+        },
+        {
             "name": "phar-io/manifest",
             "version": "2.0.1",
             "source": {
@@ -14370,7 +14370,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": ">=7.4.0",
         "ext-json": "*",
         "ext-redis": "*",
         "ext-simplexml": "*"
