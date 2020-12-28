@@ -509,6 +509,7 @@ class ReportsController extends Controller
             'showReadyForDrButton'           => $showReadyForDrButton,
             'readyForDrButtonDisabled'       => $readyForDrButtonDisabled,
             'readyForDrButtonAlreadyClicked' => $readyForDrButtonAlreadyClicked,
+            'authRoleName'                   => auth()->user()->practiceOrGlobalRole()->name,
         ];
 
         return view(

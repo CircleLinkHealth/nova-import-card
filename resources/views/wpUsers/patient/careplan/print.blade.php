@@ -9,8 +9,6 @@ if (isset($patient) && ! empty($patient)) {
 
     $alreadyShown = [];
 }
-
-$authRoleName = auth()->user()->practiceOrGlobalRole()->name;
 ?>
 
 @if(!isset($isPdf))

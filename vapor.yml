@@ -30,7 +30,6 @@ environments:
     staging:
         domain: cpm-provider.clh-staging.com
         storage: cpm-staging-vapor-storage
-        cache: cpm-staging-vapor-cache
         network: cpm-staging
         memory: 2048
         cli-memory: 2048
