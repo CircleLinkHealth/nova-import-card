@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cacb546e7ed796c2df62adffa58f175",
+    "content-hash": "115eb06cdd608834efb193ff76d3243b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -504,12 +504,6 @@
                 "brick",
                 "math"
             ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/math",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-08-18T23:57:15+00:00"
         },
         {
@@ -555,12 +549,6 @@
                 "brick",
                 "currency",
                 "money"
-            ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/money",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-08-19T22:52:38+00:00"
         },
@@ -757,7 +745,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -793,7 +781,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -937,11 +925,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-vaporizing-admin",
+            "version": "dev-laravel-8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "91bbc3b53c1579b2297c31480f2aefa7cfe054dd"
+                "reference": "62d42dfef9aa4d9561ee99be9fd081441a9dd371"
             },
             "type": "laravel-module",
             "extra": {
@@ -961,7 +949,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:57+00:00"
+            "time": "2020-12-28T16:45:04+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -969,7 +957,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "01ae052d84c341e1f4e0bcef64224c77589a9ed3"
+                "reference": "b2a81a3ecc1652f8cd35566d5bf96b7661043217"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1007,7 +995,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T12:03:15+00:00"
+            "time": "2020-12-28T16:45:04+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1046,7 +1034,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1083,7 +1071,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1119,7 +1107,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1155,15 +1143,15 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "393cc59c79b73a1ff6e0e9af6c7f014fb74bfa1a"
+                "reference": "ad30d141704f92fc1bf7b937ea7d68177376d6bb"
             },
             "require": {
                 "php": ">=7.1.0",
-                "sparclex/nova-import-card": "^7.0.1"
+                "sparclex/nova-import-card": "^7.0.2"
             },
             "type": "library",
             "extra": {
@@ -1192,7 +1180,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -1574,7 +1562,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "69a38127a8f3ff8e03e4209aa9e1d2921b3b4ba9"
+                "reference": "d665ae0564f308a752aa07fe66b75da2e9176974"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1600,7 +1588,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T11:16:40+00:00"
+            "time": "2020-12-28T16:45:04+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -2243,20 +2231,6 @@
                 "redis",
                 "xcache"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcache",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-07T18:54:01+00:00"
         },
         {
@@ -2440,20 +2414,6 @@
                 "event system",
                 "events"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fevent-manager",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T18:28:51+00:00"
         },
         {
@@ -2531,20 +2491,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T15:13:26+00:00"
         },
         {
@@ -2606,20 +2552,6 @@
                 "lexer",
                 "parser",
                 "php"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Flexer",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-05-25T17:44:05+00:00"
         },
@@ -4188,16 +4120,6 @@
                 "user agent",
                 "useragent"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/jenssegers",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/jenssegers/agent",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-13T08:05:20+00:00"
         },
         {
@@ -5750,12 +5672,6 @@
                 "s3",
                 "sftp",
                 "storage"
-            ],
-            "funding": [
-                {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
-                }
             ],
             "time": "2020-08-23T07:39:11+00:00"
         },
@@ -8001,16 +7917,6 @@
                 "php",
                 "type"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/GrahamCampbell",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpoption/phpoption",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-20T17:29:33+00:00"
         },
         {
@@ -8796,12 +8702,6 @@
                 "queue",
                 "set"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
-            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -8882,12 +8782,6 @@
                 "guid",
                 "identifier",
                 "uuid"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
             ],
             "time": "2020-08-18T17:17:46+00:00"
         },
@@ -10023,20 +9917,6 @@
             ],
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-07T11:33:47+00:00"
         },
         {
@@ -10246,20 +10126,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-07T11:33:47+00:00"
         },
@@ -12024,20 +11890,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-07T11:33:47+00:00"
         },
@@ -17304,12 +17156,6 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "funding": [
-                {
-                    "url": "https://github.com/theseer",
-                    "type": "github"
-                }
-            ],
             "time": "2020-07-12T23:59:07+00:00"
         },
         {
