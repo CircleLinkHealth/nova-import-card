@@ -9,6 +9,7 @@ namespace Tests\Feature;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
@@ -16,7 +17,6 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ImportPcmCcd extends CustomerTestCase
 {
