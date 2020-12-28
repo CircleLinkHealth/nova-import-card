@@ -1,5 +1,6 @@
 id: 16123
 name: app-cpm-caller-laravel
+separate-vendor: true
 environments:
   production:
     domain: caller.careplanmanager.com
