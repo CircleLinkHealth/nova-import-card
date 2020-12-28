@@ -36,8 +36,6 @@ class CreateNewCallRequest extends FormRequest
     public function rules()
     {
         return [
-            'inbound_cpm_id'   => 'required_if:*.inbound_cpm_id,null|filled',
-            '*.inbound_cpm_id' => 'required_if:inbound_cpm_id,null|filled',
         ];
     }
 }
