@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cacb546e7ed796c2df62adffa58f175",
+    "content-hash": "115eb06cdd608834efb193ff76d3243b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.6",
+            "version": "3.171.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5587d22e63ef82ef74dffca5d47f307b84137b51"
+                "reference": "6c32f57bc381b46c783f70a20060fde1a95f4ab5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5587d22e63ef82ef74dffca5d47f307b84137b51",
-                "reference": "5587d22e63ef82ef74dffca5d47f307b84137b51",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6c32f57bc381b46c783f70a20060fde1a95f4ab5",
+                "reference": "6c32f57bc381b46c783f70a20060fde1a95f4ab5",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-23T19:12:28+00:00"
+            "time": "2020-12-28T19:12:41+00:00"
         },
         {
             "name": "brick/math",
@@ -757,7 +757,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -793,7 +793,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -833,7 +833,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "1f404d6fbf0c431e227986e665581cfbbdeacd70"
+                "reference": "11f952b2c44d8a5070973aad8c9cc931730aedba"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -883,7 +883,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T11:34:10+00:00"
+            "time": "2020-12-28T18:36:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -937,11 +937,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-vaporizing-admin",
+            "version": "dev-laravel-8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "91bbc3b53c1579b2297c31480f2aefa7cfe054dd"
+                "reference": "62d42dfef9aa4d9561ee99be9fd081441a9dd371"
             },
             "type": "laravel-module",
             "extra": {
@@ -961,7 +961,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:57+00:00"
+            "time": "2020-12-28T16:45:04+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -969,7 +969,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "01ae052d84c341e1f4e0bcef64224c77589a9ed3"
+                "reference": "b2a81a3ecc1652f8cd35566d5bf96b7661043217"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1007,7 +1007,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T12:03:15+00:00"
+            "time": "2020-12-28T16:45:04+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1046,7 +1046,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1083,7 +1083,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1119,7 +1119,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1155,15 +1155,15 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "393cc59c79b73a1ff6e0e9af6c7f014fb74bfa1a"
+                "reference": "ad30d141704f92fc1bf7b937ea7d68177376d6bb"
             },
             "require": {
                 "php": ">=7.1.0",
-                "sparclex/nova-import-card": "^7.0.1"
+                "sparclex/nova-import-card": "^7.0.2"
             },
             "type": "library",
             "extra": {
@@ -1192,7 +1192,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -1574,7 +1574,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "69a38127a8f3ff8e03e4209aa9e1d2921b3b4ba9"
+                "reference": "d665ae0564f308a752aa07fe66b75da2e9176974"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1600,7 +1600,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T11:16:40+00:00"
+            "time": "2020-12-28T16:45:04+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",

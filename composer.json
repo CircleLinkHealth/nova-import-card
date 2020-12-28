@@ -146,7 +146,7 @@
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/core-module": "dev-laravel-8.0",
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
-        "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
+        "circlelinkhealth/cpm-migrations-module": "dev-laravel-8",
         "circlelinkhealth/customer-module": "dev-laravel-8",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
