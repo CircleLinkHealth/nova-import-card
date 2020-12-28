@@ -6,11 +6,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
 class RedirectToOtherApp extends Controller
 {
-    public function ccdImporter()
+    public function redirectToProvider(Request $request)
     {
-        return redirect()->to('');
+        $url = $request->getRequestUri();
+
+        return redirect()->to(rtrim(config('core.apps.cpm-provider.url'), '/')."$url");
     }
 
     public function config()
@@ -21,10 +25,5 @@ class RedirectToOtherApp extends Controller
     public function pinfo()
     {
         dd(phpinfo());
-    }
-
-    private function redirectToProvider($url)
-    {
-        return redirect()->to(rtrim(config('core.apps.cpm-provider.url'), '/')."/$url");
     }
 }

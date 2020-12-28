@@ -21,7 +21,7 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('home', 'HomeController@index');
 
 Route::get('ccd-importer', [
-    'uses' => 'RedirectToOtherApp@ccdImporter',
+    'uses' => 'RedirectToOtherApp@redirectToProvider',
     'as'   => 'import.ccd.remix',
 ]);
 
