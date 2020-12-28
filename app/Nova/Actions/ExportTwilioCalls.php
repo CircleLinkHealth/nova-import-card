@@ -7,11 +7,16 @@
 namespace App\Nova\Actions;
 
 use App\Nova\TwilioCall;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
 class ExportTwilioCalls extends DownloadExcel implements WithMapping
 {
+    use InteractsWithQueue;
+    use Queueable;
+
     protected $headings = [
         'ID',
         'Twilio ID',
