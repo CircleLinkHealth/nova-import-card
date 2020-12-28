@@ -62,7 +62,7 @@
 
                 <div class="input-field col s6">
 
-                    @if (config('services.twilio.enabled'))
+                    @if (config('twilio-notification-channel.enabled'))
                         <input name="settings[twilio_enabled]" type="checkbox"
                                id="twilio_enabled"
                                value="1" @if($practiceSettings->twilio_enabled){{'checked'}}@endif />
@@ -79,7 +79,7 @@
 
                 <div class="input-field col s6">
 
-                    @if(config('services.twilio.enabled') && config('services.twilio.allow-recording'))
+                    @if(config('twilio-notification-channel.enabled') && config('twilio-notification-channel.allow-recording'))
                         <input name="settings[twilio_recordings_enabled]" type="checkbox"
                                id="twilio_recordings_enabled"
                                value="1" @if($practiceSettings->twilio_recordings_enabled){{'checked'}}@endif />
