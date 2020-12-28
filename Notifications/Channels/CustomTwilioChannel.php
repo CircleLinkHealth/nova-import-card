@@ -38,10 +38,12 @@ class CustomTwilioChannel extends TwilioChannel
      * Send the given notification.
      *
      * @param mixed $notifiable
-     *
-     * @throws CouldNotSendNotification
+     * @param Notification $notification
      *
      * @return mixed
+     * @throws CannotSendNotificationException
+     * @throws CouldNotSendNotification
+     * @throws \Twilio\Exceptions\TwilioException
      */
     public function send($notifiable, Notification $notification)
     {
@@ -67,12 +69,20 @@ class CustomTwilioChannel extends TwilioChannel
 
             return $this->twilio->sendMessage($message, $to, $useSender);
         } catch (\Exception $exception) {
-            $event = new NotificationFailed($notifiable, $notification, 'twilio', ['message' => $exception->getMessage()]);
-            if (function_exists('event')) { // Use event helper when possible to add Lumen support
-                event($event);
-            } else {
-                $this->events->fire($event);
+            $event = new NotificationFailed(
+                $notifiable,
+                $notification,
+                'twilio',
+                ['message' => $exception->getMessage(), 'exception' => $exception]
+            );
+
+            $this->events->dispatch($event);
+
+            if ($this->twilio->config->isIgnoredErrorCode($exception->getCode())) {
+                return;
             }
+
+            throw $exception;
         }
     }
 

@@ -24,8 +24,8 @@ class TwilioClientService implements TwilioClientable
      */
     public function downloadMedia($url)
     {
-        $accountSid = config('services.twilio.sid');
-        $token      = config('services.twilio.token');
+        $accountSid = config('twilio-notification-channel.account_sid');
+        $token      = config('twilio-notification-channel.auth_token');
         $path       = 'tmp/twilio-recordings/';
         $path       = $path.basename($url);
 
@@ -82,8 +82,8 @@ class TwilioClientService implements TwilioClientable
     public function generateCapabilityToken(): string
     {
         if ( ! $this->capability) {
-            $this->capability = new ClientToken(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
-            $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
+            $this->capability = new ClientToken(config('twilio-notification-channel.account_sid'), config('twilio-notification-channel.auth_token'));
+            $this->capability->allowClientOutgoing(config('twilio-notification-channel.twiml-app-sid'));
         }
 
         return $this->capability->generateToken(TwilioClientService::TOKEN_LIFETIME_SECONDS);
@@ -92,7 +92,7 @@ class TwilioClientService implements TwilioClientable
     public function getClient(): Client
     {
         if ( ! $this->client) {
-            $this->client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+            $this->client = new Client(config('twilio-notification-channel.account_sid'), config('twilio-notification-channel.auth_token'));
         }
 
         return $this->client;
