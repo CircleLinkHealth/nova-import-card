@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Condition logic
@@ -67,5 +70,4 @@ return [
     */
 
     'ignore-not-found' => true,
-
 ];
