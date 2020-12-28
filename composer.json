@@ -35,7 +35,7 @@
         "circlelinkhealth/ccm-billing-module": "*",
         "laravel/ui": "^3.0",
         "laravel/scout": "^7.1|^8.0",
-        "circlelinkhealth/cerberus-gatekeeper-module": "dev-laravel-8",
+        "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "fico7489/laravel-pivot": "^3.0",
         "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
