@@ -177,9 +177,7 @@ return [
         | in conjunction with queued imports and exports.
         |
         */
-        'remote_disk' => 's3',
-
-        'force_resync_remote' => true,
+        'remote_disk' => 'media',
     ],
 ];
 
