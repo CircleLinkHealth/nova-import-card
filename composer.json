@@ -59,7 +59,7 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "circlelinkhealth/core-module": "dev-laravel-8.0",
-        "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
+        "circlelinkhealth/cpm-migrations-module": "dev-laravel-8",
         "circlelinkhealth/customer-module": "dev-laravel-8",
         "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
