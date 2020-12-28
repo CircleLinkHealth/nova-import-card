@@ -42,7 +42,6 @@
         "laravel/vapor-ui": "*",
         "yajra/laravel-datatables-oracle": "~9.0",
         "sentry/sentry-laravel": "^2.3",
-        "twilio/sdk": "~5.16",
         "joshbrw/laravel-module-installer": "*",
         "nao-pon/flysystem-google-drive": "~1.1"
     },
