@@ -23,8 +23,6 @@ use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\CarePlanApprovalReminder;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
-use CircleLinkHealth\Customer\Repositories\Cache\UserNotificationList;
-use CircleLinkHealth\Customer\Repositories\EmptyUserNotificationList;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
@@ -768,15 +766,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         static::updating(function ($model) {
             //this is how we catch standard eloquent events
         });
-    }
-
-    public function cachedNotificationsList()
-    {
-        if (in_array(config('cache.default'), ['redis'])) {
-            return new UserNotificationList($this->id);
-        }
-
-        return new EmptyUserNotificationList();
     }
 
     public function calls()
