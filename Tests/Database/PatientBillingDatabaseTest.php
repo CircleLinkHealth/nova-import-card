@@ -19,12 +19,12 @@ use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientBillingDatabaseTest extends CustomerTestCase
 {

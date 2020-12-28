@@ -10,10 +10,10 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessi
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class LocationProblemServiceDatabaseTest extends CustomerTestCase
 {
