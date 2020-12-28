@@ -174,7 +174,6 @@
         "fourstacks/nova-checkboxes": "^0.1.5",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.9.1",
-        "guzzlehttp/guzzle": "^7.0.1",
         "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
         "jubeki/nova-card-linkable": "^1.0",
         "laravel/nova": "^3.0",
