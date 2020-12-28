@@ -33,14 +33,14 @@
     "require": {
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/ccm-billing-module": "*",
-        "laravel/ui": "^2.0",
-        "laravel/scout": "^7.1|^8.0",
+        "laravel/ui": "*",
+        "laravel/scout": "*",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
-        "fico7489/laravel-pivot": "^3.0",
+        "fico7489/laravel-pivot": "*",
         "circlelinkhealth/twofa-module": "*",
-        "lab404/laravel-impersonate": "^1.2",
-        "propaganistas/laravel-phone": "^4.2.2",
-        "spatie/laravel-medialibrary": "^7.0.0",
+        "lab404/laravel-impersonate": "*",
+        "propaganistas/laravel-phone": "*",
+        "spatie/laravel-medialibrary": "*",
         "league/flysystem-aws-s3-v3": "*"
     },
     "repositories": [
