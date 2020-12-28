@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40bfa92554b8946687096b274a0de476",
+    "content-hash": "6860ddd3fac4921ef0f5ffeb5ac27193",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -670,22 +670,21 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v1.1.8",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "aca9a405fc18eb5f60f285ad74576f6b683d08ac"
+                "reference": "7c5084b0331648ac44a694ba434f15041f93ad88"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
-                "circlelinkhealth/customer-module": "*"
+                "circlelinkhealth/customer-module": "*",
+                "mpbarlow/laravel-queue-debouncer": "^2.0"
             },
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\CcmBilling\\Providers\\CcmBillingServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -722,7 +721,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-03T10:46:36+00:00"
+            "time": "2020-12-25T17:49:52+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -905,7 +904,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "2475ba6b4d4b776895d386e08bbcc6c2ec69a1b8"
+                "reference": "b36e6c79f6f4e4f14bd051ba3e0fbef2c9490d66"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -947,7 +946,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-28T07:09:37+00:00"
+            "time": "2020-12-28T07:57:43+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -983,7 +982,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d7273538c346864277dc8b3455f53e276438dade"
+                "reference": "2141199f980e7f70caea62325b6514c13eafca07"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -1021,7 +1020,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T07:47:39+00:00"
+            "time": "2020-12-28T07:58:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -6370,6 +6369,66 @@
                 }
             ],
             "time": "2020-12-14T13:15:25+00:00"
+        },
+        {
+            "name": "mpbarlow/laravel-queue-debouncer",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mpbarlow/laravel-queue-debouncer.git",
+                "reference": "be9da0171d528fea50d8496fa948a9c618698823"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/be9da0171d528fea50d8496fa948a9c618698823",
+                "reference": "be9da0171d528fea50d8496fa948a9c618698823",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^6.0|^7.0|^8.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mpbarlow\\LaravelQueueDebouncer\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Debouncer": "Mpbarlow\\LaravelQueueDebouncer\\Facade\\Debouncer"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mpbarlow\\LaravelQueueDebouncer\\": "src/"
+                },
+                "files": [
+                    "src/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Barlow",
+                    "email": "matt@barlow.coffee"
+                }
+            ],
+            "description": "A wrapper job for debouncing other queue jobs.",
+            "keywords": [
+                "debounce",
+                "job",
+                "laravel",
+                "queue"
+            ],
+            "time": "2020-10-03T19:31:30+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -17556,6 +17615,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
