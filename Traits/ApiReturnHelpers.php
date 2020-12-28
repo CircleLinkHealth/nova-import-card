@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Core\Traits;
 
 use CircleLinkHealth\Customer\Entities\Media;
+use Illuminate\Support\Facades\Storage;
 
 trait ApiReturnHelpers
 {
@@ -26,8 +27,10 @@ trait ApiReturnHelpers
 
     public function downloadMedia(Media $media)
     {
-        return \Storage::disk('media')
-            ->download("{$media->id}/{$media->file_name}");
+        return Storage::disk('media')
+            ->download("{$media->id}/{$media->file_name}", $media->file_name, [
+                'X-Vapor-Base64-Encode' => 'True',
+            ]);
     }
 
     public function error($message = null, \Exception $ex = null)
