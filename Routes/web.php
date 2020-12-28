@@ -300,3 +300,9 @@ Route::prefix('api')->group(function () {
         Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
     });
 });
+
+Route::get('impersonate/take/{id}', [
+    'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
+    'as'   => 'impersonate',
+])->middleware(['auth',
+                'permission:admin-access',]);
