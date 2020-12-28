@@ -178,5 +178,7 @@ return [
         |
         */
         'remote_disk' => 'media',
+
+        'force_resync_remote' => true,
     ],
 ];
