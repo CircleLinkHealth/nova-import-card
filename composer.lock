@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cacb546e7ed796c2df62adffa58f175",
+    "content-hash": "115eb06cdd608834efb193ff76d3243b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -757,7 +757,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -793,7 +793,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -937,11 +937,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-vaporizing-admin",
+            "version": "dev-laravel-8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "91bbc3b53c1579b2297c31480f2aefa7cfe054dd"
+                "reference": "42e07cf478b6dd009ffc368a254cb7762938b888"
             },
             "type": "laravel-module",
             "extra": {
@@ -961,7 +961,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:58:57+00:00"
+            "time": "2020-12-28T15:39:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1046,7 +1046,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1083,7 +1083,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1119,7 +1119,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1155,15 +1155,15 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "393cc59c79b73a1ff6e0e9af6c7f014fb74bfa1a"
+                "reference": "ad30d141704f92fc1bf7b937ea7d68177376d6bb"
             },
             "require": {
                 "php": ">=7.1.0",
-                "sparclex/nova-import-card": "^7.0.1"
+                "sparclex/nova-import-card": "^7.0.2"
             },
             "type": "library",
             "extra": {
@@ -1192,7 +1192,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
