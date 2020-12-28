@@ -6,8 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Services\Postmark;
 
+use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\User;
-use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
+use CircleLinkHealth\SharedModels\Services\Postmark\InboundCallbackMultimatchService;
+use CircleLinkHealth\SharedModels\Services\Postmark\InboundCallbackSingleMatchService;
 use Illuminate\Database\Eloquent\Builder;
 
 class PostmarkInboundCallbackMatchResults
