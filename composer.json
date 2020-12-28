@@ -54,6 +54,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
         }
     ]
