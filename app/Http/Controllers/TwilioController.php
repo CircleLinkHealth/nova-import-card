@@ -128,7 +128,7 @@ class TwilioController extends Controller
                         $parentCallStatus         = $request->input('CallStatus');
 
                         if ($call->in_conference && $isCallUpdateToConference && 'in-progress' === $parentCallStatus) {
-                            $recordCalls = config('services.twilio.allow-recording');
+                            $recordCalls = config('twilio-notification-channel.allow-recording');
                             if ($recordCalls) {
                                 $inboundUser = User::whereHas('primaryPractice')->find($call->inbound_user_id);
                                 if ($inboundUser) {
@@ -165,7 +165,7 @@ class TwilioController extends Controller
                     $response->hangup();
                 } else {
                     if ($call->in_conference) {
-                        $recordCalls = config('services.twilio.allow-recording');
+                        $recordCalls = config('twilio-notification-channel.allow-recording');
                         if ($recordCalls) {
                             $inboundUser = User::whereHas('primaryPractice')->find($call->inbound_user_id);
                             if ($inboundUser) {
@@ -314,7 +314,7 @@ class TwilioController extends Controller
         $isProduction = 'production' === config('app.env');
 
         if (empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
-            $input['From'] = config('services.twilio')['from'];
+            $input['From'] = config('twilio-notification-channel.from');
         }
 
         $input['From'] = formatPhoneNumberE164($input['From']);
@@ -460,7 +460,7 @@ class TwilioController extends Controller
         $isProduction = 'production' === config('app.env');
 
         if (empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
-            $input['From'] = config('services.twilio')['from'];
+            $input['From'] = config('twilio-notification-channel.from');
         }
 
         $input['From'] = formatPhoneNumberE164($input['From']);
@@ -513,7 +513,7 @@ class TwilioController extends Controller
             //action url will tell us the duration of this call and the status of it when it ends
             'action'   => route('twilio.call.dial.action'),
             'callerId' => $input['From'],
-            'record'   => config('services.twilio.allow-recording')
+            'record'   => config('twilio-notification-channel.allow-recording')
                 ? 'record-from-answer'
                 : 'do-not-record',
             'recordingStatusCallback'       => route('twilio.call.recording.status'),
