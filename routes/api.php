@@ -1,6 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +23,7 @@ Route::get('/', function () {
 
 //fixme: remove after deployment
 Route::get('/throw-exception', function () {
-    throw new Exception("testing");
+    throw new Exception('testing');
 });
 
 Route::group([
@@ -78,7 +81,7 @@ Route::group([
     ]);
     Route::post('/debugger-webhook', [
         'uses' => 'TwilioController@debuggerWebhook',
-        'as'    => 'twilio.debugger.webhook',
+        'as'   => 'twilio.debugger.webhook',
     ]);
 });
 

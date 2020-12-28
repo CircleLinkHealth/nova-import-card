@@ -14,6 +14,7 @@ use CircleLinkHealth\TwilioIntegration\Models\TwilioDebuggerLog;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioRawLog;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioRecording;
 use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Response;
@@ -22,7 +23,7 @@ use Illuminate\Validation\Rule;
 use Sentry\Severity;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
-use Twilio\Twiml;
+use Twilio\TwiML\VoiceResponse;
 
 class TwilioController extends Controller
 {
@@ -64,18 +65,18 @@ class TwilioController extends Controller
      * @throws TwimlException
      * @return \Illuminate\Http\Response XML Empty Response
      */
-    public function conferenceStatusCallback(Request $request)
+    public function conferenceStatusCallback(Request $request): \Illuminate\Http\Response
     {
         $this->logRawToDb($request, 'conference-status-callback');
         $this->logConferenceToDb($request);
 
-        return $this->responseWithXmlType(response(new Twiml()));
+        return $this->responseWithXmlType(response(new VoiceResponse()));
     }
 
     /**
      * Called from Twilio Debugger.
      */
-    public function debuggerWebhook(Request $request)
+    public function debuggerWebhook(Request $request): \Illuminate\Http\Response
     {
         $ts = Carbon::parse($request->input('Timestamp'), 'UTC');
         $ts = $ts->setTimezone(config('app.timezone'));
@@ -99,17 +100,14 @@ class TwilioController extends Controller
      * When the call ends, this handler is called (different from callStatusCallback below)
      * This handler decides what happens next:
      * We simply log the status and duration and hang up.
-     *
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function dialActionCallback(Request $request)
+    public function dialActionCallback(Request $request): \Illuminate\Http\Response
     {
         $this->logRawToDb($request, 'dial-action-callback');
         $this->logDialActionToDb($request);
 
         try {
-            $response = new Twiml();
+            $response = new VoiceResponse();
 
             $isFromChildLeg = $request->has('ParentCallSid');
             if ($isFromChildLeg) {
@@ -216,21 +214,22 @@ class TwilioController extends Controller
      * @throws TwimlException
      * @return \Illuminate\Http\Response XML Empty Response
      */
-    public function dialNumberStatusCallback(Request $request)
+    public function dialNumberStatusCallback(Request $request): \Illuminate\Http\Response
     {
         $this->logRawToDb($request, 'dial-number-status-callback');
         $this->logDialToDb($request);
 
-        return $this->responseWithXmlType(response(new Twiml()));
+        return $this->responseWithXmlType(response(new VoiceResponse()));
     }
 
     /**
      * End a call using an sid. Usually used to end a call in a conference.
      *
      *
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Twilio\Exceptions\TwilioException
      */
-    public function endCall(Request $request)
+    public function endCall(Request $request): JsonResponse
     {
         $input      = $request->all();
         $validation = Validator::make($input, [
@@ -253,11 +252,8 @@ class TwilioController extends Controller
      * Get conference info using inbound user id and outbound user id.
      * These two fields make the conference friendly name.
      * Returns the conference sid and participant's sid(s).
-     *
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getConferenceInfo(Request $request)
+    public function getConferenceInfo(Request $request): JsonResponse
     {
         $input = $request->all();
 
@@ -305,9 +301,10 @@ class TwilioController extends Controller
      * Join an active conference using the conference sid.
      *
      *
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Twilio\Exceptions\TwilioException
      */
-    public function joinConference(Request $request)
+    public function joinConference(Request $request): JsonResponse
     {
         $input = $request->all();
 
@@ -378,11 +375,8 @@ class TwilioController extends Controller
      *
      * So, the parent call (inbound) and the child call leg (outbound) will move to a conference
      * without hanging up!
-     *
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function jsCreateConference(Request $request)
+    public function jsCreateConference(Request $request): JsonResponse
     {
         $input      = $request->all();
         $validation = Validator::make($input, [
@@ -397,9 +391,9 @@ class TwilioController extends Controller
         $dbCall = TwilioCall::where('inbound_user_id', '=', $input['inbound_user_id'])
             ->where('outbound_user_id', '=', $input['outbound_user_id'])
             ->where(function ($q) {
-                                $q->where('call_status', '=', 'ringing')
-                                    ->orWhere('call_status', '=', 'in-progress');
-                            })
+                $q->where('call_status', '=', 'ringing')
+                    ->orWhere('call_status', '=', 'in-progress');
+            })
             ->orderBy('updated_at', 'desc')
             ->first();
 
@@ -432,7 +426,7 @@ class TwilioController extends Controller
         }
     }
 
-    public function obtainToken()
+    public function obtainToken(): JsonResponse
     {
         return response()->json(['token' => $this->service->generateCapabilityToken()]);
     }
@@ -448,7 +442,7 @@ class TwilioController extends Controller
      * IsCallToPatient - true if calling a patient, false if calling another party (eg patient's practice).
      *
      *
-     * @throws \Twilio\Exceptions\TwimlException
+     *
      * @return mixed
      */
     public function placeCall(Request $request)
@@ -508,7 +502,7 @@ class TwilioController extends Controller
 
         $this->logParentCallToDb($request);
 
-        $response = new Twiml();
+        $response = new VoiceResponse();
         $dial     = $response->dial('', [
             //action url will tell us the duration of this call and the status of it when it ends
             'action'   => route('twilio.call.dial.action'),
@@ -915,7 +909,7 @@ class TwilioController extends Controller
         array $header = [],
         $rootElement = 'response',
         $xml = null
-    ) {
+    ): \Illuminate\Http\Response {
         if (is_null($xml)) {
             $xml = new SimpleXMLElement('<'.$rootElement.'/>');
         }
@@ -940,7 +934,7 @@ class TwilioController extends Controller
         return Response::make($xml->asXML(), $status, $header);
     }
 
-    private function responseWithXmlType(\Illuminate\Http\Response $response)
+    private function responseWithXmlType(\Illuminate\Http\Response $response): \Illuminate\Http\Response
     {
         return $response->header('Content-Type', 'application/xml');
     }
