@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Titasgailius\SearchRelations\SearchesRelations;
 
 class TwilioCall extends Resource
@@ -78,7 +79,12 @@ class TwilioCall extends Resource
     public function actions(Request $request)
     {
         return [
-            new ExportTwilioCalls(),
+            (new ExportTwilioCalls())
+                ->onSuccess(function (Request $request, BinaryFileResponse $response) {
+                    $response->headers->set('X-Vapor-Base64-Encode', 'True', true);
+
+                    return $response;
+                }),
         ];
     }
 
