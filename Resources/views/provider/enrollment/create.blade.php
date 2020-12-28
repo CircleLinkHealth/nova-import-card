@@ -36,7 +36,7 @@
 @endpush
 
 @push('scripts')
-    <script src="{{asset('/js/materialize.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js" integrity="sha512-d0iS+vsW7aSSMaXWJjU5qsef6Lm+++lC4HHS/Va/M1fheKsotZ/WgrL58XLxSYPHnPcTxnZlANPGEZGtHVsbXg==" crossorigin="anonymous"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-lite.css" rel="stylesheet">
