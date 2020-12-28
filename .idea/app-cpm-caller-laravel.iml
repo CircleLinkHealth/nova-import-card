@@ -51,8 +51,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/joshbrw/laravel-module-installer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/justinrainbow/json-schema" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lab404/laravel-impersonate" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/laminas/laminas-diactoros" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/laminas/laminas-zendframework-bridge" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel-notification-channels/twilio" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/framework" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/passport" />
@@ -77,7 +75,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/maximebf/debugbar" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mockery/mockery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mtdowling/jmespath.php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mxl/laravel-job" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
