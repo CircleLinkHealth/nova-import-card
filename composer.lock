@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1e31bec457601edd1e011411c87775b",
+    "content-hash": "695e0759fb8f194f2e36bb10137c81ef",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -833,7 +833,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "00543b1d5495d2ec7aacd0b93e41624aea0bf0a4"
+                "reference": "929888f8bef290554cfe2df5fbab8dec7034f49c"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -842,6 +842,7 @@
                 "friendsofcat/laravel-feature-flag": "^3.2",
                 "jeremykenedy/slack-laravel": "*",
                 "joshbrw/laravel-module-installer": "*",
+                "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/vapor-core": "^2.9",
                 "laravel/vapor-ui": "*",
@@ -878,7 +879,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T03:47:27+00:00"
+            "time": "2020-12-28T04:30:46+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1379,7 +1380,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "ec3499c15be9a888c760102d04b5b84b61c8cfbe"
+                "reference": "19bf12ec9367fabf611ef3f2c4b29d210a6a840e"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1409,7 +1410,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-25T17:49:52+00:00"
+            "time": "2020-12-28T04:30:45+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
