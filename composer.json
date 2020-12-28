@@ -42,6 +42,7 @@
         "laravel/vapor-ui": "*",
         "yajra/laravel-datatables-oracle": "~9.0",
         "sentry/sentry-laravel": "^2.3",
+        "laravel/legacy-factories": "^1.1",
         "joshbrw/laravel-module-installer": "*",
         "nao-pon/flysystem-google-drive": "~1.1"
     },
