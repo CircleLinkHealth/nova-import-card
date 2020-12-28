@@ -47,9 +47,7 @@ class ManualInvoiceDownloadCommand extends Command
 
         $monthToDate = Carbon::parse($month);
 
-        $adminToReceiveMail = User::findOrFail($toReceiveMailId);
-
-        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $toReceiveMailId)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     private function validateArgs(string $downloadFormat, string $month, int $adminToReceiveMail)

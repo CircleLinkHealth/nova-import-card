@@ -25,27 +25,21 @@ class ExportAndDispatchInvoices implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    /**
-     * @var User
-     */
-    private $auth;
-    /**
-     * @var string
-     */
-    private $downloadFormat;
-    /**
-     * @var Carbon
-     */
-    private $month;
+
+    protected int $userIdToNotify;
+
+    private string $downloadFormat;
+
+    private Carbon $month;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(string $downloadFormat, Carbon $month, User $auth)
+    public function __construct(string $downloadFormat, Carbon $month, int $userIdToNotify)
     {
         $this->downloadFormat = $downloadFormat;
         $this->month          = $month;
-        $this->auth           = $auth;
+        $this->userIdToNotify = $userIdToNotify;
     }
 
     /**
@@ -69,10 +63,14 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         if ($invoices->isEmpty()) {
             Log::warning("Invoices to download for {$startDate} not found");
+
+            return;
         }
 
+        Log::debug("Ready to send {$invoices->count()} invoices to User[{$this->userIdToNotify}]");
+
         $invoicesMediaIds = $this->generateInvoicesMedia(collect([$invoices]), $startDate);
-        $this->auth->notify(new NurseInvoicesDownloaded($invoicesMediaIds, $startDate, $this->downloadFormat));
+        User::findOrFail($this->userIdToNotify)->notify(new NurseInvoicesDownloaded($invoicesMediaIds, $startDate, $this->downloadFormat));
     }
 
     public function invoicesAreChunked(Collection $invoices): bool
