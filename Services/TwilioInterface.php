@@ -14,11 +14,10 @@ interface TwilioInterface
      * Send a TwilioMessage to the a phone number.
      *
      * @param string $to
-     * @param bool   $useAlphanumericSender
      *
      * @throws \Twilio\Exceptions\TwilioException
      *
      * @return mixed
      */
-    public function sendMessage(TwilioMessage $message, $to, $useAlphanumericSender = false);
+    public function sendMessage(TwilioMessage $message, ?string $to, bool $useAlphanumericSender = false);
 }
