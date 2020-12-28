@@ -374,11 +374,6 @@ Route::group([
         'as'   => 'admin.testplan',
     ]);
 
-    Route::get('impersonate/take/{id}', [
-        'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
-        'as'   => 'impersonate',
-    ]);
-
     // users
     Route::group([
     ], function () {
