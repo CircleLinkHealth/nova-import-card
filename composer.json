@@ -32,7 +32,6 @@
         "maatwebsite/excel": "^3.1",
         "laravelcollective/html": "^6.1",
         "laravel/vapor-core": "^2.9",
-        "laravel-notification-channels/twilio": "^2.1",
         "darkghosthunter/laraload": "^2.1",
         "friendsofcat/laravel-feature-flag": "^3.2",
         "spatie/laravel-view-models": "^1.3",
