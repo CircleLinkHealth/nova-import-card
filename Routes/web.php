@@ -305,4 +305,4 @@ Route::get('impersonate/take/{id}', [
     'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
     'as'   => 'impersonate',
 ])->middleware(['auth',
-                'permission:admin-access',]);
+    'permission:admin-access', ]);
