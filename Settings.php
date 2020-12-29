@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Twofa;
+namespace CircleLinkHealth\TwoFA;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 

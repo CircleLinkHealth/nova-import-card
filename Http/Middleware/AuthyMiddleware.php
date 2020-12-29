@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TwoFA\Http\Middleware;
 
-use CircleLinkHealth\Twofa\Settings;
+use CircleLinkHealth\TwoFA\Settings;
 use Closure;
 use Illuminate\Http\Request;
 
