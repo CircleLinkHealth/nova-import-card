@@ -34,7 +34,7 @@ environments:
         cli-memory: 2048
         runtime: docker
         queue-timeout: 600
-        concurrency: 500
+        concurrency: 400
         mail: false
         timeout: 45
         queues:
