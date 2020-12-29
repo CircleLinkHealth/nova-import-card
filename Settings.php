@@ -17,6 +17,6 @@ class Settings
 
     public static function isTwoFAEnabled(): bool
     {
-        return boolval(AppConfig::pull(self::appConfigKey()));
+        return filter_var(AppConfig::pull(self::appConfigKey()), FILTER_VALIDATE_BOOLEAN);
     }
 }
