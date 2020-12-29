@@ -12,13 +12,14 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
-class ProcessCcdaFromGoogleDrive implements ShouldQueue
+class ProcessCcdaFromGoogleDrive implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

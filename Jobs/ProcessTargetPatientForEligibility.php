@@ -8,12 +8,13 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessTargetPatientForEligibility implements ShouldQueue
+class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

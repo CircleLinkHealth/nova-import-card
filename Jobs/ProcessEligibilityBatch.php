@@ -14,13 +14,14 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
-class ProcessEligibilityBatch implements ShouldQueue
+class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
