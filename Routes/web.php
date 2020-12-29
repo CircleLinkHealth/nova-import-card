@@ -86,9 +86,15 @@ Route::group([
     'prefix' => 'admin',
 ], function () {
     Route::get('dumpCcdJson/{ccdaId}', [
-       'uses' => 'ReportsController@dumpCcdJson',
-        'as' => 'dump.ccd.json'
+        'uses' => 'ReportsController@dumpCcdJson',
+        'as'   => 'dump.ccd.json',
     ]);
+
+    Route::get('ccd/download/xml/{ccdaId}', [
+        'uses' => 'ReportsController@downloadCcdXml',
+        'as'   => 'download.ccda.xml',
+    ])->middleware('permission:ccda.read');
+
     Route::group(['prefix' => 'direct-mail'], function () {
         Route::get('{directMailId}', [
             'uses' => 'DirectMailController@show',
