@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Events;
+namespace App\Listeners;
 
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;

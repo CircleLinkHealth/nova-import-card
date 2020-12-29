@@ -6,8 +6,8 @@
 
 namespace App\Providers;
 
-use App\Events\UpdateUserLoginInfo;
-use App\Events\UpdateUserSessionInfo;
+use App\Listeners\UpdateUserLoginInfo;
+use App\Listeners\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
