@@ -12,7 +12,7 @@ class Settings
 {
     public static function appConfigKey()
     {
-        return 'is_two_fa_enabled_'.app()->environment();
+        return 'is_two_fa_enabled_'.config('app.unique_env_name');
     }
 
     public static function isTwoFAEnabled(): bool
