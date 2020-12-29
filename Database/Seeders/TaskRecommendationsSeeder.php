@@ -7,6 +7,7 @@ namespace CircleLinkHealth\Customer\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class TaskRecommendationsSeeder extends Seeder
 {
