@@ -160,7 +160,7 @@ class PhiMail implements DirectMail
                 }
             }
         } catch (\Exception $e) {
-            $this->handleException($e);
+            return $this->handleException($e);
         }
 
         return $srList ?? false;
