@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "115eb06cdd608834efb193ff76d3243b",
+    "content-hash": "a33127692e9078f7266317ae72e00935",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1604,11 +1604,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-laravel-8",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "a9e1b7e55a53668360f23fb7f8e9057cbc0d8291"
+                "reference": "6a0312e1d308a31096aa5ddc457beadaf89cd44a"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -1635,7 +1635,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T03:46:53+00:00"
+            "time": "2020-12-29T04:00:41+00:00"
         },
         {
             "name": "clue/stream-filter",
