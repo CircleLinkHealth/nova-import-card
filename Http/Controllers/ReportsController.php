@@ -280,4 +280,15 @@ class ReportsController extends Controller
     public function dumpCcdJson($ccdaId) {
         return Ccda::findOrFail($ccdaId)->bluebuttonJson();
     }
+    
+    public function downloadCcdXml(Request $request, $ccdaId)
+    {
+        $ccda = Ccda::withTrashed()
+            ->with('media')
+            ->findOrFail($ccdaId);
+        
+        $media = $ccda->getMedia('ccd')->first();
+        
+        return $media ? $media : abort(400, 'XML was not found.');
+    }
 }
