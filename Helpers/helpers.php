@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\Twofa\Settings;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -151,7 +152,7 @@ if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
 if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        $twoFaEnabled = (bool) config('auth.two_fa_enabled');
+        $twoFaEnabled = Settings::isTwoFAEnabled();
         if ( ! $twoFaEnabled) {
             return false;
         }
