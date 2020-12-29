@@ -10,11 +10,12 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Str;
 
-class UPG0506CcdaImporterListener implements ShouldQueue
+class UPG0506CcdaImporterListener implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

@@ -18,10 +18,11 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class ChangeOrApproveCareplanResponseListener implements ShouldQueue
+class ChangeOrApproveCareplanResponseListener implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

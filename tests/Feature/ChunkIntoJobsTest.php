@@ -41,7 +41,7 @@ class ChunkIntoJobsTest extends TestCase
     }
 }
 
-class FakeJob extends ChunksEloquentBuilderJob implements ShouldQueue
+class FakeJob extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;
