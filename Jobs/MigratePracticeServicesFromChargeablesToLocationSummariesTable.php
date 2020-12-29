@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Log;
-use MichaelLedin\LaravelJob\Job;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 
 class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
 {

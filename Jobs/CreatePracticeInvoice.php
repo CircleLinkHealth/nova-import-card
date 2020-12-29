@@ -11,12 +11,13 @@ use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\CpmAdmin\Notifications\InvoicesCreatedNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CreatePracticeInvoice implements ShouldQueue
+class CreatePracticeInvoice implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

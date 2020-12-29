@@ -8,7 +8,8 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use MichaelLedin\LaravelJob\Job;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 
 class CheckLocationSummariesHaveBeenCreated extends Job
 {

@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\HasUniqueIdentifierForDebounce;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
-use MichaelLedin\LaravelJob\Job;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 
 class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdentifierForDebounce
 {

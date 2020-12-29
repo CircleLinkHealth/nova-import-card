@@ -15,7 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class MigrateAttestationDataChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class MigrateAttestationDataChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;

@@ -18,7 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;

@@ -20,7 +20,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;

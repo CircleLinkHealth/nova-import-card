@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateEndOfMonthCcmStatusLogsChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class GenerateEndOfMonthCcmStatusLogsChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;
