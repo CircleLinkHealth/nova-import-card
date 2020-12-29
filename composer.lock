@@ -969,7 +969,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "332d6805643a5a5beddea795c88dbc9c6c5dbb23"
+                "reference": "469cfbe0fa8f353ca19f8324bfe35e3395da5a38"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1007,7 +1007,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T20:12:27+00:00"
+            "time": "2020-12-29T01:43:17+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1232,7 +1232,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "b187e23cfef6610fea07fb61bd5d10de08147007"
+                "reference": "45318825a625b101495bcfcbe7f198d167531e9c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1254,7 +1254,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T00:41:37+00:00"
+            "time": "2020-12-29T01:47:26+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
