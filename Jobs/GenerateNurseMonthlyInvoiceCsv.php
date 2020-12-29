@@ -12,13 +12,14 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Exports\NurseInvoiceCsv;
 use CircleLinkHealth\NurseInvoices\Notifications\SendMonthlyInvoicesToAccountant;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
 
-class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
+class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

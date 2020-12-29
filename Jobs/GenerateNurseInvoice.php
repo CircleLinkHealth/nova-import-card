@@ -14,13 +14,14 @@ use CircleLinkHealth\NurseInvoices\Time\TotalTimeAggregator;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-class GenerateNurseInvoice implements ShouldQueue
+class GenerateNurseInvoice implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
