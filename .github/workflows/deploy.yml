@@ -10,6 +10,12 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Check if commit message has [ci skip]
+        uses: mstachniuk/ci-skip@v1
+        with:
+          fail-fast: true
+      - name: Install Composer dependencies
+        run: COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv
       - name: Deploy code
         run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
