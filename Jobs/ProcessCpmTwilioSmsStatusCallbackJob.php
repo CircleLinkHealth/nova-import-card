@@ -9,12 +9,13 @@ namespace CircleLinkHealth\TwilioIntegration\Jobs;
 use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessCpmTwilioSmsStatusCallbackJob implements ShouldQueue
+class ProcessCpmTwilioSmsStatusCallbackJob implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

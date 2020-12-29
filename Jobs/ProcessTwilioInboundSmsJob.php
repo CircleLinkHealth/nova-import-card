@@ -14,13 +14,14 @@ use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\TwilioIntegration\Http\Requests\TwilioInboundSmsRequest;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioInboundSms;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProcessTwilioInboundSmsJob implements ShouldQueue
+class ProcessTwilioInboundSmsJob implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
