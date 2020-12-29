@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Traits\Tests;
 
 use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Database\Seeders\NekatostrasClinicSeeder;
 use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -64,7 +65,7 @@ trait PostmarkCallbackHelpers
             return Practice::firstOrFail();
         }
 
-        $practice = Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
+        $practice = Practice::where('name', '=', NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
 
         if ( ! $practice) {
             $practice = Practice::where('name', '=', 'demo')->firstOrFail();
