@@ -35,9 +35,9 @@
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 
-{{--    currently only needed for Patient Paused letters if we decide we need it--}}
-{{--    <link rel="stylesheet" href="//cdn.webix.com/edge/webix.css" type="text/css">--}}
-{{--    <script src="//cdn.webix.com/edge/webix.js" type="text/javascript"></script>--}}
+    {{--    currently only needed for Patient Paused letters if we decide we need it--}}
+    {{--    <link rel="stylesheet" href="//cdn.webix.com/edge/webix.css" type="text/css">--}}
+    {{--    <script src="//cdn.webix.com/edge/webix.js" type="text/javascript"></script>--}}
     <style>
         body {
             font-family: Roboto, sans-serif;
@@ -158,9 +158,9 @@
                                         (export)</a>
                                 </li>
 
-{{--                                <li>--}}
-{{--                                    <a href="{{route('get.print.paused.letters')}}">Print Paused Patient Letters</a>--}}
-{{--                                </li>--}}
+                                {{--                                <li>--}}
+                                {{--                                    <a href="{{route('get.print.paused.letters')}}">Print Paused Patient Letters</a>--}}
+                                {{--                                </li>--}}
 
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
@@ -287,13 +287,11 @@
     <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha512-oBTprMeNEKCnqfuqKd6sbvFzmFQtlXS3e0C/RGFV0hD6QzhHV+ODfaQbAlmY6/q0ubbwlAM/nCJjkrgA3waLzg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.16/jquery.timepicker.min.js" integrity="sha512-huX0hcUeIkgR0QvTlhxNpIAcwiN2sABe3VwyzeZAYjMPn3OU71t9ZLlk6qs27Q049SPgeB/Az12jv/ayedXoAw==" crossorigin="anonymous"></script>
-
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script src="{{asset('compiled/js/dependencies.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha512-AIOTidJAcHBH2G/oZv9viEGXRqDNmfdPVPYOYKGy3fti0xIplnlgMHUGfuNRzC6FkzIo0iIxgFnr9RikFxK+sw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.16/jquery.timepicker.min.js" integrity="sha512-huX0hcUeIkgR0QvTlhxNpIAcwiN2sABe3VwyzeZAYjMPn3OU71t9ZLlk6qs27Q049SPgeB/Az12jv/ayedXoAw==" crossorigin="anonymous"></script>
 
 <script>
     $(document).ready(function () {
