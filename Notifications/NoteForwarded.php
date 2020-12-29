@@ -170,7 +170,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
     {
         $mail = (new MailMessage())
             ->view(
-                'vendor.notifications.email',
+                'customer::notifications.email',
                 [
                     'greeting'   => $this->getEmailBody(),
                     'actionText' => 'View Note',
