@@ -433,6 +433,11 @@
       <extension name="zmq" enabled="false" />
     </extensions>
   </component>
+  <component name="PhpStan">
+    <PhpStan_settings>
+      <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
+    </PhpStan_settings>
+  </component>
   <component name="PhpStepFilterConfiguration">
     <skipped_functions>
       <skipped_function name="CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode-&gt;isOfServiceCode" />
