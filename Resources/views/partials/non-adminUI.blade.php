@@ -64,7 +64,7 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}">
+                    <a class="navbar-brand" href="{{ getCpmProviderUrl('manage-patients/dashboard') }}">
                         <img src="{{asset('/img/logos/LogoHorizontal_Color.svg')}}"
                              alt="Care Plan Manager"
                              style="position:relative;top:-15px"
@@ -90,7 +90,7 @@
                             </li>
                             @if(config('core.apps.cpm-provider.url'))
                                 <li>
-                                    <a href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}">
+                                    <a href="{{ getCpmProviderUrl('manage-patients/dashboard') }}">
                                         <i class="glyphicon glyphicon-home"></i> Home
                                     </a>
                                 </li>
