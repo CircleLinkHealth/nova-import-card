@@ -221,7 +221,7 @@ class PhiMail implements DirectMail
         if (auth()->guest()) {
             throw $e;
         }
-    
+
         return $e->getMessage();
     }
 
