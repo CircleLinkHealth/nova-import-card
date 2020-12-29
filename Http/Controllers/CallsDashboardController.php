@@ -17,6 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 
 class CallsDashboardController extends Controller
 {
@@ -42,7 +43,9 @@ class CallsDashboardController extends Controller
             if ($call) {
                 return view('cpm-admin::admin.CallsDashboard.edit', compact(['note', 'call']));
             }
-            $nurses = User::ofType('care-center')->get();
+            $nurses = User::ofType('care-center')
+                          ->has('nurseInfo')
+                          ->get();
 
             return view('cpm-admin::admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
@@ -76,13 +79,16 @@ class CallsDashboardController extends Controller
 
         $status  = $request['status'];
         $patient = $note->patient;
+
         /** @var User $nurse */
         $nurse = User::with([
             'nurseInfo' => function ($q) {
                 $q->select(['id', 'user_id']);
             },
         ])
-            ->find($request['nurseId']);
+            ->has('nurseInfo')
+            ->findOrFail($request['nurseId']);
+
         $phone_direction = $request['direction'];
 
         $call = $service->storeCallForNote(
@@ -165,6 +171,11 @@ class CallsDashboardController extends Controller
 
     private function modifyNurseCareRateLogs(User $nurse, Note $note, string $oldStatus, string $newStatus)
     {
+        if (is_null($nurse->nurseInfo)){
+            Log::critical("User (ID:$nurse->id), author of note (ID:$note->id) does not have nurseInfo. Cannot modify nurse care rate logs or generate nurse invoices.");
+            return;
+        }
+
         NurseCareRateLog::whereBetween('created_at', [$note->created_at->copy()->startOfDay(), $note->updated_at->copy()->endOfDay()])
             ->where('nurse_id', '=', $nurse->nurseInfo->id)
             ->where('patient_user_id', '=', $note->patient_id)
