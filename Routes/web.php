@@ -85,6 +85,10 @@ Route::group([
     ],
     'prefix' => 'admin',
 ], function () {
+    Route::get('dumpCcdJson/{ccdaId}', [
+       'uses' => 'ReportsController@dumpCcdJson',
+        'as' => 'dump.ccd.json'
+    ]);
     Route::group(['prefix' => 'direct-mail'], function () {
         Route::get('{directMailId}', [
             'uses' => 'DirectMailController@show',

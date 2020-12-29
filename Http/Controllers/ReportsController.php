@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use CircleLinkHealth\Customer\Services\PrintPausedPatientLettersService;
 use CircleLinkHealth\Customer\Services\ReportsService;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -274,5 +275,9 @@ class ReportsController extends Controller
         $feed = $this->service->progress($wpUser->id);
 
         return json_encode($feed);
+    }
+    
+    public function dumpCcdJson($ccdaId) {
+        return Ccda::findOrFail($ccdaId)->bluebuttonJson();
     }
 }

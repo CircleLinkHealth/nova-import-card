@@ -31,7 +31,7 @@
 
                         <h3>CCDAs</h3>
                         @forelse($dm->ccdas as $ccda)
-                            <a href="{{route('get.CCDViewerController.show', [$ccda->id])}}">CCDA [{{$ccda->id}}]</a>
+                            <a href="{{route('dump.ccd.json', [$ccda->id])}}">CCDA [{{$ccda->id}}]</a>
                             @if($ccda->imported)
                                 was already imported.
                             @else
