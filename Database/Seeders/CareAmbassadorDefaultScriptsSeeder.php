@@ -1,9 +1,12 @@
 <?php
 
-namespace CircleLinkHealth\Customer\Database\Seeders;
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+
+namespace CircleLinkHealth\Customer\Database\Seeders;
+
+// This file is part of CarePlan Manager by CircleLink Health.
 
 use CircleLinkHealth\SharedModels\Entities\TrixField;
 use Illuminate\Database\Seeder;
