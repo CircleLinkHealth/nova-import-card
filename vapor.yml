@@ -4,7 +4,6 @@ environments:
     production:
         domain: provider.careplanmanager.com
         storage: cpm-production-vapor-storage
-        cache: cpm-production-vapor-cache
         network: cpm-production
         memory: 2048
         cli-memory: 2048
