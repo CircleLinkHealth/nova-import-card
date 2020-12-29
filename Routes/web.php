@@ -306,3 +306,17 @@ Route::get('impersonate/take/{id}', [
     'as'   => 'impersonate',
 ])->middleware(['auth',
     'permission:admin-access', ]);
+
+Route::group([
+    'prefix' => 'postmark',
+], function () {
+    Route::post('/status', [
+        'uses' => 'Postmark\PostmarkController@statusCallback',
+        'as'   => 'postmark.status',
+    ]);
+
+    Route::post('/inbound', [
+        'uses' => 'Postmark\PostmarkController@inbound',
+        'as'   => 'postmark.inbound',
+    ]);
+});
