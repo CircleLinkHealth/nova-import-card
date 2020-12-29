@@ -8,12 +8,13 @@ namespace CircleLinkHealth\Revisionable\Jobs;
 
 use CircleLinkHealth\Revisionable\Entities\Revisionable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class StoreRevisions implements ShouldQueue
+class StoreRevisions implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
