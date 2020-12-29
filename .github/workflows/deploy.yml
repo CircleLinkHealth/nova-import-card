@@ -26,9 +26,14 @@ jobs:
         run: composer validate
 
       - name: Install Composer dependencies
-        uses: php-actions/composer@v1
+        uses: php-actions/composer@v5
+        env:
+          COMPOSER_MIRROR_PATH_REPOS: 1
         with:
-          command: COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv
+          composer_version: 1
+          progress: yes
+          dev: no
+          args: --classmap-authoritative -vvv
 
       - name: Deploy code
         run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} --commit="${{ github.sha }}"
