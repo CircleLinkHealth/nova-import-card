@@ -904,10 +904,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "1466f2e2b1cb07d59770d777d6d41a7a482bf864"
+                "reference": "1a394d6e22a720422c6861c394590cc184123b96"
             },
             "require": {
-                "circlelinkhealth/ccda-parser-processor-php-module": "^1.0",
+                "circlelinkhealth/ccda-parser-processor-php-module": "*",
                 "circlelinkhealth/core-module": "*",
                 "circlelinkhealth/customer-module": "*",
                 "circlelinkhealth/raygun-module": "*",
@@ -947,7 +947,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T06:32:29+00:00"
+            "time": "2020-12-29T07:59:12+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1285,7 +1285,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "eb4b393823ab8aa1ee17514328725aa5146b6852"
+                "reference": "cb093a5f1311c169edfd78a12789d5b6976216c4"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1302,7 +1302,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T06:56:12+00:00"
+            "time": "2020-12-29T07:18:04+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1310,7 +1310,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "202e85679dc7381ab802720ce624a7b55a29471c"
+                "reference": "508e48aceeabea70ed1722b28f6339ca8d9848cc"
             },
             "type": "laravel-module",
             "extra": {
@@ -1330,7 +1330,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-24T10:51:21+00:00"
+            "time": "2020-12-29T07:37:54+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1470,7 +1470,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "e121e7200b1ab079c6e6d9f6af5deef3bc25a43b"
+                "reference": "ce71b2909d35e1f186a203aa4ae30a2e34abd25e"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -1497,7 +1497,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T07:04:08+00:00"
+            "time": "2020-12-29T07:37:54+00:00"
         },
         {
             "name": "clue/stream-filter",
