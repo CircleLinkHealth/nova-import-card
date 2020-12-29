@@ -846,7 +846,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "1c87e7786db94fd2dcd036f56e70ec147df5809b"
+                "reference": "56f63e177396955b5379039af8595c687a45fdde"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -896,7 +896,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T04:23:47+00:00"
+            "time": "2020-12-29T07:04:08+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -904,9 +904,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "b0a638fa7aa6848adf5c4af4e018ec3ec392eb8a"
+                "reference": "1466f2e2b1cb07d59770d777d6d41a7a482bf864"
             },
             "require": {
+                "circlelinkhealth/ccda-parser-processor-php-module": "^1.0",
                 "circlelinkhealth/core-module": "*",
                 "circlelinkhealth/customer-module": "*",
                 "circlelinkhealth/raygun-module": "*",
@@ -946,7 +947,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T06:07:25+00:00"
+            "time": "2020-12-29T06:32:29+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1284,7 +1285,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "fa9ca1de7a8c07343cd7ecc60f8da6055e1e931b"
+                "reference": "eb4b393823ab8aa1ee17514328725aa5146b6852"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1301,7 +1302,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T19:48:11+00:00"
+            "time": "2020-12-29T06:56:12+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1469,7 +1470,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "70f413942c3eacfb9a9f47f16031bc6f45f42ac5"
+                "reference": "e121e7200b1ab079c6e6d9f6af5deef3bc25a43b"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -1496,7 +1497,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T04:23:46+00:00"
+            "time": "2020-12-29T07:04:08+00:00"
         },
         {
             "name": "clue/stream-filter",
