@@ -1,4 +1,4 @@
-@extends('partials.providerUI')
+@extends(view()->exists('partials.providerUI') ? 'partials.providerUI' : 'cpm-admin::partials.adminUI')
 
 @section('title', 'Perform 2FA')
 @section('activity', 'Perform 2FA')
