@@ -1,37 +1,37 @@
 @if(isset($isPdf))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style>
+        body {
+            background: #fff;
+            color: #333;
+            line-height: 1.3em;
+            font-weight: 300;
+        }
+
+        .borderless-table-invoices, .borderless-table-invoices > * {
+            border: none !important;
+        }
+
+        .cross-out {
+            text-decoration: line-through;
+        }
+
+        .display-inline-block {
+            display: inline-block;
+        }
+
+        .text-bold-invoice {
+            font-weight: bold;
+        }
+
+        .invoice-page-header {
+            padding-bottom: 9px;
+            margin: -10px 0 20px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
 @endif
-
-<style>
-    body {
-        background: #fff;
-        color: #333;
-        line-height: 1.3em;
-        font-weight: 300;
-    }
-
-    .borderless-table-invoices, .borderless-table-invoices > * {
-        border: none !important;
-    }
-
-    .cross-out {
-        text-decoration: line-through;
-    }
-
-    .display-inline-block {
-        display: inline-block;
-    }
-
-    .text-bold-invoice {
-        font-weight: bold;
-    }
-
-    .invoice-page-header {
-        padding-bottom: 9px;
-        margin: -10px 0 20px;
-        border-bottom: 1px solid #eee;
-    }
-</style>
 {{--HACK! Duplicating css both in @push, and in <style> above so it works both with PDF, and web--}}
 {{--NOTE! This is causing an Error showing in dev console:
 Templates should only be responsible for mapping the state to the UI.

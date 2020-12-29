@@ -8,7 +8,6 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 use Illuminate\Console\Command;
 

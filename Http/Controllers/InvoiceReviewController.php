@@ -24,7 +24,7 @@ use Illuminate\View\View;
 class InvoiceReviewController extends Controller
 {
     use ApiReturnHelpers;
-    
+
     /**
      * @var \CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay
      */
