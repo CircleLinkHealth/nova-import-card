@@ -64,7 +64,7 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+                    <a class="navbar-brand" href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}">
                         <img src="{{asset('/img/logos/LogoHorizontal_Color.svg')}}"
                              alt="Care Plan Manager"
                              style="position:relative;top:-15px"
