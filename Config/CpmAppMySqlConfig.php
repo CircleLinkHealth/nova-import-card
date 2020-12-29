@@ -42,7 +42,7 @@ class CpmAppMySqlConfig
             ]) : [],
         ];
 
-        if (true === boolval(env('MYSQL_CLUSTER_MODE'))) {
+        if (true === filter_var(env('MYSQL_CLUSTER_MODE'), FILTER_VALIDATE_BOOLEAN)) {
             $mysqlConfig['read'] = [
                 'host' => explode(',', env('MYSQL_CLUSTER_READ_HOSTS')),
             ];

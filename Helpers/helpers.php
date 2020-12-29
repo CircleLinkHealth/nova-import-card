@@ -30,7 +30,7 @@ if ( ! function_exists('isProductionEnv')) {
      */
     function isProductionEnv(): ?bool
     {
-        return boolval(config('core.is_production_env'));
+        return filter_var(config('core.is_production_env'), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -1623,7 +1623,7 @@ if ( ! function_exists('allowNonUsPhones')) {
      */
     function allowNonUsPhones()
     {
-        return ! isProductionEnv() && boolval(AppConfig::pull('allow_non_us_phone', false));
+        return ! isProductionEnv() && filter_var(AppConfig::pull('allow_non_us_phone', false), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
