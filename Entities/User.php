@@ -3608,10 +3608,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function sendCarePlanApprovalReminder($numberOfCareplans, $force = false)
     {
         if ( ! $this->shouldSendCarePlanApprovalReminder() && ! $force) {
+            Log::debug('not sending cp approval reminder because cp1');
+
             return false;
         }
 
         if ($numberOfCareplans < 1) {
+            Log::debug('not sending cp approval reminder because cp2');
+
             return false;
         }
 
