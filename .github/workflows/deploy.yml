@@ -30,7 +30,7 @@ jobs:
         env:
           COMPOSER_MIRROR_PATH_REPOS: 1
         with:
-          composer_version: 1
+          version: 1
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
