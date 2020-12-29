@@ -34,7 +34,7 @@
         }
     },
     "require": {
-        "circlelinkhealth/ccda-parser-processor-php-module": "^1.0",
+        "circlelinkhealth/ccda-parser-processor-php-module": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/raygun-module": "*",
