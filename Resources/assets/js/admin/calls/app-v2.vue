@@ -81,7 +81,7 @@
                     <a :href="props.row.notesLink" :class="props.row['ccmStatus']">{{ props.row['Patient ID'] }}</a>
                 </template>
                 <template slot="Patient" slot-scope="props">
-                  <div v-if="isCallbacksAdmin">
+                  <div v-if="isCallbacksAdmin()">
                     {{ props.row['Patient'] }}
                   </div>
                   <div v-else>
