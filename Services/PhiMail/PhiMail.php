@@ -218,7 +218,11 @@ class PhiMail implements DirectMail
         Log::critical($message);
         Log::critical($traceString);
 
-        throw $e;
+        if (auth()->guest()) {
+            throw $e;
+        }
+    
+        return $e->getMessage();
     }
 
     /**
