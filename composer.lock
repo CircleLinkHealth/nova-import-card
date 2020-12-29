@@ -504,12 +504,6 @@
                 "brick",
                 "math"
             ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/math",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-08-18T23:57:15+00:00"
         },
         {
@@ -555,12 +549,6 @@
                 "brick",
                 "currency",
                 "money"
-            ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/money",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-08-19T22:52:38+00:00"
         },
@@ -873,7 +861,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "56f63e177396955b5379039af8595c687a45fdde"
+                "reference": "027bb2c3a8b5280af127106a486e1a3a7514f7a5"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -923,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T07:04:08+00:00"
+            "time": "2020-12-29T12:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -931,7 +919,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "1a394d6e22a720422c6861c394590cc184123b96"
+                "reference": "f6a2421f1e48479c435952fd9ba0a82b90e11f7c"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -974,7 +962,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T07:59:12+00:00"
+            "time": "2020-12-29T12:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1010,7 +998,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0f6f4c3cf76ea9cedae259b2e311f0e3008cd883"
+                "reference": "392611d5de6af821433498e6c7d7db46dcbc6411"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1048,7 +1036,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T08:19:41+00:00"
+            "time": "2020-12-29T12:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1273,7 +1261,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "45318825a625b101495bcfcbe7f198d167531e9c"
+                "reference": "c22e02579d2ddab2027ee6efbc843765287a5323"
             },
             "type": "laravel-module",
             "extra": {
@@ -1295,7 +1283,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T01:47:26+00:00"
+            "time": "2020-12-29T12:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
@@ -1464,7 +1452,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "8d32b6893d984110a55c4090e54bdfa998b501d4"
+                "reference": "b134a898418222fa5debba4a03c3b3313ef2b1a1"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1481,7 +1469,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T08:41:12+00:00"
+            "time": "2020-12-29T12:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -2284,20 +2272,6 @@
                 "redis",
                 "xcache"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcache",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-07T18:54:01+00:00"
         },
         {
@@ -2481,20 +2455,6 @@
                 "event system",
                 "events"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fevent-manager",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T18:28:51+00:00"
         },
         {
@@ -2572,20 +2532,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T15:13:26+00:00"
         },
         {
@@ -2647,20 +2593,6 @@
                 "lexer",
                 "parser",
                 "php"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Flexer",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-05-25T17:44:05+00:00"
         },
@@ -4229,16 +4161,6 @@
                 "user agent",
                 "useragent"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/jenssegers",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/jenssegers/agent",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-13T08:05:20+00:00"
         },
         {
@@ -5791,12 +5713,6 @@
                 "s3",
                 "sftp",
                 "storage"
-            ],
-            "funding": [
-                {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
-                }
             ],
             "time": "2020-08-23T07:39:11+00:00"
         },
@@ -8042,16 +7958,6 @@
                 "php",
                 "type"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/GrahamCampbell",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpoption/phpoption",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-20T17:29:33+00:00"
         },
         {
@@ -8837,12 +8743,6 @@
                 "queue",
                 "set"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
-            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -8923,12 +8823,6 @@
                 "guid",
                 "identifier",
                 "uuid"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
             ],
             "time": "2020-08-18T17:17:46+00:00"
         },
@@ -10064,20 +9958,6 @@
             ],
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-07T11:33:47+00:00"
         },
         {
@@ -10287,20 +10167,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-07T11:33:47+00:00"
         },
@@ -12065,20 +11931,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-07T11:33:47+00:00"
         },
@@ -13923,16 +13775,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.5",
+            "version": "2.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "2b6fd8b7b630e5c6a04440f7ed358e8753229509"
+                "reference": "8e907d81244649c5ea746e2ec30c32c5f59df472"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/2b6fd8b7b630e5c6a04440f7ed358e8753229509",
-                "reference": "2b6fd8b7b630e5c6a04440f7ed358e8753229509",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/8e907d81244649c5ea746e2ec30c32c5f59df472",
+                "reference": "8e907d81244649c5ea746e2ec30c32c5f59df472",
                 "shasum": ""
             },
             "require": {
@@ -13990,7 +13842,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-12-28T23:56:45+00:00"
+            "time": "2020-12-29T09:12:55+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -17345,12 +17197,6 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "funding": [
-                {
-                    "url": "https://github.com/theseer",
-                    "type": "github"
-                }
-            ],
             "time": "2020-07-12T23:59:07+00:00"
         },
         {
