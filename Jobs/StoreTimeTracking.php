@@ -17,13 +17,14 @@ use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class StoreTimeTracking implements ShouldQueue
+class StoreTimeTracking implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
