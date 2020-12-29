@@ -16,12 +16,6 @@ jobs:
         with:
           fail-fast: true
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          extensions: redis, imagick, intl, json, simplexml
-
       - name: Validate Composer
         run: composer validate
 
@@ -31,6 +25,8 @@ jobs:
           COMPOSER_MIRROR_PATH_REPOS: 1
         with:
           version: 1
+          php_version: 7.4
+          php_extensions: redis, imagick, intl, json, simplexml
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
