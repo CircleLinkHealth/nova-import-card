@@ -2337,3 +2337,11 @@ if ( ! function_exists('intValue')) {
         return $default;
     }
 }
+
+if ( ! function_exists('getCpmProviderUrl')) {
+    function getCpmProviderUrl(string $uri): string
+    {
+        return rtrim(config('core.apps.cpm-provider.url'), '/')."/$uri";
+    }
+}
+
