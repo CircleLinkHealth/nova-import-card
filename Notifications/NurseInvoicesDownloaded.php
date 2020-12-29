@@ -82,9 +82,17 @@ class NurseInvoicesDownloaded extends Notification
         }
 
         return (new MailMessage())
-            ->action("Download $this->downloadFormat Invoices", $this->getSignedUrl($notifiable))
-            ->line('For security reasons, this link will expire in 48 hours.')
-            ->line('Thank you for using our CarePlan!');
+            ->view('customer::notifications.email', [
+                'greeting'        => 'Hi!',
+                'actionText'      => "Download $this->downloadFormat Invoices",
+                'actionUrl'       => $this->getSignedUrl($notifiable),
+                'introLines'      => [],
+                'outroLines'      => [
+                    'For security reasons, this link will expire in 48 hours.',
+                    'Thank you for using CarePlan Manager!'
+                ],
+                'level'           => '',
+            ]);
     }
 
     /**
