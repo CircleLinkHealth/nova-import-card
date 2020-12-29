@@ -315,7 +315,7 @@
                 self.bannerType = 'success';
                 self.showBanner = true;
 
-                window.location.href = self.redirectTo || '/';
+                window.location.href = self.redirectTo || rootUrl('/');
             },
             denied() {
                 let self = this;
