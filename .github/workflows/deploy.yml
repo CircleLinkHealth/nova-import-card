@@ -26,7 +26,6 @@ jobs:
         with:
           version: 1
           php_version: 7.4
-          php_extensions: ext-redis, ext-imagick, ext-intl, ext-json, ext-simplexml
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
