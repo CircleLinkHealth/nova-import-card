@@ -58,9 +58,7 @@ class CallsDashboardController extends Controller
     {
         /** @var Note $note */
         $note = Note::with([
-            'patient' => function ($q) {
-                $q->with(['patientInfo']);
-            },
+            'patient.patientInfo',
             'author',
             'call' => function ($q) {
                 $q->where(function ($q2) {
@@ -81,11 +79,7 @@ class CallsDashboardController extends Controller
         $patient = $note->patient;
 
         /** @var User $nurse */
-        $nurse = User::with([
-            'nurseInfo' => function ($q) {
-                $q->select(['id', 'user_id']);
-            },
-        ])
+        $nurse = User::with(['nurseInfo:id,user_id'])
             ->has('nurseInfo')
             ->findOrFail($request['nurseId']);
 
@@ -123,6 +117,7 @@ class CallsDashboardController extends Controller
         /** @var Call $call */
         $call = Call::with([
             'note',
+            'inboundUser.patientInfo',
             'outboundUser' => function ($q) {
                 $q->without(['perms', 'roles'])
                     ->with(['nurseInfo']);
