@@ -3,6 +3,7 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+namespace CircleLinkHealth\Customer\Database\Seeders;
 
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;

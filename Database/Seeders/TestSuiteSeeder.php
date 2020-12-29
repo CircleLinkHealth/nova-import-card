@@ -1,5 +1,7 @@
 <?php
 
+namespace CircleLinkHealth\Customer\Database\Seeders;
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
@@ -8,6 +10,7 @@ use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 use CircleLinkHealth\CcmBilling\Database\Seeders\ChargeableServiceSeeder;
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\Customer\Database\Seeders\EhrSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
