@@ -52,6 +52,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
+        "wildbit/swiftmailer-postmark": "*",
         "nao-pon/flysystem-google-drive": "~1.1"
     },
     "require-dev": {
