@@ -45,7 +45,7 @@ class CustomDownloadExcel extends ExportToExcel implements WithHeadings
         $media = auth()->user()->addMedia(new RemoteFile($filename, $this->getDisk()))->toMediaCollection(
             'Nova Excel Export - '.$resource::uriKey()
         );
-        
+
         return \is_callable($this->onSuccess)
             ? ($this->onSuccess)($request, $filename, $resource)
             : Action::download(

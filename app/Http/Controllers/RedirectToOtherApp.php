@@ -10,13 +10,6 @@ use Illuminate\Http\Request;
 
 class RedirectToOtherApp extends Controller
 {
-    public function redirectToProvider(Request $request)
-    {
-        $url = $request->getRequestUri();
-
-        return redirect()->to(rtrim(config('core.apps.cpm-provider.url'), '/')."$url");
-    }
-
     public function config()
     {
         dd(config());
@@ -25,5 +18,12 @@ class RedirectToOtherApp extends Controller
     public function pinfo()
     {
         dd(phpinfo());
+    }
+
+    public function redirectToProvider(Request $request)
+    {
+        $url = $request->getRequestUri();
+
+        return redirect()->to(rtrim(config('core.apps.cpm-provider.url'), '/')."$url");
     }
 }

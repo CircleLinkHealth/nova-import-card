@@ -180,4 +180,3 @@ return [
         'remote_disk' => 'media',
     ],
 ];
-

@@ -15,9 +15,9 @@ return [
     | and used as needed; however, this mailer will be used by default.
     |
     */
-    
+
     'default' => env('MAIL_MAILER', env('POSTMARK_TOKEN', null) ? 'postmark' : 'smtp'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
@@ -35,7 +35,7 @@ return [
     |            "postmark", "log", "array"
     |
     */
-    
+
     'mailers' => [
         'smtp' => [
             'transport'  => 'smtp',
@@ -46,34 +46,34 @@ return [
             'password'   => env('MAIL_PASSWORD'),
             'timeout'    => null,
         ],
-        
+
         'ses' => [
             'transport' => 'ses',
         ],
-        
+
         'mailgun' => [
             'transport' => 'mailgun',
         ],
-        
+
         'postmark' => [
             'transport' => 'postmark',
         ],
-        
+
         'sendmail' => [
             'transport' => 'sendmail',
             'path'      => '/usr/sbin/sendmail -bs',
         ],
-        
+
         'log' => [
             'transport' => 'log',
             'channel'   => env('MAIL_LOG_CHANNEL'),
         ],
-        
+
         'array' => [
             'transport' => 'array',
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Global "From" Address
@@ -84,24 +84,24 @@ return [
     | used globally for all e-mails that are sent by your application.
     |
     */
-    
+
     'from' => [
         'address' => env('TRANSACTIONAL_MAIL_FROM_ADDRESS', 'no-reply@careplanmanager.com'),
         'name'    => env('TRANSACTIONAL_MAIL_FROM_NAME', 'CircleLink Health'),
     ],
-    
+
     'from-with-inbound' => [
         // we prefer to not have a default, because we don't want to have emails
         // targeted to staging being processed by production inbound mail address
         'address' => env('INBOUND_MAIL_FROM_ADDRESS', null /*'wellness@careplanmanager.com'*/),
         'name'    => env('INBOUND_MAIL_FROM_NAME', 'CarePlan Manager'),
     ],
-    
+
     'marketing_from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'no-reply@circlelinkhealth.com'),
         'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | E-Mail Encryption Protocol
@@ -112,9 +112,9 @@ return [
     | transport layer security protocol should provide great security.
     |
     */
-    
+
     'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | SMTP Server Username
@@ -125,11 +125,11 @@ return [
     | connection. You may also set the "password" value below this one.
     |
     */
-    
+
     'username' => env('MAIL_USERNAME'),
-    
+
     'password' => env('MAIL_PASSWORD'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Sendmail System Path
@@ -140,9 +140,9 @@ return [
     | been provided here, which will work well on most of your systems.
     |
     */
-    
+
     'sendmail' => '/usr/sbin/sendmail -bs',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Markdown Mail Settings
@@ -153,15 +153,15 @@ return [
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |
     */
-    
+
     'markdown' => [
         'theme' => 'default',
-        
+
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Log Channel
@@ -172,6 +172,6 @@ return [
     | for simpler reading. Otherwise, the default channel will be used.
     |
     */
-    
+
     'log_channel' => env('MAIL_LOG_CHANNEL'),
 ];
