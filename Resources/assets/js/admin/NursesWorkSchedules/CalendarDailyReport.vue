@@ -135,6 +135,8 @@
 </template>
 
 <script>
+    import {rootUrl} from "../../app.config";
+
     export default {
         name: "CalendarDailyReport",
         props: ['reportData', 'reportDate', 'reportFlags', 'popUpNow'],
@@ -154,7 +156,7 @@
 
         methods: {
             redirectToInvoice(){
-                window.location.href = "nurseinvoices/review";
+                window.location.href = rootUrl("nurseinvoices/review");
             },
 
             closeModal() {

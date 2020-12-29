@@ -3,6 +3,7 @@
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
+import {rootUrl} from "./app.config";
 
 const axios = require('axios');
 
@@ -32,7 +33,7 @@ if (window && document) {
         }
 
         if (error && error.response && error.response.status === 419) {
-            window.location.href = '/auth/inactivity-logout'
+            window.location.href = rootUrl('/auth/inactivity-logout')
         }
         else {
             return Promise.reject(error);
