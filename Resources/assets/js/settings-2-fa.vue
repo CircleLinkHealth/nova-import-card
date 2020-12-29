@@ -317,7 +317,7 @@
                             // so that the 2FA box will show and they'll complete the process
                             // UPDATE:  why stay on the same page? credit to nektarios for bringing this up
                             // if (_.isNull(this.authyUser)) {
-                            window.location.href = '/';
+                            window.location.href = rootUrl('/');
                             // }
 
                             this.is_loading = false;
