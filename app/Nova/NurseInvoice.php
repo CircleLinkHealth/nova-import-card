@@ -117,12 +117,6 @@ class NurseInvoice extends Resource
     public function fields(Request $request)
     {
         return [
-            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
-                ->hideWhenUpdating()
-                ->hideFromIndex()
-                ->searchable()
-                ->prepopulate(),
-
             Text::make('Name', 'nurse.user.display_name')
                 ->sortable()
                 ->hideWhenCreating()
