@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Http\Requests\AdminShowNurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Requests\ShowNurseInvoice;
@@ -22,6 +23,8 @@ use Illuminate\View\View;
 
 class InvoiceReviewController extends Controller
 {
+    use ApiReturnHelpers;
+    
     /**
      * @var \CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay
      */
