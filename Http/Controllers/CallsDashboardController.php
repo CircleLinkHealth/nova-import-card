@@ -44,7 +44,7 @@ class CallsDashboardController extends Controller
             }
             $nurses = User::ofType('care-center')->get();
 
-            return view('admin.CallsDashboard.create-call', compact(['note', 'nurses']));
+            return view('cpm-admin::admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
         $message = 'Note Does Not Exist.';
 
