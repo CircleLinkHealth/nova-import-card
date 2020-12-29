@@ -931,7 +931,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "6c3cbd4b46b0907ea5452e9384e937393ec8971d"
+                "reference": "7865a48c3180834fbb7d726d874a801703263d98"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -974,7 +974,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T16:23:10+00:00"
+            "time": "2020-12-29T18:32:08+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
