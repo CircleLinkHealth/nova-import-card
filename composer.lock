@@ -625,7 +625,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "c186312f9069cb4db7e1e414cf1a13d4dd628975"
+                "reference": "f700dc584b9b11773b922f4caf300d7eb48f79f9"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -672,7 +672,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-28T09:15:06+00:00"
+            "time": "2020-12-29T04:23:46+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -833,7 +833,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "ee4c01a42fc5d5cdeb7c5207d007e330d84fd402"
+                "reference": "1c87e7786db94fd2dcd036f56e70ec147df5809b"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -883,7 +883,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T03:25:35+00:00"
+            "time": "2020-12-29T04:23:47+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -891,7 +891,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "d238b56a4db32ce9c48c69de2cbf562e932d3eba"
+                "reference": "4d07fec4a92b77cd10abe75265c4c94a234e13cf"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -933,7 +933,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T00:08:30+00:00"
+            "time": "2020-12-29T05:33:15+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -941,7 +941,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "03e930418f155ce07b928d22c77eeef4e71174c1"
+                "reference": "2147f4e33351e8776233a2d2a51274d184a7fe0f"
             },
             "type": "laravel-module",
             "extra": {
@@ -961,7 +961,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T21:43:49+00:00"
+            "time": "2020-12-29T05:21:02+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -969,7 +969,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "469cfbe0fa8f353ca19f8324bfe35e3395da5a38"
+                "reference": "fb80b0f428194524e11e44f8d23a32f87f71b9c6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1007,7 +1007,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T01:43:17+00:00"
+            "time": "2020-12-29T05:24:13+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1608,7 +1608,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "6a0312e1d308a31096aa5ddc457beadaf89cd44a"
+                "reference": "70f413942c3eacfb9a9f47f16031bc6f45f42ac5"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -1635,7 +1635,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T04:00:41+00:00"
+            "time": "2020-12-29T04:23:46+00:00"
         },
         {
             "name": "clue/stream-filter",
