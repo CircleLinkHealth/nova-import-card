@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Core\Jobs;
 
 use CircleLinkHealth\Core\Entities\SendGridRawLog;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
+class ProcessSendGridMailStatusCallbackJob implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
