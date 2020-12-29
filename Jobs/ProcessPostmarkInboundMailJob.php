@@ -13,13 +13,14 @@ use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use CircleLinkHealth\SharedModels\Services\Postmark\AutoResolveCallbackRequestService;
 use CircleLinkHealth\SharedModels\Services\Postmark\ScheduleCallbackAndNotifyService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProcessPostmarkInboundMailJob implements ShouldQueue
+class ProcessPostmarkInboundMailJob implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

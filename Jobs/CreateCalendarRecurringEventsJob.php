@@ -10,12 +10,13 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CreateCalendarRecurringEventsJob implements ShouldQueue
+class CreateCalendarRecurringEventsJob implements ShouldQueue, ShouldBeEncrypted
 {
     /*
      *  Note: This command does NOT delete original data from table. They are left with repeat_frequency == null
