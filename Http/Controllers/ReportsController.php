@@ -33,6 +33,22 @@ class ReportsController extends Controller
         $this->patientReadRepository            = $patientReadRepository;
     }
 
+    public function downloadCcdXml(Request $request, $ccdaId)
+    {
+        $ccda = Ccda::withTrashed()
+            ->with('media')
+            ->findOrFail($ccdaId);
+
+        $media = $ccda->getMedia('ccd')->first();
+
+        return $media ? $media : abort(400, 'XML was not found.');
+    }
+
+    public function dumpCcdJson($ccdaId)
+    {
+        return Ccda::findOrFail($ccdaId)->bluebuttonJson();
+    }
+
     public function excelReportUnreachablePatients()
     {
         $users = $this->patientReadRepository->unreachable()->fetch();
@@ -275,20 +291,5 @@ class ReportsController extends Controller
         $feed = $this->service->progress($wpUser->id);
 
         return json_encode($feed);
-    }
-    
-    public function dumpCcdJson($ccdaId) {
-        return Ccda::findOrFail($ccdaId)->bluebuttonJson();
-    }
-    
-    public function downloadCcdXml(Request $request, $ccdaId)
-    {
-        $ccda = Ccda::withTrashed()
-            ->with('media')
-            ->findOrFail($ccdaId);
-        
-        $media = $ccda->getMedia('ccd')->first();
-        
-        return $media ? $media : abort(400, 'XML was not found.');
     }
 }

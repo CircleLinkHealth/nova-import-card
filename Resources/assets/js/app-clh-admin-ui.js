@@ -52,7 +52,7 @@ const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ '../..
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
 const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ '../../../../Twofa/Resources/assets/js/user-account-settings');
 const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ '../../../../Twofa/Resources/assets/js/authy-perform-2fa');
-
+const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse-invoice" */ '../../../../Nurseinvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 
 
 Vue.use(ClientTable, {}, false)
@@ -78,9 +78,7 @@ Vue.component('authy-perform-2fa', AuthyPerform2FA);
 Vue.component('passport-clients', PassportClients);
 Vue.component('passport-authorized-clients', PassportAuthorizedClients);
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokens);
-
-
-
+Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
 
 const App = new Vue({
     el: '#app',
