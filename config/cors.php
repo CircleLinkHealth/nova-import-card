@@ -1,7 +1,7 @@
 <?php
 
 $env = env('APP_ENV', 'production');
-$isProd = in_array($env, ['production', 'worker']);
+$isProd = in_array($env, ['production', 'worker']) || \Illuminate\Support\Str::contains($env, 'prod');
 
 return [
 
