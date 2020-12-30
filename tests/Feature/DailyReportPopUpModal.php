@@ -48,7 +48,7 @@ class DailyReportPopUpModal extends TestCase
         $cacheKey = "daily-report-for-{$nurse->id}-{$date->toDateString()}";
         Auth::login($nurse);
         Artisan::call("create:dailyReportFakeData $nurse->id");
-        $reportDataForCalendar = (new NurseCalendarService())->nurseDailyReportForDate($nurse->id, $date, $cacheKey);
+        $reportDataForCalendar = (new NurseCalendarService())->nurseDailyReportForDate($nurse->id, $date, $cacheKey, false);
         self::assertTrue( ! empty($reportDataForCalendar->first()));
     }
 }

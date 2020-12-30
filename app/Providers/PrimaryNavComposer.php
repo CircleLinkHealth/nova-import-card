@@ -34,16 +34,25 @@ class PrimaryNavComposer extends ServiceProvider
 
                 $cacheKey = "daily-report-for-{$user->id}-{$date->toDateString()}";
 
-                if ( ! \Cache::has($cacheKey)) {
-                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date, $cacheKey)->first();
+                $forceDailyReportModalToPop = forceDailyReportModalToPopUp();
+
+                if ($forceDailyReportModalToPop) {
+                    \Cache::forget($cacheKey);
                 }
+
+                if ( ! \Cache::has($cacheKey)) {
+                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date, $cacheKey, $forceDailyReportModalToPop)->first();
+                }
+
+                $shouldPopDailyMetricsReport = ! forceDailyReportModalToStopPopping();
             }
 
             $view->with(compact(
                 'user',
                 'userIsCareCoach',
                 'reportData',
-                'hasNotCurrentWeekWindows'
+                'hasNotCurrentWeekWindows',
+                'shouldPopDailyMetricsReport'
             ));
         });
     }
