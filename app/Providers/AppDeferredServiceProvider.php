@@ -17,7 +17,6 @@ class AppDeferredServiceProvider extends ServiceProvider implements DeferrablePr
     {
         return [
             DevelopmentServiceProvider::class,
-            ReportFormatter::class,
         ];
     }
 
@@ -29,10 +28,5 @@ class AppDeferredServiceProvider extends ServiceProvider implements DeferrablePr
         if ($this->app->environment('local')) {
             DevelopmentServiceProvider::class;
         }
-
-        $this->app->bind(
-            ReportFormatter::class,
-            WebixFormatter::class
-        );
     }
 }
