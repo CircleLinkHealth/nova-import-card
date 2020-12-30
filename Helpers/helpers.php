@@ -2101,21 +2101,26 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
         return false;
     }
 }
-// It will force daily report modal to pop up, ignoring if it is the first login or not.
-if ( ! function_exists('forceDailyReportModalToPopUp')) {
-    function forceDailyReportModalToPopUp(): bool
+// It will force daily report modal to pop up by deleting the cache key for given user, ignoring if it is the first login or not.
+if ( ! function_exists('forceDailyReportModalToPopUpFor')) {
+    function forceDailyReportModalToPopUpFor()
     {
-        return AppConfig::pull('force_daily_report_modal_to_pop_up', false);
+        return intval(AppConfig::pull('force_daily_report_modal_to_pop_up_for', null));
     }
 }
 
-if ( ! function_exists('forceDailyReportModalToStopPopping')) {
-    function forceDailyReportModalToStopPopping(): bool
+if ( ! function_exists('forceDailyReportModalToStopPoppingFor')) {
+    function forceDailyReportModalToStopPoppingFor()
     {
-        return AppConfig::pull('force_daily_report_modal_to_stop_popping', false);
+        $value = AppConfig::pull('force_daily_report_modal_to_stop_popping_for', null);
+
+        if ('all_nurses' === $value) {
+            return auth()->id();
+        }
+
+        return intval($value);
     }
 }
-
 
 if ( ! function_exists('sanitizeString')) {
     /**
