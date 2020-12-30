@@ -406,18 +406,21 @@ class NurseCalendarService
                 : 'Surplus',
         ];
     }
-
+    
     /**
-     * @param $cacheKey
+     * @param int $userId
+     * @param Carbon $date
+     * @param string $cacheKey
      *
+     * @param bool $forceDailyReportModalToPop
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
+    public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey, bool $forceDailyReportModalToPop = false)
     {
         $this->cacheKey     = $cacheKey;
         $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
         $cacheTime          = Carbon::now()->endOfDay();
-        if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
+        if ($forceDailyReportModalToPop || $loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
             Cache::put($cacheKey, $cacheKey, $cacheTime);
             try {
                 return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
