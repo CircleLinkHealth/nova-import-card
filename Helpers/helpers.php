@@ -2101,6 +2101,21 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
         return false;
     }
 }
+// It will force daily report modal to pop up, ignoring if it is the first login or not.
+if ( ! function_exists('forceDailyReportModalToPopUp')) {
+    function forceDailyReportModalToPopUp(): bool
+    {
+        return AppConfig::pull('force_daily_report_modal_to_pop_up', false);
+    }
+}
+
+if ( ! function_exists('forceDailyReportModalToStopPopping')) {
+    function forceDailyReportModalToStopPopping(): bool
+    {
+        return AppConfig::pull('force_daily_report_modal_to_stop_popping', false);
+    }
+}
+
 
 if ( ! function_exists('sanitizeString')) {
     /**
