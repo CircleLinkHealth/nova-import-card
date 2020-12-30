@@ -5,7 +5,7 @@
 
 <?php
 $patientListDropdown = getPatientListDropdown(auth()->user());
-$hasAwv              = in_array('awv', $patientListDropdown);
+$hasAwv = in_array('awv', $patientListDropdown);
 ?>
 
 @section('content')
@@ -89,10 +89,10 @@ $hasAwv              = in_array('awv', $patientListDropdown);
         @include('core::partials.errors.errors')
     </div>
 
-        @if($showPatientsPendingApprovalBox)
-            <div class="container-fluid">
-                @include('partials.provider.patients-pending-approval')
-            </div>
+    @if($showPatientsPendingApprovalBox)
+        <div class="container-fluid">
+            @include('partials.provider.patients-pending-approval')
+        </div>
 
-        @endif
+    @endif
 @endsection
