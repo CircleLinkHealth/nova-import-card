@@ -4856,16 +4856,16 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.0",
+            "version": "v2.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7"
+                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
-                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
+                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
+                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
                 "shasum": ""
             },
             "require": {
@@ -4920,7 +4920,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-15T16:50:13+00:00"
+            "time": "2020-12-29T15:06:52+00:00"
         },
         {
             "name": "laravel/vapor-ui",
