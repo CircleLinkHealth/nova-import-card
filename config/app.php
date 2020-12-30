@@ -10,12 +10,15 @@ use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
+use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CommandsServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
+use CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider;
 use MichaelLedin\LaravelJob\LaravelJobServiceProvider;
 
 return [
@@ -206,10 +209,11 @@ return [
         BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
         DirectMailServiceProvider::class,
-        \CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider::class,
+        GoogleDriveServiceProvider::class,
 
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
-        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class,
+        TwilioIntegrationServiceProvider::class,
+        NurseInvoicesServiceProvider::class,
     ],
 
     /*
