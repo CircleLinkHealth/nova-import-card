@@ -406,13 +406,8 @@ class NurseCalendarService
                 : 'Surplus',
         ];
     }
-    
+
     /**
-     * @param int $userId
-     * @param Carbon $date
-     * @param string $cacheKey
-     *
-     * @param bool $forceDailyReportModalToPop
      * @return \Collection|\Illuminate\Support\Collection
      */
     public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey, bool $forceDailyReportModalToPop = false)
@@ -423,7 +418,7 @@ class NurseCalendarService
         if ($forceDailyReportModalToPop || $loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
             Cache::put($cacheKey, $cacheKey, $cacheTime);
             try {
-                return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
+                return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date, $forceDailyReportModalToPop);
             } catch (\Exception $e) {
                 Log::error("User for $userId not found. Cannot prepare yesterday's daily report.");
             }
@@ -474,7 +469,7 @@ class NurseCalendarService
      *
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function prepareDailyReportsForNurse($auth, $date = null)
+    public function prepareDailyReportsForNurse($auth, $date = null, bool $forceDailyReportToPopUp = false)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
 //        ! Cache::has($this->cacheKey) exists only when debug is ON.
@@ -502,7 +497,7 @@ class NurseCalendarService
             }
 
             if ( ! empty($report)) {
-                if (App::environment(['testing', 'review'])) {
+                if (App::environment(['testing', 'review']) || $forceDailyReportToPopUp) {
                     $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
                 }
 
