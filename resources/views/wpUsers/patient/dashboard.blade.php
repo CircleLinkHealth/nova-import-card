@@ -5,7 +5,7 @@
 
 <?php
 $patientListDropdown = getPatientListDropdown(auth()->user());
-$hasAwv = in_array('awv', $patientListDropdown);
+$hasAwv              = in_array('awv', $patientListDropdown);
 ?>
 
 @section('content')

@@ -9,7 +9,6 @@ namespace App\Providers;
 use App\Notifications\Channels\FaxChannel;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\ChunksEloquentBuilder;
-use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
 use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;

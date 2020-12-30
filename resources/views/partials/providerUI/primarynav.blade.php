@@ -1,8 +1,8 @@
 <?php
 
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-$patientListDropdown = getPatientListDropdown($user);
-$isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+$patientListDropdown     = getPatientListDropdown($user);
+$isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
