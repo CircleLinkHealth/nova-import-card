@@ -13,7 +13,7 @@ environments:
     - cpm-caller-revisionable-production
     scheduler: false
     mail: false
-    concurrency: 40
+    concurrency: 50
     warm: 10
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
