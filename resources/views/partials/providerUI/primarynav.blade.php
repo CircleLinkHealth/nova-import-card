@@ -1,8 +1,8 @@
 <?php
 
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-$patientListDropdown = getPatientListDropdown($user);
-$isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+$patientListDropdown     = getPatientListDropdown($user);
+$isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
@@ -325,13 +325,13 @@ $isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 
                         @include('partials.user-account-dropdown')
 
-                        @if(!empty($reportData))
-                            <calendar-daily-report style="color: black; letter-spacing: 1px;"
-                                                   :report-data="{{json_encode($reportData['data']['reportData'])}}"
-                                                   :report-date="{{json_encode(\Carbon\Carbon::parse($reportData['data']['date'])->toDateString())}}"
-                                                   :report-flags="{{json_encode($reportData['data']['reportFlags'])}}"
-                                                   :pop-up-now={{true}}></calendar-daily-report>
-                        @endif
+{{--                        @if(!empty($reportData))--}}
+{{--                            <calendar-daily-report style="color: black; letter-spacing: 1px;"--}}
+{{--                                                   :report-data="{{json_encode($reportData['data']['reportData'])}}"--}}
+{{--                                                   :report-date="{{json_encode(\Carbon\Carbon::parse($reportData['data']['date'])->toDateString())}}"--}}
+{{--                                                   :report-flags="{{json_encode($reportData['data']['reportFlags'])}}"--}}
+{{--                                                   :pop-up-now={{true}}></calendar-daily-report>--}}
+{{--                        @endif--}}
 
                     </ul>
                 </div>
