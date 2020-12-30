@@ -2344,4 +2344,3 @@ if ( ! function_exists('getCpmProviderUrl')) {
         return rtrim(config('core.apps.cpm-provider.url'), '/')."/$uri";
     }
 }
-
