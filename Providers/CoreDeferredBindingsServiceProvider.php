@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Core\Providers;
 
-use App\Formatters\WebixFormatter;
 use CircleLinkHealth\Core\Console\Commands\CreateAndSeedTestSuiteDB;
 use CircleLinkHealth\Core\Console\Commands\CreateMySqlDB;
 use CircleLinkHealth\Core\Console\Commands\CreateOpPreloadPreloadFilePlaceholder;
@@ -18,6 +17,7 @@ use CircleLinkHealth\Core\Console\Commands\ReviewAppPreDestroy;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
 use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
+use CircleLinkHealth\Core\Formatters\WebixFormatter;
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
 use CircleLinkHealth\Core\Traits\Notifiable as CircleLinkNotifiable;
