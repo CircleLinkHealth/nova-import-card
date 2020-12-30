@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\CpmAdmin\Http\Requests\StoreMedicationGroupMapRequest;
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
@@ -14,6 +15,8 @@ use Illuminate\Routing\Controller;
 
 class MedicationGroupsMapController extends Controller
 {
+    use ApiReturnHelpers;
+
     /**
      * Show the form for creating a new resource.
      *
