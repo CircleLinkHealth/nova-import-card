@@ -175,6 +175,7 @@ class CreateFakeDataForDailyReportCommand extends Command
             'projectedHoursLeftInMonth'      => 0,
             'avgHoursWorkedLast10Sessions'   => 0,
             'surplusShortfallHours'          => 0,
+            'totalVisitsCount'=> 6
         ])];
     }
 
