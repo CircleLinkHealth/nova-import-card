@@ -1011,7 +1011,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ee4eed4938f2835242b3045cc9bb8f9f47db6ce6"
+                "reference": "c8ec559644a79a0612f05d76c1c912a213c7812a"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1049,7 +1049,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-30T21:56:58+00:00"
+            "time": "2020-12-30T23:28:57+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1057,7 +1057,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "3316f91fee27f392bdcc082f63ab01cffa7d7603"
+                "reference": "08d99f8eeb7f5722c3d89b03d87e6c49dbef45a5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1084,7 +1084,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-30T18:01:46+00:00"
+            "time": "2020-12-30T23:30:50+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
