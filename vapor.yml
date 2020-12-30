@@ -4,13 +4,13 @@ environments:
   production:
     domain: caller.careplanmanager.com
     memory: 512
-    cache: cpm-production-vapor-cache
     network: cpm-production
     cli-memory: 512
     runtime: docker
     queues: false
     scheduler: false
     mail: false
+    concurrency: 40
     warm: 10
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
@@ -22,6 +22,7 @@ environments:
     runtime: docker
     queues: false
     scheduler: false
+    concurrency: 5
     mail: false
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'

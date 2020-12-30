@@ -215,6 +215,7 @@
       <path value="$PROJECT_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
       <path value="$PROJECT_DIR$/vendor/laravel/vapor-cli" />
       <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/vendor/wildbit/swiftmailer-postmark" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

@@ -223,16 +223,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.7",
+            "version": "3.171.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6c32f57bc381b46c783f70a20060fde1a95f4ab5"
+                "reference": "1f7f7c1db844f6c988c93008f902b352c7616da8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6c32f57bc381b46c783f70a20060fde1a95f4ab5",
-                "reference": "6c32f57bc381b46c783f70a20060fde1a95f4ab5",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1f7f7c1db844f6c988c93008f902b352c7616da8",
+                "reference": "1f7f7c1db844f6c988c93008f902b352c7616da8",
                 "shasum": ""
             },
             "require": {
@@ -304,7 +304,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-28T19:12:41+00:00"
+            "time": "2020-12-29T19:11:15+00:00"
         },
         {
             "name": "brick/math",
@@ -364,7 +364,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "f700dc584b9b11773b922f4caf300d7eb48f79f9"
+                "reference": "35089799388a65829e1e46d186f026375926b941"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -411,7 +411,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T04:23:46+00:00"
+            "time": "2020-12-29T14:32:04+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -500,7 +500,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "56f63e177396955b5379039af8595c687a45fdde"
+                "reference": "faebd9b4a1a7272e8f369078c5d2f6035f2ec39b"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -524,6 +524,7 @@
                 "nao-pon/flysystem-google-drive": "~1.1",
                 "sentry/sentry-laravel": "^2.3",
                 "spatie/laravel-view-models": "^1.3",
+                "wildbit/swiftmailer-postmark": "*",
                 "yajra/laravel-datatables-oracle": "~9.0"
             },
             "require-dev": {
@@ -550,7 +551,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T07:04:08+00:00"
+            "time": "2020-12-30T01:08:33+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -586,7 +587,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0f6f4c3cf76ea9cedae259b2e311f0e3008cd883"
+                "reference": "86bb77f6e62a7cfd6c49ba6f23dadada80966fc4"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -624,7 +625,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T08:19:41+00:00"
+            "time": "2020-12-29T14:32:05+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -632,7 +633,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "b42c7ff91683e494b350cabb8920c6ba46237838"
+                "reference": "226db7fcc1a764e8367ecdea915a0731b3281fb7"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -659,7 +660,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T09:15:06+00:00"
+            "time": "2020-12-29T14:32:04+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -667,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "c76c0d629ef3582082fb6598702742a3d74b061f"
+                "reference": "0850a457490ed4467891aee6ca63c2cbabd231ea"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0|^8.0",
@@ -706,7 +707,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-12-27T23:55:26+00:00"
+            "time": "2020-12-29T14:32:04+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -714,7 +715,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "8d32b6893d984110a55c4090e54bdfa998b501d4"
+                "reference": "59d0a130dcd3655b9655a390957edc8e2459c64b"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -731,7 +732,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T08:41:12+00:00"
+            "time": "2020-12-29T22:53:39+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -768,7 +769,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "e96041062a9a2508ebbd7475a37d6d63614520da"
+                "reference": "a38201266848dc467f031dba0683b501738bef1c"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -794,7 +795,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T19:48:35+00:00"
+            "time": "2020-12-29T14:32:04+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -1413,16 +1414,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.24",
+            "version": "2.1.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "ca90a3291eee1538cd48ff25163240695bd95448"
+                "reference": "0dbf5d78455d4d6a41d186da50adc1122ec066f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/ca90a3291eee1538cd48ff25163240695bd95448",
-                "reference": "ca90a3291eee1538cd48ff25163240695bd95448",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/0dbf5d78455d4d6a41d186da50adc1122ec066f4",
+                "reference": "0dbf5d78455d4d6a41d186da50adc1122ec066f4",
                 "shasum": ""
             },
             "require": {
@@ -1473,7 +1474,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-14T15:56:27+00:00"
+            "time": "2020-12-29T14:50:06+00:00"
         },
         {
             "name": "fakerphp/faker",
@@ -10499,6 +10500,46 @@
                 "validate"
             ],
             "time": "2020-07-08T17:02:28+00:00"
+        },
+        {
+            "name": "wildbit/swiftmailer-postmark",
+            "version": "3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wildbit/swiftmailer-postmark.git",
+                "reference": "44ccab7834de8b220d292647ecb2cb683f9962ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/44ccab7834de8b220d292647ecb2cb683f9962ee",
+                "reference": "44ccab7834de8b220d292647ecb2cb683f9962ee",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "swiftmailer/swiftmailer": "^6.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Postmark\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Postmark",
+                    "email": "support@postmarkapp.com"
+                }
+            ],
+            "description": "A Swiftmailer Transport for Postmark.",
+            "time": "2020-09-10T10:54:20+00:00"
         },
         {
             "name": "yajra/laravel-datatables-oracle",
