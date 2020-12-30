@@ -873,7 +873,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f7f9653b71b2880632246190627c21831801b662"
+                "reference": "faebd9b4a1a7272e8f369078c5d2f6035f2ec39b"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -924,7 +924,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T19:05:46+00:00"
+            "time": "2020-12-30T01:08:33+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
