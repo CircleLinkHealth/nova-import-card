@@ -48,6 +48,7 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
                     $providerId = optional($enrollee->revisionHistory->where('key', 'provider_id')
                                                                ->whereNull('new_value')
                                                                ->whereNotNull('old_value')
+                                                               ->sortByDesc('created_at')
                                                                ->first())->old_value;
 
                     if ( ! User::ofType('provider')->where('id', $providerId)->exists()) {
