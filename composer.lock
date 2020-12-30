@@ -504,12 +504,6 @@
                 "brick",
                 "math"
             ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/math",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-08-18T23:57:15+00:00"
         },
         {
@@ -555,12 +549,6 @@
                 "brick",
                 "currency",
                 "money"
-            ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/money",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-08-19T22:52:38+00:00"
         },
@@ -665,7 +653,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "35089799388a65829e1e46d186f026375926b941"
+                "reference": "aa7d1e804b06adbd577a2571db9025b92c449084"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -712,7 +700,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T14:32:04+00:00"
+            "time": "2020-12-30T08:21:21+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -873,7 +861,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "faebd9b4a1a7272e8f369078c5d2f6035f2ec39b"
+                "reference": "c22d8a88bc21d4030c4b54681658ed369d8cc5ee"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -924,7 +912,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-30T01:08:33+00:00"
+            "time": "2020-12-30T08:21:21+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -932,7 +920,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "34539a5e8c368ff9b2c552c0d1bd8d3f7cbd1d5e"
+                "reference": "31c3f22cde0837a1fa17c98eb0eac1a7a9c2b668"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -975,7 +963,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-29T22:53:39+00:00"
+            "time": "2020-12-30T08:21:21+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1011,7 +999,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "86bb77f6e62a7cfd6c49ba6f23dadada80966fc4"
+                "reference": "391f8f1abcded6fbe465f29831492cab586b652e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1049,7 +1037,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T14:32:05+00:00"
+            "time": "2020-12-30T08:21:21+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -2285,20 +2273,6 @@
                 "redis",
                 "xcache"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcache",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-07T18:54:01+00:00"
         },
         {
@@ -2482,20 +2456,6 @@
                 "event system",
                 "events"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fevent-manager",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T18:28:51+00:00"
         },
         {
@@ -2573,20 +2533,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T15:13:26+00:00"
         },
         {
@@ -2648,20 +2594,6 @@
                 "lexer",
                 "parser",
                 "php"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Flexer",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-05-25T17:44:05+00:00"
         },
@@ -4230,16 +4162,6 @@
                 "user agent",
                 "useragent"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/jenssegers",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/jenssegers/agent",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-13T08:05:20+00:00"
         },
         {
@@ -5183,16 +5105,16 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.0",
+            "version": "v2.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7"
+                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
-                "reference": "99222390d68d2bb1da20ac799ebc08d4b1dd4cc7",
+                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
+                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
                 "shasum": ""
             },
             "require": {
@@ -5247,7 +5169,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-15T16:50:13+00:00"
+            "time": "2020-12-29T15:06:52+00:00"
         },
         {
             "name": "laravel/vapor-ui",
@@ -5792,12 +5714,6 @@
                 "s3",
                 "sftp",
                 "storage"
-            ],
-            "funding": [
-                {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
-                }
             ],
             "time": "2020-08-23T07:39:11+00:00"
         },
@@ -8043,16 +7959,6 @@
                 "php",
                 "type"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/GrahamCampbell",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpoption/phpoption",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-20T17:29:33+00:00"
         },
         {
@@ -8838,12 +8744,6 @@
                 "queue",
                 "set"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
-            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -8924,12 +8824,6 @@
                 "guid",
                 "identifier",
                 "uuid"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/ramsey",
-                    "type": "github"
-                }
             ],
             "time": "2020-08-18T17:17:46+00:00"
         },
@@ -10065,20 +9959,6 @@
             ],
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-07T11:33:47+00:00"
         },
         {
@@ -10288,20 +10168,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-07T11:33:47+00:00"
         },
@@ -12067,20 +11933,6 @@
                 "interoperability",
                 "standards"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-07T11:33:47+00:00"
         },
         {
@@ -13195,44 +13047,44 @@
         },
         {
             "name": "barryvdh/laravel-ide-helper",
-            "version": "v2.8.2",
+            "version": "v2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "5515cabea39b9cf55f98980d0f269dc9d85cfcca"
+                "reference": "64a6b902583802c162cdccf7e76dc8619368bf1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/5515cabea39b9cf55f98980d0f269dc9d85cfcca",
-                "reference": "5515cabea39b9cf55f98980d0f269dc9d85cfcca",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/64a6b902583802c162cdccf7e76dc8619368bf1a",
+                "reference": "64a6b902583802c162cdccf7e76dc8619368bf1a",
                 "shasum": ""
             },
             "require": {
                 "barryvdh/reflection-docblock": "^2.0.6",
                 "composer/composer": "^1.6 || ^2",
-                "doctrine/dbal": "~2.3",
+                "doctrine/dbal": "^2.6 || ^3",
                 "ext-json": "*",
-                "illuminate/console": "^6 || ^7 || ^8",
-                "illuminate/filesystem": "^6 || ^7 || ^8",
-                "illuminate/support": "^6 || ^7 || ^8",
-                "php": ">=7.2",
+                "illuminate/console": "^8",
+                "illuminate/filesystem": "^8",
+                "illuminate/support": "^8",
+                "php": "^7.3 || ^8.0",
                 "phpdocumentor/type-resolver": "^1.1.0"
             },
             "require-dev": {
                 "ext-pdo_sqlite": "*",
                 "friendsofphp/php-cs-fixer": "^2",
-                "illuminate/config": "^6 || ^7 || ^8",
-                "illuminate/view": "^6 || ^7 || ^8",
-                "mockery/mockery": "^1.3.3",
-                "orchestra/testbench": "^4 || ^5 || ^6",
+                "illuminate/config": "^8",
+                "illuminate/view": "^8",
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^6",
                 "phpunit/phpunit": "^8.5 || ^9",
-                "spatie/phpunit-snapshot-assertions": "^1.4 || ^2.2 || ^3 || ^4",
+                "spatie/phpunit-snapshot-assertions": "^3 || ^4",
                 "vimeo/psalm": "^3.12"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "2.9-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -13273,7 +13125,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-06T08:55:05+00:00"
+            "time": "2020-12-29T10:11:05+00:00"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -17346,12 +17198,6 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "funding": [
-                {
-                    "url": "https://github.com/theseer",
-                    "type": "github"
-                }
-            ],
             "time": "2020-07-12T23:59:07+00:00"
         },
         {
