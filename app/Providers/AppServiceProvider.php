@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\ChunksEloquentBuilder;
@@ -206,11 +205,6 @@ class AppServiceProvider extends ServiceProvider
                         throw new \Exception('Channel Supplied from Patient AWV Care Docs Page is invalid.');
                 }
             }
-        );
-
-        $this->app->bind(
-            ReportFormatter::class,
-            WebixFormatter::class
         );
 
         $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);

@@ -6,8 +6,6 @@
 
 namespace App\Providers;
 
-use App\Formatters\WebixFormatter;
-use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +15,6 @@ class AppDeferredServiceProvider extends ServiceProvider implements DeferrablePr
     {
         return [
             DevelopmentServiceProvider::class,
-            ReportFormatter::class,
         ];
     }
 
@@ -29,10 +26,5 @@ class AppDeferredServiceProvider extends ServiceProvider implements DeferrablePr
         if ($this->app->environment('local')) {
             DevelopmentServiceProvider::class;
         }
-
-        $this->app->bind(
-            ReportFormatter::class,
-            WebixFormatter::class
-        );
     }
 }
