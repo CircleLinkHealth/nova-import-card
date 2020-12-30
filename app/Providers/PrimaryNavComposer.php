@@ -34,8 +34,9 @@ class PrimaryNavComposer extends ServiceProvider
 
                 $cacheKey = "daily-report-for-{$user->id}-{$date->toDateString()}";
 
-                $forceDailyReportModalToPop = forceDailyReportModalToPopUp();
-
+                $forceDailyReportModalToPopForUserId = forceDailyReportModalToPopUpFor();
+                $forceDailyReportModalToPop = ! is_null($forceDailyReportModalToPopForUserId) && $forceDailyReportModalToPopForUserId === $user->id;
+                
                 if ($forceDailyReportModalToPop) {
                     \Cache::forget($cacheKey);
                 }
@@ -44,7 +45,7 @@ class PrimaryNavComposer extends ServiceProvider
                     $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date, $cacheKey, $forceDailyReportModalToPop)->first();
                 }
 
-                $shouldPopDailyMetricsReport = ! forceDailyReportModalToStopPopping();
+                $stopPoppingDailyReportForThisUser = forceDailyReportModalToStopPoppingFor() === $user->id;
             }
 
             $view->with(compact(
@@ -52,7 +53,7 @@ class PrimaryNavComposer extends ServiceProvider
                 'userIsCareCoach',
                 'reportData',
                 'hasNotCurrentWeekWindows',
-                'shouldPopDailyMetricsReport'
+                'stopPoppingDailyReportForThisUser'
             ));
         });
     }
