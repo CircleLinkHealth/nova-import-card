@@ -103,8 +103,8 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue, Dire
     public function toMail(User $notifiable)
     {
         $mailable = new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
-        Log::debug(CarePlanApprovalReminder::class." mailable: ". $mailable->mailer);
-        
+        Log::debug(CarePlanApprovalReminder::class.' mailable: '.$mailable->mailer);
+
         return $mailable;
     }
 
