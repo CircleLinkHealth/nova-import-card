@@ -932,7 +932,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "31c3f22cde0837a1fa17c98eb0eac1a7a9c2b668"
+                "reference": "e632a870ab1a2eb02a4bc91925a7bb6bbc1e91e6"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -975,7 +975,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-30T08:21:21+00:00"
+            "time": "2020-12-30T15:36:43+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1057,7 +1057,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "226db7fcc1a764e8367ecdea915a0731b3281fb7"
+                "reference": "fb8ad7160548d0f14644ef717bb575ecf83f00a7"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1084,7 +1084,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T14:32:04+00:00"
+            "time": "2020-12-30T17:36:21+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -5000,16 +5000,16 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v8.5.1",
+            "version": "v8.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "b8b8a35cc3ac82cbc07dfa83955492d2ef6e237b"
+                "reference": "ece6758b82c51ff7f5e011f243a7c6b33711a847"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/b8b8a35cc3ac82cbc07dfa83955492d2ef6e237b",
-                "reference": "b8b8a35cc3ac82cbc07dfa83955492d2ef6e237b",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/ece6758b82c51ff7f5e011f243a7c6b33711a847",
+                "reference": "ece6758b82c51ff7f5e011f243a7c6b33711a847",
                 "shasum": ""
             },
             "require": {
@@ -5061,7 +5061,7 @@
                 "laravel",
                 "search"
             ],
-            "time": "2020-12-22T17:29:20+00:00"
+            "time": "2020-12-30T15:52:14+00:00"
         },
         {
             "name": "laravel/tinker",
