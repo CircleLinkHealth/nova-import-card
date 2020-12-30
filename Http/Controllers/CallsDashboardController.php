@@ -44,8 +44,8 @@ class CallsDashboardController extends Controller
                 return view('cpm-admin::admin.CallsDashboard.edit', compact(['note', 'call']));
             }
             $nurses = User::ofType('care-center')
-                          ->has('nurseInfo')
-                          ->get();
+                ->has('nurseInfo')
+                ->get();
 
             return view('cpm-admin::admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
@@ -166,8 +166,9 @@ class CallsDashboardController extends Controller
 
     private function modifyNurseCareRateLogs(User $nurse, Note $note, string $oldStatus, string $newStatus)
     {
-        if (is_null($nurse->nurseInfo)){
+        if (is_null($nurse->nurseInfo)) {
             Log::critical("User (ID:$nurse->id), author of note (ID:$note->id) does not have nurseInfo. Cannot modify nurse care rate logs or generate nurse invoices.");
+
             return;
         }
 
