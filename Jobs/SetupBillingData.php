@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 class SetupBillingData extends Job
 {

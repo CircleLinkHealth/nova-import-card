@@ -24,7 +24,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements ShouldQueue,ShouldBeEncrypted
+class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

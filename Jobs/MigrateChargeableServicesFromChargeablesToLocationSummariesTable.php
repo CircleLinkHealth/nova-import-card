@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends Job
 {
