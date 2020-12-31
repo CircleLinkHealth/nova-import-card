@@ -24,7 +24,6 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         uses: php-actions/composer@v5
         env:
-          APP_KEY: base64:QI6rk5vJfGAd29zEx1n/9QoJndxLHLR9lbbnvgyXtYc=
           COMPOSER_MIRROR_PATH_REPOS: 1
         with:
           version: 1
@@ -32,7 +31,7 @@ jobs:
           php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath
           progress: yes
           dev: no
-          args: --classmap-authoritative
+          args: --classmap-authoritative --no-scripts
 
       - name: Setup PHP - need this to run vapor deploy
         if: ${{ env.CI_SKIP == 'false' }}
