@@ -56,7 +56,7 @@ jobs:
         run: echo Job Status ${{ job.status }}
 
       - name: Notify Slack - Success
-        if: ${{ env.CI_SKIP == 'false' && job.status == 'success'  }}
+        if: ${{ env.CI_SKIP == 'false' && success()  }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -68,7 +68,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Failure
-        if: ${{ env.CI_SKIP == 'false' && job.status == 'failure'  }}
+        if: ${{ env.CI_SKIP == 'false' && failure()  }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
-        if: ${{ env.CI_SKIP == 'false' && job.status == 'failure'  }}
+        if: ${{ env.CI_SKIP == 'false' && failure()  }}
         with:
           name: Logs
           path: ./storage/logs
