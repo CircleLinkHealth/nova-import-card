@@ -31,7 +31,7 @@ class CreateFakeDataForDailyReportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'create:dailyReportFakeData {nurseUserId? : User ID of nurse to generate fake data.} ';
+    protected $signature = 'create:dailyReportFakeData {nurseUserId? : User ID of nurse to generate fake data.}';
     //    This should only be used for testing ROAD 151. It does not produce any data that make sense
     /**
      * @var NurseCalendarService
@@ -83,10 +83,28 @@ class CreateFakeDataForDailyReportCommand extends Command
             $this->createWorkScheduleData($user);
         }
 
-        $dataOnS3 = $this->nursesPerformanceReportService->showDataFromS3(Carbon::yesterday());
+        $yesterday = Carbon::yesterday();
+        $dataOnS3  = $this->nursesPerformanceReportService->showDataFromS3($yesterday);
 
-        if (empty($dataOnS3->first())) {
-            $this->createDummyReportForYesterday($user);
+        if (App::environment('production')) {
+            if (empty($dataOnS3)) {
+                $dateString = $yesterday->toDateString();
+                $this->error("Data on S3 not found for $dateString");
+
+                return;
+            }
+        }
+
+        if (empty($dataOnS3) && App::environment('staging')) {
+            $this->createDummyReportForYesterday($user, $yesterday);
+
+            return;
+        }
+
+        $s3DataForUser = $dataOnS3->where('nurse_id', $user->id)->first();
+
+        if (empty($s3DataForUser)) {
+            $this->createDummyReportForYesterday($user, $yesterday);
         }
     }
 
@@ -121,7 +139,7 @@ class CreateFakeDataForDailyReportCommand extends Command
         $this->info("Data Generated Successfully For User $userId");
     }
 
-    private function createDummyReportForYesterday(User $user)
+    private function createDummyReportForYesterday(User $user, Carbon $yesterday)
     {
         $nextUpcomingWindow = $user->nurseInfo->firstWindowAfter(Carbon::now());
 
@@ -134,7 +152,7 @@ class CreateFakeDataForDailyReportCommand extends Command
 
         $dataToUpload = $this->createFakeData($user, $nextUpcomingWindow, $nextUpcomingWindowLabel ?? null);
 
-        $date     = Carbon::yesterday()->startOfDay();
+        $date     = $yesterday->copy()->startOfDay();
         $fileName = "nurses-and-states-daily-report-{$date->toDateString()}.json";
         $path     = storage_path($fileName);
         $saved    = file_put_contents($path, json_encode(collect($dataToUpload)));
@@ -175,6 +193,7 @@ class CreateFakeDataForDailyReportCommand extends Command
             'projectedHoursLeftInMonth'      => 0,
             'avgHoursWorkedLast10Sessions'   => 0,
             'surplusShortfallHours'          => 0,
+            'totalVisitsCount'               => 6,
         ])];
     }
 
