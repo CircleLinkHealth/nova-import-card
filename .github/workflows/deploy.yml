@@ -24,7 +24,7 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         uses: php-actions/composer@v5
         env:
-          APP_KEY: dummy
+          APP_KEY: base64:QI6rk5vJfGAd29zEx1n/9QoJndxLHLR9lbbnvgyXtYc=
           COMPOSER_MIRROR_PATH_REPOS: 1
         with:
           version: 1
