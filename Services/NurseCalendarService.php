@@ -410,15 +410,15 @@ class NurseCalendarService
     /**
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey, bool $forceDailyReportModalToPop = false)
+    public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
     {
         $this->cacheKey     = $cacheKey;
         $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
         $cacheTime          = Carbon::now()->endOfDay();
-        if ($forceDailyReportModalToPop || $loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
+        if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
             Cache::put($cacheKey, $cacheKey, $cacheTime);
             try {
-                return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date, $forceDailyReportModalToPop);
+                return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
             } catch (\Exception $e) {
                 Log::error("User for $userId not found. Cannot prepare yesterday's daily report.");
             }
@@ -469,7 +469,7 @@ class NurseCalendarService
      *
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function prepareDailyReportsForNurse($auth, $date = null, bool $forceDailyReportToPopUp = false)
+    public function prepareDailyReportsForNurse($auth, $date = null)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
 //        ! Cache::has($this->cacheKey) exists only when debug is ON.
@@ -497,10 +497,6 @@ class NurseCalendarService
             }
 
             if ( ! empty($report)) {
-                if (App::environment(['testing', 'review']) || $forceDailyReportToPopUp) {
-                    $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
-                }
-
                 if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
                     $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
                 }
