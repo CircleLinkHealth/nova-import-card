@@ -4,7 +4,7 @@ on:
   pull_request:
 jobs:
   deploy:
-    name: Deploy to Vapor
+    name: Vaporize
     timeout-minutes: 30
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/laravel-8.0' || github.ref == 'refs/heads/master'
@@ -15,13 +15,6 @@ jobs:
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup PHP with no coverage driver
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          tools: composer:v1
-          extensions: redis, zip, gd, exif, imagick, opcache
-          coverage: none
       - name: Check if commit message has [ci skip]
         uses: mstachniuk/ci-skip@v1
         with:
@@ -32,10 +25,19 @@ jobs:
           COMPOSER_MIRROR_PATH_REPOS: 1
         with:
           version: 1
+          php_version: 7.4
+          php_extensions: redis zip gd exif imagick opcache
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
-      - name: Vaporize
+      - name: Setup PHP - need this to run vapor deploy
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v1
+          extensions: redis, zip, gd, exif, imagick, opcache
+          coverage: none
+      - name: Deploy
         run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
           APP_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
