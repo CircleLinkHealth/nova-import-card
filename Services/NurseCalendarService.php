@@ -408,8 +408,6 @@ class NurseCalendarService
     }
 
     /**
-     * @param $cacheKey
-     *
      * @return \Collection|\Illuminate\Support\Collection
      */
     public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
@@ -499,10 +497,6 @@ class NurseCalendarService
             }
 
             if ( ! empty($report)) {
-                if (App::environment(['testing', 'review'])) {
-                    $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
-                }
-
                 if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
                     $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
                 }
