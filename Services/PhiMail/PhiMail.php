@@ -191,25 +191,6 @@ class PhiMail implements DirectMail
         }
     }
 
-    /**
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \Exception
-     */
-    private function fetchKeyIfNotExists(string $certFileName, string $certPath)
-    {
-        $storage = Storage::disk('secrets');
-
-        if ( ! is_readable($certPath)) {
-            $contents = $storage->get($certFileName);
-
-            $written = Storage::disk('storage')->put(resolvePath($certPath), $contents);
-
-            if (false === $written) {
-                throw new \Exception("Could not write `$certFileName` to `$certPath`.");
-            }
-        }
-    }
-
     private function handleException(\Exception $e)
     {
         $message     = $e->getMessage()."\n".$e->getFile()."\n".$e->getLine();
@@ -277,15 +258,10 @@ class PhiMail implements DirectMail
      */
     private function initPhiMailConnection($dmUserAddress = null)
     {
-        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('core.services.emr-direct.user');
-        $phiMailPass        = config('core.services.emr-direct.password');
-        $clientCertPath     = base_path(config('core.services.emr-direct.conc-keys-pem-path'));
-        $serverCertPath     = base_path(config('core.services.emr-direct.server-cert-pem-path'));
-        $clientCertFileName = config('core.services.emr-direct.client-cert-filename');
-        $serverCertFileName = config('core.services.emr-direct.server-cert-filename');
-
-        $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
-        $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
+        $phiMailUser    = $dmUserAddress ? $dmUserAddress : config('core.services.emr-direct.user');
+        $phiMailPass    = config('core.services.emr-direct.password');
+        $clientCertPath = base_path('emr-direct-client-cert.pem');
+        $serverCertPath = base_path('emr-direct-server-cert.pem');
 
         $storage = Storage::drive('storage');
 
