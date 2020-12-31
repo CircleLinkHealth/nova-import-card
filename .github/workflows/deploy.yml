@@ -52,6 +52,9 @@ jobs:
           APP_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
 
+      - name: Echo Job Status
+        run: echo Job Status ${{ job.status }}
+
       - name: Notify Slack - Success
         if: ${{ env.CI_SKIP == 'false' && job.status == 'success'  }}
         uses: rtCamp/action-slack-notify@v2
