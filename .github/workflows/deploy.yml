@@ -26,7 +26,7 @@ jobs:
         with:
           version: 1
           php_version: 7.4
-          php_extensions: redis
+          php_extensions: redis zend-opcache
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
