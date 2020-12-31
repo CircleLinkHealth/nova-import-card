@@ -16,9 +16,6 @@ jobs:
         with:
           fail-fast: true
 
-      - name: Validate Composer
-        run: composer validate
-
       - name: Install Composer dependencies
         uses: php-actions/composer@v5
         env:
@@ -30,6 +27,13 @@ jobs:
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
+
+      - name: Setup PHP with no coverage driver
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: redis, zip, gd, exif, imagick, opcache
+          coverage: none
 
       - name: Vaporize
         run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} --commit="${{ github.sha }}"
