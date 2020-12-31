@@ -2101,24 +2101,25 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
         return false;
     }
 }
-// It will force daily report modal to pop up by deleting the cache key for given user, ignoring if it is the first login or not.
-if ( ! function_exists('forceDailyReportModalToPopUpFor')) {
-    function forceDailyReportModalToPopUpFor()
-    {
-        return intval(AppConfig::pull('force_daily_report_modal_to_pop_up_for', null));
-    }
-}
 
-if ( ! function_exists('forceDailyReportModalToStopPoppingFor')) {
-    function forceDailyReportModalToStopPoppingFor()
+if ( ! function_exists('enableDailyReportToPopUp')) {
+    function enableDailyReportToPopUp(int $userId): bool
     {
-        $value = AppConfig::pull('force_daily_report_modal_to_stop_popping_for', null);
+        $value = AppConfig::pull('enable_daily_report_to_pop_up', null);
 
-        if ('all_nurses' === $value) {
-            return auth()->id();
+        if ($value === (string) $userId) {
+            return true;
         }
 
-        return intval($value);
+        if ('1' === $value || '0' === $value) {
+            return boolval($value);
+        }
+    
+        if ('true' === $value || 'false' === $value) {
+            return boolval($value);
+        }
+
+        return true;
     }
 }
 
