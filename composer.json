@@ -33,7 +33,7 @@
     "lcobucci/jwt": "^4.0",
     "maatwebsite/excel": "^3.1",
     "laravelcollective/html": "^6.2",
-    "laravel/vapor-core": "dev-clh-2.0",
+    "laravel/vapor-core": "dev-clh",
     "darkghosthunter/laraload": "dev-master",
     "friendsofcat/laravel-feature-flag": "^3.2",
     "spatie/laravel-view-models": "^1.3",
