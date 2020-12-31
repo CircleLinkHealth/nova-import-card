@@ -20,6 +20,7 @@ use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
+use CircleLinkHealth\Eligibility\Console\RestoreEnrolleeProvidersFromRevisions;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
@@ -56,6 +57,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
             SendSelfEnrollmentReminders::class,
+            RestoreEnrolleeProvidersFromRevisions::class
         ];
     }
 
@@ -81,6 +83,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
             SendSelfEnrollmentReminders::class,
+            RestoreEnrolleeProvidersFromRevisions::class
         ]);
 
         $this->app->singleton(AthenaApiImplementation::class, function () {
