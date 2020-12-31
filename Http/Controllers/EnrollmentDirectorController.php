@@ -61,8 +61,8 @@ class EnrollmentDirectorController extends Controller
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
         $careAmbassadorUser = User::with('careAmbassador')
-            ->has('careAmbassador')
-            ->findOrFail($request->input('ambassadorId'));
+                                  ->has('careAmbassador')
+                                  ->findOrFail($request->input('ambassadorId'));
 
         $enrolleeIds = $request->input('enrolleeIds');
 
@@ -70,9 +70,9 @@ class EnrollmentDirectorController extends Controller
 
         if ( ! $careAmbassadorUser->careAmbassador->speaks_spanish) {
             $spanishSpeakingEnrollees = Enrollee::whereIn('id', $enrolleeIds)
-                ->where('lang', 'like', '%es%')
-                ->orWhere('lang', 'like', '%sp%')
-                ->pluck('id');
+                                                ->where('lang', 'like', '%es%')
+                                                ->orWhere('lang', 'like', '%sp%')
+                                                ->pluck('id');
 
             foreach ($spanishSpeakingEnrollees as $id) {
                 $key = array_search($id, $enrolleeIds);
@@ -83,11 +83,11 @@ class EnrollmentDirectorController extends Controller
             }
         }
 
-        Enrollee::whereIn('id', $enrolleeIds)
-            ->update([
-                'status'                  => Enrollee::TO_CALL,
-                'care_ambassador_user_id' => $request->input('ambassadorId'),
-            ]);
+        $updated = Enrollee::whereIn('id', $enrolleeIds)
+                           ->update([
+                               'status'                  => Enrollee::TO_CALL,
+                               'care_ambassador_user_id' => $careAmbassadorUser->id,
+                           ]);
 
         $message                  = null;
         $unassignedEnrolleesExist = ! empty($notAssigned);
@@ -97,6 +97,8 @@ class EnrollmentDirectorController extends Controller
         }
 
         return response()->json([
+            'enrollees_updated'    => $updated,
+            'enrollee_ids_updated' => $enrolleeIds,
             'enrollees_unassigned' => ! empty($notAssigned),
             'message'              => $message,
         ], 200);
@@ -107,24 +109,24 @@ class EnrollmentDirectorController extends Controller
         $phones = $request->input('phones');
 
         Enrollee::where('id', $request->input('id'))
-            ->update([
-                'first_name'          => $request->input('first_name'),
-                'last_name'           => $request->input('last_name'),
-                'lang'                => $request->input('lang'),
-                'status'              => $request->input('status'),
-                'address'             => $request->input('address'),
-                'address_2'           => $request->input('address_2'),
-                'primary_phone'       => $phones['primary_phone'],
-                'home_phone'          => $phones['home_phone'],
-                'other_phone'         => $phones['other_phone'] ?? $phones['work_phone'] ?? null,
-                'cell_phone'          => $phones['cell_phone'],
-                'primary_insurance'   => $request->input('primary_insurance'),
-                'secondary_insurance' => $request->input('secondary_insurance'),
-                'tertiary_insurance'  => $request->input('tertiary_insurance'),
-                'city'                => $request->input('city'),
-                'state'               => $request->input('state'),
-                'zip'                 => $request->input('zip'),
-            ]);
+                ->update([
+                    'first_name'          => $request->input('first_name'),
+                    'last_name'           => $request->input('last_name'),
+                    'lang'                => $request->input('lang'),
+                    'status'              => $request->input('status'),
+                    'address'             => $request->input('address'),
+                    'address_2'           => $request->input('address_2'),
+                    'primary_phone'       => $phones['primary_phone'],
+                    'home_phone'          => $phones['home_phone'],
+                    'other_phone'         => $phones['other_phone'] ?? $phones['work_phone'] ?? null,
+                    'cell_phone'          => $phones['cell_phone'],
+                    'primary_insurance'   => $request->input('primary_insurance'),
+                    'secondary_insurance' => $request->input('secondary_insurance'),
+                    'tertiary_insurance'  => $request->input('tertiary_insurance'),
+                    'city'                => $request->input('city'),
+                    'state'               => $request->input('state'),
+                    'zip'                 => $request->input('zip'),
+                ]);
 
         return response()->json([], 200);
     }
@@ -132,10 +134,10 @@ class EnrollmentDirectorController extends Controller
     public function getCareAmbassadors()
     {
         $ambassadors = User::ofType('care-ambassador')
-            ->select(['id', 'display_name'])
-            ->without(['roles', 'perms'])
-            ->get()
-            ->toArray();
+                           ->select(['id', 'display_name'])
+                           ->without(['roles', 'perms'])
+                           ->get()
+                           ->toArray();
 
         return response()->json($ambassadors);
     }
@@ -156,7 +158,7 @@ class EnrollmentDirectorController extends Controller
         $count = $data->count();
 
         $data->limit($limit)
-            ->skip($limit * ($page - 1));
+             ->skip($limit * ($page - 1));
 
         $now = Carbon::now()->toDateString();
 
@@ -226,8 +228,8 @@ END ASC, attempt_count ASC");
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
                 $q->where('id', $term)
-                    ->orWhere('first_name', 'like', "%${term}%")
-                    ->orWhere('last_name', 'like', "%${term}%");
+                  ->orWhere('first_name', 'like', "%${term}%")
+                  ->orWhere('last_name', 'like', "%${term}%");
             });
         }
 
@@ -238,7 +240,7 @@ END ASC, attempt_count ASC");
 
                 $item = [
                     'id'       => $e->id,
-                    'name'     => $e->first_name.' '.$e->last_name,
+                    'name'     => $e->first_name . ' ' . $e->last_name,
                     'mrn'      => $e->mrn,
                     'program'  => optional($e->practice)->display_name ?? '',
                     'provider' => optional($e->provider)->getFullName() ?? '',
