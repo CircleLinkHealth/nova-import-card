@@ -11,16 +11,18 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+
+      - name: Check if commit message has [ci skip]
+        uses: mstachniuk/ci-skip@v1
+
       - name: Turnstyle - run workflow only once
+        if: ${{ env.CI_SKIP == 'false' }}
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check if commit message has [ci skip]
-        uses: mstachniuk/ci-skip@v1
-        with:
-          fail-fast: true
-          exit-code: 0
+
       - name: Install Composer dependencies
+        if: ${{ env.CI_SKIP == 'false' }}
         uses: php-actions/composer@v5
         env:
           COMPOSER_MIRROR_PATH_REPOS: 1
@@ -31,20 +33,25 @@ jobs:
           progress: yes
           dev: no
           args: --classmap-authoritative
+
       - name: Setup PHP - need this to run vapor deploy
+        if: ${{ env.CI_SKIP == 'false' }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
           tools: composer:v1
           extensions: redis, zip, gd, exif, imagick, opcache
           coverage: none
+
       - name: Deploy
+        if: ${{ env.CI_SKIP == 'false' }}
         run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
           APP_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
+
       - name: Notify Slack - Success
-        if: success()
+        if: ${{ env.CI_SKIP == 'false' && job.status == 'success'  }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -54,8 +61,9 @@ jobs:
           SLACK_MESSAGE: Workflow - ${{ github.workflow }}
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':suspect:'
+
       - name: Notify Slack - Failure
-        if: failure()
+        if: ${{ env.CI_SKIP == 'false' && job.status == 'failure'  }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -64,10 +72,11 @@ jobs:
           SLACK_TITLE: Deployment failed for ${{ github.repository }}
           SLACK_MESSAGE: Workflow - ${{ github.workflow }}
           SLACK_USERNAME: kokos
-          SLACK_ICON_EMOJI: ':bomb:'
+          SLACK_ICON_EMOJI: ':scream_cat:'
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
-        if: failure()
+        if: ${{ env.CI_SKIP == 'false' && job.status == 'failure'  }}
         with:
           name: Logs
           path: ./storage/logs
