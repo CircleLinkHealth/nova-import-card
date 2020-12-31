@@ -26,11 +26,12 @@ jobs:
         with:
           version: 1
           php_version: 7.4
+          php_extensions: redis
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
 
-      - name: Deploy code
+      - name: Vaporize
         run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
           APP_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
