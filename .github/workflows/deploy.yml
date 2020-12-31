@@ -1,7 +1,6 @@
 name: Vaporize
 on:
   push:
-  pull_request:
 jobs:
   deploy:
     name: Vaporize
@@ -25,6 +24,7 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         uses: php-actions/composer@v5
         env:
+          APP_KEY: dummy
           COMPOSER_MIRROR_PATH_REPOS: 1
         with:
           version: 1
