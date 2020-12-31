@@ -121,11 +121,16 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/vapor-core.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
     }
   ],
   "require": {
     "php": "^7.4",
+    "laravel/vapor-core": "dev-clh",
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-imagick": "*",
@@ -143,7 +148,7 @@
     "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
     "circlelinkhealth/condition-code-lookup-module": "1.1.7",
-    "circlelinkhealth/core-module": "dev-laravel-8.0",
+    "circlelinkhealth/core-module": "dev-s3envvars",
     "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
     "circlelinkhealth/cpm-migrations-module": "dev-laravel-8",
     "circlelinkhealth/customer-module": "dev-laravel-8",

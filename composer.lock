@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39c797e6b2c415ad84cdc8dd2b77e5fc",
+    "content-hash": "131a3e7c1e55831b63b7327fc119df02",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -842,11 +842,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-laravel-8.0",
+            "version": "dev-s3envvars",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "22877ec938407a99aa3b997faf921cd94bce5fc4"
+                "reference": "c8a7635125a3586d7c52a7a0a049f071c52c85e0"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -861,7 +861,6 @@
                 "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/tinker": "^2.0",
-                "laravel/vapor-core": "^2.9",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.2",
                 "lcobucci/jwt": "^4.0",
@@ -897,7 +896,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-31T14:04:51+00:00"
+            "time": "2020-12-31T17:08:35+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -905,7 +904,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "e632a870ab1a2eb02a4bc91925a7bb6bbc1e91e6"
+                "reference": "c7ed97ad073ee16ff54b3f6a056517ca120f5766"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -948,7 +947,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-30T15:36:43+00:00"
+            "time": "2020-12-31T15:57:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -984,12 +983,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5b834c9b4db991b13353ec8bafbc50ef076c012f"
+                "reference": "22cea8d1dbd210f91dd222d1ab96a31d159f3811"
             },
             "require": {
-                "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
+                "circlelinkhealth/ccm-billing-module": "*",
                 "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
-                "circlelinkhealth/core-module": "dev-laravel-8.0",
+                "circlelinkhealth/core-module": "*",
                 "circlelinkhealth/twofa-module": "*",
                 "fico7489/laravel-pivot": "^3.0",
                 "jenssegers/agent": "^2.5",
@@ -1022,7 +1021,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-31T14:04:51+00:00"
+            "time": "2020-12-31T17:14:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1286,7 +1285,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "59d0a130dcd3655b9655a390957edc8e2459c64b"
+                "reference": "bc943cd983f9774bdf780921dbdf6f4402bad56c"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1303,7 +1302,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T22:53:39+00:00"
+            "time": "2020-12-31T16:23:37+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -4105,11 +4104,17 @@
         },
         {
             "name": "joshbrw/laravel-module-installer",
-            "version": "v0.1.5",
+            "version": "v0.1.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
-                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
+                "url": "https://github.com/joshbrw/laravel-module-installer.git",
+                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joshbrw/laravel-module-installer/zipball/06bf72e947c313ba7d84c498fb6947a00ba313ef",
+                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef",
+                "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.1",
@@ -4129,10 +4134,11 @@
                     "Joshbrw\\LaravelModuleInstaller\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "time": "2020-01-16T16:56:46+00:00"
+            "time": "2017-11-08T10:06:42+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
@@ -4849,17 +4855,11 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.1",
+            "version": "dev-clh",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
-                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/vapor-core.git",
+                "reference": "1312539e7a365c1ac34386f34d152ffab5521ba9"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -4897,7 +4897,16 @@
                     "Laravel\\Vapor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\Vapor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -4913,7 +4922,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-29T15:06:52+00:00"
+            "time": "2020-12-31T16:47:24+00:00"
         },
         {
             "name": "laravel/vapor-ui",
@@ -17610,6 +17619,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "laravel/vapor-core": 20,
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
