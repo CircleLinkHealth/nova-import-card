@@ -33,4 +33,3 @@ CLHPackages/
 .vapor/
 .env.test
 lsp/log/*
-.env.staging
