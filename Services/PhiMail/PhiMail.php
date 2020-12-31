@@ -263,8 +263,6 @@ class PhiMail implements DirectMail
         $clientCertPath = base_path('emr-direct-client-cert.pem');
         $serverCertPath = base_path('emr-direct-server-cert.pem');
 
-        $storage = Storage::drive('storage');
-
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
         // PEM data concatenated into one file:
@@ -273,13 +271,13 @@ class PhiMail implements DirectMail
         //   <intermediate_CA_certificate.pem>
         //   <root_CA_certificate.pem>
         PhiMailConnector::setClientCertificate(
-            $storage->path($clientCertPath),
+            $clientCertPath,
             config('core.services.emr-direct.pass-phrase')
         );
 
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
-        PhiMailConnector::setServerCertificate($storage->path($serverCertPath));
+        PhiMailConnector::setServerCertificate($serverCertPath);
 
         $phiMailServer = config('core.services.emr-direct.mail-server');
         $phiMailPort   = config('core.services.emr-direct.port');
