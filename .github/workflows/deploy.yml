@@ -19,6 +19,7 @@ jobs:
         uses: mstachniuk/ci-skip@v1
         with:
           fail-fast: true
+          exit-code: 0
       - name: Install Composer dependencies
         uses: php-actions/composer@v5
         env:
