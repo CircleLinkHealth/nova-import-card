@@ -25,6 +25,7 @@ class PrimaryNavComposer extends ServiceProvider
             $userIsCareCoach = $user->isCareCoach();
             $reportData = [];
             $hasNotCurrentWeekWindows = false;
+            $enableDailyReportPopUp = false;
 
             if ($userIsCareCoach) {
                 $date = Carbon::yesterday();
@@ -33,19 +34,11 @@ class PrimaryNavComposer extends ServiceProvider
                 });
 
                 $cacheKey = "daily-report-for-{$user->id}-{$date->toDateString()}";
+                $enableDailyReportPopUp = enableDailyReportToPopUp($user->id);
 
-                $forceDailyReportModalToPopForUserId = forceDailyReportModalToPopUpFor();
-                $forceDailyReportModalToPop = ! is_null($forceDailyReportModalToPopForUserId) && $forceDailyReportModalToPopForUserId === $user->id;
-                
-                if ($forceDailyReportModalToPop) {
-                    \Cache::forget($cacheKey);
+                if ($enableDailyReportPopUp && ! \Cache::has($cacheKey)) {
+                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date, $cacheKey)->first();
                 }
-
-                if ( ! \Cache::has($cacheKey)) {
-                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date, $cacheKey, $forceDailyReportModalToPop)->first();
-                }
-
-                $stopPoppingDailyReportForThisUser = forceDailyReportModalToStopPoppingFor() === $user->id;
             }
 
             $view->with(compact(
@@ -53,7 +46,7 @@ class PrimaryNavComposer extends ServiceProvider
                 'userIsCareCoach',
                 'reportData',
                 'hasNotCurrentWeekWindows',
-                'stopPoppingDailyReportForThisUser'
+                'enableDailyReportPopUp'
             ));
         });
     }
