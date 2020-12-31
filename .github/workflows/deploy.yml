@@ -48,9 +48,11 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
-          SLACK_COLOR: '#3278BD'
-          SLACK_TITLE: Deployment failed for ${{ github.repository }}
-          SLACK_MESSAGE: Action ID ${{ github.action }}
+          SLACK_COLOR: '#39C16C'
+          SLACK_TITLE: Deployment successful for ${{ github.repository }}
+          SLACK_MESSAGE: Workflow - ${{ github.workflow }}
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':awwyeah:'
       - name: Notify Slack - Failure
         if: failure()
         uses: rtCamp/action-slack-notify@v2
@@ -59,7 +61,9 @@ jobs:
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#ff0033'
           SLACK_TITLE: Deployment failed for ${{ github.repository }}
-          SLACK_MESSAGE: Action ID ${{ github.action }}
+          SLACK_MESSAGE: Workflow - ${{ github.workflow }}
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':bomb:'
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         if: failure()
