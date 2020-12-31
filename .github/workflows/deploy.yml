@@ -1,4 +1,4 @@
-name: Deploy to Vapor
+name: Vaporize
 on:
   push:
   pull_request:
