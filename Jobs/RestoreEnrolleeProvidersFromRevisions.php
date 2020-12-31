@@ -35,7 +35,7 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
 
     public function handle()
     {
-        Log::info("Restoring providers for enrollees that mistakenly got their provider un-attached.");
+        Log::channel('database')->info("Restoring providers for enrollees that mistakenly got their provider un-attached.");
         Enrollee::with(['revisionHistory'])
                 ->whereNull('provider_id')
                 ->where('status', Enrollee::INELIGIBLE)
@@ -46,7 +46,7 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
                       ->whereNotNull('old_value');
                 })
                 ->each(function (Enrollee $enrollee) {
-                    Log::info("Restoring provider for enrollee with ID: $enrollee->id.");
+                    Log::channel('database')->info("Restoring provider for enrollee with ID: $enrollee->id.");
                     $providerId = optional($enrollee->revisionHistory->where('key', 'provider_id')
                                                                ->whereNull('new_value')
                                                                ->whereNotNull('old_value')
@@ -54,7 +54,7 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
                                                                ->first())->old_value;
 
                     if ( ! User::ofType('provider')->where('id', $providerId)->exists()) {
-                        Log::critical("Error restoring provider for enrollee with ID: {$enrollee->id}. Provider with ID: {$providerId} not found");
+                        Log::channel('database')->info("Error restoring provider for enrollee with ID: {$enrollee->id}. Provider with ID: {$providerId} not found");
 
                         return;
                     }
