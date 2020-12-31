@@ -65,7 +65,7 @@ class RestoreEnrolleeProvidersFromRevisions extends Command
                                                                      ->sortByDesc('created_at')
                                                                      ->first())->old_value;
 
-                    if ( ! User::ofType('provider')->where('id', $providerId)->exists()) {
+                    if ( ! User::ofType(['provider','office_admin'])->where('id', $providerId)->exists()) {
                         $this->info("Error restoring provider for enrollee with ID: {$enrollee->id}. Provider with ID: {$providerId} not found");
 
                         return;
