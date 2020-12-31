@@ -29,7 +29,7 @@ jobs:
           php_extensions: redis zip gd exif imagick opcache
           progress: yes
           dev: no
-          args: --classmap-authoritative -vvv
+          args: --classmap-authoritative
       - name: Setup PHP - need this to run vapor deploy
         uses: shivammathur/setup-php@v2
         with:
@@ -42,6 +42,24 @@ jobs:
         env:
           APP_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
+      - name: Notify Slack - Success
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#3278BD'
+          SLACK_TITLE: Deployment failed for ${{ github.repository }}
+          SLACK_MESSAGE: Action ID ${{ github.action }}
+      - name: Notify Slack - Failure
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#ff0033'
+          SLACK_TITLE: Deployment failed for ${{ github.repository }}
+          SLACK_MESSAGE: Action ID ${{ github.action }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         if: failure()
