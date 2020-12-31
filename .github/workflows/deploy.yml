@@ -26,7 +26,7 @@ jobs:
         with:
           version: 1
           php_version: 7.4
-          php_extensions: redis zip gd exif imagick "zend-opcache"
+          php_extensions: redis zip gd exif imagick opcache
           progress: yes
           dev: no
           args: --classmap-authoritative -vvv
