@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Http\Requests\SafeRequest;
-use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
+use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Illuminate\Routing\Controller;
 
 class CcdProblemController extends Controller
