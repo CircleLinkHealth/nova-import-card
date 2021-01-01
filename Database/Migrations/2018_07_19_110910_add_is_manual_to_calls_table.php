@@ -32,8 +32,8 @@ class AddIsManualToCallsTable extends Migration
                 ->nullable();
         });
 
-        if (class_exists('App\Call', false)) {
-            App\Call::with('schedulerUser')->chunk(200, function ($records) {
+        if (class_exists('CircleLinkHealth\SharedModels\Entities\Call', false)) {
+            \CircleLinkHealth\SharedModels\Entities\Call::with('schedulerUser')->chunk(200, function ($records) {
                 foreach ($records as $record) {
                     if ($record->isFromCareCenter) {
                         $record->is_manual = true;

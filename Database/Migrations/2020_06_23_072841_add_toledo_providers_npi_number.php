@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Console\Commands\UpdateToledoProviderFromExcelCommand;
+use CircleLinkHealth\Eligibility\Console\Commands\UpdateToledoProviderFromExcelCommand;
 use Illuminate\Database\Migrations\Migration;
 
 class AddToledoProvidersNpiNumber extends Migration

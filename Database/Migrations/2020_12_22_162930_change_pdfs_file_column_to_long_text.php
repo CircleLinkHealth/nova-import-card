@@ -5,10 +5,9 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeShortUrlKeysUnique extends Migration
+class ChangePdfsFileColumnToLongText extends Migration
 {
     /**
      * Reverse the migrations.
@@ -26,9 +25,8 @@ class MakeShortUrlKeysUnique extends Migration
      */
     public function up()
     {
-        Schema::table('short_urls', function (Blueprint $table) {
-            $table->unique('url_key');
-            $table->unique('default_short_url');
+        Schema::table('pdfs', function ($table) {
+            $table->longText('file')->change();
         });
     }
 }

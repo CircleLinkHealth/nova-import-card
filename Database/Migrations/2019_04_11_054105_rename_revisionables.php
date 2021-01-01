@@ -24,7 +24,7 @@ class RenameRevisionables extends Migration
             ->where('revisionable_type', 'App\Activity')
             ->update(
                 [
-                    'revisionable_type' => 'CircleLinkHealth\TimeTracking\Entities\Activity',
+                    'revisionable_type' => 'CircleLinkHealth\SharedModels\Entities\Activity',
                 ]
             );
 
@@ -32,7 +32,7 @@ class RenameRevisionables extends Migration
             ->where('revisionable_type', 'App\ActivityMeta')
             ->update(
                 [
-                    'revisionable_type' => 'CircleLinkHealth\TimeTracking\Entities\ActivityMeta',
+                    'revisionable_type' => 'CircleLinkHealth\SharedModels\Entities\ActivityMeta',
                 ]
             );
 
@@ -40,7 +40,7 @@ class RenameRevisionables extends Migration
             ->where('revisionable_type', 'App\PageTimer')
             ->update(
                 [
-                    'revisionable_type' => 'CircleLinkHealth\TimeTracking\Entities\PageTimer',
+                    'revisionable_type' => 'CircleLinkHealth\SharedModels\Entities\PageTimer',
                 ]
             );
     }

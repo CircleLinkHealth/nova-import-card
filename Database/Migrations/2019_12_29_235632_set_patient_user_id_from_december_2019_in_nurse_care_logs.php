@@ -62,7 +62,7 @@ class SetPatientUserIdFromDecember2019InNurseCareLogs extends Migration
     }
 
     /**
-     * Copied from {@link \App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator}.
+     * Copied from {@link \CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator}.
      *
      * @param Activity $activity
      */

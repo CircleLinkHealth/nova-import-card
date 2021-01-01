@@ -4,12 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFacilityNameToEnrollees extends Migration
+class MakeCommentIdNullable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -18,6 +17,9 @@ class AddFacilityNameToEnrollees extends Migration
      */
     public function down()
     {
+        Schema::table('lv_activitymeta', function (Blueprint $table) {
+            $table->integer('comment_id')->nullable(false)->change();
+        });
     }
 
     /**
@@ -27,13 +29,8 @@ class AddFacilityNameToEnrollees extends Migration
      */
     public function up()
     {
-        if (Schema::hasColumn($table = (new Enrollee())->getTable(), 'facility_name')) {
-            return;
-        }
-
-        Schema::table($table, function (Blueprint $table) {
-            $table->string('facility_name')
-                ->nullable()->after('location_id');
+        Schema::table('lv_activitymeta', function (Blueprint $table) {
+            $table->integer('comment_id')->nullable(true)->default(null)->change();
         });
     }
 }
