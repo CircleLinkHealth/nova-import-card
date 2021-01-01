@@ -268,8 +268,8 @@ class CcdaImporterWrapper
             $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
 
-        if ( ! $this->ccda->json) {
-            $this->ccda->bluebuttonJson();
+        if ( ! $this->ccda->json && ! $this->ccda->bluebuttonJson()) {
+            return $this;
         }
 
         if ( ! $this->ccda->patient_mrn) {
