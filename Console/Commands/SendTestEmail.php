@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Core\Console\Commands;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Core\Notifications\PostmarkCallbackNotificationTest;
-use CircleLinkHealth\Core\Notifications\SendGridTestNotification;
+use CircleLinkHealth\Core\Notifications\TestEmailNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;
 
@@ -99,7 +99,7 @@ class SendTestEmail extends Command
     private function sendTestNotification()
     {
         $anonymous = $this->sendAnonymousNotification();
-        $anonymous->notifyNow(new SendGridTestNotification());
+        $anonymous->notifyNow(new TestEmailNotification());
         $this->info('Done');
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendGridTestNotification extends Notification
+class TestEmailNotification extends Notification
 {
     use Queueable;
 
@@ -45,8 +45,11 @@ class SendGridTestNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        $env = config('app.unique_env_name');
+
         return (new MailMessage())
-            ->line('Test Notification.');
+            ->subject("Test Notification from $env")
+            ->line('Test Notification from .'.$env);
     }
 
     /**
