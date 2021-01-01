@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use Illuminate\Validation\ValidationException;
-use Tests\CustomerTestCase;
 
 class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
 {

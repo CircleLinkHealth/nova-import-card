@@ -9,12 +9,12 @@ namespace CircleLinkHealth\Eligibility;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
@@ -26,6 +26,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicatio
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
 use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -413,10 +414,10 @@ class ProcessEligibilityService
                                         (bool) $filterLastEncounter,
                                         (bool) $filterInsurance,
                                         (bool) $filterProblems
-                                    ))->onQueue('low'),
+                                    ))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE)),
                                 ]
                             )->dispatch($ccda->id)
-                                ->onQueue('low');
+                                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
                         } else {
                             $pathWithUnderscores = str_replace('/', '_', $path);
                             $put = $cloudDisk->put(

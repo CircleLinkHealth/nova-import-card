@@ -11,14 +11,13 @@ use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ImportAndApproveEnrollee implements ShouldQueue
 {
@@ -78,16 +77,6 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ($enrollee->user->patientInfo->isDirty()) {
             $enrollee->user->patientInfo->save();
         }
-    }
-
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(12)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(30);
-
-        return [$rateLimitedMiddleware];
     }
 
     public function retryUntil(): \DateTime

@@ -7,13 +7,13 @@
         <title>Module Eligibility</title>
 
        {{-- Laravel Mix - CSS File --}}
-       {{-- <link rel="stylesheet" href="{{ mix('css/eligibility.css') }}"> --}}
+       {{-- <link rel="stylesheet" href="{{ asset('css/eligibility.css') }}"> --}}
 
     </head>
     <body>
         @yield('content')
 
         {{-- Laravel Mix - JS File --}}
-        {{-- <script src="{{ mix('js/eligibility.js') }}"></script> --}}
+        {{-- <script src="{{ asset('js/eligibility.js') }}"></script> --}}
     </body>
 </html>

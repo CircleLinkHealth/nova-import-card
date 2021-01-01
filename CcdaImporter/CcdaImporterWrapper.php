@@ -6,20 +6,20 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\Search\LocationByName;
+use CircleLinkHealth\Core\Search\LocationByName;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -122,7 +122,7 @@ class CcdaImporterWrapper
             });
 
             if ( ! $this->ccda->location_id && $ehrPracticeId = optional($this->ccda->targetPatient)->ehr_practice_id) {
-                $aLoc = \Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
+                $aLoc = Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
                     return collect(app(AthenaApiImplementation::class)->getDepartments($ehrPracticeId));
                 })->where('departmentid', $deptId)->first();
 
@@ -309,6 +309,13 @@ class CcdaImporterWrapper
         });
     }
 
+    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    {
+        $term = self::prepareForMysqlMatch($term);
+
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
+    }
+
     /**
      * Search for a Billing Provider using a search term.
      *
@@ -326,6 +333,8 @@ class CcdaImporterWrapper
         if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
             return $provider;
         }
+
+        return null;
     }
 
     /**
@@ -376,13 +385,6 @@ class CcdaImporterWrapper
         $term = self::prepareForMysqlMatch($term);
 
         return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
-    }
-
-    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
-    {
-        $term = self::prepareForMysqlMatch($term);
-
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
     }
 
     private static function prepareForMysqlMatch(string $term)
@@ -455,7 +457,7 @@ class CcdaImporterWrapper
         if ( ! $this->ccda->bluebuttonJson()->document) {
             return;
         }
-        
+
         $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->map(function ($address) {
             $address = ((array) $address->address)['street'] ?? null;
 
@@ -550,7 +552,7 @@ class CcdaImporterWrapper
         if ( ! $this->ccda->bluebuttonJson()->document) {
             return;
         }
-        
+
         if ($custodianName = $this->ccda->bluebuttonJson()->document->custodian->name) {
             $location = Location::whereColumnOrSynonym('name', $custodianName)->first();
 

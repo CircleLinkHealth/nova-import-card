@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\ValueObjects;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class SurveyOnlyEnrolleeMedicalRecord
 {

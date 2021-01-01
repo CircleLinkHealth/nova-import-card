@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\Decorators;
 
-use App\ValueObjects\Athena\Insurances;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\DTO\Athena\Insurances;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

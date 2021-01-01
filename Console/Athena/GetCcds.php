@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Console\Command;
 
 class GetCcds extends Command

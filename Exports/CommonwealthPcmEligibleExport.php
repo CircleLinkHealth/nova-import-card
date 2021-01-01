@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Exports;
 
-use App\Exports\PracticeReports\BasePracticeReport;
+use CircleLinkHealth\Customer\Exports\BasePracticeReport;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;

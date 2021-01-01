@@ -5,6 +5,41 @@
  */
 
 Route::prefix('eligibility')->group(function () {
+    Route::group([
+        'prefix'     => 'ehr-report-writer',
+        'middleware' => ['permission:ehr-report-writer-access', 'auth'],
+    ], function () {
+        Route::get('index', [
+            'uses' => 'EhrReportWriterController@index',
+            'as'   => 'report-writer.dashboard',
+        ]);
+
+        Route::get('download-template/{name}', [
+            'uses' => 'EhrReportWriterController@downloadCsvTemplate',
+            'as'   => 'report-writer.download-template',
+        ]);
+
+        Route::post('validate', [
+            'uses' => 'EhrReportWriterController@validateJson',
+            'as'   => 'report-writer.validate',
+        ]);
+
+        Route::post('submit', [
+            'uses' => 'EhrReportWriterController@submitFile',
+            'as'   => 'report-writer.submit',
+        ]);
+
+        Route::post('notify', [
+            'uses' => 'EhrReportWriterController@notifyReportWriter',
+            'as'   => 'report-writer.notify',
+        ]);
+
+        Route::get('google-drive', [
+            'uses' => 'EhrReportWriterController@redirectToGoogleDriveFolder',
+            'as'   => 'report-writer.google-drive',
+        ]);
+    });
+
     Route::post('process-eligibility/drive/', [
         'uses' => 'ProcessEligibilityController@fromGoogleDrive',
         'as'   => 'process.eligibility.google.drive',

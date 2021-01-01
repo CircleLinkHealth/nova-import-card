@@ -11,10 +11,10 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee
@@ -22,7 +22,7 @@ class ImportEnrollee
     public static function import(Enrollee &$enrollee)
     {
         $static = new static();
-        
+
         if ($enrollee->user_id) {
             /** @var User|null $patientUser */
             $patientUserImported = $static->handleExistingUser($enrollee);
@@ -34,11 +34,11 @@ class ImportEnrollee
 
         /** @var ImportService $importService */
         $importService = app(ImportService::class);
-        
+
         if ($importService->isCcda($enrollee->medical_record_type)) {
             return $importService->importExistingCcda($enrollee->medical_record_id, $enrollee);
         }
-        
+
         if ($enrollee->targetPatient) {
             return $static->importTargetPatient($enrollee);
         }
