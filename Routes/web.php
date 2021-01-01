@@ -631,10 +631,6 @@ Route::group([
         'uses' => 'OpsDashboardController@index',
         'as'   => 'OpsDashboard.index',
     ])->middleware('permission:opsReport.read');
-    Route::get('/chart', [
-        'uses' => 'OpsDashboardController@opsGraph',
-        'as'   => 'OpsDashboard.index.chart',
-    ])->middleware('permission:opsReport.read');
     Route::get('/index/csv', [
         'uses' => 'OpsDashboardController@dailyCsv',
         'as'   => 'OpsDashboard.dailyCsv',

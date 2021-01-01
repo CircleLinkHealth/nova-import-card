@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
-use CircleLinkHealth\CpmAdmin\Charts\OpsChart;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -183,10 +182,5 @@ class OpsDashboardController extends Controller
             'rows',
             'dateGenerated',
         ]));
-    }
-
-    public function opsGraph()
-    {
-        return view('charts.ops')->with('chart', OpsChart::clhGrowthChart());
     }
 }
