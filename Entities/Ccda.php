@@ -297,8 +297,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $filename = "ccda-{$ccda->id}.xml";
         }
 
-        \Storage::disk('storage')->put($filename, $xml);
-        $ccda->addMedia(storage_path($filename))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
+        $storage = \Storage::disk('storage');
+        $storage->put($filename, $xml);
+        $ccda->addMedia($storage->path($filename))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
 
         return $ccda;
     }

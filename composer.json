@@ -8,6 +8,11 @@
             "email": "mantoniou@cirlelinkhealth.com"
         }
     ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2.x-dev"
+        }
+    },
     "autoload": {
         "psr-4": {
             "CircleLinkHealth\\SharedModels\\": ""
