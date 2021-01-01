@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63d558be433709a892ed4e14e7ae24af",
+    "content-hash": "6cc726c46a1614bc93bad5d69928134e",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1291,16 +1291,21 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "87fab9a7667ba354a0f21394d862d35c442ce991"
+                "reference": "1c798fab143099b83fd63fc4ea31f80c449a4bc5"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
             },
             "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\SharedModels\\": ""
@@ -1312,7 +1317,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T08:29:36+00:00"
+            "time": "2021-01-01T19:09:41+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -17682,6 +17687,7 @@
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20,
