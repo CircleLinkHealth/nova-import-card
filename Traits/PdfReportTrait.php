@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\Contracts\PdfReportHandler;
+use CircleLinkHealth\Core\Contracts\PdfReportHandler;
 
 trait PdfReportTrait
 {

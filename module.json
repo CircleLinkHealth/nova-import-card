@@ -6,6 +6,7 @@
     "active": 1,
     "order": 0,
     "providers": [
+        "CircleLinkHealth\\Customer\\Providers\\CustomerDeferrableServiceProvider",
         "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider"
     ],
     "aliases": {},

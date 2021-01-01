@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\ProviderSignature;
+use CircleLinkHealth\SharedModels\ProviderSignature;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -54,7 +54,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo wherePronunciation($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo whereSex($value)
  * @property int|null                                                                                    $revision_history_count
- * @property \App\ProviderSignature|null                                                                 $signature
+ * @property \CircleLinkHealth\SharedModels\ProviderSignature|null                                       $signature
  */
 class ProviderInfo extends \CircleLinkHealth\Core\Entities\BaseModel
 {

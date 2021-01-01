@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\Call;
-use App\Jobs\StoreTimeTracking;
-use App\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 

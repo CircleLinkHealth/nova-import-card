@@ -4,10 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Constants;
-use App\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 use Illuminate\Database\Seeder;
 use Illuminate\Validation\ValidationException;
 
@@ -27,7 +26,7 @@ class NekatostrasClinicSeeder extends Seeder
 
             $practice->chargeableServices()->sync(\CircleLinkHealth\Customer\Entities\ChargeableService::pluck('id')->toArray());
 
-            foreach (array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, [
+            foreach (array_merge(CpmConstants::PRACTICE_STAFF_ROLE_NAMES, [
                 'care-center-external',
                 'care-ambassador',
                 'care-center',

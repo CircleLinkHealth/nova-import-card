@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Repositories;
 
-use App\Http\Controllers\API\PracticeStaffController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -381,7 +381,7 @@ class UserRepository
             if ('date_paused' == $key
                 || 'date_withdrawn' == $key
             ) {
-                continue 1;
+                continue;
             }
 
             if ('ccm_status' == $key) {
@@ -692,7 +692,7 @@ class UserRepository
     {
         $isPracticeStaff = Role::allRoles()
             ->whereIn('id', $roleIds)
-            ->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)
+            ->whereIn('name', CpmConstants::PRACTICE_STAFF_ROLES)
             ->isNotEmpty();
 
         if ($isPracticeStaff) {

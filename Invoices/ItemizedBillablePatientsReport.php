@@ -6,15 +6,15 @@
 
 namespace CircleLinkHealth\Customer\Invoices;
 
-use App\Repositories\BillablePatientsEloquentRepository;
-use App\Repositories\PatientSummaryEloquentRepository;
-use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\DTO\PatientReportData;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Illuminate\Support\Collection;
 
 class ItemizedBillablePatientsReport
@@ -73,9 +73,9 @@ class ItemizedBillablePatientsReport
             ->has('patient.patientInfo.location')
             ->chunkById(
                 100,
-                function ($summaries) use (&$data, $repo) {
+                function ($summaries) use (&$data) {
                     $summaries->each(
-                        function (PatientMonthlySummary $summary) use (&$data, $repo) {
+                        function (PatientMonthlySummary $summary) use (&$data) {
                             $u = $summary->patient;
 
                             $patientData = new PatientReportData();
@@ -133,7 +133,7 @@ class ItemizedBillablePatientsReport
                         $q->where('is_billable', true)
                             ->where('year', $this->month->year);
                     },
-                    'billingProvider',
+                    'billingProvider.user',
                 ]
             )
             ->chunk(

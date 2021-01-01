@@ -6,25 +6,25 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 
 /**
  * App\CareAmbassador.
  *
- * @property int                                                               $id
- * @property int                                                               $user_id
- * @property int|null                                                          $hourly_rate
- * @property int                                                               $speaks_spanish
- * @property \Carbon\Carbon|null                                               $created_at
- * @property \Carbon\Carbon|null                                               $updated_at
- * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $logs
- * @property \CircleLinkHealth\Customer\Entities\User                          $user
- * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereCreatedAt($value)
- * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereHourlyRate($value)
- * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereId($value)
- * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereSpeaksSpanish($value)
- * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUpdatedAt($value)
- * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUserId($value)
+ * @property int                                                                                                  $id
+ * @property int                                                                                                  $user_id
+ * @property int|null                                                                                             $hourly_rate
+ * @property int                                                                                                  $speaks_spanish
+ * @property \Carbon\Carbon|null                                                                                  $created_at
+ * @property \Carbon\Carbon|null                                                                                  $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $logs
+ * @property \CircleLinkHealth\Customer\Entities\User                                                             $user
+ * @method   static                                                                                               \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereCreatedAt($value)
+ * @method   static                                                                                               \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereHourlyRate($value)
+ * @method   static                                                                                               \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereId($value)
+ * @method   static                                                                                               \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereSpeaksSpanish($value)
+ * @method   static                                                                                               \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUpdatedAt($value)
+ * @method   static                                                                                               \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUserId($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador newModelQuery()

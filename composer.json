@@ -11,10 +11,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider"
+
             ],
             "aliases": {
-                
+
             }
         }
     },
@@ -27,23 +27,35 @@
             "CircleLinkHealth\\Customer\\": ""
         }
     },
+    "config": {
+        "sort-packages": true
+    },
     "require": {
-        "circlelinkhealth/core-module": "*",
-        "circlelinkhealth/ccm-billing-module": "*",
+        "circlelinkhealth/core-module": "dev-vaporizing-admin",
+        "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
+        "laravel/ui": "^2.0",
         "laravel/passport": "^8.0",
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "fico7489/laravel-pivot": "^3.0",
-        "spatie/laravel-medialibrary": "^7.0.0"
+        "circlelinkhealth/twofa-module": "*",
+        "lab404/laravel-impersonate": "^1.2",
+        "propaganistas/laravel-phone": "^4.2.2",
+        "spatie/laravel-medialibrary": "^7.0.0",
+        "league/flysystem-aws-s3-v3": "*"
     },
     "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+        },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
         },
         {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-ccm-billing.git"
+            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
         }
     ]
 }
