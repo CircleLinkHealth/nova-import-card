@@ -32,9 +32,8 @@
         }
         .auth-pages-title-container {
             font-family: "Roboto Slab",Georgia,Times,"Times New Roman",serif;
-            /*background: #50b2e2;*/
-            /*color: #fff;*/
-            color: #50b2e2;
+            background: #50b2e2;
+            color: #fff;
             text-align: center;
         }
 
@@ -56,11 +55,11 @@
                 @include('core::partials.errors.errors')
                 @include('core::partials.errors.messages')
             </div>
-            <div class="col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4">
+            <div class="main-form-container col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4">
                 <div class="row">
                     <div class="main-form-title--login">
                             <div class="col-lg-12"
-                                 style="background-color: white;margin: 0 0px 10px 0px;">
+                                 style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
                                 <div class="col-lg-10 col-lg-offset-1" style="text-align: center">
                                     @if(\Illuminate\Support\Facades\Cookie::has('practice_name_as_logo') && ! empty(\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')))
                                         <h2 class="auth-pages-title">{{\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')}}</h2>

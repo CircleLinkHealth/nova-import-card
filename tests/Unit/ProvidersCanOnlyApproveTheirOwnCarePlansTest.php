@@ -8,8 +8,8 @@ namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ProvidersCanOnlyApproveTheirOwnCarePlansTest extends CustomerTestCase
 {

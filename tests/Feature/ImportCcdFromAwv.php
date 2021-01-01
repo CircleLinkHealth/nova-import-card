@@ -8,8 +8,8 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ImportCcdFromAwv extends CustomerTestCase
 {

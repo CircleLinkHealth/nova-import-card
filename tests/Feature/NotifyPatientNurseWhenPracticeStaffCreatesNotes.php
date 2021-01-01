@@ -11,8 +11,8 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase
 {

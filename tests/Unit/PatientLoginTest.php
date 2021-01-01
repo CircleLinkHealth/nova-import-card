@@ -12,12 +12,12 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\NotifyPatientCarePlanApproved;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Support\Facades\Notification;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientLoginTest extends CustomerTestCase
 {

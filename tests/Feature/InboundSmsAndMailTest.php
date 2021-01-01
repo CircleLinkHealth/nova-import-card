@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallReplyNotification;
@@ -20,6 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class InboundSmsAndMailTest extends CustomerTestCase
 {

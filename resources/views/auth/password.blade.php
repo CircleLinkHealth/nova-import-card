@@ -1,7 +1,7 @@
 @extends('layouts.no-auth')
 
 @section('content')
-	<div class="main-form-block main-form-horizontal col-md-12">
+	<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 		<form class="form-horizontal" role="form" method="POST" style="padding-top: 15px;"
 			  action="{{ url('auth/password/email') }}" autocomplete="off">
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -15,7 +15,7 @@
 
 			<div class="form-group">
 				<div class="text-center col-md-12">
-					<button type="submit" class="btn btn-primary auth-submit-btn" style="background-color: #50B2E2;">
+					<button type="submit" class="btn btn-primary auth-submit-btn">
 						Send Password Reset Link
 					</button>
 				</div>
