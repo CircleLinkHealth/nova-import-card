@@ -15,6 +15,7 @@ use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
 /**
@@ -60,11 +61,11 @@ class IncomingMessageHandler
 
         $dm->ccdas->each(function (Ccda $ccda) use ($dm) {
             if ( ! Str::contains(strtolower($dm->body), strtolower(self::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))) {
-                ImportCcda::withChain(
-                    [
-                        new DecorateUPG0506CcdaWithPdfData($ccda),
-                    ]
-                )->dispatch($ccda)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+                Bus::chain([
+                    new ImportCcda($ccda),
+                    new DecorateUPG0506CcdaWithPdfData($ccda),
+                ])->dispatch($ccda)
+                    ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
                 return;
             }
