@@ -51,7 +51,7 @@ class ImportMedicalRecordsById implements ShouldQueue, ShouldBeEncrypted
             ->wherePracticeId($this->practice->id)
             ->get()
             ->map(function ($ccda) {
-                ImportCcda::dispatch($ccda)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+                ImportCcda::dispatch($ccda->id)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
             });
     }
 }

@@ -44,9 +44,9 @@ class ImportCcda implements ShouldQueue, ShouldBeEncrypted
     /**
      * Create a new job instance.
      */
-    public function __construct(Ccda $ccda, bool $notifyUploaderUser = false)
+    public function __construct(int $ccdaId, bool $notifyUploaderUser = false)
     {
-        $this->ccda               = $ccda;
+        $this->ccda               = Ccda::findOrFail($ccdaId);
         $this->notifyUploaderUser = $notifyUploaderUser;
     }
 

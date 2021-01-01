@@ -52,7 +52,7 @@ class ImportCcdas implements ShouldQueue, ShouldBeEncrypted
         Ccda::whereIn('id', $this->ccdaIds)->chunkById(50, function ($ccdas) {
             $ccdas->each(function (Ccda $ccda) {
                 $ccda->user_id = $this->initiatorUserId;
-                ImportCcda::dispatch($ccda, true);
+                ImportCcda::dispatch($ccda->id, true);
             });
         });
     }
