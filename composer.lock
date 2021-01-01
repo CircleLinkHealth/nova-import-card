@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0bc01eea2c79ddae0f43f1d63122f772",
+    "content-hash": "2d9f6db64834a579cd69011194faa8ad",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -842,11 +842,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v2.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "85adbdad93791930df16023e4ab9a28434ddf290"
+                "reference": "4559c50f956131d556fac56b84b46b1dd581ac56"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -878,6 +878,9 @@
             },
             "type": "laravel-module",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
                 "laravel": {
                     "providers": [],
                     "aliases": []
@@ -897,15 +900,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T08:29:36+00:00"
+            "time": "2021-01-01T18:08:59+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
-            "version": "v1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "3c0509415790a066085674ba8bc35d89eac16ea8"
+                "reference": "ed379dbc31bae4eb14318afc885899441fe82a98"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -916,6 +919,9 @@
             },
             "type": "laravel-module",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                },
                 "laravel": {
                     "providers": [],
                     "aliases": []
@@ -948,7 +954,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-01T07:16:20+00:00"
+            "time": "2021-01-01T18:08:58+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -980,11 +986,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ccb9639d4093e80acddbe9031696bf1040a02101"
+                "reference": "072be2d10fbb46f7399b0efddba4a1c40420817e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1002,6 +1008,9 @@
             },
             "type": "laravel-module",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                },
                 "laravel": {
                     "providers": [],
                     "aliases": []
@@ -1022,7 +1031,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T07:56:51+00:00"
+            "time": "2021-01-01T18:08:59+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -14585,11 +14594,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "1.11.8",
+            "version": "v1.11.8.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "d1171230aba6bb175c07b10c46a42ceb2b6379a2"
+                "reference": "fbe0f2ce1cf98f0eea0869d967559f9349d3d174"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14645,7 +14654,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-01T06:22:04+00:00"
+            "time": "2021-01-01T16:27:41+00:00"
         },
         {
             "name": "maximebf/debugbar",
@@ -17670,6 +17679,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/core-module": 20,
+        "circlelinkhealth/cpm-admin-module": 20,
+        "circlelinkhealth/customer-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20,
