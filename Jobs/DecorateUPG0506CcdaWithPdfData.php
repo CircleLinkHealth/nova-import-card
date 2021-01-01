@@ -32,9 +32,9 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue, ShouldBeEncrypted
     /**
      * Create a new job instance.
      */
-    public function __construct(Ccda $ccda)
+    public function __construct(int $ccdaId)
     {
-        $this->ccda = $ccda;
+        $this->ccda = Ccda::findOrFail($ccdaId);
     }
 
     /**
