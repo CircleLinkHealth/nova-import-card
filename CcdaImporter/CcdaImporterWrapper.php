@@ -166,8 +166,10 @@ class CcdaImporterWrapper
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
         }
 
-        if ( ! $provider && $this->ccda->bluebuttonJson()->document && $this->ccda->bluebuttonJson()->document->author->name && $name = $this->ccda->bluebuttonJson()->document->author->name->given) {
-            $provider = $name[0].' '.$this->ccda->bluebuttonJson()->document->author->name->family;
+        $bb = $this->ccda->bluebuttonJson();
+        
+        if ( ! $provider && $bb && $bb->document && $bb->document->author->name && $name = $bb->document->author->name->given) {
+            $provider = $name[0].' '.$bb->document->author->name->family;
         }
 
         if ($provider instanceof User) {
