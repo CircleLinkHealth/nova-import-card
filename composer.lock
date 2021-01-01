@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "281e4af76611ee694ec04b8a3d125d6a",
+    "content-hash": "8eeb0958a020e77c1a777a681fcb4c81",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1026,11 +1026,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.2",
+            "version": "v4.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "e1f17d480bcb1e5551fe8f295676970e49987f42"
+                "reference": "c6e888a028cac96c49b149e9339cf26d73ca812a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1057,7 +1057,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T06:27:29+00:00"
+            "time": "2021-01-01T06:49:11+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -14585,11 +14585,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.11.7.2",
+            "version": "1.11.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "4597ac73fef0c9b64bcda4a72170e753aa0c0c90"
+                "reference": "d1171230aba6bb175c07b10c46a42ceb2b6379a2"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14645,7 +14645,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-01T03:55:18+00:00"
+            "time": "2021-01-01T06:22:04+00:00"
         },
         {
             "name": "maximebf/debugbar",
