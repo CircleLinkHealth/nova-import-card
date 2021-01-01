@@ -19,7 +19,7 @@ trait RunsCommands
      */
     private function runCpmCommand(string $command)
     {
-        $this->info("Running: `$command`");
+        $this->info("\nRunning: `$command`");
         $process = Process::fromShellCommandline($command);
         $process->run();
 
@@ -30,14 +30,14 @@ trait RunsCommands
         $errors = $process->getErrorOutput();
 
         if ( ! empty($errors)) {
-            $this->info("Errors `{$errors}`");
+            $this->info("\nErrors `{$errors}`");
             \Log::debug('Errors: '.$errors, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $output = $process->getOutput();
 
         if ($output) {
-            $this->info('Output: '.$output);
+            $this->info("\nOutput: $output");
             \Log::debug('Output: '.$output, ['file' => __FILE__, 'line' => __LINE__]);
         }
 

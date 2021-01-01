@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Core\Notifications\Channels;
 use CircleLinkHealth\Core\Entities\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\DatabaseChannel as LaravelDatabaseChannel;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseChannel extends LaravelDatabaseChannel
 {
@@ -18,7 +19,7 @@ class DatabaseChannel extends LaravelDatabaseChannel
 
         // in case we are in a DB transaction.
         // we want to make sure we have the notification in DB, so we can update status in case it fails
-        \DB::commit();
+        DB::commit();
 
         return $res;
     }

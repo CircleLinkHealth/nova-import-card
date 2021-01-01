@@ -5,3 +5,5 @@
  */
 
 Route::get('health-check', 'HealthCheckController@isSiteUp');
+Route::get('opcache', 'OPCacheGUIController@index')->middleware('permission:admin-access');
+

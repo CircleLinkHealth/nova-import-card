@@ -6,13 +6,8 @@
 
 namespace CircleLinkHealth\Core\Listeners;
 
-use App\Providers\CpmEventServiceProvider;
 use Swift_Events_SendEvent;
 
-/**
- * This listener is used on Swift Mailer events.
- * Listener is registered in {@link CpmEventServiceProvider::boot()}.
- */
 class PostmarkAddSmtpIdOnHeader implements \Swift_Events_SendListener
 {
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
