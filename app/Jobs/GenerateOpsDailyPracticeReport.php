@@ -11,12 +11,13 @@ use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Services\OpsDashboardReport;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateOpsDailyPracticeReport implements ShouldQueue
+class GenerateOpsDailyPracticeReport implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

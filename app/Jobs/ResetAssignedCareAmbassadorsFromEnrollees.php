@@ -8,12 +8,13 @@ namespace App\Jobs;
 
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ResetAssignedCareAmbassadorsFromEnrollees implements ShouldQueue
+class ResetAssignedCareAmbassadorsFromEnrollees implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

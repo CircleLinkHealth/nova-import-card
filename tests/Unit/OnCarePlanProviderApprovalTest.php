@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Tests\Concerns\PhaxioFake\Phaxio;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class OnCarePlanProviderApprovalTest extends CustomerTestCase

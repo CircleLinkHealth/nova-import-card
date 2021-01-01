@@ -8,8 +8,8 @@ namespace Tests\Unit;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Tests\Helpers\Users\Patient\Problems;
 
 class IsPcmTest extends CustomerTestCase

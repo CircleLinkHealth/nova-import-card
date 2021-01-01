@@ -258,6 +258,9 @@ class ReportsController extends Controller
     public function u20(
         GetUnder20MinutesReport $request
     ) {
+        if (auth()->user()->isCareCoach()) {
+            return redirect()->back();
+        }
         $input               = $request->all();
         $time                = isset($input['selectMonth']) ? Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15) : now();
         $month_selected      = $time->format('m');

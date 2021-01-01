@@ -10,10 +10,11 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\CreatePageTimerParams;
 use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class UserLoggedOut implements ShouldQueue
+class UserLoggedOut implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

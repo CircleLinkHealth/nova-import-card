@@ -9,10 +9,11 @@ namespace App\Listeners;
 use App\Jobs\LogSuccessfulLogoutToDB;
 use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LogSuccessfulLogout implements ShouldQueue
+class LogSuccessfulLogout implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

@@ -7,11 +7,11 @@
 namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Services\ApproveBillablePatientsService;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Tests\Helpers\Users\Patient\Problems;
 
 class PcmBillable extends CustomerTestCase

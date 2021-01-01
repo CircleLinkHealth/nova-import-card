@@ -7,10 +7,11 @@
 namespace App\Listeners;
 
 use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class ForwardApprovedCarePlanToPractice implements ShouldQueue
+class ForwardApprovedCarePlanToPractice implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

@@ -6,8 +6,6 @@
 
 namespace App\Providers;
 
-use App\Events\UpdateUserLoginInfo;
-use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
@@ -24,6 +22,8 @@ use App\Listeners\RunComposerIde;
 use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UpdateCcdaStatus;
+use App\Listeners\UpdateUserLoginInfo;
+use App\Listeners\UpdateUserSessionInfo;
 use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;

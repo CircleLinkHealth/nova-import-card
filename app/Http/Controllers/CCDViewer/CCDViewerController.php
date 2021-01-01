@@ -28,17 +28,6 @@ class CCDViewerController extends Controller
         return view('CCDViewer.old-viewer');
     }
 
-    public function downloadXml(Request $request, $ccdaId)
-    {
-        $ccda = Ccda::withTrashed()
-            ->with('media')
-            ->findOrFail($ccdaId);
-
-        $media = $ccda->getMedia('ccd')->first();
-
-        return $media ? $media : abort(400, 'XML was not found.');
-    }
-
     public function exportAllCcds($userId)
     {
         $mediaExport = Media::where('model_type', Ccda::class)->whereIn('model_id', function ($query) use ($userId) {

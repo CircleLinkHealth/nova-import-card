@@ -32,16 +32,6 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    'twilio' => [
-        'enabled'          => env('TWILIO_ENABLED', false),
-        'account_sid'      => env('TWILIO_SID', 'somerandomstring'),
-        'auth_token'       => env('TWILIO_TOKEN', 'somerandomstring'),
-        'from'             => env('TWILIO_FROM', 'somerandomstring'),
-        'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
-        'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
-        'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
-        'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
-    ],
 
     'authy' => [
         'api_url' => env('AUTHY_API_URL', 'https://api.authy.com'),

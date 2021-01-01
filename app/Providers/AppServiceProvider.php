@@ -6,11 +6,9 @@
 
 namespace App\Providers;
 
-use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\ChunksEloquentBuilder;
-use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
 use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
@@ -29,6 +27,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Notifications\ChannelManager;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
@@ -44,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Paginator::useBootstrapThree();
+
         Schema::defaultStringLength(255);
 
         /*
@@ -203,11 +204,6 @@ class AppServiceProvider extends ServiceProvider
                         throw new \Exception('Channel Supplied from Patient AWV Care Docs Page is invalid.');
                 }
             }
-        );
-
-        $this->app->bind(
-            ReportFormatter::class,
-            WebixFormatter::class
         );
 
         $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);
