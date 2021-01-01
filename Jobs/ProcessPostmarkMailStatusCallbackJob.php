@@ -8,13 +8,14 @@ namespace CircleLinkHealth\Core\Jobs;
 
 use CircleLinkHealth\Core\Entities\PostmarkRawLog;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProcessPostmarkMailStatusCallbackJob implements ShouldQueue
+class ProcessPostmarkMailStatusCallbackJob implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

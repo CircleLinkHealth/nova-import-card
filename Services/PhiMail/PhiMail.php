@@ -160,7 +160,7 @@ class PhiMail implements DirectMail
                 }
             }
         } catch (\Exception $e) {
-            $this->handleException($e);
+            return $this->handleException($e);
         }
 
         return $srList ?? false;
@@ -191,25 +191,6 @@ class PhiMail implements DirectMail
         }
     }
 
-    /**
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \Exception
-     */
-    private function fetchKeyIfNotExists(string $certFileName, string $certPath)
-    {
-        $storage = Storage::disk('secrets');
-
-        if ( ! is_readable($certPath)) {
-            $contents = $storage->get($certFileName);
-
-            $written = Storage::disk('storage')->put(resolvePath($certPath), $contents);
-
-            if (false === $written) {
-                throw new \Exception("Could not write `$certFileName` to `$certPath`.");
-            }
-        }
-    }
-
     private function handleException(\Exception $e)
     {
         $message     = $e->getMessage()."\n".$e->getFile()."\n".$e->getLine();
@@ -218,7 +199,11 @@ class PhiMail implements DirectMail
         Log::critical($message);
         Log::critical($traceString);
 
-        throw $e;
+        if (auth()->guest()) {
+            throw $e;
+        }
+
+        return $e->getMessage();
     }
 
     /**
@@ -273,17 +258,10 @@ class PhiMail implements DirectMail
      */
     private function initPhiMailConnection($dmUserAddress = null)
     {
-        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('core.services.emr-direct.user');
-        $phiMailPass        = config('core.services.emr-direct.password');
-        $clientCertPath     = base_path(config('core.services.emr-direct.conc-keys-pem-path'));
-        $serverCertPath     = base_path(config('core.services.emr-direct.server-cert-pem-path'));
-        $clientCertFileName = config('core.services.emr-direct.client-cert-filename');
-        $serverCertFileName = config('core.services.emr-direct.server-cert-filename');
-
-        $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
-        $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
-
-        $storage = Storage::drive('storage');
+        $phiMailUser    = $dmUserAddress ? $dmUserAddress : config('core.services.emr-direct.user');
+        $phiMailPass    = config('core.services.emr-direct.password');
+        $clientCertPath = base_path('emr-direct-client-cert.pem');
+        $serverCertPath = base_path('emr-direct-server-cert.pem');
 
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
@@ -293,13 +271,13 @@ class PhiMail implements DirectMail
         //   <intermediate_CA_certificate.pem>
         //   <root_CA_certificate.pem>
         PhiMailConnector::setClientCertificate(
-            $storage->path($clientCertPath),
+            $clientCertPath,
             config('core.services.emr-direct.pass-phrase')
         );
 
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
-        PhiMailConnector::setServerCertificate($storage->path($serverCertPath));
+        PhiMailConnector::setServerCertificate($serverCertPath);
 
         $phiMailServer = config('core.services.emr-direct.mail-server');
         $phiMailPort   = config('core.services.emr-direct.port');

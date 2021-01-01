@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\TwoFA\Settings;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -29,7 +30,7 @@ if ( ! function_exists('isProductionEnv')) {
      */
     function isProductionEnv(): ?bool
     {
-        return boolval(config('core.is_production_env'));
+        return filter_var(config('core.is_production_env'), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -151,7 +152,7 @@ if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
 if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        $twoFaEnabled = (bool) config('auth.two_fa_enabled');
+        $twoFaEnabled = Settings::isTwoFAEnabled();
         if ( ! $twoFaEnabled) {
             return false;
         }
@@ -1622,7 +1623,7 @@ if ( ! function_exists('allowNonUsPhones')) {
      */
     function allowNonUsPhones()
     {
-        return ! isProductionEnv() && boolval(AppConfig::pull('allow_non_us_phone', false));
+        return ! isProductionEnv() && filter_var(AppConfig::pull('allow_non_us_phone', false), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -2101,6 +2102,27 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
     }
 }
 
+if ( ! function_exists('enableDailyReportToPopUp')) {
+    function enableDailyReportToPopUp(int $userId): bool
+    {
+        $value = AppConfig::pull('enable_daily_report_to_pop_up', null);
+
+        if ($value === (string) $userId) {
+            return true;
+        }
+
+        if ('1' === $value || '0' === $value) {
+            return boolval($value);
+        }
+    
+        if ('true' === $value || 'false' === $value) {
+            return boolval($value);
+        }
+
+        return true;
+    }
+}
+
 if ( ! function_exists('sanitizeString')) {
     /**
      * @param $string
@@ -2334,5 +2356,12 @@ if ( ! function_exists('intValue')) {
         }
 
         return $default;
+    }
+}
+
+if ( ! function_exists('getCpmProviderUrl')) {
+    function getCpmProviderUrl(string $uri): string
+    {
+        return rtrim(config('core.apps.cpm-provider.url'), '/')."/$uri";
     }
 }

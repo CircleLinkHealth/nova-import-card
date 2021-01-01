@@ -55,6 +55,8 @@ use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInvi
  * @property string|null $media_collection_name
  * @property string|null $phaxio_event_type
  * @property string|null $phaxio_event_status
+ * @method   static      Builder|DatabaseNotification read()
+ * @method   static      Builder|DatabaseNotification unread()
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
