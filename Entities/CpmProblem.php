@@ -69,7 +69,6 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @property int|null                                                     $location_chargeable_services_count
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem withChargeableServicesForLocation($locationId)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem hasChargeableServiceCodeForLocation($chargeableServiceCode, $locationId)
-
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem ofLocation($locationId)
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -87,7 +86,7 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         self::DEMENTIA,
         self::DEPRESSION,
     ];
-    
+
     protected $guarded = [];
 
     protected $table = 'cpm_problems';
@@ -203,7 +202,7 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
                 ->where('code', $chargeableServiceCode);
         });
     }
-    
+
     public function scopeOfLocation($query, int $locationId)
     {
         return $query->whereHas('locationChargeableServices', fn ($lcs) => $lcs->where('location_id', $locationId));

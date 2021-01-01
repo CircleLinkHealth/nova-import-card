@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\DirectMailMessage;
-use App\Entities\CcdaRequest;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
@@ -20,7 +18,6 @@ use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Traits\BelongsToPatientUser;
@@ -28,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -54,8 +52,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon                                                                  $updated_at
  * @property \Illuminate\Support\Carbon|null                                                             $deleted_at
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null                                $batch
- * @property \App\Entities\CcdaRequest                                                                   $ccdaRequest
- * @property \App\DirectMailMessage|null                                                                 $directMessage
+ * @property \CircleLinkHealth\SharedModels\Entities\CcdaRequest                                         $ccdaRequest
+ * @property \CircleLinkHealth\SharedModels\Entities\DirectMailMessage|null                              $directMessage
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                           $location
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection        $media
  * @property int|null                                                                                    $media_count
@@ -542,10 +540,12 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             throw new InvalidCcdaException($this->id);
         }
 
-        $xmlPath = storage_path("ccdas/import/media_{$xmlMedia->id}.xml");
-        file_put_contents($xmlPath, $xml);
+        $drive = Storage::drive('storage');
+        $drive->put($xmlFilename = "ccd_import_media_{$xmlMedia->id}.xml", $xml);
 
-        $jsonPath = storage_path("ccdas/import/ccda_{$this->id}.json");
+        $xmlPath = storage_path($xmlFilename);
+
+        $jsonPath = storage_path($jsonFilename = "ccda_import_json_{$this->id}.json");
 
         Artisan::call(
             'ccd:parse',
@@ -557,13 +557,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         );
 
         if (file_exists($xmlPath)) {
-            \Storage::delete($xmlPath);
+            $drive->delete($xmlFilename);
         }
 
         if (file_exists($jsonPath)) {
             $this->json = file_get_contents($jsonPath);
             $this->save();
-            \Storage::delete($jsonPath);
+            $drive->delete($jsonFilename);
 
             return;
         }

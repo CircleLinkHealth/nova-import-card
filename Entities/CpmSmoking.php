@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Contracts\Models\CPM\Biometric;
+use CircleLinkHealth\Customer\Contracts\Biometric;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**

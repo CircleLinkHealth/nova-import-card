@@ -148,7 +148,7 @@ class CarePlanTemplate extends \CircleLinkHealth\Core\Entities\BaseModel
                 throw new \Exception("Relationship `${rel}` does not exist.");
             }
 
-            $attributes[$rel] = function ($query) use ($rel) {
+            $attributes[$rel] = function ($query) {
                 $query->with('cpmInstructions')
                     ->orderBy('pivot_ui_sort');
             };

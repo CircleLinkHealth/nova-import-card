@@ -65,19 +65,19 @@ class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
     public function isIcd10()
     {
         return '2.16.840.1.113883.6.3'                                                                     == $this->code_system_oid
-            || Str::contains(strtolower($this->code_system_name), ['10']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD10_NAME];
+            || Str::contains(strtolower($this->code_system_name), ['10']) || $this->problem_code_system_id == \CircleLinkHealth\Customer\CpmConstants::CODE_SYSTEM_NAME_ID_MAP[\CircleLinkHealth\Customer\CpmConstants::ICD10_NAME];
     }
 
     public function isIcd9()
     {
         return '2.16.840.1.113883.6.103'                                                                     == $this->code_system_oid
-               || Str::contains(strtolower($this->code_system_name), ['9']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD9_NAME];
+               || Str::contains(strtolower($this->code_system_name), ['9']) || $this->problem_code_system_id == \CircleLinkHealth\Customer\CpmConstants::CODE_SYSTEM_NAME_ID_MAP[\CircleLinkHealth\Customer\CpmConstants::ICD9_NAME];
     }
 
     public function isSnomed()
     {
         return '2.16.840.1.113883.6.96'                                                                           == $this->code_system_oid
-               || Str::contains(strtolower($this->code_system_name), ['snomed']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::SNOMED_NAME];
+               || Str::contains(strtolower($this->code_system_name), ['snomed']) || $this->problem_code_system_id == \CircleLinkHealth\Customer\CpmConstants::CODE_SYSTEM_NAME_ID_MAP[\CircleLinkHealth\Customer\CpmConstants::SNOMED_NAME];
     }
 
     public function problem()
@@ -89,13 +89,13 @@ class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         if ($this->isSnomed()) {
             $this->code_system_oid  = self::SNOMED_CODE;
-            $this->code_system_name = \App\Constants::SNOMED_NAME;
+            $this->code_system_name = \CircleLinkHealth\Customer\CpmConstants::SNOMED_NAME;
         } elseif ($this->isIcd9()) {
             $this->code_system_oid  = self::ICD9_CODE;
-            $this->code_system_name = \App\Constants::ICD9_NAME;
+            $this->code_system_name = \CircleLinkHealth\Customer\CpmConstants::ICD9_NAME;
         } elseif ($this->isIcd10()) {
             $this->code_system_oid  = self::ICD10_CODE;
-            $this->code_system_name = \App\Constants::ICD10_NAME;
+            $this->code_system_name = \CircleLinkHealth\Customer\CpmConstants::ICD10_NAME;
         }
 
         return $this;

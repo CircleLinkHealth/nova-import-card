@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Models\CPM\App;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
