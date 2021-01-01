@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class PatientCallManagementController extends Controller
 {
@@ -27,7 +27,7 @@ class PatientCallManagementController extends Controller
      */
     public function remix(Request $request)
     {
-        return view('admin.patientCallManagement.remix');
+        return view('cpm-admin::admin.patientCallManagement.remix');
     }
 
     /**
@@ -37,7 +37,7 @@ class PatientCallManagementController extends Controller
      */
     public function remixV2(Request $request)
     {
-        return view('admin.patientCallManagement.remixV2');
+        return view('cpm-admin::admin.patientCallManagement.remixV2');
     }
 
     /**

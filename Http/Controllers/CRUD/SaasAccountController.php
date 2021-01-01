@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\CRUD;
 
-use App\Http\Requests\CreateSaasAccount;
-use App\Notifications\SAAS\SendInternalUserSignupInvitation;
-use CircleLinkHealth\CpmAdmin\Services\SAAS\UserManagementService;
-use CircleLinkHealth\CpmAdmin\DTO\InternalUser;
+use CircleLinkHealth\CpmAdmin\Http\Requests\CreateSaasAccount;
+use CircleLinkHealth\Customer\DTO\InternalUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\Customer\Notifications\SAAS\SendInternalUserSignupInvitation;
+use CircleLinkHealth\Customer\Services\SAAS\UserManagementService;
 use Illuminate\Routing\Controller;
 
 class SaasAccountController extends Controller
@@ -34,7 +34,7 @@ class SaasAccountController extends Controller
      */
     public function create()
     {
-        return view('admin.saasAccounts.create', [
+        return view('cpm-admin::admin.saasAccounts.create', [
             'submitUrl'    => route('saas-accounts.store'),
             'submitMethod' => 'POST',
         ]);

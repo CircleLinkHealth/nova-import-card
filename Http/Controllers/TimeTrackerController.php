@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class TimeTrackerController extends Controller
 {
     public function index(Request $request)
     {
-        return view('admin.timeTracker.index');
+        return view('cpm-admin::admin.timeTracker.index');
     }
 }

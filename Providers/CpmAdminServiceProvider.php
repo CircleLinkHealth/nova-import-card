@@ -15,6 +15,7 @@ class CpmAdminServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->registerVueComponents();
     }
 
     /**
@@ -55,12 +56,12 @@ class CpmAdminServiceProvider extends ServiceProvider
      */
     public function registerTranslations()
     {
-        $langPath = resource_path('lang/modules/customer');
+        $langPath = resource_path('lang/modules/cpm-admin');
 
         if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, 'customer');
+            $this->loadTranslationsFrom($langPath, 'cpm-admin');
         } else {
-            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'customer');
+            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'cpm-admin');
         }
     }
 
@@ -69,7 +70,7 @@ class CpmAdminServiceProvider extends ServiceProvider
      */
     public function registerViews()
     {
-        $viewPath = resource_path('views/modules/customer');
+        $viewPath = resource_path('views/modules/cpm-admin');
 
         $sourcePath = __DIR__.'/../Resources/views';
 
@@ -84,14 +85,22 @@ class CpmAdminServiceProvider extends ServiceProvider
             array_merge(
                 array_map(
                     function ($path) {
-                        return $path.'/modules/customer';
+                        return $path.'/modules/cpm-admin';
                     },
                     \Config::get('view.paths')
                 ),
                 [$sourcePath]
             ),
-            'customer'
+            'cpm-admin'
         );
+    }
+
+    public function registerVueComponents()
+    {
+        $this->publishes([
+            __DIR__.'/../Resources/assets/js/' => resource_path(
+                'assets/js/'
+            ), ], 'vue-components');
     }
 
     /**
@@ -101,13 +110,13 @@ class CpmAdminServiceProvider extends ServiceProvider
     {
         $this->publishes(
             [
-                __DIR__.'/../Config/config.php' => config_path('customer.php'),
+                __DIR__.'/../Config/config.php' => config_path('cpm-admin.php'),
             ],
             'config'
         );
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
-            'customer'
+            'cpm-admin'
         );
 
         $this->publishes(

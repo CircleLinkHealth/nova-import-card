@@ -6,13 +6,16 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
-use App\CallView;
-use App\Filters\CallViewFilters;
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PamCsvResource;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\SharedModels\Entities\CallView;
+use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
 class CallReportController extends Controller
 {
@@ -21,16 +24,9 @@ class CallReportController extends Controller
         $date = Carbon::now()->startOfMonth();
 
         $calls = CallView::filter($filters)
-            ->get();
+            ->paginate($filters->filters()['rows']);
 
-        if ($request->has('json')) {
-            // interrupt request and return json
-            return response()->json($calls);
-        }
-
-        $data = $this->generateXlsData($date, $calls);
-
-        return $data->download($data->getFilename());
+        return PamCsvResource::collection($calls);
     }
 
     /**
@@ -81,15 +77,21 @@ class CallReportController extends Controller
             'Last Call',
             'CCM Time',
             'BHI Time',
+            'PCM Time',
+            'RPM Time',
+            'CCM (RHC/FQHC) Time',
             'Successful Calls',
             'Billing Provider',
             'Scheduler',
         ];
 
-        $rows = [];
+        $patientTimeAndCallCounts = $calls->isNotEmpty() ? PatientTimeAndCalls::get($calls->pluck('patient_id')->toArray()) : collect();
+        $rows                     = [];
 
         foreach ($calls as $call) {
-            $rows[] = [
+            /** @var PatientTimeAndCallsValueObject */
+            $supplementaryViewDataForPatient = $patientTimeAndCallCounts->filter(fn (PatientTimeAndCallsValueObject $p) => $p->getPatientId() == $call->patient_id)->first();
+            $rows[]                          = [
                 $call->id,
                 $call->type,
                 $call->nurse,
@@ -100,9 +102,12 @@ class CallReportController extends Controller
                 $call->call_time_end,
                 $call->preferredCallDaysToString(),
                 $call->last_call,
-                $this->formatTime($call->ccm_time),
-                $this->formatTime($call->bhi_time),
-                $call->no_of_successful_calls,
+                $this->formatTime($supplementaryViewDataForPatient->getCcmTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getBhiTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getPcmTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getRpmTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getRhcTotalTime()),
+                (string) $supplementaryViewDataForPatient->getNoOfSuccessfulCalls(),
                 $call->billing_provider,
                 $call->scheduler,
             ];

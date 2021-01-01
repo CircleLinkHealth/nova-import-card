@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
@@ -54,7 +54,7 @@ class DashboardController extends Controller
 
         // switch dashboard view based on logged in user
         if ($user->hasRole(['administrator', 'administrator-view-only'])) {
-            return view('admin.dashboard', compact(['user']));
+            return view('cpm-admin::dashboard', compact(['user']));
         }
 
         return redirect()->route('patients.dashboard', []);
@@ -90,7 +90,7 @@ class DashboardController extends Controller
     {
         $patient = User::find('393');
 
-        return view('admin.testplan', compact(['patient']));
+        return view('cpm-admin::admin.testplan', compact(['patient']));
     }
 
     public function upg0506($type)
