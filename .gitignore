@@ -33,4 +33,4 @@ CLHPackages/
 .vapor/
 .env.test
 lsp/log/*
-.env.staging
+*deploy-s3.env

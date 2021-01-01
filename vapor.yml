@@ -2,7 +2,10 @@ id: 13482
 name: app-cpm-web
 environments:
     production:
-        domain: provider.careplanmanager.com
+        domain:
+            - careplanmanager.com
+            - provider.careplanmanager.com
+            - worker.careplanmanager.com
         storage: cpm-production-vapor-storage
         network: cpm-production
         memory: 2048
@@ -49,4 +52,26 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
-
+    tests3:
+        domain: cpm-provider-s3keystest.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        network: cpm-staging
+        memory: 2048
+        cli-memory: 2048
+        runtime: docker
+        queue-timeout: 600
+        concurrency: 5
+        mail: false
+        timeout: 45
+        queues:
+            - cpm-provider-s3keystest-low-staging
+            - cpm-provider-s3keystest-high-staging
+            - cpm-provider-s3keystest-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
