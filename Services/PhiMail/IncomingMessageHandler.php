@@ -50,7 +50,7 @@ class IncomingMessageHandler
     /**
      * @return mixed
      */
-    public function handleMessageAttachment(DirectMailMessage $dm, string $mimeType, string $attachment)
+    public function handleMessageAttachment(DirectMailMessage &$dm, string $mimeType, string $attachment)
     {
         return IncomingMessageHandlerFactory::create($dm, $mimeType, $attachment)->handle();
     }
