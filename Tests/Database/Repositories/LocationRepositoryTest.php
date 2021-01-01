@@ -18,7 +18,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class LocationRepositoryTest extends CustomerTestCase
 {
@@ -39,7 +39,7 @@ class LocationRepositoryTest extends CustomerTestCase
             ChargeableService::CCM,
             ChargeableService::BHI,
             ChargeableService::PCM,
-        ] as  $code) {
+        ] as $code) {
             $this->repo->store($location->id, $code, $startOfMonth);
         }
 

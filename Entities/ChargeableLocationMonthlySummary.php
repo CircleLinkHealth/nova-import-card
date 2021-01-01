@@ -8,9 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Entities;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\Traits\DateScopesTrait;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 
 /**
  * CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary.

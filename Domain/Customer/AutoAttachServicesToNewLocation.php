@@ -78,7 +78,7 @@ class AutoAttachServicesToNewLocation
                             });
                     },
                 ])
-                    ->when( ! is_null($month), function ($q) use ($month) {
+                    ->when( ! is_null($month), function ($q) {
                         $q->whereHas('chargeableServiceSummaries', function ($summary) {
                             $summary->createdOn($this->month, 'chargeable_month');
                         });

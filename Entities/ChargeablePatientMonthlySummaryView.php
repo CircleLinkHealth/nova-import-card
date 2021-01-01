@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use CircleLinkHealth\Core\Entities\SqlViewModel;
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
+use CircleLinkHealth\Core\Traits\DateScopesTrait;
 
 /**
  * CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView.

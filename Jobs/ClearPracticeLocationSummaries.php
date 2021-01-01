@@ -8,8 +8,8 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Location;
-use MichaelLedin\LaravelJob\Job;
 
 class ClearPracticeLocationSummaries extends Job
 {

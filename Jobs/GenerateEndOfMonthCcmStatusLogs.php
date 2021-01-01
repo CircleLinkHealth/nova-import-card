@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\User;
-use MichaelLedin\LaravelJob\Job;
 
 class GenerateEndOfMonthCcmStatusLogs extends Job
 {

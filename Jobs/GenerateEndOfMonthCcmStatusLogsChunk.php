@@ -10,13 +10,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateEndOfMonthCcmStatusLogsChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class GenerateEndOfMonthCcmStatusLogsChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;

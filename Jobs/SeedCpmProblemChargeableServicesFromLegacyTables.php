@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Practice;
-use MichaelLedin\LaravelJob\Job;
 
 class SeedCpmProblemChargeableServicesFromLegacyTables extends Job
 {

@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use MichaelLedin\LaravelJob\Job;
 
 class CompareCurrentAndLegacyBillingDataForPractice extends Job
 {

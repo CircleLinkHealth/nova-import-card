@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class PCM extends AbstractProcessor
@@ -44,7 +44,7 @@ class PCM extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return Constants::THIRTY_MINUTES_IN_SECONDS;
+        return CpmConstants::THIRTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool

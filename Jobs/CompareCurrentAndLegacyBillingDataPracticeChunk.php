@@ -12,13 +12,12 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -39,7 +38,7 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
 
     public function getBuilder(): Builder
     {
-        return  User::ofType('participant')
+        return User::ofType('participant')
             ->ofPractice($this->practiceId)
             ->whereHas('patientInfo', fn ($pi) => $pi->enrolled())
             ->whereHas('carePlan', fn ($cp) => $cp->whereIn('status', [

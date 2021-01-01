@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Log;
-use MichaelLedin\LaravelJob\Job;
 
 class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
 {

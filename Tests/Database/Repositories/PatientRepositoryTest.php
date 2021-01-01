@@ -11,7 +11,7 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class PatientRepositoryTest extends CustomerTestCase
 {
@@ -32,7 +32,7 @@ class PatientRepositoryTest extends CustomerTestCase
             ChargeableService::CCM,
             ChargeableService::BHI,
             ChargeableService::PCM,
-        ] as  $code) {
+        ] as $code) {
             (new LocationProcessorEloquentRepository())->store($locationId, $code, $startOfMonth = Carbon::now()->startOfMonth());
         }
 

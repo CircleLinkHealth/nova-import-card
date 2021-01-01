@@ -6,12 +6,11 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\HasUniqueIdentifierForDebounce;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
-use MichaelLedin\LaravelJob\Job;
-use Spatie\RateLimitedMiddleware\RateLimited;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 
 class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdentifierForDebounce
 {
@@ -60,16 +59,6 @@ class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdenti
         BillingCache::clearPatients([$this->getPatientId()]);
 
         (app(ProcessPatientSummaries::class))->execute($this->getPatientId(), $this->getMonth());
-    }
-
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(30)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(20);
-
-        return [$rateLimitedMiddleware];
     }
 
     public function retryUntil(): \DateTime

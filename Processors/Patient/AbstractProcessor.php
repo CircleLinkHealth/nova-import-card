@@ -94,7 +94,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
         return collect($patientProblems)
             ->filter(
-                function (PatientProblemForProcessing $problem) use ($patientId, $chargeableMonth) {
+                function (PatientProblemForProcessing $problem) {
                     return collect($problem->getServiceCodes())->contains($this->codeForProblems());
                 }
             )->count() >= $this->minimumNumberOfProblems();

@@ -27,7 +27,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\CcmBilling\\Providers\\CcmBillingServiceProvider"
+
             ],
             "aliases": {
 
@@ -47,7 +47,8 @@
     },
     "require": {
         "circlelinkhealth/core-module": "*",
-        "circlelinkhealth/customer-module": "*"
+        "circlelinkhealth/customer-module": "*",
+        "mpbarlow/laravel-queue-debouncer": "^2.0"
     },
 
     "repositories": [

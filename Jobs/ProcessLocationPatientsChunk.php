@@ -14,14 +14,12 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
-class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements ShouldQueue
+class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -84,28 +82,14 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements S
             );
         });
     }
-    
-    public function middleware()
-    {
-        if (isUnitTestingEnv()) {
-            return [];
-        }
-        
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(20)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(20);
-        
-        return [$rateLimitedMiddleware];
-    }
-    
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
-    }
 
     public function repo(): LocationProcessorRepository
     {
         return app(LocationProcessorRepository::class);
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
     }
 }

@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
-use App\Call;
-use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
@@ -21,10 +19,12 @@ use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 
 class PatientBillingDatabaseTest extends CustomerTestCase
 {

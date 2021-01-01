@@ -9,13 +9,13 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
-class ProcessPracticePatientMonthlyServices implements ShouldQueue
+class ProcessPracticePatientMonthlyServices implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -47,21 +47,7 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
                 ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth);
             });
     }
-    
-    public function middleware()
-    {
-        if (isUnitTestingEnv()) {
-            return [];
-        }
-        
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(20)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(20);
-        
-        return [$rateLimitedMiddleware];
-    }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();

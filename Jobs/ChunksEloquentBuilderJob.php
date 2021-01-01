@@ -6,10 +6,12 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use App\Contracts\ChunksEloquentBuilder;
+use CircleLinkHealth\Core\ChunksEloquentBuilder;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder
+abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, ShouldQueue, ShouldBeEncrypted
 {
     protected int $limit;
 

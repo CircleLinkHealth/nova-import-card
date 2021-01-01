@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\DateScopesTrait;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**

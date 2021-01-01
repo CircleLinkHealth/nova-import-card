@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use App\Constants;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Traits\IsPartOfSequence;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class CCM60 extends AbstractProcessor
@@ -52,7 +52,7 @@ class CCM60 extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return Constants::TWENTY_MINUTES_IN_SECONDS;
+        return CpmConstants::TWENTY_MINUTES_IN_SECONDS;
     }
 
     public function next(): ?PatientServiceProcessor

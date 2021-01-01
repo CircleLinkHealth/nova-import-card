@@ -15,7 +15,7 @@ use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollectio
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
 
 class PatientServicesForTimeTracker
@@ -72,7 +72,7 @@ class PatientServicesForTimeTracker
 
         if ($this->patientEligibleForRHC()) {
             $rhc               = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
-            $rhcNullActivities = boolval(AppConfig::pull('rhc_null_activities', false));
+            $rhcNullActivities = filter_var(AppConfig::pull('rhc_null_activities', false), FILTER_VALIDATE_BOOLEAN);
 
             $activitiesForMonth = Activity::wherePatientId($this->patientId)
                 ->createdThisMonth('performed_at')

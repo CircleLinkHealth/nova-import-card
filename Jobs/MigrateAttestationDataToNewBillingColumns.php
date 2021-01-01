@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
-use MichaelLedin\LaravelJob\Job;
+use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 
 class MigrateAttestationDataToNewBillingColumns extends Job
 {
