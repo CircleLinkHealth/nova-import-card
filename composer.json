@@ -11,7 +11,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
+              "CircleLinkHealth\\Raygun\\Providers\\RaygunDeferredServiceProvider",
+              "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
             ],
             "aliases": {
                 

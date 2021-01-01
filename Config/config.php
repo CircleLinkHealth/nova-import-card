@@ -135,6 +135,6 @@ return [
     |
     */
     'app_version' => env('APP_VERSION', ''),
-    
+
     'grouping_key' => env('RAYGUN_GROUPING_KEY', ''),
 ];
