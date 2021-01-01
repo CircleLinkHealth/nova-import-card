@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CpmAdmin\Charts\OpsChart;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\SharedModels\Services\OpsDashboardReport;
@@ -164,8 +163,6 @@ class GenerateOpsDailyReport implements ShouldQueue, ShouldBeEncrypted
             ->first()
             ->addMedia($path)
             ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
-
-        \Cache::forget(OpsChart::ADMIN_CHART_CACHE_KEY);
 
         if (isProductionEnv()) {
             sendSlackMessage(
