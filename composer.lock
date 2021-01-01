@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "227d1263a38dd959186ee42246d84d64",
+    "content-hash": "acf798b0896107d5fa76990035c81a17",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -846,7 +846,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "cfd32fe488eaed37d0e5fc5c44f8e6df9a1f9151"
+                "reference": "a14e8d8b169637ae2abb8372c1387468eac6f499"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -861,7 +861,7 @@
                 "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/tinker": "^2.0",
-                "laravel/vapor-core": "2.10.2",
+                "laravel/vapor-core": "^2.10.3",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.2",
                 "lcobucci/jwt": "^4.0",
@@ -897,7 +897,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-31T22:25:20+00:00"
+            "time": "2021-01-01T02:14:40+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -4906,11 +4906,11 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.2",
+            "version": "v2.10.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-core.git",
-                "reference": "014aaa6595f4dd50801c3043cbaa1611ef3b5f59"
+                "reference": "25066e106b11dcf366861cb02bf9d4b29d16d993"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -4973,7 +4973,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-31T22:17:51+00:00"
+            "time": "2020-12-31T22:50:04+00:00"
         },
         {
             "name": "laravel/vapor-ui",
@@ -14585,11 +14585,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.11.2",
+            "version": "v1.11.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "edb5ea6c8f2c405993bae6d3fe529b879a3bbdd7"
+                "reference": "3ed4e8acc11303a58f53870571b4e5a6728a9b6f"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14645,7 +14645,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-31T20:14:55+00:00"
+            "time": "2021-01-01T01:45:31+00:00"
         },
         {
             "name": "maximebf/debugbar",

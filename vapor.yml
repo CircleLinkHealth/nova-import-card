@@ -2,7 +2,10 @@ id: 13482
 name: app-cpm-web
 environments:
     production:
-        domain: provider.careplanmanager.com
+        domain:
+            - careplanmanager.com
+            - provider.careplanmanager.com
+            - worker.careplanmanager.com
         storage: cpm-production-vapor-storage
         network: cpm-production
         memory: 2048
