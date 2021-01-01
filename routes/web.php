@@ -24,11 +24,3 @@ Route::get('ccd-importer', [
     'uses' => 'RedirectToOtherApp@redirectToProvider',
     'as'   => 'import.ccd.remix',
 ]);
-
-Route::get('pinfo', [
-    'uses' => 'RedirectToOtherApp@pinfo',
-])->middleware(['auth', 'role:administrator']);
-
-Route::get('config', [
-    'uses' => 'RedirectToOtherApp@config',
-])->middleware(['auth', 'role:administrator']);
