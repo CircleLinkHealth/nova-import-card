@@ -105,5 +105,7 @@ class XML extends BaseHandler
             $ccda->practice_id = $practiceId;
             $ccda->save();
         }
+
+        $dm->setRelation('ccdas', $dm->ccdas->add($ccda));
     }
 }
