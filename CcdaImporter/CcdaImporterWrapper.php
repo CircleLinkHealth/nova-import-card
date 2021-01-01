@@ -167,7 +167,7 @@ class CcdaImporterWrapper
         }
 
         $bb = $this->ccda->bluebuttonJson();
-        
+
         if ( ! $provider && $bb && $bb->document && $bb->document->author->name && $name = $bb->document->author->name->given) {
             $provider = $name[0].' '.$bb->document->author->name->family;
         }
@@ -429,7 +429,7 @@ class CcdaImporterWrapper
             return;
         }
 
-        if ($providerAddress = $this->ccda->bluebuttonJson()->demographics->provider->address->street[0] ?? null) {
+        if ($providerAddress = optional($this->ccda->bluebuttonJson())->demographics->provider->address->street[0] ?? null) {
             $locations = $provider->locations->whereIn('address_line_1', [$providerAddress, $this->replaceCommonAddressVariations($providerAddress)]);
 
             if (1 === $locations->count()) {
@@ -440,7 +440,7 @@ class CcdaImporterWrapper
 
     private function setLocationFromAuthorAddressInCcda(Ccda $ccda)
     {
-        if ( ! $this->ccda->bluebuttonJson()->document) {
+        if ( ! optional($this->ccda->bluebuttonJson())->document) {
             return;
         }
         $address = ((array) $ccda->bluebuttonJson()->document->author->address)['street'][0] ?? null;
@@ -456,11 +456,11 @@ class CcdaImporterWrapper
 
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
     {
-        if ( ! $this->ccda->bluebuttonJson()->document) {
+        if ( ! optional($bb = $this->ccda->bluebuttonJson())->document) {
             return;
         }
 
-        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->map(function ($address) {
+        $addresses = collect($bb->document->documentation_of)->map(function ($address) {
             $address = ((array) $address->address)['street'] ?? null;
 
             if (empty($address[0] ?? null)) {
@@ -482,8 +482,10 @@ class CcdaImporterWrapper
 
     private function setLocationFromDocumentLocationName()
     {
-        if ( ! empty($this->ccda->practice_id) && $locationName = $this->ccda->bluebuttonJson()->document->location->name) {
-            $this->ccda->setLocationId(Location::where('name', $locationName)->where('practice_id', $this->ccda->practice_id)->value('id'));
+        if ($bb = $this->ccda->bluebuttonJson()) {
+            if ( ! empty($this->ccda->practice_id) && $locationName = $bb->document->location->name) {
+                $this->ccda->setLocationId(Location::where('name', $locationName)->where('practice_id', $this->ccda->practice_id)->value('id'));
+            }
         }
 
         return null;
@@ -551,11 +553,11 @@ class CcdaImporterWrapper
 
     private function setPracticeAndLocationFromDocumentCustodianName()
     {
-        if ( ! $this->ccda->bluebuttonJson()->document) {
+        if ( ! optional($bb = $this->ccda->bluebuttonJson())->document) {
             return;
         }
 
-        if ($custodianName = $this->ccda->bluebuttonJson()->document->custodian->name) {
+        if ($custodianName = $bb->document->custodian->name) {
             $location = Location::whereColumnOrSynonym('name', $custodianName)->first();
 
             if ($location) {
