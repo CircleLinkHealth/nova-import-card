@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="main-form-block main-form-horizontal col-md-12">
+    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
         <form class="form-prevent-multi-submit" role="form" method="POST" action="{{ url('/auth/login') }}"
               autocomplete="off">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
