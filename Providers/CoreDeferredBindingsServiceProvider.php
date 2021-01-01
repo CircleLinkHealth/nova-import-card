@@ -15,6 +15,7 @@ use CircleLinkHealth\Core\Console\Commands\HerokuOnRelease;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppCreateDb;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppPreDestroy;
 use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
+use CircleLinkHealth\Core\Console\Commands\SendTestEmail;
 use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
 use CircleLinkHealth\Core\Formatters\WebixFormatter;
@@ -56,6 +57,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             GenerateInboundCallbackDataFeedbackToTester::class,
             CreateOpPreloadPreloadFilePlaceholder::class,
             ReportFormatter::class,
+            SendTestEmail::class,
         ];
     }
 
@@ -73,6 +75,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             ReviewAppSeedDb::class,
             GenerateInboundCallbackDataFeedbackToTester::class,
             CreateOpPreloadPreloadFilePlaceholder::class,
+            SendTestEmail::class,
         ];
 
         if ($this->app->environment('testing')) {
