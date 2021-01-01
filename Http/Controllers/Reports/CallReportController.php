@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\CpmAdmin\Http\Resources\PamCsvResource;
 use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
+use CircleLinkHealth\Customer\DTO\PatientTimeAndCalls;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\SharedModels\Entities\CallView;
 use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
