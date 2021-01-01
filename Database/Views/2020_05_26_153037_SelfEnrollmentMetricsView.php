@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class SelfEnrollmentMetricsView extends BaseSqlView

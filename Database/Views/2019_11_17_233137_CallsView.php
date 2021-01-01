@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\CallView;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 /**
@@ -67,7 +66,7 @@ class CallsView extends BaseSqlView
 						from patient_info pi
 						left join patient_contact_window pcw on pi.id = pcw.patient_info_id
 						where pi.ccm_status in ('enrolled', 'paused')
-						group by pi.user_id, pi.general_comment, pi.ccm_status, pi.preferred_contact_language) as u4 on c.inbound_cpm_id = u4.patient_id
+						group by pi.user_id, pi.ccm_status, pi.general_comment, pi.preferred_contact_language) as u4 on c.inbound_cpm_id = u4.patient_id
 						
 			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice, p.is_demo from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
 
