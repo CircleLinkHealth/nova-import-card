@@ -49,10 +49,10 @@
                             <div class="col-sm-12">
                                 <call-number
                                         :debug="@json($allowNonUsPhones)"
-                                        cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
+                                        cpm-caller-url="{{config('twilio-notification-channel.cpm-caller-url')}}"
                                         cpm-token="{{$cpmToken}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"
-                                        :allow-conference="@json(config('services.twilio.allow-conference'))"
+                                        :allow-conference="@json(config('twilio-notification-channel.allow-conference'))"
                                         inbound-user-id="{{$patient->id}}"
                                         outbound-user-id="{{auth()->id()}}"
                                         source="patient-call-page"

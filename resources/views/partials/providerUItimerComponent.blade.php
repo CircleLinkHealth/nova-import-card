@@ -1,7 +1,7 @@
 <time-tracker ref="TimeTrackerApp"
               class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ''}}"
               :hide-tracker="@json(isset($hideTracker) && $hideTracker)"
-              :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
+              :twilio-enabled="@json(config('twilio-notification-channel.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
               :info="timeTrackerInfo"
               route-activities="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}"
               :disable-time-tracking="@json(isset($disableTimeTracking) && $disableTimeTracking)"

@@ -8,10 +8,11 @@ namespace App\Listeners;
 
 use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class UpdateCcdaStatus implements ShouldQueue
+class UpdateCcdaStatus implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

@@ -7,7 +7,7 @@
     <div class="{{$shouldUseNewVersion ? 'container-fluid' : 'container'}}" style="padding-top: 3%;">
         <div style="display: none">
             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
-                          :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
+                          :twilio-enabled="@json(config('twilio-notification-channel.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
                           :hide-tracker="true"
                           :override-timeout="{{config('services.time-tracker.override-timeout')}}">
             </time-tracker>

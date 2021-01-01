@@ -8,10 +8,11 @@ namespace App\Listeners;
 
 use CircleLinkHealth\Customer\Events\CarePlanWasQAApproved;
 use CircleLinkHealth\SharedModels\Observers\PatientObserver;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class AddPatientConsentNote implements ShouldQueue
+class AddPatientConsentNote implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

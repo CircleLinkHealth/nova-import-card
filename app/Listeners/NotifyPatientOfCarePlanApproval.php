@@ -7,10 +7,11 @@
 namespace App\Listeners;
 
 use CircleLinkHealth\Customer\Events\CarePlanWasRNApproved;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class NotifyPatientOfCarePlanApproval implements ShouldQueue
+class NotifyPatientOfCarePlanApproval implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

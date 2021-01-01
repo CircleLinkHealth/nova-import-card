@@ -93,10 +93,12 @@ const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-nurse" */ '
 const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
 const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
 const SchedulePatientActivity = () => import(/* webpackChunkName: "chunk-callbacks-admin" */  '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/calls/comps/schedule-patient-activity.vue');
+const NotificationsComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications')
 
 
 
 Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
+Vue.component('notifications-dropdown', NotificationsComponent);
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
 Vue.component('careTeam', CareTeamComponent);

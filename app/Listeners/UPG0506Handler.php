@@ -7,10 +7,11 @@
 namespace App\Listeners;
 
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class UPG0506Handler implements ShouldQueue
+class UPG0506Handler implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

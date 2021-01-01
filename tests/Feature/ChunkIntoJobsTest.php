@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ChunksEloquentBuilderJob;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -41,7 +40,7 @@ class ChunkIntoJobsTest extends TestCase
     }
 }
 
-class FakeJob extends ChunksEloquentBuilderJob implements ShouldQueue
+class FakeJob extends ChunksEloquentBuilderJob
 {
     use Dispatchable;
     use InteractsWithQueue;

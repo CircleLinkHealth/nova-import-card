@@ -14,7 +14,7 @@
     @endif
 
     <open-modal></open-modal>
-    <notifications ref="globalNotification"></notifications>
+    <notifications-dropdown ref="globalNotification"></notifications-dropdown>
 
     @yield('content')
 

@@ -78,6 +78,8 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'unique_env_name' => env('UNIQUE_ENV_NAME', env('APP_ENV', 'production')),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

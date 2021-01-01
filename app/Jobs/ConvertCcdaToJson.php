@@ -8,11 +8,12 @@ namespace App\Jobs;
 
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ConvertCcdaToJson implements ShouldQueue
+class ConvertCcdaToJson implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
     use Queueable;
