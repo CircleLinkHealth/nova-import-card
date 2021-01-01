@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92bb169a55e1a0c1adf472e130b0eb77",
+    "content-hash": "8714669bb0e5e47b2a85f1dceacba46b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1061,11 +1061,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "6b299ab5e80ad7cadd1c309cf7893c32d14e4fb0"
+                "reference": "f2ccde047334568d9f26b5fb28fbfa1db66563ad"
             },
             "type": "laravel-module",
             "extra": {
@@ -1087,15 +1087,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T14:32:04+00:00"
+            "time": "2021-01-01T05:00:54+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "e5e8bf60690f1cba7b0be333ac2d5490808a1071"
+                "reference": "739ce93f6f24a3e39443bbff234ea14f708396ed"
             },
             "type": "laravel-module",
             "extra": {
@@ -1117,11 +1117,11 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-24T08:38:54+00:00"
+            "time": "2021-01-01T05:01:46+00:00"
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
-            "version": "dev-master",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
@@ -1163,11 +1163,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "93ae67efb689225e28c96f040e23f4cb0d3ab485"
+                "reference": "33a8a93b16d336ba08ccdf19be3491249c0c9da6"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1193,15 +1193,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-28T09:15:06+00:00"
+            "time": "2021-01-01T05:04:30+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v7.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "0850a457490ed4467891aee6ca63c2cbabd231ea"
+                "reference": "74dc4c0899556555a25a134e41219ff2d955322a"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0|^8.0",
@@ -1240,15 +1240,15 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-12-29T14:32:04+00:00"
+            "time": "2021-01-01T05:07:58+00:00"
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "8fcff6610165466cf8873ee1e85fd772e109f44c"
+                "reference": "76b3f32e131f0b7b65522001f03f16116024737f"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1278,7 +1278,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T13:24:55+00:00"
+            "time": "2021-01-01T05:11:03+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1307,11 +1307,11 @@
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "0bbb68213f4bdb6213e63635d6ac8f9e7563fdac"
+                "reference": "93a5aef49dee23e6b21f98e086d868cfe23afb5e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1331,15 +1331,15 @@
                     "email": ""
                 }
             ],
-            "time": "2020-12-29T18:17:12+00:00"
+            "time": "2021-01-01T04:59:46+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "71ef85fa5d0f5f42a7e448a3af4f9d5485214f44"
+                "reference": "c0f9bc8aa85791f02a03d8e2739a917e03efaf0d"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1367,7 +1367,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T23:26:35+00:00"
+            "time": "2021-01-01T05:12:17+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -1399,12 +1399,12 @@
             "time": "2020-09-30T13:48:52+00:00"
         },
         {
-            "name": "circlelinkhealth/timetracking-module",
-            "version": "dev-vaporizing-admin",
+            "name": "circlelinkhealth/time-tracking-module",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "b4eb0421f12d19a9ca98ef44a2af6b4e17b38b68"
+                "reference": "414e64750b8c1c3623db23b6bdb2b570db59fe8f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1429,11 +1429,11 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T14:32:04+00:00"
+            "time": "2021-01-01T05:13:15+00:00"
         },
         {
             "name": "circlelinkhealth/twilio-integration-module",
-            "version": "dev-master",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
@@ -1467,11 +1467,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-vaporizing-admin",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "ce71b2909d35e1f186a203aa4ae30a2e34abd25e"
+                "reference": "7904806d4746126e95d4584d80a7a4f054937003"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -1498,7 +1498,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-29T07:37:54+00:00"
+            "time": "2021-01-01T05:14:38+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -17670,17 +17670,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "circlelinkhealth/nurseinvoices-module": 20,
-        "circlelinkhealth/patientapi-module": 20,
-        "circlelinkhealth/pdf-service-module": 20,
-        "circlelinkhealth/raygun-module": 20,
-        "circlelinkhealth/revisionable-module": 20,
-        "circlelinkhealth/saml-sp-module": 20,
-        "circlelinkhealth/sharedvuecomponents-module": 20,
-        "circlelinkhealth/sqlviews-module": 20,
-        "circlelinkhealth/timetracking-module": 20,
-        "circlelinkhealth/twilio-integration-module": 20,
-        "circlelinkhealth/twofa-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20,
