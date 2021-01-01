@@ -62,9 +62,9 @@ class IncomingMessageHandler
         $dm->ccdas->each(function (Ccda $ccda) use ($dm) {
             if ( ! Str::contains(strtolower($dm->body), strtolower(self::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))) {
                 Bus::chain([
-                    new ImportCcda($ccda),
-                    new DecorateUPG0506CcdaWithPdfData($ccda),
-                ])->dispatch($ccda)
+                    new ImportCcda($ccda->id),
+                    new DecorateUPG0506CcdaWithPdfData($ccda->id),
+                ])->dispatch()
                     ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
                 return;
