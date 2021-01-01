@@ -187,7 +187,7 @@ class ImporterController extends Controller
                 ]
             );
 
-            ImportCcda::dispatch($ccda, true);
+            ImportCcda::dispatch($ccda->id, true);
             $ccdas[] = $ccda->id;
         }
 

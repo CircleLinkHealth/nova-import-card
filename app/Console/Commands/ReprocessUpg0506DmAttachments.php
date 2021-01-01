@@ -59,7 +59,7 @@ class ReprocessUpg0506DmAttachments extends Command
             //no need to re-import ccd at this point.
             $dm->ccdas()->get()->each(function ($ccda) {
                 if (Ccda::hasUPG0506Media()->whereId($ccda->id)->exists()) {
-                    DecorateUPG0506CcdaWithPdfData::dispatch($ccda);
+                    DecorateUPG0506CcdaWithPdfData::dispatch($ccda->id);
                 }
             });
 
