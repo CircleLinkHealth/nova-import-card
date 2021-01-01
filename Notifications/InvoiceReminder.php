@@ -6,28 +6,30 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use CircleLinkHealth\SharedModels\Entities\Dispute;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DisputeResolved extends Notification
+class InvoiceReminder extends Notification
 {
     use Queueable;
-
     /**
-     * @var Dispute
+     * @var Carbon
      */
-    public $dispute;
+    public $deadline;
+    /**
+     * @var Carbon
+     */
+    public $invoiceMonth;
 
     /**
      * Create a new notification instance.
-     *
-     * @param mixed $startDate
      */
-    public function __construct(Dispute $dispute)
+    public function __construct(Carbon $deadline, Carbon $invoiceMonth)
     {
-        $this->dispute = $dispute;
+        $this->deadline     = $deadline;
+        $this->invoiceMonth = $invoiceMonth;
     }
 
     /**
@@ -53,11 +55,12 @@ class DisputeResolved extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Your invoice dispute has been resolved')
+            ->subject('Last chance to review your invoice')
             ->greeting("Hello {$notifiable->first_name},")
-            ->line('We would like to inform  you that your invoice dispute has been resolved. Please see below message from CircleLink Health:')
-            ->line('"'.$this->dispute->resolution_note.'"')
-            ->action('See Invoice', url(route('care.center.invoice.review')));
+            ->line("We would like to inform you that the deadline to submit a dispute for your invoice for {$this->invoiceMonth->format('F Y')} is on {$this->deadline->format('m-d-Y')} at {$this->deadline->format('h:iA T')}.")
+            ->line('Please take some time to review your invoice, in case you haven\'t yet.')
+            ->action('Review Invoice', url(route('care.center.invoice.review')))
+            ->line('Thank you for using CarePlan Manager for providing care!');
     }
 
     /**

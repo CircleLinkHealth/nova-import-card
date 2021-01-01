@@ -47,9 +47,9 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from '../../../../../../resources/assets/js/components/loader';
-    import {rootUrl} from "../../../../../../resources/assets/js/app.config.js";
-    import Errors from "../../../../../../resources/assets/js/components/src/Errors";
+    import LoaderComponent from '../../../../../Sharedvuecomponents/Resources/assets/js/components/loader';
+    import {rootUrl} from "../../../../../Sharedvuecomponents/Resources/assets/js/app.config.js";
+    import Errors from "../../../../../Sharedvuecomponents/Resources/assets/js/components/src/Errors";
 
     export default {
         props: [

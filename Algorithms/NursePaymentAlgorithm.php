@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\NurseInvoices\Algorithms;
 
-use App\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
@@ -20,6 +19,7 @@ use CircleLinkHealth\NurseInvoices\Time\TimeSplitter;
 use CircleLinkHealth\NurseInvoices\ValueObjects\PatientPayCalculationResult;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeRangeEntry;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeSlots;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -313,8 +313,8 @@ abstract class NursePaymentAlgorithm
                 $nurseCallsInDays->put($nurseInfoId, $entry);
             });
         });
-        $coll->each(function (Collection $nurseRange, $rangeIndex) use ($coll, $nurseCallsInDays) {
-            $nurseRange->each(function (TimeRangeEntry $range, string $nurseInfoId) use ($coll, $rangeIndex, $nurseCallsInDays) {
+        $coll->each(function (Collection $nurseRange, $rangeIndex) use ($nurseCallsInDays) {
+            $nurseRange->each(function (TimeRangeEntry $range, string $nurseInfoId) use ($nurseCallsInDays) {
                 $entry = $nurseCallsInDays->get($nurseInfoId, []);
                 if (in_array($range->lastLogDate, $entry)) {
                     $range->hasSuccessfulCall = true;

@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 use Illuminate\Console\Command;
 
@@ -46,9 +46,7 @@ class ManualInvoiceDownloadCommand extends Command
 
         $monthToDate = Carbon::parse($month);
 
-        $adminToReceiveMail = User::findOrFail($toReceiveMailId);
-
-        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $toReceiveMailId)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     private function validateArgs(string $downloadFormat, string $month, int $adminToReceiveMail)

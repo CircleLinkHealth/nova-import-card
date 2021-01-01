@@ -6,10 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use App\Contracts\HasAttachment;
-use App\Mail\NurseInvoiceMailer;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -62,7 +61,7 @@ class InvoiceBeforePayment extends Notification implements HasAttachment, Should
      *
      * @param mixed $notifiable
      *
-     * @return NurseInvoiceMailer
+     * @return \CircleLinkHealth\NurseInvoices\Mail\NurseInvoiceMailer
      */
     public function toMail($notifiable)
     {

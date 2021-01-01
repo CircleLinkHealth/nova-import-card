@@ -6,28 +6,29 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use CircleLinkHealth\SharedModels\Entities\Dispute;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DisputeResolved extends Notification
+class ResolveDisputeReminder extends Notification
 {
     use Queueable;
 
     /**
-     * @var Dispute
+     * Count of invoices required to be resolved.
+     *
+     * @var
      */
-    public $dispute;
+    public $disputes;
 
     /**
      * Create a new notification instance.
      *
-     * @param mixed $startDate
+     * @param $disputes
      */
-    public function __construct(Dispute $dispute)
+    public function __construct($disputes)
     {
-        $this->dispute = $dispute;
+        $this->disputes = $disputes;
     }
 
     /**
@@ -48,16 +49,16 @@ class DisputeResolved extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return MailMessage
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Your invoice dispute has been resolved')
-            ->greeting("Hello {$notifiable->first_name},")
-            ->line('We would like to inform  you that your invoice dispute has been resolved. Please see below message from CircleLink Health:')
-            ->line('"'.$this->dispute->resolution_note.'"')
-            ->action('See Invoice', url(route('care.center.invoice.review')));
+            ->subject('Reminder - Resolve Dispute Invoices')
+            ->greeting('Hello,')
+            ->line("There are {$this->disputes} Invoices disputes that required to be resolved")
+            ->action('Resolve Disputes', url('superadmin/resources/disputes'))
+            ->line('Thank you!');
     }
 
     /**
@@ -69,6 +70,6 @@ class DisputeResolved extends Notification
      */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['mail'];
     }
 }

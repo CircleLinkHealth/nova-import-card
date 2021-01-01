@@ -6,28 +6,33 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use CircleLinkHealth\SharedModels\Entities\Dispute;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DisputeResolved extends Notification
+class SendMonthlyInvoicesToAccountant extends Notification
 {
     use Queueable;
+    /**
+     * @var mixed
+     */
+    public $csvInvoices;
 
     /**
-     * @var Dispute
+     * @var Carbon
      */
-    public $dispute;
+    public $date;
 
     /**
      * Create a new notification instance.
      *
-     * @param mixed $startDate
+     * @param mixed $csvInvoices
      */
-    public function __construct(Dispute $dispute)
+    public function __construct(Carbon $date, $csvInvoices)
     {
-        $this->dispute = $dispute;
+        $this->date        = $date;
+        $this->csvInvoices = $csvInvoices;
     }
 
     /**
@@ -53,11 +58,10 @@ class DisputeResolved extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Your invoice dispute has been resolved')
-            ->greeting("Hello {$notifiable->first_name},")
-            ->line('We would like to inform  you that your invoice dispute has been resolved. Please see below message from CircleLink Health:')
-            ->line('"'.$this->dispute->resolution_note.'"')
-            ->action('See Invoice', url(route('care.center.invoice.review')));
+            ->greeting('Hello,')
+            ->line("Please check attachment for: {$this->date->format('F Y')} Nurse Invoices")
+            ->attachData($this->csvInvoices->getFile(), "Nurse_Invoices_Csv_{$this->date->format('F Y')}.csv")
+            ->line('Thank you!');
     }
 
     /**
@@ -69,6 +73,6 @@ class DisputeResolved extends Notification
      */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['mail'];
     }
 }

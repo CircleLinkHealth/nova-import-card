@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\NurseInvoices\Time;
 
-use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\NurseInvoices\Entities\TimeTrackedPerDayView;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

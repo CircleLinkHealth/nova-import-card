@@ -6,14 +6,15 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
-use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseMonthlyInvoiceCsv;
+use CircleLinkHealth\NurseInvoices\Notifications\ResolveDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
@@ -65,7 +66,7 @@ class SendResolveInvoiceDisputeReminder extends Command
         }
 
         GenerateNurseMonthlyInvoiceCsv::dispatch($month)
-            ->onQueue('high');
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
 
         $this->info('Command finished');
     }
@@ -97,7 +98,7 @@ class SendResolveInvoiceDisputeReminder extends Command
         $disputesCanExist = $disputeResolutionDeadline->copy()->startOfMonth();
         //The month before $disputesCanExist is the month for which we are generating invoices for.
         $invoiceMonth                         = $disputesCanExist->copy()->subMonth()->startOfMonth();
-        $invoicesNotSentToAccountantSentQuery = \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->whereNull('sent_to_accountant_at');
+        $invoicesNotSentToAccountantSentQuery = \CircleLinkHealth\SharedModels\Entities\NurseInvoice::where('month_year', $invoiceMonth)->whereNull('sent_to_accountant_at');
         if ( ! $invoicesNotSentToAccountantSentQuery->exists()) {
             return true;
         }
@@ -110,7 +111,7 @@ class SendResolveInvoiceDisputeReminder extends Command
             return true;
         }
 
-        $disputesExist = \CircleLinkHealth\NurseInvoices\Entities\Dispute::whereIn('disputable_id', \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->pluck('id'))->where('is_resolved', false)->exists();
+        $disputesExist = \CircleLinkHealth\SharedModels\Entities\Dispute::whereIn('disputable_id', \CircleLinkHealth\SharedModels\Entities\NurseInvoice::where('month_year', $invoiceMonth)->pluck('id'))->where('is_resolved', false)->exists();
 
         if ( ! $disputesExist) {
             return false;
@@ -125,7 +126,7 @@ class SendResolveInvoiceDisputeReminder extends Command
     public function unresolvedDisputesCount($month)
     {
         return NurseInvoice::where('month_year', $month)
-            ->whereHas('disputes', function ($q) use ($month) {
+            ->whereHas('disputes', function ($q) {
                 $q->whereNull('resolved_at');
             })
             ->count();

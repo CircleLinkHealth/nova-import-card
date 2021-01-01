@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\NurseInvoices\Exports;
 
-use App\Services\AttachDisputesToTimePerDay;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
+use CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay;
+use CircleLinkHealth\PdfService\Services\PdfService;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Support\Collection;
 
 class InvoicesExportFormat
@@ -32,7 +32,7 @@ class InvoicesExportFormat
 
     public function exportToPdf(PdfService $pdfService)
     {
-        return  $this->invoices->map(function ($invoice) use ($pdfService) {
+        return $this->invoices->map(function ($invoice) use ($pdfService) {
             $nurseUserId = Nurse::findOrFail($invoice->nurse_info_id)->user_id;
             $args = $this->getInvoiceArgs($invoice, $nurseUserId);
 
@@ -42,7 +42,7 @@ class InvoicesExportFormat
 
     public function toCsvArray()
     {
-        return  $this->invoices->map(function ($invoice) {
+        return $this->invoices->map(function ($invoice) {
             if ( ! isset($invoice->first()->invoice_data)) {
                 return [
                     'Nurse'          => 'n/a',

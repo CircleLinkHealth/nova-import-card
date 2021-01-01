@@ -6,24 +6,27 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\AttachDisputesToTimePerDay;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Http\Requests\AdminShowNurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Requests\ShowNurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceApproval;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceDispute;
+use CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 
 class InvoiceReviewController extends Controller
 {
+    use ApiReturnHelpers;
+
     /**
-     * @var AttachDisputesToTimePerDay
+     * @var \CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay
      */
     private $attachDisputes;
     /**

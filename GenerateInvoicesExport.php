@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use CircleLinkHealth\Core\Exports\FromArray;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Exports\InvoicesExportFormat;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 

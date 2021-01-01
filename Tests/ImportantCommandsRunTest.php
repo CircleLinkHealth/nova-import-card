@@ -8,9 +8,8 @@ namespace CircleLinkHealth\NurseInvoices\Tests;
 
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
-use Tests\CustomerTestCase;
 
-class ImportantCommandsRunTest extends CustomerTestCase
+class ImportantCommandsRunTest extends \CircleLinkHealth\Customer\Tests\CustomerTestCase
 {
     public function test_commands_run()
     {
