@@ -27,6 +27,7 @@
             "CircleLinkHealth\\Customer\\": ""
         }
     },
+    "minimum-stability": "dev",
     "config": {
         "sort-packages": true
     },
