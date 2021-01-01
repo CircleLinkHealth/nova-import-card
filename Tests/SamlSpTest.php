@@ -9,11 +9,11 @@ namespace CircleLinkHealth\SamlSp\Tests;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Aacotroneo\Saml2\Saml2User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use Mockery;
 use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
-use Tests\CustomerTestCase;
 
 class SamlSpTest extends CustomerTestCase
 {
@@ -52,7 +52,7 @@ class SamlSpTest extends CustomerTestCase
         $route = route('saml2_acs', [
             'idpName' => 'testing',
         ]);
-        $targetRoute = route('patientCallManagement.v2.index');
+        $targetRoute = route('patientCallManagement.v2.provider.index');
         $resp        = $this->post($route, [
             'RelayState'   => $targetRoute,
             'SAMLResponse' => '',

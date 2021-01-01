@@ -35,7 +35,7 @@
 <div class="container">
     <div class="content">
         <img
-                src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}"
+                src="{{asset('/img/logos/LogoHorizontal_Color.svg')}}"
                 alt="Care Plan Manager"
                 style="margin-bottom: 1%;"
                 width="180"/>

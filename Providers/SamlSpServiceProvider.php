@@ -12,7 +12,6 @@ use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
 use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
 use CircleLinkHealth\SamlSp\Listeners\SamlLogoutEventListener;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -48,9 +47,6 @@ class SamlSpServiceProvider extends ServiceProvider
      */
     public function registerFactories()
     {
-        if ( ! app()->environment('production')) {
-            app(Factory::class)->load(__DIR__.'/../Database/factories');
-        }
     }
 
     /**
