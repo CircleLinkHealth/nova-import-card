@@ -15,6 +15,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class CarePlanApprovalReminder extends Notification implements ShouldQueue, DirectMailableNotification
@@ -101,7 +102,10 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue, Dire
      */
     public function toMail(User $notifiable)
     {
-        return new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
+        $mailable = new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
+        Log::debug(CarePlanApprovalReminder::class.' mailable: '.$mailable->mailer);
+
+        return $mailable;
     }
 
     /**
@@ -123,6 +127,8 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue, Dire
         if ($settings->dm_careplan_approval_reminders) {
             $channels[] = DirectMailChannel::class;
         }
+
+        Log::debug(CarePlanApprovalReminder::class.' channels:'.json_encode($channels));
 
         return $channels;
     }

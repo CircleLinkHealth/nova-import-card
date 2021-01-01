@@ -183,7 +183,7 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
         $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
-            ->view('vendor.notifications.email', [
+            ->view('customer::notifications.email', [
                 'greeting'        => $this->getBody(),
                 'actionText'      => 'View CarePlan',
                 'actionUrl'       => $this->carePlan->link(),

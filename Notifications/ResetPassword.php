@@ -59,7 +59,7 @@ class ResetPassword extends Notification implements ShouldQueue
 
         return (new MailMessage())
             ->from(config('mail.from.address'), $fromName)
-            ->view('vendor.notifications.email', [
+            ->view('customer::notifications.email', [
                 'greeting'     => 'You are receiving this email because we received a password reset request for your account.',
                 'actionText'   => 'Reset Password',
                 'actionUrl'    => $this->resetUrl($notifiable),

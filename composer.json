@@ -31,17 +31,17 @@
         "sort-packages": true
     },
     "require": {
-        "circlelinkhealth/core-module": "dev-vaporizing-admin",
+        "circlelinkhealth/core-module": "dev-laravel-8.0",
         "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
-        "laravel/ui": "^2.0",
-        "laravel/passport": "^8.0",
+        "laravel/ui": "^3.0",
         "laravel/scout": "^7.1|^8.0",
-        "circlelinkhealth/cerberus-gatekeeper-module": "*",
+        "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "fico7489/laravel-pivot": "^3.0",
         "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
         "propaganistas/laravel-phone": "^4.2.2",
         "spatie/laravel-medialibrary": "^7.0.0",
+        "jenssegers/agent": "^2.5",
         "league/flysystem-aws-s3-v3": "*"
     },
     "repositories": [
@@ -52,6 +52,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
         },
         {
             "type": "git",

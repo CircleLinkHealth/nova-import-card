@@ -267,7 +267,7 @@ Route::get('/downloadInvoice/{practice}/{name}', [
 ]);
 
 Route::post('forward-careplan-to-billing-provider-via-dm', [
-    'uses' => 'Patient\CareplanController@forwardToBillingProviderViaDM',
+    'uses' => 'Patient\CarePlanController@forwardToBillingProviderViaDM',
     'as'   => 'forward-careplan-to-billing-provider-via-dm',
 ])->middleware(['patientProgramSecurity']);
 
@@ -299,4 +299,24 @@ Route::prefix('api')->group(function () {
         )->middleware('permission:patient.read');
         Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
     });
+});
+
+Route::get('impersonate/take/{id}', [
+    'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
+    'as'   => 'impersonate',
+])->middleware(['auth',
+    'permission:admin-access', ]);
+
+Route::group([
+    'prefix' => 'postmark',
+], function () {
+    Route::post('/status', [
+        'uses' => 'Postmark\PostmarkController@statusCallback',
+        'as'   => 'postmark.status',
+    ]);
+
+    Route::post('/inbound', [
+        'uses' => 'Postmark\PostmarkController@inbound',
+        'as'   => 'postmark.inbound',
+    ]);
 });

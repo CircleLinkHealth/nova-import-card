@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CirleLinkHealth\Customer\DTO;
+namespace CircleLinkHealth\Customer\DTO;
 
 use Illuminate\Contracts\Support\Arrayable;
 
 class PostmarkCallbackInboundData implements Arrayable
 {
-    const CANCELLATION_REASON_KEY     = 'Cancel/Withdraw Reason';
-    const CANCELLATION_REASON_NEW_KEY = 'cancelReason';
+    const CANCELLATION_FORMATTED_KEY = 'cancelReason';
+    const CANCELLATION_REASON_KEY    = 'Cancel/Withdraw Reason';
     /**
      * @var mixed
      */
@@ -99,16 +99,16 @@ class PostmarkCallbackInboundData implements Arrayable
     public function toArray()
     {
         return [
-            'from'                            => $this->from,
-            'phone'                           => $this->phone,
-            'ptn'                             => $this->ptn,
-            'message'                         => $this->message,
-            'primary'                         => $this->primary,
-            'messageId'                       => $this->messageId,
-            'isRecId'                         => $this->isRecId,
-            'callerId'                        => $this->callerId,
-            'taken'                           => $this->taken,
-            self::CANCELLATION_REASON_NEW_KEY => $this->callbackCancellationMessage(),
+            'from'                           => $this->from,
+            'phone'                          => $this->phone,
+            'ptn'                            => $this->ptn,
+            'message'                        => $this->message,
+            'primary'                        => $this->primary,
+            'messageId'                      => $this->messageId,
+            'isRecId'                        => $this->isRecId,
+            'callerId'                       => $this->callerId,
+            'taken'                          => $this->taken,
+            self::CANCELLATION_FORMATTED_KEY => $this->callbackCancellationMessage(),
         ];
     }
 }
