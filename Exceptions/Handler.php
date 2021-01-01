@@ -14,6 +14,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\ErrorHandler\Error\FatalError;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -57,7 +58,6 @@ class Handler extends ExceptionHandler
      * @param \Illuminate\Http\Request $request
      *
      * @throws \Throwable
-     *
      * @return \Illuminate\Http\Response
      */
     public function render(
@@ -78,7 +78,6 @@ class Handler extends ExceptionHandler
      * Report or log an exception.
      *
      * @throws Exception
-     *
      * @return mixed|void
      */
     public function report(\Throwable $e)
@@ -103,6 +102,12 @@ class Handler extends ExceptionHandler
 //            return;
         }
 
+        if ($e instanceof FatalError) {
+            if (str_contains($e->getMessage(), 'escapeshellarg')) {
+                return;
+            }
+        }
+        
         if (app()->bound('sentry')) {
             app('sentry')->captureException($e);
         }
