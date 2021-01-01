@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\TwoFA\Http\Middleware;
 
+use CircleLinkHealth\TwoFA\Settings;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -41,7 +42,7 @@ class AuthyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if ( ! (bool) config('auth.two_fa_enabled')) {
+        if ( ! Settings::isTwoFAEnabled()) {
             \Session::put('authy_status', 'approved');
 
             if (\Route::is('user.2fa.show.token.form')) {
