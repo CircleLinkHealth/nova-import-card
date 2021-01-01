@@ -64,8 +64,8 @@ class IncomingMessageHandler
                 Bus::chain([
                     new ImportCcda($ccda->id),
                     new DecorateUPG0506CcdaWithPdfData($ccda->id),
-                ])->dispatch()
-                    ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+                ])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+                    ->dispatch();
 
                 return;
             }
