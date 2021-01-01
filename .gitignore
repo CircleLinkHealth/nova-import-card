@@ -34,5 +34,3 @@ CLHPackages/
 .env.test
 lsp/log/*
 *deploy-s3.env
-production-deploy-s3.env
-staging-deploy-s3.env
