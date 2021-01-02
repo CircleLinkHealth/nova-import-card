@@ -6,6 +6,7 @@ environments:
             - careplanmanager.com
             - provider.careplanmanager.com
             - worker.careplanmanager.com
+            - mycpm.link
         storage: cpm-production-vapor-storage
         network: cpm-production
         memory: 2048
