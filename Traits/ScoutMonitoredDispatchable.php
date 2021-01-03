@@ -10,7 +10,7 @@ use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Fluent;
-use Scoutapm\Events\Span\Span;
+use Scoutapm\Events\Span\SpanReference;
 use Scoutapm\Laravel\Facades\ScoutApm;
 
 trait ScoutMonitoredDispatchable
@@ -101,7 +101,7 @@ trait ScoutMonitoredDispatchable
         return ScoutApm::instrument(
             'Job',
             self::class,
-            static function (Span $span) use ($wrapThis) {
+            static function (SpanReference $span) use ($wrapThis) {
                 return $wrapThis;
             }
         );
