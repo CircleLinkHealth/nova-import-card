@@ -6,7 +6,7 @@ jobs:
     name: Vaporize
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/laravel-8'
+    if: github.ref == 'refs/heads/development'
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -22,6 +22,11 @@ jobs:
 
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.testing', '.env');"
+
+      - name: Set SSH key for npm install
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_PANGRATIOS }}
 
       - name: Install Composer dependencies
         if: ${{ env.CI_SKIP == 'false' }}
