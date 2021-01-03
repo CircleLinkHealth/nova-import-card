@@ -3,9 +3,10 @@ name: app-cpm-caller-laravel
 environments:
   production:
     domain: caller.careplanmanager.com
-    memory: 512
     network: cpm-production
+    memory: 512
     cli-memory: 512
+    queue-memory: 512
     runtime: docker
     queues:
     - cpm-caller-low-production
@@ -14,7 +15,7 @@ environments:
     scheduler: false
     mail: false
     concurrency: 50
-    warm: 10
+    capacity: 5
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
   staging:
@@ -22,6 +23,7 @@ environments:
     network: cpm-staging
     memory: 512
     cli-memory: 512
+    queue-memory: 512
     runtime: docker
     queues:
     - cpm-caller-low-staging
