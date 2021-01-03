@@ -21,6 +21,9 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "7.0.x-dev"
+        },
         "laravel": {
             "providers": [
                 "CircleLinkHealth\\Revisionable\\Providers\\RevisionableServiceProvider"
