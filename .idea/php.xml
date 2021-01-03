@@ -353,6 +353,8 @@
       <path value="$PROJECT_DIR$/vendor/moontoast/math" />
       <path value="$PROJECT_DIR$/vendor/shipping-docker/vessel" />
       <path value="$PROJECT_DIR$/vendor/consoletvs/charts" />
+      <path value="$PROJECT_DIR$/vendor/scoutapp/scout-apm-laravel" />
+      <path value="$PROJECT_DIR$/vendor/scoutapp/scout-apm-php" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
