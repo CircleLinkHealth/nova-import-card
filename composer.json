@@ -9,6 +9,9 @@
         }
     ],
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        },
         "laravel": {
             "providers": [
                 "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
