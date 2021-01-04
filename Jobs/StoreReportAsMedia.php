@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Contracts\PracticeDataExportInterface;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;

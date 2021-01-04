@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Jobs;
 
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\SendCareDocument;

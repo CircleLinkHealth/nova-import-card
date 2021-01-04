@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use CircleLinkHealth\SharedModels\Entities\Activity;
