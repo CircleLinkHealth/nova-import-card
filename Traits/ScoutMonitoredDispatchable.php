@@ -101,7 +101,7 @@ trait ScoutMonitoredDispatchable
         return ScoutApm::instrument(
             'Job',
             self::class,
-            static function (SpanReference $span) use ($wrapThis) {
+            static function (SpanReference $span = null) use ($wrapThis) {
                 return $wrapThis;
             }
         );
