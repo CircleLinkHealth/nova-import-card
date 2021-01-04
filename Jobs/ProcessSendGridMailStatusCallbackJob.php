@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Core\Jobs;
 
 use CircleLinkHealth\Core\Entities\SendGridRawLog;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;

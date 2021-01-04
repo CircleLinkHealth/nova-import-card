@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Core\Listeners;
 
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationSent;
