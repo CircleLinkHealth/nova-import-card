@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Notifications;
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
+use CircleLinkHealth\Customer\DTO\CarePlanApprovalReminderRecipient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use Illuminate\Bus\Queueable;
@@ -102,7 +103,7 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue, Dire
      */
     public function toMail(User $notifiable)
     {
-        $mailable = new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
+        $mailable = new CarePlanApprovalReminderMailable(CarePlanApprovalReminderRecipient::fromUser($notifiable), $this->numberOfCareplans);
         Log::debug(CarePlanApprovalReminder::class.' mailable: '.$mailable->mailer);
 
         return $mailable;

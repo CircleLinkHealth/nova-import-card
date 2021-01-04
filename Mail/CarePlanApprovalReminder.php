@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Mail;
 
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\DTO\CarePlanApprovalReminderRecipient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -23,7 +23,7 @@ class CarePlanApprovalReminder extends Mailable
      *
      * @param $numberOfCareplans
      */
-    public function __construct(User $recipient, $numberOfCareplans)
+    public function __construct(CarePlanApprovalReminderRecipient $recipient, $numberOfCareplans)
     {
         $this->recipient         = $recipient;
         $this->numberOfCareplans = $numberOfCareplans;
@@ -39,7 +39,7 @@ class CarePlanApprovalReminder extends Mailable
         return $this
             ->view('emails.careplansPendingApproval')
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->to($this->recipient->email, $this->recipient->getFullName())
+            ->to($this->recipient->email(), $this->recipient->name())
             ->subject("{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!");
     }
 }
