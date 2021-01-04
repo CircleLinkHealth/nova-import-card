@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
 use CircleLinkHealth\Nurseinvoices\Config\DebugConfig;
