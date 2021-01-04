@@ -30,11 +30,9 @@ class ManualCallController extends Controller
 
     public function create(ShowCreateManualCallForm $request)
     {
-        $message = \Session::pull(self::SESSION_KEY);
+        $messageEncoded = \Session::pull(self::SESSION_KEY);
+        $message        = CreateManualCallAfterNote::fromString($messageEncoded);
 
-        if ( ! $message instanceof CreateManualCallAfterNote) {
-            throw new \DomainException('Type Error in ManualCallController `$message` should be an instance of.');
-        }
         $nextCallSuggestion = app(NextCallDateSuggestor::class)
             ->handle($message->getPatient(), $message->getCallHandler());
 

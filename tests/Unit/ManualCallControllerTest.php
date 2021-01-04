@@ -44,7 +44,7 @@ class ManualCallControllerTest extends CustomerTestCase
     {
         [$nurse, $patient] = $this->mockSuggestor($handler = new SuccessfulCall());
 
-        $this->putMessageInSession(new CreateManualCallAfterNote($patient, $handler));
+        $this->putMessageInSession(json_encode((new CreateManualCallAfterNote($patient->id, true))->toArray()));
 
         $response = $this->actingAs($nurse)
             ->get(route('manual.call.create', ['patientId' => $patient->id]));

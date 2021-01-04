@@ -6,8 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
-use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
 use App\Jobs\ForwardNote;
@@ -762,7 +760,9 @@ class NotesController extends Controller
                             ['Successfully Created Note']
                         );
                     }
-                    \Session::flash(ManualCallController::SESSION_KEY, new CreateManualCallAfterNote($patient, Call::REACHED === $call_status ? new SuccessfulCall() : new UnsuccessfulCall()));
+
+                    $sessionVal = new CreateManualCallAfterNote($patient->id, Call::REACHED === $call_status);
+                    \Session::flash(ManualCallController::SESSION_KEY, json_encode($sessionVal->toArray()));
 
                     return redirect()->route('manual.call.create', ['patientId' => $patientId])->with(
                         'messages',
