@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\TwilioIntegration\Jobs;
 
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallReplyNotification;
@@ -17,6 +16,7 @@ use CircleLinkHealth\TwilioIntegration\Models\TwilioInboundSms;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
