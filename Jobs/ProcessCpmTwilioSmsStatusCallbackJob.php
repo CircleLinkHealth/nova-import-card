@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TwilioIntegration\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use Illuminate\Bus\Queueable;

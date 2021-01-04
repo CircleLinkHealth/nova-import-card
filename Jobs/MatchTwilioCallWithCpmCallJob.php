@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TwilioIntegration\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
