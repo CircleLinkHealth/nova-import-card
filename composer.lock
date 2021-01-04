@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "996b1d32ae70773cef06c9854a9df730",
+    "content-hash": "5ed300caaf1f9e503ab5190ba4f66588",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -621,14 +621,17 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "v1.1.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
-                "reference": "e679a1052d3d5d24ad8310742a8ac1f5070a4375"
+                "reference": "ce1083ed1be5c8890cff373622b9f5239d16d820"
             },
             "type": "laravel-module",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                },
                 "laravel": {
                     "providers": [
                         "CircleLinkHealth\\CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
@@ -657,7 +660,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2020-11-30T17:48:38+00:00"
+            "time": "2021-01-04T20:34:58+00:00"
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
@@ -17715,6 +17718,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/ccda-parser-processor-php-module": 20,
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
