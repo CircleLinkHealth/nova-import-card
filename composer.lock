@@ -625,7 +625,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
-                "reference": "ce1083ed1be5c8890cff373622b9f5239d16d820"
+                "reference": "3c2f8b8ff2787d5452b91f3f0339caa59afd85e5"
             },
             "type": "laravel-module",
             "extra": {
@@ -660,7 +660,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2021-01-04T20:34:58+00:00"
+            "time": "2021-01-04T22:07:43+00:00"
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
@@ -1490,7 +1490,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "31f66f7782140da35b8b633e10b233c7a3885aec"
+                "reference": "81cc08e79be004b966287edcda642f231cacdb34"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1512,7 +1512,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T21:29:26+00:00"
+            "time": "2021-01-04T22:13:54+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
