@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
@@ -14,7 +15,6 @@ use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;

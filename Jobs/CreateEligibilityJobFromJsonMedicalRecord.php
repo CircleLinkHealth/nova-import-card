@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

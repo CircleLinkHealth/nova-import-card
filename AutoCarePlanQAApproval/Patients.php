@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\AutoCarePlanQAApproval;
 
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

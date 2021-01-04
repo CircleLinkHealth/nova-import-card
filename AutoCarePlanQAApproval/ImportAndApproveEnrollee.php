@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\AutoCarePlanQAApproval;
 
 use CircleLinkHealth\Core\Helpers\StringHelpers;
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -15,7 +16,6 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -14,7 +15,6 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

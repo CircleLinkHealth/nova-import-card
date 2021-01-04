@@ -1,10 +1,10 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Eligibility\Jobs;
-
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -35,23 +35,23 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
 
     public function handle()
     {
-        Log::channel('database')->info("Restoring providers for enrollees that mistakenly got their provider un-attached.");
+        Log::channel('database')->info('Restoring providers for enrollees that mistakenly got their provider un-attached.');
         Enrollee::with(['revisionHistory'])
-                ->whereNull('provider_id')
-                ->where('status', Enrollee::INELIGIBLE)
-                ->whereHas('revisionHistory', function ($r) {
+            ->whereNull('provider_id')
+            ->where('status', Enrollee::INELIGIBLE)
+            ->whereHas('revisionHistory', function ($r) {
                     $r->where('created_at', '>=', $this->date)
-                      ->where('key', 'provider_id')
-                      ->whereNull('new_value')
-                      ->whereNotNull('old_value');
+                        ->where('key', 'provider_id')
+                        ->whereNull('new_value')
+                        ->whereNotNull('old_value');
                 })
-                ->each(function (Enrollee $enrollee) {
+            ->each(function (Enrollee $enrollee) {
                     Log::channel('database')->info("Restoring provider for enrollee with ID: $enrollee->id.");
                     $providerId = optional($enrollee->revisionHistory->where('key', 'provider_id')
-                                                               ->whereNull('new_value')
-                                                               ->whereNotNull('old_value')
-                                                               ->sortByDesc('created_at')
-                                                               ->first())->old_value;
+                        ->whereNull('new_value')
+                        ->whereNotNull('old_value')
+                        ->sortByDesc('created_at')
+                        ->first())->old_value;
 
                     if ( ! User::ofType('provider')->where('id', $providerId)->exists()) {
                         Log::channel('database')->info("Error restoring provider for enrollee with ID: {$enrollee->id}. Provider with ID: {$providerId} not found");
@@ -59,10 +59,9 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
                         return;
                     }
 
-                    $enrollee->status      = Enrollee::TO_CALL;
+                    $enrollee->status = Enrollee::TO_CALL;
                     $enrollee->provider_id = $providerId;
                     $enrollee->save();
                 });
-
     }
 }

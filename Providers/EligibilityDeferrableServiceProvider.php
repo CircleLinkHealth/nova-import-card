@@ -57,7 +57,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
             SendSelfEnrollmentReminders::class,
-            RestoreEnrolleeProvidersFromRevisions::class
+            RestoreEnrolleeProvidersFromRevisions::class,
         ];
     }
 
@@ -83,7 +83,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
             SendSelfEnrollmentReminders::class,
-            RestoreEnrolleeProvidersFromRevisions::class
+            RestoreEnrolleeProvidersFromRevisions::class,
         ]);
 
         $this->app->singleton(AthenaApiImplementation::class, function () {
