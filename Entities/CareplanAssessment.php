@@ -131,7 +131,7 @@ class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         $patient        = $this->patient()->first();
         $this->fileName = Carbon::now()->toDateString().'-'.$patient['id'].'.pdf';
-        $filePath       = base_path('storage/pdfs/assessments/'.$this->fileName);
+        $filePath       = storage_path('pdfs/assessments/'.$this->fileName);
 
         $pdf = app(PdfService::class);
         $pdf->createPdfFromView('emails.assessment-created', [
