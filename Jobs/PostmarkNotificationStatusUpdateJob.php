@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\Core\Jobs;
 
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use Illuminate\Bus\Queueable;
 use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

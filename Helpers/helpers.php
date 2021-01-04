@@ -2114,7 +2114,7 @@ if ( ! function_exists('enableDailyReportToPopUp')) {
         if ('1' === $value || '0' === $value) {
             return boolval($value);
         }
-    
+
         if ('true' === $value || 'false' === $value) {
             return boolval($value);
         }

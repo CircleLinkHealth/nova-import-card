@@ -107,7 +107,7 @@ class Handler extends ExceptionHandler
                 return;
             }
         }
-        
+
         if (app()->bound('sentry')) {
             app('sentry')->captureException($e);
         }

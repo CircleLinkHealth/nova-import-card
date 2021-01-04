@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\DirectMail\Actions\Ccda\GetOrCreateCcdaXml;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PhiMail implements DirectMail
