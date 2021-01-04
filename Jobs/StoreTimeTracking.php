@@ -8,6 +8,7 @@ namespace CircleLinkHealth\TimeTracking\Jobs;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
@@ -19,7 +20,6 @@ use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Symfony\Component\HttpFoundation\ParameterBag;
