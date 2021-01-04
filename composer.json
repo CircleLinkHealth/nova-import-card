@@ -40,6 +40,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
         },
         {
@@ -57,6 +61,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
         },
         {
             "type": "path",
@@ -109,6 +117,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
         }
     ],
     "require": {
@@ -130,6 +142,7 @@
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
+        "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
         "circlelinkhealth/enrollment-invites": "*",
@@ -139,14 +152,15 @@
         "circlelinkhealth/invoices-download": "*",
         "circlelinkhealth/nurseinvoices-module": "dev-vaporizing-admin",
         "circlelinkhealth/pdf-service-module": "dev-master",
-        "circlelinkhealth/raygun-module": "1.2",
-        "circlelinkhealth/revisionable-module": "6.1.1",
+        "circlelinkhealth/raygun-module": "dev-vaporizing-admin",
+        "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
         "circlelinkhealth/saml-sp-module": "dev-vaporizing-admin",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
         "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/timetracking-module": "dev-vaporizing-admin",
+        "circlelinkhealth/twilio-integration-module": "dev-master",
         "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
@@ -164,7 +178,6 @@
         "laravel/framework": "^7.24",
         "laravel/nova": "^3.0",
         "laravel/tinker": "^2.0",
-        "laravel/vapor-cli": "^1.11",
         "maatwebsite/laravel-nova-excel": "^1.2",
         "phaxio/phaxio": "^2.0",
         "sparclex/nova-import-card": "^7.0.1",
@@ -177,12 +190,17 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
         "barryvdh/laravel-ide-helper": "^2.8",
+        "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
         "facade/ignition": "^2.0",
         "friendsofphp/php-cs-fixer": "^2.17",
+        "joshgaber/novaunit": "1.2",
+        "laravel/vapor-cli": "^1.11",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^4.1",
         "nwidart/laravel-modules": "^7.1",
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^9.0",
+        "psalm/plugin-laravel": "^1.4",
+        "vimeo/psalm": "^4.3"
     },
     "config": {
         "discard-changes": true,

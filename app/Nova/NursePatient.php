@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\GeneratePatientCallDataCsv\GeneratePatientCallDataCsv;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class NursePatient extends Resource
      *
      * @var string
      */
-    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
+    public static $group = CpmConstants::NOVA_GROUP_CARE_COACHES;
 
     /**
      * The model the resource corresponds to.

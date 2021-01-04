@@ -4,13 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
+use Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider;
+use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
+use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
+use MichaelLedin\LaravelJob\LaravelJobServiceProvider;
 
 return [
     /*
@@ -179,7 +184,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
+        CpmMigrationsServiceProvider::class,
+        ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
         CpmAdminServiceProvider::class,
         RaygunServiceProvider::class,
@@ -188,10 +194,16 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
+        LaravelJobServiceProvider::class,
+        CcmBillingServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
         BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
+        DirectMailServiceProvider::class,
+
+        CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
+        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class
     ],
 
     /*

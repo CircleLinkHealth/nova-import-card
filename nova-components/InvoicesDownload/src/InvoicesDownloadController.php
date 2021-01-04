@@ -7,7 +7,8 @@
 namespace Circlelinkhealth\InvoicesDownload;
 
 use Carbon\Carbon;
-use Circlelinkhealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 
 class InvoicesDownloadController
 {
@@ -21,7 +22,7 @@ class InvoicesDownloadController
         $month        = Carbon::parse($date['label'])->startOfMonth();
         $monthToHuman = Carbon::parse($month)->format('M-Y');
 
-        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, $auth)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, $auth)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return response()->json(
             [

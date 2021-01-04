@@ -141,7 +141,7 @@ class Ccda extends Resource
                     return '';
                 }
 
-                return link_to_route('patient.careplan.print', 'View', [$row->patient_user_id])->toHtml();
+                return link_to(env('CPM_PROVIDER_APP_URL')."manage-patients/{$row->patient_user_id}/view-careplan", 'View', [$row->patient_user_id])->toHtml();
             })->asHtml(),
             Text::make('First Name', 'first_name')->sortable(),
             Text::make('Last Name', 'last_name')->sortable(),

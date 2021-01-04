@@ -38,6 +38,37 @@ return [
     ],
 
     'twilio' => [
-        'enabled' => env('TWILIO_ENABLED', false),
+        'enabled'          => env('TWILIO_ENABLED', false),
+        'account_sid'      => env('TWILIO_SID', 'somerandomstring'),
+        'auth_token'       => env('TWILIO_TOKEN', 'somerandomstring'),
+        'from'             => env('TWILIO_FROM', 'somerandomstring'),
+        'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
+        'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
+        'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
+        'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
+    ],
+
+    'serverless-pdf-generator' => [
+        'api-url'         => env('SERVERLESS_PDF_GENERATOR_API_URL'),
+        'api-key'         => env('SERVERLESS_PDF_GENERATOR_API_KEY'),
+        'default-options' => [
+            'format' => 'Letter',
+            'scale'  => 0.8,
+            'margin' => [
+                'top'    => '1cm',
+                'bottom' => '1cm',
+                'left'   => '1cm',
+                'right'  => '1cm',
+            ],
+        ],
+        'mail-vendor-envelope-options' => [
+            'scale'  => 0.7,
+            'margin' => [
+                'top'    => '12mm',
+                'bottom' => '15mm',
+                'left'   => '25mm',
+                'right'  => '0.75mm',
+            ],
+        ],
     ],
 ];

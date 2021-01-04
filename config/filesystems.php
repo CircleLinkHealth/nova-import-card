@@ -4,6 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+$useLambdaStorage = env('USE_LAMBDA_STORAGE', false);
+$lambdaRoot       = env('LAMBDA_STORAGE_ROOT', '/mnt/local');
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +50,12 @@ return [
     'disks' => [
         'local' => [
             'driver' => 'local',
-            'root'   => storage_path('app'),
+            'root'   => $useLambdaStorage ? ($lambdaRoot.'/app') : storage_path('app'),
+        ],
+
+        'storage' => [
+            'driver' => 'local',
+            'root'   => $useLambdaStorage ? $lambdaRoot : storage_path(),
         ],
 
         'public' => [
@@ -73,6 +81,14 @@ return [
             'secret' => env('S3_CPM_STORAGE_SECRET'),
             'region' => env('S3_CPM_STORAGE_REGION'),
             'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+        ],
+
+        'secrets' => [
+            'driver' => 's3',
+            'key'    => env('S3_SECRETS_KEY'),
+            'secret' => env('S3_SECRETS_SECRET'),
+            'region' => env('S3_SECRETS_REGION'),
+            'bucket' => env('S3_SECRETS_BUCKET'),
         ],
     ],
 

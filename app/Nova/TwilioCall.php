@@ -31,7 +31,7 @@ class TwilioCall extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\SharedModels\Entities\TwilioCall::class;
+    public static $model = \CircleLinkHealth\TwilioIntegration\Models\TwilioCall::class;
 
     /**
      * The columns that should be searched.

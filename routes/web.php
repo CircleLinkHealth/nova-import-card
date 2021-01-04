@@ -18,8 +18,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('home', 'HomeController@index');
 
 Route::get('ccd-importer', [
     'uses' => 'RedirectToOtherApp@ccdImporter',
     'as'   => 'import.ccd.remix',
 ]);
+
+Route::get('pinfo', [
+    'uses' => 'RedirectToOtherApp@pinfo',
+])->middleware(['auth', 'role:administrator']);
+
+Route::get('config', [
+    'uses' => 'RedirectToOtherApp@config',
+])->middleware(['auth', 'role:administrator']);

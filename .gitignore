@@ -32,3 +32,4 @@ CircleLinkHealth/
 .phpunit.result.cache
 .vapor/
 .env.production
+lsp/log/*
