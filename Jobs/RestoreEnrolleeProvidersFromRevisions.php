@@ -40,28 +40,28 @@ class RestoreEnrolleeProvidersFromRevisions extends Job implements ShouldBeEncry
             ->whereNull('provider_id')
             ->where('status', Enrollee::INELIGIBLE)
             ->whereHas('revisionHistory', function ($r) {
-                    $r->where('created_at', '>=', $this->date)
-                        ->where('key', 'provider_id')
-                        ->whereNull('new_value')
-                        ->whereNotNull('old_value');
-                })
+                $r->where('created_at', '>=', $this->date)
+                    ->where('key', 'provider_id')
+                    ->whereNull('new_value')
+                    ->whereNotNull('old_value');
+            })
             ->each(function (Enrollee $enrollee) {
-                    Log::channel('database')->info("Restoring provider for enrollee with ID: $enrollee->id.");
-                    $providerId = optional($enrollee->revisionHistory->where('key', 'provider_id')
-                        ->whereNull('new_value')
-                        ->whereNotNull('old_value')
-                        ->sortByDesc('created_at')
-                        ->first())->old_value;
+                Log::channel('database')->info("Restoring provider for enrollee with ID: $enrollee->id.");
+                $providerId = optional($enrollee->revisionHistory->where('key', 'provider_id')
+                    ->whereNull('new_value')
+                    ->whereNotNull('old_value')
+                    ->sortByDesc('created_at')
+                    ->first())->old_value;
 
-                    if ( ! User::ofType('provider')->where('id', $providerId)->exists()) {
-                        Log::channel('database')->info("Error restoring provider for enrollee with ID: {$enrollee->id}. Provider with ID: {$providerId} not found");
+                if ( ! User::ofType('provider')->where('id', $providerId)->exists()) {
+                    Log::channel('database')->info("Error restoring provider for enrollee with ID: {$enrollee->id}. Provider with ID: {$providerId} not found");
 
-                        return;
-                    }
+                    return;
+                }
 
-                    $enrollee->status = Enrollee::TO_CALL;
-                    $enrollee->provider_id = $providerId;
-                    $enrollee->save();
-                });
+                $enrollee->status = Enrollee::TO_CALL;
+                $enrollee->provider_id = $providerId;
+                $enrollee->save();
+            });
     }
 }

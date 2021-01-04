@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Jobs;
 
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee as ActionClass;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

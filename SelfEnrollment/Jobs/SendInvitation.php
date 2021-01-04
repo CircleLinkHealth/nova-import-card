@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Jobs;
 
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentC
 use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
