@@ -8,7 +8,7 @@ environments:
         network: cpm-production
         memory: 256
         cli-memory: 512
-        queue-memory: 256
+        queue-memory: 512
         queue-timeout: 600
         concurrency: 40
         queue-concurrency: 10
