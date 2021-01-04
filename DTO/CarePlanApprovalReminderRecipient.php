@@ -20,15 +20,15 @@ class CarePlanApprovalReminderRecipient
         $this->email = $email;
         $this->role  = $role;
     }
-    
-    public static function fromUser(User $recipient)
-    {
-        return new static($recipient->getFullName(), $recipient->email, $recipient->practiceOrGlobalRole()->name);
-    }
-    
+
     public function email(): string
     {
         return $this->email;
+    }
+
+    public static function fromUser(User $recipient)
+    {
+        return new static($recipient->getFullName(), $recipient->email, $recipient->practiceOrGlobalRole()->name);
     }
 
     public function isProvider(): bool
