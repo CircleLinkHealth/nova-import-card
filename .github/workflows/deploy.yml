@@ -54,7 +54,7 @@ jobs:
         with:
           version: 1
           php_version: 7.4
-          php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath
+          php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath sockets
           progress: yes
           dev: yes
           args: --classmap-authoritative --no-scripts
@@ -65,7 +65,7 @@ jobs:
         with:
           php-version: '7.4'
           tools: composer:v1
-          extensions: redis, zip, gd, exif, imagick, opcache, intl, libxml, pdo, dom, bcmath
+          extensions: redis, zip, gd, exif, imagick, opcache, intl, libxml, pdo, dom, bcmath, sockets
           coverage: none
 
       - name: Deploy
