@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Jobs;
 
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\SelfEnrollment\AppConfig\Reminders;

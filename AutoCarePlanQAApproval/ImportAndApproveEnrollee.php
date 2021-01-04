@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\AutoCarePlanQAApproval;
 
 use CircleLinkHealth\Core\Helpers\StringHelpers;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
