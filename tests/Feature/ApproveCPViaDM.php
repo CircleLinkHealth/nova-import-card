@@ -16,13 +16,13 @@ use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Str;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
 {

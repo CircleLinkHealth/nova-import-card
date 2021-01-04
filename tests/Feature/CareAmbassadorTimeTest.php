@@ -7,8 +7,8 @@
 namespace Tests\Feature;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 
 class CareAmbassadorTimeTest extends CustomerTestCase
 {

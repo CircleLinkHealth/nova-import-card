@@ -13,8 +13,8 @@ use App\Contracts\CallHandler;
 use App\Http\Controllers\ManualCallController;
 use App\ValueObjects\CreateManualCallAfterNote;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class ManualCallControllerTest extends CustomerTestCase
 {
