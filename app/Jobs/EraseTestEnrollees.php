@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;

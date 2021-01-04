@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;

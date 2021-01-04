@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;

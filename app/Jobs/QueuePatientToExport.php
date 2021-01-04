@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use CircleLinkHealth\Core\GoogleDrive;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Bus\Queueable;

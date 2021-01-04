@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;

@@ -9,7 +9,7 @@ namespace App\Jobs;
 use App\Exports\NurseDailyReport;
 use App\Notifications\ReportGenerated;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

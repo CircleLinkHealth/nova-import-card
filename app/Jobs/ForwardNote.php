@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Bus\Queueable;

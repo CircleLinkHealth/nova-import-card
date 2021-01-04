@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Bus\Queueable;
