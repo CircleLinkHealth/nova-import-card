@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -540,13 +541,17 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $this->save();
             throw new InvalidCcdaException($this->id);
         }
-
+    
+        $xmlFilename = "ccd_import_media_{$xmlMedia->id}.xml";
+        $jsonFilename = "ccda_import_json_{$this->id}.json";
+        
         $drive = Storage::drive('storage');
-        $drive->put($xmlFilename = "ccd_import_media_{$xmlMedia->id}.xml", $xml);
+        $drive->put($xmlFilename, $xml);
 
         $xmlPath = storage_path($xmlFilename);
-
-        $jsonPath = storage_path($jsonFilename = "ccda_import_json_{$this->id}.json");
+        $jsonPath = storage_path($jsonFilename);
+        
+        Log::debug("ccda[$this->id].parseToJson inputPath[$xmlPath] outputPath[$jsonPath]");
 
         Artisan::call(
             'ccd:parse',
