@@ -13,7 +13,6 @@ use CircleLinkHealth\Customer\Entities\WorkHours;
 use CircleLinkHealth\Customer\Traits\ValidatesWorkScheduleCalendar;
 use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
