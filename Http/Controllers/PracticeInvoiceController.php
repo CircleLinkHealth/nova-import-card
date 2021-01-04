@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\CreatePracticeInvoice;
+use CircleLinkHealth\CcmBilling\Jobs\SetLegacyPmsClosedMonthStatus;
 use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
@@ -60,25 +61,16 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $savedSummaries = collect();
+        $updated = $this->getCurrentMonthSummariesQuery($practice_id, $date)->update([
+            'actor_id' => $user->id,
+            'needs_qa' => false,
+        ]);
 
-        $this->getCurrentMonthSummariesQuery($practice_id, $date)
-            ->chunkById(100, function ($summaries) use ($user, &$savedSummaries) {
-                foreach ($summaries as $summary) {
-                    $summary->actor_id = $user->id;
-                    $summary->needs_qa = false;
-                    if ($summary->patient) {
-                        if ($summary->patient->patientInfo) {
-                            $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
-                        }
-                    }
-                    $summary->save();
+        SetLegacyPmsClosedMonthStatus::dispatch($practice_id, $date)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
 
-                    $savedSummaries->push($summary);
-                }
-            });
-
-        return response()->json($savedSummaries);
+        return response()->json([
+            'updated' => $updated,
+        ]);
     }
 
     public function counts(Request $request)
@@ -279,16 +271,14 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $query = $this->getCurrentMonthSummariesQuery($practice_id, $date);
-
-        $query->update([
+        $updated = $this->getCurrentMonthSummariesQuery($practice_id, $date)->update([
             'actor_id'          => null,
             'closed_ccm_status' => null,
         ]);
 
-        $summaries = $query->get();
-
-        return response()->json($summaries);
+        return response()->json([
+            'updated' => $updated,
+        ]);
     }
 
     /**
@@ -457,10 +447,9 @@ class PracticeInvoiceController extends Controller
      */
     private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
     {
-        return PatientMonthlySummary::with('patient.patientInfo')
-            ->whereHas('patient', function ($q) use ($practice_id) {
-                $q->ofPractice($practice_id);
-            })
+        return PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
+            $q->ofPractice($practice_id);
+        })
             ->where('month_year', $date->startOfMonth());
     }
 }
