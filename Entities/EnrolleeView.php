@@ -148,6 +148,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                                                         $invited
  * @property string|null                                                                                 $facility_name
  * @property string|null                                                                                 $deleted_at
+ * @method   static                                                                                      \Illuminate\Database\Query\Builder|EnrolleeView onlyTrashed()
+ * @method   static                                                                                      \Illuminate\Database\Query\Builder|EnrolleeView withTrashed()
+ * @method   static                                                                                      \Illuminate\Database\Query\Builder|EnrolleeView withoutTrashed()
  */
 class EnrolleeView extends SqlViewModel
 {
