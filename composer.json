@@ -129,6 +129,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
     }
   ],
@@ -162,6 +166,7 @@
     "circlelinkhealth/raygun-module": "2.0",
     "circlelinkhealth/revisionable-module": "7.0.x-dev",
     "circlelinkhealth/saml-sp-module": "2.0",
+    "circlelinkhealth/self-enrollment-module": "0.0.x-dev",
     "circlelinkhealth/shared-models-module": "2.2.x-dev",
     "circlelinkhealth/sharedvuecomponents-module": "1.0",
     "circlelinkhealth/sqlviews-module": "2.0",
