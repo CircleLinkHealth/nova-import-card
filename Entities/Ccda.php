@@ -541,16 +541,15 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $this->save();
             throw new InvalidCcdaException($this->id);
         }
-    
-        $xmlFilename = "ccd_import_media_{$xmlMedia->id}.xml";
+
+        $xmlFilename  = "ccd_import_media_{$xmlMedia->id}.xml";
         $jsonFilename = "ccda_import_json_{$this->id}.json";
-        
+
         $drive = Storage::drive('storage');
         $drive->put($xmlFilename, $xml);
 
-        $xmlPath = $drive->path($xmlFilename);
+        $xmlPath  = $drive->path($xmlFilename);
         $jsonPath = $drive->path($jsonFilename);
-        
         Log::debug("ccda[$this->id].parseToJson inputPath[$xmlPath] outputPath[$jsonPath]");
 
         Artisan::call(
