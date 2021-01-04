@@ -8,7 +8,7 @@ namespace CircleLinkHealth\TimeTracking\Jobs;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
