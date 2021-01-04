@@ -139,20 +139,20 @@
         },
         {
             "name": "algolia/scout-extended",
-            "version": "1.10.2",
+            "version": "v1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2"
+                "reference": "bcbdd44b22e4ed742c363d23b8d4c3193d543ce2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2",
-                "reference": "ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/bcbdd44b22e4ed742c363d23b8d4c3193d543ce2",
+                "reference": "bcbdd44b22e4ed742c363d23b8d4c3193d543ce2",
                 "shasum": ""
             },
             "require": {
-                "algolia/algoliasearch-client-php": "^2.5.1",
+                "algolia/algoliasearch-client-php": "^2.7.3",
                 "ext-json": "*",
                 "illuminate/console": "^6.0|^7.0|^8.0",
                 "illuminate/contracts": "^6.0|^7.0|^8.0",
@@ -160,15 +160,15 @@
                 "illuminate/filesystem": "^6.0|^7.0|^8.0",
                 "illuminate/support": "^6.0|^7.0|^8.0",
                 "laravel/scout": "^8.0",
-                "php": "^7.3",
+                "php": "^7.3|^8.0",
                 "riimu/kit-phpencoder": "^2.4"
             },
             "require-dev": {
-                "fzaninotto/faker": "^1.8",
-                "laravel/legacy-factories": "^1.0",
-                "mockery/mockery": "^1.1",
+                "fakerphp/faker": "^1.13",
+                "laravel/legacy-factories": "^1.1",
+                "mockery/mockery": "^1.4",
                 "nunomaduro/larastan": "^0.6",
-                "orchestra/testbench": "^4.0|^5.0|^6.0",
+                "orchestra/testbench": "^4.9|^5.9|^6.6",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
@@ -212,7 +212,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2020-11-24T10:23:31+00:00"
+            "time": "2021-01-04T09:34:22+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -1467,7 +1467,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "808bf71112691da00f42e9a96c9c8b9dd68edf0c"
+                "reference": "5f1e37ecf8d8cb77408025058e42ed7ed5628974"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1496,7 +1496,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T08:28:27+00:00"
+            "time": "2021-01-04T12:50:52+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
