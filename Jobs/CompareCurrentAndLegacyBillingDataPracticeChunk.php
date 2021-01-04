@@ -8,12 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
