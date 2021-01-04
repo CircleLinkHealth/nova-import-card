@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcdaParserProcessorPhp\Console\Commands;
 
 use Illuminate\Config\Repository as Config;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 class CcdaParse extends Command
@@ -54,19 +55,22 @@ class CcdaParse extends Command
     public function handle()
     {
         $this->info('Ready to spawn nodejs process');
-
+        Log::debug('ccdaparser.start');
         $process = Process::fromShellCommandline($this->prepareCommand());
         $process->setTimeout(60 * 20); //20 minutes
         $process->run(
             function ($type, $buffer) {
                 if ('err' === $type) {
                     $this->error($buffer);
+                    Log::error('ccdaparser.error: '.$buffer);
                 } else {
                     $this->info($buffer);
+                    Log::info('ccdaparser.info: '.$buffer);
                 }
             },
             $this->valuesToInject()
         );
+        Log::debug('ccdaparser.end');
     }
 
     private function prepareCommand()
@@ -92,7 +96,9 @@ class CcdaParse extends Command
             $cmdArgs[] = '--force="true"';
         }
 
-        return implode(' ', $cmdArgs);
+        return tap(implode(' ', $cmdArgs), function ($command) {
+            Log::debug('ccdaparser.command: '.$command);
+        });
     }
 
     
