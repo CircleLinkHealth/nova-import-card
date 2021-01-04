@@ -1,7 +1,6 @@
 FROM laravelphp/vapor:php74
 
 RUN apk add --update nodejs
-
 RUN echo "NODE Version:" && node --version
 
 RUN pecl install scoutapm
