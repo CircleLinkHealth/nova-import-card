@@ -6,11 +6,12 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
+use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use CircleLinkHealth\Core\Traits\ScoutMonitoredDispatchable as Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -45,7 +46,9 @@ class SendSlackMessage implements ShouldQueue, ShouldBeEncrypted
         try {
             \Slack::to($this->to)->send($this->message);
         } catch (ClientException $e) {
-            Log::error($e->getMessage()." `To:{$this->to}` `Message:{$this->message}`");
+            Log::error(get_class($e).' '.$e->getMessage()." `To:{$this->to}` `Message:{$this->message}`");
+        } catch (ServerException $e) {
+            Log::error(get_class($e).' '.$e->getMessage()." `To:{$this->to}` `Message:{$this->message}`");
         }
     }
 }
