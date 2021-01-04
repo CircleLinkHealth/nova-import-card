@@ -548,8 +548,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         $drive = Storage::drive('storage');
         $drive->put($xmlFilename, $xml);
 
-        $xmlPath = storage_path($xmlFilename);
-        $jsonPath = storage_path($jsonFilename);
+        $xmlPath = $drive->path($xmlFilename);
+        $jsonPath = $drive->path($jsonFilename);
         
         Log::debug("ccda[$this->id].parseToJson inputPath[$xmlPath] outputPath[$jsonPath]");
 
@@ -562,12 +562,12 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ]
         );
 
-        if (file_exists($xmlPath)) {
+        if ($drive->exists($xmlPath)) {
             $drive->delete($xmlFilename);
         }
 
-        if (file_exists($jsonPath)) {
-            $this->json = file_get_contents($jsonPath);
+        if ($drive->exists($jsonPath)) {
+            $this->json = $drive->get($jsonPath);
             $this->save();
             $drive->delete($jsonFilename);
 
