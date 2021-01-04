@@ -153,7 +153,7 @@
         "ext-zend-opcache": "*",
         "alexbowers/nova-prepopulate-searchable": "^1.0",
         "anaseqal/nova-import": "^0.0.3",
-        "circlelinkhealth/ccda-parser-processor-php-module": "1.1.4",
+        "circlelinkhealth/ccda-parser-processor-php-module": "1.1.x-dev",
         "circlelinkhealth/ccm-billing-module": "2.0.x-dev",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/clh-import-card-extended": "*",
