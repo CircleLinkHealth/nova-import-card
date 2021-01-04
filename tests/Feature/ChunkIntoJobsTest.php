@@ -8,10 +8,10 @@ namespace Tests\Feature;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ChunksEloquentBuilderJob;
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Queue;

@@ -7,11 +7,11 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
