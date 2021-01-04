@@ -72,7 +72,7 @@ class CustomTwilioChannel extends TwilioChannel
                 $notifiable,
                 $notification,
                 'twilio',
-                ['message' => $exception->getMessage(), 'exception' => $exception]
+                ['message' => $exception->getMessage()]
             );
 
             $this->events->dispatch($event);
