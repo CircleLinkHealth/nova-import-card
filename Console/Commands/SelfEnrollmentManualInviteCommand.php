@@ -4,8 +4,8 @@ namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use Illuminate\Console\Command;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
+use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class SelfEnrollmentManualInviteCommand extends Command
