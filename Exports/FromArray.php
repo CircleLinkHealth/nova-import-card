@@ -75,7 +75,7 @@ class FromArray implements FromCollection, Responsable, WithHeadings
     {
         $disk = Storage::disk('storage');
         $disk->makeDirectory('exports');
-        
+
         $filepath = 'exports/'.$this->getFilename();
         $stored   = $this->store($filepath, 'storage');
 
