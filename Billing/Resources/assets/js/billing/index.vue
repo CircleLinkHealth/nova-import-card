@@ -55,7 +55,7 @@
                                                 <div>
                                                     <label v-if="typeof practice !== 'undefined'">
                                                         Set <a target="_blank"
-                                                               :href="`/practices/${practice.name}/chargeable-services`">Chargeable
+                                                               :href="this.practiceChargeableServicesUrl()">Chargeable
                                                         Services</a>
                                                     </label>
                                                 </div>
@@ -664,7 +664,10 @@
                     this.loaders.closeMonth = false
                     console.error('billable:close-month', err)
                 })
-            }
+            },
+            practiceChargeableServicesUrl() {
+                return rootUrl(`practices/${this.practice.name}/chargeable-services`);
+            },
         },
         computed: {
             practice() {
