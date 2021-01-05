@@ -101,7 +101,6 @@ class CcdaParse extends Command
         });
     }
 
-    
     private function valuesToInject()
     {
         $dbConnection     = $this->config->get('ccda-parser.db_connection');
