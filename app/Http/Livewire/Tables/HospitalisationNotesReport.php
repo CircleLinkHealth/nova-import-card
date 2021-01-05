@@ -65,11 +65,11 @@ class HospitalisationNotesReport extends LivewireDatatable
 
     private function nurses()
     {
-        return User::careCoaches()->activeNurses()->without(['roles', 'perms'])->pluck('display_name');
+        return User::careCoaches()->activeNurses()->without(['roles', 'perms'])->orderBy('display_name')->pluck('display_name');
     }
     
     private function practices()
     {
-        return Practice::activeBillable()->pluck('display_name');
+        return Practice::activeBillable()->orderBy('display_name')->pluck('display_name');
     }
 }
