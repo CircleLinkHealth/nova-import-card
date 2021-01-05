@@ -21,6 +21,11 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('home', 'HomeController@index');
 
 Route::get('ccd-importer', [
-    'uses' => 'RedirectToOtherApp@redirectToProvider',
+    'uses' => 'RedirectToProviderApp@ccdImporter',
     'as'   => 'import.ccd.remix',
+]);
+
+Route::get('patient/{patientId}/demographics', [
+    'uses' => 'RedirectToProviderApp@showPatientDemographics',
+    'as'   => 'patient.demographics.show',
 ]);
