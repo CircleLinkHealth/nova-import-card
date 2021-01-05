@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Validators;
 
-use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as SectionValidator;
 
 class ImportAllItems implements SectionValidator

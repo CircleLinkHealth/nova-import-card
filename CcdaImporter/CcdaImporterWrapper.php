@@ -263,7 +263,7 @@ class CcdaImporterWrapper
         if (self::isUnenrolledSurveyUser($patient, $this->enrollee)) {
             return $this;
         }
-    
+
         if ( ! $this->ccda->json && ! $this->ccda->bluebuttonJson()) {
             return $this;
         }
