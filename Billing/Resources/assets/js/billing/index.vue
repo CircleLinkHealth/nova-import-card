@@ -55,7 +55,7 @@
                                                 <div>
                                                     <label v-if="typeof practice !== 'undefined'">
                                                         Set <a target="_blank"
-                                                               :href="`/practices/${practice.name}/chargeable-services`">Chargeable
+                                                               :href="this.practiceChargeableServicesUrl()">Chargeable
                                                         Services</a>
                                                     </label>
                                                 </div>
@@ -209,7 +209,12 @@
 
     export default {
         name: 'billing-report',
-        props: {},
+        props: {
+            adminBaseUrl: {
+                type: String,
+                required: true
+            }
+        },
         components: {
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal,
@@ -664,7 +669,17 @@
                     this.loaders.closeMonth = false
                     console.error('billable:close-month', err)
                 })
-            }
+            },
+            practiceChargeableServicesUrl() {
+                if (! this.practice){
+                    return '';
+                }
+                let uri = `practices/${this.practice.name}/chargeable-services`;
+                if (! this.adminBaseUrl.endsWith('/')){
+                    uri = '/'+uri;
+                }
+                return this.adminBaseUrl+uri;
+            },
         },
         computed: {
             practice() {
