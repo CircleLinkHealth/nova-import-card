@@ -3552,7 +3552,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
     {
-        return $query->careCoaches()->with([
+        return $query->careCoaches()
+            ->without(['roles', 'perms'])
+                     ->with([
             'nurseInfo' => function ($nurseInfo) use ($startDate) {
                 $nurseInfo->with(
                     [
@@ -3567,9 +3569,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             },
         ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
             $invoice->where('month_year', $startDate);
-        })
-            //            Need nurses that are currently active or used to be for selected month
-            ->where(function ($query) use ($startDate, $endDate) {
+        })->where(function ($query) use ($startDate, $endDate) {
                 $query->whereHas(
                     'nurseInfo',
                     function ($info) {
@@ -3584,7 +3584,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
                         $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
                     });
-            });
+        });
     }
 
     /**
