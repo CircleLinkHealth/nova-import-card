@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
+use CircleLinkHealth\SelfEnrollment\Providers\SelfEnrollmentProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Collective\Html\HtmlServiceProvider;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
@@ -218,6 +219,7 @@ return [
         CoreServiceProvider::class,
         CoreDeferredBindingsServiceProvider::class,
         CommandsServiceProvider::class,
+        SelfEnrollmentProvider::class,
     ],
 
     /*

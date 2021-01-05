@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "911de300748c0b573c180aa6198af39f",
+    "content-hash": "625fc1265507883e12713398c5cff3eb",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1012,12 +1012,43 @@
             "time": "2021-01-01T05:11:03+00:00"
         },
         {
+            "name": "circlelinkhealth/self-enrollment-module",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
+                "reference": "8599f3ffaa988d9133461804bbceec8d21dedecb"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SelfEnrollment\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@circlelinkhealth.com"
+                }
+            ],
+            "time": "2021-01-04T22:28:55+00:00"
+        },
+        {
             "name": "circlelinkhealth/shared-models-module",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "71dfbf581ecb3348658793f743f3bd01d848dc34"
+                "reference": "81cc08e79be004b966287edcda642f231cacdb34"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1039,7 +1070,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T17:41:23+00:00"
+            "time": "2021-01-04T22:13:54+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -13747,6 +13778,7 @@
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/self-enrollment-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
