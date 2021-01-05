@@ -179,6 +179,9 @@
                                 <li>
                                     <a href="{{route('revisions.phi.activity')}}">PHI Activity</a>
                                 </li>
+                                <li>
+                                    <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes Table</a>
+                                </li>
                             </ul>
                         </li>
 
