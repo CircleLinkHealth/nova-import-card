@@ -60,7 +60,7 @@ jobs:
           env-file: .env
 
       - name: Echo APP_KEY (testing)
-        run: echo 'APP_KEY=$APP_KEY'
+        run: echo 'APP_KEY=${{ env.APP_KEY }}'
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
