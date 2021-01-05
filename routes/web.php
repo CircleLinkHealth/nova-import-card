@@ -29,3 +29,8 @@ Route::get('patient/{patientId}/demographics', [
     'uses' => 'RedirectToProviderApp@showPatientDemographics',
     'as'   => 'patient.demographics.show',
 ]);
+
+Route::get('patient/{patientId}/notes', [
+    'uses' => 'RedirectToProviderApp@notesIndex',
+    'as'   => 'patient.note.index',
+]);

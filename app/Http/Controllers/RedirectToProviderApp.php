@@ -19,6 +19,11 @@ class RedirectToProviderApp extends Controller
     {
         return $this->redirectToProvider("manage-patients/$patientId/careplan/demographics");
     }
+    
+    public function notesIndex($patientId)
+    {
+        return $this->redirectToProvider("manage-patients/$patientId/notes");
+    }
 
     private function redirectToProvider($url)
     {
