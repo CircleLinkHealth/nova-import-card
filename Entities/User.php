@@ -3568,23 +3568,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
                 },
             ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
-            $invoice->where('month_year', $startDate);
-        })->where(function ($query) use ($startDate, $endDate) {
-            $query->whereHas(
-                'nurseInfo',
-                function ($info) {
-                        $info->where('status', 'active')->when(
-                            isProductionEnv(),
-                            function ($info) {
-                                $info->where('is_demo', false);
-                            }
-                        );
+                $invoice->where('month_year', $startDate);
+            })->where(function ($query) use ($startDate, $endDate) {
+                $query->activeNurses()
+                    ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
+                    $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
+                });
+            });
+    }
+    
+    public function scopeActiveNurses($builder) {
+        return $builder->whereHas('nurseInfo', function ($info) {
+                $info->where('status', 'active')
+                     ->when(isProductionEnv(), function ($info) {
+                        $info->where('is_demo', false);
                     }
-            )
-                ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
-                        $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
-                    });
-        });
+                );
+            }
+        );
     }
 
     /**
