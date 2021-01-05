@@ -104,7 +104,7 @@
                                 const isSoftwareOnly = @json(auth()->user()->isSoftwareOnly());
                             </script>
                         @endpush
-                        <billing-report admin-base-url="{{config('core.apps.cpm-admin.url')}}" ref="billingReport"></billing-report>
+                        <billing-report ref="billingReport"></billing-report>
                     </div>
                 </div>
             </div>

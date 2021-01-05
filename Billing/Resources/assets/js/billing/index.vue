@@ -209,12 +209,7 @@
 
     export default {
         name: 'billing-report',
-        props: {
-            adminBaseUrl: {
-                type: String,
-                required: true
-            }
-        },
+        props: {},
         components: {
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal,
@@ -671,14 +666,7 @@
                 })
             },
             practiceChargeableServicesUrl() {
-                if (! this.practice){
-                    return '';
-                }
-                let uri = `practices/${this.practice.name}/chargeable-services`;
-                if (! this.adminBaseUrl.endsWith('/')){
-                    uri = '/'+uri;
-                }
-                return this.adminBaseUrl+uri;
+                return rootUrl(`practices/${this.practice.name}/chargeable-services`);
             },
         },
         computed: {
