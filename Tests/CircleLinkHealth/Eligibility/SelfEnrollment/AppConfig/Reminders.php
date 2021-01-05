@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\SelfEnrollment\AppConfig;
+namespace CircleLinkHealth\SelfEnrollment\AppConfig;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 
