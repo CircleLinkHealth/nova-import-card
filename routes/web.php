@@ -26,7 +26,10 @@ Route::group([
              ], function () {
     Route::get('home', 'HomeController@index');
     
-    Route::get('hospitalisation-notes-dashboard', 'HospitalisationNotesController@index');
+    Route::get('hospitalisation-notes-dashboard', [
+        'uses' => 'HospitalisationNotesController@index',
+        'as' => 'hospitalization-notes.table'
+    ]);
     Route::get('note/{id}', 'RedirectToProviderApp@noteId');
     
     
