@@ -994,7 +994,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "11c54cfd97105aad34823599e6084df7c185eb86"
+                "reference": "1d1b8ff704400405a2f8408295d9b55c92cda4e5"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1035,7 +1035,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-05T00:06:51+00:00"
+            "time": "2021-01-05T00:41:10+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1043,7 +1043,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "dc5e4ce7de78ce076b9499bdb48f37533bf40f86"
+                "reference": "bbc90350be8602aa1647e1ec0a83d0c49fe8a84c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1073,7 +1073,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T23:50:46+00:00"
+            "time": "2021-01-05T02:46:24+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1462,7 +1462,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "385a9fe4cf4acc5be839e2b3dacd54c82bd26b58"
+                "reference": "8abc5d841db775cd402ae8cd0cfb2ab5149935e0"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1490,7 +1490,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T18:00:37+00:00"
+            "time": "2021-01-04T23:50:46+00:00"
         },
         {
             "name": "circlelinkhealth/twilio-integration-module",
