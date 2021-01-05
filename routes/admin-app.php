@@ -27,7 +27,7 @@ Route::group([
     
     Route::get('chargeable-services', [
         'uses' => 'RedirectToAdminApp@getPracticeChargeableServices',
-        'as'   => 'provider.dashboard.manage.staff',
+        'as'   => 'provider.dashboard.manage.chargeable-services',
     ]);
 });
 
