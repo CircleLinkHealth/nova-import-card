@@ -371,6 +371,8 @@
       <path value="$PROJECT_DIR$/vendor/scoutapp/scout-apm-laravel" />
       <path value="$PROJECT_DIR$/vendor/twilio/sdk" />
       <path value="$PROJECT_DIR$/vendor/laravel-notification-channels/twilio" />
+      <path value="$PROJECT_DIR$/vendor/livewire/livewire" />
+      <path value="$PROJECT_DIR$/vendor/mediconesystems/livewire-datatables" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers;
 
+use CircleLinkHealth\SharedModels\Entities\Note;
+
 class RedirectToProviderApp extends Controller
 {
     public function ccdImporter()
@@ -17,7 +19,14 @@ class RedirectToProviderApp extends Controller
     {
         return $this->redirectToProvider("manage-patients/$patientId/notes");
     }
-
+    
+    public function noteId($noteId)
+    {
+        $patientId = Note::whereId($noteId)->value('patient_id');
+        
+        return $this->redirectToProvider("manage-patients/$patientId/notes/view/$noteId");
+    }
+    
     public function showPatientDemographics($patientId)
     {
         return $this->redirectToProvider("manage-patients/$patientId/careplan/demographics");
