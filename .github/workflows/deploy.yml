@@ -21,6 +21,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Copy .env
+        if: ${{ env.CI_SKIP == 'false' }}
         run: php -r "file_exists('.env') || copy('.env.githubactions', '.env');"
 
       - name: Install Composer dependencies
@@ -45,17 +46,9 @@ jobs:
           extensions: redis, zip, gd, exif, imagick, opcache, intl, libxml, pdo, dom, bcmath, sockets
           coverage: none
 
-      - name: Predeploy
+      - name: Cache config (testing)
         if: ${{ env.CI_SKIP == 'false' }}
-        run: php artisan key:generate && php artisan config:clear
-
-      - name: Export .env file to $GITHUB_ENV (testing)
-        uses: c-py/action-dotenv-to-setenv@v2
-        with:
-          env-file: .env
-
-      - name: Echo APP_KEY (testing)
-        run: echo 'APP_KEY=${{ env.APP_KEY }}'
+        run: php artisan config:cache
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
@@ -65,7 +58,6 @@ jobs:
           ENV_TYPE: production
           APP_ENV: production
           APP_NAME: provider
-          APP_KEY: base64:OzIBYjmtAr92KbwC5SO03s5CciXElEJ20KpSlfTxEoA=
           S3_SECRETS_BUCKET: ${{ secrets.PRODUCTION_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.PRODUCTION_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
@@ -79,7 +71,6 @@ jobs:
           ENV_TYPE: staging
           APP_ENV: staging
           APP_NAME: provider
-          APP_KEY: base64:OzIBYjmtAr92KbwC5SO03s5CciXElEJ20KpSlfTxEoA=
           S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
