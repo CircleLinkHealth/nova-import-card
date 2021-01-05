@@ -72,7 +72,7 @@ class MedicalRecordFactory
 
     public function createDefaultMedicalRecord(User $user, Ccda $ccda)
     {
-        return new CcdaMedicalRecord(json_decode($ccda->json));
+        return new CcdaMedicalRecord($ccda->bluebuttonJson(true));
     }
 
     public function createToledoClinicMedicalRecord(User $user, ?Ccda $ccda)
