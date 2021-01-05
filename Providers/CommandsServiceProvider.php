@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CpmAdmin\Providers;
 
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountBillablePatientsForMonth;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
-use CircleLinkHealth\CpmAdmin\Console\Commands\ManuallyCreateEnrollmentTestData;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
 use CircleLinkHealth\CpmAdmin\Console\Commands\SyncNumberOfCallsForCurrentMonth;
 use Illuminate\Support\ServiceProvider;
 

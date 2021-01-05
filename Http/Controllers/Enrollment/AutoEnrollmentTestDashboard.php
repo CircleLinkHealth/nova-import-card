@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment;
 
-use CircleLinkHealth\CpmAdmin\Console\Commands\ManuallyCreateEnrollmentTestData;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InviteUnreachablePatients;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
+use CircleLinkHealth\SelfEnrollment\Constants;
+use CircleLinkHealth\SelfEnrollment\Domain\InviteUnreachablePatients;
+use CircleLinkHealth\SelfEnrollment\Domain\UnreachablesFinalAction;
+use CircleLinkHealth\SelfEnrollment\Helpers;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
