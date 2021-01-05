@@ -22,7 +22,7 @@ jobs:
 
       - name: Copy .env
         if: ${{ env.CI_SKIP == 'false' }}
-        run: php -r "file_exists('.env') || copy('.env.githubactions', '.env');"
+        run: php -r "copy('.env.githubactions', '.env');"
 
       - name: Install Composer dependencies
         if: ${{ env.CI_SKIP == 'false' }}
@@ -48,7 +48,7 @@ jobs:
 
       - name: Cache config (testing)
         if: ${{ env.CI_SKIP == 'false' }}
-        run: php artisan config:cache
+        run: php artisan key:generate --force && php artisan config:clear
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
