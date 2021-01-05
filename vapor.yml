@@ -20,7 +20,6 @@ environments:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
   staging:
     domain: cpm-caller-laravel.clh-staging.com
-    network: cpm-staging
     memory: 512
     cli-memory: 512
     queue-memory: 512
