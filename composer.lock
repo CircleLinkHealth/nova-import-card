@@ -668,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "57f568089672a9ad511a623654ce1b44d7e06c05"
+                "reference": "c79ad2d899407e1cae40f2ce99628e5751094a96"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -718,7 +718,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-04T23:50:46+00:00"
+            "time": "2021-01-05T15:46:34+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1024,7 +1024,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1be8bdd0854ad48556b481ee775e9dabed8dcf5c"
+                "reference": "2408b14a980b7d7e89e18bc823c5ff996c795332"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1065,7 +1065,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-05T10:34:53+00:00"
+            "time": "2021-01-05T16:14:28+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -4707,16 +4707,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.20.1",
+            "version": "v8.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02"
+                "reference": "a61cab167c35f465a923737ee6e6fb99cd5fde88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/b5d8573ab16027867eaa1ac148893833434f9b02",
-                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/a61cab167c35f465a923737ee6e6fb99cd5fde88",
+                "reference": "a61cab167c35f465a923737ee6e6fb99cd5fde88",
                 "shasum": ""
             },
             "require": {
@@ -4866,7 +4866,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-12-22T21:21:19+00:00"
+            "time": "2021-01-05T15:43:10+00:00"
         },
         {
             "name": "laravel/legacy-factories",
