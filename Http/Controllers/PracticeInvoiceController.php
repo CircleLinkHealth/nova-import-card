@@ -14,6 +14,7 @@ use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Notification;
 
 class PracticeInvoiceController extends Controller
 {
+    use ApiReturnHelpers;
+    
     private $patientSummaryDBRepository;
     private $practiceReportsService;
     private $service;
