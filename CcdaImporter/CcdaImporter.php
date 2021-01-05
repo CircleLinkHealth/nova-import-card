@@ -29,7 +29,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\DTOs\Address;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
