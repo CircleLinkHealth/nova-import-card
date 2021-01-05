@@ -103,11 +103,11 @@ class SelfEnrollmentController extends Controller
         } catch (\Exception $e) {
             Log::error(json_encode($e));
 
-            return view('EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
         }
 
         return view(
-            'EnrollmentSurvey.enrollmentSurveyLogin',
+            'selfEnrollment::EnrollmentSurvey.enrollmentSurveyLogin',
             [
                 'userId'          => $loginFormData['user']->id,
                 'isSurveyOnly'    => $request->input('is_survey_only'),
@@ -147,7 +147,7 @@ class SelfEnrollmentController extends Controller
             $message = $e->getMessage();
             Log::critical("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
 
-            return view('EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
         }
     }
 
@@ -176,7 +176,7 @@ class SelfEnrollmentController extends Controller
             $practiceNumber = $patient->primaryPractice->outgoing_phone_number;
             $doctorName     = $patient->getBillingProviderName();
 
-            return view('enrollment-letters.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
+            return view('selfEnrollment::enrollment-letters.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
         $this->expirePastInvitationLink($patient);
@@ -246,7 +246,7 @@ class SelfEnrollmentController extends Controller
             $userId = intval($request->input('enrollable_id'));
             Log::critical("User [$userId] could not log in to Self Enrollment Survey");
 
-            return view('EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
         }
     }
 
@@ -272,7 +272,7 @@ class SelfEnrollmentController extends Controller
 
         Auth::logout();
 
-        return view('EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
+        return view('selfEnrollment::EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
     }
 
     /**
@@ -369,7 +369,7 @@ class SelfEnrollmentController extends Controller
             $practiceNumber = $user->enrollee->practice->outgoing_phone_number;
             $doctorName     = optional($user->enrollee->provider)->last_name;
 
-            return view('enrollment-letters.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
+            return view('selfEnrollment::enrollment-letters.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
         if ($this->hasSurveyInProgress($user)) {
@@ -431,7 +431,7 @@ class SelfEnrollmentController extends Controller
 
         $isSurveyOnly = true;
 
-        return view('Enrollment.enrollmentInfoRequested', compact(
+        return view('selfEnrollment::Enrollment.enrollmentInfoRequested', compact(
             'practiceNumber',
             'providerName',
             'practiceDisplayName',
