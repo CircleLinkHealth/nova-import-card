@@ -879,7 +879,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "972e7c7b856f31ee232c4012d1ea4adad1b4ce64"
+                "reference": "38fba61b03362e67adfe1e241e1f44ee2b08e57d"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -934,7 +934,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T23:50:46+00:00"
+            "time": "2021-01-05T03:51:39+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -942,7 +942,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "4d2cfea654d02b16e552f64b4f698e5beabfe7f8"
+                "reference": "1a5c02c8656491e2779b6de2d21479bbfc231f4b"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -988,7 +988,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-04T08:28:28+00:00"
+            "time": "2021-01-05T03:51:39+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1649,7 +1649,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "a29ce68be5562ae431bc2186ec978f6d302d411d"
+                "reference": "a9d2a947f6c1f8b3e1cdf662b881c521400136aa"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1678,7 +1678,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T18:00:36+00:00"
+            "time": "2021-01-04T23:50:45+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
