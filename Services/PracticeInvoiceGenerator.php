@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Invoices\ItemizedBillablePatientsReport;
 use CircleLinkHealth\PdfService\Services\PdfService;
+use Illuminate\Support\Facades\Storage;
 
 class PracticeInvoiceGenerator
 {
@@ -73,10 +74,10 @@ class PracticeInvoiceGenerator
     {
         $pdfService = app(PdfService::class);
 
-        \Storage::disk('storage')
-            ->makeDirectory('download');
+        $disk = Storage::disk('storage');
+        $disk->makeDirectory('download');
 
-        $path = storage_path("download/${reportName}.pdf");
+        $path = $disk->path("download/${reportName}.pdf");
         $pdf  = $pdfService->createPdfFromView(
             'billing.practice.invoice',
             $this->practice->getInvoiceData($this->month),
