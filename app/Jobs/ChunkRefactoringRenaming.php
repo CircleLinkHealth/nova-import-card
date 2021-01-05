@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use Carbon\Carbon;
@@ -12,14 +16,17 @@ use Illuminate\Queue\SerializesModels;
 
 class ChunkRefactoringRenaming implements ShouldQueue, ShouldBeEncrypted
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    protected Carbon $date;
+    protected string $field;
+    protected string $newClass;
+    protected string $oldClass;
+    protected int $range;
 
     protected string $table;
-    protected string $oldClass;
-    protected string $newClass;
-    protected Carbon $date;
-    protected int $range;
-    protected string $field;
 
     /**
      * Create a new job instance.
@@ -34,12 +41,12 @@ class ChunkRefactoringRenaming implements ShouldQueue, ShouldBeEncrypted
         Carbon $date,
         int $range = 6
     ) {
-        $this->table = $table;
-        $this->field = $field;
+        $this->table    = $table;
+        $this->field    = $field;
         $this->oldClass = $oldClass;
         $this->newClass = $newClass;
-        $this->date = $date->startOfMonth()->startOfDay();
-        $this->range = $range;
+        $this->date     = $date->startOfMonth()->startOfDay();
+        $this->range    = $range;
     }
 
     /**
@@ -50,13 +57,13 @@ class ChunkRefactoringRenaming implements ShouldQueue, ShouldBeEncrypted
     public function handle()
     {
         \DB::table($this->table)
-           ->where($this->field, $this->oldClass)
-           ->where('created_at', '>=', $this->date)
-           ->where('created_at', '<', $this->date->copy()->addMonths($this->range)->endOfMonth()->endOfDay())
-           ->update(
-               [
-                   $this->field => $this->newClass,
-               ]
-           );
+            ->where($this->field, $this->oldClass)
+            ->where('created_at', '>=', $this->date)
+            ->where('created_at', '<', $this->date->copy()->addMonths($this->range)->endOfMonth()->endOfDay())
+            ->update(
+                [
+                    $this->field => $this->newClass,
+                ]
+            );
     }
 }

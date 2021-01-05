@@ -6,8 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class RedirectToProviderApp extends Controller
 {
     public function ccdImporter()
@@ -15,14 +13,14 @@ class RedirectToProviderApp extends Controller
         return $this->redirectToProvider('ccd-importer');
     }
 
-    public function showPatientDemographics($patientId)
-    {
-        return $this->redirectToProvider("manage-patients/$patientId/careplan/demographics");
-    }
-    
     public function notesIndex($patientId)
     {
         return $this->redirectToProvider("manage-patients/$patientId/notes");
+    }
+
+    public function showPatientDemographics($patientId)
+    {
+        return $this->redirectToProvider("manage-patients/$patientId/careplan/demographics");
     }
 
     private function redirectToProvider($url)
