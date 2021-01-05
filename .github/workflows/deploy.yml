@@ -50,6 +50,18 @@ jobs:
           extensions: redis, zip, gd, exif, imagick, opcache, intl, libxml, pdo, dom, bcmath, sockets
           coverage: none
 
+      - name: Predeploy
+        if: ${{ env.CI_SKIP == 'false' }}
+        run: php artisan key:generate && php artisan config:clear
+
+      - name: Export .env file to $GITHUB_ENV (testing)
+        uses: c-py/action-dotenv-to-setenv@v2
+        with:
+          env-file: .env
+
+      - name: Echo APP_KEY (testing)
+        run: echo 'APP_KEY=$APP_KEY'
+
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
         run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
@@ -75,9 +87,6 @@ jobs:
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
-
-      - name: Echo Job Status
-        run: echo Job Status ${{ job.status }}
 
       - name: Notify Slack - Success
         if: ${{ env.CI_SKIP == 'false' && success()  }}
