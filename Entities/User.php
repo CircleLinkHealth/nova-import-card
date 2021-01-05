@@ -3554,25 +3554,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->careCoaches()
             ->without(['roles', 'perms'])
-                     ->with([
-            'nurseInfo' => function ($nurseInfo) use ($startDate) {
-                $nurseInfo->with(
-                    [
-                        'invoices' => function ($invoice) use ($startDate) {
-                            $invoice->where('month_year', $startDate);
-                        },
-                    ]
-                );
-            },
-            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
-                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
-            },
-        ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
+            ->with([
+                'nurseInfo' => function ($nurseInfo) use ($startDate) {
+                    $nurseInfo->with(
+                        [
+                            'invoices' => function ($invoice) use ($startDate) {
+                                $invoice->where('month_year', $startDate);
+                            },
+                        ]
+                    );
+                },
+                'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                    $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+                },
+            ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
             $invoice->where('month_year', $startDate);
         })->where(function ($query) use ($startDate, $endDate) {
-                $query->whereHas(
-                    'nurseInfo',
-                    function ($info) {
+            $query->whereHas(
+                'nurseInfo',
+                function ($info) {
                         $info->where('status', 'active')->when(
                             isProductionEnv(),
                             function ($info) {
@@ -3580,8 +3580,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             }
                         );
                     }
-                )
-                    ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
+            )
+                ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
                         $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
                     });
         });
