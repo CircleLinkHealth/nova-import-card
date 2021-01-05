@@ -1,4 +1,4 @@
-@extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
+@extends('selfEnrollment::layouts.EnrollmentSurvey.enrollmentLetterMaster')
 @section('title', 'Self-Enrollment error')
 @section('activity', 'Self-Enrollment error')
 @section('content')

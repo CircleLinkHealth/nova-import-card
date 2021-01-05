@@ -33,18 +33,22 @@ class SelfEnrollmentProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
-        $viewPath = resource_path('views/modules/selfEnrollment');
+//        $viewPath = resource_path('views/modules/selfEnrollment');
+//
+//        $sourcePath = __DIR__.'/../Resources/views';
+//
+//        $this->publishes([
+//            $sourcePath => $viewPath,
+//        ], 'views');
+//
+//
+//        $this->loadViewsFrom(array_merge(array_map(function ($path) {
+//            return $path.'/modules/selfEnrollment';
+//        }, Config::get('view.paths')), [$sourcePath]), 'selfEnrollment');
 
-        $sourcePath = __DIR__.'/../Resources/views';
-
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'selfEnrollment');
         $this->publishes([
-            $sourcePath => $viewPath,
-        ], 'views');
-
-
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path.'/modules/selfEnrollment';
-        }, Config::get('view.paths')), [$sourcePath]), 'selfEnrollment');
-
+            __DIR__.'/../resources/views' => resource_path('views/vendor/selfEnrollment'),
+        ]);
     }
 }
