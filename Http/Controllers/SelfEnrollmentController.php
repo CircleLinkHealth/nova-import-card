@@ -254,7 +254,7 @@ class SelfEnrollmentController extends Controller
     {
         $practiceLetter  = null;
         $practiceName    = '';
-        $practiceLogoSrc = SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         // Just checking if Enrollee. Patients(usres) are not allowed here.
         if ($request->input('isSurveyOnly')) {
             $enrollee = Enrollee::with('practice')->where('id', $request->input('enrolleeId'))->first();
@@ -296,7 +296,7 @@ class SelfEnrollmentController extends Controller
             ]
         );
 
-        $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$user->id}/{$enrolleesSurvey->id}");
+        $enrolleesSurveyUrl = url(config('selfEnrollment.awv.url')."/survey/enrollees/create-url/{$user->id}/{$enrolleesSurvey->id}");
 
         return redirect($enrolleesSurveyUrl);
     }
@@ -431,7 +431,7 @@ class SelfEnrollmentController extends Controller
 
         $isSurveyOnly = true;
 
-        return view('selfEnrollment::Enrollment.enrollmentInfoRequested', compact(
+        return view('selfEnrollment::EnrollmentSurvey.enrollmentInfoRequested', compact(
             'practiceNumber',
             'providerName',
             'practiceDisplayName',

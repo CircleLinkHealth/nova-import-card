@@ -34,6 +34,7 @@ class SelfEnrollmentProvider extends ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->publishConfigurations();
 
 //        $viewPath = resource_path('views/modules/selfEnrollment');
 //
@@ -52,5 +53,19 @@ class SelfEnrollmentProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/selfEnrollment'),
         ]);
+    }
+
+    private function publishConfigurations()
+    {
+//        $this->publishes([
+//            __DIR__.'/../Config/services.php' => config_path('selfEnrollment.php'),
+//        ],
+//            'config'
+//        );
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../Config/services.php',
+            'selfEnrollment'
+        );
     }
 }
