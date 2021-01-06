@@ -16,7 +16,7 @@
     </div>
     <br/>
     <div class="w-screen mb-4">
-        <livewire:tables.hospitalisation-notes-report exportable wire:class="w-screen"/>
+        <livewire:tables.hospitalisation-notes-report exportable per-page="15"/>
     </div>
 
 </div>

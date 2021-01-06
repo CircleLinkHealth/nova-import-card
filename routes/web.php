@@ -30,8 +30,10 @@ Route::group([
         'uses' => 'HospitalisationNotesController@index',
         'as' => 'hospitalization-notes.table'
     ]);
-    Route::get('note/{id}', 'RedirectToProviderApp@noteId');
-    
+    Route::get('patient/{patientId}/note/{noteId}', [
+        'uses' => 'RedirectToProviderApp@notesShow',
+        'as'   => 'patient.note.show',
+    ]);
     
     Route::get('ccd-importer', [
         'uses' => 'RedirectToProviderApp@ccdImporter',

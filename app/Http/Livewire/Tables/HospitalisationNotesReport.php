@@ -31,17 +31,16 @@ class HospitalisationNotesReport extends LivewireDatatable
         return [
             Column::checkbox(),
 
-            NumberColumn::name('id')
-                        ->label('Note ID')
-                        ->filterable()
-                        ->linkTo('note', 6),
-
             Column::name('nurses.display_name')
                 ->label('Nurse')
                 ->filterable($this->nurses())
                 ->searchable(),
 
             Column::name('patients.display_name')
+                ->callback(['patients.id', 'patients.display_name'], function ($id, $name) {
+                    $url = route('patient.note.index', ['patientId' => $id]);
+                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">' . $name . '</a>';
+                })
                 ->label('Patient')
                 ->filterable()
                 ->searchable(),
@@ -52,10 +51,13 @@ class HospitalisationNotesReport extends LivewireDatatable
                   ->searchable(),
 
             Column::name('body')
+                ->callback(['id', 'patients.id', 'body'], function ($id, $patientId, $body) {
+                    $url = route('patient.note.show', ['patientId' => $patientId, 'noteId' => $id]);
+                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">' . substr($body, 0, 80) . '</a>';
+                })
                 ->label('Note')
                 ->filterable()
-                ->searchable()
-                ->truncate(100),
+                ->searchable(),
 
             DateColumn::name('performed_at')
                       ->label('Date')

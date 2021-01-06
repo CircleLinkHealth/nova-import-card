@@ -20,10 +20,8 @@ class RedirectToProviderApp extends Controller
         return $this->redirectToProvider("manage-patients/$patientId/notes");
     }
     
-    public function noteId($noteId)
+    public function notesShow($patientId, $noteId)
     {
-        $patientId = Note::whereId($noteId)->value('patient_id');
-        
         return $this->redirectToProvider("manage-patients/$patientId/notes/view/$noteId");
     }
     
