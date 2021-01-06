@@ -5,7 +5,6 @@ environments:
     production:
         domain: superadmin.careplanmanager.com
         storage: cpm-production-vapor-storage
-        network: cpm-production
         memory: 512
         cli-memory: 512
         queue-memory: 512
@@ -16,7 +15,6 @@ environments:
         runtime: docker
         scheduler: false
         mail: false
-        capacity: 2
         timeout: 60
         queues:
             - cpm-admin-low-production
