@@ -8,7 +8,6 @@ environments:
             - worker.careplanmanager.com
             - mycpm.link
         storage: cpm-production-vapor-storage
-        network: cpm-production
         memory: 2048
         cli-memory: 1024
         queue-memory: 1024
@@ -24,7 +23,7 @@ environments:
             - cpm-provider-high-production
             - cpm-provider-revisionable-production
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod'
             - 'php artisan route:cache'
@@ -34,6 +33,7 @@ environments:
     staging:
         runtime: docker
         domain: cpm-provider.clh-staging.com
+        network: vapor-network-1609910488
         storage: cpm-staging-vapor-storage
         memory: 512
         cli-memory: 512
@@ -48,7 +48,7 @@ environments:
             - cpm-provider-high-staging
             - cpm-provider-revisionable-staging
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod && rm -rf node_modules'
             - 'php artisan route:cache'
