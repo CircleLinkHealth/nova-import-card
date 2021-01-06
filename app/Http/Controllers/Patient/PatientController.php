@@ -124,7 +124,8 @@ class PatientController extends Controller
 
         $query = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with(['primaryPractice', 'patientInfo', 'phoneNumbers']);
+            ->with(['primaryPractice', 'patientInfo', 'phoneNumbers'])
+            ->ofActiveBillablePractice();
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
@@ -158,9 +159,7 @@ class PatientController extends Controller
                 ? route('patient.schedule.activity', [$d->program_id, $d->id])
                 : route('patient.summary', ['patientId' => $d->id]);
 
-            $programObj = Practice::find($d->program_id);
-
-            $patients[$i]['program'] = $programObj->display_name ?? '';
+            $patients[$i]['program'] = $d->primaryPractice->display_name ?? '';
             $patients[$i]['hint']    = $patients[$i]['name'].' DOB:'.$patients[$i]['dob'].' ['.$patients[$i]['program']."] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
             ++$i;
         }

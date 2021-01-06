@@ -14,7 +14,6 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
 use CircleLinkHealth\SharedModels\Services\Enrollment\SuggestEnrollable;
 use CircleLinkHealth\SharedModels\Services\Enrollment\UpdateEnrollable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -160,7 +159,7 @@ class EnrollmentCenterController extends ApiController
                 auth()->user()->careAmbassador
             );
         }
-        //return stats and cookie if enrollable does not exist
+
         if ( ! $enrollable) {
             $stats = EnrollableCallQueue::getCareAmbassadorPendingCallStatus(auth()->user()->id);
 
@@ -170,17 +169,8 @@ class EnrollmentCenterController extends ApiController
             ]);
         }
 
-        $isConfirmedFamilyMember = DB::table('enrollee_family_members')
-            ->where('family_member_enrollee_id', $enrollable->id)
-            ->exists();
-
-        //If enrollee does not have provider attach only show them to the CA if they have been confirmed as a family member for another patient.
-        if ( ! $enrollable->provider && ! $isConfirmedFamilyMember) {
-            $message = "Enrollee with id: {$enrollable->id}, does not have provider attached. Marking as ineligible and recommending investigation.";
-            Log::critical($message);
-            sendSlackMessage('#ca_panel_alerts', $message);
-            $enrollable->status = Enrollee::INELIGIBLE;
-            $enrollable->save();
+        if ( ! $enrollable->shouldAppearInCaPanel()) {
+            $this->handleIneligibleEnrollable($enrollable);
 
             return $this->show($request);
         }
@@ -229,5 +219,14 @@ class EnrollmentCenterController extends ApiController
             $errorEnrollee->save();
         }
         sendSlackMessage('#ca_panel_alerts', "Something went wrong while performing action on Enrollee with id: {$errorEnrolleeId}. \n Message: {$request->input('error_on_previous_submit')}", true);
+    }
+
+    private function handleIneligibleEnrollable(Enrollee $enrollable): void
+    {
+        $message = "Marking Enrollee with id: {$enrollable->id} as ineligible and recommending investigation.";
+        Log::critical($message);
+        sendSlackMessage('#ca_panel_alerts', $message);
+        $enrollable->status = Enrollee::INELIGIBLE;
+        $enrollable->save();
     }
 }
