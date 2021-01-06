@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Entities;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
@@ -21,6 +22,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -136,6 +138,7 @@ use Illuminate\Support\Str;
  * @method   static                                                       \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
  * @method   static                                                       \Illuminate\Database\Query\Builder|Enrollee withTrashed()
  * @method   static                                                       \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
  */
 class Enrollee extends BaseModel
 {
@@ -176,7 +179,9 @@ class Enrollee extends BaseModel
      */
     const LEGACY = 'legacy';
 
-    const MAX_CALL_ATTEMPTS = 3;
+    const MAX_CALL_ATTEMPTS_KEY = 'enrollee_max_call_attempts';
+    
+    const DEFAULT_MAX_CALL_ATTEMPTS = 5;
 
     /**
      * Enrollees who did not respond to any of our notifications to enroll.
@@ -706,6 +711,19 @@ class Enrollee extends BaseModel
         return $this->provider->providerInfo;
     }
 
+    public function hasAnyValidPhone(): bool
+    {
+        foreach ($this->attributesToArray() as $key => $value) {
+            if (in_array($key, $this->phoneAttributes)) {
+                if ( ! empty($value)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_id');
@@ -820,11 +838,11 @@ class Enrollee extends BaseModel
             ->where('last_attempt_at', '<=', $end->endOfDay());
     }
 
-    public function scopeLessThanThreeAttempts($query)
+    public function scopeLessThanMaxAllowedAttempts($query)
     {
         $query->where(function ($q) {
             $q->whereNull('attempt_count')
-                ->orWhere('attempt_count', '<', self::MAX_CALL_ATTEMPTS);
+                ->orWhere('attempt_count', '<', (int) AppConfig::pull(self::MAX_CALL_ATTEMPTS_KEY, self::DEFAULT_MAX_CALL_ATTEMPTS));
         });
     }
 
@@ -1013,6 +1031,23 @@ class Enrollee extends BaseModel
     public function setPrimaryPhoneNumberAttribute($primaryPhone)
     {
         $this->attributes['primary_phone'] = (new StringManipulation())->formatPhoneNumberE164($primaryPhone);
+    }
+
+    public function shouldAppearInCaPanel(): bool
+    {
+        if ( ! $this->hasAnyValidPhone()) {
+            return false;
+        }
+
+        $isConfirmedFamilyMember = DB::table('enrollee_family_members')
+            ->where('family_member_enrollee_id', $this->id)
+            ->exists();
+
+        if (empty($this->provider_id) && ! $isConfirmedFamilyMember) {
+            return false;
+        }
+
+        return true;
     }
 
     public function speaksSpanish()

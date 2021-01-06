@@ -53,7 +53,7 @@ class EnrollableCallQueue
     public static function getCareAmbassadorPendingCallStatus(int $careAmbassadorUserId): array
     {
         $patientsPending = Enrollee::whereCareAmbassadorUserId($careAmbassadorUserId)
-            ->lessThanThreeAttempts()
+            ->lessThanMaxAllowedAttempts()
             ->where(function ($e) {
                 $e->where(function ($subQ) {
                     $subQ->where('status', Enrollee::UNREACHABLE)
@@ -161,7 +161,7 @@ class EnrollableCallQueue
     private function getFromCallQueue()
     {
         return Enrollee::withCaPanelRelationships()
-            ->lessThanThreeAttempts()
+            ->lessThanMaxAllowedAttempts()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
             ->whereNull('requested_callback')
@@ -207,7 +207,7 @@ class EnrollableCallQueue
 
         return Enrollee::withCaPanelRelationships()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
-            ->lessThanThreeAttempts()
+            ->lessThanMaxAllowedAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
             //important. Patient has 1 attempt and has been called 3 days ago. However then they requested that they be called in 10 days
