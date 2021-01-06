@@ -15,15 +15,16 @@ class ServerlessPdfService implements HtmlToPdfService
     private Client $client;
     private ?string $htmlString;
     private array $options;
-
+    private string $url;
+    
     /**
      * ServerlessPdfService constructor.
      */
     public function __construct()
     {
-        $url          = config('services.serverless-pdf-generator.api-url');
+        $this->url          = config('services.serverless-pdf-generator.api-url');
         $this->client = new Client([
-            'base_uri' => $url,
+            'base_uri' => $this->url,
             'headers'  => [
                 'x-api-key' => config('services.serverless-pdf-generator.api-key'),
             ],
@@ -49,9 +50,8 @@ class ServerlessPdfService implements HtmlToPdfService
 
     public function save(string $filename, bool $overwrite = false): HtmlToPdfService
     {
-        $url        = $this->client->getConfig('base_uri');
         $optionsStr = json_encode($this->options);
-        Log::debug("Calling: $url with options: $optionsStr");
+        Log::debug("Calling: $this->url with options: $optionsStr");
 
         $result = $this->client->post(
             '',
