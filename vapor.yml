@@ -33,7 +33,6 @@ environments:
     staging:
         runtime: docker
         domain: cpm-provider.clh-staging.com
-        network: vapor-network-1609910488
         storage: cpm-staging-vapor-storage
         memory: 512
         cli-memory: 512
