@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9f4a27b91ce28aee0adf04b5a45effa",
+    "content-hash": "2965208ad501106848cf9ce506f9e760",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -849,7 +849,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "eeb7ff64d3442c27e16d05d5c110b4709557f78e"
+                "reference": "86baa0c990beab6a56daac6fe807e598f2a31c6d"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -904,7 +904,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-06T05:44:58+00:00"
+            "time": "2021-01-06T16:51:28+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1335,11 +1335,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-ca-panel-fixes",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "727e55d5e6c13869d05a297f8ebde43b4278ba4a"
+                "reference": "4f2a70a1bdba86659c1424d9ed414c2685b97840"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1361,7 +1361,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-06T16:26:37+00:00"
+            "time": "2021-01-06T16:47:10+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
