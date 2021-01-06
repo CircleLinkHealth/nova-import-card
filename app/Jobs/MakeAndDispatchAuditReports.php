@@ -11,12 +11,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 

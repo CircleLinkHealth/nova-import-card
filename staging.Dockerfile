@@ -1,5 +1,8 @@
 FROM laravelphp/vapor:php74
 
+RUN apk add --update nodejs
+RUN echo "NODE Version:" && node --version
+
 RUN \
  curl -L https://download.newrelic.com/php_agent/release/newrelic-php5-9.15.0.293-linux-musl.tar.gz | tar -C /tmp -zx && \
    NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=1 /tmp/newrelic-php5-*/newrelic-install install \
