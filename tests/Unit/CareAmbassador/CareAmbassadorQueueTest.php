@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
@@ -256,8 +257,8 @@ class CareAmbassadorQueueTest extends TestCase
             'practice_id'             => $this->practice->id,
             'care_ambassador_user_id' => $this->careAmbassadorUser->id,
             'status'                  => Enrollee::UNREACHABLE,
-            //attempt NOT irrelevant - no unreachables with 3 tries and above should appear
-            'attempt_count' => 3,
+            //attempt NOT irrelevant - no unreachables with max tries and above should appear
+            'attempt_count' => Enrollee::DEFAULT_MAX_CALL_ATTEMPTS,
         ]);
     }
 }
