@@ -1339,7 +1339,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b62b4b226b4f28be3d4b21135ebbd28c685c1088"
+                "reference": "727e55d5e6c13869d05a297f8ebde43b4278ba4a"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1361,7 +1361,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-06T16:17:35+00:00"
+            "time": "2021-01-06T16:26:37+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
