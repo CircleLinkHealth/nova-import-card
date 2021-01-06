@@ -18,7 +18,7 @@
                     <br>
                     <br>
                     @if(!empty($providerName))
-                    <strong>Dr. {{$providerName}}'s care team</strong>
+                    <strong>Dr. {{$providerName}}'s care team</strong>`
                     @endif
                 </p>
             </div>
