@@ -7,7 +7,6 @@ environments:
       - awv2.careplanmanager.com
       - awv.careplanmanager.com
     storage: cpm-production-vapor-storage
-    network: cpm-production
     memory: 512
     cli-memory: 512
     queue-memory: 512
