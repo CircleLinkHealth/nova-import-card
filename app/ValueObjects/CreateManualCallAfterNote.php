@@ -13,7 +13,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class CreateManualCallAfterNote implements Arrayable
 {
-    private ?User $patient;
+    private ?User $patient = null;
     private int $patientId;
     private bool $reached;
 
@@ -45,7 +45,7 @@ class CreateManualCallAfterNote implements Arrayable
 
     public function getPatient(): User
     {
-        if ( ! $this->patient) {
+        if (is_null($this->patient)) {
             $this->patient = User::without(['roles', 'perms'])->find($this->patientId);
         }
 
