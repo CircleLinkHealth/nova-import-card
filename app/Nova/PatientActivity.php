@@ -121,6 +121,8 @@ class PatientActivity extends Resource
 
             Text::make('Patient', 'patient.display_name'),
 
+            Text::make('Type', 'type'),
+
             Number::make('Duration (ms)', 'duration'),
 
             Text::make('ChargeableService', function ($row) {

@@ -32,7 +32,7 @@ class ModifyPatientActivity
     {
         /** @var ChargeableService $cs */
         $cs = ChargeableService::cached()->where('code', '=', $this->chargeableService)->first();
-        if (!$cs) {
+        if ( ! $cs) {
             throw new \Exception("could not find chargeable service $this->chargeableService");
         }
 
@@ -56,10 +56,10 @@ class ModifyPatientActivity
             ->distinct('nurse_id')
             ->select('nurse_id')
             ->each(function (NurseCareRateLog $nurseLog) {
-                            \Artisan::call('nurseinvoices:create', [
-                                'month'   => now()->startOfMonth()->toDateString(),
-                                'userIds' => $nurseLog->nurse->user_id,
-                            ]);
-                        });
+                \Artisan::call('nurseinvoices:create', [
+                    'month'   => now()->startOfMonth()->toDateString(),
+                    'userIds' => $nurseLog->nurse->user_id,
+                ]);
+            });
     }
 }
