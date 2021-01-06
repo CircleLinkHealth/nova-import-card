@@ -13,7 +13,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class CreateManualCallAfterNote implements Arrayable
 {
-    private User $patient;
+    private ?User $patient;
     private int $patientId;
     private bool $reached;
 
