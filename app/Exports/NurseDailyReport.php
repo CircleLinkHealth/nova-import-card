@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Spatie\MediaLibrary\Helpers\RemoteFile;
 
 class NurseDailyReport implements FromCollection, Responsable, WithHeadings
 {
@@ -132,9 +133,9 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
     public function storeAndAttachMediaTo($model)
     {
         $filepath = 'exports/'.$this->getFilename();
-        $stored   = $this->store($filepath, 'storage');
+        $stored   = $this->store($filepath, 'media');
 
-        return $this->attachMediaTo($model, storage_path($filepath), "nurse_daily_report_for_{$this->date->toDateString()}");
+        return $this->attachMediaTo($model, new RemoteFile($filepath, 'media'), "nurse_daily_report_for_{$this->date->toDateString()}");
     }
 
     /**

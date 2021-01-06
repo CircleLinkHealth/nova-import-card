@@ -242,6 +242,7 @@ namespace App;
  * @property int|null                                                                                                             $saml_users_count
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User activeNurses()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
