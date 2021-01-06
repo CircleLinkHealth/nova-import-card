@@ -6,22 +6,22 @@
         <div class="letter-view">
             @if(!$hideButtons)
                 <div class="header-buttons">
-                    @include('enrollment-letters.enrollableInvitationButtons')
+                    @include('selfEnrollment::enrollment-letters.enrollableInvitationButtons')
                 </div>
             @endif
 
-            @include('enrollment-letters.headers.commonwealth')
+            @include('selfEnrollment::enrollment-letters.headers.commonwealth')
 
-            @include('enrollment-letters.baseLetter')
+            @include('selfEnrollment::enrollment-letters.baseLetter')
 
                 <div class="logo" style="margin-bottom: 10px">
-                    @include('enrollment-letters.practiceLogo')
+                    @include('selfEnrollment::enrollment-letters.practiceLogo')
                 </div>
 
 
             @if(!$hideButtons)
                 <div class="header-buttons">
-                    @include('enrollment-letters.enrollableInvitationButtons')
+                    @include('selfEnrollment::enrollment-letters.enrollableInvitationButtons')
                 </div>
             @endif
         </div>

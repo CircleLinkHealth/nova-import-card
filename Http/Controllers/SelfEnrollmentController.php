@@ -391,7 +391,7 @@ class SelfEnrollmentController extends Controller
     {
         $enrollablePrimaryPractice     = $userEnrollee->primaryPractice;
         $letterClass                   = ucfirst(self::getLetterClassName($enrollablePrimaryPractice->name));
-        $practiceLetterClass           = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
+        $practiceLetterClass           = ucfirst(str_replace(' ', '', "CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter\ $letterClass"));
         $practiceLetterReflectionClass = new \ReflectionClass($practiceLetterClass);
         $baseLetter                    = (new EnrollmentBaseLetter(
             $enrollablePrimaryPractice,

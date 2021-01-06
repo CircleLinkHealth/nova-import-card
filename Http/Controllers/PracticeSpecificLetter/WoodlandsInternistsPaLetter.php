@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
+namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
-use App\Contracts\SelfEnrollmentLetter;
+use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
-use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
@@ -46,7 +46,7 @@ class WoodlandsInternistsPaLetter extends EnrollmentLetterDefaultConfigs impleme
         $letterViewParams                   = LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs);
         $letterViewParams['disableButtons'] = $this->disableButtons;
 
-        return view("enrollment-letters.$className", $letterViewParams);
+        return view("selfEnrollment::enrollment-letters.$className", $letterViewParams);
     }
 
     public function letterSpecificView()

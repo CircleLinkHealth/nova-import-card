@@ -6,17 +6,17 @@
         <div class="letter-view">
             @if(!$hideButtons)
                 <div class="header-buttons">
-                    @include('enrollment-letters.enrollableInvitationButtons')
+                    @include('selfEnrollment::enrollment-letters.enrollableInvitationButtons')
                 </div>
             @endif
 
-            @include('enrollment-letters.headers.woodlands')
+            @include('selfEnrollment::enrollment-letters.headers.woodlands')
 
-            @include('enrollment-letters.baseLetter')
+            @include('selfEnrollment::enrollment-letters.baseLetter')
 
             @if(!$hideButtons)
                 <div class="header-buttons">
-                    @include('enrollment-letters.enrollableInvitationButtons')
+                    @include('selfEnrollment::enrollment-letters.enrollableInvitationButtons')
                 </div>
             @endif
         </div>
