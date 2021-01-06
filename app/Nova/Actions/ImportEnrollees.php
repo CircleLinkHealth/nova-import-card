@@ -26,12 +26,15 @@ class ImportEnrollees extends Action
     use SerializesModels;
     const ACTION_ASSIGN_ENROLLEES_TO_CA = 'assign_enrollees_to_ca';
     const ACTION_CREATE_ENROLLEES       = 'create_enrollees';
+    const ACTION_CREATE_ENROLLEES_FROM_PRACTICE_PULL       = 'create_enrollees_from_practice_pull';
     const ACTION_MARK_AUTO_ENROLLMENT   = 'mark_for_auto_enrollment';
     const ACTION_MARK_INELIGIBLE        = 'mark_as_ineligible';
     const LABEL_ASSIGN_ENROLLEES_TO_CA  = 'Assign Patients to Care Ambassador';
     const LABEL_CREATE_ENROLLEES        = 'Create Patients from CSV';
+    const LABEL_CREATE_ENROLLEES_FROM_PRACTICE_PULL = 'Create Patients from Practice Pull Data';
     const LABEL_MARK_AUTO_ENROLLMENT    = 'Mark Patients for Auto Enrollment';
     const LABEL_MARK_INELIGIBLE         = 'Mark Patients as Ineligible';
+
 
     /**
      * Indicates if this action is only available on the resource detail view.
