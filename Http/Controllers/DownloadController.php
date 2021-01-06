@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
