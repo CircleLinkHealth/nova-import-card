@@ -48,6 +48,11 @@ class RedirectToAdminApp extends Controller
         return $this->redirectToAdmin('pam');
     }
 
+    public function getPracticeChargeableServices(string $practiceSlug)
+    {
+        return $this->redirectToAdmin("practices/$practiceSlug/chargeable-services");
+    }
+
     private function redirectToAdmin($url)
     {
         return redirect()->to(rtrim(config('core.apps.cpm-admin.url'), '/')."/$url");
