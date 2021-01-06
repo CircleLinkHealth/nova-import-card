@@ -23,10 +23,6 @@ trait AttachableAsMedia
      */
     public function attachMediaTo(Model $model, $filePath, $mediaCollection)
     {
-        if ( ! file_exists($filePath)) {
-            throw new FileNotFoundException("`$filePath` could not be found.");
-        }
-
         if ( ! $model instanceof HasMedia) {
             throw new \Exception(get_class($model).' needs to implement interface '.HasMedia::class);
         }
