@@ -540,7 +540,7 @@ class CcdaImporterWrapper
         if ( ! $location) {
             $location = LocationByName::first($enrollee->facility_name);
 
-            if ($location->practice_id !== $ccda->practice_id) {
+            if ($location && $location->practice_id !== $ccda->practice_id) {
                 $location = null;
             }
         }
