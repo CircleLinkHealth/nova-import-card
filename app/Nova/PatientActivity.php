@@ -121,7 +121,9 @@ class PatientActivity extends Resource
 
             Text::make('Patient', 'patient.display_name'),
 
-            Number::make('Duration (ms)', 'duration'),
+            Text::make('Type', 'type'),
+
+            Number::make('Duration (s)', 'duration'),
 
             Text::make('ChargeableService', function ($row) {
                 /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $cs */
