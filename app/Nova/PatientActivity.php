@@ -119,18 +119,21 @@ class PatientActivity extends Resource
                 ->sortable()
                 ->readonly(true),
 
-            Text::make('Patient', 'patient.display_name'),
+            Text::make('Patient', 'patient.display_name')
+                ->readonly(true),
 
-            Text::make('Type', 'type'),
+            Text::make('Type', 'type')
+                ->readonly(true),
 
-            Number::make('Duration (s)', 'duration'),
+            Number::make('Duration (s)', 'duration')
+                ->readonly(true),
 
             Text::make('ChargeableService', function ($row) {
                 /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $cs */
                 $cs = \CircleLinkHealth\Customer\Entities\ChargeableService::cached()->firstWhere('id', '=', $row->chargeable_service_id);
 
                 return ($cs)->display_name ?? 'N/A';
-            }),
+            })->readonly(true),
         ];
     }
 
