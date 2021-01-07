@@ -9,7 +9,6 @@ namespace App\Console;
 use App\Console\Commands\AlertSlackForPatientsWithNoLocation;
 use App\Console\Commands\AssignUnassignedPatientsToStandByNurse;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
-use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForDraftCarePlans;
 use App\Console\Commands\CheckForDraftNotesAndQAApproved;
@@ -103,9 +102,6 @@ class Kernel extends ConsoleKernel
                 return SendMonthlyNurseInvoiceLAN::shouldSend();
             })
             ->onOneServer();
-
-        $schedule->command(CheckEmrDirectInbox::class)
-            ->everyFiveMinutes();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyFifteenMinutes();
