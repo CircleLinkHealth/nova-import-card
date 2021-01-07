@@ -43,11 +43,11 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     protected string $fileName;
 
-    protected int $chunkSize;
+    protected int $chunkSize = 100;
 
     protected int $practiceId;
 
-    public function __construct(int $practiceId, string $fileName, ?int $caId, int $chunkSize = 100)
+    public function __construct(int $practiceId, string $fileName, ?int $caId)
     {
         ini_set('upload_max_filesize', '200M');
         ini_set('post_max_size', '200M');
@@ -55,7 +55,6 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
         ini_set('max_execution_time', 900);
 
         $this->practiceId = $practiceId;
-        $this->chunkSize = $chunkSize;
         $this->fileName   = $fileName;
         $this->caId       = $caId;
     }

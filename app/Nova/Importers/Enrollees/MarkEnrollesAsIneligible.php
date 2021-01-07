@@ -10,6 +10,8 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class MarkEnrollesAsIneligible extends EnrolleeImportingAction
 {
+    protected int $chunkSize = 200;
+
     protected function fetchEnrollee(array $row) :? Enrollee
     {
         return Enrollee::where('mrn', $row['mrn'])
