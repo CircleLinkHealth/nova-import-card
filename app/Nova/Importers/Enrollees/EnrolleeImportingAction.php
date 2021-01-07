@@ -92,9 +92,11 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
             return;
         }
 
-        if ($this->shouldPerformAction($enrollee, $row)){
-            $this->performAction($enrollee);
+        if (! $this->shouldPerformAction($enrollee, $row)){
+            Log::channel('database')->warning("Action not performed for Patient for CSV:{$this->fileName}, for row: {$this->rowNumber}. Please investigate");
+            return;
         }
+        $this->performAction($enrollee);
     }
 
     public function rules(): array
@@ -117,33 +119,6 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
         }
 
         return $date;
-    }
-
-    private function markForAutoEnrollment(array $row)
-    {
-        $enrollee = $this->fetchEnrollee($row);
-
-        if ( ! $enrollee) {
-            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-
-            return;
-        }
-
-        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLinks->isNotEmpty()) {
-            Log::channel('database')->warning("Patient for CSV:{$this->fileName}, for row: {$this->rowNumber} has already been marked for auto-enrollment.");
-
-            return;
-        }
-
-        $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
-
-        $enrollee->care_ambassador_user_id = null;
-
-        //reset attempt count and requested callback to prevent the CA call queue from accidentally picking these up - edge case
-        //this also means we reset their call statuses in general
-        $enrollee->attempt_count      = 0;
-        $enrollee->requested_callback = null;
-        $enrollee->save();
     }
 
     private function updateOrCreateEnrolleeFromCsv(array $row)
