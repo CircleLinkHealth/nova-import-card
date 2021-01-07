@@ -13,7 +13,6 @@ environments:
         queue-concurrency: 10
         cli-concurrency: 10
         runtime: docker
-        scheduler: false
         mail: false
         timeout: 60
         queues:
