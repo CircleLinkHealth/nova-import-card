@@ -9,6 +9,7 @@ namespace App\Nova\Actions;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use Illuminate\Support\Facades\Log;
 
 class ModifyPatientActivity
 {
@@ -56,9 +57,11 @@ class ModifyPatientActivity
             ->distinct('nurse_id')
             ->select('nurse_id')
             ->each(function (NurseCareRateLog $nurseLog) {
+                $nurseUserId = $nurseLog->nurse->user_id;
+                Log::debug("Ready to regenerate invoice for $nurseUserId");
                 \Artisan::call('nurseinvoices:create', [
                     'month'   => now()->startOfMonth()->toDateString(),
-                    'userIds' => $nurseLog->nurse->user_id,
+                    'userIds' => $nurseUserId,
                 ]);
             });
     }
