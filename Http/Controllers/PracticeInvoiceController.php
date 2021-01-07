@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Notification;
 class PracticeInvoiceController extends Controller
 {
     use ApiReturnHelpers;
-    
+
     private $patientSummaryDBRepository;
     private $practiceReportsService;
     private $service;
