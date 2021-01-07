@@ -6,11 +6,9 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\Types\Self_;
 
 class UpdateBankHolidaysForYear extends Command
 {
