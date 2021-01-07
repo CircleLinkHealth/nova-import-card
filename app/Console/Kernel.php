@@ -9,7 +9,7 @@ namespace App\Console;
 use App\Console\Commands\CheckVoiceCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use CircleLinkHealth\Core\Console\Commands\CheckEmrDirectInbox;
-use CircleLinkHealth\Eligibility\Console\Commands\OverwritePatientMrnsFromSupplementalData;
+use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        CheckEmrDirectInbox::class,
     ];
 
     /**
