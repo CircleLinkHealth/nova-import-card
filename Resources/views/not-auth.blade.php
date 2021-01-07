@@ -36,7 +36,7 @@
     <div class="content">
         <h4>Care Plan Manager</h4>
 
-        <h1><b><u>Apologies</u>, there's been a an issue.</b></h1>
+        <h1><b><u>Apologies</u>, there's been an issue.</b></h1>
 
         <h2>
             Authentication failed!
