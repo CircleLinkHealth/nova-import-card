@@ -73,7 +73,7 @@ jobs:
 
       - name: Create env files to connect to S3 after deployment - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' }}
-        run: 'echo "ENV_TYPE=$ENV_TYPE\nAPP_NAME=$APP_NAME\nS3_SECRETS_BUCKET=$S3_SECRETS_BUCKET\nS3_SECRETS_KEY=$S3_SECRETS_KEY\nS3_SECRETS_SECRET=$S3_SECRETS_SECRET\nS3_SECRETS_REGION=$S3_SECRETS_REGION" > production-deploy-s3.env'
+        run: 'echo "ENV_TYPE=$ENV_TYPE\nAPP_NAME=$APP_NAME\nS3_SECRETS_BUCKET=$S3_SECRETS_BUCKET\nS3_SECRETS_KEY=$S3_SECRETS_KEY\nS3_SECRETS_SECRET=$S3_SECRETS_SECRET\nS3_SECRETS_REGION=$S3_SECRETS_REGION" > staging-deploy-s3.env'
         shell: bash
         env:
           ENV_TYPE: staging
