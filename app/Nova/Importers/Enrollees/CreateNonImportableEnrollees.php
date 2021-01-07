@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CreateNonImportableEnrollees extends EnrolleeImportingAction
 {
+    protected int $chunkSize = 50;
+
     protected function fetchEnrollee(array $row) :? Enrollee
     {
         return Enrollee::with(['user'])
