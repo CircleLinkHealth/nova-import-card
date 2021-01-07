@@ -61,7 +61,13 @@ jobs:
 
       - name: Create env files to connect to S3 after deployment - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
-        run: 'echo "ENV_TYPE=$ENV_TYPE\nAPP_NAME=$APP_NAME\nS3_SECRETS_BUCKET=$S3_SECRETS_BUCKET\nS3_SECRETS_KEY=$S3_SECRETS_KEY\nS3_SECRETS_SECRET=$S3_SECRETS_SECRET\nS3_SECRETS_REGION=$S3_SECRETS_REGION" > production-deploy-s3.env'
+        run: |
+          echo ENV_TYPE=$ENV_TYPE >> production-deploy-s3.env
+          echo APP_NAME=$APP_NAME >> production-deploy-s3.env
+          echo S3_SECRETS_BUCKET=$S3_SECRETS_BUCKET >> production-deploy-s3.env
+          echo S3_SECRETS_KEY=$S3_SECRETS_KEY >> production-deploy-s3.env
+          echo S3_SECRETS_SECRET=$S3_SECRETS_SECRET >> production-deploy-s3.env
+          echo S3_SECRETS_REGION=$S3_SECRETS_REGION >> production-deploy-s3.env
         shell: bash
         env:
           ENV_TYPE: production
@@ -73,7 +79,13 @@ jobs:
 
       - name: Create env files to connect to S3 after deployment - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' }}
-        run: 'echo "ENV_TYPE=$ENV_TYPE\nAPP_NAME=$APP_NAME\nS3_SECRETS_BUCKET=$S3_SECRETS_BUCKET\nS3_SECRETS_KEY=$S3_SECRETS_KEY\nS3_SECRETS_SECRET=$S3_SECRETS_SECRET\nS3_SECRETS_REGION=$S3_SECRETS_REGION" > staging-deploy-s3.env'
+        run: |
+          echo ENV_TYPE=$ENV_TYPE >> staging-deploy-s3.env
+          echo APP_NAME=$APP_NAME >> staging-deploy-s3.env
+          echo S3_SECRETS_BUCKET=$S3_SECRETS_BUCKET >> staging-deploy-s3.env
+          echo S3_SECRETS_KEY=$S3_SECRETS_KEY >> staging-deploy-s3.env
+          echo S3_SECRETS_SECRET=$S3_SECRETS_SECRET >> staging-deploy-s3.env
+          echo S3_SECRETS_REGION=$S3_SECRETS_REGION >> staging-deploy-s3.env
         shell: bash
         env:
           ENV_TYPE: staging
