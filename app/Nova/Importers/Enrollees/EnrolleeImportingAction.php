@@ -83,6 +83,7 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
     protected function execute(array $row): void
     {
         if (! $this->validateRow($row)){
+            Log::channel('database')->critical("Input Validation for CSV:{$this->fileName}, at row: {$this->rowNumber}, failed.");
             return;
         }
 
@@ -99,23 +100,6 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
     public function rules(): array
     {
         return $this->rules;
-    }
-
-    private function assignToCa(array $row)
-    {
-        $enrollee = $this->fetchEnrollee($row);
-
-        if ( ! $enrollee) {
-            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-
-            return;
-        }
-
-        $enrollee->status                  = Enrollee::TO_CALL;
-        $enrollee->care_ambassador_user_id = $this->caId;
-        $enrollee->attempt_count           = 0;
-
-        $enrollee->save();
     }
 
     /**

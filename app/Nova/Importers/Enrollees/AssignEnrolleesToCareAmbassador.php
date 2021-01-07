@@ -7,27 +7,42 @@ namespace App\Nova\Importers\Enrollees;
 
 
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AssignEnrolleesToCareAmbassador extends EnrolleeImportingAction
 {
-
-    protected function fetchEnrollee()
+    protected function fetchEnrollee(array $row) :? Enrollee
     {
-        // TODO: Implement fetchEnrollee() method.
+        return Enrollee::whereId($row['eligible_patient_id'])
+                       ->where('practice_id', $this->practiceId)
+                       ->where('mrn', $row['mrn'])
+                       ->where('first_name', $row['first_name'])
+                       ->where('last_name', $row['last_name'])
+                       ->first();
     }
 
     protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
     {
-        // TODO: Implement shouldPerformAction() method.
+        return true;
     }
 
-    protected function performAction(Enrollee $enrollee)
+    protected function performAction(Enrollee $enrollee) : void
     {
-        // TODO: Implement performAction() method.
+        $enrollee->status                  = Enrollee::TO_CALL;
+        $enrollee->care_ambassador_user_id = $this->caId;
+        $enrollee->attempt_count           = 0;
+
+        $enrollee->save();
     }
 
     protected function validateRow(array $row): bool
     {
-        // TODO: Implement validateRow() method.
+        return Validator::make($row, [
+            'eligible_patient_id' => 'required',
+            'mrn'                 => 'required',
+            'first_name'          => 'required',
+            'last_name'           => 'required',
+        ])->passes();
     }
 }
