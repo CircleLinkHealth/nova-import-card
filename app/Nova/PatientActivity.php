@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Nova\Actions\ModifyPatientActivityAction;
 use App\Nova\Filters\ActivityChargeableServiceFilter;
+use App\Nova\Helpers\Utils;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -128,12 +129,15 @@ class PatientActivity extends Resource
             Number::make('Duration (s)', 'duration')
                 ->readonly(true),
 
-            Text::make('ChargeableService', function ($row) {
+            Text::make('Chargeable Service', function ($row) {
+                $styleHack = Utils::getCssToHideEditButton($this);
+
                 /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $cs */
                 $cs = \CircleLinkHealth\Customer\Entities\ChargeableService::cached()->firstWhere('id', '=', $row->chargeable_service_id);
+                $str = ($cs)->display_name ?? 'N/A';
 
-                return ($cs)->display_name ?? 'N/A';
-            })->readonly(true),
+                return $styleHack."<span>$str</span>";
+            })->readonly(true)->asHtml(),
         ];
     }
 
