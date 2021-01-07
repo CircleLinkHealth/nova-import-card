@@ -40,8 +40,14 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
+            'channels'          => ['vapor'],
+            'ignore_exceptions' => true,
+        ],
+
+        'vapor' => [
+            'driver'            => 'stack',
             'channels'          => ['stderr'],
-            'ignore_exceptions' => false,
+            'ignore_exceptions' => true,
         ],
 
         'single' => [
