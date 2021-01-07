@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d18ce3450fcf7f21c6dd0acd0a27bd5",
+    "content-hash": "4396d51e4b131c476709ffa5bc395d89",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1266,11 +1266,11 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "v2.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "76b3f32e131f0b7b65522001f03f16116024737f"
+                "reference": "936baf88bbe3a471cacfc863ae92d26c528df1c0"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1300,7 +1300,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:11:03+00:00"
+            "time": "2021-01-07T14:31:39+00:00"
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
@@ -13036,16 +13036,16 @@
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.5.1",
+            "version": "v3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "233c10688f4c1a6e66ed2ef123038b1363d1bedc"
+                "reference": "cae0a8d1cb89b0f0522f65e60465e16d738e069b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/233c10688f4c1a6e66ed2ef123038b1363d1bedc",
-                "reference": "233c10688f4c1a6e66ed2ef123038b1363d1bedc",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/cae0a8d1cb89b0f0522f65e60465e16d738e069b",
+                "reference": "cae0a8d1cb89b0f0522f65e60465e16d738e069b",
                 "shasum": ""
             },
             "require": {
@@ -13058,6 +13058,7 @@
                 "symfony/finder": "^4.3|^5"
             },
             "require-dev": {
+                "mockery/mockery": "^1.3.3",
                 "orchestra/testbench-dusk": "^4|^5|^6",
                 "phpunit/phpunit": "^8.5|^9.0",
                 "squizlabs/php_codesniffer": "^3.5"
@@ -13108,7 +13109,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-07T19:32:39+00:00"
+            "time": "2021-01-06T14:21:44+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
