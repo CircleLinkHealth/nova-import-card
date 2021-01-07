@@ -13,12 +13,13 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class CreateManualCallAfterNote implements Arrayable
 {
-    private ?User $patient = null;
+    private ?User $patient;
     private int $patientId;
     private bool $reached;
 
     public function __construct(int $patientId, bool $reached)
     {
+        $this->patient   = null;
         $this->patientId = $patientId;
         $this->reached   = $reached;
     }

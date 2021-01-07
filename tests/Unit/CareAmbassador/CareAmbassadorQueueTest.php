@@ -8,7 +8,6 @@ namespace Tests\Unit;
 
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;

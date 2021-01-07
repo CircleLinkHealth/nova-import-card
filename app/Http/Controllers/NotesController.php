@@ -240,18 +240,25 @@ class NotesController extends Controller
 
     public function deleteDraft(Request $request, $patientId, $noteId)
     {
-        $note = Note::findOrFail($noteId);
+        $redirect = redirect()->route('patient.note.index', ['patientId' => $patientId]);
+        $errorMsg = null;
+        $note     = Note::findOrFail($noteId);
+
         if (Note::STATUS_DRAFT !== $note->status) {
-            throw new \Exception('You cannot delete a non-draft note');
+            $errorMsg = 'You cannot delete a non-draft note';
         }
 
         if ($note->author_id != auth()->id()) {
-            throw new \Exception('Only the author of the note can delete it');
+            $errorMsg = 'Only the author of the note can delete it';
         }
 
-        $note->delete();
+        if ($errorMsg) {
+            $redirect->withErrors([$errorMsg]);
+        } else {
+            $note->delete();
+        }
 
-        return redirect()->route('patient.note.index', ['patientId' => $patientId]);
+        return $redirect;
     }
 
     public function download(Request $request, $patientId, $noteId)

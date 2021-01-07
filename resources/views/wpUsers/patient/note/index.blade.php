@@ -18,7 +18,7 @@
             @include('core::partials.errors.messages')
         </div>
         <div>
-            @include('core::partials.errors.messages')
+            @include('core::partials.errors.errors')
         </div>
     </div>
 
