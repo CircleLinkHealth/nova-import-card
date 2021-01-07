@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Console\Commands;
+namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
