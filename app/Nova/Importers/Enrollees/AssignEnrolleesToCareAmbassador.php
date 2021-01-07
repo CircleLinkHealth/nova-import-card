@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AssignEnrolleesToCareAmbassador extends EnrolleeImportingAction
 {
+    protected int $chunkSize = 200;
+
     protected function fetchEnrollee(array $row) :? Enrollee
     {
         return Enrollee::whereId($row['eligible_patient_id'])
