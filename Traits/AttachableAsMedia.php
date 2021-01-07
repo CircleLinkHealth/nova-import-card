@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Core\Traits;
 
-use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 
