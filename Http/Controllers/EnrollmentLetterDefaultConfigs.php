@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers;
 
-use Illuminate\Routing\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use Illuminate\Routing\Controller;
 
 abstract class EnrollmentLetterDefaultConfigs extends Controller
 {

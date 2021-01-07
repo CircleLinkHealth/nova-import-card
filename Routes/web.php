@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
@@ -44,7 +49,6 @@ Route::get('/review-letter/{userId}', [
     'uses' => '\CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController@reviewLetter',
     'as'   => 'enrollee.to.review.letter',
 ]);
-
 
 Route::get('login-enrollees-survey/{user}/{survey}', '\CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')

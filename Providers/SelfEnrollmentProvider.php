@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
 use CircleLinkHealth\SamlSp\Providers\RouteServiceProvider;
@@ -11,21 +15,6 @@ use Illuminate\Support\ServiceProvider;
 
 class SelfEnrollmentProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->app->register(RouteServiceProvider::class);
-        $this->commands([
-            SelfEnrollmentManualInviteCommand::class,
-            SendSelfEnrollmentReminders::class,
-        ]);
-//        $this->app->singleton(SelfEnrollmentLetter::class);
-    }
-
     /**
      * Bootstrap services.
      *
@@ -52,5 +41,20 @@ class SelfEnrollmentProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/selfEnrollment'),
         ]);
+    }
+
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->register(RouteServiceProvider::class);
+        $this->commands([
+            SelfEnrollmentManualInviteCommand::class,
+            SendSelfEnrollmentReminders::class,
+        ]);
+//        $this->app->singleton(SelfEnrollmentLetter::class);
     }
 }

@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\Enrollment\PracticeSpecificLetter;
 
-use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
-use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use Illuminate\Database\Eloquent\Model;
 
 class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter

@@ -8,7 +8,6 @@ namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use Illuminate\Console\Command;
 
 class ManuallyCreateEnrollmentTestData extends Command
