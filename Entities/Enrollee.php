@@ -159,6 +159,8 @@ class Enrollee extends BaseModel
      */
     const CONSENTED = 'consented';
 
+    const DEFAULT_MAX_CALL_ATTEMPTS = 5;
+
     /**
      * status = eligible.
      */
@@ -180,8 +182,6 @@ class Enrollee extends BaseModel
     const LEGACY = 'legacy';
 
     const MAX_CALL_ATTEMPTS_KEY = 'enrollee_max_call_attempts';
-    
-    const DEFAULT_MAX_CALL_ATTEMPTS = 5;
 
     /**
      * Enrollees who did not respond to any of our notifications to enroll.
