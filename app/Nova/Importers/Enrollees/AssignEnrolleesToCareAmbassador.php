@@ -29,7 +29,7 @@ class AssignEnrolleesToCareAmbassador extends EnrolleeImportingAction
         return true;
     }
 
-    protected function performAction(Enrollee $enrollee) : void
+    protected function performAction(Enrollee $enrollee, array $actionInput) : void
     {
         $enrollee->status                  = Enrollee::TO_CALL;
         $enrollee->care_ambassador_user_id = $this->caId;
@@ -46,5 +46,10 @@ class AssignEnrolleesToCareAmbassador extends EnrolleeImportingAction
             'first_name'          => 'required',
             'last_name'           => 'required',
         ])->passes();
+    }
+
+    protected function getActionInput(Enrollee $enrollee, array $row): array
+    {
+        return $row;
     }
 }

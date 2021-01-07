@@ -92,11 +92,14 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
             return;
         }
 
-        if (! $this->shouldPerformAction($enrollee, $row)){
+        $actionInput = $this->getActionInput($enrollee, $row);
+
+        if (! $this->shouldPerformAction($enrollee, $actionInput)){
             Log::channel('database')->warning("Action not performed for Patient for CSV:{$this->fileName}, for row: {$this->rowNumber}. Please investigate");
             return;
         }
-        $this->performAction($enrollee);
+
+        $this->performAction($enrollee, $actionInput);
     }
 
     public function rules(): array
@@ -245,9 +248,11 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     protected abstract function fetchEnrollee(array $row) :? Enrollee;
 
+    protected abstract function getActionInput(Enrollee $enrollee, array $row) :array;
+
     protected abstract function shouldPerformAction(Enrollee $enrollee, array $row) : bool;
 
-    protected abstract function performAction(Enrollee $enrollee): void;
+    protected abstract function performAction(Enrollee $enrollee, array $actionInput): void;
 
     protected abstract function validateRow(array $row): bool;
 

@@ -19,12 +19,12 @@ class MarkEnrollesAsIneligible extends EnrolleeImportingAction
                        ->first();
     }
 
-    protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
+    protected function shouldPerformAction(Enrollee $enrollee, array $actionInput): bool
     {
         return true;
     }
 
-    protected function performAction(Enrollee $enrollee) : void
+    protected function performAction(Enrollee $enrollee, array $actionInput) : void
     {
         $enrollee->status = Enrollee::INELIGIBLE;
         $enrollee->save();
@@ -33,5 +33,10 @@ class MarkEnrollesAsIneligible extends EnrolleeImportingAction
     protected function validateRow(array $row): bool
     {
         return isset($row['mrn']);
+    }
+
+    protected function getActionInput(Enrollee $enrollee, array $row): array
+    {
+        return $row;
     }
 }

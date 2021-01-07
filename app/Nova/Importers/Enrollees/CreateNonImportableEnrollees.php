@@ -6,28 +6,117 @@
 namespace App\Nova\Importers\Enrollees;
 
 
+use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use Illuminate\Support\Facades\Validator;
 
 class CreateNonImportableEnrollees extends EnrolleeImportingAction
 {
-
-    protected function fetchEnrollee()
+    protected function fetchEnrollee(array $row) :? Enrollee
     {
-        // TODO: Implement fetchEnrollee() method.
+        return Enrollee::with(['user'])
+        ->firstOrCreate([
+            'mrn'         => $row['mrn'],
+            'practice_id' => $this->practiceId,
+        ]);
     }
 
     protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
     {
-        // TODO: Implement shouldPerformAction() method.
+        return $row['dob'] instanceof Carbon && ! empty($row['provider_id']);
     }
 
-    protected function performAction(Enrollee $enrollee)
+    protected function performAction(Enrollee $enrollee, array $actionInput) : void
     {
-        // TODO: Implement performAction() method.
+        $enrollee->first_name = ucfirst(strtolower($actionInput['first_name']));
+        $enrollee->last_name = ucfirst(strtolower($actionInput['last_name']));
+        $enrollee->provider_id = $actionInput['provider_id'];
+        $enrollee->address   = ucwords(strtolower($actionInput['address']));
+        $enrollee->address_2   = ucwords(strtolower($actionInput['address_2']));
+        $enrollee->home_phone = (new StringManipulation())->formatPhoneNumberE164($actionInput['phone_number']);
+        $enrollee->dob = optional($actionInput['dob'])->toDateString();
+        $enrollee->city  = ucwords(strtolower($actionInput['city']));
+        $enrollee->state = $actionInput['state'];
+        $enrollee->zip  = $actionInput['zip'];
+        $enrollee->status = Enrollee::TO_CALL;
+        $enrollee->source = Enrollee::UPLOADED_CSV;
+        $enrollee->save();
+
+        $user = $enrollee->user;
+
+        if (is_null($user)) {
+            CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
+
+            return;
+        }
+
+        if ( ! $user->isSurveyOnly()) {
+            return;
+        }
+
+        CarePerson::updateOrCreate(
+            [
+                'type'    => CarePerson::BILLING_PROVIDER,
+                'user_id' => $user->id,
+            ],
+            [
+                'member_user_id' => $actionInput['provider_id'],
+            ]
+        );
     }
 
     protected function validateRow(array $row): bool
     {
-        // TODO: Implement validateRow() method.
+        return Validator::make($row, [
+            'mrn'                 => 'required',
+            'first_name'          => 'required',
+            'last_name'           => 'required',
+            'dob'                 => 'required',
+            'phone_number'        => 'required'
+        ])->passes();
+    }
+
+    protected function getActionInput(Enrollee $enrollee, array $row): array
+    {
+        $row['dob'] = $this->determineDob($row);
+        $row['provider_id'] = $this->getProviderId($row);
+        $row['practice_id'] = $this->practiceId;
+
+        return $row;
+    }
+
+    private function determineDob(array $row) :? Carbon
+    {
+        $date = $row['dob'];
+
+        if (empty($date)){
+            return null;
+        }
+
+        if (is_numeric($date)) {
+            $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
+        }
+
+        if ( ! $date) {
+            return null;
+        }
+
+        try {
+            $date = ImportPatientInfo::parseDOBDate($date);
+        } catch (\Throwable $throwable){
+            $date = null;
+        }
+
+        return $date;
+    }
+
+    private function getProviderId(array $row) :? int
+    {
+        return optional(CcdaImporterWrapper::mysqlMatchProvider($row['provider'], $this->practiceId))->id;
     }
 }
