@@ -39,16 +39,13 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     protected $rules;
 
-    private ?int $caId;
+    protected ?int $caId;
 
-    private string $fileName;
+    protected string $fileName;
 
     protected int $chunkSize;
 
-    /**
-     * @var int
-     */
-    private $practiceId;
+    protected int $practiceId;
 
     public function __construct(int $practiceId, string $fileName, ?int $caId, int $chunkSize = 100)
     {
@@ -68,22 +65,6 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
         return $this->chunkSize;
     }
 
-    public function markAsIneligible(array $row)
-    {
-        $enrollee = Enrollee::where('mrn', $row['mrn'])
-                            ->where('practice_id', $this->practiceId)
-                            ->first();
-
-        if (is_null($enrollee)) {
-            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-
-            return;
-        }
-
-        $enrollee->status = Enrollee::INELIGIBLE;
-        $enrollee->save();
-    }
-
     public function message(): string
     {
         return 'File queued for importing.';
@@ -91,11 +72,23 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     public function onRow(Row $row)
     {
-        if (! $this->validateRow($row = $row->toArray())){
+       $this->execute($row->toArray());
+       $this->incrementRowNumber();
+    }
+
+    protected function incrementRowNumber():void
+    {
+        $this->rowNumber++;
+    }
+
+    protected function execute(array $row): void
+    {
+        if (! $this->validateRow($row)){
             return;
         }
 
         if (is_null($enrollee = $this->fetchEnrollee($row))){
+            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
             return;
         }
 
@@ -292,11 +285,11 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
         }
     }
 
-    protected abstract function fetchEnrollee();
+    protected abstract function fetchEnrollee(array $row) :? Enrollee;
 
     protected abstract function shouldPerformAction(Enrollee $enrollee, array $row) : bool;
 
-    protected abstract function performAction(Enrollee $enrollee);
+    protected abstract function performAction(Enrollee $enrollee): void;
 
     protected abstract function validateRow(array $row): bool;
 

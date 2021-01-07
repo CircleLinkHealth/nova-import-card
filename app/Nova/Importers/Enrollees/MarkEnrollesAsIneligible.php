@@ -10,24 +10,26 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class MarkEnrollesAsIneligible extends EnrolleeImportingAction
 {
-
-    protected function fetchEnrollee()
+    protected function fetchEnrollee(array $row) :? Enrollee
     {
-        // TODO: Implement fetchEnrollee() method.
+        return Enrollee::where('mrn', $row['mrn'])
+                       ->where('practice_id', $this->practiceId)
+                       ->first();
     }
 
     protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
     {
-        // TODO: Implement shouldPerformAction() method.
+        return true;
     }
 
-    protected function performAction(Enrollee $enrollee)
+    protected function performAction(Enrollee $enrollee) : void
     {
-        // TODO: Implement performAction() method.
+        $enrollee->status = Enrollee::INELIGIBLE;
+        $enrollee->save();
     }
 
     protected function validateRow(array $row): bool
     {
-        // TODO: Implement validateRow() method.
+        return isset($row['mrn']);
     }
 }
