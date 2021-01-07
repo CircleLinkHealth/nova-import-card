@@ -96,6 +96,11 @@ Route::group([
         Route::group([
             'prefix' => 'monthly-billing/v2',
         ], function () {
+            Route::post('/updatePracticeServices', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@updatePracticeChargeableServices',
+                'as'   => 'monthly.billing.practice.services',
+            ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+
             Route::get('/make', [
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@make',
                 'as'   => 'monthly.billing.make',
@@ -118,6 +123,11 @@ Route::group([
             Route::post('/open', [
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@openMonthlySummaryStatus',
                 'as'   => 'monthly.billing.open.month',
+            ])->middleware('permission:patientSummary.update');
+
+            Route::post('/updateSummaryServices', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@updateSummaryChargeableServices',
+                'as'   => 'monthly.billing.updateSummaryServices',
             ])->middleware('permission:patientSummary.update');
 
             Route::post('/status/update', [

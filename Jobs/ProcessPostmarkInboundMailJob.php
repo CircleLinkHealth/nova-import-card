@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Jobs;
 
-use Illuminate\Foundation\Bus\Dispatchable;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\EmailAddressParts;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
@@ -16,6 +15,7 @@ use CircleLinkHealth\SharedModels\Services\Postmark\ScheduleCallbackAndNotifySer
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;

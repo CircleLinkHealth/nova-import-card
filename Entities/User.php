@@ -328,6 +328,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2974,6 +2975,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(SamlUser::class, 'cpm_user_id', 'id');
     }
 
+    public function scopeActiveNurses($builder)
+    {
+        return $builder->whereHas(
+            'nurseInfo',
+            function ($info) {
+            $info->where('status', 'active')
+                ->when(
+                    isProductionEnv(),
+                    function ($info) {
+                         $info->where('is_demo', false);
+                     }
+                );
+        }
+        );
+    }
+
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
@@ -3552,35 +3569,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
     {
-        return $query->careCoaches()->with([
-            'nurseInfo' => function ($nurseInfo) use ($startDate) {
-                $nurseInfo->with(
-                    [
-                        'invoices' => function ($invoice) use ($startDate) {
-                            $invoice->where('month_year', $startDate);
-                        },
-                    ]
-                );
-            },
-            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
-                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
-            },
-        ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
-            $invoice->where('month_year', $startDate);
-        })
-            //            Need nurses that are currently active or used to be for selected month
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->whereHas(
-                    'nurseInfo',
-                    function ($info) {
-                        $info->where('status', 'active')->when(
-                            isProductionEnv(),
-                            function ($info) {
-                                $info->where('is_demo', false);
-                            }
-                        );
-                    }
-                )
+        return $query->careCoaches()
+            ->without(['roles', 'perms'])
+            ->with([
+                'nurseInfo' => function ($nurseInfo) use ($startDate) {
+                    $nurseInfo->with(
+                        [
+                            'invoices' => function ($invoice) use ($startDate) {
+                                $invoice->where('month_year', $startDate);
+                            },
+                        ]
+                    );
+                },
+                'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                    $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+                },
+            ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
+                $invoice->where('month_year', $startDate);
+            })->where(function ($query) use ($startDate, $endDate) {
+                $query->activeNurses()
                     ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
                         $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
                     });
