@@ -328,6 +328,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2974,6 +2975,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(SamlUser::class, 'cpm_user_id', 'id');
     }
 
+    public function scopeActiveNurses($builder)
+    {
+        return $builder->whereHas(
+            'nurseInfo',
+            function ($info) {
+            $info->where('status', 'active')
+                ->when(
+                    isProductionEnv(),
+                    function ($info) {
+                         $info->where('is_demo', false);
+                     }
+                );
+        }
+        );
+    }
+
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
@@ -3572,20 +3589,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             })->where(function ($query) use ($startDate, $endDate) {
                 $query->activeNurses()
                     ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
-                    $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
-                });
+                        $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
+                    });
             });
-    }
-    
-    public function scopeActiveNurses($builder) {
-        return $builder->whereHas('nurseInfo', function ($info) {
-                $info->where('status', 'active')
-                     ->when(isProductionEnv(), function ($info) {
-                        $info->where('is_demo', false);
-                    }
-                );
-            }
-        );
     }
 
     /**

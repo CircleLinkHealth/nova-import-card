@@ -124,7 +124,7 @@ Route::group([
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@openMonthlySummaryStatus',
                 'as'   => 'monthly.billing.open.month',
             ])->middleware('permission:patientSummary.update');
-    
+
             Route::post('/updateSummaryServices', [
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@updateSummaryChargeableServices',
                 'as'   => 'monthly.billing.updateSummaryServices',
