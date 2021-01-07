@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.13",
+            "version": "3.171.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "faa2936a85d83e727e18326a0f036f15855f69bd"
+                "reference": "2bc8681a623caa13d5c1da90ca4d6c76436b545d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/faa2936a85d83e727e18326a0f036f15855f69bd",
-                "reference": "faa2936a85d83e727e18326a0f036f15855f69bd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2bc8681a623caa13d5c1da90ca4d6c76436b545d",
+                "reference": "2bc8681a623caa13d5c1da90ca4d6c76436b545d",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-01-06T19:14:50+00:00"
+            "time": "2021-01-07T19:16:26+00:00"
         },
         {
             "name": "brick/math",
@@ -1073,7 +1073,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "00cbc22efc2dc87e32302baff33918de9a9b243b"
+                "reference": "34e310ac1115033c608cd4797be9947fc9b4a88c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1103,7 +1103,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T17:53:04+00:00"
+            "time": "2021-01-07T19:43:50+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
