@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2965208ad501106848cf9ce506f9e760",
+    "content-hash": "0d18ce3450fcf7f21c6dd0acd0a27bd5",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1335,11 +1335,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-master",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "139185f081059be2fc98964d5babb0f4dc575b8e"
+                "reference": "4f2a70a1bdba86659c1424d9ed414c2685b97840"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1361,7 +1361,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T09:08:00+00:00"
+            "time": "2021-01-06T16:47:10+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -17867,7 +17867,6 @@
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/self-enrollment-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/time-tracking-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "heroku/heroku-buildpack-php": 20,
