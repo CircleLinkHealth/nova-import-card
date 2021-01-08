@@ -674,7 +674,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "cb1578c4b16b5b8132ce7c13eaae8466c226249d"
+                "reference": "deaded3c325a4e6c48010db0797bdbd5f00b83e0"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -724,7 +724,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-07T22:34:08+00:00"
+            "time": "2021-01-08T18:17:07+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -849,7 +849,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "df3c84108208ce61ad797faf70704495966e58ac"
+                "reference": "98846bed0c289a7bf142387af304b2a4cd5f733d"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -904,7 +904,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-08T16:26:25+00:00"
+            "time": "2021-01-08T18:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1308,7 +1308,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "2a2b644fd6fe5c2f8bbdd5781454c65d803d579c"
+                "reference": "40a96bf3608a80791e7c39193b4a26b6990817b8"
             },
             "type": "laravel-module",
             "extra": {
@@ -1331,7 +1331,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-08T09:25:43+00:00"
+            "time": "2021-01-08T18:16:16+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
