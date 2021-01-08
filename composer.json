@@ -165,7 +165,7 @@
     "circlelinkhealth/pdf-service-module": "1.0",
     "circlelinkhealth/raygun-module": "2.0",
     "circlelinkhealth/revisionable-module": "7.0.x-dev",
-    "circlelinkhealth/saml-sp-module": "2.0",
+    "circlelinkhealth/saml-sp-module": "2.0.1",
     "circlelinkhealth/self-enrollment-module": "0.0.x-dev",
     "circlelinkhealth/shared-models-module": "2.2.1",
     "circlelinkhealth/sharedvuecomponents-module": "1.0",

@@ -59,8 +59,41 @@ jobs:
         with:
           env-file: .env
 
-      - name: Echo APP_KEY (testing)
-        run: echo 'APP_KEY=${{ env.APP_KEY }}'
+      - name: Create env files to connect to S3 after deployment - production
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
+        run: |
+          echo ENV_TYPE=$ENV_TYPE >> production-deploy-s3.env
+          echo APP_NAME=$APP_NAME >> production-deploy-s3.env
+          echo S3_SECRETS_BUCKET=$S3_SECRETS_BUCKET >> production-deploy-s3.env
+          echo S3_SECRETS_KEY=$S3_SECRETS_KEY >> production-deploy-s3.env
+          echo S3_SECRETS_SECRET=$S3_SECRETS_SECRET >> production-deploy-s3.env
+          echo S3_SECRETS_REGION=$S3_SECRETS_REGION >> production-deploy-s3.env
+        shell: bash
+        env:
+          ENV_TYPE: production
+          APP_NAME: provider
+          S3_SECRETS_BUCKET: ${{ secrets.PRODUCTION_S3_SECRETS_BUCKET }}
+          S3_SECRETS_KEY: ${{ secrets.PRODUCTION_S3_SECRETS_KEY }}
+          S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
+          S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
+
+      - name: Create env files to connect to S3 after deployment - staging
+        if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' }}
+        run: |
+          echo ENV_TYPE=$ENV_TYPE >> staging-deploy-s3.env
+          echo APP_NAME=$APP_NAME >> staging-deploy-s3.env
+          echo S3_SECRETS_BUCKET=$S3_SECRETS_BUCKET >> staging-deploy-s3.env
+          echo S3_SECRETS_KEY=$S3_SECRETS_KEY >> staging-deploy-s3.env
+          echo S3_SECRETS_SECRET=$S3_SECRETS_SECRET >> staging-deploy-s3.env
+          echo S3_SECRETS_REGION=$S3_SECRETS_REGION >> staging-deploy-s3.env
+        shell: bash
+        env:
+          ENV_TYPE: staging
+          APP_NAME: provider
+          S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
+          S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
+          S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
+          S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
@@ -69,11 +102,6 @@ jobs:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: production
           APP_ENV: production
-          APP_NAME: provider
-          S3_SECRETS_BUCKET: ${{ secrets.PRODUCTION_S3_SECRETS_BUCKET }}
-          S3_SECRETS_KEY: ${{ secrets.PRODUCTION_S3_SECRETS_KEY }}
-          S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
-          S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
       - name: Deploy - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' }}
@@ -82,11 +110,6 @@ jobs:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: staging
           APP_ENV: staging
-          APP_NAME: provider
-          S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
-          S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
-          S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
-          S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
       - name: Notify Slack - Success
         if: ${{ env.CI_SKIP == 'false' && success()  }}

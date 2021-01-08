@@ -5,8 +5,6 @@
  * Could generate careplan in HTML or PDF
  * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}.
  */
-use Illuminate\Support\Collection;
-
 if ( ! function_exists('checkIfExists')) {
     //check if exists
     function checkIfExists(
@@ -32,9 +30,19 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
     @foreach($careplans as $id => $careplan)
         @push('styles')
             <style type="text/css">
+
+                .container {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    width: 100%;
+                }
+
+                .print-row {
+                    line-height: normal;
+                }
+
                 body {
                     margin: 0;
-                    margin-right: 150px !important;
                 }
 
                 div.address {
@@ -53,29 +61,29 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 }
 
                 .sender-address-print {
-                    font-size: 16px !important;
+                    font-size: 7.81pt !important;
                 }
 
                 .receiver-address-print {
-                    font-size: 16px !important;
+                    font-size: 7.81pt !important;
                     height: 1in !important;
                 }
 
                 .receiver-address-padding {
-                    padding-top: 1.7in !important;
+                    padding-top: 70px !important;
                     margin-top: 0 !important;
                     margin-bottom: 0 !important;
                 }
 
                 .welcome-copy {
-                    font-size: 24px;
+                    font-size: 11.41pt;
                     margin-top: 0.5in !important;
                 }
 
                 .omr-bar {
-                    height: 15px;
+                    height: 10px;
                     background-color: black;
-                    width: 35%;
+                    width: 17mm;
                     margin-left: 120%;
                     margin-top: 15%;
                 }
@@ -117,7 +125,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         @endpush
         <div class="container">
             <section class="patient-summary">
-                <div class="patient-info__main">
+                <div class="patient-info__main" style="margin-right: 92px;">
                     @if($letter)
                         <div class="patient-info__main ">
                             <div class="row gutter">
@@ -178,27 +186,33 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="row gutter">
                                 <div class="col-xs-10 welcome-copy">
                                     <div class="row gutter">
-                                        Dear @if($title) {{$title}} @else {{ucfirst(strtolower($patient->first_name))}} @endif {{ucfirst(strtolower($patient->last_name))}},
+                                        Dear @if($title) {{$title}} @else {{ucfirst(strtolower($patient->first_name))}} @endif {{ucfirst(strtolower($patient->last_name))}}
+                                        ,
                                     </div>
                                     <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink Health's @else {{$patient->primaryPractice->display_name}}'s @endif Personalized Care Program!
+                                        Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink
+                                        Health's @else {{$patient->primaryPractice->display_name}}'s @endif Personalized
+                                        Care Program!
                                     </div>
                                     <br><br>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        We’re happy you’ve decided to join this program so you can get the benefits of better health.
+                                        We’re happy you’ve decided to join this program so you can get the benefits of
+                                        better health.
                                     </div>
                                     <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
                                         Enclosed is a copy of the care plan we've discussed or will discuss soon. <br>
-                                        Please take a moment to read it; we'll continue to refer to it throughout our coaching sessions.
+                                        Please take a moment to read it; we'll continue to refer to it throughout our
+                                        coaching sessions.
                                     </div>
                                     <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        If you have any questions or concerns, please feel free to call me at {{$practiceNumber}}.
+                                        If you have any questions or concerns, please feel free to call me
+                                        at {{$practiceNumber}}.
                                     </div>
                                     <div class="row gutter"><BR><BR>
                                     </div>
@@ -217,7 +231,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter">
-                                        @if($assignedNurseName) {{$assignedNurseName}} @else Your Registered Nurse Care Coach @endif
+                                        @if($assignedNurseName) {{$assignedNurseName}} @else Your Registered Nurse Care
+                                        Coach @endif
                                     </div>
                                     <div class="row gutter">
                                     </div>
@@ -226,19 +241,24 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="breakhere"></div>
                         <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
-                    @endif
+                </div>
+
+                @endif
+
+                <div style="margin-right: 105px">
                     @if($generatePdfCareplan)
-                            @include('partials.carePlans.patient-general-info')
+                        @include('partials.carePlans.patient-general-info')
+                    @endif
+
+                    @if($generatePdfCareplan)
+                        @include('partials.carePlans.careplan-sections')
+                        <!-- /OTHER INFORMATION -->
                     @endif
                 </div>
-            @if($generatePdfCareplan)
-                @include('partials.carePlans.careplan-sections')
-                    <!-- /OTHER INFORMATION -->
+
             </section>
         </div>
         <div class="row"></div>
-        @endif
-
         @push('styles')
             <script>
                 var careplan = (<?php

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d18ce3450fcf7f21c6dd0acd0a27bd5",
+    "content-hash": "4396d51e4b131c476709ffa5bc395d89",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -994,7 +994,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "85f4740810274fc6b0289cc7e55180abff3b18f6"
+                "reference": "cff7edbf5ff6987652394314fd08b76accbaad2f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1035,7 +1035,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T09:08:52+00:00"
+            "time": "2021-01-08T09:25:43+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1266,11 +1266,11 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "v2.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "76b3f32e131f0b7b65522001f03f16116024737f"
+                "reference": "936baf88bbe3a471cacfc863ae92d26c528df1c0"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1300,7 +1300,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:11:03+00:00"
+            "time": "2021-01-07T14:31:39+00:00"
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
@@ -1308,7 +1308,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "ee011271eb19128c5a3f5baa27b6dd04737600ba"
+                "reference": "2a2b644fd6fe5c2f8bbdd5781454c65d803d579c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1331,7 +1331,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T09:08:52+00:00"
+            "time": "2021-01-08T09:25:43+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
