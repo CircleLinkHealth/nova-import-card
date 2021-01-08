@@ -12,7 +12,7 @@ use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-class LogSentMailNotification implements ShouldQueue
+class LogSentMailNotification
 {
     use InteractsWithQueue;
 

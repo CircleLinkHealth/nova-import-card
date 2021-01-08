@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LogFailedNotification implements ShouldQueue
+class LogFailedNotification
 {
     use InteractsWithQueue;
 
