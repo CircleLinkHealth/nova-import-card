@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use App\Jobs\SendCarePlanApprovalReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
@@ -3626,9 +3627,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return false;
         }
 
-        $this->loadMissing(['primaryPractice.settings']);
-
-        $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
+        SendCarePlanApprovalReminder::dispatch($this->id, $numberOfCareplans);
 
         return true;
     }
