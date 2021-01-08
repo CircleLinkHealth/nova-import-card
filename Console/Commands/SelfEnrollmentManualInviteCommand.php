@@ -1,12 +1,15 @@
 <?php
 
-namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Console\Command;
+namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use Illuminate\Console\Command;
 
 class SelfEnrollmentManualInviteCommand extends Command
 {

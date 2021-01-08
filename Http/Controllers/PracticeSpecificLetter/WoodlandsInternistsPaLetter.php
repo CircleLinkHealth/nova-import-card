@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
-use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
-use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
-use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class WoodlandsInternistsPaLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
