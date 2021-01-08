@@ -111,7 +111,7 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     protected abstract function getActionInput(Enrollee $enrollee, array $row) :array;
 
-    protected abstract function shouldPerformAction(Enrollee $enrollee, array $row) : bool;
+    protected abstract function shouldPerformAction(Enrollee $enrollee, array $actionInput) : bool;
 
     protected abstract function performAction(Enrollee $enrollee, array $actionInput): void;
 
