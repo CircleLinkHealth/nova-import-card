@@ -64,6 +64,7 @@ class EnrolleesInvitationPanel extends Resource
                 return true;
             })->canRun(function () {
                 return true;
+
             }),
         ];
     }
