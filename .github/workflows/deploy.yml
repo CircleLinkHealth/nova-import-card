@@ -95,17 +95,8 @@ jobs:
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
-      - name: Echo current path
-        run: pwd
-
-      - name: Create more env files
-        uses: "finnp/create-file-action@master"
-        env:
-          FILE_NAME: "/home/runner/work/app-cpm-web/app-cpm-web/vendor/laravel/vapor-cli/src/BuildProcess/staging-common-secrets.env"
-          FILE_DATA: ""
-
       - name: Set permissions to env files
-        run: sudo chmod +rwx /home/runner/work/app-cpm-web/app-cpm-web/vendor/laravel/vapor-cli/src/BuildProcess/staging-common-secrets.env
+        run: sudo chmod -R 777 .
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
