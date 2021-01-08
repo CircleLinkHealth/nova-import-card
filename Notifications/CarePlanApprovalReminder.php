@@ -19,7 +19,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
-class CarePlanApprovalReminder extends Notification implements ShouldQueue, DirectMailableNotification
+class CarePlanApprovalReminder extends Notification implements DirectMailableNotification
 {
     use Queueable;
     /**
