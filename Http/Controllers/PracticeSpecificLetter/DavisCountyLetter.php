@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\Enrollment\PracticeSpecificLetter;
+namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -46,7 +46,7 @@ class DavisCountyLetter extends EnrollmentLetterDefaultConfigs implements SelfEn
         $letterViewParams                   = LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs);
         $letterViewParams['disableButtons'] = $this->disableButtons;
 
-        return view("enrollment-letters.$className", $letterViewParams);
+        return view("selfEnrollment::enrollment-letters.$className", $letterViewParams);
     }
 
     public function letterSpecificView()

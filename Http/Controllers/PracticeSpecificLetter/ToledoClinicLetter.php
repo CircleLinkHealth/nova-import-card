@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\Enrollment\PracticeSpecificLetter;
+namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -76,7 +76,7 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
         $baseLetterConfigs = $this->getBaseViewConfigs();
         $className         = $baseLetterConfigs['className'];
 
-        return view("enrollment-letters.$className", LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs));
+        return view("selfEnrollment::enrollment-letters.$className", LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs));
     }
 
     public function letterSpecificView()

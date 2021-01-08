@@ -1,4 +1,4 @@
-@extends('selfEnrollment::layouts.EnrollmentSurvey.enrollmentLetterMaster')selfEnrollment::
+@extends('selfEnrollment::layouts.EnrollmentSurvey.enrollmentLetterMaster')
 @section('title', 'Davis Invitation')
 @section('activity', 'Davis Invitation')
 @section('content')
