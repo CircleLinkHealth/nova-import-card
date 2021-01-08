@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c9ef0c41302685dcda93b1c85996926",
+    "content-hash": "a017dd78fd9e9f913ffdd02679aa96be",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -4970,11 +4970,11 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.5",
+            "version": "v2.10.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-core.git",
-                "reference": "ea649452ff28230f33a4377b2336905d91b8c878"
+                "reference": "4df0406f1e46f22ebbeb2ab500709b445f2f7263"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -5037,7 +5037,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-08T15:39:59+00:00"
+            "time": "2021-01-08T17:33:22+00:00"
         },
         {
             "name": "laravel/vapor-ui",
