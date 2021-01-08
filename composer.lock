@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4396d51e4b131c476709ffa5bc395d89",
+    "content-hash": "a017dd78fd9e9f913ffdd02679aa96be",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -849,7 +849,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "0b35379d593d4c5ea6c9c08d7be70a1158d5ada6"
+                "reference": "df3c84108208ce61ad797faf70704495966e58ac"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -904,7 +904,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T17:44:05+00:00"
+            "time": "2021-01-08T16:26:25+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -994,7 +994,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "cff7edbf5ff6987652394314fd08b76accbaad2f"
+                "reference": "1f4c49b3be3763a0fec8f128bcc7a16667ad728e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1035,7 +1035,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-08T09:25:43+00:00"
+            "time": "2021-01-08T16:07:23+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -4970,11 +4970,11 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.3",
+            "version": "v2.10.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-core.git",
-                "reference": "25066e106b11dcf366861cb02bf9d4b29d16d993"
+                "reference": "4df0406f1e46f22ebbeb2ab500709b445f2f7263"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -5037,7 +5037,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-31T22:50:04+00:00"
+            "time": "2021-01-08T17:33:22+00:00"
         },
         {
             "name": "laravel/vapor-ui",

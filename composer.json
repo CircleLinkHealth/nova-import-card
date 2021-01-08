@@ -191,7 +191,6 @@
     "spatie/laravel-medialibrary": "^7.19",
     "spatie/laravel-schedule-monitor": "^1.0",
     "spatie/laravel-slack-slash-command": "^1.10",
-    "laravel/vapor-core": "2.10.3",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
     "wildbit/swiftmailer-postmark": "^3.1",
