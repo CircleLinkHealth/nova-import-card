@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
 
 class HospitalisationNotesController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('livewire.hospitalisation-notes');
     }
 }

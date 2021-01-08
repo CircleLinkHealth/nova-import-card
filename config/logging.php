@@ -45,8 +45,8 @@ return [
         ],
 
         'vapor' => [
-            'driver' => 'stack',
-            'channels' => ['stderr'],
+            'driver'            => 'stack',
+            'channels'          => ['stderr'],
             'ignore_exceptions' => true,
         ],
 

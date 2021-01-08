@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
-use Mediconesystems\LivewireDatatables\NumberColumn;
 
 class HospitalisationNotesReport extends LivewireDatatable
 {
@@ -39,29 +38,31 @@ class HospitalisationNotesReport extends LivewireDatatable
             Column::name('patients.display_name')
                 ->callback(['patients.id', 'patients.display_name'], function ($id, $name) {
                     $url = route('patient.note.index', ['patientId' => $id]);
-                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">' . $name . '</a>';
+
+                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.$name.'</a>';
                 })
                 ->label('Patient')
                 ->filterable()
                 ->searchable(),
 
             Column::name('practices.display_name')
-                  ->label('Practice')
-                  ->filterable($this->practices())
-                  ->searchable(),
+                ->label('Practice')
+                ->filterable($this->practices())
+                ->searchable(),
 
             Column::name('body')
                 ->callback(['id', 'patients.id', 'body'], function ($id, $patientId, $body) {
                     $url = route('patient.note.show', ['patientId' => $patientId, 'noteId' => $id]);
-                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">' . substr($body, 0, 80) . '</a>';
+
+                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.substr($body, 0, 80).'</a>';
                 })
                 ->label('Note')
                 ->filterable()
                 ->searchable(),
 
             DateColumn::name('performed_at')
-                      ->label('Date')
-                      ->filterable(),
+                ->label('Date')
+                ->filterable(),
         ];
     }
 
@@ -69,7 +70,7 @@ class HospitalisationNotesReport extends LivewireDatatable
     {
         return User::careCoaches()->activeNurses()->without(['roles', 'perms'])->orderBy('display_name')->pluck('display_name');
     }
-    
+
     private function practices()
     {
         return Practice::activeBillable()->orderBy('display_name')->pluck('display_name');

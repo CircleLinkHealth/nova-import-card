@@ -7,9 +7,9 @@
 namespace App\Console;
 
 use App\Console\Commands\CheckVoiceCalls;
-use Illuminate\Console\Scheduling\Schedule;
 use CircleLinkHealth\Core\Console\Commands\CheckEmrDirectInbox;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -43,10 +43,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(CheckEmrDirectInbox::class)
-                 ->everyFiveMinutes();
-    
+            ->everyFiveMinutes();
+
         $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
-                 ->everyThirtyMinutes();
+            ->everyThirtyMinutes();
 
 //        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
 //            ->hourly()

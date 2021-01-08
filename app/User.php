@@ -243,6 +243,7 @@ use Laravel\Nova\Actions\Actionable;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar|null                                   $cpmBloodSugar
  * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking|null                                      $cpmSmoking
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight|null                                       $cpmWeight
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User activeNurses()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
