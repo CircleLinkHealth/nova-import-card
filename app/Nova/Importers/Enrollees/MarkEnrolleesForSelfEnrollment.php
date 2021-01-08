@@ -29,7 +29,7 @@ class MarkEnrolleesForSelfEnrollment extends EnrolleeImportingAction
         return Enrollee::QUEUE_AUTO_ENROLLMENT != $enrollee->status && $enrollee->enrollmentInvitationLinks->isNotEmpty();
     }
 
-    protected function performAction(Enrollee $enrollee) : void
+    protected function performAction(Enrollee $enrollee, array $actionInput) : void
     {
         $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
         $enrollee->care_ambassador_user_id = null;
@@ -46,5 +46,10 @@ class MarkEnrolleesForSelfEnrollment extends EnrolleeImportingAction
             'first_name'          => 'required',
             'last_name'           => 'required',
         ])->passes();
+    }
+
+    protected function getActionInput(Enrollee $enrollee, array $row): array
+    {
+        return $row;
     }
 }
