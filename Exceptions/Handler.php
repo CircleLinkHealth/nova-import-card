@@ -102,12 +102,6 @@ class Handler extends ExceptionHandler
 //            return;
         }
 
-        if ($e instanceof FatalError) {
-            if (str_contains($e->getMessage(), 'escapeshellarg')) {
-                return;
-            }
-        }
-
         if (app()->bound('sentry')) {
             app('sentry')->captureException($e);
         }
