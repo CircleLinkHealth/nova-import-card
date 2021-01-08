@@ -76,8 +76,8 @@ class SelfEnrollmentProvider extends ServiceProvider
 
     private function publishPublicAssets()
     {
-        $this->publishes([
-            __DIR__.'/../Public' => public_path('vendor/selfEnrollment'),
-        ], 'public');
+//        $this->publishes([
+//            __DIR__.'/../Public' => public_path('vendor/selfEnrollment'),
+//        ], 'public');
     }
 }
