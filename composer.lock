@@ -668,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "cb1578c4b16b5b8132ce7c13eaae8466c226249d"
+                "reference": "deaded3c325a4e6c48010db0797bdbd5f00b83e0"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -718,7 +718,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-07T22:34:08+00:00"
+            "time": "2021-01-08T18:17:07+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -879,7 +879,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "df3c84108208ce61ad797faf70704495966e58ac"
+                "reference": "98846bed0c289a7bf142387af304b2a4cd5f733d"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -934,7 +934,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-08T16:26:25+00:00"
+            "time": "2021-01-08T18:41:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -6234,16 +6234,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "781a1250dc8eab9121fd856ff0b6efca8c32756f"
+                "reference": "8663232c198ef12964b62559e9bb2023eb86701d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/781a1250dc8eab9121fd856ff0b6efca8c32756f",
-                "reference": "781a1250dc8eab9121fd856ff0b6efca8c32756f",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/8663232c198ef12964b62559e9bb2023eb86701d",
+                "reference": "8663232c198ef12964b62559e9bb2023eb86701d",
                 "shasum": ""
             },
             "require": {
@@ -6298,7 +6298,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-01T20:51:29+00:00"
+            "time": "2021-01-08T17:33:29+00:00"
         },
         {
             "name": "maatwebsite/excel",
