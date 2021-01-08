@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\Enrollment\PracticeSpecificLetter;
+namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Illuminate\Database\Eloquent\Model;
 
 class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
@@ -61,7 +61,7 @@ class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfig
         $baseLetterConfigs = $this->getBaseViewConfigs();
         $className         = $baseLetterConfigs['className'];
 
-        return view("enrollment-letters.$className", [
+        return view("selfEnrollment::enrollment-letters.$className", [
             'userEnrollee'           => $this->userEnrollee,
             'isSurveyOnlyUser'       => $this->isSurveyOnlyUser,
             'letterPages'            => $this->letterPages,

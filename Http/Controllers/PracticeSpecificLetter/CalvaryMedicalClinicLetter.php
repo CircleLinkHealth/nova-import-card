@@ -78,7 +78,7 @@ class CalvaryMedicalClinicLetter extends EnrollmentLetterDefaultConfigs implemen
         $baseLetterConfigs = $this->getBaseViewConfigs();
         $className         = $baseLetterConfigs['className'];
 
-        return view("enrollment-letters.$className", LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs));
+        return view("selfEnrollment::enrollment-letters.$className", LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs));
     }
 
     public function letterSpecificView()
