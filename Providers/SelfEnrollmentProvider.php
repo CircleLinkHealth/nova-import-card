@@ -24,6 +24,7 @@ class SelfEnrollmentProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->publishConfigurations();
+        $this->publishPublicAssets();
 
 //        $viewPath = resource_path('views/modules/selfEnrollment');
 //
@@ -71,5 +72,12 @@ class SelfEnrollmentProvider extends ServiceProvider
             __DIR__.'/../Config/services.php',
             'selfEnrollment'
         );
+    }
+
+    private function publishPublicAssets()
+    {
+        $this->publishes([
+            __DIR__.'/../Public' => public_path('vendor/selfEnrollment'),
+        ], 'public');
     }
 }
