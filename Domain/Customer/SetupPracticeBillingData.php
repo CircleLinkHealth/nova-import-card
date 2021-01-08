@@ -44,7 +44,7 @@ class SetupPracticeBillingData
             new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId),
             new ProcessPracticePatientMonthlyServices($practiceId),
         ])
-            ->dispatch($practiceId)
-            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
+            ->dispatch($practiceId);
     }
 }
