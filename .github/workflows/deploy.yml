@@ -95,8 +95,8 @@ jobs:
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
-      - name: Set permissions to env files
-        run: sudo chmod -R 777 .
+      - name: Set permissions to allow creating env files
+        run: sudo chmod -R 777 ./vendor/laravel/vapor-cli/src/BuildProcess
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
