@@ -14,7 +14,7 @@ use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class LogSentNotification implements ShouldQueue
+class LogSentNotification
 {
     use Dispatchable;
     use InteractsWithQueue;
