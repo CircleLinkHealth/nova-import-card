@@ -188,6 +188,8 @@ class Enrollee extends BaseModel
      */
     const NON_RESPONSIVE = 'non_responsive';
 
+    const SOURCE_PRACTICE_PULL = 'practice_pull';
+
     /**
      * Queued for auto-enrollment.
      */
