@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "958317804dc03ed43d9c80281291394b",
+    "content-hash": "4396d51e4b131c476709ffa5bc395d89",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -9181,16 +9181,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "3.1.1",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "2a0ecb127dbccf93fb5a37df907ce08822a62e6c"
+                "reference": "e9b2d45b248d75f4c79a9d166b13b947b72f01fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/2a0ecb127dbccf93fb5a37df907ce08822a62e6c",
-                "reference": "2a0ecb127dbccf93fb5a37df907ce08822a62e6c",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/e9b2d45b248d75f4c79a9d166b13b947b72f01fa",
+                "reference": "e9b2d45b248d75f4c79a9d166b13b947b72f01fa",
                 "shasum": ""
             },
             "require": {
@@ -9218,7 +9218,7 @@
                 "raven/raven": "*"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
+                "friendsofphp/php-cs-fixer": "^2.17",
                 "http-interop/http-factory-guzzle": "^1.0",
                 "monolog/monolog": "^1.3|^2.0",
                 "nikic/php-parser": "^4.10.3",
@@ -9228,7 +9228,7 @@
                 "phpstan/phpstan-phpunit": "^0.12",
                 "phpunit/phpunit": "^8.5.13|^9.4",
                 "symfony/phpunit-bridge": "^5.2",
-                "vimeo/psalm": "^3.4|^4.2"
+                "vimeo/psalm": "^4.2"
             },
             "suggest": {
                 "monolog/monolog": "Allow sending log messages to Sentry by using the included Monolog handler."
@@ -9278,7 +9278,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-12-05T21:59:39+00:00"
+            "time": "2021-01-07T18:51:44+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -14775,11 +14775,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "dev-create-files-before-writing-to-them",
+            "version": "v1.11.8.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "09fd54c1cfcabf45cd6684793455af89943bbc95"
+                "reference": "fbe0f2ce1cf98f0eea0869d967559f9349d3d174"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14835,7 +14835,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-07T22:11:16+00:00"
+            "time": "2021-01-01T16:27:41+00:00"
         },
         {
             "name": "maximebf/debugbar",
@@ -17871,7 +17871,6 @@
         "circlelinkhealth/time-tracking-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "heroku/heroku-buildpack-php": 20,
-        "laravel/vapor-cli": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20
