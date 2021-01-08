@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4396d51e4b131c476709ffa5bc395d89",
+    "content-hash": "958317804dc03ed43d9c80281291394b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -14775,11 +14775,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.11.8.1",
+            "version": "dev-create-files-before-writing-to-them",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "fbe0f2ce1cf98f0eea0869d967559f9349d3d174"
+                "reference": "09fd54c1cfcabf45cd6684793455af89943bbc95"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14835,7 +14835,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-01T16:27:41+00:00"
+            "time": "2021-01-07T22:11:16+00:00"
         },
         {
             "name": "maximebf/debugbar",
@@ -17871,6 +17871,7 @@
         "circlelinkhealth/time-tracking-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "heroku/heroku-buildpack-php": 20,
+        "laravel/vapor-cli": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20
