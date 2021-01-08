@@ -2980,14 +2980,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $builder->whereHas(
             'nurseInfo',
             function ($info) {
-            $info->where('status', 'active')
-                ->when(
-                    isProductionEnv(),
-                    function ($info) {
-                         $info->where('is_demo', false);
-                     }
-                );
-        }
+                $info->where('status', 'active')
+                    ->when(
+                        isProductionEnv(),
+                        function ($info) {
+                            $info->where('is_demo', false);
+                        }
+                    );
+            }
         );
     }
 
