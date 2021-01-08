@@ -22,8 +22,41 @@ class CreateEnrolleesFromPracticePull extends EnrolleeImportingAction
 
     protected function getActionInput(Enrollee $enrollee, array $row): array
     {
-        //get practice pull data here to validate below?
-        return $row;
+        return [
+            'email',
+            'first_name',
+            'last_name',
+            'dob',
+            'gender',
+            'lang',
+            'location_id',
+            'provider_id',
+            'address',
+            'address_2',
+
+            'city',
+            'state',
+            'zip',
+
+            'home_phone',
+            'cell_phone',
+            'other_phone',
+            'primary_insurance',
+            'secondary_insurance',
+            'status' => Enrollee::TO_CALL,
+            'source' => Enrollee::SOURCE_PRACTICE_PULL,
+            'last_encounter',
+            'facility_name',
+
+            'primary_insurance',
+            'secondary_insurance',
+            'tertiary_insurance',
+            'last_encounter',
+            'referring_provider_name',
+            'problems',
+            'cpm_problem_1',
+            'cpm_problem_2',
+        ];
     }
 
     protected function shouldPerformAction(Enrollee $enrollee, array $actionInput): bool
@@ -34,7 +67,7 @@ class CreateEnrolleesFromPracticePull extends EnrolleeImportingAction
 
     protected function performAction(Enrollee $enrollee, array $actionInput): void
     {
-        //add adapter to create enrollee from Practice Pull data.
+        $enrollee->update($actionInput);
     }
 
     protected function validateRow(array $row): bool
