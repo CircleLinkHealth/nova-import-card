@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class kolos extends Command
 {
@@ -37,9 +38,6 @@ class kolos extends Command
      */
     public function handle()
     {
-        $x = config('selfEnrollment.services.awv.url');
-        $d = config('selfEnrollment.awv.url');
-
         return 0;
     }
 }
