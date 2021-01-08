@@ -95,9 +95,15 @@ jobs:
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
+      - name: Create env files
+        uses: "finnp/create-file-action@master"
+        env:
+          FILE_NAME: "/home/runner/work/app-cpm-web/app-cpm-web/vendor/laravel/vapor-cli/src/BuildProcess/staging-common-secrets.env"
+          FILE_DATA: ""
+
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
-        run: sudo --preserve-env ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: production
@@ -105,7 +111,7 @@ jobs:
 
       - name: Deploy - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' }}
-        run: sudo --preserve-env ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: staging
