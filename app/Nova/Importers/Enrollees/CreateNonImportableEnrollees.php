@@ -1,10 +1,10 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Nova\Importers\Enrollees;
-
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
@@ -19,34 +19,38 @@ class CreateNonImportableEnrollees extends EnrolleeImportingAction
 {
     protected int $chunkSize = 50;
 
-    protected function fetchEnrollee(array $row) :? Enrollee
+    protected function fetchEnrollee(array $row): ?Enrollee
     {
         return Enrollee::with(['user'])
-        ->firstOrCreate([
-            'mrn'         => $row['mrn'],
-            'practice_id' => $this->practiceId,
-        ]);
+            ->firstOrCreate([
+                'mrn'         => $row['mrn'],
+                'practice_id' => $this->practiceId,
+            ]);
     }
 
-    protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
+    protected function getActionInput(Enrollee $enrollee, array $row): array
     {
-        return $row['dob'] instanceof Carbon && ! empty($row['provider_id']);
+        $row['dob']         = $this->determineDob($row);
+        $row['provider_id'] = $this->getProviderId($row);
+        $row['practice_id'] = $this->practiceId;
+
+        return $row;
     }
 
-    protected function performAction(Enrollee $enrollee, array $actionInput) : void
+    protected function performAction(Enrollee $enrollee, array $actionInput): void
     {
-        $enrollee->first_name = ucfirst(strtolower($actionInput['first_name']));
-        $enrollee->last_name = ucfirst(strtolower($actionInput['last_name']));
+        $enrollee->first_name  = ucfirst(strtolower($actionInput['first_name']));
+        $enrollee->last_name   = ucfirst(strtolower($actionInput['last_name']));
         $enrollee->provider_id = $actionInput['provider_id'];
-        $enrollee->address   = ucwords(strtolower($actionInput['address']));
+        $enrollee->address     = ucwords(strtolower($actionInput['address']));
         $enrollee->address_2   = ucwords(strtolower($actionInput['address_2']));
-        $enrollee->home_phone = (new StringManipulation())->formatPhoneNumberE164($actionInput['phone_number']);
-        $enrollee->dob = optional($actionInput['dob'])->toDateString();
-        $enrollee->city  = ucwords(strtolower($actionInput['city']));
-        $enrollee->state = $actionInput['state'];
-        $enrollee->zip  = $actionInput['zip'];
-        $enrollee->status = Enrollee::TO_CALL;
-        $enrollee->source = Enrollee::UPLOADED_CSV;
+        $enrollee->home_phone  = (new StringManipulation())->formatPhoneNumberE164($actionInput['phone_number']);
+        $enrollee->dob         = optional($actionInput['dob'])->toDateString();
+        $enrollee->city        = ucwords(strtolower($actionInput['city']));
+        $enrollee->state       = $actionInput['state'];
+        $enrollee->zip         = $actionInput['zip'];
+        $enrollee->status      = Enrollee::TO_CALL;
+        $enrollee->source      = Enrollee::UPLOADED_CSV;
         $enrollee->save();
 
         $user = $enrollee->user;
@@ -72,31 +76,27 @@ class CreateNonImportableEnrollees extends EnrolleeImportingAction
         );
     }
 
+    protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
+    {
+        return $row['dob'] instanceof Carbon && ! empty($row['provider_id']);
+    }
+
     protected function validateRow(array $row): bool
     {
         return Validator::make($row, [
-            'mrn'                 => 'required',
-            'first_name'          => 'required',
-            'last_name'           => 'required',
-            'dob'                 => 'required',
-            'phone_number'        => 'required'
+            'mrn'          => 'required',
+            'first_name'   => 'required',
+            'last_name'    => 'required',
+            'dob'          => 'required',
+            'phone_number' => 'required',
         ])->passes();
     }
 
-    protected function getActionInput(Enrollee $enrollee, array $row): array
-    {
-        $row['dob'] = $this->determineDob($row);
-        $row['provider_id'] = $this->getProviderId($row);
-        $row['practice_id'] = $this->practiceId;
-
-        return $row;
-    }
-
-    private function determineDob(array $row) :? Carbon
+    private function determineDob(array $row): ?Carbon
     {
         $date = $row['dob'];
 
-        if (empty($date)){
+        if (empty($date)) {
             return null;
         }
 
@@ -110,14 +110,14 @@ class CreateNonImportableEnrollees extends EnrolleeImportingAction
 
         try {
             $date = ImportPatientInfo::parseDOBDate($date);
-        } catch (\Throwable $throwable){
+        } catch (\Throwable $throwable) {
             $date = null;
         }
 
         return $date;
     }
 
-    private function getProviderId(array $row) :? int
+    private function getProviderId(array $row): ?int
     {
         return optional(CcdaImporterWrapper::mysqlMatchProvider($row['provider'], $this->practiceId))->id;
     }

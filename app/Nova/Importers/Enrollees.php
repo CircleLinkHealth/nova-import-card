@@ -197,7 +197,6 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             return;
         }
 
-
         //perform on enrollee
         $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 

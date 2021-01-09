@@ -1,18 +1,11 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Nova\Importers\Enrollees;
 
-
-use App\Nova\Actions\ImportEnrollees;
-use Carbon\Carbon;
-use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -31,21 +24,21 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     protected $attributes;
 
+    protected ?int $caId;
+
+    protected int $chunkSize = 100;
+
+    protected string $fileName;
+
     protected $modelClass;
+
+    protected int $practiceId;
 
     protected $resource;
 
     protected int $rowNumber = 2;
 
     protected $rules;
-
-    protected ?int $caId;
-
-    protected string $fileName;
-
-    protected int $chunkSize = 100;
-
-    protected int $practiceId;
 
     public function __construct(int $practiceId, string $fileName, ?int $caId)
     {
@@ -71,35 +64,8 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
 
     public function onRow(Row $row)
     {
-       $this->execute($row->toArray());
-       $this->incrementRowNumber();
-    }
-
-    protected function incrementRowNumber():void
-    {
-        $this->rowNumber++;
-    }
-
-    protected function execute(array $row): void
-    {
-        if (! $this->validateRow($row)){
-            Log::channel('database')->warning("Input Validation for CSV:{$this->fileName}, at row: {$this->rowNumber}, failed.");
-            return;
-        }
-
-        if (is_null($enrollee = $this->fetchEnrollee($row))){
-            Log::channel('database')->warning("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-            return;
-        }
-
-        $actionInput = $this->getActionInput($enrollee, $row);
-
-        if (! $this->shouldPerformAction($enrollee, $actionInput)){
-            Log::channel('database')->warning("Action not performed for Patient for CSV:{$this->fileName}, for row: {$this->rowNumber}. Please investigate");
-            return;
-        }
-
-        $this->performAction($enrollee, $actionInput);
+        $this->execute($row->toArray());
+        $this->incrementRowNumber();
     }
 
     public function rules(): array
@@ -107,14 +73,43 @@ abstract class EnrolleeImportingAction implements WithChunkReading, OnEachRow, W
         return $this->rules;
     }
 
-    protected abstract function fetchEnrollee(array $row) :? Enrollee;
+    protected function execute(array $row): void
+    {
+        if ( ! $this->validateRow($row)) {
+            Log::channel('database')->warning("Input Validation for CSV:{$this->fileName}, at row: {$this->rowNumber}, failed.");
 
-    protected abstract function getActionInput(Enrollee $enrollee, array $row) :array;
+            return;
+        }
 
-    protected abstract function shouldPerformAction(Enrollee $enrollee, array $actionInput) : bool;
+        if (is_null($enrollee = $this->fetchEnrollee($row))) {
+            Log::channel('database')->warning("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
 
-    protected abstract function performAction(Enrollee $enrollee, array $actionInput): void;
+            return;
+        }
 
-    protected abstract function validateRow(array $row): bool;
+        $actionInput = $this->getActionInput($enrollee, $row);
 
+        if ( ! $this->shouldPerformAction($enrollee, $actionInput)) {
+            Log::channel('database')->warning("Action not performed for Patient for CSV:{$this->fileName}, for row: {$this->rowNumber}. Please investigate");
+
+            return;
+        }
+
+        $this->performAction($enrollee, $actionInput);
+    }
+
+    abstract protected function fetchEnrollee(array $row): ?Enrollee;
+
+    abstract protected function getActionInput(Enrollee $enrollee, array $row): array;
+
+    protected function incrementRowNumber(): void
+    {
+        ++$this->rowNumber;
+    }
+
+    abstract protected function performAction(Enrollee $enrollee, array $actionInput): void;
+
+    abstract protected function shouldPerformAction(Enrollee $enrollee, array $actionInput): bool;
+
+    abstract protected function validateRow(array $row): bool;
 }
