@@ -1,16 +1,16 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Eligibility\Adapters;
 
-
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class PracticePullToEnrolleeAdapter
 {
-    public static function getArray(string $mrn, int $practiceId):array
+    public static function getArray(string $mrn, int $practiceId): array
     {
         return [
             'email',
