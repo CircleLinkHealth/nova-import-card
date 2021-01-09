@@ -28,92 +28,92 @@ use Illuminate\Support\Str;
 /**
  * CircleLinkHealth\SharedModels\Entities\Enrollee.
  *
- * @property int $id
- * @property int|null $batch_id
- * @property int|null $eligibility_job_id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property int|null $user_id
- * @property int|null $provider_id
- * @property int|null $practice_id
- * @property int|null $location_id
- * @property int|null $care_ambassador_user_id
- * @property int $total_time_spent
- * @property string|null $last_call_outcome
- * @property string|null $last_call_outcome_reason
- * @property string|null $other_note
- * @property string|null $mrn
- * @property string $first_name
- * @property string $last_name
- * @property string|null $address
- * @property string|null $address_2
- * @property string|null $city
- * @property string|null $state
- * @property string|null $zip
- * @property string|null $primary_phone
- * @property string|null $other_phone
- * @property string|null $home_phone
- * @property string|null $cell_phone
- * @property \Illuminate\Support\Carbon|null $dob
- * @property string|null $lang
- * @property string|null $invite_code
- * @property string|null $status
- * @property string|null $source
- * @property int|null $attempt_count
- * @property string|null $preferred_days
- * @property string|null $preferred_window
- * @property \Illuminate\Support\Carbon|null $invite_sent_at
- * @property \Illuminate\Support\Carbon|null $consented_at
- * @property \Illuminate\Support\Carbon|null $last_attempt_at
- * @property \Illuminate\Support\Carbon|null $invite_opened_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $primary_insurance
- * @property string|null $secondary_insurance
- * @property string|null $tertiary_insurance
- * @property int|null $has_copay
- * @property string|null $email
- * @property \Illuminate\Support\Carbon|null $last_encounter
- * @property string|null $referring_provider_name
- * @property int|null $confident_provider_guess
- * @property string|null $problems
- * @property int|null $cpm_problem_1
- * @property int|null $cpm_problem_2
- * @property string|null $color
- * @property \Illuminate\Support\Carbon|null $requested_callback
- * @property string|null $callback_note
- * @property array|null $agent_details
- * @property int|null $enrollment_non_responsive
- * @property int $auto_enrollment_triggered
- * @property \CircleLinkHealth\Customer\Entities\User|null $careAmbassador
+ * @property int                                               $id
+ * @property int|null                                          $batch_id
+ * @property int|null                                          $eligibility_job_id
+ * @property string|null                                       $medical_record_type
+ * @property int|null                                          $medical_record_id
+ * @property int|null                                          $user_id
+ * @property int|null                                          $provider_id
+ * @property int|null                                          $practice_id
+ * @property int|null                                          $location_id
+ * @property int|null                                          $care_ambassador_user_id
+ * @property int                                               $total_time_spent
+ * @property string|null                                       $last_call_outcome
+ * @property string|null                                       $last_call_outcome_reason
+ * @property string|null                                       $other_note
+ * @property string|null                                       $mrn
+ * @property string                                            $first_name
+ * @property string                                            $last_name
+ * @property string|null                                       $address
+ * @property string|null                                       $address_2
+ * @property string|null                                       $city
+ * @property string|null                                       $state
+ * @property string|null                                       $zip
+ * @property string|null                                       $primary_phone
+ * @property string|null                                       $other_phone
+ * @property string|null                                       $home_phone
+ * @property string|null                                       $cell_phone
+ * @property \Illuminate\Support\Carbon|null                   $dob
+ * @property string|null                                       $lang
+ * @property string|null                                       $invite_code
+ * @property string|null                                       $status
+ * @property string|null                                       $source
+ * @property int|null                                          $attempt_count
+ * @property string|null                                       $preferred_days
+ * @property string|null                                       $preferred_window
+ * @property \Illuminate\Support\Carbon|null                   $invite_sent_at
+ * @property \Illuminate\Support\Carbon|null                   $consented_at
+ * @property \Illuminate\Support\Carbon|null                   $last_attempt_at
+ * @property \Illuminate\Support\Carbon|null                   $invite_opened_at
+ * @property \Illuminate\Support\Carbon|null                   $created_at
+ * @property \Illuminate\Support\Carbon|null                   $updated_at
+ * @property string|null                                       $primary_insurance
+ * @property string|null                                       $secondary_insurance
+ * @property string|null                                       $tertiary_insurance
+ * @property int|null                                          $has_copay
+ * @property string|null                                       $email
+ * @property \Illuminate\Support\Carbon|null                   $last_encounter
+ * @property string|null                                       $referring_provider_name
+ * @property int|null                                          $confident_provider_guess
+ * @property string|null                                       $problems
+ * @property int|null                                          $cpm_problem_1
+ * @property int|null                                          $cpm_problem_2
+ * @property string|null                                       $color
+ * @property \Illuminate\Support\Carbon|null                   $requested_callback
+ * @property string|null                                       $callback_note
+ * @property array|null                                        $agent_details
+ * @property int|null                                          $enrollment_non_responsive
+ * @property int                                               $auto_enrollment_triggered
+ * @property \CircleLinkHealth\Customer\Entities\User|null     $careAmbassador
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection
  *     $confirmedFamilyMembers
- * @property int|null $confirmed_family_members_count
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob|null $eligibilityJob
+ * @property int|null                                                                    $confirmed_family_members_count
+ * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob|null                  $eligibilityJob
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
  *     $enrollmentInvitationLinks
- * @property int|null $enrollment_invitation_links_count
- * @property mixed $agent
- * @property mixed $cell_phone_e164
- * @property mixed $home_phone_e164
- * @property mixed $other_phone_e164
- * @property mixed $practice_name
- * @property mixed $primary_phone_e164
- * @property mixed $provider_full_name
+ * @property int|null                                          $enrollment_invitation_links_count
+ * @property mixed                                             $agent
+ * @property mixed                                             $cell_phone_e164
+ * @property mixed                                             $home_phone_e164
+ * @property mixed                                             $other_phone_e164
+ * @property mixed                                             $practice_name
+ * @property mixed                                             $primary_phone_e164
+ * @property mixed                                             $provider_full_name
  * @property \CircleLinkHealth\Customer\Entities\Location|null $location
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
  *     $notifications
- * @property int|null $notifications_count
+ * @property int|null                                          $notifications_count
  * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
- * @property \CircleLinkHealth\Customer\Entities\User|null $provider
+ * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
- * @property int|null $revision_history_count
- * @property mixed $primary_phone_number
+ * @property int|null                                                  $revision_history_count
+ * @property mixed                                                     $primary_phone_number
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient|null $targetPatient
- * @property \CircleLinkHealth\Customer\Entities\User|null $user
+ * @property \CircleLinkHealth\Customer\Entities\User|null             $user
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda
  *     $ccda)
@@ -128,8 +128,8 @@ use Illuminate\Support\Str;
  *     $shouldIncludeRelevanceScore = false)
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     newModelQuery()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee newQuery()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee query()
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     searchAddresses($term)
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
@@ -138,8 +138,8 @@ use Illuminate\Support\Str;
  *     shouldBeCalled()
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee(\CircleLinkHealth\SharedModels\Entities\Enrollee $enrollee)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toCall()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toSMS()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toCall()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toSMS()
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     withCaPanelRelationships()
  * @mixin \Eloquent
@@ -148,16 +148,16 @@ use Illuminate\Support\Str;
  *     lastCalledBetween(\Carbon\Carbon $start, \Carbon\Carbon $end)
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     ofStatus($status)
- * @property string|null $facility_name
- * @property mixed $cell_phone_npa_parenthesized
- * @property mixed $home_phone_npa_parenthesized
- * @property mixed $other_phone_npa_parenthesized
- * @property mixed $primary_phone_npa_parenthesized
+ * @property string|null                     $facility_name
+ * @property mixed                           $cell_phone_npa_parenthesized
+ * @property mixed                           $home_phone_npa_parenthesized
+ * @property mixed                           $other_phone_npa_parenthesized
+ * @property mixed                           $primary_phone_npa_parenthesized
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method   static \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
- * @method   static \Illuminate\Database\Query\Builder|Enrollee withTrashed()
- * @method   static \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
- * @method   static \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method   static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
+ * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
+ * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
  */
 class Enrollee extends BaseModel
 {
@@ -168,9 +168,9 @@ class Enrollee extends BaseModel
     use SoftDeletes;
 
     // Agent array keys
-    const AGENT_EMAIL_KEY = 'email';
-    const AGENT_NAME_KEY = 'name';
-    const AGENT_PHONE_KEY = 'phone';
+    const AGENT_EMAIL_KEY        = 'email';
+    const AGENT_NAME_KEY         = 'name';
+    const AGENT_PHONE_KEY        = 'phone';
     const AGENT_RELATIONSHIP_KEY = 'relationship';
 
     /**
@@ -207,8 +207,6 @@ class Enrollee extends BaseModel
      */
     const NON_RESPONSIVE = 'non_responsive';
 
-    const SOURCE_PRACTICE_PULL = 'practice_pull';
-
     /**
      * Queued for auto-enrollment.
      */
@@ -225,6 +223,8 @@ class Enrollee extends BaseModel
      * status = rejected.
      */
     const SOFT_REJECTED = 'soft_rejected';
+
+    const SOURCE_PRACTICE_PULL = 'practice_pull';
 
     /**
      * status = to_call.
@@ -611,7 +611,7 @@ class Enrollee extends BaseModel
     {
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
-            $getAttr = $attribute . '_npa_parenthesized';
+            $getAttr = $attribute.'_npa_parenthesized';
             $attr    = $this->$getAttr;
             if ($compareAgainstEnrollee) {
                 if (in_array(
@@ -637,7 +637,7 @@ class Enrollee extends BaseModel
     {
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
-            $phones[] = $this->{$attribute . '_e164'};
+            $phones[] = $this->{$attribute.'_e164'};
         }
 
         return implode(', ', $phones);
@@ -673,9 +673,9 @@ class Enrollee extends BaseModel
         }
 
         $phones = [
-            $this->home_phone_e164                          => 'home',
-            $this->cell_phone_e164                          => 'cell',
-            $this->other_phone_e164                         => 'other',
+            $this->home_phone_e164  => 'home',
+            $this->cell_phone_e164  => 'cell',
+            $this->other_phone_e164 => 'other',
             //agent phones always saved as e164
             $this->getAgentAttribute(self::AGENT_PHONE_KEY) => 'agent',
         ];
@@ -760,7 +760,7 @@ class Enrollee extends BaseModel
 
     public function nameAndDob()
     {
-        return $this->name() . ', ' . $this->dob->toDateString();
+        return $this->name().', '.$this->dob->toDateString();
     }
 
     public function practice()
@@ -849,9 +849,9 @@ class Enrollee extends BaseModel
         return $query->where(
             function ($q) use ($phone) {
                 $q->where('home_phone', 'like', "%${phone}%")
-                  ->orWhere('cell_phone', 'like', "%${phone}%")
-                  ->orWhere('other_phone', 'like', "%${phone}%")
-                  ->orWhere('primary_phone', 'like', "%${phone}%");
+                    ->orWhere('cell_phone', 'like', "%${phone}%")
+                    ->orWhere('other_phone', 'like', "%${phone}%")
+                    ->orWhere('primary_phone', 'like', "%${phone}%");
             }
         );
     }
@@ -859,15 +859,18 @@ class Enrollee extends BaseModel
     public function scopeLastCalledBetween($query, Carbon $start, Carbon $end)
     {
         return $query->where('last_attempt_at', '>=', $start->startOfDay())
-                     ->where('last_attempt_at', '<=', $end->endOfDay());
+            ->where('last_attempt_at', '<=', $end->endOfDay());
     }
 
     public function scopeLessThanMaxAllowedAttempts($query)
     {
         $query->where(function ($q) {
             $q->whereNull('attempt_count')
-              ->orWhere('attempt_count', '<',
-                  (int)AppConfig::pull(self::MAX_CALL_ATTEMPTS_KEY, self::DEFAULT_MAX_CALL_ATTEMPTS));
+                ->orWhere(
+                    'attempt_count',
+                    '<',
+                    (int) AppConfig::pull(self::MAX_CALL_ATTEMPTS_KEY, self::DEFAULT_MAX_CALL_ATTEMPTS)
+                );
         });
     }
 
@@ -912,23 +915,23 @@ class Enrollee extends BaseModel
     public function scopeShouldSuggestAsFamilyForEnrollee($query, Enrollee $enrollee)
     {
         return $query->where('id', '!=', $enrollee->id)
-                     ->where('practice_id', $enrollee->practice_id)
-                     ->whereNotNull('provider_id')
-                     ->when(! is_null($enrollee->user_id), fn($e) => $e->where('user_id', '!=', $enrollee->user_id))
-                     ->whereNotIn(
-                         'status',
-                         [
-                             self::CONSENTED,
-                             self::ENROLLED,
-                             self::LEGACY,
-                         ]
-                     )
-                     ->where(
-                         function ($q) {
+            ->where('practice_id', $enrollee->practice_id)
+            ->whereNotNull('provider_id')
+            ->when( ! is_null($enrollee->user_id), fn ($e) => $e->where('user_id', '!=', $enrollee->user_id))
+            ->whereNotIn(
+                'status',
+                [
+                    self::CONSENTED,
+                    self::ENROLLED,
+                    self::LEGACY,
+                ]
+            )
+            ->where(
+                function ($q) {
                              $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
-                               ->orWhereNull('last_attempt_at');
+                                 ->orWhereNull('last_attempt_at');
                          }
-                     );
+            );
     }
 
     public function scopeToCall($query)
@@ -967,7 +970,7 @@ class Enrollee extends BaseModel
                             },
                         ]);
                     },
-                    'locations'       => function ($l) {
+                    'locations' => function ($l) {
                         $l->whereNotNull('timezone');
                     },
                 ]);
@@ -1066,8 +1069,8 @@ class Enrollee extends BaseModel
         }
 
         $isConfirmedFamilyMember = DB::table('enrollee_family_members')
-                                     ->where('family_member_enrollee_id', $this->id)
-                                     ->exists();
+            ->where('family_member_enrollee_id', $this->id)
+            ->exists();
 
         if (empty($this->provider_id) && ! $isConfirmedFamilyMember) {
             return false;
