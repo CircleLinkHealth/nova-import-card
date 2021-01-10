@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Core\Listeners;
 
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\InteractsWithQueue;
 
