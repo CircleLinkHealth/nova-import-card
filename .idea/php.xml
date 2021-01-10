@@ -373,6 +373,7 @@
       <path value="$PROJECT_DIR$/vendor/laravel-notification-channels/twilio" />
       <path value="$PROJECT_DIR$/vendor/livewire/livewire" />
       <path value="$PROJECT_DIR$/vendor/mediconesystems/livewire-datatables" />
+      <path value="$PROJECT_DIR$/vendor/sloveniangooner/searchable-select" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
