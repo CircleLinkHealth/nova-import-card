@@ -928,9 +928,9 @@ class Enrollee extends BaseModel
             )
             ->where(
                 function ($q) {
-                             $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
-                                 ->orWhereNull('last_attempt_at');
-                         }
+                    $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
+                        ->orWhereNull('last_attempt_at');
+                }
             );
     }
 
