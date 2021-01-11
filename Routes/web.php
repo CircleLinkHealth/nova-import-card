@@ -108,7 +108,7 @@ Route::group([
 
     Route::get('/invite-unreachable', [
         'uses' => '\CircleLinkHealth\SelfEnrollment\Http\Controllers\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
-        'as'   => 'send.invitates.panel',
+        'as'   => 'send.invitations.panel',
     ])->middleware('auth');
     //---------------------------------------
 });
