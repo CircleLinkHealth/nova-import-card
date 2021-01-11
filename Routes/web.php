@@ -61,10 +61,10 @@ Route::post('enrollee-login-viewed', [
 
 Route::group([
     'prefix'     => 'admin',
-//    'middleware' => [
-//        'auth',
-//        'permission:admin-access',
-//    ],
+    'middleware' => [
+        'auth',
+        'permission:admin-access',
+    ],
 ], function () {
     Route::get('/send-enrollee-reminder-test', [
         'uses' => '\CircleLinkHealth\SelfEnrollment\Http\Controllers\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
@@ -109,6 +109,6 @@ Route::group([
     Route::get('/invite-unreachable', [
         'uses' => '\CircleLinkHealth\SelfEnrollment\Http\Controllers\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
         'as'   => 'send.invitations.panel',
-    ])/*->middleware('auth')*/;
+    ])->middleware('auth');
     //---------------------------------------
 });
