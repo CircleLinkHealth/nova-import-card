@@ -10,6 +10,15 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class PracticePullToEnrolleeAdapter
 {
+    protected string $mrn;
+    protected int $practiceId;
+
+    public function __construct(string $mrn, int $practiceId)
+    {
+        $this->mrn = $mrn;
+        $this->practiceId = $practiceId;
+    }
+
     public static function getArray(string $mrn, int $practiceId): array
     {
         return [
