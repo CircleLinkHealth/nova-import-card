@@ -1,0 +1,53 @@
+id: 13702
+name: cpm-admin
+separate-vendor: true
+environments:
+    production:
+        domain: superadmin.careplanmanager.com
+        storage: cpm-production-vapor-storage
+        cache: cpm-production-vapor-cache
+        network: cpm-production
+        memory: 2048
+        cli-memory: 2048
+        runtime: php-7.4
+        queue-timeout: 600
+        scheduler: false
+        mail: false
+        warm: 20
+        timeout: 60
+        queues:
+            - cpm-admin-low-production
+            - cpm-admin-high-production
+            - cpm-admin-revisionable-production
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+    staging:
+        domain: cpm-admin.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        cache: cpm-staging-vapor-cache
+        network: cpm-staging
+        memory: 2048
+        cli-memory: 2048
+        runtime: php-7.4
+        queue-timeout: 600
+        scheduler: false
+        mail: false
+        timeout: 60
+        queues:
+            - cpm-admin-low-staging
+            - cpm-admin-high-staging
+            - cpm-admin-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
