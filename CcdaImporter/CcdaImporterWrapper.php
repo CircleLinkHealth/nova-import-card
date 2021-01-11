@@ -273,10 +273,6 @@ class CcdaImporterWrapper
             $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
 
-        if ($this->enrollee->source === Enrollee::SOURCE_PRACTICE_PULL){
-            $this->ccda =  new PracticePullMedicalRecord($this->enrollee->mrn, $this->enrollee->practice_id);
-        }
-
         if ( ! $this->ccda->patient_mrn) {
             //fetch a fresh instance from the DB to have virtual fields
             $this->ccda = $this->ccda->fresh();
