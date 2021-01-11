@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9577062ab5c1535a2f73bd1b367cfb17",
+    "content-hash": "440bce7e357718b271de6c23d36085b8",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -668,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "41e8e4ecc72ab3db8c45390fbd338c1a2090689a"
+                "reference": "deaded3c325a4e6c48010db0797bdbd5f00b83e0"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -718,7 +718,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-11T11:27:05+00:00"
+            "time": "2021-01-08T18:17:07+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -879,7 +879,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8f728db2922de66e85368db5837d37329cef385e"
+                "reference": "e2050e3de84072ff0b268c5c8117f642be7cad25"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -934,7 +934,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T11:25:57+00:00"
+            "time": "2021-01-10T15:42:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1024,7 +1024,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "390e7f5e8ea81cd3b24c5bc7d4f1afdd3781cd3d"
+                "reference": "46757d22665039d1341f754d404742cc2906e385"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1065,15 +1065,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T11:25:57+00:00"
+            "time": "2021-01-11T08:28:43+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "4.5.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "c920289d0e5da08615d5e6f89a0e5262d453e0f3"
+                "reference": "34e310ac1115033c608cd4797be9947fc9b4a88c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1103,7 +1103,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T18:47:28+00:00"
+            "time": "2021-01-07T19:43:50+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1486,11 +1486,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "2.3.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "72fe381061df3c3ed6fe4f9cc92522c92a864b72"
+                "reference": "139185f081059be2fc98964d5babb0f4dc575b8e"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1512,7 +1512,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T18:47:28+00:00"
+            "time": "2021-01-07T09:08:00+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -5340,16 +5340,16 @@
         },
         {
             "name": "laravel/vapor-ui",
-            "version": "v1.0.3",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-ui.git",
-                "reference": "093d3fa0a0a65300f565bd20ed7dec9cc5c6abe2"
+                "reference": "898cf9b68fdfe211584cd949db3ef6160f42431f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/093d3fa0a0a65300f565bd20ed7dec9cc5c6abe2",
-                "reference": "093d3fa0a0a65300f565bd20ed7dec9cc5c6abe2",
+                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/898cf9b68fdfe211584cd949db3ef6160f42431f",
+                "reference": "898cf9b68fdfe211584cd949db3ef6160f42431f",
                 "shasum": ""
             },
             "require": {
@@ -5398,7 +5398,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-11T10:18:06+00:00"
+            "time": "2021-01-05T17:06:38+00:00"
         },
         {
             "name": "laravelcollective/html",
@@ -9600,6 +9600,47 @@
                 }
             ],
             "time": "2020-12-07T09:19:29+00:00"
+        },
+        {
+            "name": "sloveniangooner/searchable-select",
+            "version": "1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/slovenianGooner/nova-searchable-select.git",
+                "reference": "f946cc2af0f4bc02a20d93b724bbfb67ffd2e211"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/slovenianGooner/nova-searchable-select/zipball/f946cc2af0f4bc02a20d93b724bbfb67ffd2e211",
+                "reference": "f946cc2af0f4bc02a20d93b724bbfb67ffd2e211",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Sloveniangooner\\SearchableSelect\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sloveniangooner\\SearchableSelect\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-12-04T08:26:43+00:00"
         },
         {
             "name": "sparclex/nova-import-card",

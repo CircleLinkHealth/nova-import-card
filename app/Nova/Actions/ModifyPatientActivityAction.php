@@ -27,7 +27,7 @@ class ModifyPatientActivityAction extends Action
     public function fields()
     {
         return [
-            Select::make('Chargeable Service', 'chargeable_service')
+            Select::make('Set new Chargeable Service', 'chargeable_service')
                 ->required(true)
                 ->options([
                     ChargeableService::CCM                     => 'CCM',

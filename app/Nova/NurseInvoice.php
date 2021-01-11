@@ -10,6 +10,7 @@ use App\Nova\Actions\GenerateNurseInvoice;
 use Circlelinkhealth\InvoicesDownload\InvoicesDownload;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Nova;
@@ -128,6 +129,8 @@ class NurseInvoice extends Resource
             Button::make('View Breakdown')->link($this->getInvoiceBreakdownUrl(), '_blank')->style('info-link'),
 
             ID::make()->sortable(),
+
+            DateTime::make('Last Generated', 'updated_at')->sortable(),
         ];
     }
 

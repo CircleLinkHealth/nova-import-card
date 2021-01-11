@@ -40,14 +40,20 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['single'],
-            'ignore_exceptions' => false,
+            'channels'          => ['vapor'],
+            'ignore_exceptions' => true,
+        ],
+
+        'vapor' => [
+            'driver'            => 'stack',
+            'channels'          => ['stderr'],
+            'ignore_exceptions' => true,
         ],
 
         'single' => [
             'driver' => 'single',
             'path'   => storage_path('logs/laravel.log'),
-            'level'  => 'debug',
+            'level'  => 'warning',
         ],
 
         'daily' => [

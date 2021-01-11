@@ -371,6 +371,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel-notification-channels/twilio" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/livewire/livewire" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mediconesystems/livewire-datatables" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sloveniangooner/searchable-select" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
