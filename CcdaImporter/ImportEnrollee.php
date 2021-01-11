@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -200,6 +201,7 @@ class ImportEnrollee
     private function importFromPracticePull(Enrollee $enrollee)
     {
         $ccdaArgs = [
+            'json'        => (new PracticePullMedicalRecord($enrollee->mrn, $enrollee->practice_id))->toJson(),
             'mrn'         => $enrollee->mrn,
             'practice_id' => $enrollee->practice_id,
         ];
@@ -214,6 +216,8 @@ class ImportEnrollee
         }
 
         $ccda = Ccda::create($ccdaArgs);
+        $ccda->bluebuttonJson(true);
+        $ccda->save();
 
         $enrollee->medical_record_type = get_class($ccda);
         $enrollee->medical_record_id   = $ccda->id;
