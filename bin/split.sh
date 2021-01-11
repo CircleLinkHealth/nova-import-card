@@ -27,6 +27,7 @@ remote self-enrollment-module git@github.com:CircleLinkHealth/self-enrollment-mo
 
 split 'apps/admin' admin-app
 split 'apps/awv' awv-app
+split 'apps/caller' caller-app
 split 'apps/provider' provider-app
 split 'modules/admin' admin-module
 split 'modules/eligibility' eligibility-module
