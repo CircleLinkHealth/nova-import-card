@@ -22,7 +22,7 @@ fi
 : "${MONOREPO_NAME=core}"
 
 # Monorepo directory
-monorepo_dir="$PWD/$MONOREPO_NAME"
+monorepo_dir="$PWD/"
 
 
 
@@ -104,7 +104,7 @@ function create-mono {
                 fi
 
 		echo "Merging in $repo.." >&2
-		git remote add "$name" "$repo"
+		git remote add "$name" "$repo" || true
 		echo "Fetching $name.." >&2 
 		git fetch -q "$name"
 
