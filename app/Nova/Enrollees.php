@@ -89,7 +89,7 @@ class Enrollees extends Resource
         //adds templates to new Actions
         return [
             (new LinkableAway())
-                ->title('Create Patients CSV Template')
+                ->title('Create Non-importable Patients CSV Template')
                 ->url('https://drive.google.com/file/d/1RgCl5AgyodKlIytemOVMXlAHgr9iGgm9/view?usp=sharing')
                 ->subtitle('Click to download.')
                 ->target('_self'),
