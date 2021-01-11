@@ -101,11 +101,5 @@ class Kernel extends HttpKernel
         'permission'             => CerberusPermission::class,
         'patientProgramSecurity' => PatientProgramSecurity::class,
         'role'                   => CerberusRole::class,
-//        'verify.invite'          => CheckOnboardingInvite::class,
-//        'check.careplan.mode'    => CheckCarePlanMode::class,
-//        'checkPatientUserData'   => CheckPatientUserData::class,
-//        'enrollmentCenter'       => EnrollmentCenter::class,
-//        'careAmbassadorAPI'      => CareAmbassadorAPI::class,
-//        'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
     ];
 }

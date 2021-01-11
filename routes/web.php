@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@showHomepage')->name('home');
 
-Route::get('/home', 'HomeController@showHomepage')->name('home');
+Route::group([
+    'middleware' => [
+        'auth',
+    ],
+], function () {
+    Route::get('/home', 'HomeController@selfEnrollmentNova');
+});
