@@ -95,7 +95,7 @@ class ImportEnrollees extends Action
 
         $class = $this->getImporter($actionType = $fields->action_type);
 
-        if (is_null($class)){
+        if (is_null($class)) {
             return Action::message("Something went wrong. Action: $actionType not found.");
         }
 
@@ -119,19 +119,19 @@ class ImportEnrollees extends Action
         return 'import-enrollees';
     }
 
-    private function getImporter(string $actionType):? string
-    {
-        return $this->actionImporterClassmap()[$actionType] ?? null;
-    }
-
-    private function actionImporterClassmap():array
+    private function actionImporterClassmap(): array
     {
         return [
-            self::ACTION_MARK_AUTO_ENROLLMENT => Enrollees\MarkEnrolleesForSelfEnrollment::class,
+            self::ACTION_MARK_AUTO_ENROLLMENT                => Enrollees\MarkEnrolleesForSelfEnrollment::class,
             self::ACTION_CREATE_ENROLLEES_FROM_PRACTICE_PULL => Enrollees\CreateEnrolleesFromPracticePull::class,
-            self::ACTION_ASSIGN_ENROLLEES_TO_CA => Enrollees\AssignEnrolleesToCareAmbassador::class,
-            self::ACTION_CREATE_ENROLLEES => Enrollees\CreateNonImportableEnrollees::class,
-            self::ACTION_MARK_INELIGIBLE => Enrollees\MarkEnrollesAsIneligible::class
+            self::ACTION_ASSIGN_ENROLLEES_TO_CA              => Enrollees\AssignEnrolleesToCareAmbassador::class,
+            self::ACTION_CREATE_ENROLLEES                    => Enrollees\CreateNonImportableEnrollees::class,
+            self::ACTION_MARK_INELIGIBLE                     => Enrollees\MarkEnrollesAsIneligible::class,
         ];
+    }
+
+    private function getImporter(string $actionType): ?string
+    {
+        return $this->actionImporterClassmap()[$actionType] ?? null;
     }
 }
