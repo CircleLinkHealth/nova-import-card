@@ -56,6 +56,7 @@ class Family extends Resource
 
         return [
             (new AddFamilyMemberAction())
+                ->onlyOnDetail(true)
                 ->canSee(function () {
                     return true;
                 })
@@ -63,6 +64,7 @@ class Family extends Resource
                     return true;
                 }),
             (new RemoveFamilyMemberAction($memberFields))
+                ->onlyOnDetail(true)
                 ->canSee(function () {
                     return true;
                 })
@@ -112,6 +114,12 @@ class Family extends Resource
                 return $p->user->getFullName();
             });
         });
+
+        while ($memberFields->count() < 3) {
+            $memberFields->push(Text::make('Member', function () {
+                return '';
+            }));
+        }
 
         return [
             ID::make(__('ID'), 'id')->sortable(),
