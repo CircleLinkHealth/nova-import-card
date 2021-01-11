@@ -1,7 +1,7 @@
-{{--@extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')--}}
-{{--@section('title', 'Enrollment Test Panel')--}}
-{{--@section('activity', 'Enrollment Test Panel')--}}
-{{--@section('content')--}}
+@extends('selfEnrollment::layouts.EnrollmentSurvey.enrollmentLetterMaster')
+@section('title', 'Enrollment Test Panel')
+@section('activity', 'Enrollment Test Panel')
+@section('content')
 <div class="container">
     <div class="content">
         @if(session()->has('message'))
@@ -10,7 +10,7 @@
             </div>
         @endif
 
-        <h4 style="text-align: center">Test Dashboard (styling temporarily disabled)</h4>
+        <h4 style="text-align: center">Test Dashboard</h4>
         <ul class="browser-default">
             <li>
                 <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">You should follow this flow
