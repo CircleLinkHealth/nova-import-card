@@ -8,7 +8,8 @@ class HomeController extends Controller
 {
     public function showHomepage() {
         if (auth()->guest()) {
-            return redirect()->route('login');
+            return 'lkjlkjlkj';
+//            return redirect()->route('login');
         }
     }
 
