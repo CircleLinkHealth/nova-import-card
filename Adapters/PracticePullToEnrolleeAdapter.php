@@ -7,11 +7,13 @@
 namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 
 class PracticePullToEnrolleeAdapter
 {
     protected string $mrn;
     protected int $practiceId;
+    protected ?Demographics $demographics;
 
     public function __construct(string $mrn, int $practiceId)
     {
@@ -19,8 +21,12 @@ class PracticePullToEnrolleeAdapter
         $this->practiceId = $practiceId;
     }
 
-    public static function getArray(string $mrn, int $practiceId): array
+    public function toArray() : array
     {
+        if (is_null($this->demographics)){
+            return [];
+        }
+
         return [
             'email',
             'first_name',
@@ -56,5 +62,21 @@ class PracticePullToEnrolleeAdapter
             'cpm_problem_1',
             'cpm_problem_2',
         ];
+    }
+
+    public static function getArray(string $mrn, int $practiceId): array
+    {
+        return (new static($mrn, $practiceId))
+            ->setPracticePullDemographics()
+            ->toArray();
+    }
+
+    private function setPracticePullDemographics():self
+    {
+        $this->demographics = Demographics::where('practice_id', $this->practiceId)
+            ->where('mrn', $this->mrn)
+            ->first();
+
+        return $this;
     }
 }
