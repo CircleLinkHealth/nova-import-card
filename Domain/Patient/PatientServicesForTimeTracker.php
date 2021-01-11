@@ -13,7 +13,6 @@ use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
@@ -71,25 +70,19 @@ class PatientServicesForTimeTracker
         $summaries = new \Illuminate\Database\Eloquent\Collection();
 
         if ($this->patientEligibleForRHC()) {
-            $rhc               = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
-            $rhcNullActivities = filter_var(AppConfig::pull('rhc_null_activities', false), FILTER_VALIDATE_BOOLEAN);
+            $rhc = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
 
-            $activitiesForMonth = Activity::wherePatientId($this->patientId)
+            $duration = Activity::wherePatientId($this->patientId)
                 ->createdThisMonth('performed_at')
-                ->where(function ($sq) use ($rhc, $rhcNullActivities) {
-                    $sq->where('chargeable_service_id', $rhc->id)
-                        ->when($rhcNullActivities, function ($q) {
-                            $q->orWhereNull('chargeable_service_id');
-                        });
-                })
-                ->get();
+                ->where('chargeable_service_id', $rhc->id)
+                ->sum('duration');
 
             $newSummary                          = new ChargeablePatientMonthlySummaryView();
             $newSummary->patient_user_id         = $this->patientId;
             $newSummary->chargeable_service_id   = $rhc->id;
             $newSummary->chargeable_service_code = $rhc->code;
             $newSummary->chargeable_service_name = $rhc->display_name;
-            $newSummary->total_time              = $activitiesForMonth->sum('duration');
+            $newSummary->total_time              = $duration;
 
             $summaries->push($newSummary);
 
@@ -114,8 +107,27 @@ class PatientServicesForTimeTracker
             ->whereIn('code', $servicesDerivedFromPatientProblems)
             ->collect();
 
+        if ($chargeableServices->isEmpty()) {
+            $duration = Activity::wherePatientId($this->patientId)
+                ->createdThisMonth('performed_at')
+                ->whereNull('chargeable_service_id')
+                ->sum('duration');
+
+            $newSummary                          = new ChargeablePatientMonthlySummaryView();
+            $newSummary->patient_user_id         = $this->patientId;
+            $newSummary->chargeable_service_id   = -1;
+            $newSummary->chargeable_service_code = 'NONE';
+            $newSummary->chargeable_service_name = 'NONE';
+            $newSummary->total_time              = $duration;
+
+            $summaries->push($newSummary);
+
+            return $summaries;
+        }
+
         $activitiesForMonth = Activity::wherePatientId($this->patientId)
-            ->createdThisMonth('performed_at')->get();
+            ->createdThisMonth('performed_at')
+            ->get();
 
         foreach ($chargeableServices as $service) {
             $newSummary                          = new ChargeablePatientMonthlySummaryView();
@@ -133,7 +145,7 @@ class PatientServicesForTimeTracker
     private function filterUsingPatientServiceStatus(): self
     {
         $this->summaries = $this->summaries
-            ->filter(fn ($summary) => PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code))
+            ->filter(fn ($summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code))
             ->values();
 
         return $this;
