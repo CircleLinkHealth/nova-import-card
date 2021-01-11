@@ -1,0 +1,13 @@
+{
+    "name": "CpmAdmin",
+    "alias": "cpmadmin",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\CpmAdmin\\Providers\\CpmAdminServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
