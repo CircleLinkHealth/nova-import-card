@@ -7,12 +7,11 @@
 namespace CircleLinkHealth\Core\Listeners;
 
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-class LogSentMailNotification implements ShouldQueue
+class LogSentMailNotification
 {
     use InteractsWithQueue;
 
