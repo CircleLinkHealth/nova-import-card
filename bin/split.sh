@@ -29,5 +29,5 @@ split 'apps/admin' admin-app
 split 'apps/awv' awv-app
 split 'apps/provider' provider-app
 split 'modules/admin' admin-module
-split 'modules/admin' eligibility-module
-split 'modules/admin' self-enrollment-module
+split 'modules/eligibility' eligibility-module
+split 'modules/self-enrollment' self-enrollment-module
