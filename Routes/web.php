@@ -59,7 +59,6 @@ Route::post('enrollee-login-viewed', [
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
 
-
 Route::group([
     'prefix'     => 'admin',
     'middleware' => [
