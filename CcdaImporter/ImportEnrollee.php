@@ -66,7 +66,7 @@ class ImportEnrollee
             $static->importFromEligibilityJob($enrollee, $job);
         }
 
-        if (Enrollee::SOURCE_PRACTICE_PULL === $enrollee->source){
+        if (Enrollee::SOURCE_PRACTICE_PULL === $enrollee->source) {
             $static->importFromPracticePull($enrollee);
         }
 
