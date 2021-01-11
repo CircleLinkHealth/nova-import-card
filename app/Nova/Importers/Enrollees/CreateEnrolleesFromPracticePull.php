@@ -33,8 +33,7 @@ class CreateEnrolleesFromPracticePull extends EnrolleeImportingAction
 
     protected function shouldPerformAction(Enrollee $enrollee, array $actionInput): bool
     {
-        //maybe check if practice pull data is sufficient?
-        return true;
+        return ! empty($actionInput);
     }
 
     protected function validateRow(array $row): bool
