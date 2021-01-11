@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "sources": [
+    "src/_validation.scss",
+    "onboarding.scss"
+  ],
+  "names": [],
+  "mappings": "AAAA;EACE,0BAA0B,EAC3B;;ACAD;EACE,+CAA+C;EAC/C,aAAa,EACd;;AAED;EACE,mCAAgB;EAChB,iBAAiB,EAClB;;AAED;EACE,qBAAc;EAAd,cAAc;EACd,uBAAoB;EAApB,oBAAoB;EACpB,sBAAwB;EAAxB,wBAAwB,EACzB",
+  "file": "onboarding.css",
+  "sourcesContent": [
+    ".validation-errors-container {\n  background-color: #f44336;\n}",
+    "@import \"src/_validation.scss\";\n\nhtml, body {\n  font-family: 'Roboto', 'Helvetica', sans-serif;\n  height: 100%;\n}\n\n.main-container {\n  background: rgba(41, 70, 97, 0.02);\n  min-height: 100%;\n}\n\n.v-center {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n"
+  ]
+}
