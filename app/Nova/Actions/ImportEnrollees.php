@@ -24,6 +24,7 @@ class ImportEnrollees extends Action
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     const ACTION_ASSIGN_ENROLLEES_TO_CA              = 'assign_enrollees_to_ca';
     const ACTION_CREATE_ENROLLEES                    = 'create_enrollees';
     const ACTION_CREATE_ENROLLEES_FROM_PRACTICE_PULL = 'create_enrollees_from_practice_pull';
@@ -91,7 +92,14 @@ class ImportEnrollees extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $file = $fields->file;
-        Excel::import(new Enrollees($fields->practice_id, $fields->action_type, $file->getClientOriginalName(), $fields->ca_id), $file);
+
+        $class = $this->getImporter($actionType = $fields->action_type);
+
+        if (is_null($class)){
+            return Action::message("Something went wrong. Action: $actionType not found.");
+        }
+
+        Excel::import(new $class($fields->practice_id, $file->getClientOriginalName(), $fields->ca_id), $file);
 
         return Action::message('It worked!');
     }
@@ -109,5 +117,21 @@ class ImportEnrollees extends Action
     public function uriKey(): string
     {
         return 'import-enrollees';
+    }
+
+    private function getImporter(string $actionType):? string
+    {
+        return $this->actionImporterClassmap()[$actionType] ?? null;
+    }
+
+    private function actionImporterClassmap():array
+    {
+        return [
+            self::ACTION_MARK_AUTO_ENROLLMENT => Enrollees\MarkEnrolleesForSelfEnrollment::class,
+            self::ACTION_CREATE_ENROLLEES_FROM_PRACTICE_PULL => Enrollees\CreateEnrolleesFromPracticePull::class,
+            self::ACTION_ASSIGN_ENROLLEES_TO_CA => Enrollees\AssignEnrolleesToCareAmbassador::class,
+            self::ACTION_CREATE_ENROLLEES => Enrollees\CreateNonImportableEnrollees::class,
+            self::ACTION_MARK_INELIGIBLE => Enrollees\MarkEnrollesAsIneligible::class
+        ];
     }
 }
