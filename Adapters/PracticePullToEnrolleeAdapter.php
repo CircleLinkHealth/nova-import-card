@@ -28,39 +28,37 @@ class PracticePullToEnrolleeAdapter
         }
 
         return [
-            'email',
-            'first_name',
-            'last_name',
-            'dob',
-            'gender',
-            'lang',
-            'location_id',
-            'provider_id',
-            'address',
-            'address_2',
+            'email' => $this->demographics->email,
+            'first_name' => $this->demographics->first_name,
+            'last_name' => $this->demographics->last_name,
+            'dob' => $this->demographics->dob,
+            'gender' => $this->demographics->gender,
+            'lang' => $this->demographics->lang,
 
-            'city',
-            'state',
-            'zip',
+            'location_id' => $this->demographics->location_id,
+            'provider_id' => $this->demographics->billing_provider_user_id,
 
-            'home_phone',
-            'cell_phone',
-            'other_phone',
-            'primary_insurance',
-            'secondary_insurance',
+            'address' => $this->demographics->street,
+            'address_2' => $this->demographics->street2,
+
+            'city' => $this->demographics->city,
+            'state' => $this->demographics->state,
+            'zip' => $this->demographics->zip,
+
+            'home_phone' => $this->demographics->home_phone,
+            'cell_phone' => $this->demographics->cell_phone,
+            'other_phone' => $this->demographics->other_phone,
+
             'status' => Enrollee::TO_CALL,
             'source' => Enrollee::SOURCE_PRACTICE_PULL,
-            'last_encounter',
-            'facility_name',
+            'last_encounter' => $this->demographics->last_encounter,
+            'facility_name' => $this->demographics->facility_name,
 
-            'primary_insurance',
-            'secondary_insurance',
-            'tertiary_insurance',
-            'last_encounter',
-            'referring_provider_name',
-            'problems',
-            'cpm_problem_1',
-            'cpm_problem_2',
+            'primary_insurance' => $this->demographics->primary_insurance,
+            'secondary_insurance' => $this->demographics->secondary_insurance,
+            'tertiary_insurance' => $this->demographics->tertiary_insurance,
+
+            'referring_provider_name' => $this->demographics->referring_provider_name
         ];
     }
 
