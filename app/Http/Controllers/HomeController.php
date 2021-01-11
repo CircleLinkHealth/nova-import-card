@@ -10,7 +10,10 @@ class HomeController extends Controller
         if (auth()->guest()) {
             return redirect()->route('login');
         }
+    }
 
+    public function selfEnrollmentNova()
+    {
         if (auth()->user()->isAdmin()){
             return 'to nova';
         }
