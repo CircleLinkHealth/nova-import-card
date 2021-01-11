@@ -10,7 +10,8 @@
   ],
   "extra": {
     "branch-alias": {
-      "dev-master": "2.4.x-dev"
+      "dev-master": "2.4.x-dev",
+      "dev-road_547_core": "2.3.x-dev"
     },
     "laravel": {
       "providers": [
