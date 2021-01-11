@@ -1,0 +1,820 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+// Variables
+@import 'variables';
+
+$primary-color: #50b2e2;
+$primary-color-active: #4aa5d2;
+
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+@import '~bootstrap-css-only/css/bootstrap.min.css';
+@import '~mdbvue/lib/mdbvue.css';
+
+$image-path: '~@/../../mdb/mdbvue/img';
+@import '~@/../../mdb/mdbvue/scss/mdb.scss';
+
+@import "~vue-select/dist/vue-select.css";
+
+@import "~daterangepicker/daterangepicker.css";
+
+/**
+Add global CSS here
+ */
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body, #app {
+    min-height: 100% !important;
+    height: 100%;
+    background-color: #f2f6f9;
+}
+
+.main-container {
+    height: 100%;
+}
+
+.survey-container {
+    width: 100%;
+    overflow-y: hidden;
+    height: calc(100% - 56px);
+}
+
+.survey-container.read-only {
+    overflow-y: auto;
+}
+
+.survey-container.max {
+    height: 100%;
+}
+
+@media (min-width: 519px) {
+    .survey-container {
+        height: calc(100% - 100px);
+    }
+}
+
+.by-circlelink {
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 20px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.56px;
+    color: $primary-color;
+}
+
+.progress {
+    width: 100%;
+    margin-top: 2px;
+    height: 5px;
+    border-radius: 5px;
+    border: solid 1px #d2e8f3;
+    background-color: #a7d9f1;
+}
+
+@media (min-width: 519px) {
+    .by-circlelink {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+    .progress {
+        margin-top: 9px;
+        height: 10px;
+    }
+}
+
+.progress-bar {
+    height: 100% !important;
+    background-color: $primary-color !important;
+}
+
+.navbar-laravel {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.next-btn {
+    font-size: 18px;
+    font-family: Poppins, serif;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    padding: 6px 40px;
+    line-height: normal;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-transform: none;
+    height: 40px;
+    border-radius: 5px;
+    border: solid 1px $primary-color-active;
+    background-color: $primary-color;
+    margin: 0 0 10px 0;
+}
+
+.questions-box {
+    padding-top: 15px;
+    padding-left: 9%;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.practice-title {
+    font-family: Poppins, serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-top: 20px;
+    color: $primary-color;
+}
+
+.practice-title .text-style-1 {
+    font-weight: 600;
+}
+
+.survey-main-title {
+    font-family: Poppins, serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.67px;
+    text-align: center;
+    margin-top: 30px;
+    color: #1a1a1a;
+}
+
+.survey-sub-welcome-text {
+    font-family: Poppins;
+    font-size: 18px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-top: 25px;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: #1a1a1a;
+}
+
+@media (min-width: 519px) {
+    .survey-main-title {
+        font-size: 24px;
+        letter-spacing: 1.5px;
+    }
+
+    .survey-sub-welcome-text {
+        margin-top: 25px;
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+}
+
+.questions-title {
+    width: 83%;
+    font-family: Poppins, serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.3px;
+    color: #1a1a1a;
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px;
+}
+
+@media (min-width: 519px) {
+    .questions-title {
+        font-size: 24px;
+        letter-spacing: 0.78px;
+    }
+}
+
+.question-answer-type {
+    width: 83%;
+    //margin bottom to make room for the shadows on the buttons
+    margin-bottom: 10px;
+    height: calc(100% - 90px);
+    font-size: initial;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.3px;
+    color: #1a1a1a;
+}
+
+.welcome-icon-container {
+    margin: auto;
+    text-align: center;
+}
+
+.welcome-icon {
+    width: 190px;
+}
+
+.btn {
+    text-transform: initial;
+}
+
+.btn-start-container {
+    text-align: center;
+}
+
+.btn-start {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 30px;
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.6px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.survey-sub-welcome-text-enrollee{
+    font-size: 36px;
+    padding-bottom: 50px;
+    line-height: 64px;
+    letter-spacing: 2px;
+    text-align: center;
+    font-weight: 400;
+}
+
+ .enrollee-btn {
+     font-size: 30px;
+     border-radius: 10px;
+     height: 80px;
+     width: 200px;
+ }
+
+
+   .enrollee-title{
+    font-size: 50px;
+   }
+
+@media (max-width: 490px) {
+    .survey-sub-welcome-text-enrollee{
+        font-size: 21px !important;
+        padding-bottom: 27px;
+        line-height: 37px;
+        letter-spacing: 2px;
+        font-weight: 400;
+    }
+}
+
+
+@media (max-width: 519px) {
+    .enrollee-btn {
+        height: 55px;
+        width: 140px;
+        font-size: 20px;
+    }
+
+    .enrollee-title{
+        font-size: 24px;
+    }
+}
+
+@media (min-width: 519px) {
+    .btn-start {
+        padding-left: 65px;
+        padding-right: 65px;
+        margin-top: 60px;
+        margin-bottom: 20px;
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.no-margin-side {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.scroll-container {
+    height: 100%;
+}
+
+.scrollable {
+    overflow-y: auto;
+    //height: 100%;
+    max-height: calc(100% - 80px);
+}
+
+.select-dropdown ::placeholder {
+    color: #d5dadd !important;
+}
+
+.select-dropdown.active ::placeholder {
+    color: #1a1a1a !important;
+}
+
+.select-dropdown .vs__dropdown-toggle,
+.select-dropdown .vs__dropdown-menu {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #d5dadd;
+}
+
+.select-dropdown .vs__dropdown-option:before {
+    color: #50b2e2;
+    font-family: "Font Awesome 5 Free", serif;
+    display: inline-block;
+    content: "\f111";
+    letter-spacing: 5px;
+    position: relative;
+    font-size: 1.3em;
+    top: 2px;
+}
+
+.select-dropdown .vs__dropdown-option.vs__dropdown-option--selected {
+    color: #50b2e2;
+}
+
+.select-dropdown .vs__dropdown-option.vs__dropdown-option--selected:before {
+    content: "\f058";
+}
+
+.select-dropdown .vs__dropdown-option--highlight {
+    background: transparent;
+    color: #50b2e2;
+}
+
+/*.survey-container::-webkit-scrollbar {*/
+/*width: 0 !important*/
+/*}*/
+
+.bottom-navbar {
+    background-color: #ffffff;
+    //height: 56px;
+}
+
+@media (min-width: 519px) {
+    .bottom-navbar {
+        height: 100px;
+    }
+}
+
+.scroll-buttons .btn {
+    padding: 0;
+    margin-top: 13px;
+    width: 30px;
+    height: 30px;
+}
+
+.scroll-buttons .btn:first-child {
+    margin-right: 10px;
+}
+
+.scroll-buttons .btn:last-child {
+    margin-right: 20px;
+}
+
+.scroll-buttons .fas {
+    font-size: 15px;
+}
+
+@media (min-width: 519px) {
+    .scroll-buttons .btn {
+        margin-top: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .scroll-buttons .btn:last-child {
+        margin-right: 30px;
+    }
+
+    .scroll-buttons .fas {
+        font-size: 30px;
+    }
+}
+
+/**
+When two rows, we have less margin-top (in the col- screens)
+ */
+.progress-container {
+    margin-top: 8px;
+}
+
+.progress-text {
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.56px;
+    text-align: right;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+/**
+When progress text and bar are in one line (col-sm screens)
+ */
+@media (min-width: 519px) {
+    .progress-container {
+        margin-top: 26px;
+    }
+
+    .progress-text {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+}
+
+@media (min-width: 766px) {
+    .progress-container {
+        margin-top: 36px;
+    }
+}
+
+.active {
+    opacity: 1;
+    transition: opacity 0.5s linear;
+}
+
+.question-scroll-container {
+    color: $primary-color;
+    text-align: center;
+}
+
+.question-scroll {
+    padding: 0;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    background: url("../images/scroll-button.svg");
+}
+
+.fa-chevron-circle-down, .fa-phone-alt, .fa-times {
+    color: #ffffff;
+}
+
+.call-assistance {
+    position: fixed;
+}
+
+.call-btn-round {
+    margin-left: 40px;
+    margin-right: 0 !important;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.btn-toggle-edit {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    padding: 0;
+}
+
+.watermark {
+    opacity: 0.1;
+    transition: opacity 0.5s linear;
+}
+
+.non-visible {
+    opacity: 0.02;
+    transition: opacity 0.5s linear;
+}
+
+.error {
+    color: darkred;
+}
+
+.welcome-icon {
+    width: 108px;
+    margin: auto;
+}
+
+.card-body {
+    text-align: center;
+}
+
+.by-circlelink {
+    font-family: Poppins, serif;
+    font-size: 18px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    color: #50b2e2;
+}
+
+.by-circlelink .text-style-1 {
+    font-weight: normal;
+    color: #1a1a1a;
+}
+
+.navbar {
+    background: linear-gradient(to right, #4fb2e2 0, #0170b5 100%);
+    border-radius: 0;
+    //height: 50px;
+    //border: 1px solid transparent;
+    padding: 0;
+}
+
+.navbar a {
+    color: #fff !important;
+}
+
+.navbar .container {
+    max-width: 100%;
+}
+
+a.navbar-title {
+    font-family: "Roboto Slab", Georgia, Times, "Times New Roman", serif;
+    font-weight: 300;
+    font-size: 24px;
+    color: #fafafa;
+    line-height: 0;
+    padding: 11px 11px 11px 0;
+}
+
+a.navbar-title:hover {
+    color: #fafafa;
+}
+
+@media (max-width: 375px) {
+
+    a.navbar-title {
+        margin-left: 10px;
+    }
+
+    .navbar-title img {
+        width: 30px;
+    }
+}
+
+.top-left-fixed {
+    position: fixed;
+    top: 15px;
+    left: 30px;
+}
+
+.top-right-fixed {
+    position: fixed;
+    top: 15px;
+    right: 30px;
+}
+
+// Samsung Galax 6/7/8/plus
+@media (min-width: 414px) {
+    .survey-container {
+        //margin-left: 1em;
+    }
+}
+
+@media (max-width: 996px) {
+    .questions-title {
+        font-size: 100%;
+    }
+
+    //pencil button circle (toggle view)
+    .top-buttons .top-right-fixed > button {
+        width: 4em;
+        height: 4em;
+        padding: 1%;
+    }
+
+    //Left button return back arrow*
+    .top-buttons .top-left-fixed > button {
+        height: 4em;
+        width: 4em;
+    }
+    // top buttons
+    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i {
+        font-size: 3em;
+    }
+
+    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 600px) {
+
+    //pencil button circle (toggle view)
+    .top-buttons .top-right-fixed > button {
+        width: 36px;
+        height: 36px;
+        padding: 1%;
+    }
+
+    //Left button return back arrow*
+    .top-buttons .top-left-fixed > button {
+        height: 36px;
+        width: 36px;
+    }
+    // top buttons
+    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i {
+        font-size: 2em;
+    }
+
+    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i {
+        font-size: 1.5em;
+    }
+
+}
+
+//I phone X
+@media (max-width: 490px) {
+
+    .survey-container {
+        //56px .bottom-navbar
+        height: calc(100% - 54px);
+    }
+
+    .survey-container.with-top-buttons {
+        //60px .top-buttons + 56px .bottom-navbar
+        height: calc(100% - 114px);
+    }
+
+    .top-buttons {
+        text-align: center;
+        background-color: $primary-color;
+        box-shadow: 0 2px 4px #afafaf;
+    }
+
+    .top-buttons .col {
+        border: 1px solid transparent;
+    }
+
+    .top-buttons .col:first-child {
+        border-right: 1px solid #f2f6f9;
+    }
+
+    .top-left-fixed, .top-right-fixed {
+        display: none;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .top-buttons .mobile-view {
+        display: inline;
+        color: #fafafa;
+        width: 90%;
+        box-shadow: none;
+    }
+
+
+    .questions-body {
+        margin-left: -15px;
+    }
+
+    .main-container {
+        padding-left: 0;
+        padding-right: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .main-container.welcome {
+        overflow: auto;
+    }
+
+    .main-container.welcome .survey-container {
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    .question-answer-type {
+        width: 330px;
+    }
+
+    .questions-title {
+        width: 330px;
+        padding-left: 9px;
+        font-size: 14px;
+    }
+
+    .next-btn {
+        height: 34px;
+        padding-top: 2px;
+    }
+
+    .btn-start {
+        width: 40%;
+        height: 30px;
+        padding: 1%;
+    }
+
+    .survey-main-title {
+        font-size: 15px;
+        margin-bottom: 15px;
+        margin-top: 45px;
+    }
+
+    #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg {
+        margin-left: -6px;
+        margin-top: 2px;
+        padding: 2px;
+    }
+
+    .by-circlelink {
+        //margin-right: 28px;
+        font-size: 14px;
+    }
+
+    #app > div > div > div > div.align-items-center > div {
+        font-size: 76%;
+    }
+
+    .welcome-icon {
+        width: 160px;
+    }
+
+    .survey-sub-welcome-text {
+        font-size: 13px;
+        //display: contents;
+        margin-left: 1%;
+        margin-right: 1%;
+    }
+
+    .call-btn-round {
+        width: 35px;
+        height: 35px;
+        margin-left: 20px;
+        //padding: 3px 27px 37px 13px !important;
+        //margin-top: 7px !important;
+    }
+
+    .scroll-buttons {
+        margin-right: -20px;
+        margin-left: -20px;
+    }
+
+    .scroll-buttons .btn {
+        margin-top: 10px;
+        width: 35px;
+        height: 35px
+    }
+
+    .question-scroll {
+        width: 40px;
+        height: 40px;
+        background-size: 40px;
+    }
+}
+
+.spinner-overlay {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+}
+
+.list-group-item.active {
+    background-color: $primary-color;
+    border-color: $primary-color;
+}
+
+@media (max-width: 375px) {
+    .welcome-icon {
+        width: 120px;
+    }
+
+    .survey-main-title {
+        font-size: 14px;
+        margin-bottom: 10px;
+        margin-top: 30px;
+    }
+
+    .survey-sub-welcome-text {
+        margin-top: 0;
+        font-size: 12px;
+    }
+
+}
