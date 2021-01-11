@@ -17,7 +17,7 @@ class CreateEnrolleesFromPracticePull extends EnrolleeImportingAction
     {
         return Enrollee::firstOrCreate([
             'mrn' => $row['mrn'],
-            $this->practiceId,
+            'practice_id' => $this->practiceId,
         ]);
     }
 
