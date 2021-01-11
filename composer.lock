@@ -1024,7 +1024,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "8719d1d84a8af905b8aa64d11bfd8793bf367f11"
+                "reference": "056dd0912a3f7e3999bd7eb023d8a1b48802f101"
             },
             "type": "laravel-module",
             "extra": {
@@ -1047,7 +1047,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T19:13:22+00:00"
+            "time": "2021-01-11T20:29:24+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
