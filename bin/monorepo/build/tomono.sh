@@ -22,7 +22,7 @@ fi
 : "${MONOREPO_NAME=core}"
 
 # Monorepo directory
-monorepo_dir="$PWD/"
+monorepo_dir="$PWD/$MONOREPO_NAME"
 
 
 
@@ -104,8 +104,8 @@ function create-mono {
                 fi
 
 		echo "Merging in $repo.." >&2
-		git remote add "$name" "$repo" || true
-		echo "Fetching $name.." >&2 
+		git remote add "$name" "$repo"
+		echo "Fetching $name.." >&2
 		git fetch -q "$name"
 
 		# Now we've got all tags in .git/refs/tags: put them away for a sec
