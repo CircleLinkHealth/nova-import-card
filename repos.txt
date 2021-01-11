@@ -1,0 +1,7 @@
+git@github.com:CircleLinkHealth/app-awv.git awv-app apps/awv
+git@github.com:CircleLinkHealth/app-cpm-admin.git admin-app apps/admin
+git@github.com:CircleLinkHealth/app-cpm-web.git provider-app apps/provider
+
+git@github.com:CircleLinkHealth/cpm-admin-module.git admin-module modules/admin
+git@github.com:CircleLinkHealth/eligibility-module.git eligibility-module modules/eligibility
+git@github.com:CircleLinkHealth/self-enrollment-module.git self-enrollment-module modules/self-enrollment
