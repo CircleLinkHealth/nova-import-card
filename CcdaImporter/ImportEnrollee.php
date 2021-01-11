@@ -65,6 +65,10 @@ class ImportEnrollee
             $static->importFromEligibilityJob($enrollee, $job);
         }
 
+        if (Enrollee::SOURCE_PRACTICE_PULL === $enrollee->source){
+            $static->importFromPracticePull($enrollee);
+        }
+
         if (Enrollee::ENROLLED === $enrollee->status) {
             return;
         }
@@ -188,6 +192,33 @@ class ImportEnrollee
 
         //We need to refresh the model before we perform the import, to make sure virtual columns contain the proper data
         //since the model that gets returned from Ccda::create method contains null values fro virtual columns
+        $ccda = $ccda->fresh()->import($enrollee);
+
+        $this->enrolleeMedicalRecordImported($enrollee);
+    }
+
+    private function importFromPracticePull(Enrollee $enrollee)
+    {
+        $ccdaArgs = [
+            'mrn'         => $enrollee->mrn,
+            'practice_id' => $enrollee->practice_id,
+        ];
+
+        $enrolleeUser = $enrollee->user;
+
+        if ($enrolleeUser) {
+            if ($enrolleeUser->isSurveyOnly()) {
+                $ccdaArgs['patient_id']          = $enrolleeUser->id;
+                $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
+            }
+        }
+
+        $ccda = Ccda::create($ccdaArgs);
+
+        $enrollee->medical_record_type = get_class($ccda);
+        $enrollee->medical_record_id   = $ccda->id;
+        $enrollee->save();
+
         $ccda = $ccda->fresh()->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
