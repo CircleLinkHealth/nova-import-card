@@ -106,7 +106,7 @@
         "circlelinkhealth/cpm-admin-module": "1.2.x-dev",
         "circlelinkhealth/cpm-migrations-module": "3.0",
         "circlelinkhealth/customer-module": "4.2.x-dev",
-        "circlelinkhealth/eligibility-module": "4.4.x-dev",
+        "circlelinkhealth/eligibility-module": "4.5.x-dev",
         "circlelinkhealth/raygun-module": "2.0",
         "circlelinkhealth/revisionable-module": "7.0.x-dev",
         "circlelinkhealth/saml-sp-module": "2.0",
