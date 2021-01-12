@@ -1,0 +1,101 @@
+{
+  "name": "CarePlan Manager",
+  "description": "CarePlan Manager - CircleLink Health",
+  "keywords": [],
+  "website": "https://www.careplanmanager.com/",
+  "repository": "https://github.com/CircleLinkHealth/app-cpm-web",
+  "logo": "https://www.careplanmanager.com/img/logos/LogoHorizontal_Color.svg?id=e08f4611feae12f4f909",
+  "success_url": "/",
+  "image": "heroku/php",
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-php"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+    },
+    {
+      "url": "https://github.com/chap/wkhtmltopdf-heroku-18-buildpack"
+    },
+    {
+      "url": "https://github.com/carwow/heroku-buildpack-pdftotext.git"
+    },
+    {
+      "url": "https://github.com/stevo550/buildpack-slug-cleaner.git"
+    }
+  ],
+  "environments": {
+    "review": {
+      "addons": [
+        "heroku-redis:premium-0"
+      ],
+      "scripts": {
+        "pr-predestroy": "php artisan reviewapp:predestroy"
+      }
+    },
+    "production": {
+      "addons": [
+        "heroku-redis:private-7"
+      ],
+      "formation": {
+        "web": {
+          "quantity": 1,
+          "size": "performance-l"
+        },
+        "worker": {
+          "quantity": 1,
+          "size": "performance-m"
+        },
+        "scheduler": {
+          "quantity": 1,
+          "size": "performance-s"
+        }
+      }
+    },
+    "staging": {
+      "addons": [
+        "heroku-redis:premium-0"
+      ],
+      "formation": {
+        "web": {
+          "quantity": 1,
+          "size": "hobby"
+        },
+        "worker": {
+          "quantity": 1,
+          "size": "hobby"
+        },
+        "scheduler": {
+          "quantity": 1,
+          "size": "hobby"
+        }
+      }
+    },
+    "test": {
+      "formation": {
+        "test": {
+          "quantity": 1,
+          "size": "performance-l"
+        }
+      },
+      "addons": [
+        "heroku-redis:premium-0"
+      ],
+      "scripts": {
+        "test-setup": "vendor/bin/heroku-php-nginx -C heroku/nginx.conf public/ >/dev/null 2>&1 & sleep 5",
+        "test": "composer test && php artisan reviewapp:predestroy"
+      },
+      "env": {
+        "APP_ENV": "testing",
+        "APP_DEBUG": "true",
+        "APP_KEY": "base64:OzIBYjmtAr92KbwC5SO03s5CciXElEJ20KpSlfTxEoA=",
+        "BCRYPT_ROUNDS": "4",
+        "BROADCAST_DRIVER": "log",
+        "CACHE_DRIVER": "array",
+        "SESSION_DRIVER": "array",
+        "QUEUE_CONNECTION": "sync",
+        "SCOUT_DRIVER": "null"
+      }
+    }
+  }
+}
