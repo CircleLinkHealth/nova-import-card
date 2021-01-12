@@ -3,7 +3,7 @@
 set -e
 set -x
 
-CURRENT_BRANCH="1.x"
+CURRENT_BRANCH=$1
 
 function split()
 {
@@ -18,18 +18,15 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-#remote for apps
 remote admin-app git@github.com:CircleLinkHealth/app-cpm-admin.git
 remote awv-app git@github.com:CircleLinkHealth/app-awv.git
 remote caller-app git@github.com:CircleLinkHealth/app-cpm-caller.git
 remote provider-app git@github.com:CircleLinkHealth/app-cpm-web.git
-
-#remote for modules
 remote admin-module git@github.com:CircleLinkHealth/cpm-admin-module.git
 remote eligibility-module git@github.com:CircleLinkHealth/eligibility-module.git
 remote self-enrollment-module git@github.com:CircleLinkHealth/self-enrollment-module.git
 remote opcache-gui-module git@github.com:CircleLinkHealth/opcache-gui.git
-remote raygun-module git@github.com:CircleLinkHealth/raygun.git
+remote raygun-module git@github.com:CircleLinkHealth/raygun-module.git
 remote time-tracking-module git@github.com:CircleLinkHealth/time-tracking.git
 remote two-fa-module git@github.com:CircleLinkHealth/two-fa.git
 remote customer-module git@github.com:CircleLinkHealth/customer.git
@@ -56,13 +53,10 @@ remote vapor-cli-module git@github.com:CircleLinkHealth/vapor-cli.git
 remote vapor-core-module git@github.com:CircleLinkHealth/vapor-core.git
 remote vapor-devops-helpers-module git@github.com:CircleLinkHealth/vapor-devops-helpers.git
 
-#split apps
 split 'apps/admin' admin-app
 split 'apps/awv' awv-app
 split 'apps/caller' caller-app
 split 'apps/provider' provider-app
-
-#split modules
 split 'modules/admin' admin-module
 split 'modules/eligibility' eligibility-module
 split 'modules/self-enrollment' self-enrollment-module

@@ -10,7 +10,7 @@ then
     exit 1
 fi
 
-RELEASE_BRANCH="1.x"
+RELEASE_BRANCH=$1
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 VERSION=$1
 
@@ -52,7 +52,41 @@ git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in auth broadcasting bus cache collections config console container contracts cookie database encryption events filesystem hashing http log macroable mail notifications pagination pipeline queue redis routing session support testing translation validation view
+for REMOTE in
+admin-app
+awv-app
+caller-app
+provider-app
+admin-module
+eligibility-module
+self-enrollment-module
+opcache-gui-module
+raygun-module
+time-tracking-module
+two-fa-module
+customer-module
+ccm-billing-module
+core-module
+saml-sp-module
+revisionable-module
+cpm-migrations-module
+sqlviews-module
+cerberus-gatekeeper-module
+shared-models-module
+ccda-parser-module
+patient-api-module
+nurse-invoices-module
+shared-vue-components
+condition-code
+synonyms-module
+twilio-integration-module
+laravel-module-installer
+short-url-module
+pdf-service-module
+cpm-admin-module
+vapor-cli-module
+vapor-core-module
+vapor-devops-helpers
 do
     echo ""
     echo ""
