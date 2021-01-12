@@ -1,0 +1,15 @@
+{
+    "name": "TwilioIntegration",
+    "alias": "twilioIntegration",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "CircleLinkHealth\\TwilioIntegration\\Providers\\TwilioIntegrationServiceProvider",
+        "CircleLinkHealth\\TwilioIntegration\\Providers\\TwilioClientServiceProvider",
+        "CircleLinkHealth\\TwilioIntegration\\Providers\\RouteServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
