@@ -1,0 +1,84 @@
+<div id="ccd-uploaded-summaries" class="mdl-grid">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+        <thead>
+        <tr>
+            <th class="mdl-data-table__cell--non-numeric">Import</th>
+            <th class="mdl-data-table__cell--non-numeric">Edit</th>
+            <th class="mdl-data-table__cell--non-numeric">Delete</th>
+            <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th class="mdl-data-table__cell--non-numeric">Practice</th>
+            <th class="mdl-data-table__cell--non-numeric">Location</th>
+            <th class="mdl-data-table__cell--non-numeric">Billing Provider</th>
+            <th class="mdl-data-table__cell--non-numeric">Source</th>
+            <th class="mdl-data-table__cell--non-numeric">Created At</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr v-for="importedMedicalRecord in importedMedicalRecords"
+            v-bind:class="{ 'flag': importedMedicalRecord.flag }"
+            v-bind:id="'row-' + importedMedicalRecord.id">
+
+            <td v-bind:id="'import-row-' + importedMedicalRecord.id">
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
+                       v-bind:for="'import-' + importedMedicalRecord.id"
+                       v-bind:id="'import-label-' + importedMedicalRecord.id">
+                    <input v-model="okToImport" v-bind:value="importedMedicalRecord.id" type="checkbox"
+                           v-bind:id="'import-' + importedMedicalRecord.id" class="mdl-checkbox__input"
+                           v-on:click="toggleCheckboxes">
+                    <span class="mdl-checkbox__label"></span>
+                </label>
+            </td>
+            <td v-bind:id="'edit-row-' + importedMedicalRecord.id" class="mdl-data-table__cell--non-numeric">
+                <a v-bind:href="'/ccd-importer/uploaded-ccd-items/' + importedMedicalRecord.id + '/edit'">Edit</a>
+            </td>
+
+            <td v-bind:id="'delete-row-' + importedMedicalRecord.id">
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                       v-bind:for="'delete-' + importedMedicalRecord.id"
+                       v-bind:id="'delete-label-' + importedMedicalRecord.id">
+                    <input v-model="okToDelete" v-bind:value="importedMedicalRecord.id" type="checkbox"
+                           v-bind:id="'delete-' + importedMedicalRecord.id" class="mdl-switch__input"
+                           v-on:click="toggleCheckboxes">
+                    <span class="mdl-switch__label"></span>
+                </label>
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">{{ (importedMedicalRecord.demographics || {}).first_name }} {{
+                (importedMedicalRecord.demographics || {}).last_name }}
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">
+                {{ (importedMedicalRecord.practice || {}).display_name }}
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">
+                {{ (importedMedicalRecord.location || {}).name }}
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">{{ (importedMedicalRecord.billing_provider || {}).first_name }}
+                {{(importedMedicalRecord.billing_provider || {}).last_name }}
+            </td>
+
+            <td v-if="importedMedicalRecord.source" class="mdl-data-table__cell--non-numeric">{{
+                importedMedicalRecord.source }}
+            </td>
+            <td v-else class="mdl-data-table__cell--non-numeric">N/A</td>
+            <td v-if="importedMedicalRecord.created_at" class="mdl-data-table__cell--non-numeric">{{
+                importedMedicalRecord.created_at }}
+            </td>
+            <td v-else class="mdl-data-table__cell--non-numeric">N/A</td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <div v-bind:class="{ 'hide': tableHide }" class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
+        <mdl-button primary raised v-mdl-ripple-effect type="submit" v-on:click="syncCcds"
+                    v-bind:disabled="!(okToImport.length + okToDelete.length)" id="syncCcdsBtn">
+            Import/Delete Checked CCDs
+        </mdl-button>
+    </div>
+
+</div>

@@ -1,0 +1,179 @@
+<style>
+    /* Style Select Field */
+    select {
+        font-family: inherit;
+        background-color: transparent;
+        width: 100%;
+        padding: 4px 0;
+        font-size: 16px;
+        color: rgba(0,0,0,1);
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0, 0.12);
+    }
+
+    /* Remove focus */
+    select:focus {
+        outline: none;
+    }
+
+    .mdl-selectfield {
+        position: relative;
+    }
+    .mdl-selectfield:after {
+        position: absolute;
+        top: 0.75em;
+        right: 0.5em;
+        /* Styling the down arrow */
+        width: 0;
+        height: 0;
+        padding: 0;
+        content: '';
+        border-left: .25em solid transparent;
+        border-right: .25em solid transparent;
+        border-top: 0.375em solid rgba(0,0,0, 0.12);
+        pointer-events: none;
+    }
+</style>
+
+<div>
+    <div class="mdl-grid">
+
+        <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+
+        <div class="mdl-cell mdl-cell--8-col mdl-grid">
+
+            <!-- Location and Provider -->
+            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+
+                <h5 class="mdl-cell mdl-cell--6-col"><label>Vendor:</label>{{ vendor }}</h5>
+
+                <h5 class="mdl-cell mdl-cell--6-col"><label>Practice: </label>{{ program.name }}</h5>
+
+                <div class="mdl-selectfield mdl-cell mdl-cell--6-col">
+                    <label for="provider_id">Primary Provider</label>
+                    <select v-model="demographics.provider_id" name="provider_id" id="provider_id">
+                        <option value="" disabled selected>Choose a provider</option>
+                        <option v-for="provider in providers" v-bind:value="provider.id">{{ provider.name }}</option>
+                    </select>
+                </div>
+
+                <div class="mdl-selectfield mdl-cell mdl-cell--6-col">
+                    <label for="location_id">Location</label>
+                    <select v-model="demographics.location_id" name="location_id" id="location_id">
+                        <option value="" disabled selected>Choose a location</option>
+                        <option v-for="location in locations" v-bind:value="location.id">{{ location.name }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Names and stuff -->
+            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--6-col"
+                        :model="demographics.first_name"
+                        label="First Name">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--6-col"
+                        :model="demographics.last_name"
+                        label="Last Name">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--6-col"
+                        :model="demographics.gender"
+                        label="Gender">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--6-col"
+                        :model="demographics.dob"
+                        label="DOB">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--6-col"
+                        :model="demographics.mrn_number"
+                        label="MRN Number">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--6-col"
+                        :model="demographics.preferred_contact_language"
+                        label="Language">
+                </text-with-floating-label>
+            </div>
+
+            <!-- Address -->
+            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-grid">
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.street"
+                        label="Street">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.city"
+                        label="City">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.state"
+                        label="State">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.zip"
+                        label="Zip">
+                </text-with-floating-label>
+            </div>
+
+            <!-- Phones -->
+            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-grid">
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.study_phone_number"
+                        label="Primary Phone">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.cell_phone"
+                        label="Cell Phone">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.home_phone"
+                        label="Home Phone">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.work_phone"
+                        label="Work Phone">
+                </text-with-floating-label>
+
+                <text-with-floating-label
+                        class="mdl-cell mdl-cell--12-col"
+                        :model="demographics.email"
+                        label="Email">
+                </text-with-floating-label>
+            </div>
+
+            <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
+                <mdl-button primary raised v-mdl-ripple-effect @click="submitForm" :disabled="!enableButton">
+                    Save Demographics
+                </mdl-button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
