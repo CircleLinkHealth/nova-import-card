@@ -208,11 +208,9 @@ class ImportEnrollee
 
         $enrolleeUser = $enrollee->user;
 
-        if ($enrolleeUser) {
-            if ($enrolleeUser->isSurveyOnly()) {
-                $ccdaArgs['patient_id']          = $enrolleeUser->id;
-                $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
-            }
+        if ($enrolleeUser && $enrolleeUser->isSurveyOnly()) {
+            $ccdaArgs['patient_id']          = $enrolleeUser->id;
+            $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
         }
 
         $ccda = Ccda::create($ccdaArgs);
@@ -223,7 +221,7 @@ class ImportEnrollee
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->save();
 
-        $ccda = $ccda->fresh()->import($enrollee);
+        $ccda = $ccda->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
     }
