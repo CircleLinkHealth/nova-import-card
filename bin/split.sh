@@ -18,6 +18,9 @@ function split()
     fi
     SHA1=`splitsh-lite --prefix=$1`
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
+    if [ ! -z "$2" ]; then
+        rm -rf "$PWD/apps/$2/CircleLinkHealth/*"
+    fi
 }
 
 function remote()
