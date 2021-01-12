@@ -1,0 +1,1 @@
+# shared-vue-components-module
