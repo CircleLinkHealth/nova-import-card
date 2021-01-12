@@ -8,14 +8,13 @@ git@github.com:CircleLinkHealth/app-cpm-caller.git caller-app apps/caller
 
 #modules
 git@github.com:CircleLinkHealth/ccda-parser-module.git CcdaParser modules/CcdaParser
-git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git CerberusGatekeeper modules/CerberusGatekeeper
-git@github.com:CircleLinkHealth/cpm-admin-module.git CpmAdmin modules/CpmAdmin
 git@github.com:CircleLinkHealth/ccm-billing-module.git CcmBilling modules/CcmBilling
+git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git CerberusGatekeeper modules/CerberusGatekeeper
 git@github.com:CircleLinkHealth/condition-code-lookup-module.git ConditionCodeLookup modules/ConditionCodeLookup
-git@github.com:CircleLinkHealth/cpm-migrations-module.git CpmMigrations modules/CpmMigrations
 git@github.com:CircleLinkHealth/module-core.git Core modules/Core
-git@github.com:CircleLinkHealth/module-customer.git Customer modules/Customer
 git@github.com:CircleLinkHealth/cpm-admin-module.git CpmAdmin modules/CpmAdmin
+git@github.com:CircleLinkHealth/cpm-migrations-module.git CpmMigrations modules/CpmMigrations
+git@github.com:CircleLinkHealth/module-customer.git Customer modules/Customer
 git@github.com:CircleLinkHealth/eligibility-module.git Eligibility modules/Eligibility
 git@github.com:CircleLinkHealth/laravel-module-installer.git LaravelModuleInstaller modules/LaravelModuleInstaller
 git@github.com:CircleLinkHealth/nurse-invoices-module.git NurseInvoices modules/NurseInvoices
