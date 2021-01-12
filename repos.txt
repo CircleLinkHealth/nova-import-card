@@ -11,12 +11,12 @@
 #git@github.com:CircleLinkHealth/eligibility-module.git eligibility-module modules/eligibility
 #git@github.com:CircleLinkHealth/self-enrollment-module.git self-enrollment-module modules/self-enrollment
 #git@github.com:CircleLinkHealth/opcache-gui.git opcache-gui-module modules/opcache-gui-module
-#git@github.com:CircleLinkHealth/module-raygun.git module-raygun-module modules/module-raygun-module
-#git@github.com:CircleLinkHealth/module-time-tracking.git module-time-tracking-module modules/module-time-tracking-module
-#git@github.com:CircleLinkHealth/module-two-fa.git module-two-fa-module modules/module-two-fa-module
-#git@github.com:CircleLinkHealth/module-customer.git module-customer-module modules/module-customer-module
+#git@github.com:CircleLinkHealth/module-raygun.git module-raygun-module  modules/raygun-module
+#git@github.com:CircleLinkHealth/module-time-tracking.git module-time-tracking-module  modules/time-tracking-module
+#git@github.com:CircleLinkHealth/module-two-fa.git module-two-fa-module  modules/two-fa-module
+#git@github.com:CircleLinkHealth/module-customer.git module-customer-module  modules/customer-module
 #git@github.com:CircleLinkHealth/ccm-billing-module.git ccm-billing-module modules/ccm-billing-module
-#git@github.com:CircleLinkHealth/module-core.git module-core-module modules/module-core-module
+#git@github.com:CircleLinkHealth/module-core.git module-core-module  modules/core-module
 #git@github.com:CircleLinkHealth/saml-sp-module.git saml-sp-module modules/saml-sp-module
 #git@github.com:CircleLinkhealth/revisionable-module.git revisionable-module modules/revisionable-module
 #git@github.com:CircleLinkHealth/cpm-migrations-module.git cpm-migrations-module modules/cpm-migrations-module
