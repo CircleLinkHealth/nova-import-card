@@ -17,3 +17,7 @@ Now that we've copied the necessary files, we can build the mono repo by running
 ```bash
 sh ../build.sh
 ```
+### Credits
+The monorepo is powered by
+- https://github.com/hraban/tomono
+- https://github.com/splitsh/lite
