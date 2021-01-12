@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ff6518025596d1a34c21475ad1fae10",
+    "content-hash": "41cdc348aec2cc128930fc6fec428566",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.15",
+            "version": "3.171.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "26c7f2deb05110c62e38cc867658f1ef89123365"
+                "reference": "2bc8681a623caa13d5c1da90ca4d6c76436b545d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/26c7f2deb05110c62e38cc867658f1ef89123365",
-                "reference": "26c7f2deb05110c62e38cc867658f1ef89123365",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2bc8681a623caa13d5c1da90ca4d6c76436b545d",
+                "reference": "2bc8681a623caa13d5c1da90ca4d6c76436b545d",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-01-11T19:28:59+00:00"
+            "time": "2021-01-07T19:16:26+00:00"
         },
         {
             "name": "brick/math",
@@ -668,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "41e8e4ecc72ab3db8c45390fbd338c1a2090689a"
+                "reference": "deaded3c325a4e6c48010db0797bdbd5f00b83e0"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -718,7 +718,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-11T11:27:05+00:00"
+            "time": "2021-01-08T18:17:07+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -879,7 +879,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8f728db2922de66e85368db5837d37329cef385e"
+                "reference": "e2050e3de84072ff0b268c5c8117f642be7cad25"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -934,7 +934,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T11:25:57+00:00"
+            "time": "2021-01-10T15:42:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1024,7 +1024,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "390e7f5e8ea81cd3b24c5bc7d4f1afdd3781cd3d"
+                "reference": "46757d22665039d1341f754d404742cc2906e385"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1065,15 +1065,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T11:25:57+00:00"
+            "time": "2021-01-11T08:28:43+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "4.5.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "fed7760532fc58247d3bb9c81bd901936b062d3f"
+                "reference": "34e310ac1115033c608cd4797be9947fc9b4a88c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1103,7 +1103,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T23:59:22+00:00"
+            "time": "2021-01-07T19:43:50+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1486,11 +1486,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "2.3.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "72fe381061df3c3ed6fe4f9cc92522c92a864b72"
+                "reference": "139185f081059be2fc98964d5babb0f4dc575b8e"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1512,7 +1512,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T18:47:28+00:00"
+            "time": "2021-01-07T09:08:00+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -5340,16 +5340,16 @@
         },
         {
             "name": "laravel/vapor-ui",
-            "version": "v1.0.3",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-ui.git",
-                "reference": "093d3fa0a0a65300f565bd20ed7dec9cc5c6abe2"
+                "reference": "898cf9b68fdfe211584cd949db3ef6160f42431f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/093d3fa0a0a65300f565bd20ed7dec9cc5c6abe2",
-                "reference": "093d3fa0a0a65300f565bd20ed7dec9cc5c6abe2",
+                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/898cf9b68fdfe211584cd949db3ef6160f42431f",
+                "reference": "898cf9b68fdfe211584cd949db3ef6160f42431f",
                 "shasum": ""
             },
             "require": {
@@ -5398,7 +5398,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-11T10:18:06+00:00"
+            "time": "2021-01-05T17:06:38+00:00"
         },
         {
             "name": "laravelcollective/html",
@@ -15244,27 +15244,27 @@
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "7.3.0",
+            "version": "8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "5194d3c1941518f6131238745aff916453afc727"
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/5194d3c1941518f6131238745aff916453afc727",
-                "reference": "5194d3c1941518f6131238745aff916453afc727",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/6ade5ec19e81a0e4807834886a2c47509d069cb7",
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.2.5"
+                "php": ">=7.3"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
-                "laravel/framework": "^7.0",
+                "laravel/framework": "^8.0",
                 "mockery/mockery": "~1.0",
-                "orchestra/testbench": "^5.0",
+                "orchestra/testbench": "^6.2",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.5",
                 "spatie/phpunit-snapshot-assertions": "^2.1.0"
@@ -15280,7 +15280,7 @@
                     }
                 },
                 "branch-alias": {
-                    "dev-master": "7.0-dev"
+                    "dev-master": "8.0-dev"
                 }
             },
             "autoload": {
@@ -15317,7 +15317,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-10T08:40:16+00:00"
+            "time": "2020-11-11T09:24:22+00:00"
         },
         {
             "name": "openlss/lib-array2xml",
