@@ -1,0 +1,56 @@
+id: 13482
+name: app-cpm-web
+environments:
+    production:
+        domain:
+            - careplanmanager.com
+            - provider.careplanmanager.com
+            - worker.careplanmanager.com
+            - mycpm.link
+        storage: cpm-production-vapor-storage
+        memory: 1024
+        cli-memory: 1024
+        queue-memory: 1024
+        runtime: docker
+        queue-timeout: 800
+        cli-timeout: 300
+        concurrency: 100
+        mail: false
+        capacity: 5
+        timeout: 60
+        queues:
+            - cpm-provider-low-production
+            - cpm-provider-high-production
+            - cpm-provider-revisionable-production
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+    staging:
+        runtime: docker
+        domain: cpm-provider.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        queue-memory: 512
+        timeout: 45
+        cli-timeout: 600
+        queue-timeout: 600
+        concurrency: 5
+        mail: false
+        queues:
+            - cpm-provider-low-staging
+            - cpm-provider-high-staging
+            - cpm-provider-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
