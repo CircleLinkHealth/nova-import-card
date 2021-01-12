@@ -33,7 +33,7 @@
 #git@github.com:CircleLinkHealth/module-raygun.git Raygun modules/Raygun
 #git@github.com:CircleLinkhealth/revisionable-module.git Revisionable modules/Revisionable
 #git@github.com:CircleLinkHealth/saml-sp-module.git SamlSp modules/SamlSp
-#git@github.com:CircleLinkHealth/self-enrollment-module.git SelfEnrollment modules/SelfEnrollment
+git@github.com:CircleLinkHealth/module-self-enrollment.git SelfEnrollment modules/SelfEnrollment
 #git@github.com:CircleLinkHealth/shared-models-module.git SharedModels modules/SharedModels
 #git@github.com:CircleLinkHealth/shared-vue-components-module.git SharedVueComponents modules/SharedVueComponents
 #git@github.com:CircleLinkHealth/short-url.git ShortUrl modules/ShortUrl
