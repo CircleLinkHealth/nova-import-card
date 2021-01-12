@@ -10,6 +10,8 @@ class HomeController extends Controller
         if (auth()->guest()) {
             return redirect()->route('login');
         }
+
+        return $this->selfEnrollmentNova();
     }
 
     public function selfEnrollmentNova()
