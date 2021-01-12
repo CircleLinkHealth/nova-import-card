@@ -14,9 +14,10 @@ do
             if [ ! -d "$APP_PATH/CircleLinkHealth" ]; then
               mkdir "$APP_PATH/CircleLinkHealth"
             fi
-            if [ ! -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
-              ln -s "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/$DIR"
+            if [ -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
+              rm -rf "$APP_PATH/CircleLinkHealth/$DIR"
             fi
+            ln -s "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/$DIR"
         done
     else
         echo "$APP_PATH: monorepo-modules.txt not found!"
