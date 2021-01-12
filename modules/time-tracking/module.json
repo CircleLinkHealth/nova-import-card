@@ -1,0 +1,14 @@
+{
+    "name": "TimeTracking",
+    "alias": "timeTracking",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
