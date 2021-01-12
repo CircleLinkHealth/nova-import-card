@@ -13,7 +13,6 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     protected $namespace = 'CircleLinkHealth\SelfEnrollment\Http\Controllers';
-
     /**
      * Bootstrap services.
      *

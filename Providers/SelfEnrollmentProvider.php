@@ -21,23 +21,8 @@ class SelfEnrollmentProvider extends ServiceProvider
     {
         $this->publishConfigurations();
         $this->publishPublicAssets();
-
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+//        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 //        $this->app->register(RouteServiceProvider::class);
-
-//        $viewPath = resource_path('views/modules/selfEnrollment');
-//
-//        $sourcePath = __DIR__.'/../Resources/views';
-//
-//        $this->publishes([
-//            $sourcePath => $viewPath,
-//        ], 'views');
-//
-//
-//        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-//            return $path.'/modules/selfEnrollment';
-//        }, Config::get('view.paths')), [$sourcePath]), 'selfEnrollment');
-
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'selfEnrollment');
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/selfEnrollment'),
