@@ -49,7 +49,9 @@ TwoFA
 Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provdider App, and Admin App.
 
 ### How to build the monorepo from scratch
-This is like a hard "reset". What it does is it will erase everything, and re-build the monorepo from scratch by mirroring each repository.
+This is like a hard "reset". What it does is it will erase everything, and re-build the monorepo from scratch by mirroring each repository. 
+
+Building from scratch **has to** happen on the `master` branch.
 
 Firstly, delete all apps and modules. 
 ```bash
