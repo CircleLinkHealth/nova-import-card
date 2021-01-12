@@ -7,10 +7,11 @@ CURRENT_BRANCH=$1
 
 function split()
 {
-    if [ ! -z "$2" && -f "$2/" ]; then
-        if [ ! -z "$2" ]; then
-
-        fi
+    if [ ! -z "$2" && -f "../apps/$2/monorepo-modules.txt" ]; then
+        for FILE in $(cat "../apps/$2/monorepo-modules.txt")
+        do
+            cp -rf "../modules/$FILE" "../apps/$2/CircleLinkHealth"
+        done
     fi
     SHA1=`splitsh-lite --prefix=$1`
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
