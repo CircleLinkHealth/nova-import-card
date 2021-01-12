@@ -22,13 +22,6 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                InstallCommand::class,
-                NetworkCommand::class,
-            ]);
-        }
-
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->publishConfigurations();
         $this->publishPublicAssets();
@@ -59,7 +52,7 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(RouteServiceProvider::class);
+        $this->app->register(SelfEnrollmentRouteProvider::class);
         $this->commands([
             SelfEnrollmentManualInviteCommand::class,
             SendSelfEnrollmentReminders::class,
