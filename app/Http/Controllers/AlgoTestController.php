@@ -14,7 +14,7 @@ class AlgoTestController extends Controller
             return 'Sorry, this cannot be run on the production environment.';
         }
 
-        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
+        return (new \CircleLinkHealth\SharedModels\Services\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
     }
 
     public function algoFamily()
@@ -23,7 +23,7 @@ class AlgoTestController extends Controller
             return 'Sorry, this cannot be run on the production environment.';
         }
 
-        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
+        return (new \CircleLinkHealth\SharedModels\Services\SchedulerService())->syncFamilialCalls();
     }
 
     public function algoRescheduler()

@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
@@ -48,7 +49,7 @@ class QueueCcdasToProcess extends Command
             ->get(['id'])
             ->map(function ($ccda) {
                 $job = (new ProcessCcda($ccda))
-                    ->onQueue('low')
+                    ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
                     ->delay(Carbon::now()->addSeconds(20));
 
                 dispatch($job);

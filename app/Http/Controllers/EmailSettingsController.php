@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EmailSettings;
+use CircleLinkHealth\SharedModels\Entities\EmailSettings;
 use Illuminate\Http\Request;
 
 class EmailSettingsController extends Controller

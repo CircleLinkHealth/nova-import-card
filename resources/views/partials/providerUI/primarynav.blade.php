@@ -6,7 +6,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
 ?>
 @push('styles')
     <style>
-        .fa-exclamation{
+        .fa-exclamation {
             font-size: 12px;
             background: rgb(238, 66, 20);
             border-radius: 0.8em;
@@ -21,15 +21,32 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
         }
 
         @keyframes shake-animation {
-            0% { transform:translate(0,0) }
-            1.78571% { transform:translate(5px,0) }
-            3.57143% { transform:translate(0,0) }
-            5.35714% { transform:translate(5px,0) }
-            7.14286% { transform:translate(0,0) }
-            8.92857% { transform:translate(5px,0) }
-            10.71429% { transform:translate(0,0) }
-            100% { transform:translate(0,0) }
+            0% {
+                transform: translate(0, 0)
+            }
+            1.78571% {
+                transform: translate(5px, 0)
+            }
+            3.57143% {
+                transform: translate(0, 0)
+            }
+            5.35714% {
+                transform: translate(5px, 0)
+            }
+            7.14286% {
+                transform: translate(0, 0)
+            }
+            8.92857% {
+                transform: translate(5px, 0)
+            }
+            10.71429% {
+                transform: translate(0, 0)
+            }
+            100% {
+                transform: translate(0, 0)
+            }
         }
+
         .full-width {
             width: 100%;
         }
@@ -69,7 +86,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                 <div class="row">
                     <div class="col-md-3 col-xs-12">
                         <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
-                                    src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
+                                    src="{{asset('/img/logos/LogoHorizontal_White.svg')}}"
                                     alt="Care Plan Manager"
                                     style="position:relative;top:-7px"
                                     height="50"
@@ -97,23 +114,23 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
                         @if (auth()->user()->isCallbacksAdmin())
-                                    <li>
-                                        <a href="{{ route('patientCallManagement.v2.index') }}" style="color: #fff;">
-                                            Patient Activity Management
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('ca-director.index') }}" style="color: #fff;">
-                                            Care Ambassador Panel
-                                        </a>
-                                    </li>
+                            <li>
+                                <a href="{{ route('patientCallManagement.v2.provider.index') }}" style="color: #fff;">
+                                    Patient Activity Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('ca-director.provider.index') }}" style="color: #fff;">
+                                    Care Ambassador Panel
+                                </a>
+                            </li>
                         @endif
 
                         @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                            :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
+                                                            :twilio-enabled="@json(config('twilio-notification-channel.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
                                                             :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                                 </li>
                             @endif
@@ -160,7 +177,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                             <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -179,7 +196,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                         <li>
-                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -239,73 +256,65 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                         </ul>
                                     </li>
                                 @endif
-                        @endif
+                            @endif
 
-                        @if($userIsCareCoach)
-                            <li>
-                                <a href="{{ route('patientCallList.index') }}" class="text-white"><i
-                                            class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
-                            </li>
+                            @if($userIsCareCoach)
+                                <li>
+                                    <a href="{{ route('patientCallList.index') }}" class="text-white"><i
+                                                class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                                </li>
 
                                 @if($hasNotCurrentWeekWindows)
+                                    <li>
+                                        <a href="{{ route('care.center.work.schedule.index') }}"
+                                           class="text-white"
+                                           title="Schedule has 0 hours for current week. Please enter your schedule.">
+                                            <i class="top-nav-item-icon glyphicon glyphicon-calendar"></i>
+                                            Schedule</a>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a href="{{ route('care.center.work.schedule.index') }}"
+                                           class="text-white"
+                                           title="Schedule has 0 hours for current week. Please enter your schedule.">
+                                            <i class="fa fa-exclamation"></i>
+                                            Schedule</a>
+                                    </li>
+
+                                @endif
+
+                            @endif
+
+                            @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin() && !auth()->user()->isCareCoach())
+                                <li class="dropdown">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false"><i
+                                                class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span
+                                                class="caret text-white"></span></div>
+
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        @if($user->isAdmin())
+                                            <li>
+                                                <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print
+                                                    List</a>
+                                            </li>
+                                        @endif
+                                        @if(auth()->check() && should_show_notes_report(auth()->user()->program_id))
+                                            <li>
+                                                <a href="{{ route('patient.note.listing') }}">Notes Report</a>
+                                            </li>
+                                        @endif
                                         <li>
-                                            <a href="{{ route('care.center.work.schedule.index') }}"
-                                               class="text-white"
-                                               title="Schedule has 0 hours for current week. Please enter your schedule.">
-                                                <i class="top-nav-item-icon glyphicon glyphicon-calendar"></i>
-                                                Schedule</a>
+                                            <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                         </li>
-                                    @else
-                                        <li>
-                                            <a href="{{ route('care.center.work.schedule.index') }}"
-                                               class="text-white"
-                                               title="Schedule has 0 hours for current week. Please enter your schedule.">
-                                                <i class="fa fa-exclamation"></i>
-                                                Schedule</a>
-                                        </li>
-
-                                    @endif
-
-                        @endif
-
-                            @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
+                                    </ul>
+                                </li>
+                            @endif
+                            {{--Live Notifications--}}
                             <li class="dropdown">
                                 <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                     aria-expanded="false"><i
-                                            class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span
-                                            class="caret text-white"></span></div>
-
-                            <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                @if($user->isAdmin())
-                                    <li>
-                                        <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
-                                    </li>
-                                @endif
-                                @if(auth()->check() && should_show_notes_report(auth()->user()->program_id))
-                                    <li>
-                                        <a href="{{ route('patient.note.listing') }}">Notes Report</a>
-                                    </li>
-                                @endif
-                                <li>
-                                    <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
-                                </li>
-                                @if($user->hasRole('developer') || $user->isAdmin())
-                                    <li>
-                                        <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('admin.reports.nurse.metrics') }}">
-                                            Nurse Performance Report</a>
-                                    </li>
-                                @endif
-                            </ul>
-                        </li>
-                                @endif
-                        {{--Live Notifications--}}
-                        <li class="dropdown">
-                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                 aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
-                                <a class="inline-block">
+                                     aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
+                                    <a class="inline-block">
 
                                         <pusher-notifications
                                                 :user-id="{{json_encode(auth()->id())}}"></pusher-notifications>
@@ -316,13 +325,13 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
 
                         @include('partials.user-account-dropdown')
 
-                            @if(!empty($reportData))
-                                    <calendar-daily-report style="color: black; letter-spacing: 1px;"
-                                            :report-data="{{json_encode($reportData['data']['reportData'])}}"
-                                            :report-date="{{json_encode(\Carbon\Carbon::parse($reportData['data']['date'])->toDateString())}}"
-                                            :report-flags="{{json_encode($reportData['data']['reportFlags'])}}"
-                                            :pop-up-now={{true}}></calendar-daily-report>
-                            @endif
+                        @if(!empty($reportData) && $enableDailyReportPopUp)
+                            <calendar-daily-report style="color: black; letter-spacing: 1px;"
+                                                   :report-data="{{json_encode($reportData['data']['reportData'])}}"
+                                                   :report-date="{{json_encode(\Carbon\Carbon::parse($reportData['data']['date'])->toDateString())}}"
+                                                   :report-flags="{{json_encode($reportData['data']['reportFlags'])}}"
+                                                   :pop-up-now={{true}}></calendar-daily-report>
+                        @endif
 
                     </ul>
                 </div>

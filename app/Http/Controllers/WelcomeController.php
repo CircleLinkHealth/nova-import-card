@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\ManagesPatientCookies;
+use CircleLinkHealth\Customer\Traits\ManagesPatientCookies;
 use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
@@ -46,7 +46,7 @@ class WelcomeController extends Controller
     public function index(Request $request)
     {
         if ( ! auth()->check()) {
-            return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm');
+            return redirect()->to('login');
         }
 
         $user = auth()->user();
@@ -71,12 +71,8 @@ class WelcomeController extends Controller
             return redirect()->route('login');
         }
 
-        if ($user->isAdmin()) {
-            return \App::call('App\Http\Controllers\Admin\DashboardController@index');
-        }
-
         if ($user->isCallbacksAdmin()) {
-            return redirect()->route('patientCallManagement.v2.index');
+            return redirect()->route('patientCallManagement.v2.provider.index');
         }
 
         if ($user->isSaasAdmin()) {
@@ -87,9 +83,13 @@ class WelcomeController extends Controller
             return \App::call('App\Http\Controllers\Enrollment\EnrollmentCenterController@dashboard');
         }
 
+        if ($user->isAdmin()) {
+            return redirect()->to(config('core.apps.cpm-admin.url'));
+        }
+
         if ($user->isEhrReportWriter()) {
             if ( ! isProductionEnv()) {
-                return \App::call('App\Http\Controllers\EhrReportWriterController@index');
+                return \App::call('CircleLinkHealth\Eligibility\Http\Controllers\EhrReportWriterController@index');
             }
 
             return redirect()->route('login')->with(

@@ -6,12 +6,12 @@
 
 namespace Tests\Unit;
 
-use App\Services\Enrollment\CareAmbassadorKPIs;
-use App\Services\Enrollment\PracticeKPIs;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Http\Resources\CareAmbassadorKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 

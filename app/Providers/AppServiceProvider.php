@@ -6,34 +6,33 @@
 
 namespace App\Providers;
 
-use App\Contracts\ChunksEloquentBuilder;
-use App\Contracts\ReportFormatter;
-use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
-use App\Notifications\NotificationStrategies\SendsNotification;
-use App\Services\AWV\DirectPatientDocument;
-use App\Services\AWV\EmailPatientDocument;
-use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\ChunksEloquentBuilder;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
-use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
+use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
+use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
+use CircleLinkHealth\SharedModels\Services\AWV\DirectPatientDocument;
+use CircleLinkHealth\SharedModels\Services\AWV\EmailPatientDocument;
+use CircleLinkHealth\SharedModels\Services\AWV\FaxPatientDocument;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Notifications\ChannelManager;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
 
@@ -44,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Paginator::useBootstrapThree();
+
         Schema::defaultStringLength(255);
 
         /*
@@ -68,12 +69,6 @@ class AppServiceProvider extends ServiceProvider
         } else {
             \Log::warning('Class Swift_Preferences does not exist.');
         }
-
-        Horizon::auth(
-            function ($request) {
-                return optional(auth()->user())->hasRole(['administrator', 'developer']);
-            }
-        );
 
         Queue::looping(
             function () {
@@ -144,9 +139,6 @@ class AppServiceProvider extends ServiceProvider
         $cm->extend('phaxio', function (Application $app) {
             return $app->make(FaxChannel::class);
         });
-        $cm->extend('twilio', function (Application $app) {
-            return $app->make(CustomTwilioChannel::class);
-        });
         $cm->extend('mail', function (Application $app) {
             return $app->make(CustomMailChannel::class);
         });
@@ -214,22 +206,19 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
-        $this->app->bind(
-            ReportFormatter::class,
-            WebixFormatter::class
-        );
-
         $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);
-        $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
 
         $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
         $this->app->register(EmailArrayValidatorServiceProvider::class);
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
-        $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
 
 //        Auth::provider('enrollmentLogin', function ($app, array $config) {
 //            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
 //        });
+
+        if ($this->app->environment('local', 'review', 'testing')) {
+            app(Factory::class)->load(base_path('CircleLinkHealth/Customer/Database/Factories'));
+        }
     }
 }

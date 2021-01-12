@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\GenerateNurseDailyReportCsv;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
@@ -49,7 +50,7 @@ class QueueGenerateNurseDailyReport extends Command
                 $forDate = Carbon::parse($forDate);
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
-                die(1);
+                exit(1);
             }
         } else {
             //CPM-404
@@ -65,6 +66,6 @@ class QueueGenerateNurseDailyReport extends Command
         }
 
         GenerateNurseDailyReportCsv::dispatch($forDate)
-            ->onQueue('high');
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
     }
 }

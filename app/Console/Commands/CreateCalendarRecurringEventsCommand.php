@@ -6,10 +6,11 @@
 
 namespace App\Console\Commands;
 
-use App\FullCalendar\NurseCalendarService;
-use App\Jobs\CreateCalendarRecurringEventsJob;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
+use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Illuminate\Console\Command;
 
 class CreateCalendarRecurringEventsCommand extends Command
@@ -76,7 +77,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                         ];
 
                         $recurringEventsToSave = $this->service->createRecurringEvents($nurseInfoId, $windowData);
-                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
+                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
                     });
             });
 

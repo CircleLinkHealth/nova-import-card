@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\CCDViewer;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaStream;
 
@@ -26,17 +26,6 @@ class CCDViewerController extends Controller
     public function create()
     {
         return view('CCDViewer.old-viewer');
-    }
-
-    public function downloadXml(Request $request, $ccdaId)
-    {
-        $ccda = Ccda::withTrashed()
-            ->with('media')
-            ->findOrFail($ccdaId);
-
-        $media = $ccda->getMedia('ccd')->first();
-
-        return $media ? $media : abort(400, 'XML was not found.');
     }
 
     public function exportAllCcds($userId)

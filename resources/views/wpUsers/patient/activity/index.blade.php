@@ -369,10 +369,10 @@
 
                             </script>
                         @endpush
-                        @if( (auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
+                        @if( (auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                           header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y'); ?>',
+                                           header:'CarePlanManager.com - Patient Activity Report <?php echo date('M d,Y'); ?>',
                                            orientation:'landscape',
                                            autowidth:true,
                                            columns:{

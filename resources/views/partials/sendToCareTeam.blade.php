@@ -85,11 +85,11 @@
             <div class="col-sm-12 no-padding-left no-padding-right">
                 @if($shouldShowForwardNoteSummaryBox)
                     <div class="col-sm-1 no-padding-left custom-radio">
-                        <input id='fyi' type="radio" name="summary_type" value="{{\App\Note::SUMMARY_FYI}}">
+                        <input id='fyi' type="radio" name="summary_type" value="{{\CircleLinkHealth\SharedModels\Entities\Note::SUMMARY_FYI}}">
                         <label for="fyi"><span> </span>FYI</label>
                     </div>
                     <div class="col-sm-11 no-padding-left custom-radio">
-                        <input id="to-do" type="radio" name="summary_type" value="{{\App\Note::SUMMARY_TODO}}">
+                        <input id="to-do" type="radio" name="summary_type" value="{{\CircleLinkHealth\SharedModels\Entities\Note::SUMMARY_TODO}}">
                         <label for="to-do"><span> </span>To-do</label>
                         <br>
                     </div>

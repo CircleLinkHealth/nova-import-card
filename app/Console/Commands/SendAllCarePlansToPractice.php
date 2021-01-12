@@ -73,7 +73,7 @@ class SendAllCarePlansToPractice extends Command
 
     protected function getArguments()
     {
-        return  [
+        return [
             ['practice_id',
                 InputArgument::REQUIRED,
                 'The practice id (numeric).', ],

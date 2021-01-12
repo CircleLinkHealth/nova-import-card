@@ -293,7 +293,7 @@ $lifestyles = $data['lifestyles'];
 <!-- /LIFESTYLES -->
 
 
-<div class="patient-info__subareas pb-before">
+<div class="patient-info__subareas">
     <div class="row">
         <div class="col-xs-12">
             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
@@ -307,15 +307,8 @@ $lifestyles = $data['lifestyles'];
 </div>
 
 <!-- INSTRUCTIONS -->
-<div class="patient-info__subareas pb-before">
+<div class="patient-info__subareas">
     <div class="row">
-        <div class="col-xs-12 print-only">
-            <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">
-                Care
-                Plan
-                Part 2</h1>
-        </div>
-
         <div class="col-xs-12">
             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Follow these
                 Instructions:</h2>
@@ -337,12 +330,7 @@ $lifestyles = $data['lifestyles'];
 
 
 <!-- OTHER INFORMATION -->
-<div class="row pb-before">
-    <div class="col-xs-12 print-only">
-        <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care
-            Plan
-            Part 3</h1>
-    </div>
+<div class="row">
     <div class="col-xs-12">
         <h1 class="patient-summary__title--secondary patient-summary--careplan"><p>Other
                 information</p>
@@ -359,7 +347,7 @@ $lifestyles = $data['lifestyles'];
         </div>
         <div class="col-xs-12">
             @if($careplan['allergies'])
-                <p><?= nl2br($careplan['allergies']); ?></p>
+                <p><?php echo nl2br($careplan['allergies']); ?></p>
             @else
                 <p>No instructions at this time</p>
             @endif
@@ -377,7 +365,7 @@ $lifestyles = $data['lifestyles'];
         </div>
         <div class="col-xs-12">
             @if($careplan['social'])
-                <p><?= nl2br($careplan['social']); ?></p>
+                <p><?php echo nl2br($careplan['social']); ?></p>
             @else
                 <p>No instructions at this time</p>
             @endif
@@ -474,7 +462,7 @@ $lifestyles = $data['lifestyles'];
             <?php $careplan['other']; ?>
 
             @if($careplan['other'])
-                <p><?= nl2br($careplan['other']); ?></p>
+                <p><?php echo nl2br($careplan['other']); ?></p>
             @else
                 <p>No instructions at this time</p>
             @endif

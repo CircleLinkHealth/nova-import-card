@@ -32,16 +32,6 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    'twilio' => [
-        'enabled'          => env('TWILIO_ENABLED', false),
-        'account_sid'      => env('TWILIO_SID', 'somerandomstring'),
-        'auth_token'       => env('TWILIO_TOKEN', 'somerandomstring'),
-        'from'             => env('TWILIO_FROM', 'somerandomstring'),
-        'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
-        'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
-        'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
-        'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
-    ],
 
     'authy' => [
         'api_url' => env('AUTHY_API_URL', 'https://api.authy.com'),
@@ -65,19 +55,6 @@ return [
         'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
     ],
 
-    'emr-direct' => [
-        'user'                 => env('EMR_DIRECT_USER'),
-        'test_user'            => env('EMR_DIRECT_TEST_USER'),
-        'password'             => env('EMR_DIRECT_PASSWORD'),
-        'conc-keys-pem-path'   => env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
-        'pass-phrase'          => env('EMR_DIRECT_PASS_PHRASE'),
-        'server-cert-pem-path' => env('EMR_DIRECT_SERVER_CERT_PEM_PATH'),
-        'mail-server'          => env('EMR_DIRECT_MAIL_SERVER'),
-        'port'                 => env('EMR_DIRECT_PORT'),
-        'client-cert-filename' => env('EMR_CLIENT_CERT_FILENAME'),
-        'server-cert-filename' => env('EMR_SERVER_CERT_FILENAME'),
-    ],
-
     'athena' => [
         'key'     => env('ATHENA_KEY'),
         'secret'  => env('ATHENA_SECRET'),
@@ -89,11 +66,28 @@ return [
         'report_url' => env('AWV_URL', '').env('AWV_REPORT_URI', ''),
     ],
 
-    'phaxio' => [
-        'host' => 'https://api.phaxio.com/v2.1/',
-
-        'key'    => env('PHAXIO_KEY', null),
-        'secret' => env('PHAXIO_SECRET', null),
+    'serverless-pdf-generator' => [
+        'api-url'         => env('SERVERLESS_PDF_GENERATOR_API_URL'),
+        'api-key'         => env('SERVERLESS_PDF_GENERATOR_API_KEY'),
+        'default-options' => [
+            'format' => 'Letter',
+            'scale'  => 0.8,
+            'margin' => [
+                'top'    => '1cm',
+                'bottom' => '1cm',
+                'left'   => '1cm',
+                'right'  => '1cm',
+            ],
+        ],
+        'mail-vendor-envelope-options' => [
+            'scale'  => 1.0,
+            'margin' => [
+                'top'    => '4mm',
+                'bottom' => '25mm',
+                'left'   => '25mm',
+                'right'  => '0.5mm',
+            ],
+        ],
     ],
 
     'tester' => [

@@ -1,27 +1,33 @@
+@php
+    $url = rtrim(url('/'),'/').'/';
+@endphp
 <!DOCTYPE html>
 <head>
+    <script type="text/javascript">
+        var APP_URL = {!! json_encode($url) !!}
+    </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="content-language" content="en-US"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="base-url" content="{{ url('/') }}">
+    <meta name="base-url" content="{{ $url }}">
     <base href="{{asset('')}}">
 
     <title>CarePlanManager - @yield('title')</title>
 
-    <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/patientsearch.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
           integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
 
-    <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 
     @if (Route::is('patientCallManagement.v2.index') || \Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
-        <link href="{{ mix('/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet">
     @endif
 
-    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     @if(!isset($isPdf))
         <link rel="stylesheet"
@@ -38,7 +44,7 @@
         <link rel="stylesheet" type="text/css"
               href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
-        <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
+        <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     @endif
     <style>
@@ -64,7 +70,7 @@
     </style>
     @stack('styles')
     @include('modules.raygun.partials.real-user-monitoring')
-    @include('partials.new-relic-tracking')
+    @include('core::partials.new-relic-tracking')
 </head>
 <body>
 
@@ -81,26 +87,26 @@
 </div> <!-- end #app -->
 
 @if(!isset($isPdf))
-    @include('partials.footer')
+    @include('footer')
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
-    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
 @include('partials.providerUItimer')
 @stack('prescripts')
 
-<script type="text/javascript" src="{{mix('compiled/js/app-provider-ui.js')}}"></script>
-<script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
+<script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
         integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 @stack('scripts')
 
-<script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
+<script src="{{asset('js/prevent-multiple-submits.js')}}"></script>
 <script>
     $(function () {
         try {
@@ -168,7 +174,7 @@
     @endif
 @endauth
 
-@include('partials.sentry-js')
+@include('core::partials.sentry-js')
 </body>
 
 </html>

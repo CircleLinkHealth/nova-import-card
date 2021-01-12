@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class FillEnrolleesPhonesFromElJobPatDemos extends Command

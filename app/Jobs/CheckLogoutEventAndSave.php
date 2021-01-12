@@ -6,15 +6,16 @@
 
 namespace App\Jobs;
 
-use App\LoginLogout;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CheckLogoutEventAndSave implements ShouldQueue
+class CheckLogoutEventAndSave implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

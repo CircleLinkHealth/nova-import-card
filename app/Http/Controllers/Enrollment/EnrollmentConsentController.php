@@ -6,12 +6,9 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\EnrolleeView;
-use App\Filters\EnrolleeFilters;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\EnrolleeCsvResource;
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrollmentConsentController extends Controller
@@ -27,55 +24,6 @@ class EnrollmentConsentController extends Controller
         }
 
         return view('enrollment-consent.create', ['enrollee' => $enrollee]);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function index(Request $request, EnrolleeFilters $filters)
-    {
-        $fields = ['*'];
-
-        $byColumn  = $request->get('byColumn');
-        $query     = $request->get('query');
-        $limit     = $request->get('limit');
-        $orderBy   = $request->get('orderBy');
-        $ascending = $request->get('ascending');
-        $page      = $request->get('page');
-
-        $data = EnrolleeView::filter($filters)->select($fields);
-
-        $count = $data->count();
-
-        $data->limit($limit)
-            ->skip($limit * ($page - 1));
-
-        $now = Carbon::now()->toDateString();
-
-        if (isset($orderBy)) {
-            $direction = 1 == $ascending
-                ? 'ASC'
-                : 'DESC';
-            $data->orderBy($orderBy, $direction);
-        }
-
-        $filtersInput = $filters->filters();
-
-        if ($filters->isCsv()) {
-            return EnrolleeCsvResource::collection($data->paginate($filtersInput['rows']));
-        }
-
-        $results = $data->get()->toArray();
-
-        return [
-            'data'  => $results,
-            'count' => $count,
-        ];
-    }
-
-    public function makeEnrollmentReport()
-    {
-        return view('admin.reports.enrollment.enrollment-list');
     }
 
     public function store(Request $request)

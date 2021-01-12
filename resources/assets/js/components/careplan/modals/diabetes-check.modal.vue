@@ -21,7 +21,7 @@
 </template>
 
 <script>
-    import Modal from '../../../admin/common/modal'
+    import Modal from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/common/modal'
     import {Event} from 'vue-tables-2'
 
     export default {

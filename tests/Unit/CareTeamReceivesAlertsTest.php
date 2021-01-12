@@ -9,8 +9,8 @@ namespace Tests\Unit;
 use App\Traits\SetupTestCustomerTrait;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Faker\Factory;
-use Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class CareTeamReceivesAlertsTest extends CustomerTestCase

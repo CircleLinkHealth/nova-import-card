@@ -28,7 +28,7 @@
                         Add New Practice
                     </div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         {!! Form::open(array('url' => route('saas-admin.practices.store', array()), 'class' => 'form-horizontal')) !!}
 

@@ -23,7 +23,7 @@
                 <div class="main-form-container col-lg-10 col-lg-offset-1">
                     <div class="row">
                         <div class="col-sm-2">
-                            <h4 class="time-report__month"><?= date('F Y'); ?></h4>
+                            <h4 class="time-report__month"><?php echo date('F Y'); ?></h4>
                         </div>
                         <div class="col-sm-10">
                         </div>
@@ -42,7 +42,7 @@
                             <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name'
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                            @if( (auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
+                            @if( (auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                                 <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
         header:'CarePlanManager.com - Patient CarePlan Print List',

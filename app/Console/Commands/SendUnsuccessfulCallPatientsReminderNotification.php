@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\PatientUnsuccessfulCallNotification;
-use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 

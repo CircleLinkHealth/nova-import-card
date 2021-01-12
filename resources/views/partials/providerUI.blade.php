@@ -8,13 +8,13 @@
             @include('partials.providerUI.patientnav')
         @endif
 
-        @if(!empty($patient->id) && ((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.create')) || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))))
+        @if(!empty($patient->id) && ((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.create')) || (auth()->user()->isCareCoach() && app(CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))))
             @include('partials.fab')
         @endif
     @endif
 
     <open-modal></open-modal>
-    <notifications ref="globalNotification"></notifications>
+    <notifications-dropdown ref="globalNotification"></notifications-dropdown>
 
     @yield('content')
 

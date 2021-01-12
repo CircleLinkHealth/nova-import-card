@@ -8,10 +8,10 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Notifications\InvoiceBeforePayment;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Console\Command;
 
 class SendCareCoachApprovedMonthlyInvoices extends Command

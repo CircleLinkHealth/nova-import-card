@@ -157,7 +157,7 @@
                 </ul>
                 <?php
 
-                $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
+                $ccdProblemService = app(CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService::class);
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
@@ -217,81 +217,6 @@
         </div>
     </div>
 </div>
-
-
-@push('styles')
-    <style>
-
-        input[type=checkbox]:disabled + label,
-        input[type=radio]:disabled + label {
-            cursor: default;
-            color: #5b5b5b
-        }
-
-        input[type=radio]:checked:disabled + label span {
-            cursor: default;
-            background: url(../img/ui/radio-active-disabled.png) left top no-repeat;
-        }
-
-        input[type=checkbox]:checked:disabled + label span {
-            cursor: default;
-            background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
-        }
-
-        .color-grey {
-            color: #7b7d81;
-        }
-
-        .color-green {
-            color: #47beab;
-        }
-
-        .load-hidden-bhi {
-            display: none;
-        }
-
-        @-webkit-keyframes bounce {
-            0% {
-                transform: scale(1, 1) translate(0px, 0px);
-            }
-
-            30% {
-                transform: scale(1, 0.8) translate(0px, 10px);
-            }
-
-            75% {
-                transform: scale(1, 1.1) translate(0px, -25px);
-            }
-
-            100% {
-                transform: scale(1, 1) translate(0px, 0px);
-            }
-        }
-
-        .bounce {
-            -webkit-animation: bounce 0.65s 4;
-        }
-
-        .bhi-tooltip {
-            display: none;
-            z-index: 9999999;
-            position: absolute;
-            border: 1px solid #333;
-            background-color: #5cc0dd;
-            border-radius: 5px;
-            padding: 10px;
-            color: #fff;
-            font-size: 12px;
-        }
-
-        .bhi-problem {
-            color: #5cc0dd !important;
-            font-weight: bolder;
-        }
-
-    </style>
-
-@endpush
 
 @push('scripts')
     <script>

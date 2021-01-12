@@ -6,7 +6,7 @@
 
 namespace Tests\Concerns\TwilioFake;
 
-use CircleLinkHealth\Core\TwilioInterface;
+use CircleLinkHealth\TwilioIntegration\Services\TwilioInterface;
 use NotificationChannels\Twilio\TwilioMessage;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Log\LoggerInterface;

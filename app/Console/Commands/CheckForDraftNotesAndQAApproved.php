@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\Note;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Console\Command;
 
 class CheckForDraftNotesAndQAApproved extends Command

@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ResetAssignedCareAmbassadorsFromEnrollees;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Console\Command;
 
 class QueueResetAssignedCareAmbassadorsFromEnrollees extends Command
@@ -39,6 +40,6 @@ class QueueResetAssignedCareAmbassadorsFromEnrollees extends Command
      */
     public function handle()
     {
-        ResetAssignedCareAmbassadorsFromEnrollees::dispatch()->onQueue('low');
+        ResetAssignedCareAmbassadorsFromEnrollees::dispatch()->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 }

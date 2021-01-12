@@ -6,13 +6,13 @@
 
 namespace App\Console\Commands;
 
-use App\DirectMailMessage;
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
-use App\Services\PhiMail\Incoming\Handlers\Pdf;
-use App\Services\PhiMail\Incoming\Handlers\XML;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Handlers\Pdf;
+use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Handlers\XML;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -173,7 +173,7 @@ class UPG0506Demo extends Command
             [
                 'message_id'      => Str::uuid(),
                 'from'            => $this->argument('providerDm') ?: 'drraph@upg.ssdirect.aprima.com',
-                'to'              => config('services.emr-direct.user'),
+                'to'              => config('core.services.emr-direct.user'),
                 'body'            => 'This is a demo message.',
                 'num_attachments' => collect([$this->option('ccd'), $this->option('pdf')])->filter()->count(),
             ]

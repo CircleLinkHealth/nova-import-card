@@ -59,9 +59,6 @@ mix.webpackConfig(webpackConfig);
  * CSS
  *
  */
-mix.combine([
-    'resources/assets/sass/css/provider/dashboard.css',
-], 'public/compiled/css/provider-dashboard.css');
 
 
 /**
@@ -70,7 +67,6 @@ mix.combine([
  *
  */
 
-/** start fixing issue 688 */
 mix.combine([
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/jquery-ui.js',
@@ -81,63 +77,23 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
 ], 'public/compiled/js/issue-688.js');
-/** end fixing issue 688 */
 
-/** start fixing admin-ui */
-mix.combine([
-    'bower_components/jquery/dist/jquery.js',
-    'bower_components/jquery-ui/jquery-ui.js',
-    'bower_components/jquery-idletimer/dist/idle-timer.js',
-    'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
-    'bower_components/select2/dist/js/select2.js',
-    'bower_components/bootstrap/dist/js/bootstrap.js'
-], 'public/compiled/js/admin-ui.js');
-/** end fixing admin-ui */
-
-//apps
-mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps();
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
-mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-enrollment-ui.js', 'public/compiled/js').sourceMaps();
 
-const walkSync = function (dir, fileList) {
-    const files = fs.readdirSync(dir);
-    fileList = fileList || [];
-    files.forEach(function (file) {
-        if (fs.statSync(path.join(dir, file)).isDirectory()) {
-            fileList = walkSync(path.join(dir, file), fileList);
-        } else {
-            fileList.push(path.join(dir, file));
-        }
+if (mix.inProduction()) {
+    const ASSET_URL = process.env.ASSET_URL + "/";
+
+    mix.webpackConfig(webpack => {
+        return {
+            plugins: [
+                new webpack.DefinePlugin({
+                    "process.env.ASSET_PATH": JSON.stringify(ASSET_URL)
+                })
+            ],
+            output: {
+                publicPath: ASSET_URL
+            }
+        };
     });
-    return fileList;
-};
-const allPublicFiles = walkSync('public');
-const toVersion = [];
-allPublicFiles.forEach((fullPath) => {
-
-    const dirName = path.dirname(fullPath);
-
-    //looking for compiled folder
-    if (dirName.indexOf('compiled') > -1) {
-        //we assume this file is already processed and ignore
-        return;
-    }
-
-    const fileName = path.basename(fullPath);
-
-    if (fileName.indexOf('chunk-') > -1) {
-        //we assume this file is already processed and ignore
-        return;
-    }
-
-
-    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico", ".svg", ".json"].includes(path.extname(fullPath))) {
-        toVersion.push(fullPath);
-    }
-
-});
-mix
-    .sourceMaps()
-    .version(toVersion);
+}

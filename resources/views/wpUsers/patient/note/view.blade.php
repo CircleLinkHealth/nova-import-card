@@ -57,7 +57,7 @@
 
     <div class="row" style="margin-top:30px;">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
-            @include('errors.errors')
+            @include('core::partials.errors.messages')
         </div>
         <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
@@ -194,7 +194,7 @@
                             <div class="new-note-item">
                                 <div class="form-block col-md-12">
                                     <div class="row">
-                                        @if((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.send'))|| (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
+                                        @if((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.send'))|| (auth()->user()->isCareCoach() && app(CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
                                         <div class="new-note-item">
                                                 @include('partials.sendToCareTeam')
                                             </div>

@@ -7,22 +7,15 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CarePlanPrintListView;
-use App\Contracts\DirectMail;
-use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
-use App\Http\Requests\DmCarePlanToBillingProviderRequest;
 use App\Http\Requests\PatientPhonesRequest;
 use App\Jobs\GeneratePatientsCarePlans;
-use App\Repositories\PatientReadRepository;
-use App\Services\CarePlanGeneratorService;
-use App\Services\CareplanService;
-use App\Services\PatientService;
 use Auth;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -31,11 +24,16 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
+use CircleLinkHealth\SharedModels\Services\CarePlanGeneratorService;
+use CircleLinkHealth\SharedModels\Services\CareplanService;
+use CircleLinkHealth\SharedModels\Services\PatientService;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -45,16 +43,13 @@ class PatientCareplanController extends Controller
 {
     private $formatter;
     private $patientReadRepository;
-    private $pdfService;
 
     public function __construct(
         ReportFormatter $formatter,
-        PatientReadRepository $patientReadRepository,
-        PdfService $pdfService
+        PatientReadRepository $patientReadRepository
     ) {
         $this->formatter             = $formatter;
         $this->patientReadRepository = $patientReadRepository;
-        $this->pdfService            = $pdfService;
     }
 
     public function createPatientDemographics(Request $request)
@@ -96,30 +91,6 @@ class PatientCareplanController extends Controller
         return response()->json([
             'message' => 'Phone Number Has Been Deleted!',
         ], 200);
-    }
-
-    public function forwardToBillingProviderViaDM(DmCarePlanToBillingProviderRequest $request, DirectMail $dm)
-    {
-        $patient = User::ofType('participant')
-            ->with([
-                'carePlan',
-                'primaryPractice.settings',
-            ])
-            ->find($patientId = $request->input('patient_id'));
-
-        if ( ! $patient->carePlan) {
-            return "Patient with ID $patientId does not have a CarePlan";
-        }
-
-        $dm = $dm->send(
-            $request->input('dm_address'),
-            $patient->carePlan->toPdf(),
-            now()->toDateTimeString()." - Patient ID $patientId Care Plan.pdf",
-            null,
-            $patient
-        );
-
-        dd($dm);
     }
 
     public function getPatientAgentContact(PatientPhonesRequest $request)
@@ -288,6 +259,7 @@ class PatientCareplanController extends Controller
             return app(CarePlanGeneratorService::class)->renderForUser(auth()->id(), $userIds[0], $letter);
         }
 
+        Log::debug('Dispatching GeneratePatientsCarePlans');
         GeneratePatientsCarePlans::dispatch(auth()->id(), now(), $userIds, $letter);
 
         return response()->json('The Care Plan(s) are being generated. You will receive an email when they are ready!');

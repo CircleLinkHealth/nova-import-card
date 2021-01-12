@@ -16,13 +16,9 @@
                          v-html="show(notification)">
                     </div>
                 </div>
-                <div class="dropdown-footer"
-                     @click="seeAll()">
-                    <a>
-                        See All
-                    </a>
+                <div class="dropdown-footer text-center" @click="redirectToSeeAll">
+                    See All
                 </div>
-                <!---->
             </div>
         </div>
     </div>
@@ -30,8 +26,7 @@
 
 
 <script>
-// import PusherSeeAllNotifications from './pusher-see-all-notifications';
-import LoaderComponent from './loader'
+import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
 
 export default {
     name: "pusher-notifications",
@@ -53,7 +48,7 @@ export default {
             component: '',
             isClicked: false,
             notificationsFromDbCount: [],
-            waiting: false,
+            waiting: false
         }
     },
     computed: {
@@ -96,11 +91,9 @@ export default {
         redirectTo(notification) {
             window.location.href = notification.data.redirect_link;
         },
-
-        seeAll() {
-            window.location.href = '/see-all-notifications'
-        },
-
+        redirectToSeeAll() {
+            window.location.href = document.querySelector('meta[name="base-url"]').content+'see-all-notifications'
+        }
     },
 
     created() {

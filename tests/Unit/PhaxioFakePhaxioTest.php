@@ -6,9 +6,10 @@
 
 namespace Tests\Unit;
 
-use App\Contracts\FaxableNotification;
-use App\Notifications\SendSms;
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use CircleLinkHealth\TwilioIntegration\Notifications\SendSms;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -18,7 +19,6 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\PhaxioFake\Phaxio;
 use Tests\Concerns\PhaxioFake\WithPhaxioMock;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\CustomerTestCase;
 
 class PhaxioFakeTest extends CustomerTestCase
 {

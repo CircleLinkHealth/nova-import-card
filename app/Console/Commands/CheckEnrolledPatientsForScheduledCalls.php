@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Calls\SchedulerService;
 use App\User;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Console\Command;
 
 class CheckEnrolledPatientsForScheduledCalls extends Command

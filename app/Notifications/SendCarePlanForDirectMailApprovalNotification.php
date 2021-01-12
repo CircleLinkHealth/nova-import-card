@@ -6,11 +6,11 @@
 
 namespace App\Notifications;
 
-use App\Contracts\DirectMailableNotification;
-use App\Notifications\Channels\DirectMailChannel;
-use App\PasswordlessLoginToken;
-use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
+use CircleLinkHealth\Core\DTO\SimpleNotification;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\PasswordlessLoginToken;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;

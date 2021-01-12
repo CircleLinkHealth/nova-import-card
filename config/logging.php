@@ -40,28 +40,35 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
+            'channels'          => ['vapor'],
+            'ignore_exceptions' => true,
+        ],
+
+        'vapor' => [
+            'driver'            => 'stack',
             'channels'          => ['stderr'],
-            'ignore_exceptions' => false,
+            'level'             => env('APP_LOG_LEVEL', \Monolog\Logger::ALERT),
+            'ignore_exceptions' => true,
         ],
 
         'single' => [
             'driver' => 'single',
             'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::ALERT),
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::ALERT),
             'days'   => 14,
         ],
 
         'database' => [
             'driver'           => 'custom',
             'via'              => danielme85\LaravelLogToDB\LogToDbHandler::class,
-            'model'            => \App\DatabaseLog::class, //Your own optional custom model
-            'level'            => env('APP_LOG_LEVEL', 'debug'),
+            'model'            => \CircleLinkHealth\SharedModels\Entities\DatabaseLog::class, //Your own optional custom model
+            'level'            => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'name'             => 'database',
             'connection'       => 'default',
             'collection'       => 'log',
@@ -92,7 +99,7 @@ return [
 
         'papertrail' => [
             'driver'       => 'monolog',
-            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::ALERT),
             'handler'      => SyslogUdpHandler::class,
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
@@ -111,12 +118,12 @@ return [
 
         'syslog' => [
             'driver' => 'syslog',
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::ALERT),
         ],
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::ALERT),
         ],
 
         'sentry' => [

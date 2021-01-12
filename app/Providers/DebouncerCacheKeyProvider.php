@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Contracts\HasUniqueIdentifierForDebounce;
+use CircleLinkHealth\CcmBilling\Contracts\HasUniqueIdentifierForDebounce;
 use Closure;
 use Mpbarlow\LaravelQueueDebouncer\Contracts\CacheKeyProvider;
 use ReflectionFunction;

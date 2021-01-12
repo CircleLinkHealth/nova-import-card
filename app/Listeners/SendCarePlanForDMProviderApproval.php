@@ -7,15 +7,16 @@
 namespace App\Listeners;
 
 use App\AppConfig\DMDomainForAutoApproval;
-use App\Events\CarePlanWasRNApproved;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
-use App\Services\CarePlanApprovalRequestsReceivers;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Events\CarePlanWasRNApproved;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Services\CarePlanApprovalRequestsReceivers;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendCarePlanForDMProviderApproval implements ShouldQueue
+class SendCarePlanForDMProviderApproval implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

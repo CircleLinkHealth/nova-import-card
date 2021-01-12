@@ -7,16 +7,17 @@
 namespace App\Jobs;
 
 use App\Notifications\WeeklyPracticeReport;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\SalesByPracticeReport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
 
-class EmailWeeklyPracticeReport implements ShouldQueue
+class EmailWeeklyPracticeReport implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
     use Queueable;

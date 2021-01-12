@@ -6,13 +6,13 @@
 
 namespace App\Algorithms\Calls;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 
 //READ ME:
 /*

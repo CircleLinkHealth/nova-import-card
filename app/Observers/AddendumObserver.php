@@ -6,12 +6,12 @@
 
 namespace App\Observers;
 
-use App\Call;
-use App\Models\Addendum;
-use App\Note;
 use App\Notifications\AddendumCreated;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Addendum;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Support\Facades\Notification;
 
 class AddendumObserver

@@ -6,11 +6,12 @@
 
 namespace App\Listeners;
 
-use App\Events\PdfableCreated;
+use CircleLinkHealth\Customer\Events\PdfableCreated;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class CreateAndHandlePdfReport implements ShouldQueue
+class CreateAndHandlePdfReport implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

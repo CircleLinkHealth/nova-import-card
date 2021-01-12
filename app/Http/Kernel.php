@@ -6,7 +6,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AdminOrPracticeStaff;
 use App\Http\Middleware\CareAmbassadorAPI;
 use App\Http\Middleware\CheckCarePlanMode;
@@ -14,10 +13,10 @@ use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckPatientUserData;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnrollmentCenter;
-use App\Http\Middleware\LogoutIfAccessDisabled;
-use App\Http\Middleware\PatientProgramSecurity;
-use App\Http\Middleware\SentryContext;
 use App\Http\Middleware\VerifyCsrfToken;
+use CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled;
+use CircleLinkHealth\Core\Http\Middleware\SentryContext;
+use CircleLinkHealth\Customer\Http\Middleware\PatientProgramSecurity;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -104,7 +103,6 @@ class Kernel extends HttpKernel
         'ability'                => CerberusAbility::class,
         'permission'             => CerberusPermission::class,
         'patientProgramSecurity' => PatientProgramSecurity::class,
-        'providerDashboardACL'   => ProviderDashboardACL::class,
         'role'                   => CerberusRole::class,
         'verify.invite'          => CheckOnboardingInvite::class,
         'check.careplan.mode'    => CheckCarePlanMode::class,

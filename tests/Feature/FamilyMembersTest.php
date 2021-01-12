@@ -8,8 +8,8 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Family;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Illuminate\Database\Eloquent\Collection;
-use Tests\CustomerTestCase;
 
 class FamilyMembersTest extends CustomerTestCase
 {

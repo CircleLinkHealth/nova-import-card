@@ -6,11 +6,11 @@
 
 namespace App\Listeners;
 
-use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Support\Collection;
 
 class PatientContactWindowUpdated

@@ -8,10 +8,10 @@ namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
-use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
@@ -27,7 +27,7 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     private $nurse;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 

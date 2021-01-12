@@ -9,8 +9,10 @@ namespace App\Console\Commands;
 use App\Jobs\GenerateOpsDailyPracticeReport;
 use App\Jobs\GenerateOpsDailyReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 
 class QueueGenerateOpsDailyReport extends Command
 {
@@ -56,17 +58,15 @@ class QueueGenerateOpsDailyReport extends Command
         $length      = count($practicesIds);
         $jobsToChain = [];
 
-        //start from 1 - exclude first array entry because this is going to be the initial job on which we will chain all others.
-        for ($i = 1; $i < $length; ++$i) {
+        for ($i = 0; $i < $length; ++$i) {
             $jobsToChain[] = new GenerateOpsDailyPracticeReport($practicesIds[$i], $endDate);
         }
         //add last job to gather all data - upload report to s3 - notify etc.
         $jobsToChain[] = new GenerateOpsDailyReport($practicesIds, $endDate);
 
-        GenerateOpsDailyPracticeReport::withChain(
-            $jobsToChain
-        )
-            ->dispatch($practicesIds[0], $endDate)
-            ->onQueue('high');
+        Bus::chain($jobsToChain)
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
+            ->dispatch();
+        $this->info("Ops Dashboard Jobs dispatched for date:{$endDate}");
     }
 }

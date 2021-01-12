@@ -7,13 +7,13 @@
 namespace App\Console\Commands;
 
 use App\Notifications\SendAuditReport;
-use App\Reports\PatientDailyAuditReport;
-use App\Services\Phaxio\PhaxioFaxService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Core\Services\Phaxio\PhaxioFaxService;
 use CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -56,7 +56,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                 'primaryPractice.settings',
             ])
             ->whereHas('primaryPractice.notificationContactPreferences', function ($q) {
-                return             $q->where('notification', SendAuditReport::class);
+                return $q->where('notification', SendAuditReport::class);
             })
             ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)

@@ -6,18 +6,18 @@
 
 namespace Tests\Feature;
 
-use App\Call;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
-use App\Notifications\PatientUnsuccessfulCallNotification;
-use App\NotificationsExclusion;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
+use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\CustomerTestCase;
 
 class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 {

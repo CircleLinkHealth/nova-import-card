@@ -9,9 +9,9 @@ namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 use App\Contracts\SelfEnrollmentLetter;
 use App\Http\Controllers\Enrollment\PracticeLetterHelper\LettersHelper;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
-use App\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\ProviderSignature;
 use Illuminate\Database\Eloquent\Model;
 
 class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
@@ -85,7 +85,7 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
 
         $this->extraAddressValuesExists = ! empty(collect($this->extraAddressValues)->filter()->all());
 
-        return  $this->letterBladeView();
+        return $this->letterBladeView();
     }
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string

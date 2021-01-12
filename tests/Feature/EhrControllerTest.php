@@ -6,8 +6,8 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\EhrController;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\CpmAdmin\Http\Controllers\EhrController;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class EhrControllerTest extends CustomerTestCase
 {

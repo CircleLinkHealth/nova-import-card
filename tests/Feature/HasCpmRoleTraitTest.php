@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Role;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class HasCpmRoleTraitTest extends CustomerTestCase
 {

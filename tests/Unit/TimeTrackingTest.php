@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class TimeTrackingTest extends CustomerTestCase
 {

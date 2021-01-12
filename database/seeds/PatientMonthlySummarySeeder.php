@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Call;
-use App\Constants;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -70,8 +70,8 @@ class PatientMonthlySummarySeeder extends Seeder
             ],
             [
                 'month_year'             => now()->startOfMonth()->toDate(),
-                'total_time'             => Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS,
-                'ccm_time'               => Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS,
+                'total_time'             => CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS,
+                'ccm_time'               => CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS,
                 'bhi_time'               => 0,
                 'no_of_calls'            => 10,
                 'no_of_successful_calls' => 10,

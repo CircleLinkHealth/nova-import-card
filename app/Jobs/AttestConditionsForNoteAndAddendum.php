@@ -6,15 +6,16 @@
 
 namespace App\Jobs;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class AttestConditionsForNoteAndAddendum implements ShouldQueue
+class AttestConditionsForNoteAndAddendum implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

@@ -9,8 +9,6 @@ if (isset($patient) && ! empty($patient)) {
 
     $alreadyShown = [];
 }
-
-$authRoleName = auth()->user()->practiceOrGlobalRole()->name;
 ?>
 
 @if(!isset($isPdf))
@@ -77,7 +75,7 @@ $authRoleName = auth()->user()->practiceOrGlobalRole()->name;
                                             </ul>
                                         </div>
                                         <div class="row" style="margin-bottom: 5%;">
-                                            @include('errors.incompatibleBrowser')
+                                            @include('core::partials.errors.incompatibleBrowser')
                                         </div>
                                     </div>
                                 @endif

@@ -18,12 +18,14 @@
 
     <div id="app">
         <enrollment-dashboard
-                cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
+                cpm-caller-url="{{config('twilio-notification-channel.cpm-caller-url')}}"
                 cpm-token="{{$cpmToken}}"
-                :debug="{{json_encode(!isProductionEnv())}}">
+                :debug="{{json_encode(!isProductionEnv())}}"
+                cookie-img-url="{{asset('img/cookie.png')}}"
+        >
 
         </enrollment-dashboard>
     </div>
 
-    <script src="{{mix('compiled/js/app-enrollment-ui.js')}}"></script>
+    <script src="{{asset('compiled/js/app-enrollment-ui.js')}}"></script>
 @stop

@@ -1,14 +1,14 @@
-import store from "./store";
+import store from "../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store";
 
-require('./bootstrap');
+require('../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap');
 
 import 'es6-string-polyfills';
-import './prototypes/array.prototype';
+import '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/prototypes/array.prototype';
 import Vue from 'vue';
-import axios from './bootstrap-axios';
+import axios from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap-axios';
 import VueAxios from 'vue-axios';
-import EventBus from './admin/time-tracker/comps/event-bus';
-import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
+import EventBus from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus';
+import {BindWindowFocusChange, BindWindowVisibilityChange} from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/events/window.event'
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]');

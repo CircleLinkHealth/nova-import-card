@@ -6,8 +6,6 @@
 
 namespace Tests\Unit;
 
-use App\Call;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
@@ -21,9 +19,11 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 
 class BHIReconsentTest extends CustomerTestCase
 {

@@ -7,10 +7,10 @@
 namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 
 use App\Contracts\SelfEnrollmentLetter;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Illuminate\Database\Eloquent\Model;
 
 class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
@@ -76,7 +76,7 @@ class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfig
 
     public function letterSpecificView()
     {
-        return  $this->letterBladeView();
+        return $this->letterBladeView();
     }
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string

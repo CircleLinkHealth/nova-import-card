@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Services\AppointmentService;
-use App\Services\PatientService;
+use CircleLinkHealth\SharedModels\Services\AppointmentService;
+use CircleLinkHealth\SharedModels\Services\PatientService;
 
 class AppointmentController extends ApiController
 {

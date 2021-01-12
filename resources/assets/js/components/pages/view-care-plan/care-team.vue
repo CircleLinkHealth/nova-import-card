@@ -40,8 +40,8 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam} from '../../../store/actions'
-    import {patientCareTeam} from '../../../store/getters'
+    import {getPatientCareTeam} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions'
+    import {patientCareTeam} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/getters'
     import UpdateCarePerson from './update-care-person.vue'
     import DisableEditingMixin from '../../../components/careplan/mixins/disable-editing.mixin'
 

@@ -6,27 +6,34 @@
 
 namespace App\ValueObjects;
 
-use App\Contracts\CallHandler;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Arrayable;
 
 class CreateManualCallAfterNote implements Arrayable
 {
-    private CallHandler $callHandler;
-    /**
-     * @var User|User
-     */
-    private User $patient;
+    private ?User $patient;
+    private int $patientId;
+    private bool $reached;
 
-    /**
-     * CreateManualCallAfterNote constructor.
-     *
-     * @param mixed|string $lastCallStatus
-     */
-    public function __construct(User $patient, CallHandler $callHandler)
+    public function __construct(int $patientId, bool $reached)
     {
-        $this->patient     = $patient;
-        $this->callHandler = $callHandler;
+        $this->patient   = null;
+        $this->patientId = $patientId;
+        $this->reached   = $reached;
+    }
+
+    public static function fromArray(array $arr): CreateManualCallAfterNote
+    {
+        return new CreateManualCallAfterNote($arr['patientId'], $arr['reached']);
+    }
+
+    public static function fromString(string $str): CreateManualCallAfterNote
+    {
+        $arr = json_decode($str, true);
+
+        return self::fromArray($arr);
     }
 
     /**
@@ -34,11 +41,15 @@ class CreateManualCallAfterNote implements Arrayable
      */
     public function getCallHandler()
     {
-        return $this->callHandler;
+        return $this->reached ? new SuccessfulCall() : new UnsuccessfulCall();
     }
 
     public function getPatient(): User
     {
+        if (is_null($this->patient)) {
+            $this->patient = User::without(['roles', 'perms'])->find($this->patientId);
+        }
+
         return $this->patient;
     }
 
@@ -50,8 +61,8 @@ class CreateManualCallAfterNote implements Arrayable
     public function toArray()
     {
         return [
-            'callHandler' => $this->callHandler,
-            'patient'     => $this->patient,
+            'reached'   => $this->reached,
+            'patientId' => $this->patientId,
         ];
     }
 }

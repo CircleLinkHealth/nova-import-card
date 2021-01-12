@@ -6,18 +6,18 @@
 
 namespace App\Jobs;
 
-use App\Charts\OpsChart;
-use App\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\SharedModels\Services\OpsDashboardReport;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateOpsDailyReport implements ShouldQueue
+class GenerateOpsDailyReport implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -163,8 +163,6 @@ class GenerateOpsDailyReport implements ShouldQueue
             ->first()
             ->addMedia($path)
             ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
-
-        \Cache::forget(OpsChart::ADMIN_CHART_CACHE_KEY);
 
         if (isProductionEnv()) {
             sendSlackMessage(

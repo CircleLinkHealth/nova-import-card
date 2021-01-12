@@ -6,8 +6,9 @@
 
 namespace Tests\Unit;
 
-use App\Notifications\SendSms;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use CircleLinkHealth\TwilioIntegration\Notifications\SendSms;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -17,7 +18,6 @@ use NotificationChannels\Twilio\TwilioSmsMessage;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\Concerns\TwilioFake\WithTwilioMock;
-use Tests\CustomerTestCase;
 
 class TwilioFakeTest extends CustomerTestCase
 {

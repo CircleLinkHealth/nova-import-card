@@ -6,9 +6,6 @@
 
 namespace App\View\Composers;
 
-use App\CareAmbassadorLog;
-use App\Jobs\StoreTimeTracking;
-use App\Policies\CreateNoteForPatient;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
@@ -16,6 +13,8 @@ use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollectio
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
@@ -191,7 +190,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $record1->chargeable_service_id   = -1;
             $record1->chargeable_service_code = 'NONE';
             $record1->chargeable_service_name = 'NONE';
-            $record1->total_time              = optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+            $record1->total_time              = optional(\CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
             $chargeableServices               = new PatientChargeableSummaryCollection(collect([
                 new PatientChargeableSummary($record1),
             ]));

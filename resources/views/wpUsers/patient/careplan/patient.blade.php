@@ -1,6 +1,10 @@
 <?php
 
+use Illuminate\Support\Str;
+
 $user_info = [];
+$rawUrl    = Str::replaceLast('/', '', config('app.url'));
+$url       = substr($rawUrl, strpos($rawUrl, ':') + 1);
 ?>
 
 @extends('partials.providerUI')
@@ -347,11 +351,9 @@ $user_info = [];
 
                                                                 function populateBillingProviderDropdown(practiceId, locationId) {
                                                                     $('#provider_id_loader').removeClass('hide');
-                                                                    return $.ajax({
-                                                                        url: '/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
-                                                                        type: 'GET',
+                                                                    return $.get({
+                                                                        url: APP_URL+'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                         success: function (providers) {
-                                                                            console.log('practice:providers', providers)
                                                                             providers.forEach(function (provider) {
                                                                                 $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
                                                                             })
@@ -394,11 +396,9 @@ $user_info = [];
                                                             function populateLocationsDropdown(practiceId) {
                                                                 $('#preferred_contact_location_loader').removeClass('hide');
 
-                                                                return $.ajax({
-                                                                    url: '/api/practices/' + practiceId + '/locations',
-                                                                    type: 'GET',
+                                                                return $.get({
+                                                                    url: APP_URL+'api/practices/' + practiceId + '/locations',
                                                                     success: function (locations) {
-                                                                        console.log('practice:locations', locations)
                                                                         locations.forEach(function (location) {
                                                                             $('[name="preferred_contact_location"]').append($('<option />').val(location.id).text(location.name))
                                                                         })
@@ -413,11 +413,9 @@ $user_info = [];
 
                                                             function populateBillingProviderDropdown(practiceId, locationId) {
                                                                 $('#provider_id_loader').removeClass('hide');
-                                                                return $.ajax({
-                                                                    url: '/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
-                                                                    type: 'GET',
+                                                                return $.get({
+                                                                    url: APP_URL+'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                     success: function (providers) {
-                                                                        console.log('practice:providers', providers)
                                                                         providers.forEach(function (provider) {
                                                                             $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
                                                                         })
@@ -559,7 +557,6 @@ $user_info = [];
                                                             return;
                                                         }
 
-                                                        console.log(ccmStatus);
                                                         if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();

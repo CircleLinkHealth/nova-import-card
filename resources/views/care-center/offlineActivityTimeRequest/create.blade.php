@@ -15,7 +15,7 @@
     <div class="container">
         <div class="row" style="margin-top:60px;">
             <div class="col-md-12">
-                @include('errors.errors')
+                @include('core::partials.errors.errors')
             </div>
         </div>
     </div>

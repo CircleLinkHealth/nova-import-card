@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-// for heroku
 use CircleLinkHealth\Core\Config\CpmAppMySqlConfig;
 
+// for heroku
 if (getenv('DATABASE_URL')) {
     $pgsqlUrl = parse_url(getenv('DATABASE_URL'));
 

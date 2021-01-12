@@ -210,13 +210,13 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../app.config.js'
-    import modal from '../../shared/modal.vue'
+    import {rootUrl} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config.js'
+    import modal from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
-    import Loader from '../../../components/loader.vue';
+    import Loader from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader.vue';
     import VueSelect from 'vue-select';
     import CareDocumentBox from './comps/care-document-box';
-    import Errors from "../../src/Errors";
+    import Errors from "../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/Errors";
 
 
     let self;

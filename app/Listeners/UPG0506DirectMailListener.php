@@ -6,16 +6,17 @@
 
 namespace App\Listeners;
 
-use App\DirectMailMessage;
-use App\Services\PhiMail\Events\DirectMailMessageReceived;
-use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\UPG\UPGPdfCarePlan;
+use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Services\PhiMail\Incoming\Handlers\Pdf;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Str;
 
-class UPG0506DirectMailListener implements ShouldQueue
+class UPG0506DirectMailListener implements ShouldQueue, ShouldBeEncrypted
 {
     use InteractsWithQueue;
 

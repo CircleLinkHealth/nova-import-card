@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\CarePlanWasApproved;
-use App\Note;
-use App\Services\ProviderInfoService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\ProviderInfoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 
