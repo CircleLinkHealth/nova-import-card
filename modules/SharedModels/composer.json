@@ -1,0 +1,39 @@
+{
+    "name": "circlelinkhealth/shared-models-module",
+    "type": "laravel-module",
+    "description": "",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@cirlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\SharedModels\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "circlelinkhealth/eligibility-module": "^4.1"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "github-oauth": {
+            "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
+        }
+    }
+}
