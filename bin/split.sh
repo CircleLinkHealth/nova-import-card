@@ -8,12 +8,19 @@ CURRENT_BRANCH=$1
 function split()
 {
     if [ ! -z "$2" ] && [ -f "$PWD/apps/$2/monorepo-modules.txt" ]; then
-        if [ ! -d "$PWD/apps/$2/CircleLinkHealth" ]; then
-            mkdir "$PWD/apps/$2/CircleLinkHealth"
-        fi
         for DIR in $(cat "$PWD/apps/$2/monorepo-modules.txt")
         do
-            cp -rf "$PWD/modules/$DIR" "$PWD/apps/$2/CircleLinkHealth/"
+            APP_PATH="$PWD/apps/$2"
+
+            if [ -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
+                rm -rf "$APP_PATH/CircleLinkHealth/$DIR"
+            fi
+
+            if [ ! -d "$APP_PATH/CircleLinkHealth" ]; then
+                mkdir "$APP_PATH/CircleLinkHealth"
+            fi
+
+            cp -rf "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/"
         done
     fi
     SHA1=`splitsh-lite --prefix=$1`
