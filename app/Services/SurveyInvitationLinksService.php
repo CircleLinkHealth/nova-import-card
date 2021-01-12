@@ -12,6 +12,7 @@ use App\Survey;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Support\Facades\URL;
 use Waavi\UrlShortener\Facades\UrlShortener;
 
@@ -138,7 +139,7 @@ class SurveyInvitationLinksService
 
         //in case job runs synchronously
         try {
-            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('awv-high');
+            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
         } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
         }

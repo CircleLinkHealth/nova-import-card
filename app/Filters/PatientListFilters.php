@@ -9,6 +9,7 @@ namespace App\Filters;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use CircleLinkHealth\Core\Filters\QueryFilters;
 
 class PatientListFilters extends QueryFilters
 {

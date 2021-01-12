@@ -8,6 +8,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\GeneratePatientReportsJob;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Console\Command;
 
 class QueueGenerateProviderReports extends Command
@@ -74,7 +75,7 @@ class QueueGenerateProviderReports extends Command
 
         foreach ($this->patientIds as $patientId) {
             $this->info("Generating reports for $patientId");
-            GeneratePatientReportsJob::dispatch($patientId, $this->year, $debug)->onQueue('awv-high');
+            GeneratePatientReportsJob::dispatch($patientId, $this->year, $debug)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
         }
     }
 }
