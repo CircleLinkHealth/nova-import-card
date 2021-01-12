@@ -8,15 +8,14 @@ class HomeController extends Controller
 {
     public function showHomepage() {
         if (auth()->guest()) {
-            return 'lkjlkjlkj';
-//            return redirect()->route('login');
+            return redirect()->route('login');
         }
     }
 
     public function selfEnrollmentNova()
     {
         if (auth()->user()->isAdmin()){
-            return 'to nova';
+            return redirect(url("/superadmin/resources/self-enrollment-metrics-resources"));
         }
     }
 }
