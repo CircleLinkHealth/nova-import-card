@@ -5,5 +5,7 @@ set -x
 
 for SUBDOMAIN in $(ls "$PWD/apps/")
 do
-  ln -s "$PWD/modules/" "$PWD/apps/$SUBDOMAIN/CircleLinkHealth"
+    if [ ! -e "$PWD/apps/$SUBDOMAIN/CircleLinkHealth" ]; then
+      ln -s "$PWD/modules/" "$PWD/apps/$SUBDOMAIN/CircleLinkHealth"
+    fi
 done
