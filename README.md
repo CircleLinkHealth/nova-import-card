@@ -19,8 +19,8 @@ The monorepo was created by mirroring all CPM repositories into one, while maint
 ### Getting a feature on staging
 Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provdider App, and Admin App.
 
-### How to build the monorepo
-**This is only necessary when we want to create the monorepo from scratch. If the monorepo is already built, we just need to clone it and we can start working.** 
+### How to build the monorepo from scratch
+This is like a hard "reset". What it does is it will erase everything, and re-build the monorepo from scratch by mirroring each repository.
 
 Firstly, delete all apps and modules. 
 ```bash
