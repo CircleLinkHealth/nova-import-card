@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
-use CircleLinkHealth\SamlSp\Providers\RouteServiceProvider;
+use App\Providers\RouteServiceProvider;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use Illuminate\Support\ServiceProvider;
