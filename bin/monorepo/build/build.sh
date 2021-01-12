@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export MONOREPO_NAME=cpm
+export MONOREPO_NAME=cpm-monorepo
 
 cd ../
 
