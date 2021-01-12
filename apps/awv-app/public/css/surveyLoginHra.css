@@ -1,0 +1,111 @@
+.practice-title {
+        /*width: 300px;
+        height: 58px;*/
+    font-family: Poppins, sans-serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-top: 20px;
+    /*margin-left: 111px;*/
+    color: #50b2e2;
+}
+
+.practice-title .text-style-1 {
+    font-weight: 600;
+}
+
+.survey-main-title {
+   /* width: 236px;
+    height: 80px;*/
+    font-family: Poppins, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-top: 30px;
+   /* margin-left: 136px;*/
+    color: #1a1a1a;
+}
+
+.survey-sub-title {
+   /* width: 400px;
+    height: 58px;*/
+    font-family: Poppins, sans-serif;
+    font-size: 18px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 25px;
+    /*margin-left: 54px;*/
+    color: #1a1a1a;
+}
+
+.form-group-input {
+  /*  font-size: 18px;
+    font-weight: 500;*/
+    letter-spacing: 1px;
+    margin-left: 50px;
+    color: #1a1a1a;
+}
+
+.full-name {
+   /* width: 100px;*/
+   /* height: 29px;*/
+    font-family: Poppins, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+}
+
+.birth-date {
+   /* width: 130px;*/
+   /* height: 29px;*/
+    font-family: Poppins, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+}
+
+.survey-login {
+    width: 500px;
+    height: 700px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin-left: 430px;
+    margin-top: 30px;
+    border: 2px solid #50b2e2;
+}
+
+.btn-primary {
+    width: 180px;
+    height: 60px;
+    border-radius: 3px;
+    margin-left: 160px;
+    background-color: #50b2e2;
+}
+
+.by-circlelink {
+    width: 234px;
+    height: 30px;
+    font-family: Poppins;
+    font-size: 18px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    margin-left: 130px;
+    color: #50b2e2;
+}
