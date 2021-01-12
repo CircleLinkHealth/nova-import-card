@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00d59dd927ef56bf9b3439b669975b78",
+    "content-hash": "927900e352606402efa10ca7781d80c6",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1004,6 +1004,42 @@
             "time": "2021-01-11T23:59:22+00:00"
         },
         {
+            "name": "circlelinkhealth/enrollment-invites",
+            "version": "dev-app_self_enrollment_master",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/EnrollmentInvites",
+                "reference": "2b2ffa8f3d8c7da7d48f1db03ec0a930f8bf809d"
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\EnrollmentInvites\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\EnrollmentInvites\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "circlelinkhealth/raygun-module",
             "version": "v2.0",
             "source": {
@@ -1131,7 +1167,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "57dc3a5dd7681ab3c881439cdcf3a5c9aa62b76f"
+                "reference": "f24ac17d9e3e53e0aa44e14be49ab9281ca134de"
             },
             "require": {
                 "laravel/nova": "~3.0"
@@ -1142,9 +1178,7 @@
                     "dev-main": "0.0.x-dev"
                 },
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\SelfEnrollment\\Providers\\SelfEnrollmentProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -1159,7 +1193,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-12T10:42:22+00:00"
+            "time": "2021-01-12T12:22:21+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -2678,16 +2712,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.15",
+            "version": "8.12.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "c1f328bface2745ff1a292639dd68cafc673a456"
+                "reference": "d3d4ed9466249747249f3032717c4aebaaa8363e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c1f328bface2745ff1a292639dd68cafc673a456",
-                "reference": "c1f328bface2745ff1a292639dd68cafc673a456",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/d3d4ed9466249747249f3032717c4aebaaa8363e",
+                "reference": "d3d4ed9466249747249f3032717c4aebaaa8363e",
                 "shasum": ""
             },
             "require": {
@@ -2742,7 +2776,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-12-15T10:15:17+00:00"
+            "time": "2021-01-12T14:54:36+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -4001,12 +4035,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "374e9565b2718c549f329af5c137e84a7d753a28"
+                "reference": "dcc4b0da849bc8a869af1cf126da00265bd1165d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/374e9565b2718c549f329af5c137e84a7d753a28",
-                "reference": "374e9565b2718c549f329af5c137e84a7d753a28",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/dcc4b0da849bc8a869af1cf126da00265bd1165d",
+                "reference": "dcc4b0da849bc8a869af1cf126da00265bd1165d",
                 "shasum": ""
             },
             "require": {
@@ -4156,7 +4190,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-01-11T14:57:10+00:00"
+            "time": "2021-01-12T15:30:54+00:00"
         },
         {
             "name": "laravel/legacy-factories",
@@ -4376,16 +4410,16 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v8.5.3",
+            "version": "v8.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "3cb9a6e66f58f61ed1adf66c138034e496c60d3f"
+                "reference": "bcc1ee3837d1384a200acc5ade75e312d6ededd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/3cb9a6e66f58f61ed1adf66c138034e496c60d3f",
-                "reference": "3cb9a6e66f58f61ed1adf66c138034e496c60d3f",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/bcc1ee3837d1384a200acc5ade75e312d6ededd6",
+                "reference": "bcc1ee3837d1384a200acc5ade75e312d6ededd6",
                 "shasum": ""
             },
             "require": {
@@ -4437,7 +4471,7 @@
                 "laravel",
                 "search"
             ],
-            "time": "2021-01-05T16:53:44+00:00"
+            "time": "2021-01-12T17:18:41+00:00"
         },
         {
             "name": "laravel/tinker",

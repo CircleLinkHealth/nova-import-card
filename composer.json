@@ -99,6 +99,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/EnrollmentInvites"
         }
     ],
     "require": {
@@ -125,7 +129,8 @@
         "lab404/laravel-impersonate": "^1.7",
         "laravel/framework": "8.x-dev",
         "laravel/tinker": "^2.5",
-        "circlelinkhealth/ccm-billing-module": "2.1.x-dev"
+        "circlelinkhealth/ccm-billing-module": "2.1.x-dev",
+        "circlelinkhealth/enrollment-invites": "*"
     },
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
