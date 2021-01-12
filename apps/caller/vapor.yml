@@ -1,0 +1,18 @@
+id: 15907
+name: cpm-caller
+environments:
+  production:
+    memory: 1024
+    cli-memory: 512
+    runtime: 'php-7.4'
+    build:
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative --prefer-dist'
+    deploy:
+      - 'php artisan migrate --force'
+  staging:
+    domain: cpm-caller.clh-staging.com
+    memory: 1024
+    cli-memory: 512
+    runtime: 'php-7.4'
+    build:
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative --prefer-dist'
