@@ -1,0 +1,14 @@
+{
+    "name": "ConditionCodeLookup",
+    "alias": "conditionCodeLookup",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
