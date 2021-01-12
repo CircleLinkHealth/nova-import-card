@@ -4,7 +4,35 @@
 The monorepo was created by mirroring all CPM repositories into one, while maintaining references to the original repositories. During development, we will commit all changes directly to the monorepo, and open a PR. When we're ready to make a release, we will run a command to write all our changes back to all the original repos. We also have the capability to merge changes from the original apps into the monorepo, but for an easier workflow let's make the monorepo the source of truth. The monorepo allows us to work with the entire CPM ecosystem in one state. This means that we should not expect any surprises in "Admin App" if say we deploy "Provider App" after having made changes to "Customer Module". Going forward, any module CLH maintains should live in the monorepo. This includes all languages. Each module's repository will be a read only instance of tags and versioned branches.
 
 ### New workflow for pulling CLH Modules
+Instead of pulling modules using composer, we'll just copy them from the mono-repo as a step in the release command. To do that create a `monorepo-modules.txt` file in the root of your app, and include one module directory name per line as it appears in `cpm-monorepo/modules`. When we run the split command, the monorepo will copy the modules in directory `CircleLinkHealth` in the root of your project.
 
+```
+// monorepo-modules.txt
+
+CcdaParser  
+ConditionCodeLookup     
+CpmMigrations           
+NurseInvoices           
+Raygun                  
+SelfEnrollment          
+SqlViews                
+TwilioIntegration
+CcmBilling              
+Core                    
+Customer                
+PatientApi              
+Revisionable            
+SharedModels            
+Synonyms                
+TwoFA
+CerberusGatekeeper      
+CpmAdmin                
+Eligibility             
+PdfService              
+SamlSp                  
+SharedVueComponents     
+TimeTracking 
+```
 
 ### Getting Started
 1. Clone the monorepo locally
@@ -19,8 +47,8 @@ The monorepo was created by mirroring all CPM repositories into one, while maint
 ### Getting a feature on staging
 Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provdider App, and Admin App.
 
-### How to build the monorepo
-**This is only necessary when we want to create the monorepo from scratch. If the monorepo is already built, we just need to clone it and we can start working.** 
+### How to build the monorepo from scratch
+This is like a hard "reset". What it does is it will erase everything, and re-build the monorepo from scratch by mirroring each repository.
 
 Firstly, delete all apps and modules. 
 ```bash

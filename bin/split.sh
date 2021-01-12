@@ -33,6 +33,7 @@ git pull origin $CURRENT_BRANCH
 remote admin-app git@github.com:CircleLinkHealth/app-cpm-admin.git
 remote awv-app git@github.com:CircleLinkHealth/app-awv.git
 remote caller-app git@github.com:CircleLinkHealth/app-cpm-caller.git
+remote provider-app git@github.com:CircleLinkHealth/app-cpm-web.git
 remote CcdaParser git@github.com:CircleLinkHealth/ccda-parser-module.git
 remote CerberusGatekeeper git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git
 remote CpmAdmin git@github.com:CircleLinkHealth/cpm-admin-module.git
