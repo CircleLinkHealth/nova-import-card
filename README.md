@@ -1,7 +1,10 @@
 # CPM Monorepo
 
 ### How does it work?
-The monorepo was created by mirroring all CPM repositories into one, while maintaining references to the original repositories. During development, we will commit all changes directly to the monorepo. When we're ready to make a release, we will run a command to write all our changes back to all the original repos. We also have the capability to merge changes from the original apps into the monorepo, but for an easier workflow let's make the monorepo the source of truth.
+The monorepo was created by mirroring all CPM repositories into one, while maintaining references to the original repositories. During development, we will commit all changes directly to the monorepo, and open a PR. When we're ready to make a release, we will run a command to write all our changes back to all the original repos. We also have the capability to merge changes from the original apps into the monorepo, but for an easier workflow let's make the monorepo the source of truth. The monorepo allows us to work with the entire CPM ecosystem in one state. This means that we should not expect any surprises in "Admin App" if say we deploy "Provider App" after having made changes to "Customer Module". Going forward, any module CLH maintains should live in the monorepo. This includes all languages. Each module's repository will be a read only instance of tags and versioned branches.
+
+### New workflow for pulling CLH Modules
+
 
 ### Getting Started
 1. Clone the monorepo locally
