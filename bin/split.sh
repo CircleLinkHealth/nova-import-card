@@ -7,10 +7,13 @@ CURRENT_BRANCH=$1
 
 function split()
 {
-    if [ ! -z "$2" && -f "../apps/$2/monorepo-modules.txt" ]; then
-        for FILE in $(cat "../apps/$2/monorepo-modules.txt")
+    if [ ! -z "$2" ] && [ -f "$PWD/apps/$2/monorepo-modules.txt" ]; then
+        if [ ! -d "$PWD/apps/$2/CircleLinkHealth" ]; then
+            mkdir "$PWD/apps/$2/CircleLinkHealth"
+        fi
+        for FILE in $(cat "$PWD/apps/$2/monorepo-modules.txt")
         do
-            cp -rf "../modules/$FILE" "../apps/$2/CircleLinkHealth"
+            cp -rf "$PWD/modules/$FILE" "$PWD/apps/$2/CircleLinkHealth"
         done
     fi
     SHA1=`splitsh-lite --prefix=$1`
