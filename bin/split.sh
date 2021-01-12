@@ -7,27 +7,34 @@ CURRENT_BRANCH=$1
 
 function split()
 {
+    RESET_MODULES_DIR=0
     if [ ! -z "$2" ] && [ -f "$PWD/apps/$2/monorepo-modules.txt" ]; then
         for DIR in $(cat "$PWD/apps/$2/monorepo-modules.txt")
         do
             APP_PATH="$PWD/apps/$2"
 
+            echo "Installing $DIR in $APP_PATH"
+
             if [ -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
+                echo "Deleting existing $APP_PATH/CircleLinkHealth/$DIR"
                 rm -rf "$APP_PATH/CircleLinkHealth/$DIR"
             fi
 
             if [ ! -d "$APP_PATH/CircleLinkHealth" ]; then
+                echo "Creating $APP_PATH/CircleLinkHealth"
                 mkdir "$APP_PATH/CircleLinkHealth"
             fi
 
-            cp -rf "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/"
+            echo "Copying modules"
+
+            cp -rf "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/$DIR"
+            git add "$APP_PATH/CircleLinkHealth/$DIR/"
+            git commit -q -a
         done
     fi
+
     SHA1=`splitsh-lite --prefix=$1`
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
-    if [ ! -z "$2" ]; then
-        rm -rf "$PWD/apps/$2/CircleLinkHealth"
-    fi
 }
 
 function remote()
@@ -72,10 +79,10 @@ remote VaporCli git@github.com:CircleLinkHealth/vapor-cli.git
 remote VaporCore git@github.com:CircleLinkHealth/vapor-core.git
 remote VaporDevopsHelpers git@github.com:CircleLinkHealth/vapor-devops-helpers.git
 
-split 'apps/admin' admin-app
-split 'apps/awv' awv-app
-split 'apps/caller' caller-app
-split 'apps/provider' provider-app
+split 'apps/admin-app' admin-app
+split 'apps/awv-app' awv-app
+split 'apps/caller-app' caller-app
+split 'apps/provider-app' provider-app
 split 'modules/CcdaParser' CcdaParser
 split 'modules/CerberusGatekeeper' CerberusGatekeeper
 split 'modules/CpmAdmin' CpmAdmin
@@ -106,3 +113,5 @@ split 'modules/TwilioIntegration' TwilioIntegration
 split 'modules/VaporCli' VaporCli
 split 'modules/VaporCore' VaporCore
 split 'modules/VaporDevopsHelpers' VaporDevopsHelpers
+
+bash "$PWD/bin/local-dev/setup-symlinks.sh"
