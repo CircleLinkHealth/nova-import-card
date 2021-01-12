@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>
+        Time Tracker
+    </title>
+    <base href="/" />
+    <link rel="stylesheet" href="./css/min/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <center>
+            <div id="time-tracker"></div>
+        </center>
+    </div>
+    <script>
+        const localDomains = ['localhost', 'mykeels.dev', '127.0.0.1']
+        const webUrl = `${localDomains.some(domain => location.origin.indexOf(domain) >= 0) ? 'https://cpm-web.dev/' : 'https://staging.careplanmanager.com/'}`
+        var pageInfo = {
+                            "patientId": '1',
+                            "providerId": '1',
+                            "totalTime": 0,
+                            "wsUrl": `${location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws')}/time`,
+                            "programId": '1',
+                            "urlFull": `${webUrl}manage-patients/1/notes`,
+                            "urlShort": '/manage-patients/1/notes',
+                            "ipAddr": '127.0.0.1',
+                            "activity": 'Time Tracker Demo',
+                            "title": 'patient.note.index',
+                            "submitUrl": `${webUrl}api/v2.1/pagetimer`,
+                            "startTime": (() => {
+                                            var d = new Date();
+                                            return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}` 
+                                        })()
+                        }
+
+        const timeTrackScript = document.createElement('script');
+        timeTrackScript.src = `${webUrl}compiled/js/v-time-tracker.min.js`;
+        window.onload = () => document.body.appendChild(timeTrackScript);
+    </script>
+</body>
+
+</html>
