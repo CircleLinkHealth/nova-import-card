@@ -1,0 +1,14 @@
+{
+    "name": "SamlSp",
+    "alias": "samlsp",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\SamlSp\\Providers\\SamlSpServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
