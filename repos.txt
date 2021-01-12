@@ -10,7 +10,7 @@
 #git@github.com:CircleLinkHealth/app-cpm-admin.git admin-app apps/admin
 #git@github.com:CircleLinkHealth/app-cpm-web.git provider-app apps/provider
 #git@github.com:CircleLinkHealth/app-cpm-caller.git caller-app apps/caller
-git@github.com:CircleLinkHealth/app-time-tracker.git time-tracker-app apps/time-tracker
+#git@github.com:CircleLinkHealth/app-time-tracker.git time-tracker-app apps/time-tracker
 
 # Modules
 # Naming conventions
