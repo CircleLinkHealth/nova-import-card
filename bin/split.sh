@@ -27,7 +27,6 @@ git pull origin $CURRENT_BRANCH
 # remote awv-app git@github.com:CircleLinkHealth/app-awv.git
 # remote caller-app git@github.com:CircleLinkHealth/app-cpm-caller.git
 # remote provider-app git@github.com:CircleLinkHealth/app-cpm-web.git
-# remote admin-module git@github.com:CircleLinkHealth/cpm-admin-module.git
 # remote eligibility-module git@github.com:CircleLinkHealth/eligibility-module.git
 # remote self-enrollment-module git@github.com:CircleLinkHealth/self-enrollment-module.git
 # remote opcache-gui-module git@github.com:CircleLinkHealth/opcache-gui.git
@@ -62,7 +61,6 @@ split 'apps/admin' admin-app
 # split 'apps/awv' awv-app
 # split 'apps/caller' caller-app
 # split 'apps/provider' provider-app
-# split 'modules/admin' admin-module
 # split 'modules/eligibility' eligibility-module
 # split 'modules/self-enrollment' self-enrollment-module
 # split 'modules/opcache-gui' opcache-gui-module
@@ -88,7 +86,7 @@ split 'apps/admin' admin-app
 # split 'modules/laravel-module-installer' laravel-module-installer-module
 # split 'modules/short-url' short-url-module
 # split 'modules/pdf-service' pdf-service-module
-# split 'modules/cpm-admin' cpm-admin-module
+# split 'modules/cpm-admin-module' cpm-admin-module
 # split 'modules/vapor-cli' vapor-cli-module
 # split 'modules/vapor-core' vapor-core-module
 # split 'modules/vapor-devops-helpers' vapor-devops-helpers-module
