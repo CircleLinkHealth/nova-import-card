@@ -178,11 +178,9 @@ class ImportEnrollee
 
         $enrolleeUser = $enrollee->user;
 
-        if ($enrolleeUser) {
-            if ($enrolleeUser->isSurveyOnly()) {
-                $ccdaArgs['patient_id']          = $enrolleeUser->id;
-                $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
-            }
+        if ($enrolleeUser && $enrolleeUser->isSurveyOnly()) {
+            $ccdaArgs['patient_id']          = $enrolleeUser->id;
+            $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
         }
 
         $ccda = Ccda::create($ccdaArgs);
@@ -193,7 +191,7 @@ class ImportEnrollee
 
         //We need to refresh the model before we perform the import, to make sure virtual columns contain the proper data
         //since the model that gets returned from Ccda::create method contains null values fro virtual columns
-        $ccda = $ccda->fresh()->import($enrollee);
+        $ccda->fresh()->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
     }
@@ -221,7 +219,7 @@ class ImportEnrollee
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->save();
 
-        $ccda = $ccda->import($enrollee);
+        $ccda->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
     }
