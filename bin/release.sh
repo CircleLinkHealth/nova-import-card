@@ -52,41 +52,7 @@ git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in
-admin-app
-awv-app
-caller-app
-provider-app
-admin-module
-eligibility-module
-self-enrollment-module
-opcache-gui-module
-raygun-module
-time-tracking-module
-two-fa-module
-customer-module
-ccm-billing-module
-core-module
-saml-sp-module
-revisionable-module
-cpm-migrations-module
-sqlviews-module
-cerberus-gatekeeper-module
-shared-models-module
-ccda-parser-module
-patient-api-module
-nurse-invoices-module
-shared-vue-components
-condition-code
-synonyms-module
-twilio-integration-module
-laravel-module-installer
-short-url-module
-pdf-service-module
-cpm-admin-module
-vapor-cli-module
-vapor-core-module
-vapor-devops-helpers
+for REMOTE in $(ls ../apps ../modules)
 do
     echo ""
     echo ""

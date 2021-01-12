@@ -1,8 +1,0 @@
-{
-    "ApiPatient": true,
-    "CpmMigrations": true,
-    "Eligibility": true,
-    "NurseInvoices": true,
-    "SqlViews": true,
-    "CarePlanModels": true
-}
