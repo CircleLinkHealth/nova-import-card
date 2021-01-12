@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use App\User as SelfEnrollmentUser;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
@@ -15,7 +16,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $model = \App\User::class;
+    public static $model = SelfEnrollmentUser::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -105,5 +106,10 @@ class User extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function availableForNavigation(Request $request)
+    {
+        return false;
     }
 }

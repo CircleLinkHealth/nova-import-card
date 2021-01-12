@@ -19,7 +19,7 @@ return [
     |
     */
 
-    'name' => env('NOVA_APP_NAME', env('APP_NAME')),
+    'name' => "CarePlan SelfEnrolment",
 
     /*
     |--------------------------------------------------------------------------
@@ -58,7 +58,7 @@ return [
     |
     */
 
-    'path' => '/nova',
+    'path' => '/superadmin/self-enrolment',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ return [
     |
     */
 
-    'passwords' => env('NOVA_PASSWORDS', null),
+//    'passwords' => env('NOVA_PASSWORDS', null),
 
     /*
     |--------------------------------------------------------------------------
