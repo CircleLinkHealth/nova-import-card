@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Providers;
 
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class SelfEnrollmentProvider extends ServiceProvider
 {
@@ -21,8 +21,6 @@ class SelfEnrollmentProvider extends ServiceProvider
     {
         $this->publishConfigurations();
         $this->publishPublicAssets();
-//        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-//        $this->app->register(RouteServiceProvider::class);
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'selfEnrollment');
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/selfEnrollment'),
@@ -36,6 +34,7 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->register(RouteServiceProvider::class);
         $this->commands([
             SelfEnrollmentManualInviteCommand::class,
             SendSelfEnrollmentReminders::class,
