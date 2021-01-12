@@ -1,0 +1,14 @@
+{
+    "name": "ApiPatient",
+    "alias": "apipatient",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\ApiPatient\\Providers\\RouteServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
