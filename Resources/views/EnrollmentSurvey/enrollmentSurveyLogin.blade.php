@@ -68,14 +68,14 @@
                                         <br/>
                                         <center>
                                             <div class='row'>
-{{--                                                @if ($errors->any())--}}
-{{--                                                    <div class="alert alert-danger" style="color: red">--}}
-{{--                                                        @foreach ($errors->all() as $error)--}}
-{{--                                                            <div>{{ $error }}</div>--}}
-{{--                                                        @endforeach--}}
-{{--                                                    </div>--}}
-{{--                                                    <br/>--}}
-{{--                                                @endif--}}
+                                                @if ($errors->any())
+                                                    <div class="alert alert-danger" style="color: red">
+                                                        @foreach ($errors->all() as $error)
+                                                            <div>{{ $error }}</div>
+                                                        @endforeach
+                                                    </div>
+                                                    <br/>
+                                                @endif
 
                                                 <input type="hidden" name="user_id" value="{{$userId}}">
                                                 <input type="hidden" name="is_survey_only" value="{{$isSurveyOnly}}">
