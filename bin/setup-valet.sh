@@ -8,7 +8,7 @@ DOMAIN_NAME=$1
 
 for SUBDOMAIN in $(cat "$PWD/apps/")
 do
-  URL="$SUBDOMAIN.$DOMAIN"
+  URL="$SUBDOMAIN.$DOMAIN_NAME"
   
   cd "$PWD/apps/$SUBDOMAIN"
   valet unlink $URL
