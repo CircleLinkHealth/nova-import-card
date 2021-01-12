@@ -10,8 +10,5 @@ for SUBDOMAIN in $(ls "$PWD/apps/")
 do
   URL="$SUBDOMAIN.$DOMAIN_NAME"
 
-  cd "$PWD/apps/$SUBDOMAIN"
-  valet unlink $URL
-  valet link $URL
-  cd ../..
+  (cd "$PWD/apps/$SUBDOMAIN" && valet unlink $URL && valet link $URL)
 done
