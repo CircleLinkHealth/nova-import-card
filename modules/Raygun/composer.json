@@ -1,0 +1,30 @@
+{
+    "name": "circlelinkhealth/raygun",
+    "description": "",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@cirlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\Raygun\\": ""
+        }
+    },
+    "require": {
+        "illuminate/contracts": "^5.0",
+        "mindscape/raygun4php": "1.*",
+        "psr/log": "^1.0"
+    }
+}
