@@ -1,0 +1,110 @@
+#bloodhound {
+    width: 200px;
+    height: 40px;
+    padding-top: 10px;
+    margin: auto;
+}
+
+#bloodhound li {
+    padding: 5px;
+}
+
+#bloodhound input {
+    /*margin: auto;*/
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 8px;
+    background-color: aliceblue;
+}
+
+#bloodhound li.active {
+    background-color: #eee;
+}
+
+.typeahead,
+.tt-query,
+.tt-hint {
+    /*width: 100% !important;*/
+    /*height: 30px;*/
+    /*padding: 8px 12px;*/
+    /*font-size: 24px;*/
+    /*line-height: 30px;*/
+    /*border: 2px solid #ccc;*/
+    /*-webkit-border-radius: 8px;*/
+    /*-moz-border-radius: 8px;*/
+    /*border-radius: 8px;*/
+    outline: none;
+}
+.typeahead {
+    background-color: #fff;
+}
+
+.twitter-typeahead {
+    width: 100%;
+    height: 40px;
+}
+
+.typeahead:focus {
+    /*border: 2px solid #63bbe8;*/
+    /*height: 40px;*/
+    /*font-size: 15px;*/
+}
+
+.tt-query {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.tt-hint {
+    color: #999
+}
+
+.tt-menu {
+    /*position: absolute !important;*/
+    /*left:-2px !important;*/
+    /*max-height: 250px;*/
+    /*overflow-y: auto;*/
+    /*width: 535px !important;*/
+    /*margin: 38px 0;*/
+    /*padding: 3px 0;*/
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    top: 110% !important;
+    width: 205px !important;
+}
+
+.tt-suggestion {
+    text-align: left;
+    padding: 3px 20px;
+    font-size: 16px;
+    line-height: 28px;
+    color: #4795c1;
+}
+
+.tt-suggestion:hover {
+    cursor: pointer;
+    color: #fff;
+    background-color: #0097cf;
+}
+
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #0097cf;
+
+}
+
+.tt-suggestion p {
+    margin: 0;
+}
+
+.empty-message{
+    color: black !important;
+    padding-left: 25px !important;
+}
