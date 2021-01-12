@@ -9,29 +9,30 @@ Instead of pulling modules using composer, we'll just copy them from the mono-re
 ```
 // monorepo-modules.txt
 
-CcdaParser  
-ConditionCodeLookup     
-CpmMigrations           
-NurseInvoices           
-Raygun                  
-SelfEnrollment          
-SqlViews                
+CcdaParser
+CcmBilling
+CerberusGatekeeper
+ConditionCodeLookup
+Core
+CpmAdmin
+CpmMigrations
+Customer
+Eligibility
+NurseInvoices
+PatientApi
+PdfService
+Raygun
+Revisionable
+SamlSp
+SelfEnrollment
+SharedModels
+SharedVueComponents
+SqlViews
+Synonyms
+Revisionable
+TimeTracking
 TwilioIntegration
-CcmBilling              
-Core                    
-Customer                
-PatientApi              
-Revisionable            
-SharedModels            
-Synonyms                
 TwoFA
-CerberusGatekeeper      
-CpmAdmin                
-Eligibility             
-PdfService              
-SamlSp                  
-SharedVueComponents     
-TimeTracking 
 ```
 
 ### Getting Started
