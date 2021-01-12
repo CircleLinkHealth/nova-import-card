@@ -12,5 +12,5 @@ do
   
   cd "$PWD/apps/$SUBDOMAIN"
   valet unlink $URL
-  valet park $URL
+  valet link $URL
 done
