@@ -10,6 +10,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -69,7 +70,7 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 return;
             }
 
-            \Log::channel('database')->error('Failed to login patient with DOB['.$dob->toDateString()."] and UserId[$userId] and isSurveyOnly[$isSurveyOnly]");
+            Log::channel('database')->error('Failed to login patient with DOB['.$dob->toDateString()."] and UserId[$userId] and isSurveyOnly[$isSurveyOnly]");
 
             $validator->errors()->add('field', 'Your credentials do not match our records');
         });
