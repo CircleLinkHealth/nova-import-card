@@ -1,0 +1,32 @@
+version_source: config
+blade_directive: version
+current:
+    major: 4
+    minor: 8
+    patch: 4
+    format: '{$major}.{$minor}.{$patch}'
+    git_absorb: git-local
+cache:
+    enabled: false
+    key: pragmarx-version
+    time: 525600
+build:
+    mode: number
+    number: '60e192'
+    length: 6
+    increment_by: 1
+    git_absorb: git-local
+git:
+    git-local: 'git rev-parse --verify HEAD'
+    git-remote: 'git ls-remote {$repository}'
+    repository: 'https://github.com/CircleLinkHealth/app-cpm-web'
+    version: { git-local: 'git describe --tags', git-remote: 'git ls-remote {$repository} | grep tags/ | grep -v {} | cut -d / -f 3 | sort --version-sort | tail -1', matcher: '/[V|v]*[ersion]*\s*\.*(\d+)\.(\d+)\.(\d+)\.*(\w*)/' }
+format:
+    major: '{$major}'
+    minor: '{$minor}'
+    patch: '{$patch}'
+    build: '{$build}'
+    version: '{$major}.{$minor}.{$patch} (build {$build})'
+    full: 'version {$major}.{$minor}.{$patch} (build {$build})'
+    compact: 'v{$major}.{$minor}.{$patch}-{$build}'
+    compact_no_build: 'v{$major}.{$minor}.{$patch}'

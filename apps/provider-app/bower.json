@@ -1,0 +1,26 @@
+{
+  "name": "cpm-web",
+  "description": "",
+  "main": "",
+  "authors": [
+    "CLH"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/CircleLinkHealth/cpm-web",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-select": "1.6.3",
+    "jquery-idletimer": "1.0.1",
+    "jquery-ui": "1.11.4",
+    "select2": "4.0.3",
+    "webix": "4.3.0",
+    "bootstrap": "3.3.1"
+  }
+}
