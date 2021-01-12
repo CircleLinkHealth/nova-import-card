@@ -6,12 +6,9 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
-use App\Providers\RouteServiceProvider;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Passport\Console\InstallCommand;
-use Laravel\VaporCli\Commands\NetworkCommand;
 
 class SelfEnrollmentProvider extends ServiceProvider
 {
@@ -22,9 +19,11 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->publishConfigurations();
         $this->publishPublicAssets();
+
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+//        $this->app->register(RouteServiceProvider::class);
 
 //        $viewPath = resource_path('views/modules/selfEnrollment');
 //
@@ -52,7 +51,6 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(SelfEnrollmentRouteProvider::class);
         $this->commands([
             SelfEnrollmentManualInviteCommand::class,
             SendSelfEnrollmentReminders::class,

@@ -5,7 +5,7 @@ namespace CircleLinkHealth\SelfEnrollment\Providers;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
-class SelfEnrollmentRouteProvider extends ServiceProvider
+class RouteServiceProvider extends ServiceProvider
 {
     /**
      * The root namespace to assume when generating URLs to actions.
@@ -13,13 +13,6 @@ class SelfEnrollmentRouteProvider extends ServiceProvider
      * @var string
      */
     protected $namespace = 'CircleLinkHealth\SelfEnrollment\Http\Controllers';
-
-    /**
-     * The path to the "home" route for your application.
-     *
-     * @var string
-     */
-    public const HOME = '/home';
 
     /**
      * Bootstrap services.
@@ -59,5 +52,18 @@ class SelfEnrollmentRouteProvider extends ServiceProvider
         Route::middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('Routes/web.php'));
+    }
+
+    /**
+     * Define the "api" routes for the application.
+     *
+     * These routes are typically stateless.
+     */
+    protected function mapApiRoutes()
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($this->namespace)
+            ->group(__DIR__.'/../Routes/api.php');
     }
 }
