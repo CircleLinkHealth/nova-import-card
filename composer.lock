@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a017dd78fd9e9f913ffdd02679aa96be",
+    "content-hash": "1ad6f686a4a0587fc31c710c80c424b6",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -15106,16 +15106,16 @@
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "dev-master",
+            "version": "8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "1cf42203ec137d10fd43066984a8d8adca61e16f"
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/1cf42203ec137d10fd43066984a8d8adca61e16f",
-                "reference": "1cf42203ec137d10fd43066984a8d8adca61e16f",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/6ade5ec19e81a0e4807834886a2c47509d069cb7",
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7",
                 "shasum": ""
             },
             "require": {
@@ -15179,7 +15179,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-17T12:54:57+00:00"
+            "time": "2020-11-11T09:24:22+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -17870,10 +17870,9 @@
         "circlelinkhealth/self-enrollment-module": 20,
         "circlelinkhealth/time-tracking-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
+        "circlelinkhealth/vapor-devops-helpers-module": 20,
         "heroku/heroku-buildpack-php": 20,
-        "nwidart/laravel-modules": 20,
-        "orangehill/iseed": 20,
-        "circlelinkhealth/vapor-devops-helpers-module": 20
+        "orangehill/iseed": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
