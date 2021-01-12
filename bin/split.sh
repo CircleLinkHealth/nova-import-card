@@ -7,32 +7,6 @@ CURRENT_BRANCH=$1
 
 function split()
 {
-    RESET_MODULES_DIR=0
-    if [ ! -z "$2" ] && [ -f "$PWD/apps/$2/monorepo-modules.txt" ]; then
-        for DIR in $(cat "$PWD/apps/$2/monorepo-modules.txt")
-        do
-            APP_PATH="$PWD/apps/$2"
-
-            echo "Installing $DIR in $APP_PATH"
-
-            if [ -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
-                echo "Deleting existing $APP_PATH/CircleLinkHealth/$DIR"
-                rm -rf "$APP_PATH/CircleLinkHealth/$DIR"
-            fi
-
-            if [ ! -d "$APP_PATH/CircleLinkHealth" ]; then
-                echo "Creating $APP_PATH/CircleLinkHealth"
-                mkdir "$APP_PATH/CircleLinkHealth"
-            fi
-
-            echo "Copying modules"
-
-            cp -rf "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/$DIR"
-            git add "$APP_PATH/CircleLinkHealth/$DIR/"
-            git commit -q -a
-        done
-    fi
-
     SHA1=`splitsh-lite --prefix=$1`
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
 }
