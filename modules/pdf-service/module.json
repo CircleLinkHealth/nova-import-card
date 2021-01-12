@@ -1,0 +1,14 @@
+{
+    "name": "PdfService",
+    "alias": "pdfService",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceProvider",
+        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceDeferrableProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
