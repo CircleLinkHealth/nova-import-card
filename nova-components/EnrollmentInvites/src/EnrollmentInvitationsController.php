@@ -28,7 +28,7 @@ class EnrollmentInvitationsController
         InvitePracticeEnrollees::dispatch(
             (int) $novaRequest->input('amount'),
             (int) $novaRequest->input('practice_id'),
-            SelfEnrollmentController::BLUE_BUTTON_COLOR,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         );
 
         return $this->response();
