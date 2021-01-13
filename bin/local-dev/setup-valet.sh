@@ -3,7 +3,7 @@
 set -e
 set -x
 
-# example: cpm
+# example: clh
 DOMAIN_NAME=$1
 
 for SUBDOMAIN in $(ls "$PWD/apps/")
