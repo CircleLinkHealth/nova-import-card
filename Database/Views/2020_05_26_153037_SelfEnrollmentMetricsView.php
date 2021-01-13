@@ -11,6 +11,7 @@ use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class SelfEnrollmentMetricsView extends BaseSqlView
 {
+     // NOT SURE IF I SHOULD ALSO MOVE THIS TO SELF ENROLLMENT APP
     /**
      * Create the sql view.
      *
