@@ -8,6 +8,7 @@ namespace Circlelinkhealth\EnrollmentInvites;
 
 use CircleLinkHealth\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use CircleLinkHealth\SelfEnrollment\Domain\InviteUnreachablePatients;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnrollmentInvitationsController
@@ -27,7 +28,7 @@ class EnrollmentInvitationsController
         InvitePracticeEnrollees::dispatch(
             (int) $novaRequest->input('amount'),
             (int) $novaRequest->input('practice_id'),
-            $novaRequest->input('color')
+            SelfEnrollmentController::BLUE_BUTTON_COLOR,
         );
 
         return $this->response();

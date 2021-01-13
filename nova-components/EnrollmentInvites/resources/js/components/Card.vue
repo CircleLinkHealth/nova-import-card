@@ -15,25 +15,27 @@
                                :disabled="sendingInvites"
                                required>
 
-                         <label for="color" class="color-label">
-                             Choose invitation button color:
-                         </label>
+<!--                         <label for="color" class="color-label">-->
+<!--                             Choose invitation button color:-->
+<!--                         </label>-->
 
-                        <vue-select name="color"
-                                    id="color"
-                                    v-model="selectedButtonColor"
-                                    :options="buttonColors"
-                                    @change="setButtonBackgroundColor">
-                        </vue-select>
+<!--                        <vue-select name="color"-->
+<!--                                    id="color"-->
+<!--                                    v-model="selectedButtonColor"-->
+<!--                                    :options="buttonColors"-->
+<!--                                    @change="setButtonBackgroundColor">-->
+<!--                        </vue-select>-->
                     </span>
 
+                <br>
+
                 <div v-if="! this.card.use_redirect_button" class="invite-buttons">
-                    <div v-if="! this.card.is_patient && this.selectedButtonColor.length !== 0" class="button">
+                    <div v-if="! this.card.is_patient" class="button">
                         <a class="btn btn-default btn-primary ml-auto mt-auto"
                            :disabled="sendingInvites"
                            :style="bgc"
                            style="cursor: pointer; white-space: nowrap; width: 280px;"
-                           @click="sendInvites(bgc.backgroundColor, amount)">
+                           @click="sendInvites(amount)">
                             Send SMS/Emails
                         </a>
                     </div>
@@ -85,7 +87,7 @@ export default {
             amount:'',
             errors:null,
             sendingInvites:false,
-            selectedButtonColor:[],
+            // selectedButtonColor:[],
             buttonColors:[
                 {
                     label:'Green',
@@ -104,15 +106,15 @@ export default {
             ],
 
             bgc:{
-                backgroundColor:'',
+                backgroundColor:'#12a2c4',
             }
         };
     },
 
     methods: {
-        setButtonBackgroundColor(){
-            this.bgc.backgroundColor = this.selectedButtonColor.value;
-        },
+        // setButtonBackgroundColor(){
+        //     this.bgc.backgroundColor = this.selectedButtonColor.value;
+        // },
         redirectToInvitesDashboard(){
             // tried to redirect using Action::push() or simple redirect in controller, but it doesnt work, no errors / feedback.
             // Keeping this solution temporarily
@@ -123,7 +125,7 @@ export default {
             return this.card.use_redirect_button ? "Select Practice For Invites" : "Enrollment Invites";
         },
 
-        sendInvites(color, amount){
+        sendInvites(amount){
             this.sendingInvites = true;
 
             if (this.amount === ''){
@@ -133,7 +135,6 @@ export default {
             }
 
             Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
-                color:color,
                 amount:amount,
                 practice_id:this.card.practice_id,
                 is_patient:this.card.is_patient

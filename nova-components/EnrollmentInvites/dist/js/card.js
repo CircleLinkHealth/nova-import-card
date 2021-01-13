@@ -696,6 +696,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -710,7 +712,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             amount: '',
             errors: null,
             sendingInvites: false,
-            selectedButtonColor: [],
+            // selectedButtonColor:[],
             buttonColors: [{
                 label: 'Green',
                 value: '#4baf50'
@@ -723,16 +725,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }],
 
             bgc: {
-                backgroundColor: ''
+                backgroundColor: '#12a2c4'
             }
         };
     },
 
 
     methods: {
-        setButtonBackgroundColor: function setButtonBackgroundColor() {
-            this.bgc.backgroundColor = this.selectedButtonColor.value;
-        },
+        // setButtonBackgroundColor(){
+        //     this.bgc.backgroundColor = this.selectedButtonColor.value;
+        // },
         redirectToInvitesDashboard: function redirectToInvitesDashboard() {
             // tried to redirect using Action::push() or simple redirect in controller, but it doesnt work, no errors / feedback.
             // Keeping this solution temporarily
@@ -741,7 +743,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         title: function title() {
             return this.card.use_redirect_button ? "Select Practice For Invites" : "Enrollment Invites";
         },
-        sendInvites: function sendInvites(color, amount) {
+        sendInvites: function sendInvites(amount) {
             var _this = this;
 
             this.sendingInvites = true;
@@ -753,7 +755,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
 
             Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
-                color: color,
                 amount: amount,
                 practice_id: this.card.practice_id,
                 is_patient: this.card.is_patient
@@ -809,10 +810,10 @@ var render = function() {
                     { staticClass: "label-amount", attrs: { for: "amount" } },
                     [
                       _vm._v(
-                        "\n                       Input number of patients to send enrollment "
+                        "\n                           Input number of patients to send enrollment "
                       ),
                       _c("br"),
-                      _vm._v(" sms/emails to:\n                   ")
+                      _vm._v(" sms/emails to:\n                       ")
                     ]
                   ),
                   _vm._v(" "),
@@ -842,41 +843,16 @@ var render = function() {
                         _vm.amount = $event.target.value
                       }
                     }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "label",
-                    { staticClass: "color-label", attrs: { for: "color" } },
-                    [
-                      _vm._v(
-                        "\n                         Choose invitation button color:\n                     "
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c("vue-select", {
-                    attrs: {
-                      name: "color",
-                      id: "color",
-                      options: _vm.buttonColors
-                    },
-                    on: { change: _vm.setButtonBackgroundColor },
-                    model: {
-                      value: _vm.selectedButtonColor,
-                      callback: function($$v) {
-                        _vm.selectedButtonColor = $$v
-                      },
-                      expression: "selectedButtonColor"
-                    }
                   })
-                ],
-                1
+                ]
               )
             : _vm._e(),
           _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
           !this.card.use_redirect_button
             ? _c("div", { staticClass: "invite-buttons" }, [
-                !this.card.is_patient && this.selectedButtonColor.length !== 0
+                !this.card.is_patient
                   ? _c("div", { staticClass: "button" }, [
                       _c(
                         "a",
@@ -892,16 +868,13 @@ var render = function() {
                           attrs: { disabled: _vm.sendingInvites },
                           on: {
                             click: function($event) {
-                              return _vm.sendInvites(
-                                _vm.bgc.backgroundColor,
-                                _vm.amount
-                              )
+                              return _vm.sendInvites(_vm.amount)
                             }
                           }
                         },
                         [
                           _vm._v(
-                            "\n                        Send SMS/Emails\n                    "
+                            "\n                            Send SMS/Emails\n                        "
                           )
                         ]
                       )
