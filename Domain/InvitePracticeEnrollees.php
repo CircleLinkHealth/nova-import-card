@@ -32,6 +32,10 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
 
     /**
      * InvitePracticeEnrollees constructor.
+     * @param int $limit
+     * @param int $practiceId
+     * @param string $color
+     * @param array $channels
      */
     public function __construct(
         int $limit,
