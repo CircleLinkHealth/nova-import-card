@@ -25,7 +25,7 @@ use Illuminate\Support\Str;
 class SelfEnrollmentController extends Controller
 {
     use AuthenticatesUsers;
-    const BLUE_BUTTON_COLOR = '#12a2c4';
+    const BLUE_BUTTON_COLOR = '#12a2c4'; //@todo: remove all colors except default(blue). see metrics also.
 
     const DEFAULT_BUTTON_COLOR = '#12a2c4';
 
