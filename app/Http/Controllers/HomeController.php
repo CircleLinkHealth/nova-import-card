@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -11,13 +12,21 @@ class HomeController extends Controller
             return redirect()->route('login');
         }
 
-        return $this->selfEnrollmentNova();
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user->isAdmin()){
+            return $this->selfEnrollmentNova();
+        }
+
+        Log::error("User $user->id should not have reached here!");
+        return back();
+
+
     }
 
     public function selfEnrollmentNova()
     {
-        if (auth()->user()->isAdmin()){
-            return redirect(url("/superadmin/resources/self-enrollment-metrics-resources"));
-        }
+        return redirect(url("/superadmin/resources/self-enrollment-metrics-resources"));
     }
 }
