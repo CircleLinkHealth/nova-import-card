@@ -21,9 +21,9 @@ class SelfEnrollmentProvider extends ServiceProvider
     {
         $this->publishConfigurations();
         $this->publishPublicAssets();
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'selfEnrollment');
+        $this->loadViewsFrom(__DIR__.'/../Resources/views', 'selfEnrollment');
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/selfEnrollment'),
+            __DIR__.'/../Resources/views' => resource_path('views/vendor/selfEnrollment'),
         ]);
     }
 
@@ -34,21 +34,21 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(RouteServiceProvider::class);
         $this->commands([
             SelfEnrollmentManualInviteCommand::class,
             SendSelfEnrollmentReminders::class,
         ]);
-//        $this->app->singleton(SelfEnrollmentLetter::class);
+        $this->app->register(RouteServiceProvider::class);
+
     }
 
     private function publishConfigurations()
     {
-//        $this->publishes([
-//            __DIR__.'/../Config/services.php' => config_path('selfEnrollment.php'),
-//        ],
-//            'config'
-//        );
+        $this->publishes([
+            __DIR__.'/../Config/services.php' => config_path('selfEnrollment.php'),
+        ],
+            'config'
+        );
 
         $this->mergeConfigFrom(
             __DIR__.'/../Config/services.php',
