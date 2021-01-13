@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AppConfig\Reminders;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
+use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -61,7 +62,7 @@ class SendReminder implements ShouldQueue
             return false;
         }
 
-        if (\App\SelfEnrollment\Helpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
             return false;
         }
 

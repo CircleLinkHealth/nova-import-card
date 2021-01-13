@@ -208,7 +208,7 @@ class SelfEnrollmentController extends Controller
     public function reviewLetter($userId)
     {
         $prevUrlHost = parse_url(url()->previous(), PHP_URL_HOST);
-        $awvHost     = parse_url(config('services.awv.url'), PHP_URL_HOST);
+        $awvHost     = parse_url(config('selfEnrollment.awv.url'), PHP_URL_HOST);
         if ($prevUrlHost !== $awvHost) {
             abort(403, 'Unauthorized action.');
         }
