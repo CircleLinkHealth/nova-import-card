@@ -44,7 +44,7 @@ class GeneratePatientReports
             ])->find($instance->pivot->user_id);
 
             if (Survey::ENROLLEES === $surveyName) {
-                //Call UnreachablesFinalAction from Self Enrollment
+                //Call EnrollableSurveyCompleted from Self Enrollment
 //                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient->id);
 //                $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
             } else {

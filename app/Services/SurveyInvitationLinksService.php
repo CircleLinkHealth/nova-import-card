@@ -13,7 +13,6 @@ use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
-use Waavi\UrlShortener\Facades\UrlShortener;
 
 class SurveyInvitationLinksService
 {
@@ -68,12 +67,7 @@ class SurveyInvitationLinksService
                 ]
             );
 
-            try {
-                $shortUrl = UrlShortener::shorten($url);
-            } catch (\Exception $e) {
-                \Log::warning($e->getMessage());
-            }
-
+//            @todo:implement CPM shorten url
             $urlToken = $this->parseUrl($url);
 
             InvitationLink::create([
