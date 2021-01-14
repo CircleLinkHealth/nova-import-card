@@ -12,6 +12,7 @@ use App\Jobs\GeneratePatientReportsJob as GenerateReports;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 
 class GeneratePatientReports
 {
@@ -44,9 +45,13 @@ class GeneratePatientReports
             ])->find($instance->pivot->user_id);
 
             if (Survey::ENROLLEES === $surveyName) {
-                //Call EnrollableSurveyCompleted from Self Enrollment
-//                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient->id);
-//                $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
+                $enrolledUserData = [
+                    'enrollable_id'      => (int) $patient->id,
+                    'survey_instance_id' => $instance->id,
+                ];
+
+                EnrollableSurveyCompleted::dispatch($enrolledUserData);
+                return;
             } else {
                 $otherInstance = $patient->surveyInstances->first();
                 if ($otherInstance) {

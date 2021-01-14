@@ -106,6 +106,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/vapor-core.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git"
         }
     ],
     "require": {
@@ -140,6 +144,7 @@
         "joshbrw/laravel-module-installer": "^0.1.5",
         "lab404/laravel-impersonate": "^1.2",
         "laravel-notification-channels/twilio": "3.1.2",
+        "circlelinkhealth/self-enrollment-module": "dev-main",
         "laravel/framework": "8.0.0",
         "laravel/horizon": "^5.0",
         "laravel/nova": "^3.0",
