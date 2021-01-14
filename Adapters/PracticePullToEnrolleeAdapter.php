@@ -44,8 +44,7 @@ class PracticePullToEnrolleeAdapter
             'lang'       => $this->demographics->lang,
 
             'location_id' => $this->demographics->location_id,
-            'provider_id' => $this->demographics->billing_provider_user_id ?? optional(CcdaImporterWrapper::mysqlMatchProvider($this->demographics->referring_provider_name, $this->practiceId))->id,
-
+            'provider_id' => $this->getProviderId(),
             'address'   => $this->demographics->street,
             'address_2' => $this->demographics->street2,
 
@@ -77,5 +76,10 @@ class PracticePullToEnrolleeAdapter
             ->first();
 
         return $this;
+    }
+
+    private function getProviderId():? int
+    {
+        return $this->demographics->billing_provider_user_id ?? optional(CcdaImporterWrapper::mysqlMatchProvider($this->demographics->referring_provider_name, $this->practiceId))->id;
     }
 }
