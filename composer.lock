@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "440bce7e357718b271de6c23d36085b8",
+    "content-hash": "41cdc348aec2cc128930fc6fec428566",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -15244,27 +15244,27 @@
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "7.3.0",
+            "version": "8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "5194d3c1941518f6131238745aff916453afc727"
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/5194d3c1941518f6131238745aff916453afc727",
-                "reference": "5194d3c1941518f6131238745aff916453afc727",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/6ade5ec19e81a0e4807834886a2c47509d069cb7",
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.2.5"
+                "php": ">=7.3"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
-                "laravel/framework": "^7.0",
+                "laravel/framework": "^8.0",
                 "mockery/mockery": "~1.0",
-                "orchestra/testbench": "^5.0",
+                "orchestra/testbench": "^6.2",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.5",
                 "spatie/phpunit-snapshot-assertions": "^2.1.0"
@@ -15280,7 +15280,7 @@
                     }
                 },
                 "branch-alias": {
-                    "dev-master": "7.0-dev"
+                    "dev-master": "8.0-dev"
                 }
             },
             "autoload": {
@@ -15317,7 +15317,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-10T08:40:16+00:00"
+            "time": "2020-11-11T09:24:22+00:00"
         },
         {
             "name": "openlss/lib-array2xml",

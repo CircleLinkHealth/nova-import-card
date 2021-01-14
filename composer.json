@@ -214,7 +214,7 @@
         "laravel/vapor-cli": "^1.11.8",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^5.0",
-        "nwidart/laravel-modules": "^7.1",
+        "nwidart/laravel-modules": "^8.2",
         "phpunit/phpunit": "^9.0",
         "psalm/plugin-laravel": "^1.4",
         "vimeo/psalm": "^4.3"
