@@ -8,6 +8,7 @@ use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
+use Illuminate\Support\Facades\DB;
 
 class SelfEnrollmentMetricsView extends BaseSqlView
 {
