@@ -11,10 +11,12 @@
         {
             "type": "composer",
             "url": "https://nova.laravel.com"
-        }, {
+        },
+        {
             "type": "path",
             "url": "./nova-components/ClhImportCardExtended"
-        },{
+        },
+        {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
         },
@@ -194,6 +196,7 @@
         "maatwebsite/laravel-nova-excel": "^1.2",
         "mediconesystems/livewire-datatables": "^0.4.3",
         "phaxio/phaxio": "^2.0",
+        "sloveniangooner/searchable-select": "^1.3",
         "sparclex/nova-import-card": "^7.0.1",
         "suenerds/nova-searchable-belongs-to-filter": "^1.0",
         "titasgailius/search-relations": "^1.0",
@@ -211,7 +214,7 @@
         "laravel/vapor-cli": "^1.11.8",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^5.0",
-        "nwidart/laravel-modules": "^7.1",
+        "nwidart/laravel-modules": "^8.2",
         "phpunit/phpunit": "^9.0",
         "psalm/plugin-laravel": "^1.4",
         "vimeo/psalm": "^4.3"

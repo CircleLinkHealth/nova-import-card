@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "868cc2c61b9a51ed59c4e41ef9be8e77",
+    "content-hash": "41cdc348aec2cc128930fc6fec428566",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -879,7 +879,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "98846bed0c289a7bf142387af304b2a4cd5f733d"
+                "reference": "e2050e3de84072ff0b268c5c8117f642be7cad25"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -894,7 +894,7 @@
                 "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/tinker": "^2.0",
-                "laravel/vapor-core": "^2.10.3",
+                "laravel/vapor-core": "^2.10.6",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.2",
                 "lcobucci/jwt": "^4.0",
@@ -934,7 +934,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-08T18:41:38+00:00"
+            "time": "2021-01-10T15:42:38+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -942,7 +942,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "4d9b4378d92ff8c7c2831b9c38cf9bc32afbc318"
+                "reference": "c1f9829a478afb1fc0b354a08352a901027a54db"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -988,7 +988,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-05T23:11:05+00:00"
+            "time": "2021-01-11T08:46:29+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1024,7 +1024,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1f4c49b3be3763a0fec8f128bcc7a16667ad728e"
+                "reference": "46757d22665039d1341f754d404742cc2906e385"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1065,7 +1065,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-08T16:07:23+00:00"
+            "time": "2021-01-11T08:28:43+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -9602,6 +9602,47 @@
             "time": "2020-12-07T09:19:29+00:00"
         },
         {
+            "name": "sloveniangooner/searchable-select",
+            "version": "1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/slovenianGooner/nova-searchable-select.git",
+                "reference": "f946cc2af0f4bc02a20d93b724bbfb67ffd2e211"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/slovenianGooner/nova-searchable-select/zipball/f946cc2af0f4bc02a20d93b724bbfb67ffd2e211",
+                "reference": "f946cc2af0f4bc02a20d93b724bbfb67ffd2e211",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Sloveniangooner\\SearchableSelect\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sloveniangooner\\SearchableSelect\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-12-04T08:26:43+00:00"
+        },
+        {
             "name": "sparclex/nova-import-card",
             "version": "v7.0.2",
             "source": {
@@ -13319,16 +13360,16 @@
     "packages-dev": [
         {
             "name": "amphp/amp",
-            "version": "v2.5.1",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/amp.git",
-                "reference": "ecdc3c476b3ccff02f8e5d5bcc04f7ccfd18751c"
+                "reference": "efca2b32a7580087adb8aabbff6be1dc1bb924a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/amp/zipball/ecdc3c476b3ccff02f8e5d5bcc04f7ccfd18751c",
-                "reference": "ecdc3c476b3ccff02f8e5d5bcc04f7ccfd18751c",
+                "url": "https://api.github.com/repos/amphp/amp/zipball/efca2b32a7580087adb8aabbff6be1dc1bb924a9",
+                "reference": "efca2b32a7580087adb8aabbff6be1dc1bb924a9",
                 "shasum": ""
             },
             "require": {
@@ -13399,7 +13440,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-03T16:23:45+00:00"
+            "time": "2021-01-10T17:06:37+00:00"
         },
         {
             "name": "amphp/byte-stream",
@@ -14395,25 +14436,25 @@
         },
         {
             "name": "felixfbecker/advanced-json-rpc",
-            "version": "v3.1.1",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/felixfbecker/php-advanced-json-rpc.git",
-                "reference": "0ed363f8de17d284d479ec813c9ad3f6834b5c40"
+                "reference": "06f0b06043c7438959dbdeed8bb3f699a19be22e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/felixfbecker/php-advanced-json-rpc/zipball/0ed363f8de17d284d479ec813c9ad3f6834b5c40",
-                "reference": "0ed363f8de17d284d479ec813c9ad3f6834b5c40",
+                "url": "https://api.github.com/repos/felixfbecker/php-advanced-json-rpc/zipball/06f0b06043c7438959dbdeed8bb3f699a19be22e",
+                "reference": "06f0b06043c7438959dbdeed8bb3f699a19be22e",
                 "shasum": ""
             },
             "require": {
                 "netresearch/jsonmapper": "^1.0 || ^2.0",
-                "php": ">=7.0",
-                "phpdocumentor/reflection-docblock": "^4.0.0 || ^5.0.0"
+                "php": "^7.1 || ^8.0",
+                "phpdocumentor/reflection-docblock": "^4.3.4 || ^5.0.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0.0"
+                "phpunit/phpunit": "^7.0 || ^8.0"
             },
             "type": "library",
             "autoload": {
@@ -14432,7 +14473,7 @@
                 }
             ],
             "description": "A more advanced JSONRPC implementation",
-            "time": "2020-03-11T15:21:41+00:00"
+            "time": "2021-01-10T17:48:47+00:00"
         },
         {
             "name": "felixfbecker/language-server-protocol",
@@ -15203,27 +15244,27 @@
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "7.3.0",
+            "version": "8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "5194d3c1941518f6131238745aff916453afc727"
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/5194d3c1941518f6131238745aff916453afc727",
-                "reference": "5194d3c1941518f6131238745aff916453afc727",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/6ade5ec19e81a0e4807834886a2c47509d069cb7",
+                "reference": "6ade5ec19e81a0e4807834886a2c47509d069cb7",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.2.5"
+                "php": ">=7.3"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
-                "laravel/framework": "^7.0",
+                "laravel/framework": "^8.0",
                 "mockery/mockery": "~1.0",
-                "orchestra/testbench": "^5.0",
+                "orchestra/testbench": "^6.2",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.5",
                 "spatie/phpunit-snapshot-assertions": "^2.1.0"
@@ -15239,7 +15280,7 @@
                     }
                 },
                 "branch-alias": {
-                    "dev-master": "7.0-dev"
+                    "dev-master": "8.0-dev"
                 }
             },
             "autoload": {
@@ -15276,7 +15317,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-10T08:40:16+00:00"
+            "time": "2020-11-11T09:24:22+00:00"
         },
         {
             "name": "openlss/lib-array2xml",
