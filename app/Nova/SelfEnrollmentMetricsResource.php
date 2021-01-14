@@ -17,7 +17,7 @@ use Laravel\Nova\Fields\Text;
 class SelfEnrollmentMetricsResource extends Resource
 {
     const AUTO_ENROLLMENT_INVITATIONS_PANEL = '/superadmin/resources/auto-enrollment-invitation-panels';
-    public static $group                    = CpmConstants::NOVA_GROUP_ENROLLMENT;
+    public static $group                    = CpmConstants::NOVA_GROUP_SELF_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *
