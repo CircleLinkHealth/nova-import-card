@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41cdc348aec2cc128930fc6fec428566",
+    "content-hash": "c0b6ac8134e6de5ab9add7c8d53e9554",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.17",
+            "version": "3.171.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f23f4871eceec8c92645f054186a83bba86c1f3e"
+                "reference": "9252e55e995492a65ec9b705a5a7fdcfcaef46ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f23f4871eceec8c92645f054186a83bba86c1f3e",
-                "reference": "f23f4871eceec8c92645f054186a83bba86c1f3e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9252e55e995492a65ec9b705a5a7fdcfcaef46ef",
+                "reference": "9252e55e995492a65ec9b705a5a7fdcfcaef46ef",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-01-13T19:17:33+00:00"
+            "time": "2021-01-14T19:12:48+00:00"
         },
         {
             "name": "brick/math",
@@ -1073,7 +1073,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "34e310ac1115033c608cd4797be9947fc9b4a88c"
+                "reference": "a7df6767f3c080694b06e41c1faf2fa0f7be8776"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1103,7 +1103,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T19:43:50+00:00"
+            "time": "2021-01-14T19:47:53+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1486,11 +1486,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-master",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "139185f081059be2fc98964d5babb0f4dc575b8e"
+                "reference": "b7233591089e06f0dd9b64e3e27a8c2d452a8a39"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1512,7 +1512,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T09:08:00+00:00"
+            "time": "2021-01-14T19:48:10+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -17904,7 +17904,6 @@
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/revisionable-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/time-tracking-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20
