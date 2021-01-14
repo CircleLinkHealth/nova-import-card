@@ -868,7 +868,9 @@ class EligibilityChecker
         $enrolledPatientExists = User::withTrashed()
             ->where(
                 function ($u) use ($args) {
-                    $u->whereProgramId($args['practice_id'])
+                    $u
+                        ->ofType('participant')
+                        ->whereProgramId($args['practice_id'])
                         ->whereHas(
                             'patientInfo',
                             function ($q) use ($args) {
@@ -878,7 +880,9 @@ class EligibilityChecker
                 }
             )->orWhere(
                 function ($u) use ($args) {
-                    $u->where(
+                    $u
+                        ->ofType('participant')
+                        ->where(
                         [
                             [
                                 'program_id',
