@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Medication;
 
-use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
 
 class JsonListMedicationLogger implements Logger
 {
