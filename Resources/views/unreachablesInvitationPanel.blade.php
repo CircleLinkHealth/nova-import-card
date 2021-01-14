@@ -52,17 +52,6 @@
 
   </div>
   </div>
-            <div class="request-info-href" style="padding-top: 20px;">
-                <h5>Enter <strong>USER</strong> 'ID' that got enrolled(NOT the enrollee_id)</h5>
-                <form action="{{route('evaluate.survey.completed')}}" target="_blank">
-                    <label for="enrolleeId">Enter Id:</label><br>
-                    <input type="text" id="enrolleeId" name="enrolleeId" placeholder="ex.1616"><br>
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
 
         </div>
-
-
-{{--</div>--}}
-{{--@endsection--}}
+@endsection
