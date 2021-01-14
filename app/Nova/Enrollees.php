@@ -10,6 +10,7 @@ use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Actions\ImportEnrollees;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
+use App\Nova\Filters\NullProviderId;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
 use App\Nova\Filters\PracticeFilter;
 use CircleLinkHealth\Customer\CpmConstants;
@@ -166,6 +167,7 @@ class Enrollees extends Resource
         return [
             new PracticeFilter(),
             new EnrolleeStatus(),
+            new NullProviderId(),
             new PatientAutoEnrollmentStatus(),
         ];
     }
