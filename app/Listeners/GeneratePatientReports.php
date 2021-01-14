@@ -44,9 +44,9 @@ class GeneratePatientReports
             ])->find($instance->pivot->user_id);
 
             if (Survey::ENROLLEES === $surveyName) {
-                //Instantiate Redis Event class to emit report created events to CPM
-                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient->id);
-                $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
+                //Call UnreachablesFinalAction from Self Enrollment
+//                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient->id);
+//                $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
             } else {
                 $otherInstance = $patient->surveyInstances->first();
                 if ($otherInstance) {
