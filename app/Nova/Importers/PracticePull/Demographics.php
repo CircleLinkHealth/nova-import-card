@@ -51,7 +51,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
     {
         return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics([
             'practice_id'             => $this->practiceId,
-            'mrn'                     => $this->nullOrValue($row['mrn']),
+            'mrn'                     => $this->nullOrValue($row['patientid']),
             'first_name'              => $this->nullOrValue($row['first_name']),
             'last_name'               => $this->nullOrValue($row['last_name']),
             'last_encounter'          => Carbon::parse($row['last_encounter']),
