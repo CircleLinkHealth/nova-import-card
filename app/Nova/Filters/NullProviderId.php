@@ -12,7 +12,7 @@ class NullProviderId extends Filter
      *
      * @var string
      */
-    public $component = 'select-filter';
+    public $component = 'boolean-filter';
     public $name      = 'Without matching Provider';
 
     /**
@@ -25,7 +25,8 @@ class NullProviderId extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
-        return $query->whereNull('provider_id');
+
+        return $value['enabled'] ? $query->whereNull('provider_id') : $query;
     }
 
     /**
@@ -36,6 +37,8 @@ class NullProviderId extends Filter
      */
     public function options(Request $request)
     {
-        return [];
+        return [
+            'Enabled' => 'enabled',
+        ];
     }
 }
