@@ -25,7 +25,6 @@ Route::group([
         'uses' => '\CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController@authenticate',
         'as'   => 'invitation.enrollment.login',
     ]);
-
 });
 
 Route::get('/enrollment-survey', [
