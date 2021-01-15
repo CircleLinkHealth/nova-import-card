@@ -51,7 +51,6 @@ class GeneratePatientReports
                 ];
 
                 EnrollableSurveyCompleted::dispatch($enrolledUserData);
-                return;
             } else {
                 $otherInstance = $patient->surveyInstances->first();
                 if ($otherInstance) {
