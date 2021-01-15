@@ -10,6 +10,7 @@ use App\View\Composers\FabComposer;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingDeferredServiceProvider;
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\AuthServiceProvider;
@@ -20,7 +21,6 @@ use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CommandsServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
-use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerServiceProvider;
@@ -241,6 +241,7 @@ return [
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
         CcmBillingServiceProvider::class,
+        CcmBillingDeferredServiceProvider::class,
 
         SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
@@ -249,7 +250,6 @@ return [
         CustomerAuthServiceProvider::class,
         CpmMigrationsServiceProvider::class,
         VaporUiServiceProvider::class,
-        BillingServiceProvider::class,
         CustomerAuthServiceProvider::class,
         CustomerDeferrableServiceProvider::class,
         CustomerServiceProvider::class,

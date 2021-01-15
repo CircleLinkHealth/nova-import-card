@@ -243,6 +243,8 @@ namespace App;
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User activeNurses()
+ * @property \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[]|\Illuminate\Database\Eloquent\Collection         $monthlyBillingStatus
+ * @property int|null                                                                                                             $monthly_billing_status_count
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

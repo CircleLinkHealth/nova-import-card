@@ -56,7 +56,7 @@ describe('Tests Admin Endpoints API Status Code = 200', () => {
 	});
 
 	it('Approve Billable Patients', () => {
-		api.validateStatusCode200('/admin/reports/monthly-billing/v2/make');
+		api.validateStatusCode200('/admin/reports/monthly-billing');
 	});
 
 	it('Unreachable Patients Export', () => {

@@ -154,13 +154,31 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                         Practices <span class="caret text-white"></span>
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                        <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
-                                        <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
-                                        <li><a href="{{ route('saas-admin.practices.billing.create') }}">Billable
-                                                Patient
-                                                Report</a></li>
-                                        <li><a href="{{ route('saas-admin.monthly.billing.make') }}">Approve Billable
-                                                Patients</a></li>
+                                        <li>
+                                            <a href="{{ route('saas-admin.practices.create')}}">
+                                                Add New
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('saas-admin.practices.index')}}">
+                                                Manage
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('saas-admin.practices.billing.create') }}">
+                                                Billable Patient Report
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('saas-admin.monthly.billing.make') }}">
+                                                Approve Billable Patients
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('saas-admin.monthly.billing.make', ['version' => '3']) }}">
+                                                Approve Billable Patients (new)
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                             @endif
@@ -201,7 +219,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('monthly.billing.make') }}">
+                                            <a href="{{ route('monthly.billing.make', ['version' => '3']) }}">
                                                 Approve Billable Patients
                                             </a>
                                         </li>
