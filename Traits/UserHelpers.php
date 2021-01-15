@@ -92,14 +92,13 @@ trait UserHelpers
     }
 
     /**
-     * @param int    $practiceId
-     * @param string $roleName
-     * @param mixed  $ccmStatus
+     * @param mixed $ccmStatus
      */
     public function createUser(
-        $practiceId = 8,
-        $roleName = 'provider',
-        $ccmStatus = 'enrolled'
+        int $practiceId = 8,
+        string $roleName = 'provider',
+        string $ccmStatus = 'enrolled',
+        bool $withSuccessfulCall = true
     ): User {
         $practiceId = parseIds($practiceId)[0];
         $roles      = [Role::whereName($roleName)->firstOrFail()->id];
@@ -158,7 +157,7 @@ trait UserHelpers
                     'status'                => 'draft',
                 ]
             );
-            $this->makePatientMonthlyRecord($user->patientInfo);
+            $this->makePatientMonthlyRecord($user->patientInfo, $withSuccessfulCall);
         }
 
         $arr = ['practices', 'patientInfo'];
@@ -211,9 +210,9 @@ trait UserHelpers
         );
     }
 
-    public function makePatientMonthlyRecord(Patient $patient)
+    public function makePatientMonthlyRecord(Patient $patient, bool $withSuccessfulCall = true)
     {
-        return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
+        return (app(PatientWriteRepository::class))->updateCallLogs($patient, $withSuccessfulCall);
     }
 
     public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
@@ -358,9 +357,9 @@ trait UserHelpers
         return $nurse;
     }
 
-    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false)
+    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false, bool $withSuccessfulCall = true)
     {
-        $patient = $this->createUser($practice->id, 'participant');
+        $patient = $this->createUser($practice->id, 'participant', 'enrolled', $withSuccessfulCall);
 
         /** @var Location $location */
         $location = $practice->locations()->first();

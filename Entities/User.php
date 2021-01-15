@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -143,7 +144,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $ccd_problems_count
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection                         $ccdas
  * @property int|null                                                                                                        $ccdas_count
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $chargeableServices
+ * @property ChargeableService[]|\Illuminate\Database\Eloquent\Collection                                                    $chargeableServices
  * @property int|null                                                                                                        $chargeable_services_count
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[]                                             $clients
  * @property int|null                                                                                                        $clients_count
@@ -200,6 +201,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $locations_count
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
  * @property int|null                                                                                                        $media_count
+ * @property EloquentCollection|PatientMonthlyBillingStatus[]                                                                $monthlyBillingStatus
+ * @property int|null                                                                                                        $monthly_billing_status_count
  * @property \CircleLinkHealth\SharedModels\Entities\Note[]|\Illuminate\Database\Eloquent\Collection                         $notes
  * @property int|null                                                                                                        $notes_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
@@ -1478,6 +1481,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->ccm_status;
     }
 
+    public function getCcmStatusForMonth(Carbon $month): ?string
+    {
+        /** @var EndOfMonthCcmStatusLog $ccmStatusForMonth */
+        $ccmStatusForMonth = $this->endOfMonthCcmStatusLogs->firstWhere('chargeable_month', $month);
+        if ($ccmStatusForMonth && ! is_null($ccmStatusForMonth->closed_ccm_status)) {
+            return $ccmStatusForMonth->closed_ccm_status;
+        }
+
+        // todo: not sure about this
+        return $this->patientInfo->getCcmStatusForMonth($month);
+    }
+
     public function getCcmTime(): int
     {
         if (is_null($this->id)) {
@@ -2505,6 +2520,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function loginEvents()
     {
         return $this->hasMany(LoginLogout::class, 'user_id', 'id');
+    }
+
+    public function monthlyBillingStatus()
+    {
+        return $this->hasMany(PatientMonthlyBillingStatus::class, 'patient_user_id');
     }
 
     public function name()
