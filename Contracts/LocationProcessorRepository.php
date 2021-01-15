@@ -19,7 +19,7 @@ interface LocationProcessorRepository
 
     public function enrolledPatients(int $locationId, Carbon $monthYear): Collection;
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection;
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection;
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool;
 

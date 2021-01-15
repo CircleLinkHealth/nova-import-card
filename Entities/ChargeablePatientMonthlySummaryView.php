@@ -25,7 +25,6 @@ use CircleLinkHealth\Core\Traits\DateScopesTrait;
  * @property int                             $patient_user_id
  * @property int|null                        $chargeable_service_id
  * @property string                          $chargeable_month
- * @property int|null                        $actor_id
  * @property int                             $is_fulfilled
  * @property int                             $requires_patient_consent
  * @property \Illuminate\Support\Carbon|null $created_at

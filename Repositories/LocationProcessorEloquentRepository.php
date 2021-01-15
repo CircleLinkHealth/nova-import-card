@@ -36,9 +36,9 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->get();
     }
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?Collection
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): ?Collection
     {
-        return $this->servicesForMonth($locationId, $month)->get();
+        return $this->servicesForMonth($locationId, $month, $excludeLocked)->get();
     }
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool

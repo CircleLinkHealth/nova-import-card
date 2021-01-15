@@ -56,7 +56,7 @@ class Eloquent implements LocationProcessorRepository
         // TODO: Implement enrolledPatients() method.
     }
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection
     {
         // TODO: Implement getLocationSummaries() method.
     }

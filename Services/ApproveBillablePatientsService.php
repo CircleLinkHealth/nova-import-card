@@ -8,6 +8,8 @@ namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
@@ -36,25 +38,25 @@ class ApproveBillablePatientsService
             ->billablePatientSummaries($practiceId, $month);
     }
 
-    public function counts($practiceId, Carbon $month)
+    public function counts($practiceId, Carbon $month): BillablePatientsCountForMonthDTO
     {
         // the counts might be inaccurate here because the records might
         // not be processed yet. see command ProcessApprovableBillablePatientSummary
 
-        $count['approved'] = $this->approvePatientsRepo
+        $approved = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', true)
             ->where('rejected', '=', false)
             ->count();
 
-        $count['toQA'] = $this->approvePatientsRepo
+        $toQA = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', false)
             ->where('rejected', '=', false)
             ->where('needs_qa', '=', true)
             ->count();
 
-        $count['rejected'] = $this->approvePatientsRepo
+        $rejected = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('rejected', '=', true)
             ->where('approved', '=', false)
@@ -62,14 +64,14 @@ class ApproveBillablePatientsService
 
         // 1. not all fields might have been set, because they might not have been processed yet
         // 2. or we have an actor_id but none of these is true
-        $count['other'] = $this->approvePatientsRepo
+        $other = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('rejected', '=', false)
             ->where('approved', '=', false)
             ->where('needs_qa', '=', false)
             ->count();
 
-        return $count;
+        return new BillablePatientsCountForMonthDTO($approved, $toQA, $rejected, $other);
     }
 
     public function detachDefaultChargeableService($summary, $defaultCodeId)
@@ -88,7 +90,7 @@ class ApproveBillablePatientsService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getBillablePatientsForMonth($practiceId, Carbon $date)
+    public function getBillablePatientsForMonth($practiceId, Carbon $date): BillablePatientsForMonthDTO
     {
         // 1. this will fetch billable patients that have
         //    ccm > 1200 and/or bhi > 1200
@@ -112,11 +114,6 @@ class ApproveBillablePatientsService
             }
         );
 
-        return collect(
-            [
-                'summaries' => $summaries,
-                'is_closed' => $isClosed,
-            ]
-        );
+        return new BillablePatientsForMonthDTO($summaries, $isClosed);
     }
 }

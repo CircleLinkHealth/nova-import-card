@@ -18,14 +18,14 @@ use Illuminate\Database\Eloquent\Collection;
 class AttestPatientProblems
 {
     protected ?Addendum $addendum;
-    protected ?int $addendumId;
+    protected ?int $addendumId = null;
 
     //add in Job too
-    protected ?int $attestorId;
+    protected ?int $attestorId = null;
 
-    protected ?Call $call;
+    protected ?Call $call = null;
 
-    protected ?int $callId;
+    protected ?int $callId = null;
 
     protected array $ccdProblemIds;
 

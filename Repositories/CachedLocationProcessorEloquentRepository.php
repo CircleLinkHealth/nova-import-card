@@ -40,7 +40,7 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         return $this->repo->enrolledPatients($locationId, $monthYear);
     }
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection
     {
         if ( ! BillingCache::locationWasQueried($locationId)) {
             BillingCache::setLocationSummariesInCache($locationSummaries = $this->queryLocationServices($locationId));
@@ -125,9 +125,9 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         return $summary;
     }
 
-    private function queryLocationServices(int $locationId, ?Carbon $month = null): Collection
+    private function queryLocationServices(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): Collection
     {
-        return $this->repo->servicesForMonth($locationId, $month)->get();
+        return $this->repo->servicesForMonth($locationId, $month, $excludeLocked)->get();
     }
 
     private function updateLocationSummariesInCache(int $locationId, ChargeableLocationMonthlySummary $summary): void

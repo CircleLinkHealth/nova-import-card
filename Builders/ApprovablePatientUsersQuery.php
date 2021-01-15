@@ -23,12 +23,13 @@ trait ApprovablePatientUsersQuery
     public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
     {
         $relations = [
-            'primaryPractice'         => fn ($p)         => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
+            'primaryPractice'      => fn ($p)      => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'attestedProblems' => function ($q) use ($monthYear) {
-                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
+                $q->with('ccdProblem.cpmProblem')
+                    ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'billingProvider.user',
             'patientInfo.location.chargeableServiceSummaries' => function ($q) use ($monthYear) {
@@ -48,8 +49,11 @@ trait ApprovablePatientUsersQuery
             $relations['chargeableMonthlySummariesView'] = function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             };
+            $relations['monthlyBillingStatus'] = function ($q) use ($monthYear) {
+                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
+            };
         }
 
-        return User::with($relations);
+        return User::with($relations)->ofType('participant');
     }
 }

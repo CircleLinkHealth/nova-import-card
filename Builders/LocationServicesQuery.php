@@ -18,9 +18,10 @@ trait LocationServicesQuery
             ->where('location_id', $locationId);
     }
 
-    public function servicesForMonth(int $locationId, ?Carbon $month = null): Builder
+    public function servicesForMonth(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): Builder
     {
         return $this->servicesForLocation($locationId)
+            ->when($excludeLocked, fn ($q) => $q->where('is_locked', false))
             ->createdOnIfNotNull($month, 'chargeable_month');
     }
 }

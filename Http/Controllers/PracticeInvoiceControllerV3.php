@@ -25,7 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Notification;
 
-class PracticeInvoiceController extends Controller
+class PracticeInvoiceControllerV3 extends Controller
 {
     use ApiReturnHelpers;
 
@@ -73,24 +73,6 @@ class PracticeInvoiceController extends Controller
         return response()->json([
             'updated' => $updated,
         ]);
-    }
-
-    public function counts(Request $request)
-    {
-        $practice_id = $request['practice_id'];
-
-        //since this route is also accessible from software-only,
-        //we should make sure that software-only role is applied on this practice
-        $user = auth()->user();
-        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
-            abort(403);
-        }
-
-        $date = Carbon::createFromFormat('M, Y', $request->input('date'));
-
-        $counts = $this->service->counts($practice_id, $date->firstOfMonth());
-
-        return response()->json($counts);
     }
 
     public function createInvoices()
@@ -147,15 +129,6 @@ class PracticeInvoiceController extends Controller
     public function getChargeableServices()
     {
         return $this->ok(ChargeableService::cached());
-    }
-
-    public function getCounts(
-        $date,
-        $practice
-    ) {
-        $date = Carbon::parse($date);
-
-        return $this->service->counts($practice, $date->firstOfMonth());
     }
 
     /**

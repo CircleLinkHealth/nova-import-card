@@ -14,7 +14,6 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessPracticePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\SeedCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Entities\Location;
 
 class SetupPracticeBillingData
 {
