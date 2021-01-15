@@ -114,39 +114,39 @@ use Illuminate\Support\Str;
  * @property mixed                                                     $primary_phone_number
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient|null $targetPatient
  * @property \CircleLinkHealth\Customer\Entities\User|null             $user
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda
  *     $ccda)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     hasPhone($phone)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     lessThanThreeAttempts()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true,
  *     $shouldIncludeRelevanceScore = false)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee query()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     searchAddresses($term)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     searchPhones($term)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     shouldBeCalled()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee(\CircleLinkHealth\SharedModels\Entities\Enrollee $enrollee)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toSMS()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     withCaPanelRelationships()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null $batch
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     lastCalledBetween(\Carbon\Carbon $start, \Carbon\Carbon $end)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     ofStatus($status)
  * @property string|null                     $facility_name
  * @property mixed                           $cell_phone_npa_parenthesized
