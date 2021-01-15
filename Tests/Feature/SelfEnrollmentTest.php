@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Facades\Notification;
 use Tests\Concerns\TwilioFake\Twilio;
+use Tests\TestCase;
 
 class SelfEnrollmentTest extends TestCase
 {
