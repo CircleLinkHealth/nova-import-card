@@ -59,7 +59,6 @@ class EnrollableCallQueue
                                            $subQ->where('status', Enrollee::UNREACHABLE)
                                                ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT));
                                        })
-                                           //include those that CA-Director assigned callback for
                                            ->orWhere(function ($subQ) {
                                              $subQ->where('status', Enrollee::TO_CALL)
                                                  ->where('requested_callback', '>', Carbon::now()->startOfDay());
@@ -149,12 +148,11 @@ class EnrollableCallQueue
             ? \Cache::get("care_ambassador_{$this->careAmbassadorInfo->id}_queue")
             : [];
 
-        //do not check status for call_queue. If they have been selected by the CA they must have been on call queue initially
-        //per CPM-2256 we will be applying statuses on confirmed family members, so that we can pre-fill their data on the page.
         if ( ! empty($queue)) {
             $nextEnrolleeId = collect($queue)->first();
 
             return Enrollee::withCaPanelRelationships()
+                ->ofActivePractice()
                 ->find($nextEnrolleeId);
         }
 
@@ -167,6 +165,7 @@ class EnrollableCallQueue
     private function getFromCallQueue()
     {
         return Enrollee::withCaPanelRelationships()
+            ->ofActivePractice()
             ->lessThanMaxAllowedAttempts()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
@@ -180,6 +179,7 @@ class EnrollableCallQueue
     private function getPendingConfirmedFamilyMembers()
     {
         return Enrollee::withCaPanelRelationships()
+            ->ofActivePractice()
             ->whereIn('status', Enrollee::TO_CONFIRM_STATUSES)
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->first();
@@ -191,7 +191,7 @@ class EnrollableCallQueue
     private function getRequestedCallbackToday()
     {
         return Enrollee::withCaPanelRelationships()
-            //added < just in case CA missed them/did not work etc.
+            ->ofActivePractice()
             ->where('requested_callback', '<=', Carbon::now()->toDateString())
             ->whereNotNull('requested_callback')
             ->whereIn('status', [
@@ -199,7 +199,6 @@ class EnrollableCallQueue
                 Enrollee::UNREACHABLE,
             ])
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
-            //make sure that most recently updated comes first: e.g. Enrollee that just has been marked for callback from CA Director
             ->orderByDesc('updated_at')
             ->first();
     }
@@ -212,12 +211,11 @@ class EnrollableCallQueue
         $days = isProductionEnv() ? self::DAYS_FOR_NEXT_ATTEMPT : minDaysPastForCareAmbassadorNextAttempt();
 
         return Enrollee::withCaPanelRelationships()
+            ->ofActivePractice()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->lessThanMaxAllowedAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
-            //important. Patient has 1 attempt and has been called 3 days ago. However then they requested that they be called in 10 days
-            //thus they will be picked up by method 'getRequestedCallbackToday' in 10 days.
             ->whereNull('requested_callback')
             ->orderBy('attempt_count')
             ->first();
