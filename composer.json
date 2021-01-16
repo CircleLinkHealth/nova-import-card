@@ -107,14 +107,16 @@
     ],
     "require": {
         "php": "^7.4",
-        "ashallendesign/short-url": "3.0.4",
+        "ashallendesign/short-url": "^4.1",
         "circlelinkhealth/ccda-parser-processor-php-module": "1.1.4",
+        "circlelinkhealth/ccm-billing-module": "2.1.x-dev",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/core-module": "2.3.x-dev",
         "circlelinkhealth/cpm-admin-module": "1.2.x-dev",
         "circlelinkhealth/cpm-migrations-module": "3.0",
         "circlelinkhealth/customer-module": "4.3.x-dev",
         "circlelinkhealth/eligibility-module": "4.5.x-dev",
+        "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/raygun-module": "2.0",
         "circlelinkhealth/revisionable-module": "7.0.x-dev",
         "circlelinkhealth/saml-sp-module": "2.0",
@@ -128,9 +130,7 @@
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "lab404/laravel-impersonate": "^1.7",
         "laravel/framework": "8.x-dev",
-        "laravel/tinker": "^2.5",
-        "circlelinkhealth/ccm-billing-module": "2.1.x-dev",
-        "circlelinkhealth/enrollment-invites": "*"
+        "laravel/tinker": "^2.5"
     },
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",

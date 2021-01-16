@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "927900e352606402efa10ca7781d80c6",
+    "content-hash": "66fc6b80b64238259e4af08c98dcdbf8",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -178,11 +178,17 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "v3.0.4",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/short-url.git",
-                "reference": "1d01f0cb0ae5eaf4adc52210ff4aeae9a7fa1f5e"
+                "url": "https://github.com/ash-jc-allen/short-url.git",
+                "reference": "8b032aca7ec801998906f9f80812e235e6195e2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/8b032aca7ec801998906f9f80812e235e6195e2e",
+                "reference": "8b032aca7ec801998906f9f80812e235e6195e2e",
+                "shasum": ""
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -213,11 +219,7 @@
                     "AshAllenDesign\\ShortURL\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "AshAllenDesign\\ShortURL\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -230,13 +232,13 @@
             "description": "A Laravel package for creating shortened URLs for your web apps.",
             "homepage": "https://github.com/ash-jc-allen/short-url",
             "keywords": [
+                "URL-Shortener",
                 "ashallendesign",
                 "laravel",
                 "laravel-package",
-                "short-urls",
-                "url-shortener"
+                "short-urls"
             ],
-            "time": "2020-12-28T07:41:12+00:00"
+            "time": "2020-09-16T08:50:41+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -14646,6 +14648,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/customer-module": 20,
@@ -14655,7 +14658,6 @@
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "laravel/framework": 20,
-        "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20,
         "nwidart/laravel-modules": 20
     },
