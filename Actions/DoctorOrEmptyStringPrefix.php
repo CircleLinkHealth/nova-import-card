@@ -22,7 +22,7 @@ class DoctorOrEmptyStringPrefix
     public function __toString()
     {
         if (in_array($this->sanitizedSpecialty(), $this->doctorSpecialties()) && ! Str::startsWith(strtolower($this->fullName), 'dr.')) {
-            return 'Dr. ';
+            return 'Dr.';
         }
 
         return '';

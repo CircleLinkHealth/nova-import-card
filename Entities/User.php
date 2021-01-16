@@ -76,7 +76,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
@@ -1557,19 +1556,27 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getDoctorFullNameWithSpecialty()
     {
-        $specialty = '';
+        $suffixMaxLength = 3;
+        $specialty        = '';
         if ($this->providerInfo) {
-            $prInfoSpecialty = $this->getSpecialty();
-            $specialty       = $prInfoSpecialty == $this->getSuffix()
-                ? ''
-                : "\n {$prInfoSpecialty}";
+            $specialty = $this->getSpecialty();
+            $suffix    = $this->getSuffix();
+
+            if ( ! empty($specialty) && strlen($specialty) <= $suffixMaxLength) {
+                $suffix    = $specialty;
+                $specialty = '';
+            } elseif ( ! empty($suffix) && strlen($suffix) <= $suffixMaxLength) {
+                $suffix    = $suffix;
+                $specialty = '';
+            } else {
+                $specialty = $specialty ? $specialty : '';
+                $suffix    = $suffix ? $suffix : '';
+            }
         }
 
-        $fullName = $this->getFullName();
+        $doctorPrefix = new DoctorOrEmptyStringPrefix($fullName = $this->getFullName(), $suffix);
 
-        $doctorPrefix = new DoctorOrEmptyStringPrefix($fullName, $specialty);
-
-        return $doctorPrefix.$fullName.$specialty;
+        return "$doctorPrefix $fullName $suffix \n$specialty";
     }
 
     public function getEmailForPasswordReset()
