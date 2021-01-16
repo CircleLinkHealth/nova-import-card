@@ -20,6 +20,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
+use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
@@ -1557,19 +1558,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getDoctorFullNameWithSpecialty()
     {
         $specialty = '';
-
         if ($this->providerInfo) {
-            $specialty = $this->getSpecialty() == $this->getSuffix()
+            $prInfoSpecialty = $this->getSpecialty();
+            $specialty       = $prInfoSpecialty == $this->getSuffix()
                 ? ''
-                : "\n {$this->getSpecialty()}";
+                : "\n {$prInfoSpecialty}";
         }
 
         $fullName = $this->getFullName();
-        $doctor   = Str::startsWith(strtolower($fullName), 'dr.')
-            ? ''
-            : 'Dr. ';
 
-        return $doctor.$fullName.$specialty;
+        $doctorPrefix = new DoctorOrEmptyStringPrefix($fullName, $specialty);
+
+        return $doctorPrefix.$fullName.$specialty;
     }
 
     public function getEmailForPasswordReset()
