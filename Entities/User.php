@@ -353,6 +353,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
+    const MAX_SUFFIX_LENGTH                                        = 3;
 
     const SCOPE_LOCATION = 'location';
     const SCOPE_PRACTICE = 'practice';
@@ -1556,27 +1557,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getDoctorFullNameWithSpecialty()
     {
-        $suffixMaxLength = 3;
-        $specialty       = '';
+        $specialty = '';
         if ($this->providerInfo) {
             $specialty = $this->getSpecialty();
-            $suffix    = $this->getSuffix();
 
-            if ( ! empty($specialty) && strlen($specialty) <= $suffixMaxLength) {
-                $suffix    = $specialty;
+            if ( ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
                 $specialty = '';
-            } elseif ( ! empty($suffix) && strlen($suffix) <= $suffixMaxLength) {
-                $suffix    = $suffix;
-                $specialty = '';
-            } else {
-                $specialty = $specialty ? $specialty : '';
-                $suffix    = $suffix ? $suffix : '';
             }
         }
 
-        $doctorPrefix = new DoctorOrEmptyStringPrefix($fullName = $this->getFullName(), $suffix);
-
-        return "$doctorPrefix $fullName \n$specialty";
+        return "{$this->getFullName()} \n$specialty";
     }
 
     public function getEmailForPasswordReset()
@@ -1591,11 +1581,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getFullName()
     {
-        $firstName = $this->first_name;
-        $lastName  = $this->last_name;
-        $suffix    = $this->getSuffix();
+        $doctorPrefix = '';
+        $suffix       = $this->getSuffix();
 
-        return trim("${firstName} ${lastName} ${suffix}");
+        if ($this->isProvider()) {
+            $specialty = $this->getSpecialty();
+
+            if (empty($suffix) && ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
+                $suffix = $specialty;
+            }
+            $doctorPrefix = new DoctorOrEmptyStringPrefix($this->first_name, $suffix);
+        }
+
+        return trim("$doctorPrefix $this->first_name $this->last_name $suffix");
     }
 
     public function getFullNameWithId()
