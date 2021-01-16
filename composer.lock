@@ -1024,7 +1024,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "af0f2a2f40851f1acb9f73b87e2d2c7e52a84873"
+                "reference": "d3e2c5923c08bc2ce3ff4d4461555766793c7c82"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1065,7 +1065,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-16T03:54:13+00:00"
+            "time": "2021-01-16T04:07:06+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
