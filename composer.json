@@ -175,7 +175,7 @@
         "circlelinkhealth/raygun-module": "2.0",
         "circlelinkhealth/revisionable-module": "7.0.x-dev",
         "circlelinkhealth/saml-sp-module": "2.0",
-        "circlelinkhealth/shared-models-module": "2.3.x-dev",
+        "circlelinkhealth/shared-models-module": "2.3.2.x-dev",
         "circlelinkhealth/sharedvuecomponents-module": "1.0",
         "circlelinkhealth/sqlviews-module": "2.0",
         "circlelinkhealth/synonyms-module": "*",
