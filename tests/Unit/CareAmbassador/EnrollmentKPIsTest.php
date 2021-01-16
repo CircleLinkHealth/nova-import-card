@@ -13,7 +13,7 @@ use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Artisan;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class EnrollmentKPIsTest extends TestCase
 {

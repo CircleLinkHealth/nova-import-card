@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Services\ApproveBillablePatientsService;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PracticePcmBillingTest extends TestCase
 {

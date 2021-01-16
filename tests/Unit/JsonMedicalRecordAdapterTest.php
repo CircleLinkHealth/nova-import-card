@@ -9,7 +9,7 @@ namespace Tests\Unit;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class JsonMedicalRecordAdapterTest extends TestCase
 {

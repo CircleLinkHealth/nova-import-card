@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeRepor
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PracticeReportTest extends TestCase
 {

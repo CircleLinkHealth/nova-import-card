@@ -10,7 +10,7 @@ use App\Jobs\LogSuccessfulLoginToDB;
 use App\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\CpmConstants\ProviderClinicalTypes;
+use CircleLinkHealth\Customer\Constants\ProviderClinicalTypes;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\SelfEnrollment\AppConfig\Reminders;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;

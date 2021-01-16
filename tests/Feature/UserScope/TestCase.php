@@ -10,7 +10,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Tests\Feature\UserScope\Assertions\Assertion;
-use Tests\TestCase as BaseTestCase;
+use CircleLinkHealth\Core\Tests\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {

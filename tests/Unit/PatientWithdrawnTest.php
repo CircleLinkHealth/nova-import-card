@@ -17,7 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientWithdrawnTest extends TestCase
 {

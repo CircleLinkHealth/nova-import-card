@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 abstract class NekatostrasClinicTestCase extends TestCase
 {

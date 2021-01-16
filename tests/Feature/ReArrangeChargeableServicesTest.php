@@ -26,7 +26,7 @@ use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use Illuminate\Support\Collection;
 use ReflectionMethod;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ReArrangeChargeableServicesTest extends TestCase
 {

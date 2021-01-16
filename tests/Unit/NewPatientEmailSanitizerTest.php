@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class NewPatientEmailSanitizerTest extends TestCase
 {

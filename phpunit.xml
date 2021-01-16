@@ -12,6 +12,9 @@
     <testsuite name="EligibilityModule">
       <directory suffix="Test.php">./CircleLinkHealth/Eligibility/Tests</directory>
     </testsuite>
+    <testsuite name="CustomerModule">
+      <directory suffix="Test.php">./CircleLinkHealth/Customer/Tests</directory>
+    </testsuite>
     <testsuite name="CcmBillingModule">
       <directory suffix="Test.php">./CircleLinkHealth/CcmBilling/Tests</directory>
     </testsuite>

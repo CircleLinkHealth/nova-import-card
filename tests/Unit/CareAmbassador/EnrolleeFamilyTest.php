@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class EnrolleeFamilyTest extends TestCase
 {

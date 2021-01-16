@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class TimeTrackingAndChargeableServiceTest extends TestCase
 {

@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Tests\Helpers\CarePlanHelpers;
 
-class OpsDashboardTest extends \Tests\TestCase
+class OpsDashboardTest extends \CircleLinkHealth\Core\Tests\TestCase
 {
     use CarePlanHelpers;
     use PracticeHelpers;

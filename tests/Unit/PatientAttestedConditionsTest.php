@@ -28,7 +28,7 @@ use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientAttestedConditionsTest extends TestCase
 {

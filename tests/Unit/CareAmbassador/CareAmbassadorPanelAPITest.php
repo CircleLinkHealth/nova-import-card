@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class CareAmbassadorPanelAPITest extends TestCase
 {
