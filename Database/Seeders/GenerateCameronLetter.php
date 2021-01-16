@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\DTO\CameronLetterProductionValueObject;
 use CircleLinkHealth\Eligibility\DTO\CameronLetterTestValueObject;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;

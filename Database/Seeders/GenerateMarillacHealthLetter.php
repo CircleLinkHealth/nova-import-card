@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use App;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
 

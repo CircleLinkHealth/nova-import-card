@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Services;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Artisan;
