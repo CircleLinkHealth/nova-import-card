@@ -10,18 +10,18 @@ use Illuminate\Support\Str;
 
 class DoctorOrEmptyStringPrefix
 {
-    private string $fullName;
+    private string $name;
     private ?string $specialty;
 
-    public function __construct(string $fullName, ?string $specialty)
+    public function __construct(string $name, ?string $specialty)
     {
-        $this->fullName  = $fullName;
+        $this->name      = $name;
         $this->specialty = $specialty;
     }
 
     public function __toString()
     {
-        if (in_array($this->sanitizedSpecialty(), $this->doctorSpecialties()) && ! Str::startsWith(strtolower($this->fullName), 'dr.')) {
+        if (in_array($this->sanitizedSpecialty(), $this->doctorSpecialties()) && ! Str::startsWith(strtolower($this->name), 'dr.')) {
             return 'Dr.';
         }
 
