@@ -11,7 +11,7 @@
                 {{ $patient->getCcmStatus() == 'patient_rejected' ? 'Rejected' : ($patient->patientIsUPG0506() ? 'Created' : 'Approved') }}
                 on {{$patient->carePlan->provider_date->format('m/d/Y')}}
                 at {{$patient->carePlan->provider_date->setTimezone($patient->timezone ?? 'America/New_York')->format('g:i A T')}}
-                by {{ $patient->carePlan->providerApproverUser->getDoctorFullNameWithSpecialty() }}
+                by {{ $patient->carePlan->providerApproverUser->getFullName() }}
                 @if($patient->carePlan->wasApprovedViaNurse()) via {{$patient->carePlan->getNurseApproverName()}} @endif
             </div>
         </div>
