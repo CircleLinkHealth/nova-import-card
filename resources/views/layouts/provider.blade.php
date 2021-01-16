@@ -168,7 +168,7 @@
 </script>
 @endif
 
-@include('partials.clickup-bug-collector')
+@include('core::partials.clickup-bug-collector')
 
 @include('core::partials.sentry-js')
 </body>
