@@ -2067,7 +2067,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        if ( ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
+        if (strtolower(extractLetters($this->providerInfo->specialty)) === strtolower(extractLetters($this->getSuffix()))) {
             return '';
         }
 
