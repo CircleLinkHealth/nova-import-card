@@ -19,7 +19,7 @@ class DoctorOrEmptyStringPrefixTest extends CustomerTestCase
         $provider->suffix = '';
         $provider->save();
 
-        $this->assertFalse(Str::startsWith($provider->getDoctorFullNameWithSpecialty(), 'Dr.'));
+        $this->assertFalse(Str::startsWith($provider->getFullName(), 'Dr.'));
     }
 
     public function test_it_shows_dr_prefix_with_specialty_and_no_suffix()
@@ -30,7 +30,7 @@ class DoctorOrEmptyStringPrefixTest extends CustomerTestCase
         $provider->suffix = '';
         $provider->save();
 
-        $this->assertTrue(Str::startsWith($provider->getDoctorFullNameWithSpecialty(), 'Dr.'));
+        $this->assertTrue(Str::startsWith($provider->getFullName(), 'Dr.'));
     }
 
     public function test_it_shows_dr_prefix_with_specialty_and_suffix()
@@ -41,7 +41,7 @@ class DoctorOrEmptyStringPrefixTest extends CustomerTestCase
         $provider->suffix = 'MD';
         $provider->save();
 
-        $this->assertTrue(Str::startsWith($provider->getDoctorFullNameWithSpecialty(), 'Dr.'));
+        $this->assertTrue(Str::startsWith($provider->getFullName(), 'Dr.'));
     }
 
     public function test_it_shows_dr_prefix_with_suffix_and_no_specialty()
@@ -52,6 +52,6 @@ class DoctorOrEmptyStringPrefixTest extends CustomerTestCase
         $provider->providerInfo->specialty = '';
         $provider->providerInfo->save();
 
-        $this->assertTrue(Str::startsWith($provider->getDoctorFullNameWithSpecialty(), 'Dr.'));
+        $this->assertTrue(Str::startsWith($provider->getFullName(), 'Dr.'));
     }
 }

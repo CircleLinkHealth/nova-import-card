@@ -1555,20 +1555,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->date_withdrawn;
     }
 
-    public function getDoctorFullNameWithSpecialty()
-    {
-        $specialty = '';
-        if ($this->providerInfo) {
-            $specialty = $this->getSpecialty();
-
-            if ( ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
-                $specialty = '';
-            }
-        }
-
-        return "{$this->getFullName()} \n$specialty";
-    }
-
     public function getEmailForPasswordReset()
     {
         return $this->email;
@@ -2078,6 +2064,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getSpecialty()
     {
         if ( ! $this->providerInfo) {
+            return '';
+        }
+
+        if ( ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
             return '';
         }
 
