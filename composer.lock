@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49d61398d32c85a18f903ef67d647cec",
+    "content-hash": "6388ad6fc0f3a36686cd05a09859af88",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -803,7 +803,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -839,7 +839,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -992,11 +992,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v3.0",
+            "version": "3.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "f891f9766706c52019c3ca7cbec0cec7a779397f"
+                "reference": "f8e2b0ab7e8b1f6ffac1a0c80caa04390127c29f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1016,7 +1016,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T04:25:16+00:00"
+            "time": "2021-01-14T17:57:14+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1073,7 +1073,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1d78981b1966c7afcd08894857ef29f09e0235cc"
+                "reference": "efff7c6807ccca395da8823ad2d151bdde591ca1"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1103,11 +1103,11 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-15T20:18:55+00:00"
+            "time": "2021-01-16T13:24:06+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1144,7 +1144,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1180,7 +1180,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1216,7 +1216,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1253,7 +1253,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-master",
+            "version": "dev-laravel-8.0",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -17900,6 +17900,7 @@
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
