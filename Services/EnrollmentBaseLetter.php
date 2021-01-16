@@ -114,7 +114,7 @@ class EnrollmentBaseLetter
         if (empty($this->letter)) {
             try {
                 $className = ucfirst(Str::camel('generate'.'-'.$this->practice->name.'-letter'));
-                Artisan::call("module:seed --class=$className Eligibility");
+                Artisan::call("module:seed --class=$className SelfEnrollment");
             } catch (\Exception $exception) {
                 throw $exception;
             }
