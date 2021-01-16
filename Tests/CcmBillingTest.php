@@ -15,9 +15,9 @@ use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
-class CcmBillingTest extends TestCase
+class CcmBillingTest extends \CircleLinkHealth\Core\Tests\TestCase
 {
     public function test_it_fetches_approvable_patients_for_location()
     {
