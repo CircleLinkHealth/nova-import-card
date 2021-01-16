@@ -981,6 +981,10 @@ class Enrollee extends BaseModel
         ]);
     }
 
+    public function scopeOfActivePractice($query){
+        return $query->whereHas('practice', fn($p) => $p->active());
+    }
+
     public function sendEnrollmentConsentReminderSMS()
     {
         $emjo = 'u"\U0001F31F"';
