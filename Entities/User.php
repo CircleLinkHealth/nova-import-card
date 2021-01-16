@@ -1557,7 +1557,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getDoctorFullNameWithSpecialty()
     {
         $suffixMaxLength = 3;
-        $specialty        = '';
+        $specialty       = '';
         if ($this->providerInfo) {
             $specialty = $this->getSpecialty();
             $suffix    = $this->getSuffix();
@@ -1576,7 +1576,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         $doctorPrefix = new DoctorOrEmptyStringPrefix($fullName = $this->getFullName(), $suffix);
 
-        return "$doctorPrefix $fullName $suffix \n$specialty";
+        return "$doctorPrefix $fullName \n$specialty";
     }
 
     public function getEmailForPasswordReset()
