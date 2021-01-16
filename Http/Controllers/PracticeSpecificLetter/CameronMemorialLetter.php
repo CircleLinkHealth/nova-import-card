@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLette
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCameronLetter;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
