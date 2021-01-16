@@ -165,7 +165,7 @@ if (isset($patient) && ! empty($patient)) {
                                 Plan</h1>
                         </div>
 
-                        @include('partials.carePlans.approval-box')
+                        @include('partials.carePlans.approval-box', ['patient' => $patient])
                     </div>
 
                     <br>
