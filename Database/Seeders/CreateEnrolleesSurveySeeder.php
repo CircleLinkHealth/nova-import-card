@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class CreateEnrolleesSurveySeeder extends Seeder

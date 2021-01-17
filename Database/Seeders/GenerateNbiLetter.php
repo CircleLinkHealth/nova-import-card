@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
 
 class GenerateNbiLetter extends Seeder
 {
-    const NBI_NAME = 'demo';
+    const NBI_NAME = 'bethcare-newark-beth-israel';
     const PRACTICE_SIGNATORY_NAME = 'Dr. Johanny Garcia <br> Beth Prime Practice';
     const UI_REQUESTS             = 'ui_requests';
     private string $practiceNumber;
@@ -41,8 +41,8 @@ class GenerateNbiLetter extends Seeder
                 'practice_id' => $nbiPractice->id,
             ],
             [
-                'practice_logo_src'      => '/img/logos/Woodlands/woodlands_logo.png',
-                'customer_signature_src' => '/img/signatures/woodlands-clinic/woodlands_signature.png',
+                'practice_logo_src'      => '/img/logos/Nbi/nbi_logo.png',
+                'customer_signature_src' => '/img/signatures/nbi/nbi_signature.png',
                 'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
