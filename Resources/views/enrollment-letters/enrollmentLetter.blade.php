@@ -1,6 +1,7 @@
 @foreach($letterPages as $page)
     <div class="browser-default">
         {!! $page !!}
+        <br>
     </div>
 @endforeach
 

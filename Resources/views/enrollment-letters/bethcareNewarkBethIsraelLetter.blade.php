@@ -10,6 +10,8 @@
                 </div>
             @endif
 
+                <br>
+
             @include('selfEnrollment::enrollment-letters.headers.nbi')
 
             @include('selfEnrollment::enrollment-letters.baseLetter')

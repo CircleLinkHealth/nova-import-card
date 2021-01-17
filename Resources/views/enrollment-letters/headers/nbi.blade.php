@@ -30,6 +30,10 @@
         font-size: 23px;
     }
 
+    .practice-logo img{
+        height: 69px;
+    }
+
     @media (max-width: 490px) {
         .header{
             padding-right: 18px;
