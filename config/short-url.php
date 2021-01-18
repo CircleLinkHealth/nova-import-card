@@ -5,7 +5,7 @@
  */
 
 return [
-    'app_url' => env('SHORT_URL_BASE') ?? rtrim(env('APP_URL'), '/').'/e/',
+    'app_url' => env('SHORT_URL_BASE') ?? rtrim(env('APP_URL'), '/').'/short/',
 
     /*
     |--------------------------------------------------------------------------
