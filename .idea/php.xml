@@ -59,7 +59,6 @@
       <path value="$PROJECT_DIR$/vendor/spatie/image-optimizer" />
       <path value="$PROJECT_DIR$/vendor/spatie/temporary-directory" />
       <path value="$PROJECT_DIR$/vendor/giggsey/libphonenumber-for-php" />
-      <path value="$PROJECT_DIR$/vendor/hashids/hashids" />
       <path value="$PROJECT_DIR$/vendor/joshbrw/laravel-module-installer" />
       <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
       <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
@@ -116,7 +115,6 @@
       <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
       <path value="$PROJECT_DIR$/vendor/laravelcollective/html" />
       <path value="$PROJECT_DIR$/vendor/propaganistas/laravel-phone" />
-      <path value="$PROJECT_DIR$/vendor/ashallendesign/short-url" />
       <path value="$PROJECT_DIR$/vendor/darkghosthunter/preloader" />
       <path value="$PROJECT_DIR$/vendor/darkghosthunter/laraload" />
       <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
