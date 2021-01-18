@@ -27,7 +27,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Bus;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientSummaryProcessingTest extends TestCase
 {

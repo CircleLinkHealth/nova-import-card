@@ -22,7 +22,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class LocationSummaryProcessingTest extends TestCase
 {
