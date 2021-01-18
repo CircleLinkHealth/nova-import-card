@@ -15,7 +15,7 @@ class PatientCareplanRelations
                 $q->orderBy('id', 'desc')->with('provider')->paginate();
             },
             'carePlan' => function ($q) {
-                return $q->withNurseApprovedVia();
+                return $q->withNurseApprovedVia()->with('providerApproverUser');
             },
             'carePlanAssessment' => function ($q) {
                 $q->whereNotNull('key_treatment');

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Tests;
 
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -15,7 +16,6 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Testing\WithFaker;
 use ReflectionObject;
-use Tests\TestCase;
 
 class CustomerTestCase extends TestCase
 {

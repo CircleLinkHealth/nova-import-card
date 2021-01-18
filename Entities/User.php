@@ -21,6 +21,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
+use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
@@ -76,7 +77,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
@@ -356,6 +356,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
+    const MAX_SUFFIX_LENGTH                                        = 3;
 
     const SCOPE_LOCATION = 'location';
     const SCOPE_PRACTICE = 'practice';
@@ -429,10 +430,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     ];
 
     protected $rules = [];
-
-    //we need this for ProtectsPHI.php
-    //it is used with CerberusSiteUserTrait::setRelation
-    protected $with = ['roles', 'perms'];
 
     private static $canSeePhi = [];
 
@@ -1569,24 +1566,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->date_withdrawn;
     }
 
-    public function getDoctorFullNameWithSpecialty()
-    {
-        $specialty = '';
-
-        if ($this->providerInfo) {
-            $specialty = $this->getSpecialty() == $this->getSuffix()
-                ? ''
-                : "\n {$this->getSpecialty()}";
-        }
-
-        $fullName = $this->getFullName();
-        $doctor   = Str::startsWith(strtolower($fullName), 'dr.')
-            ? ''
-            : 'Dr. ';
-
-        return $doctor.$fullName.$specialty;
-    }
-
     public function getEmailForPasswordReset()
     {
         return $this->email;
@@ -1599,11 +1578,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getFullName()
     {
-        $firstName = $this->first_name;
-        $lastName  = $this->last_name;
-        $suffix    = $this->getSuffix();
+        $doctorPrefix = '';
+        $suffix       = $this->getSuffix();
 
-        return trim("${firstName} ${lastName} ${suffix}");
+        if ($this->isProvider()) {
+            $specialty = $this->getSpecialty();
+
+            if (empty($suffix) && ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
+                $suffix = $specialty;
+            }
+            $doctorPrefix = new DoctorOrEmptyStringPrefix($this->first_name, $suffix);
+        }
+
+        return trim("$doctorPrefix $this->first_name $this->last_name $suffix");
     }
 
     public function getFullNameWithId()
@@ -2088,6 +2075,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getSpecialty()
     {
         if ( ! $this->providerInfo) {
+            return '';
+        }
+
+        if (strtolower(extractLetters($this->providerInfo->specialty)) === strtolower(extractLetters($this->getSuffix()))) {
             return '';
         }
 
