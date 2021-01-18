@@ -12,4 +12,8 @@ use Illuminate\Database\Eloquent\Builder;
 interface PracticeProcessorRepository
 {
     public function patientServices(int $practiceId, Carbon $month): Builder;
+    
+    public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    
+    public function closeMonth(int $actorId, int $practiceId, Carbon $month);
 }

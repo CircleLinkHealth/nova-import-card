@@ -88,6 +88,7 @@ class ProcessPatientSummaries
             //todo: preload available service processors on repo property? or will hey exist in patientWithBilling Data array
             ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
             ->forPatient($this->patientUser->id)
+            ->ofLocation($this->patientUser->patientInfo->location->id)
             ->forMonth($this->month)
             ->withProblems(...PatientProblemsForBillingProcessing::getArray($this->patientId));
 

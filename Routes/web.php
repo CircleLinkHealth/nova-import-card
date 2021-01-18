@@ -33,7 +33,7 @@ Route::group([
             ])->middleware('permission:patientSummary.read');
 
             Route::post('/close', [
-                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@closeMonthlySummaryStatus',
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@closeMonth',
                 'as'   => 'monthly.billing.close.month',
             ])->middleware('permission:patientSummary.update');
 

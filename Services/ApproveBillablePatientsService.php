@@ -8,9 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\Jobs\SetLegacyPmsClosedMonthStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 
@@ -36,6 +39,23 @@ class ApproveBillablePatientsService
     {
         return $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month);
+    }
+
+    public function closeMonth(int $actorId, $practiceId, Carbon $month)
+    {
+        $updated = PatientMonthlySummary::whereHas('patient', function ($q) use ($practiceId) {
+            $q->ofPractice($practiceId);
+        })
+            ->where('month_year', $month)
+            ->update([
+                'actor_id' => $actorId,
+                'needs_qa' => false,
+            ]);
+
+        SetLegacyPmsClosedMonthStatus::dispatch($practiceId, $month)
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
+
+        return $updated;
     }
 
     public function counts($practiceId, Carbon $month): BillablePatientsCountForMonthDTO

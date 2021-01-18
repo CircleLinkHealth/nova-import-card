@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Http\Requests\GetBillablePatientsForPracticeForMonthRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsRequest;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -23,7 +23,22 @@ class ApproveBillablePatientsController extends Controller
     {
     }
 
-    public function counts(GetBillablePatientsForPracticeForMonthRequest $request)
+    public function closeMonth(ApproveBillablePatientsRequest $request)
+    {
+        $practiceId = $request->input('practice_id');
+        $date       = Carbon::createFromFormat('M, Y', $request->input('date'));
+        $user       = auth()->user();
+
+        /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
+        $service = $this->getService($request);
+        $updated = $service->closeMonth($user->id, $practiceId, $date->firstOfMonth());
+
+        return response()->json([
+            'updated' => $updated,
+        ]);
+    }
+
+    public function counts(ApproveBillablePatientsRequest $request)
     {
         $practiceId = $request['practice_id'];
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'))->startOfMonth();
@@ -35,7 +50,7 @@ class ApproveBillablePatientsController extends Controller
         return response()->json($counts->toArray());
     }
 
-    public function data(GetBillablePatientsForPracticeForMonthRequest $request)
+    public function data(ApproveBillablePatientsRequest $request)
     {
         $practiceId = $request->input('practice_id');
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'))->startOfMonth();

@@ -10,6 +10,11 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Jobs\SetLegacyPmsClosedMonthStatus;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -17,6 +22,30 @@ class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
+
+    public function closeMonth(int $actorId, int $practiceId, Carbon $month)
+    {
+        $updated = PatientMonthlyBillingStatus::whereHas(
+            'patientUser',
+            fn ($q) => $q->ofPractice($practiceId)
+        )->where('chargeable_month', $month)
+            ->update([
+                'actor_id' => $actorId,
+            ]);
+
+        ChargeableLocationMonthlySummary::whereHas(
+            'location',
+            fn ($q) => $q->where('practice_id', '=', $practiceId)
+        )->where('chargeable_month', '=', $month)
+            ->update([
+                'is_locked' => true,
+            ]);
+
+        SetLegacyPmsClosedMonthStatus::dispatch($practiceId, $month)
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
+
+        return $updated;
+    }
 
     public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {

@@ -28,6 +28,11 @@ class Location implements CustomerProcessor
         return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }
 
+    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return $this->repo->isLockedForMonth($locationId, $chargeableServiceCode, $month);
+    }
+
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
         $this->repo()

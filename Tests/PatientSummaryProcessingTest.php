@@ -37,6 +37,7 @@ class PatientSummaryProcessingTest extends TestCase
 //        FakePatientRepository::fake();
 //
 //        $patientId = 1;
+//        $locationId = 1;
 //        $ccm       = new CCM();
 //        $ccm40     = new CCM40();
 //        $month     = now();
@@ -52,6 +53,7 @@ class PatientSummaryProcessingTest extends TestCase
 //        $stub = (new PatientMonthlyBillingDTO())
 //            ->subscribe(AvailableServiceProcessors::push([$ccm, $ccm40]))
 //            ->forPatient($patientId)
+//            ->ofLocation($locationId)
 //            ->forMonth($month)
 //            ->withProblems(
 //                (new PatientProblemForProcessing())
@@ -118,6 +120,7 @@ class PatientSummaryProcessingTest extends TestCase
         $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
+            ->ofLocation(1)
             ->forMonth($startOfMonth = Carbon::now()->startOfMonth()->startOfDay())
             ->withProblems(
                 (new PatientProblemForProcessing())
@@ -155,6 +158,7 @@ class PatientSummaryProcessingTest extends TestCase
         FakePatientRepository::fake();
 
         $patientId = 1;
+        $locationId = 1;
         $ccm       = new CCM();
         $pcm       = new PCM();
         $month     = now();
@@ -162,6 +166,7 @@ class PatientSummaryProcessingTest extends TestCase
         $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([$ccm, $pcm]))
             ->forPatient($patientId)
+            ->ofLocation($locationId)
             ->forMonth($month)
             ->withProblems(
                 (new PatientProblemForProcessing())

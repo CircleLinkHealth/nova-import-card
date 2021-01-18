@@ -45,6 +45,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
                     )
             )
             ->forPatient($patient->id)
+            ->ofLocation(intval($patient->getPreferredContactLocation()))
             ->forMonth($thisMonth)
             ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id));
 

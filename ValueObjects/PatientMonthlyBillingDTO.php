@@ -14,6 +14,8 @@ class PatientMonthlyBillingDTO
 
     protected Carbon $chargeableMonth;
 
+    protected int $locationId;
+
     protected int $patientId;
 
     protected array $patientProblems;
@@ -42,6 +44,11 @@ class PatientMonthlyBillingDTO
         return $this->chargeableMonth;
     }
 
+    public function getLocationId(): int
+    {
+        return $this->locationId;
+    }
+
     public function getPatientId(): int
     {
         return $this->patientId;
@@ -50,6 +57,13 @@ class PatientMonthlyBillingDTO
     public function getPatientProblems(): array
     {
         return $this->patientProblems;
+    }
+
+    public function ofLocation(int $locationId): self
+    {
+        $this->locationId = $locationId;
+
+        return $this;
     }
 
     public function subscribe(AvailableServiceProcessors $availableServiceProcessors): self

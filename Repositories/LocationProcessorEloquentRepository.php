@@ -49,6 +49,17 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->exists();
     }
 
+    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        $summaries = ChargeableLocationMonthlySummary::where('id', '=', $locationId)
+            ->where('chargeable_month', '=', $month)
+            ->get(['id', 'is_locked']);
+
+        return $summaries->isNotEmpty() && $summaries->every(function (ChargeableLocationMonthlySummary $summary) {
+            return $summary->is_locked;
+        });
+    }
+
     public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
     {
         return $this->patientsQuery($locationId, $chargeableMonth)->paginate($pageSize);

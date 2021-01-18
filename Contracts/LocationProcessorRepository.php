@@ -23,6 +23,8 @@ interface LocationProcessorRepository
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool;
 
+    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool;
+
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
     public function pastMonthSummaries(int $locationId, Carbon $month): Collection;

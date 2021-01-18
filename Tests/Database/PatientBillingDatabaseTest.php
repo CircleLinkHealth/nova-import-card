@@ -19,6 +19,7 @@ use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Activity;
@@ -225,13 +226,15 @@ class PatientBillingDatabaseTest extends CustomerTestCase
             ->createdOn($startOfMonth, 'chargeable_month')
             ->exists());
 
+        /** @var User $patient */
         $patient = $patientRepo->patientWithBillingDataForMonth($patient->id, $startOfMonth)
             ->first();
 
-        (new MonthlyProcessor())->process(
+        (app(MonthlyProcessor::class))->process(
             (new PatientMonthlyBillingDTO())
                 ->subscribe($patient->patientInfo->location->availableServiceProcessors($startOfMonth))
                 ->forPatient($patient->id)
+                ->ofLocation($patient->patientInfo->location->id)
                 ->forMonth($startOfMonth)
                 ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
         );

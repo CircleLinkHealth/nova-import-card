@@ -20,6 +20,11 @@ class Practice implements CustomerProcessor
         $this->repo = $repo;
     }
 
+    public function closeMonth(int $actorId, int $practiceId, Carbon $month)
+    {
+        return $this->repo->closeMonth($actorId, $practiceId, $month);
+    }
+
     public function fetchApprovablePatients(int $practiceId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
     {
         return new ApprovablePatientCollection($this->repo->paginatePatients($practiceId, $month, $pageSize));

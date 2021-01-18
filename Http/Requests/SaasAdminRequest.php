@@ -9,7 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Requests;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetBillablePatientsForPracticeForMonthRequest extends FormRequest
+class SaasAdminRequest extends FormRequest
 {
     public function authorize()
     {
@@ -26,13 +26,5 @@ class GetBillablePatientsForPracticeForMonthRequest extends FormRequest
         }
 
         return false;
-    }
-
-    public function rules()
-    {
-        return [
-            'practice_id' => 'required|exists:practices,id',
-            'date'        => 'required|date_format:"F, Y"',
-        ];
     }
 }

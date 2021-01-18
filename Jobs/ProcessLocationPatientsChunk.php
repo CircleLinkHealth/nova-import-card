@@ -77,6 +77,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
                 (new PatientMonthlyBillingDTO())
                     ->subscribe($this->getAvailableServiceProcessors())
                     ->forPatient($patient->id)
+                    ->ofLocation($this->locationId)
                     ->forMonth($this->getChargeableMonth())
                     ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
             );

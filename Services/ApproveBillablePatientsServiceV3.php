@@ -21,7 +21,12 @@ class ApproveBillablePatientsServiceV3
         $this->practiceProcessor = $practiceProcessor;
     }
 
-    public function counts()
+    public function closeMonth(int $actorId, int $practiceId, Carbon $month)
+    {
+        return $this->practiceProcessor->closeMonth($actorId, $practiceId, $month);
+    }
+
+    public function counts(): BillablePatientsCountForMonthDTO
     {
         return new BillablePatientsCountForMonthDTO(0, 0, 0, 0);
     }

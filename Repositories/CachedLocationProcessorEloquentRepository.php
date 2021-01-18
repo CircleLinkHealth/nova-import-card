@@ -53,6 +53,9 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         return BillingCache::getLocationSummaries($locationId)
             ->when( ! is_null($month), function ($collection) use ($month) {
                 return $collection->where('chargeable_month', $month);
+            })
+            ->when($excludeLocked, function ($query) {
+                return $query->where('is_locked', false);
             });
     }
 
@@ -62,6 +65,15 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
             ->whereIn('chargeableService.code', $chargeableServiceCodes)
             ->where('chargeable_month', $month)
             ->isNotEmpty();
+    }
+
+    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        $summaries = $this->getLocationSummaries($locationId, $month, false);
+
+        return $summaries->isNotEmpty() && $summaries->every(function (ChargeableLocationMonthlySummary $summary) {
+            return $summary->is_locked;
+        });
     }
 
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator

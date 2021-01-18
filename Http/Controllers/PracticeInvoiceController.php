@@ -9,7 +9,6 @@ namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\CreatePracticeInvoice;
-use CircleLinkHealth\CcmBilling\Jobs\SetLegacyPmsClosedMonthStatus;
 use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
@@ -44,53 +43,6 @@ class PracticeInvoiceController extends Controller
         $this->service                    = $service;
         $this->patientSummaryDBRepository = $patientSummaryDBRepository;
         $this->practiceReportsService     = $practiceReportsService;
-    }
-
-    /** open patient-monthly-summaries in a practice */
-    public function closeMonthlySummaryStatus(Request $request)
-    {
-        $practice_id = $request->input('practice_id');
-        $date        = $request->input('date');
-        $user        = auth()->user();
-
-        //since this route is also accessible from software-only,
-        //we should make sure that software-only role is applied on this practice
-        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
-            abort(403);
-        }
-
-        if ($date) {
-            $date = Carbon::createFromFormat('M, Y', $date);
-        }
-
-        $updated = $this->getCurrentMonthSummariesQuery($practice_id, $date)->update([
-            'actor_id' => $user->id,
-            'needs_qa' => false,
-        ]);
-
-        SetLegacyPmsClosedMonthStatus::dispatch($practice_id, $date)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
-
-        return response()->json([
-            'updated' => $updated,
-        ]);
-    }
-
-    public function counts(Request $request)
-    {
-        $practice_id = $request['practice_id'];
-
-        //since this route is also accessible from software-only,
-        //we should make sure that software-only role is applied on this practice
-        $user = auth()->user();
-        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
-            abort(403);
-        }
-
-        $date = Carbon::createFromFormat('M, Y', $request->input('date'));
-
-        $counts = $this->service->counts($practice_id, $date->firstOfMonth());
-
-        return response()->json($counts);
     }
 
     public function createInvoices()
@@ -369,18 +321,5 @@ class PracticeInvoiceController extends Controller
         $summary->chargeableServices()->sync($toSync);
 
         return $this->ok($summary);
-    }
-
-    /**
-     * @param $practice_id
-     *
-     * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
-     */
-    private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
-    {
-        return PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
-            $q->ofPractice($practice_id);
-        })
-            ->where('month_year', $date->startOfMonth());
     }
 }
