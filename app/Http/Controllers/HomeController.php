@@ -15,9 +15,10 @@ class HomeController extends Controller
         /** @var User $user */
         $user = auth()->user();
 
-//        if ($user->isSurveyOnly()) {
-//            return redirect()->route('login-enrollment-survey');
-//        }
+        if ($user->isSurveyOnly()) {
+            auth()->logout();
+            return redirect()->back();
+        }
 
         if ($user->isAdmin()){
             return $this->selfEnrollmentNova();
