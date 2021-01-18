@@ -1098,6 +1098,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function forcedChargeableServices()
+    {
+        return $this->belongsToMany(ChargeableService::class, 'patient_forced_chargeable_services', 'patient_user_id', 'chargeable_service_id')
+            ->withPivot([
+                'is_forced',
+                'chargeable_month'
+            ])
+            ->withTimestamps();
+    }
+
     public function foreignId()
     {
         return $this->hasMany(ForeignId::class);
