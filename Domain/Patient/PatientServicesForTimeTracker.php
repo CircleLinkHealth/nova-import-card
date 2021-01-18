@@ -90,10 +90,16 @@ class PatientServicesForTimeTracker
         }
 
         $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
-            ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
-            ->flatten()
-            ->filter()
-            ->unique();
+                                                                                 ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
+                                                                                 ->flatten();
+
+        $this->repo()
+             ->getPatientWithBillingDataForMonth($this->patientId)
+            ->forcedChargeableServices
+            ->where('is_forced', true)
+            ->each(fn($s) => $servicesDerivedFromPatientProblems->push($s->code));
+
+        $servicesDerivedFromPatientProblems->filter()->unique();
 
         if ($servicesDerivedFromPatientProblems->contains(ChargeableService::CCM)) {
             $servicesDerivedFromPatientProblems->push(...ChargeableService::CCM_PLUS_CODES);
@@ -198,7 +204,7 @@ class PatientServicesForTimeTracker
     {
         $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
 
-        return $patient->primaryPractice->chargeableServices->where('code', $rhc = ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
+        return $patient->primaryPractice->chargeableServices->where('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
     }
 
     private function rejectNonTimeTrackerServices(): self
