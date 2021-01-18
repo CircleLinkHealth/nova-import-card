@@ -108,6 +108,8 @@
     "require": {
         "php": "^7.4",
         "ashallendesign/short-url": "^4.1",
+        "ext-bcmath": "*",
+        "moontoast/math": "1.1.2 as 1.999.999",
         "circlelinkhealth/ccda-parser-processor-php-module": "1.1.4",
         "circlelinkhealth/ccm-billing-module": "2.1.x-dev",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
