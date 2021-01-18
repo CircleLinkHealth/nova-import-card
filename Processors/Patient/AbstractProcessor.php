@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 
@@ -51,7 +52,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function processBilling(PatientMonthlyBillingDTO $patientStub): void
     {
         if ( ! $this->isAttached($patientStub->getPatientId(), $patientStub->getChargeableMonth())) {
-            if ($this->shouldAttach(
+            if ($this->shouldForceAttach(...$patientStub->getForcedPatientServices()) || $this->shouldAttach(
                 $patientStub->getPatientId(),
                 $patientStub->getChargeableMonth(),
                 ...$patientStub->getPatientProblems()
@@ -100,6 +101,13 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             )->count() >= $this->minimumNumberOfProblems();
     }
 
+    public function shouldForceAttach(ForcedPatientChargeableServicesForProcessing ...$services){
+        return collect($services)->filter(
+            fn(ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && ! $s->isForced()
+        )
+                                 ->isNotEmpty();
+    }
+
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
         if ( ! $this->shouldAttach($patientId, $chargeableMonth, ...$patientProblems)) {
@@ -122,10 +130,6 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         }
 
         if ($summary->total_time < $this->minimumTimeInSeconds()) {
-            return false;
-        }
-
-        if ($summary->no_of_successful_calls < $this->minimumNumberOfCalls()) {
             return false;
         }
 

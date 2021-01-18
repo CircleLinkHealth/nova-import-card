@@ -20,6 +20,28 @@ class PatientMonthlyBillingDTO
 
     protected array $patientProblems;
 
+    protected array $forcedPatientServices;
+
+    /**
+     * @return array
+     */
+    public function getForcedPatientServices(): array
+    {
+        return $this->forcedPatientServices;
+    }
+
+    /**
+     * @param array $forcedPatientServices
+     *
+     * @return PatientMonthlyBillingDTO
+     */
+    public function withForcedPatientServices(ForcedPatientChargeableServicesForProcessing ...$forcedPatientServices): self
+    {
+        $this->forcedPatientServices = $forcedPatientServices;
+
+        return $this;
+    }
+
     public function forMonth(Carbon $chargeableMonth): self
     {
         $this->chargeableMonth = $chargeableMonth;

@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -90,6 +91,9 @@ class ProcessPatientSummaries
             ->forPatient($this->patientUser->id)
             ->ofLocation($this->patientUser->patientInfo->location->id)
             ->forMonth($this->month)
+            ->withForcedPatientServices(
+                ...ForcedPatientChargeableServicesForProcessing::fromCollection($this->patientUser->forcedChargeableServices)
+            )
             ->withProblems(...PatientProblemsForBillingProcessing::getArray($this->patientId));
 
         return $this;
