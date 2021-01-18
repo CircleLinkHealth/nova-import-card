@@ -1,12 +1,27 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreatePatientForcedChargeableServicesTable extends Migration
 {
     const TABLE_NAME = 'patient_forced_chargeable_services';
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists(self::TABLE_NAME);
+    }
+
     /**
      * Run the migrations.
      *
@@ -14,7 +29,7 @@ class CreatePatientForcedChargeableServicesTable extends Migration
      */
     public function up()
     {
-        if (! Schema::hasTable(self::TABLE_NAME)){
+        if ( ! Schema::hasTable(self::TABLE_NAME)) {
             Schema::create(self::TABLE_NAME, function (Blueprint $table) {
                 $table->id();
                 $table->unsignedInteger('patient_user_id');
@@ -25,25 +40,15 @@ class CreatePatientForcedChargeableServicesTable extends Migration
                 $table->timestamps();
 
                 $table->foreign('patient_user_id')
-                      ->references('id')
-                      ->on('users')
-                      ->cascadeOnDelete();
+                    ->references('id')
+                    ->on('users')
+                    ->cascadeOnDelete();
 
                 $table->foreign('chargeable_services')
-                      ->references('id')
-                      ->on('chargeable_services')
-                      ->cascadeOnDelete();
+                    ->references('id')
+                    ->on('chargeable_services')
+                    ->cascadeOnDelete();
             });
         }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists(self::TABLE_NAME);
     }
 }
