@@ -175,7 +175,6 @@
       <path value="$PROJECT_DIR$/vendor/laravel/nova" />
       <path value="$PROJECT_DIR$/vendor/symfony/intl" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-icu" />
-      <path value="$PROJECT_DIR$/vendor/phpseclib/bcmath_compat" />
       <path value="$PROJECT_DIR$/vendor/robrichards/xmlseclibs" />
       <path value="$PROJECT_DIR$/vendor/aacotroneo/laravel-saml2" />
       <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
