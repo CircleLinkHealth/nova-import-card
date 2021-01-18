@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cec597c66661066b35504726cf2c1c80",
+    "content-hash": "8b4399ea2dee074ae2f3aaee4bb1488a",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -493,16 +493,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.171.18",
+            "version": "3.171.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9252e55e995492a65ec9b705a5a7fdcfcaef46ef"
+                "reference": "e786e4a8b2ec85b258833d0570ff6b61348cbdb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9252e55e995492a65ec9b705a5a7fdcfcaef46ef",
-                "reference": "9252e55e995492a65ec9b705a5a7fdcfcaef46ef",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e786e4a8b2ec85b258833d0570ff6b61348cbdb6",
+                "reference": "e786e4a8b2ec85b258833d0570ff6b61348cbdb6",
                 "shasum": ""
             },
             "require": {
@@ -574,7 +574,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-01-14T19:12:48+00:00"
+            "time": "2021-01-15T19:26:11+00:00"
         },
         {
             "name": "brick/math",
@@ -670,11 +670,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v2.2.0",
+            "version": "2.2.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "439b9b60622ffab3059471bb8332db6190c56c8e"
+                "reference": "8cdd03d7036f939d9b9ea7ec8b9d592e6d496519"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -683,9 +683,6 @@
             },
             "type": "laravel-module",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                },
                 "laravel": {
                     "providers": [],
                     "aliases": []
@@ -724,15 +721,21 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-15T17:52:05+00:00"
+            "time": "2021-01-18T18:29:00+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "v3.2.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
+                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "*",
@@ -849,7 +852,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8f728db2922de66e85368db5837d37329cef385e"
+                "reference": "664de263aef56a886531a9f34c69be922494dccd"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -904,7 +907,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T11:25:57+00:00"
+            "time": "2021-01-16T02:35:25+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -912,7 +915,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "c1f9829a478afb1fc0b354a08352a901027a54db"
+                "reference": "859b7dbf22b1f883b217ad0facbc7f7679a99ff6"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -958,15 +961,15 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-11T08:46:29+00:00"
+            "time": "2021-01-16T03:06:48+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v3.2.0",
+            "version": "3.2.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "a3579d62520881ffef74f4b9c41a7983a76421aa"
+                "reference": "fd48d5d53ff0e6164ac08001560609fa60e7134c"
             },
             "type": "laravel-module",
             "extra": {
@@ -986,15 +989,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-15T17:52:05+00:00"
+            "time": "2021-01-18T15:18:24+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.4.0",
+            "version": "4.4.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "cedb4563f154bf87afb6bcf31669006ba32218f9"
+                "reference": "b87d56105e054c6e83fa9bad278273c5509332e6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1035,15 +1038,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-15T17:52:06+00:00"
+            "time": "2021-01-18T14:42:44+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.5.0",
+            "version": "4.5.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "81a0a39a83fec3c44a4ebcb966594ff3f7b6d21b"
+                "reference": "194f279168e1a94ad7526abdd5f3e1aae7f9d165"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1073,7 +1076,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-15T17:52:05+00:00"
+            "time": "2021-01-17T18:30:29+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1110,7 +1113,7 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v2.0.1",
+            "version": "2.0.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
@@ -1304,7 +1307,7 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.0.0",
+            "version": "1.0.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
@@ -8484,16 +8487,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.10.5",
+            "version": "v0.10.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "7c710551d4a2653afa259c544508dc18a9098956"
+                "reference": "6f990c19f91729de8b31e639d6e204ea59f19cf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/7c710551d4a2653afa259c544508dc18a9098956",
-                "reference": "7c710551d4a2653afa259c544508dc18a9098956",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/6f990c19f91729de8b31e639d6e204ea59f19cf3",
+                "reference": "6f990c19f91729de8b31e639d6e204ea59f19cf3",
                 "shasum": ""
             },
             "require": {
@@ -8522,7 +8525,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.10.x-dev"
+                    "dev-main": "0.10.x-dev"
                 }
             },
             "autoload": {
@@ -8552,7 +8555,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2020-12-04T02:51:30+00:00"
+            "time": "2021-01-18T15:53:43+00:00"
         },
         {
             "name": "pusher/pusher-php-server",
@@ -14270,16 +14273,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v2.17.3",
+            "version": "v2.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "bd32f5dd72cdfc7b53f54077f980e144bfa2f595"
+                "reference": "cbc5b50bfa2688a1afca20e5a8c71f058e9ccbef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/bd32f5dd72cdfc7b53f54077f980e144bfa2f595",
-                "reference": "bd32f5dd72cdfc7b53f54077f980e144bfa2f595",
+                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/cbc5b50bfa2688a1afca20e5a8c71f058e9ccbef",
+                "reference": "cbc5b50bfa2688a1afca20e5a8c71f058e9ccbef",
                 "shasum": ""
             },
             "require": {
@@ -14301,7 +14304,6 @@
                 "symfony/stopwatch": "^3.0 || ^4.0 || ^5.0"
             },
             "require-dev": {
-                "johnkary/phpunit-speedtrap": "^1.1 || ^2.0 || ^3.0",
                 "justinrainbow/json-schema": "^5.0",
                 "keradus/cli-executor": "^1.4",
                 "mikey179/vfsstream": "^1.6",
@@ -14310,11 +14312,11 @@
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.2",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.2.1",
                 "phpspec/prophecy-phpunit": "^1.1 || ^2.0",
-                "phpunit/phpunit": "^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.13 || ^9.4.4 <9.5",
+                "phpunit/phpunit": "^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.13 || ^9.5",
                 "phpunitgoodpractices/polyfill": "^1.5",
                 "phpunitgoodpractices/traits": "^1.9.1",
                 "sanmai/phpunit-legacy-adapter": "^6.4 || ^8.2.1",
-                "symfony/phpunit-bridge": "^5.1",
+                "symfony/phpunit-bridge": "^5.2.1",
                 "symfony/yaml": "^3.0 || ^4.0 || ^5.0"
             },
             "suggest": {
@@ -14366,7 +14368,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-24T11:14:44+00:00"
+            "time": "2021-01-18T03:31:06+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -15676,16 +15678,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.67",
+            "version": "0.12.68",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "ced7a5d9c5dba908c1c00cea3f1d4ad74da71b86"
+                "reference": "ddbe01af0706ee094c3f1ce9730b35aebb508d3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ced7a5d9c5dba908c1c00cea3f1d4ad74da71b86",
-                "reference": "ced7a5d9c5dba908c1c00cea3f1d4ad74da71b86",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ddbe01af0706ee094c3f1ce9730b35aebb508d3d",
+                "reference": "ddbe01af0706ee094c3f1ce9730b35aebb508d3d",
                 "shasum": ""
             },
             "require": {
@@ -15728,7 +15730,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-14T14:16:19+00:00"
+            "time": "2021-01-18T12:29:17+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -16030,16 +16032,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.0",
+            "version": "9.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8e16c225d57c3d6808014df6b1dd7598d0a5bbbe"
+                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e16c225d57c3d6808014df6b1dd7598d0a5bbbe",
-                "reference": "8e16c225d57c3d6808014df6b1dd7598d0a5bbbe",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7bdf4085de85a825f4424eae52c99a1cec2f360",
+                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360",
                 "shasum": ""
             },
             "require": {
@@ -16125,7 +16127,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-04T05:05:53+00:00"
+            "time": "2021-01-17T07:42:25+00:00"
         },
         {
             "name": "react/event-loop",
