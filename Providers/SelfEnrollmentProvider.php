@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Providers;
 
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class SelfEnrollmentProvider extends ServiceProvider
@@ -36,7 +37,7 @@ class SelfEnrollmentProvider extends ServiceProvider
     {
         $this->commands([
             SelfEnrollmentManualInviteCommand::class,
-            SendSelfEnrollmentReminders::class,
+            SendSelfEnrollmentReminders::class
         ]);
         $this->app->register(RouteServiceProvider::class);
 
