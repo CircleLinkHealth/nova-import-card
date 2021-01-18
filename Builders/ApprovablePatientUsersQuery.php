@@ -44,9 +44,8 @@ trait ApprovablePatientUsersQuery
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'forcedChargeableServices' => function ($f) use ($monthYear) {
-                //todo: orWherePivot, wherePivotIsNull
-                $f->where(fn ($q)     => $q->when( ! is_null($monthYear), fn ($q) => $q->wherePivot('chargeable_month', $monthYear)))
-                    ->orWhere(fn ($q) => $q->wherePivot('chargeable_month', null));
+                $f->where(fn ($q)      => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
+                    ->orWhere(fn ($q)  => $q->where('chargeable_month', null));
             },
         ];
 

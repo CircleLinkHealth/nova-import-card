@@ -96,7 +96,7 @@ class PatientServicesForTimeTracker
         $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId)
             ->forcedChargeableServices
-            ->where('is_forced', true)
+            ->where('pivot.is_forced', true)
             ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->code));
 
         $servicesDerivedFromPatientProblems->filter()->unique();
