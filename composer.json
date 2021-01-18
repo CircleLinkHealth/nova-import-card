@@ -107,8 +107,9 @@
     ],
     "require": {
         "php": "^7.4",
-        "ashallendesign/short-url": "^4.1",
         "ext-bcmath": "*",
+        "ext-json": "*",
+        "ashallendesign/short-url": "^4.1",
         "circlelinkhealth/ccda-parser-processor-php-module": "1.1.4",
         "circlelinkhealth/ccm-billing-module": "2.1.x-dev",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
@@ -131,8 +132,7 @@
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "lab404/laravel-impersonate": "^1.7",
         "laravel/framework": "8.x-dev",
-        "laravel/tinker": "^2.5",
-        "ext-json": "*"
+        "laravel/tinker": "^2.5"
     },
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
