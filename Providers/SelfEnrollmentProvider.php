@@ -8,8 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Providers;
 
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
-use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 class SelfEnrollmentProvider extends ServiceProvider
 {
