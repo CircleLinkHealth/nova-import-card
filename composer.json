@@ -130,7 +130,8 @@
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "lab404/laravel-impersonate": "^1.7",
         "laravel/framework": "8.x-dev",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "ext-json": "*"
     },
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
