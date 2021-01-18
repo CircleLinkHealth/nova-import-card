@@ -14,17 +14,6 @@
                                v-model="amount"
                                :disabled="sendingInvites"
                                required>
-
-<!--                         <label for="color" class="color-label">-->
-<!--                             Choose invitation button color:-->
-<!--                         </label>-->
-
-<!--                        <vue-select name="color"-->
-<!--                                    id="color"-->
-<!--                                    v-model="selectedButtonColor"-->
-<!--                                    :options="buttonColors"-->
-<!--                                    @change="setButtonBackgroundColor">-->
-<!--                        </vue-select>-->
                     </span>
 
                 <br>
@@ -71,11 +60,6 @@ import VueSelect from 'vue-select';
 export default {
     props: [
         'card',
-
-        // The following props are only available on resource detail cards...
-        // 'resource',
-        // 'resourceId',
-        // 'resourceName',
     ],
 
     components: {
@@ -112,12 +96,7 @@ export default {
     },
 
     methods: {
-        // setButtonBackgroundColor(){
-        //     this.bgc.backgroundColor = this.selectedButtonColor.value;
-        // },
         redirectToInvitesDashboard(){
-            // tried to redirect using Action::push() or simple redirect in controller, but it doesnt work, no errors / feedback.
-            // Keeping this solution temporarily
             window.location.href = this.card.redirect_url
         },
 
