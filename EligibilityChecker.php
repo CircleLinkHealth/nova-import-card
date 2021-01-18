@@ -883,24 +883,24 @@ class EligibilityChecker
                     $u
                         ->ofType('participant')
                         ->where(
-                        [
                             [
-                                'program_id',
-                                '=',
-                                $args['practice_id'],
-                            ],
-                            [
-                                'first_name',
-                                '=',
-                                $args['first_name'],
-                            ],
-                            [
-                                'last_name',
-                                '=',
-                                $args['last_name'],
-                            ],
-                        ]
-                    )->whereHas(
+                                [
+                                    'program_id',
+                                    '=',
+                                    $args['practice_id'],
+                                ],
+                                [
+                                    'first_name',
+                                    '=',
+                                    $args['first_name'],
+                                ],
+                                [
+                                    'last_name',
+                                    '=',
+                                    $args['last_name'],
+                                ],
+                            ]
+                        )->whereHas(
                         'patientInfo',
                         function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
