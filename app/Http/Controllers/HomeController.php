@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Log;
 class HomeController extends Controller
 {
     public function showHomepage() {
-        if (auth()->guest()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
         /** @var User $user */
         $user = auth()->user();
+
+//        if ($user->isSurveyOnly()) {
+//            return redirect()->route('login-enrollment-survey');
+//        }
 
         if ($user->isAdmin()){
             return $this->selfEnrollmentNova();

@@ -20,5 +20,5 @@ Route::group([
         'auth',
     ],
 ], function () {
-    Route::get('/home', 'HomeController@selfEnrollmentNova');
+    Route::get('/home', 'HomeController@showHomepage');
 });
