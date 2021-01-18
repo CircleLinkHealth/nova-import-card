@@ -40,7 +40,7 @@ class PatientIsOfServiceCode
 
     public function isOfServiceCode(): bool
     {
-        if ($this->patientHasForcedService()){
+        if ($this->patientHasForcedService()) {
             return true;
         }
 
@@ -96,10 +96,10 @@ class PatientIsOfServiceCode
         return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
     }
 
-    private function patientHasForcedService():bool
+    private function patientHasForcedService(): bool
     {
         return $this->repo()
-                    ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
+            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
             ->where('code', $this->serviceCode)
             ->isNotEmpty();

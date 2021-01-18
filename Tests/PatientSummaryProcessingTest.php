@@ -22,12 +22,12 @@ use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Bus;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientSummaryProcessingTest extends TestCase
 {
@@ -157,11 +157,11 @@ class PatientSummaryProcessingTest extends TestCase
     {
         FakePatientRepository::fake();
 
-        $patientId = 1;
+        $patientId  = 1;
         $locationId = 1;
-        $ccm       = new CCM();
-        $pcm       = new PCM();
-        $month     = now();
+        $ccm        = new CCM();
+        $pcm        = new PCM();
+        $month      = now();
 
         $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([$ccm, $pcm]))

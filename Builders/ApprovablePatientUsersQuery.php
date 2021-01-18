@@ -23,7 +23,7 @@ trait ApprovablePatientUsersQuery
     public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
     {
         $relations = [
-            'primaryPractice'      => fn ($p)      => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
+            'primaryPractice'         => fn ($p)         => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
@@ -43,11 +43,11 @@ trait ApprovablePatientUsersQuery
                 $q->with(['chargeableService'])
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
-            'forcedChargeableServices' => function ($f) use ($monthYear){
+            'forcedChargeableServices' => function ($f) use ($monthYear) {
                 //todo: orWherePivot, wherePivotIsNull
-                $f->where(fn ($q) => $q->when(! is_null($monthYear), fn($q) => $q->wherePivot('chargeable_month', $monthYear)))
-                  ->orWhere(fn($q) => $q->wherePivot('chargeable_month', null));
-            }
+                $f->where(fn ($q)     => $q->when( ! is_null($monthYear), fn ($q) => $q->wherePivot('chargeable_month', $monthYear)))
+                    ->orWhere(fn ($q) => $q->wherePivot('chargeable_month', null));
+            },
         ];
 
         if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {

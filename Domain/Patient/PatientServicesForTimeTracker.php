@@ -90,14 +90,14 @@ class PatientServicesForTimeTracker
         }
 
         $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
-                                                                                 ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
-                                                                                 ->flatten();
+            ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
+            ->flatten();
 
         $this->repo()
-             ->getPatientWithBillingDataForMonth($this->patientId)
+            ->getPatientWithBillingDataForMonth($this->patientId)
             ->forcedChargeableServices
             ->where('is_forced', true)
-            ->each(fn($s) => $servicesDerivedFromPatientProblems->push($s->code));
+            ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->code));
 
         $servicesDerivedFromPatientProblems->filter()->unique();
 

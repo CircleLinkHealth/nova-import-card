@@ -1,10 +1,10 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
-
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
@@ -12,10 +12,10 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class ForcePatientChargeableService
 {
-    protected int $patientUserId;
     protected int $chargeableServiceId;
     protected bool $force;
     protected ?Carbon $month;
+    protected int $patientUserId;
 
     public function __construct(int $patientUserId, int $chargeableServiceId, bool $force = true, ?Carbon $month = null)
     {
@@ -39,6 +39,12 @@ class ForcePatientChargeableService
             ->reprocessPatientForBilling();
     }
 
+    private function reprocessPatientForBilling(): void
+    {
+        BillingCache::clearPatients([$this->patientUserId]);
+        (app(ProcessPatientSummaries::class))->execute($this->patientUserId, $this->month);
+    }
+
     private function setForcedChargeableService(): self
     {
         User::ofType('participant')
@@ -52,11 +58,5 @@ class ForcePatientChargeableService
             ], false);
 
         return $this;
-    }
-
-    private function reprocessPatientForBilling(): void
-    {
-        BillingCache::clearPatients([$this->patientUserId]);
-        (app(ProcessPatientSummaries::class))->execute($this->patientUserId, $this->month);
     }
 }

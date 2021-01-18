@@ -101,11 +101,12 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             )->count() >= $this->minimumNumberOfProblems();
     }
 
-    public function shouldForceAttach(ForcedPatientChargeableServicesForProcessing ...$services){
+    public function shouldForceAttach(ForcedPatientChargeableServicesForProcessing ...$services)
+    {
         return collect($services)->filter(
-            fn(ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && ! $s->isForced()
+            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && ! $s->isForced()
         )
-                                 ->isNotEmpty();
+            ->isNotEmpty();
     }
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool

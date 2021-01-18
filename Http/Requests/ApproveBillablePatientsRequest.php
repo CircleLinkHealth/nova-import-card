@@ -6,9 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Http\Requests;
 
-use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Foundation\Http\FormRequest;
-
 class ApproveBillablePatientsRequest extends SaasAdminRequest
 {
     public function rules()
