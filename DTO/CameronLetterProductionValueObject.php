@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\DTO;
 
-use CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCameronLetter;
 
 class CameronLetterProductionValueObject
 {
