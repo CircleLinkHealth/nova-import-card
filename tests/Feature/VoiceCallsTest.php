@@ -14,9 +14,9 @@ use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
-use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
 use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
+use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
 use Tests\CustomerTestCase;
 
 class VoiceCallsTest extends CustomerTestCase

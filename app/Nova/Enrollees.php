@@ -10,6 +10,7 @@ use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Actions\ImportEnrollees;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
+use App\Nova\Filters\NullProviderId;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
 use App\Nova\Filters\PracticeFilter;
 use CircleLinkHealth\Customer\CpmConstants;
@@ -89,7 +90,7 @@ class Enrollees extends Resource
         //adds templates to new Actions
         return [
             (new LinkableAway())
-                ->title('Create Patients CSV Template')
+                ->title('Create Non-importable Patients CSV Template')
                 ->url('https://drive.google.com/file/d/1RgCl5AgyodKlIytemOVMXlAHgr9iGgm9/view?usp=sharing')
                 ->subtitle('Click to download.')
                 ->target('_self'),
@@ -166,6 +167,7 @@ class Enrollees extends Resource
         return [
             new PracticeFilter(),
             new EnrolleeStatus(),
+            new NullProviderId(),
             new PatientAutoEnrollmentStatus(),
         ];
     }

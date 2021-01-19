@@ -33,3 +33,4 @@ CircleLinkHealth/
 .vapor/
 .env.production
 lsp/log/*
+*deploy-s3.env

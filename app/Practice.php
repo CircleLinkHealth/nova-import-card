@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Practice as CpmPractice;
+
 /**
  * App\Practice.
  *
@@ -112,7 +114,7 @@ namespace App;
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice whereWeeklyReportRecipients($value)
  * @mixin \Eloquent
  */
-class Practice extends \CircleLinkHealth\Customer\Entities\Practice
+class Practice extends CpmPractice
 {
     use \Laravel\Nova\Actions\Actionable;
 }
