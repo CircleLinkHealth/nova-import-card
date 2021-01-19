@@ -30,19 +30,12 @@ environments:
     storage: self-enrollment-staging-vapor-storage
 #    cache: cpm-staging-vapor-cache
 #    network: cpm-staging
-
-#    memory: 1024
-#    cli-memory: 1024
-#    runtime: docker
-#    queue-timeout: 300
-    memory: 512
-    cli-memory: 512
-    queue-memory: 512
-    timeout: 45
-    cli-timeout: 600
-    queue-timeout: 600
-    concurrency: 5
+    memory: 1024
+    cli-memory: 1024
+    runtime: docker
+    queue-timeout: 300
     mail: false
+    timeout: 45
     queues:
       - self-enrollment-provider-low-staging
       - self-enrollment-provider-high-staging
