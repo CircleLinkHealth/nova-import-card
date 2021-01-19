@@ -17,9 +17,9 @@ environments:
     mail: false
     timeout: 60
     queues:
-      - self-enrollment-provider-low-production
-      - self-enrollment-provider-high-production
-      - self-enrollment-provider-revisionable-production
+      - self-enrollment-low-production
+      - self-enrollment-high-production
+      - self-enrollment-revisionable-production
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
@@ -41,9 +41,9 @@ environments:
     mail: false
     runtime: docker
     queues:
-      - self-enrollment-provider-low-staging
-      - self-enrollment-provider-high-staging
-      - self-enrollment-provider-revisionable-staging
+      - self-enrollment-low-staging
+      - self-enrollment-high-staging
+      - self-enrollment-revisionable-staging
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
       - 'php artisan event:cache'
