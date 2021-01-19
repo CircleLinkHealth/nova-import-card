@@ -668,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "bbe2e299d17e2bb633f341a6238e13d2e8b2417e"
+                "reference": "3fee04076787b8a1862e5e1bc7770aaf100df986"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -715,7 +715,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-18T19:25:32+00:00"
+            "time": "2021-01-19T00:37:33+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -6097,16 +6097,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.6.0",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "abab7860d86533ae520523c7f6b5e74ca071116b"
+                "reference": "3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/abab7860d86533ae520523c7f6b5e74ca071116b",
-                "reference": "abab7860d86533ae520523c7f6b5e74ca071116b",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3",
+                "reference": "3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3",
                 "shasum": ""
             },
             "require": {
@@ -6145,7 +6145,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-18T20:19:53+00:00"
+            "time": "2021-01-18T20:58:21+00:00"
         },
         {
             "name": "league/oauth2-server",
