@@ -6,6 +6,7 @@
 
 namespace App\Nova\Actions;
 
+use CircleLinkHealth\CpmAdmin\Actions\ModifyPatientActivity;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova;
 
 use App\Nova\Actions\ForcePatientChargeableServices;
@@ -15,32 +19,6 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class ManagePatientForcedChargeableServices extends Resource
 {
     /**
-     * Build a "relatable" query for the given resource.
-     *
-     * This query determines which instances of the model may be attached to other resources.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function relatableQuery(NovaRequest $request, $query)
-    {
-        return $query->ofType('participant');
-    }
-
-    /**
-     * Build an "index" query for the given resource.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function indexQuery(NovaRequest $request, $query)
-    {
-        return $query->ofType('participant');
-    }
-
-    /**
      * Indicates if the resource should be displayed in the sidebar.
      *
      * @var bool
@@ -53,26 +31,6 @@ class ManagePatientForcedChargeableServices extends Resource
      * @var string
      */
     public static $model = CpmUser::class;
-
-    public static function authorizedToCreate(Request $request)
-    {
-        return false;
-    }
-
-    public function authorizedToDelete(Request $request)
-    {
-        return false;
-    }
-
-    public function authorizedToUpdate(Request $request)
-    {
-        return false;
-    }
-
-    public static function availableForNavigation(Request $request)
-    {
-        return auth()->user()->isAdmin();
-    }
 
     /**
      * The columns that should be searched.
@@ -104,9 +62,52 @@ class ManagePatientForcedChargeableServices extends Resource
     public static $title = 'display_name';
 
     /**
+     * Get the actions available for the resource.
+     *
+     *
+     * @return array
+     */
+    public function actions(Request $request)
+    {
+        return [
+            new ForcePatientChargeableServices(),
+        ];
+    }
+
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
+    }
+
+    public static function availableForNavigation(Request $request)
+    {
+        return auth()->user()->isAdmin();
+    }
+
+    /**
+     * Get the cards available for the request.
+     *
+     *
+     * @return array
+     */
+    public function cards(Request $request)
+    {
+        return [];
+    }
+
+    /**
      * Get the fields displayed by the resource.
      *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -128,11 +129,11 @@ class ManagePatientForcedChargeableServices extends Resource
                         ];
                     })->flatten()->toArray();
 
-                $html = "<ul>";
+                $html = '<ul>';
                 foreach ($summaries as $summary) {
                     $html .= "<li>$summary</li>";
                 }
-                $html .= "</ul>";
+                $html .= '</ul>';
 
                 return $html;
             })->onlyOnDetail()
@@ -142,21 +143,8 @@ class ManagePatientForcedChargeableServices extends Resource
     }
 
     /**
-     * Get the cards available for the request.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return array
-     */
-    public function cards(Request $request)
-    {
-        return [];
-    }
-
-    /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -168,9 +156,20 @@ class ManagePatientForcedChargeableServices extends Resource
     }
 
     /**
+     * Build an "index" query for the given resource.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query->ofType('participant');
+    }
+
+    /**
      * Get the lenses available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -180,16 +179,16 @@ class ManagePatientForcedChargeableServices extends Resource
     }
 
     /**
-     * Get the actions available for the resource.
+     * Build a "relatable" query for the given resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * This query determines which instances of the model may be attached to other resources.
      *
-     * @return array
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function actions(Request $request)
+    public static function relatableQuery(NovaRequest $request, $query)
     {
-        return [
-            new ForcePatientChargeableServices()
-        ];
+        return $query->ofType('participant');
     }
 }
