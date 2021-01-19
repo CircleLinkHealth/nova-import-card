@@ -33,7 +33,7 @@ class CreatePatientForcedChargeableServicesTable extends Migration
             Schema::create(self::TABLE_NAME, function (Blueprint $table) {
                 $table->id();
                 $table->unsignedInteger('patient_user_id');
-                $table->unsignedInteger('chargeable_services');
+                $table->unsignedInteger('chargeable_service_id');
                 $table->date('chargeable_month');
 
                 $table->boolean('is_forced');
@@ -44,7 +44,7 @@ class CreatePatientForcedChargeableServicesTable extends Migration
                     ->on('users')
                     ->cascadeOnDelete();
 
-                $table->foreign('chargeable_services')
+                $table->foreign('chargeable_service_id')
                     ->references('id')
                     ->on('chargeable_services')
                     ->cascadeOnDelete();
