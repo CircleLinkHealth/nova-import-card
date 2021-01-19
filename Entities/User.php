@@ -332,6 +332,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|EloquentCollection                              $forcedChargeableServices
+ * @property int|null                                                                                                $forced_chargeable_services_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -1103,7 +1105,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->belongsToMany(ChargeableService::class, 'patient_forced_chargeable_services', 'patient_user_id', 'chargeable_service_id')
             ->withPivot([
                 'is_forced',
-                'chargeable_month'
+                'chargeable_month',
             ])
             ->withTimestamps();
     }
