@@ -7,6 +7,10 @@
 namespace App\Providers;
 
 use Anaseqal\NovaImport\NovaImport;
+use CircleLinkHealth\CcmBilling\Caches\BillingCache;
+use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -51,6 +55,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(BillingCache::class, BillingDataCache::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, CachedPatientServiceProcessorRepository::class);
     }
 
     /**
