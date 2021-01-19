@@ -58,14 +58,14 @@ class ApprovableBillablePatient extends JsonResource
             'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
-            'practice'               => $this->patient->primaryPractice->display_name,
-            'practice_id'            => $this->patient->primaryPractice->id,
-            'dob'                    => $this->patient->getBirthDate(),
-            'ccm'                    => round($this->getBillableCcmCs() / 60, 2),
-            'total_time'             => $this->total_time,
-            'bhi_time'               => $this->bhi_time,
-            'ccm_time'               => $this->getBillableCcmCs(),
-            'problems'               => $problems,
+            'practice'    => $this->patient->primaryPractice->display_name,
+            'practice_id' => $this->patient->primaryPractice->id,
+            'dob'         => $this->patient->getBirthDate(),
+            'ccm'         => round($this->getBillableCcmCs() / 60, 2),
+            'total_time'  => $this->total_time,
+            'bhi_time'    => $this->bhi_time,
+            'ccm_time'    => $this->getBillableCcmCs(),
+            'problems'    => $problems,
             //todo: unused code, will probably replace class, Pangratios working on separate ticket
             'no_of_successful_calls' => 0,
             'status'                 => $status,
