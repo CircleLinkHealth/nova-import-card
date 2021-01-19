@@ -66,7 +66,8 @@ class ApprovableBillablePatient extends JsonResource
             'bhi_time'               => $this->bhi_time,
             'ccm_time'               => $this->getBillableCcmCs(),
             'problems'               => $problems,
-            'no_of_successful_calls' => $this->no_of_successful_calls,
+            //todo: unused code, will probably replace class, Pangratios working on separate ticket
+            'no_of_successful_calls' => 0,
             'status'                 => $status,
             'approve'                => (bool) $this->approved,
             'reject'                 => (bool) $this->rejected,
