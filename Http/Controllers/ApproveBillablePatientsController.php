@@ -28,7 +28,7 @@ class ApproveBillablePatientsController extends Controller
 
     public function closeMonth(ApproveBillablePatientsOpenCloseMonthRequest $request)
     {
-        $practiceId = $request->input('practice_id');
+        $practiceId = intval($request->input('practice_id'));
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'));
         $user       = auth()->user();
 
@@ -43,7 +43,7 @@ class ApproveBillablePatientsController extends Controller
 
     public function counts(ApproveBillablePatientsCountsRequest $request)
     {
-        $practiceId = $request['practice_id'];
+        $practiceId = intval($request->input('practice_id'));
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'))->startOfMonth();
 
         /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
@@ -55,7 +55,7 @@ class ApproveBillablePatientsController extends Controller
 
     public function data(ApproveBillablePatientsDataRequest $request)
     {
-        $practiceId = $request->input('practice_id');
+        $practiceId = intval($request->input('practice_id'));
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'))->startOfMonth();
 
         /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */

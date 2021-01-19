@@ -24,7 +24,7 @@ Route::group([
             ]);
 
             Route::get('/counts', [
-                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@counts',
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@counts',
             ]);
 
             Route::post('/close', [

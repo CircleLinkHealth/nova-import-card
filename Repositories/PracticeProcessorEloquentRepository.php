@@ -12,7 +12,6 @@ use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
-use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -20,6 +19,15 @@ class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
+
+    public function billingStatuses(int $practiceId, Carbon $month): \Illuminate\Support\Collection
+    {
+        return PatientMonthlyBillingStatus::whereHas(
+            'patientUser',
+            fn ($q) => $q->ofPractice($practiceId)
+        )->where('chargeable_month', $month)
+            ->get();
+    }
 
     public function closeMonth(int $actorId, int $practiceId, Carbon $month)
     {
