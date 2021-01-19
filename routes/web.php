@@ -49,7 +49,7 @@ Route::group([
         'uses' => 'RedirectToProviderApp@notesIndex',
         'as'   => 'patient.note.index',
     ]);
-    
+
     Route::get('patient/{patientId}/careplan', [
         'uses' => 'RedirectToProviderApp@showCareplan',
         'as'   => 'patient.careplan.print',
