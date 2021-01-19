@@ -901,11 +901,11 @@ class EligibilityChecker
                                 ],
                             ]
                         )->whereHas(
-                        'patientInfo',
-                        function ($q) use ($args) {
+                            'patientInfo',
+                            function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
-                    );
+                        );
                 }
             )->first();
 
