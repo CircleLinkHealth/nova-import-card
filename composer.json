@@ -9,6 +9,10 @@
     "license": "MIT",
     "repositories": [
         {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/vapor-cli.git"
+        },
+        {
             "type": "composer",
             "url": "https://nova.laravel.com"
         },
