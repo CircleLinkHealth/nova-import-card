@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\ForcePatientChargeableServices;
 use App\Nova\Filters\UserPracticeFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
@@ -187,6 +188,8 @@ class ManagePatientForcedChargeableServices extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new ForcePatientChargeableServices()
+        ];
     }
 }
