@@ -606,14 +606,13 @@ export default class TimeTrackerUser {
         };
 
         if (this.totalSeconds === 0) {
-            console.log('will not cache ccm because time is 0');
+            console.log('will not cache time because time is 0');
+        } else if (this.patientId == 0) {
+            console.log('will not cache time because patient id is 0');
         } else {
             const toCache: TimeEntity[] = [];
             for (let i = 0; i < requestData.activities.length; i++) {
                 const a = requestData.activities[i];
-                if (a.chargeable_service_id === -1) {
-                    continue;
-                }
                 const currentSeconds = this.getTotalSecondsForCsId(a.chargeable_service_id);
                 const cachedSeconds = this.getTotalSecondsForCsIdFromCache(a.chargeable_service_id);
                 if (cachedSeconds > currentSeconds) {
