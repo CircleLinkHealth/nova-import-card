@@ -69,6 +69,15 @@ class Eloquent implements LocationProcessorRepository
             ->isNotEmpty();
     }
 
+    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        $summaries = $this->getLocationSummaries($locationId, $month, false);
+
+        return $summaries->isNotEmpty() && $summaries->every(function (ChargeableLocationMonthlySummary $summary) {
+            return $summary->is_locked;
+        });
+    }
+
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         // TODO: Implement paginatePatients() method.

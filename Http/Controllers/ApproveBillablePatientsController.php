@@ -90,7 +90,7 @@ class ApproveBillablePatientsController extends Controller
         $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at->copy()->startOfMonth()) ?? 12;
 
         for ($i = 0; $i <= $numberOfMonths; ++$i) {
-            $date = $currentMonth->copy()->subMonth()->startOfMonth();
+            $date = $currentMonth->copy()->subMonths($i)->startOfMonth();
 
             $dates[] = [
                 'label' => $date->format('F, Y'),

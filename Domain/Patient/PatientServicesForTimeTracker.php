@@ -45,11 +45,11 @@ class PatientServicesForTimeTracker
             ->createAndReturnResource();
     }
 
-    public function getRaw() : Collection
+    public function getRaw(): Collection
     {
         return $this->setSummaries()
-                    ->consolidateSummaryData()
-                    ->summaries;
+            ->consolidateSummaryData()
+            ->summaries;
     }
 
     private function consolidateSummaryData(): self
