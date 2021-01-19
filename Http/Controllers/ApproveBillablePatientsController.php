@@ -7,7 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsCountsRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsDataRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsIndexRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsOpenCloseMonthRequest;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -23,7 +26,7 @@ class ApproveBillablePatientsController extends Controller
     {
     }
 
-    public function closeMonth(ApproveBillablePatientsRequest $request)
+    public function closeMonth(ApproveBillablePatientsOpenCloseMonthRequest $request)
     {
         $practiceId = $request->input('practice_id');
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'));
@@ -38,7 +41,7 @@ class ApproveBillablePatientsController extends Controller
         ]);
     }
 
-    public function counts(ApproveBillablePatientsRequest $request)
+    public function counts(ApproveBillablePatientsCountsRequest $request)
     {
         $practiceId = $request['practice_id'];
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'))->startOfMonth();
@@ -50,7 +53,7 @@ class ApproveBillablePatientsController extends Controller
         return response()->json($counts->toArray());
     }
 
-    public function data(ApproveBillablePatientsRequest $request)
+    public function data(ApproveBillablePatientsDataRequest $request)
     {
         $practiceId = $request->input('practice_id');
         $date       = Carbon::createFromFormat('M, Y', $request->input('date'))->startOfMonth();
@@ -67,7 +70,7 @@ class ApproveBillablePatientsController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index(ApproveBillablePatientsIndexRequest $request)
     {
         $practices = Practice::orderBy('display_name')
             ->select(['name', 'id', 'display_name'])
@@ -105,6 +108,20 @@ class ApproveBillablePatientsController extends Controller
             'dates',
             'version',
         ]));
+    }
+
+    public function openMonth(ApproveBillablePatientsOpenCloseMonthRequest $request)
+    {
+        $practiceId = intval($request->input('practice_id'));
+        $date       = Carbon::createFromFormat('M, Y', $request->input('date'));
+
+        /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
+        $service = $this->getService($request);
+        $updated = $service->openMonth($practiceId, $date->firstOfMonth());
+
+        return response()->json([
+            'updated' => $updated,
+        ]);
     }
 
     private function getService(Request $request)

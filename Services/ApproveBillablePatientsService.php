@@ -136,4 +136,16 @@ class ApproveBillablePatientsService
 
         return new BillablePatientsForMonthDTO($summaries, $isClosed);
     }
+
+    public function openMonth($practiceId, Carbon $month)
+    {
+        return PatientMonthlySummary::whereHas('patient', function ($q) use ($practiceId) {
+            $q->ofPractice($practiceId);
+        })
+            ->where('month_year', $month)
+            ->update([
+                'actor_id'          => null,
+                'closed_ccm_status' => null,
+            ]);
+    }
 }

@@ -44,4 +44,9 @@ class ApproveBillablePatientsServiceV3
 
         return new BillablePatientsForMonthDTO($jsonCollection->resource, $isClosed);
     }
+
+    public function openMonth(int $practiceId, Carbon $month)
+    {
+        return $this->practiceProcessor->openMonth($practiceId, $month);
+    }
 }

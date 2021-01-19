@@ -30,6 +30,11 @@ class Practice implements CustomerProcessor
         return new ApprovablePatientCollection($this->repo->paginatePatients($practiceId, $month, $pageSize));
     }
 
+    public function openMonth(int $practiceId, Carbon $month)
+    {
+        return $this->repo->openMonth($practiceId, $month);
+    }
+
     public function processServicesForAllPatients(int $practiceId, Carbon $month): void
     {
         // TODO: Implement processServicesForAllPatients() method.

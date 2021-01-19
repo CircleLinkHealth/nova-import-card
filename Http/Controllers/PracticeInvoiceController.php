@@ -137,33 +137,6 @@ class PracticeInvoiceController extends Controller
         return redirect()->back();
     }
 
-    /** open patient-monthly-summaries in a practice */
-    public function openMonthlySummaryStatus(Request $request)
-    {
-        $practice_id = $request->input('practice_id');
-        $date        = $request->input('date');
-        $user        = auth()->user();
-
-        //since this route is also accessible from software-only,
-        //we should make sure that software-only role is applied on this practice
-        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
-            abort(403);
-        }
-
-        if ($date) {
-            $date = Carbon::createFromFormat('M, Y', $date);
-        }
-
-        $updated = $this->getCurrentMonthSummariesQuery($practice_id, $date)->update([
-            'actor_id'          => null,
-            'closed_ccm_status' => null,
-        ]);
-
-        return response()->json([
-            'updated' => $updated,
-        ]);
-    }
-
     /**
      * @return string
      */

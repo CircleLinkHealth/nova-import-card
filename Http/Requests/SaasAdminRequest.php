@@ -21,10 +21,10 @@ class SaasAdminRequest extends FormRequest
         }
 
         $practiceId = $this->input('practice_id');
-        if ( ! empty($practiceId) && $user->hasRoleForSite('software-only', $practiceId)) {
-            return true;
+        if ( ! empty($practiceId)) {
+            return $user->hasRoleForSite('software-only', $practiceId);
         }
 
-        return false;
+        return $user->hasRole('software-only');
     }
 }
