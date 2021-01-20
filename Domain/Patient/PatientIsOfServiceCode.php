@@ -54,7 +54,7 @@ class PatientIsOfServiceCode
 
     private function hasClashingService(): bool
     {
-        if ($this->isAClashWithForcedService()){
+        if ($this->isAClashForForcedService()){
             return true;
         }
         $clashes = ChargeableService::getClashesWithService($this->serviceCode);
@@ -148,7 +148,7 @@ class PatientIsOfServiceCode
             ->exists();
     }
 
-    private function isAClashWithForcedService():bool
+    private function isAClashForForcedService():bool
     {
         return $this->repo()
              ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
