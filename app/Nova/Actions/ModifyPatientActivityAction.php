@@ -51,7 +51,7 @@ class ModifyPatientActivityAction extends Action
         $activityIds = $models->pluck('id')->toArray();
 
         try {
-            (new ModifyPatientActivity($cs, $activityIds))->execute();
+            ModifyPatientActivity::forActivityIds($cs, $activityIds)->execute();
         } catch (\Exception $e) {
             $this->markAsFailed($models->first(), $e);
         }
