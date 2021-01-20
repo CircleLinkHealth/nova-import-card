@@ -45,7 +45,7 @@ class RPM40 extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return CpmConstants::TWENTY_MINUTES_IN_SECONDS;
+        return CpmConstants::FORTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool

@@ -115,12 +115,9 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($this->hasUnfulfilledPreviousService($patientId, $chargeableMonth)) {
-            return false;
-        }
-
+        //todo: change codeForProblems name to 'base code' or something
         $summary = $this->repo()
-            ->getChargeablePatientSummary($patientId, $this->code(), $chargeableMonth);
+            ->getChargeablePatientSummary($patientId, $this->codeForProblems(), $chargeableMonth);
 
         if ( ! $summary) {
             return false;
@@ -139,6 +136,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
+        //todo: revisit clashes to accomodate forced cs
         foreach ($this->clashesWith() as $clash) {
             $clashIsAttached = $this->repo->isAttached($patientId, $clash->code(), $chargeableMonth);
 
@@ -149,23 +147,6 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             if ($clashIsAttached && $hasEnoughProblemsForClash) {
                 return true;
             }
-        }
-
-        return false;
-    }
-
-    private function hasUnfulfilledPreviousService(int $patientId, Carbon $chargeableMonth): bool
-    {
-        if ( ! method_exists($this, 'previous')) {
-            return false;
-        }
-
-        if ( ! $this->previous() instanceof PatientServiceProcessor) {
-            return false;
-        }
-
-        if ( ! $this->repo()->isFulfilled($patientId, $this->previous()->code(), $chargeableMonth)) {
-            return true;
         }
 
         return false;

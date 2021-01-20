@@ -34,6 +34,7 @@ class RPM60 extends AbstractProcessor
         return true;
     }
 
+    //TODO: remove call counts for here not needed
     public function minimumNumberOfCalls(): int
     {
         return 1;
@@ -46,7 +47,7 @@ class RPM60 extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return CpmConstants::TWENTY_MINUTES_IN_SECONDS;
+        return CpmConstants::SIXTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool

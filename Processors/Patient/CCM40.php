@@ -13,8 +13,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class CCM40 extends AbstractProcessor
 {
-    use IsPartOfSequence;
-
     public function clashesWith(): array
     {
         return [
@@ -52,17 +50,7 @@ class CCM40 extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return CpmConstants::TWENTY_MINUTES_IN_SECONDS;
-    }
-
-    public function next(): PatientServiceProcessor
-    {
-        return new CCM60();
-    }
-
-    public function previous(): ?PatientServiceProcessor
-    {
-        return new CCM();
+        return CpmConstants::FORTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool
