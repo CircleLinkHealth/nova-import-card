@@ -126,7 +126,7 @@
         "circlelinkhealth/raygun-module": "2.0",
         "circlelinkhealth/revisionable-module": "7.0.x-dev",
         "circlelinkhealth/saml-sp-module": "2.0",
-        "circlelinkhealth/self-enrollment-module": "dev-nbi_enrollment_letter",
+        "circlelinkhealth/self-enrollment-module": "dev-main",
         "circlelinkhealth/shared-models-module": "3.0.x-dev",
         "circlelinkhealth/sqlviews-module": "2.0",
         "circlelinkhealth/synonyms-module": "*",

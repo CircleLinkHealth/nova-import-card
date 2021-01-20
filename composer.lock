@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24428387b6df9d8a526fc5b1a95609f0",
+    "content-hash": "03c279209d0c82ef9486658c8327d357",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1164,11 +1164,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "dev-nbi_enrollment_letter",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "b56c70b854208fefd9ed264614dee0ac37d9fcc2"
+                "reference": "465a0188d6815592f9219c8bde66632b618857c1"
             },
             "require": {
                 "laravel/nova": "~3.0"
@@ -1194,7 +1194,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T14:05:38+00:00"
+            "time": "2021-01-20T14:18:01+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
