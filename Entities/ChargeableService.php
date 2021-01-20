@@ -45,22 +45,24 @@ use Illuminate\Support\Facades\Cache;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereId($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int|null    $patient_summaries_count
- * @property int|null    $practices_count
- * @property int|null    $providers_count
- * @property int|null    $revision_history_count
- * @property int|null    $order
- * @property int         $is_enabled
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvInitial()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvSubsequent()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService bhi()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService ccm()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService generalCareManagement()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService pcm()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService softwareOnly()
- * @property string|null $display_name
+ * @property int|null                                                                            $patient_summaries_count
+ * @property int|null                                                                            $practices_count
+ * @property int|null                                                                            $providers_count
+ * @property int|null                                                                            $revision_history_count
+ * @property int|null                                                                            $order
+ * @property int                                                                                 $is_enabled
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvInitial()
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvSubsequent()
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService bhi()
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService ccm()
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService generalCareManagement()
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService pcm()
+ * @method   static                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService softwareOnly()
+ * @property string|null                                                                         $display_name
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $forcedForPatients
+ * @property int|null                                                                            $forced_for_patients_count
  */
 class ChargeableService extends BaseModel
 {
