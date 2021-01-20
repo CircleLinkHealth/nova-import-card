@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03c279209d0c82ef9486658c8327d357",
+    "content-hash": "24428387b6df9d8a526fc5b1a95609f0",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -537,16 +537,16 @@
         },
         {
             "name": "cakephp/chronos",
-            "version": "2.0.6",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/chronos.git",
-                "reference": "30baea51824076719921c6c2d720bfd6b49e6dca"
+                "reference": "3f119d1eb8105ed2c43bb72e8fc5c78487620089"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/chronos/zipball/30baea51824076719921c6c2d720bfd6b49e6dca",
-                "reference": "30baea51824076719921c6c2d720bfd6b49e6dca",
+                "url": "https://api.github.com/repos/cakephp/chronos/zipball/3f119d1eb8105ed2c43bb72e8fc5c78487620089",
+                "reference": "3f119d1eb8105ed2c43bb72e8fc5c78487620089",
                 "shasum": ""
             },
             "require": {
@@ -554,8 +554,7 @@
             },
             "require-dev": {
                 "cakephp/cakephp-codesniffer": "^4.0",
-                "phpbench/phpbench": "^1.0@dev",
-                "phpunit/phpunit": "^8.0"
+                "phpunit/phpunit": "^8.0 || ^9.0"
             },
             "type": "library",
             "autoload": {
@@ -588,7 +587,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2020-08-22T02:42:12+00:00"
+            "time": "2021-01-16T14:35:30+00:00"
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
@@ -636,7 +635,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "59a541b119d12d76a2022f39400cd6d6cdba704e"
+                "reference": "2a8b40efb993b482a6e32b42ade503cdbaf24859"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -687,7 +686,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-11T16:47:16+00:00"
+            "time": "2021-01-20T13:58:17+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -776,7 +775,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4d5bb402d3966f23200d4acfaa0857c393d3530b"
+                "reference": "b83798fff1739a44e6ce273f122568383376442a"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -791,7 +790,7 @@
                 "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/tinker": "^2.0",
-                "laravel/vapor-core": "^2.10.3",
+                "laravel/vapor-core": "^2.10.6",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.2",
                 "lcobucci/jwt": "^4.0",
@@ -832,7 +831,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-11T16:47:16+00:00"
+            "time": "2021-01-20T13:57:41+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -840,7 +839,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "d063fbc69d6a8b84da99122f776b55a390668159"
+                "reference": "4163a015e98c825d1e4b7601cece3626ed4e457e"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -887,7 +886,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-11T18:50:39+00:00"
+            "time": "2021-01-20T13:58:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -923,7 +922,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6e8b9f33ca7d497d8d0e5d280d8c221ce15bce5b"
+                "reference": "289342ac4b2654f3837b41cf6776e5c7a856e0a6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -965,7 +964,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-15T22:14:52+00:00"
+            "time": "2021-01-20T13:56:37+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -973,7 +972,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ecdc8f2e462fed8805349a46585995f0e7adec6e"
+                "reference": "e7b94754ba4eb64d6a05badda725d47098d79b1c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1003,7 +1002,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-19T17:22:02+00:00"
+            "time": "2021-01-20T13:54:33+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1165,11 +1164,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "dev-main",
+            "version": "dev-nbi_enrollment_letter",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "e41570327a83a0a9047dab60181e31cf2af6c12a"
+                "reference": "b56c70b854208fefd9ed264614dee0ac37d9fcc2"
             },
             "require": {
                 "laravel/nova": "~3.0"
@@ -1195,7 +1194,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-18T16:12:32+00:00"
+            "time": "2021-01-20T14:05:38+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1203,7 +1202,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "c5ba79293c64f34e66df3846c871cce487e0a2dc"
+                "reference": "7f60887c59aa3dace60a1774d9ea744715f139dc"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1226,7 +1225,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-16T18:59:24+00:00"
+            "time": "2021-01-20T14:00:02+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1332,11 +1331,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v2.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "7904806d4746126e95d4584d80a7a4f054937003"
+                "reference": "ee9de20a9786d7937e0696db04c3423084be805e"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -1363,19 +1362,19 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:14:38+00:00"
+            "time": "2021-01-20T08:39:36+00:00"
         },
         {
             "name": "clue/stream-filter",
             "version": "v1.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/clue/php-stream-filter.git",
+                "url": "https://github.com/clue/stream-filter.git",
                 "reference": "aeb7d8ea49c7963d3b581378955dbf5bc49aa320"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clue/php-stream-filter/zipball/aeb7d8ea49c7963d3b581378955dbf5bc49aa320",
+                "url": "https://api.github.com/repos/clue/stream-filter/zipball/aeb7d8ea49c7963d3b581378955dbf5bc49aa320",
                 "reference": "aeb7d8ea49c7963d3b581378955dbf5bc49aa320",
                 "shasum": ""
             },
@@ -2947,16 +2946,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.156",
+            "version": "v0.157.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "2f5e54fdef034f856208328126bddd8376dae4b3"
+                "reference": "957846303c28c10033fa83d8688ffd325c260a3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/2f5e54fdef034f856208328126bddd8376dae4b3",
-                "reference": "2f5e54fdef034f856208328126bddd8376dae4b3",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/957846303c28c10033fa83d8688ffd325c260a3e",
+                "reference": "957846303c28c10033fa83d8688ffd325c260a3e",
                 "shasum": ""
             },
             "require": {
@@ -2980,7 +2979,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-11-30T20:03:55+00:00"
+            "time": "2021-01-19T12:20:06+00:00"
         },
         {
             "name": "google/auth",
