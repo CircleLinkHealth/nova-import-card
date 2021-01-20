@@ -17,3 +17,4 @@ _ide_helper_models.php
 CircleLinkHealth/*
 /.vapor/
 lsp/
+staging-deploy-s3.env
