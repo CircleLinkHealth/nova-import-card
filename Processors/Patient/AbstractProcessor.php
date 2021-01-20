@@ -125,10 +125,6 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($summary->no_of_successful_calls < $this->minimumNumberOfCalls()) {
-            return false;
-        }
-
         return true;
     }
 
