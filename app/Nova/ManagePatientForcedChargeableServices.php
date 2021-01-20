@@ -141,10 +141,15 @@ class ManagePatientForcedChargeableServices extends Resource
             Text::make('Patient Eligible Chargeable Services', function () {
                 $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
                     ->get()
-                    ->map(function ($s) {
+                    ->map(function ($s){
                         $minutes = secondsToMMSS($s->total_time);
 
-                        return "<li><strong>$s->chargeable_service_name</strong> - $s->chargeable_service_code (time: $minutes)</li>";
+                        $line = "<li><strong>$s->chargeable_service_name</strong> - $s->chargeable_service_code (time: $minutes)</li>";
+
+                        if ($this->forcedChargeableServices->where('code', $s->chargeable_service_code)->isNotEmpty()){
+                            $line .= '(forced)';
+                        }
+                        return $line;
                     })->implode('');
 
                 return "<ul>$summaries</ul>";
