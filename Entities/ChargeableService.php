@@ -243,6 +243,14 @@ class ChargeableService extends BaseModel
         return self::FRIENDLY_NAMES[$code] ?? $code;
     }
 
+    public function forcedForPatients(){
+        return $this->belongsToMany(User::class, 'patient_forced_chargeable_services', 'chargeable_service_id', 'patient_user_id')
+            ->withPivot([
+                'is_forced',
+                'chargeable_month'
+            ])->withTimestamps();
+    }
+
     public function patientSummaries()
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
