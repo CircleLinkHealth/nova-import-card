@@ -112,7 +112,6 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('patientCallManagement.v2.index') }}">Manage (V2)</a></li>
-                                <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                 <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                             </ul>
                         </li>
@@ -178,6 +177,9 @@
                                 </li>
                                 <li>
                                     <a href="{{route('revisions.phi.activity')}}">PHI Activity</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes Table</a>
                                 </li>
                             </ul>
                         </li>
@@ -284,6 +286,7 @@
     @endif
 
     @yield('content')
+
 </div>
 
 @if (Agent::isIE())
@@ -307,6 +310,8 @@
 @stack('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
         integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+
+@include('core::partials.clickup-bug-collector')
 
 @include('core::partials.sentry-js')
 
