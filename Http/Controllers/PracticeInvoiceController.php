@@ -14,7 +14,6 @@ use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -94,7 +93,7 @@ class PracticeInvoiceController extends Controller
             'Content-Length: '.filesize(storage_path('/download/'.$name)),
         ]);
     }
-    
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
