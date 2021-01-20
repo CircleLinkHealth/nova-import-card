@@ -67,12 +67,19 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             $dob = Carbon::create((int) $input['birth_date_year'], (int) $input['birth_date_month'], (int) $input['birth_date_day']);
 
             if ($this->enrolleeQuery($dob, $userId = (int) $input['user_id'], $isSurveyOnly = (bool) $input['is_survey_only'])->exists()) {
+                $this->request->add([
+                    'userId'=>$userId
+                ]);
                 return;
             }
 
             Log::channel('database')->error('Failed to login patient with DOB['.$dob->toDateString()."] and UserId[$userId] and isSurveyOnly[$isSurveyOnly]");
 
             $validator->errors()->add('field', 'Your credentials do not match our records');
+
+            $this->request->add([
+                'userId'=>$userId
+            ]);
         });
     }
 

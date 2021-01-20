@@ -238,13 +238,16 @@ class SelfEnrollmentController extends Controller
 
     protected function authenticate(SelfEnrollableUserAuthRequest $request)
     {
+        $userId = intval($request->get('userId'));
         try {
+            /** @var User $user */
+            $user = Auth::loginUsingId((int) $userId, true);
             return $this->enrollableInvitationManager(
-                Auth::loginUsingId((int) $request->input('user_id'), true)
+                $user
             );
-        } catch (\Exception $e) {
-            $userId = intval($request->input('enrollable_id'));
-            Log::critical("User [$userId] could not log in to Self Enrollment Survey");
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            Log::critical("User [$userId] could not log in to Self Enrollment Survey.EXCEPTION: $exception");
 
             return view('selfEnrollment::EnrollmentSurvey.enrollableError');
         }
