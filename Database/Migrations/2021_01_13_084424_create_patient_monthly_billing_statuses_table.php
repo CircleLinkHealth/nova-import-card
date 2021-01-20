@@ -43,7 +43,7 @@ class CreatePatientMonthlyBillingStatusesTable extends Migration
             $table->unsignedInteger('patient_user_id');
             $table->date('chargeable_month');
             $table->unsignedInteger('actor_id')->nullable();
-            $table->enum('status', ['accepted', 'rejected', 'needs_qa'])->nullable()->default(null);
+            $table->enum('status', ['approved', 'rejected', 'needs_qa'])->nullable()->default(null);
 
             $table->timestamps();
 
