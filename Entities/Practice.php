@@ -16,8 +16,8 @@ use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
-use CircleLinkHealth\Eligibility\Entities\RpmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -525,7 +525,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function pcmProblems()
     {
-        return $this->hasMany(PcmProblem::class, 'practice_id');
+        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\PcmProblem::class, 'practice_id');
     }
 
     public function pcp()
@@ -545,7 +545,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function rpmProblems()
     {
-        return $this->hasMany(RpmProblem::class, 'practice_id');
+        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\RpmProblem::class, 'practice_id');
     }
 
     public function scopeActive($q)
