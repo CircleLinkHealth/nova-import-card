@@ -60,7 +60,7 @@
                                                     </label>
                                                 </div>
                                                 <select2 class="form-control" v-model="selectedService"
-                                                         :disabled="isClosed">
+                                                         :disabled="isClosed" v-if="isSupported">
                                                     <option :value="null">Set Default Code</option>
                                                     <option v-for="(service, index) in selectedPracticeChargeableServices"
                                                             :key="index"
@@ -68,7 +68,7 @@
                                                     </option>
                                                 </select2>
                                             </div>
-                                            <div class="col-sm-4 text-right">
+                                            <div class="col-sm-4 text-right" v-if="isSupported">
                                                 <div>&nbsp;</div>
                                                 <div>
                                                     <button class="btn btn-info" @click="attachChargeableService"
@@ -366,7 +366,7 @@
                 if (isDetach) {
                     data.detach = true
                 }
-                return this.axios.post(rootUrl('reports/monthly-billing/updatePracticeServices'), data).then(response => {
+                return this.axios.post(rootUrl('reports/monthly-billing/setPracticeServices'), data).then(response => {
                     (response.data || []).forEach(summary => {
                         const tableItem = this.tableData.find(row => row.id == summary.id)
                         if (tableItem) {
@@ -519,7 +519,7 @@
                         item.chargeable_services = serviceIDs
                         console.log('service-ids', serviceIDs, item)
                         item.promises.update_chargeables = true
-                        return this.axios.post(rootUrl('reports/monthly-billing/updateSummaryServices'), {
+                        return this.axios.post(rootUrl('reports/monthly-billing/setPatientServices'), {
                             report_id: item.reportId,
                             patient_chargeable_services: serviceIDs,
                             version: this.version
@@ -717,6 +717,9 @@
             },
         },
         computed: {
+            isSupported() {
+                return this.version !== '3';
+            },
             practice() {
                 return this.practices.find(p => +p.id === +this.selectedPractice);
             },

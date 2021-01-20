@@ -37,14 +37,14 @@ Route::group([
                 'as'   => 'monthly.billing.open.month',
             ]);
 
-            Route::post('/updatePracticeServices', [
-                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@updatePracticeChargeableServices',
-                'as'   => 'monthly.billing.practice.services',
-            ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+            Route::post('/setPracticeServices', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@setPracticeChargeableServices',
+                'as'   => 'monthly.billing.set.practice.services',
+            ]);
 
-            Route::post('/updateSummaryServices', [
-                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@updateSummaryChargeableServices',
-                'as'   => 'monthly.billing.updateSummaryServices',
+            Route::post('/setPatientServices', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@setPatientChargeableServices',
+                'as'   => 'monthly.billing.set.patient.services',
             ])->middleware('permission:patientSummary.update');
 
             Route::post('/status/update', [

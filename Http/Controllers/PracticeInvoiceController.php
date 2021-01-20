@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\CreatePracticeInvoice;
 use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
@@ -184,44 +183,6 @@ class PracticeInvoiceController extends Controller
         return $logger;
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function updatePracticeChargeableServices(Request $request)
-    {
-        $practice_id     = $request->input('practice_id');
-        $date            = $request->input('date');
-        $default_code_id = $request->input('default_code_id');
-        $is_detach       = $request->has('detach');
-
-        if ($date) {
-            $date = Carbon::createFromFormat('M, Y', $date);
-        } else {
-            return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
-        }
-
-        if ( ! $default_code_id || ! $practice_id) {
-            return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
-        }
-
-        $summaries = $this->service
-            ->billablePatientSummaries($practice_id, $date)
-            ->get()
-            ->map(function ($summary) use ($default_code_id, $is_detach) {
-                if ( ! $is_detach) {
-                    $summary = $this->service
-                        ->attachDefaultChargeableService($summary, $default_code_id, false);
-                } else {
-                    $summary = $this->service
-                        ->detachDefaultChargeableService($summary, $default_code_id);
-                }
-
-                return ApprovableBillablePatient::make($summary);
-            });
-
-        return response()->json($summaries);
-    }
-
     public function updateStatus(Request $request)
     {
         if ( ! $request->ajax()) {
@@ -253,46 +214,5 @@ class PracticeInvoiceController extends Controller
             ],
             'actor_id' => $summary->actor_id,
         ]);
-    }
-
-    public function updateSummaryChargeableServices(Request $request)
-    {
-        if ( ! $request->ajax()) {
-            return response()->json('Method not allowed', 403);
-        }
-
-        $reportId = $request->input('report_id');
-
-        if ( ! $reportId) {
-            return $this->badRequest('report_id is a required field');
-        }
-
-        //need array of IDs
-        $chargeableIDs = $request->input('patient_chargeable_services');
-
-        if ( ! is_array($chargeableIDs)) {
-            return $this->badRequest('patient_chargeable_services must be an array');
-        }
-
-        $summary = PatientMonthlySummary::find($reportId);
-
-        $summary->actor_id = auth()->id();
-        $summary->save();
-
-        if ( ! $summary) {
-            return $this->badRequest("Report with id ${reportId} not found.");
-        }
-
-        $toSync = [];
-
-        foreach ($chargeableIDs as $id) {
-            $toSync[$id] = [
-                'is_fulfilled' => true,
-            ];
-        }
-
-        $summary->chargeableServices()->sync($toSync);
-
-        return $this->ok($summary);
     }
 }

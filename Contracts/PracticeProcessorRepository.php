@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 interface PracticeProcessorRepository
@@ -17,7 +18,7 @@ interface PracticeProcessorRepository
 
     public function openMonth(int $practiceId, Carbon $month);
 
-    public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator;
 
     public function patientServices(int $practiceId, Carbon $month): Builder;
 }

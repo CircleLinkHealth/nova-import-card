@@ -11,8 +11,11 @@ use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsCountsReque
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsDataRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsIndexRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsOpenCloseMonthRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsSetPatientChargeableServicesRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsSetPracticeChargeableServicesRequest;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -22,6 +25,8 @@ use Illuminate\Routing\Controller;
 
 class ApproveBillablePatientsController extends Controller
 {
+    use ApiReturnHelpers;
+
     public function __construct()
     {
     }
@@ -65,11 +70,6 @@ class ApproveBillablePatientsController extends Controller
         return response($month->summaries)->header('is-closed', (int) $month->isClosed);
     }
 
-    /**
-     * Show the page to choose a practice and generate approvable billing reports.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
     public function index(ApproveBillablePatientsIndexRequest $request)
     {
         $practices = Practice::orderBy('display_name')
@@ -122,6 +122,39 @@ class ApproveBillablePatientsController extends Controller
         return response()->json([
             'updated' => $updated,
         ]);
+    }
+
+    public function setPatientChargeableServices(ApproveBillablePatientsSetPatientChargeableServicesRequest $request)
+    {
+        $reportId             = intval($request->input('report_id'));
+        $chargeableServiceIds = $request->input('patient_chargeable_services');
+
+        /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
+        $service = $this->getService($request);
+        $summary = $service->setPatientChargeableServices($reportId, $chargeableServiceIds);
+
+        return $this->ok($summary);
+    }
+
+    /**
+     * @deprecated this feature will not be implemented in new version
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setPracticeChargeableServices(ApproveBillablePatientsSetPracticeChargeableServicesRequest $request)
+    {
+        $practiceId    = $request->input('practice_id');
+        $date          = Carbon::createFromFormat('M, Y', $request->input('date'));
+        $defaultCodeId = $request->input('default_code_id');
+        $isDetach      = $request->has('detach');
+
+        /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
+        $service = $this->getService($request);
+        if ($service instanceof ApproveBillablePatientsServiceV3) {
+            return $this->badRequest('not supported');
+        }
+        $summaries = $service->setPracticeChargeableServices($practiceId, $date->firstOfMonth(), $defaultCodeId, $isDetach);
+
+        return response()->json($summaries);
     }
 
     private function getService(Request $request)

@@ -148,4 +148,45 @@ class ApproveBillablePatientsService
                 'closed_ccm_status' => null,
             ]);
     }
+
+    public function setPatientChargeableServices(int $reportId, array $csIds): ?PatientMonthlySummary
+    {
+        $summary = PatientMonthlySummary::find($reportId);
+        if ( ! $summary) {
+            return null;
+        }
+
+        $summary->actor_id = auth()->id();
+        $summary->save();
+
+        $toSync = [];
+
+        foreach ($csIds as $id) {
+            $toSync[$id] = [
+                'is_fulfilled' => true,
+            ];
+        }
+
+        $summary->chargeableServices()->sync($toSync);
+
+        return $summary;
+    }
+
+    public function setPracticeChargeableServices(int $practiceId, Carbon $month, int $defaultCodeId, bool $isDetach)
+    {
+        return $this
+            ->billablePatientSummaries($practiceId, $month)
+            ->get()
+            ->map(function ($summary) use ($defaultCodeId, $isDetach) {
+                if ( ! $isDetach) {
+                    $summary = $this
+                        ->attachDefaultChargeableService($summary, $defaultCodeId, false);
+                } else {
+                    $summary = $this
+                        ->detachDefaultChargeableService($summary, $defaultCodeId);
+                }
+
+                return ApprovableBillablePatient::make($summary);
+            });
+    }
 }
