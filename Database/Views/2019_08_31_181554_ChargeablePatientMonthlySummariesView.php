@@ -21,32 +21,6 @@ class ChargeablePatientMonthlySummariesView extends BaseSqlView
             cs.display_name as chargeable_service_name,
 
         coalesce((
-            SELECT COUNT(*)
-            FROM calls
-            WHERE inbound_cpm_id = cpms.patient_user_id
-            and (DATE(calls.called_date) between cpms.chargeable_month and LAST_DAY(cpms.chargeable_month))
-            and (
-                type IS NULL
-                    OR type = 'call'
-                    OR sub_type = 'Call Back'
-                )
-            and status in ('reached', 'not reached')
-        ),0) as no_of_calls,
-
-        coalesce((
-            SELECT COUNT(*) as no_of_calls
-            FROM calls
-            WHERE inbound_cpm_id = cpms.patient_user_id
-            and (DATE(calls.called_date) between cpms.chargeable_month and LAST_DAY(cpms.chargeable_month))
-            and (
-                type IS NULL
-                    OR type = 'call'
-                    OR sub_type = 'Call Back'
-                )
-            and status='reached'
-        ),0) as no_of_successful_calls,
-
-        coalesce((
             SELECT SUM(duration) as total_time
             FROM lv_activities
             WHERE patient_id = cpms.patient_user_id
