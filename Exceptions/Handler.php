@@ -14,7 +14,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\ErrorHandler\Error\FatalError;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -100,12 +99,6 @@ class Handler extends ExceptionHandler
 //            @todo: decide if we want to implement fully
 //            StorePHIException::dispatch($e);
 //            return;
-        }
-
-        if ($e instanceof FatalError) {
-            if (str_contains($e->getMessage(), 'escapeshellarg')) {
-                return;
-            }
         }
 
         if (app()->bound('sentry')) {

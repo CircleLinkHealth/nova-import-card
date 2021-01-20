@@ -321,7 +321,7 @@ if ( ! function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message, $force = false)
     {
-        Log::warning("$to: $message");
+        Log::info("$to: $message");
 
         if ( ! $force && ! isProductionEnv()) {
             return;

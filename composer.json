@@ -54,7 +54,7 @@
     "genealabs/laravel-caffeine": "^8.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "laravel/framework": "^8.0",
-    "laravel/vapor-core": "^2.10.3",
+    "laravel/vapor-core": "^2.10.6",
     "laravel/tinker": "^2.0",
     "wildbit/swiftmailer-postmark": "*",
     "nao-pon/flysystem-google-drive": "~1.1"

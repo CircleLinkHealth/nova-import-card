@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Core\Exports;
 use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -72,10 +73,13 @@ class FromArray implements FromCollection, Responsable, WithHeadings
 
     public function storeAndAttachMediaTo($model, $mediaCollection)
     {
+        $disk = Storage::disk('storage');
+        $disk->makeDirectory('exports');
+
         $filepath = 'exports/'.$this->getFilename();
         $stored   = $this->store($filepath, 'storage');
 
-        return $this->attachMediaTo($model, storage_path($filepath), $mediaCollection);
+        return $this->attachMediaTo($model, $disk->path($filepath), $mediaCollection);
     }
 
     private function headingsFromReportData()

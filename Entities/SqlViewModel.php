@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SqlViewModel extends Model
 {
-    use ProtectsPhi;
+//    use ProtectsPhi;
 
     public $phi = [];
 }
