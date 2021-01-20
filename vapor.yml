@@ -1,6 +1,5 @@
 id: 16674
 name: app-self-enrollment
-separate-vendor: true
 environments:
   production:
     domain: self-enrollment.careplanmanager.com
@@ -13,7 +12,7 @@ environments:
     concurrency: 40
     queue-concurrency: 10
     cli-concurrency: 10
-    runtime: docker
+    runtime: php-7.4:al2
     mail: false
     timeout: 60
     queues:
@@ -39,7 +38,7 @@ environments:
     queue-timeout: 600
     concurrency: 5
     mail: false
-    runtime: docker
+    runtime: php-7.4:al2
     queues:
       - self-enrollment-low-staging
       - self-enrollment-high-staging
