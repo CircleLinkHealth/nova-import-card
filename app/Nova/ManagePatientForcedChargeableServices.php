@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -70,7 +71,6 @@ class ManagePatientForcedChargeableServices extends Resource
     public function actions(Request $request)
     {
         return [
-            new ForcePatientChargeableServices(),
         ];
     }
 
@@ -86,7 +86,7 @@ class ManagePatientForcedChargeableServices extends Resource
 
     public function authorizedToUpdate(Request $request)
     {
-        return false;
+        return true;
     }
 
     public static function availableForNavigation(Request $request)
@@ -118,9 +118,13 @@ class ManagePatientForcedChargeableServices extends Resource
 
             Text::make('Display Name', 'display_name')->sortable(),
 
+            BelongsToMany::make('Forced Chargeable Services', 'forcedChargeableServices', 'App\Nova\ChargeableService')
+                         ->onlyOnDetail(),
+
             Text::make('Patient Eligible Chargeable Services', function () {
                 $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
                     ->get()
+                    //todo untangify
                     ->transform(function ($s) {
                         $minutes = secondsToMMSS($s->total_time);
 

@@ -11,11 +11,19 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Select;
 
 class ForcePatientChargeableServices extends Action
 {
     use InteractsWithQueue;
     use Queueable;
+
+    protected ?int $patientId;
+
+    public function __construct(int $patientId = null)
+    {
+        $this->patientId = $patientId;
+    }
 
     /**
      * Get the fields available on the action.
@@ -24,7 +32,12 @@ class ForcePatientChargeableServices extends Action
      */
     public function fields()
     {
-        return [];
+
+        return [
+            Select::make('Forced Chargeable Services')->options([
+                $this->patientId => $this->patientId
+            ])
+        ];
     }
 
     /**
