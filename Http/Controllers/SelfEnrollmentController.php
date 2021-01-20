@@ -247,7 +247,7 @@ class SelfEnrollmentController extends Controller
             );
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
-            Log::critical("[Self Enrollment Survey] User [$userId] could not login. EXCEPTION: $exception");
+            Log::critical("[Self Enrollment Survey] User [$userId] could not login. EXCEPTION: $message");
 
             return view('selfEnrollment::EnrollmentSurvey.enrollableError');
         }
