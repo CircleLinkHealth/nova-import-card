@@ -16,7 +16,7 @@
     <link rel="manifest" href="/img/favicon/site.webmanifest">
 
     <!-- Styles -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     @stack('styles')
 
@@ -28,7 +28,7 @@
 
 </div>
 
-<script src="{{ mix('js/app.js') }}"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 
 @stack('scripts')
 @include('partials.sentry-js')

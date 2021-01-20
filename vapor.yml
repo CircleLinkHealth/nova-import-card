@@ -1,0 +1,52 @@
+id: 16392
+name: app-awv
+separate-vendor: true
+environments:
+  production:
+    domain:
+      - awv2.careplanmanager.com
+      - awv.careplanmanager.com
+    storage: cpm-production-vapor-storage
+    memory: 512
+    cli-memory: 512
+    queue-memory: 512
+    runtime: docker
+    queue-timeout: 600
+    capacity: 2
+    timeout: 45
+    scheduler: false
+    mail: false
+    queues:
+      - awv-low-production
+      - awv-high-production
+      - awv-revisionable-production
+    build:
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'php artisan event:cache'
+      - 'npm ci && npm run prod && rm -rf node_modules'
+      - 'php artisan route:cache'
+    deploy:
+      - 'php artisan migrate --force'
+      - 'php artisan migrate:views'
+  staging:
+    domain: awv-v2.clh-staging.com
+    storage: cpm-staging-vapor-storage
+    memory: 512
+    cli-memory: 512
+    queue-memory: 512
+    runtime: docker
+    queue-timeout: 600
+    timeout: 45
+    mail: false
+    queues:
+      - awv-low-staging
+      - awv-high-staging
+      - awv-revisionable-staging
+    build:
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'php artisan event:cache'
+      - 'npm ci && npm run prod && rm -rf node_modules'
+      - 'php artisan route:cache'
+    deploy:
+      - 'php artisan migrate --force'
+      - 'php artisan migrate:views'

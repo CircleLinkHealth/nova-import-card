@@ -10,13 +10,13 @@
     <title>{{ config('app.name', 'AWV') }}</title>
 
     <!-- FAV ICON -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/img/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/img/favicon/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('/img/favicon/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{asset('/img/favicon/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{asset('/img/favicon/favicon-16x16.png')}}">
+    <link rel="manifest" href="{{asset('/img/favicon/site.webmanifest')}}">
 
     <!-- Styles -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     @stack('styles')
 </head>
@@ -33,9 +33,9 @@
 </div>
 
 <!-- Scripts -->
-{{--    <script src="{{ mix('js/manifest.js') }}" defer></script>--}}
-{{--    <script src="{{ mix('js/vendor.js') }}" defer></script>--}}
-<script src="{{ mix('js/app.js') }}" defer></script>
+{{--    <script src="{{ asset('js/manifest.js') }}" defer></script>--}}
+{{--    <script src="{{ asset('js/vendor.js') }}" defer></script>--}}
+<script src="{{ asset('js/app.js') }}" defer></script>
 
 @stack('scripts')
 @include('partials.sentry-js')

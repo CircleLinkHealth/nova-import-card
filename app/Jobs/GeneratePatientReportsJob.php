@@ -283,7 +283,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         Carbon $generatedAt,
         string $reportTitle,
         string $reportTitle2 = null
-    ): string {
+    ): ?string {
         /** @var PdfWrapper $cover */
         $cover = App::make('snappy.pdf.wrapper');
         $this->setPdfOptions($cover, false);

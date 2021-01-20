@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SurveyAnswersCalculateSuggestionsJob;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Console\Command;
 
 class CalculateSuggestedAnswers extends Command
@@ -47,7 +48,7 @@ class CalculateSuggestedAnswers extends Command
         }
 
         foreach ($patientIds as $patientId) {
-            SurveyAnswersCalculateSuggestionsJob::dispatch($patientId)->onQueue('awv-high');
+            SurveyAnswersCalculateSuggestionsJob::dispatch($patientId)->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
         }
 
         $this->info('Done.');
