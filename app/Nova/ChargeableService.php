@@ -80,14 +80,15 @@ class ChargeableService extends Resource
                         return isset($this->pivot->chargeable_month) && ! is_null($this->pivot->chargeable_month)
                             ? Carbon::parse($this->pivot->chargeable_month)->toDateString()
                             : '-';
-                    })->readonly()->onlyOnIndex(),
+                    })->readonly()->onlyOnDetail(),
                     Select::make('Chargeable Month', 'chargeable_month')->options([
                         null                                                      => 'Permanently',
                         Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
                         Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
                     ]),
                 ];
-            })->hid,
+            })->hideFromIndex()
+              ->hideFromDetail(),
         ];
     }
 
