@@ -32,11 +32,10 @@ class ForcePatientChargeableServices extends Action
      */
     public function fields()
     {
-
         return [
             Select::make('Forced Chargeable Services')->options([
-                $this->patientId => $this->patientId
-            ])
+                $this->patientId => $this->patientId,
+            ]),
         ];
     }
 
