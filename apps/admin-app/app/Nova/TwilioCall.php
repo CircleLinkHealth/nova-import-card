@@ -78,7 +78,7 @@ class TwilioCall extends Resource
     public function actions(Request $request)
     {
         return [
-            (new ExportTwilioCalls())->withDisk('media'),
+            new ExportTwilioCalls(),
         ];
     }
 

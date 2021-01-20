@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -547,15 +547,15 @@ class TimeTrackerUser {
             }))
         };
         if (this.totalSeconds === 0) {
-            console.log('will not cache time because time is 0');
-        }
-        else if (this.patientId == 0) {
-            console.log('will not cache time because patient id is 0');
+            console.log('will not cache ccm because time is 0');
         }
         else {
             const toCache = [];
             for (let i = 0; i < requestData.activities.length; i++) {
                 const a = requestData.activities[i];
+                if (a.chargeable_service_id === -1) {
+                    continue;
+                }
                 const currentSeconds = this.getTotalSecondsForCsId(a.chargeable_service_id);
                 const cachedSeconds = this.getTotalSecondsForCsIdFromCache(a.chargeable_service_id);
                 if (cachedSeconds > currentSeconds) {

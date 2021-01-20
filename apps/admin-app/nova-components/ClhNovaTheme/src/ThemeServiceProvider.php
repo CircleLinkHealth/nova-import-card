@@ -18,10 +18,10 @@ class ThemeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Nova::theme(asset('/css/clh-nova-theme/theme.css', isProductionEnv()));
+        Nova::theme(asset('/circlelinkhealth/clh-nova-theme/theme.css', true));
 
         $this->publishes([
-            __DIR__.'/../resources/css' => public_path('css/clh-nova-theme'),
+            __DIR__.'/../resources/css' => public_path('circlelinkhealth/clh-nova-theme'),
         ], 'public');
     }
 

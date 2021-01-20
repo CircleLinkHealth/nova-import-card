@@ -14,13 +14,15 @@ class InvoicesDownloadController
 {
     public function downloadInvoices(InvoicesDownloadRequest $request)
     {
+        $auth = auth()->user();
+
         $downloadFormat = $request->input('downloadFormat');
         $date           = $request->input('date');
 
         $month        = Carbon::parse($date['label'])->startOfMonth();
         $monthToHuman = Carbon::parse($month)->format('M-Y');
 
-        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, auth()->id())->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, $auth)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return response()->json(
             [

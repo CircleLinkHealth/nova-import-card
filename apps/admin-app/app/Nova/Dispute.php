@@ -7,7 +7,6 @@
 namespace App\Nova;
 
 use App\Nova\Actions\ResolveInvoiceDispute;
-use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -21,7 +20,7 @@ class Dispute extends Resource
      *
      * @var string
      */
-    public static $group = CpmConstants::NOVA_GROUP_CARE_COACHES;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
     /**
      * The model the resource corresponds to.
      *

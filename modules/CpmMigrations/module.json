@@ -1,0 +1,13 @@
+{
+    "name": "CpmMigrations",
+    "alias": "cpmMigrations",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\CpmMigrations\\Providers\\CpmMigrationsServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Sentry\Severity;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
 use Twilio\Twiml;
@@ -482,6 +483,11 @@ class TwilioController extends Controller
         ]);
 
         if ($validation->fails()) {
+            $msg = 'Validation failed:' . json_encode($validation->errors()->all());
+            \Log::critical($msg);
+            if (app()->bound('sentry')) {
+                app('sentry')->captureMessage($msg, Severity::error());
+            }
             return $this->responseWithXmlData($validation->errors()->all(), 400);
         }
 

@@ -9,8 +9,8 @@ namespace App\Nova;
 use App\Nova\Actions\GenerateNurseInvoice;
 use Circlelinkhealth\InvoicesDownload\InvoicesDownload;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Nova;
@@ -117,6 +117,12 @@ class NurseInvoice extends Resource
     public function fields(Request $request)
     {
         return [
+            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
+                ->hideWhenUpdating()
+                ->hideFromIndex()
+                ->searchable()
+                ->prepopulate(),
+
             Text::make('Name', 'nurse.user.display_name')
                 ->sortable()
                 ->hideWhenCreating()
@@ -129,8 +135,6 @@ class NurseInvoice extends Resource
             Button::make('View Breakdown')->link($this->getInvoiceBreakdownUrl(), '_blank')->style('info-link'),
 
             ID::make()->sortable(),
-
-            DateTime::make('Last Generated', 'updated_at')->sortable(),
         ];
     }
 

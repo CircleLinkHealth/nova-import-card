@@ -10,3 +10,4 @@ _ide_helper_models.php
 .phpunit.result.cache
 Modules/
 app-cpm-caller.iml
+.vapor/
