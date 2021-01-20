@@ -243,7 +243,7 @@ class AutoPatientAttestation
             /** @var PatientMonthlySummary $pms */
             $pms = $this->patient->patientSummaryForMonth($this->month);
 
-            return $pms->hasServiceCode($code);
+            return boolval(optional($pms)->hasServiceCode($code));
         }
 
         return PatientIsOfServiceCode::execute($this->patient->id, $code);
