@@ -13,7 +13,9 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -119,27 +121,27 @@ class ManagePatientForcedChargeableServices extends Resource
             Text::make('Display Name', 'display_name')->sortable(),
 
             BelongsToMany::make('Forced Chargeable Services', 'forcedChargeableServices', 'App\Nova\ChargeableService')
+                ->fields(function(){
+                    return  [
+                        Select::make('Chargeable Month', 'chargeable_month')->options([
+                            null => 'Permanently',
+                            Carbon::now()->startOfMonth()->toDateString() => 'Current month only',
+                            Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only'
+                        ])
+                    ];
+                })
                          ->onlyOnDetail(),
 
             Text::make('Patient Eligible Chargeable Services', function () {
                 $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
                     ->get()
-                    //todo untangify
-                    ->transform(function ($s) {
+                    ->map(function ($s) {
                         $minutes = secondsToMMSS($s->total_time);
 
-                        return [
-                            $s->chargeable_service_id => "$s->chargeable_service_name - $s->chargeable_service_code (time: $minutes)",
-                        ];
-                    })->flatten()->toArray();
+                        return "<li>$s->chargeable_service_name - $s->chargeable_service_code (time: $minutes)</li>";
+                    })->implode('');
 
-                $html = '<ul>';
-                foreach ($summaries as $summary) {
-                    $html .= "<li>$summary</li>";
-                }
-                $html .= '</ul>';
-
-                return $html;
+                return "<ul>$summaries</ul>";
             })->onlyOnDetail()
                 ->readonly()
                 ->asHtml(),
