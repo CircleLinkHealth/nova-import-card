@@ -34,13 +34,13 @@ class LocationServices
     public function getChargeableServices(User $patient, ?Carbon $month = null): Collection
     {
         if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
-            Log::warning("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services for patient[$patient->id].");
+            Log::debug("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services for patient[$patient->id].");
 
             return $patient->primaryPractice->chargeableServices;
         }
 
         if (is_null($locationId = $patient->getPreferredContactLocation())) {
-            Log::warning("LocationServices::getChargeableServices $locationId is null. Returning empty collection.");
+            Log::debug("LocationServices::getChargeableServices $locationId is null. Returning empty collection.");
 
             return new Collection();
         }
