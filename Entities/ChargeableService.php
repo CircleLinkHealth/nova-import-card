@@ -198,6 +198,15 @@ class ChargeableService extends BaseModel
         return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
+    public function forcedForPatients()
+    {
+        return $this->belongsToMany(User::class, 'patient_forced_chargeable_services', 'chargeable_service_id', 'patient_user_id')
+            ->withPivot([
+                'is_forced',
+                'chargeable_month',
+            ])->withTimestamps();
+    }
+
     public static function getChargeableServiceIdUsingCode(string $code): int
     {
         return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
@@ -241,14 +250,6 @@ class ChargeableService extends BaseModel
     public static function getFriendlyName($code)
     {
         return self::FRIENDLY_NAMES[$code] ?? $code;
-    }
-
-    public function forcedForPatients(){
-        return $this->belongsToMany(User::class, 'patient_forced_chargeable_services', 'chargeable_service_id', 'patient_user_id')
-            ->withPivot([
-                'is_forced',
-                'chargeable_month'
-            ])->withTimestamps();
     }
 
     public function patientSummaries()
