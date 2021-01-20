@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f81a3f92ac46c2e7ffeed0d34fc37511",
+    "content-hash": "b6c5fdce54d44b211a2a44908306d3c6",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -934,11 +934,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
-            "version": "dev-master",
+            "version": "1.3.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "859b7dbf22b1f883b217ad0facbc7f7679a99ff6"
+                "reference": "365b910c5f6955d586b6c978afdbd75639734e03"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -984,7 +984,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-16T03:06:48+00:00"
+            "time": "2021-01-20T10:19:05+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1540,11 +1540,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v2.0",
+            "version": "v2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "c0f9bc8aa85791f02a03d8e2739a917e03efaf0d"
+                "reference": "3aa2d1c660dd3b8740495097fa8761a5ca4a7526"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1572,7 +1572,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:12:17+00:00"
+            "time": "2021-01-20T08:01:19+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",

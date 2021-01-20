@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Nova\Actions\ModifyPatientTime;
+use CircleLinkHealth\CpmAdmin\Actions\ModifyPatientTime;
 use Illuminate\Console\Command;
 
 class ModifyPatientTimeCommand extends Command
