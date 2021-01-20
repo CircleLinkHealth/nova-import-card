@@ -67,8 +67,8 @@ class SurveyInvitationLinksService
                 ]
             );
 
-//            @todo:implement CPM shorten url
             $urlToken = $this->parseUrl($url);
+            $shortUrl = shortenUrl($url);
 
             InvitationLink::create([
                 'patient_info_id'     => $patientInfoId,

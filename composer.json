@@ -110,6 +110,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/short-url.git"
         }
     ],
     "require": {
@@ -122,6 +126,7 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "algolia/algoliasearch-client-php": "^2.6",
+        "ashallendesign/short-url": "^4.1",
         "appstract/laravel-opcache": "4.0.2",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/core-module": "2.3.x-dev",
