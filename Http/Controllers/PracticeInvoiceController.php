@@ -94,21 +94,7 @@ class PracticeInvoiceController extends Controller
             'Content-Length: '.filesize(storage_path('/download/'.$name)),
         ]);
     }
-
-    public function getChargeableServices()
-    {
-        return $this->ok(ChargeableService::cached());
-    }
-
-    public function getCounts(
-        $date,
-        $practice
-    ) {
-        $date = Carbon::parse($date);
-
-        return $this->service->counts($practice, $date->firstOfMonth());
-    }
-
+    
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -181,38 +167,5 @@ class PracticeInvoiceController extends Controller
         }
 
         return $logger;
-    }
-
-    public function updateStatus(Request $request)
-    {
-        if ( ! $request->ajax()) {
-            return response()->json('Method not allowed', 403);
-        }
-
-        $summary = PatientMonthlySummary::find($request['report_id']);
-
-        $summary->approved = $request['approved'];
-        $summary->rejected = $request['rejected'];
-
-        if ( ! $summary->approved && ! $summary->rejected) {
-            $summary->needs_qa = true;
-        }
-
-        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
-        $summary->actor_id = auth()->user()->id;
-        $summary->save();
-
-        //used for view report counts
-        $counts = $this->getCounts($summary->month_year, $summary->patient->primaryPractice->id);
-
-        return response()->json([
-            'report_id' => $summary->id,
-            'counts'    => $counts,
-            'status'    => [
-                'approved' => $summary->approved,
-                'rejected' => $summary->rejected,
-            ],
-            'actor_id' => $summary->actor_id,
-        ]);
     }
 }

@@ -41,7 +41,7 @@
         color: red;
     }
 
-    .modal-error button,input[type='button'] {
+    input[type='button'].modal-error button {
         background-color: transparent;
         color: red;
         border-color: #999;

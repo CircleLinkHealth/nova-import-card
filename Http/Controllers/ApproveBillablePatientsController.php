@@ -11,8 +11,10 @@ use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsCountsReque
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsDataRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsIndexRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsOpenCloseMonthRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsSetBillingStatusRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsSetPatientChargeableServicesRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsSetPracticeChargeableServicesRequest;
+use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsSuccessfulCallsCountRequest;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
@@ -124,6 +126,18 @@ class ApproveBillablePatientsController extends Controller
         ]);
     }
 
+    public function setBillingStatus(ApproveBillablePatientsSetBillingStatusRequest $request)
+    {
+        $reportId  = intval($request->input('report_id'));
+        $newStatus = $request->input('status');
+
+        /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
+        $service  = $this->getService($request);
+        $response = $service->setPatientBillingStatus($reportId, $newStatus);
+
+        return $response ? $this->ok($response) : $this->error('there was an error');
+    }
+
     public function setPatientChargeableServices(ApproveBillablePatientsSetPatientChargeableServicesRequest $request)
     {
         $reportId             = intval($request->input('report_id'));
@@ -131,9 +145,9 @@ class ApproveBillablePatientsController extends Controller
 
         /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
         $service = $this->getService($request);
-        $summary = $service->setPatientChargeableServices($reportId, $chargeableServiceIds);
+        $result  = $service->setPatientChargeableServices($reportId, $chargeableServiceIds);
 
-        return $this->ok($summary);
+        return $result ? $this->ok() : $this->error('there was an error');
     }
 
     /**
@@ -154,7 +168,16 @@ class ApproveBillablePatientsController extends Controller
         }
         $summaries = $service->setPracticeChargeableServices($practiceId, $date->firstOfMonth(), $defaultCodeId, $isDetach);
 
-        return response()->json($summaries);
+        return $this->ok($summaries);
+    }
+
+    public function successfulCallsCount(ApproveBillablePatientsSuccessfulCallsCountRequest $request)
+    {
+        $patientIds = $request->input('patient_ids');
+        $date       = Carbon::createFromFormat('M, Y', $request->input('date'));
+        $response   = app(ApproveBillablePatientsServiceV3::class)->successfulCallsCount($patientIds, $date);
+
+        return $this->ok($response);
     }
 
     private function getService(Request $request)

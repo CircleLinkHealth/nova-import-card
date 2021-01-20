@@ -149,11 +149,45 @@ class ApproveBillablePatientsService
             ]);
     }
 
-    public function setPatientChargeableServices(int $reportId, array $csIds): ?PatientMonthlySummary
+    public function setPatientBillingStatus(int $reportId, string $newStatus): ?array
+    {
+        /** @var PatientMonthlySummary $summary */
+        $summary = PatientMonthlySummary::with([
+            'patient' => fn ($q) => $q->select(['id', 'program_id']),
+        ])->find($reportId);
+        if ( ! $summary) {
+            return null;
+        }
+
+        $summary->approved = 'approved' === $newStatus;
+        $summary->rejected = 'rejected' === $newStatus;
+
+        if ( ! $summary->approved && ! $summary->rejected) {
+            $summary->needs_qa = true;
+        }
+
+        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
+        $summary->actor_id = auth()->id();
+        $summary->save();
+
+        $counts = $this->counts(intval($summary->patient->primaryProgramId()), $summary->month_year)->toArray();
+
+        return [
+            'report_id' => $summary->id,
+            'counts'    => $counts,
+            'status'    => [
+                'approved' => $summary->approved,
+                'rejected' => $summary->rejected,
+            ],
+            'actor_id' => $summary->actor_id,
+        ];
+    }
+
+    public function setPatientChargeableServices(int $reportId, array $csIds): bool
     {
         $summary = PatientMonthlySummary::find($reportId);
         if ( ! $summary) {
-            return null;
+            return false;
         }
 
         $summary->actor_id = auth()->id();
@@ -169,7 +203,7 @@ class ApproveBillablePatientsService
 
         $summary->chargeableServices()->sync($toSync);
 
-        return $summary;
+        return true;
     }
 
     public function setPracticeChargeableServices(int $practiceId, Carbon $month, int $defaultCodeId, bool $isDetach)

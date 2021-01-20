@@ -27,30 +27,39 @@ Route::group([
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@counts',
             ]);
 
+            Route::post('/successful-calls-count', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@successfulCallsCount',
+            ]);
+
+            Route::post('/set-billing-status', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@setBillingStatus',
+                'as'   => 'monthly.billing.set.status',
+            ]);
+
             Route::post('/close', [
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@closeMonth',
                 'as'   => 'monthly.billing.close.month',
             ]);
 
             Route::post('/open', [
-                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@openMonthlySummaryStatus',
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@openMonth',
                 'as'   => 'monthly.billing.open.month',
             ]);
 
-            Route::post('/setPracticeServices', [
+            Route::post('/set-practice-services', [
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@setPracticeChargeableServices',
                 'as'   => 'monthly.billing.set.practice.services',
             ]);
 
-            Route::post('/setPatientServices', [
+            Route::post('/set-patient-services', [
                 'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@setPatientChargeableServices',
                 'as'   => 'monthly.billing.set.patient.services',
-            ])->middleware('permission:patientSummary.update');
+            ]);
 
-            Route::post('/status/update', [
-                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@updateStatus',
-                'as'   => 'monthly.billing.status.update',
-            ])->middleware('permission:patientSummary.update');
+            Route::post('/set-billing-status', [
+                'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\ApproveBillablePatientsController@setBillingStatus',
+                'as'   => 'monthly.billing.set.status',
+            ]);
         });
     });
 

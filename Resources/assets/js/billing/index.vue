@@ -2,10 +2,17 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     Approve Billable Patients
                 </div>
-                <div class="col-sm-3 text-right">
+                <div class="col-sm-5 text-right">
+                    <button v-if="isNewVersion() && typeof practice !== 'undefined'">
+                        <a style="text-decoration: none" target="_blank" :href="this.practiceChargeableServicesUrl()">
+                            Enable/Disable Practice Chargeable Services
+                        </a>
+                    </button>
+                </div>
+                <div class="col-sm-1 text-right">
                     <button title="Generate an Excel Sheet" @click="exportExcel">Export</button>
                 </div>
             </div>
@@ -47,20 +54,21 @@
                             </div>
                         </div>
                         <div class="col-sm-5">
-                            <div class="row">
+                            <div class="row" v-if="!isNewVersion()">
                                 <div class="col-sm-12">
                                     <form v-if="!isSoftwareOnly">
                                         <div class="row">
                                             <div class="col-sm-8">
                                                 <div>
                                                     <label v-if="typeof practice !== 'undefined'">
-                                                        Set <a target="_blank"
-                                                               :href="this.practiceChargeableServicesUrl()">Chargeable
-                                                        Services</a>
+                                                        Set
+                                                        <a target="_blank" :href="this.practiceChargeableServicesUrl()">
+                                                            Chargeable Services
+                                                        </a>
                                                     </label>
                                                 </div>
                                                 <select2 class="form-control" v-model="selectedService"
-                                                         :disabled="isClosed" v-if="isSupported">
+                                                         :disabled="isClosed">
                                                     <option :value="null">Set Default Code</option>
                                                     <option v-for="(service, index) in selectedPracticeChargeableServices"
                                                             :key="index"
@@ -68,7 +76,7 @@
                                                     </option>
                                                 </select2>
                                             </div>
-                                            <div class="col-sm-4 text-right" v-if="isSupported">
+                                            <div class="col-sm-4 text-right">
                                                 <div>&nbsp;</div>
                                                 <div>
                                                     <button class="btn btn-info" @click="attachChargeableService"
@@ -158,6 +166,10 @@
                         <span class="blue pointer" style="overflow-wrap: break-word"
                               @click="showBhiModal(props.row)">{{ attestedBhiProblemCodes(props.row) || 'N/A' }}</span>
                     </div>
+                </template>
+                <template slot="#Successful Calls" slot-scope="props">
+                    <span>{{ props.row['#Successful Calls'] }}</span>
+                    <loader v-if="loaders.callsCount"></loader>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
                     <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
@@ -252,7 +264,8 @@
                     counts: false,
                     chargeableServices: false,
                     openMonth: false,
-                    closeMonth: false
+                    closeMonth: false,
+                    callsCount: false
                 },
                 url: null,
                 counts: {
@@ -292,41 +305,46 @@
 
             approveOrReject(e, row, type) {
                 const tablePatient = this.tableData.find(patient => patient.id == row.id)
-                console.log('billing-approve-reject-patient', tablePatient, e)
-                if (tablePatient) {
-                    if (type == 'approve') {
-                        tablePatient.approved = e.target.checked
-                        tablePatient.rejected = false
-                    } else {
-                        tablePatient.rejected = e.target.checked
-                        tablePatient.approved = false
-                    }
-
-                    const errorKey = 'approve_reject'
-                    tablePatient.promises['approve_reject'] = true
-                    this.axios.post(rootUrl('reports/monthly-billing/status/update'), {
-                        report_id: tablePatient.reportId,
-                        approved: Number(tablePatient.approved),
-                        rejected: Number(tablePatient.rejected),
-                        version: this.version
-                    }).then(response => {
-                        tablePatient.promises['approve_reject'] = false
-                        tablePatient.approved = !!(response.data.status || {}).approved
-                        tablePatient.rejected = !!(response.data.status || {}).rejected
-                        if ((response.data || {}).counts) {
-                            this.counts.approved = ((response.data || {}).counts || {}).approved || 0
-                            this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
-                            this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
-                            this.counts.other = ((response.data || {}).counts || {}).other || 0
-                        }
-                        tablePatient.actorId = (response.data || {}).actor_id
-                        console.log('billing-approve-reject', response.data)
-                    }).catch(err => {
-                        tablePatient.promises['approve_reject'] = false
-                        console.error('billing-approve-reject', err)
-                        tablePatient.errors[errorKey] = err.message
-                    })
+                if (!tablePatient) {
+                    console.warn('billing-approve-reject-patient: tablePatient not found', row.id);
+                    return;
                 }
+                console.log('billing-approve-reject-patient', tablePatient, e)
+                const originalApproved = tablePatient.approved;
+                const originalRejected = tablePatient.rejected;
+                if (type === 'approve') {
+                    tablePatient.approved = e.target.checked
+                    tablePatient.rejected = false
+                } else {
+                    tablePatient.rejected = e.target.checked
+                    tablePatient.approved = false
+                }
+
+                const errorKey = 'approve_reject'
+                tablePatient.promises['approve_reject'] = true
+                this.axios.post(rootUrl('reports/monthly-billing/set-billing-status'), {
+                    report_id: tablePatient.reportId,
+                    status: tablePatient.approved ? 'approved' : (tablePatient.rejected ? 'rejected' : 'needs_qa'),
+                    version: this.version
+                }).then(response => {
+                    tablePatient.promises['approve_reject'] = false
+                    tablePatient.approved = !!(response.data.status || {}).approved
+                    tablePatient.rejected = !!(response.data.status || {}).rejected
+                    if ((response.data || {}).counts) {
+                        this.counts.approved = ((response.data || {}).counts || {}).approved || 0
+                        this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
+                        this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
+                        this.counts.other = ((response.data || {}).counts || {}).other || 0
+                    }
+                    tablePatient.actorId = (response.data || {}).actor_id
+                    console.log('billing-approve-reject', response.data)
+                }).catch(err => {
+                    tablePatient.approved = originalApproved;
+                    tablePatient.rejected = originalRejected;
+                    tablePatient.promises['approve_reject'] = false
+                    console.error('billing-approve-reject', err)
+                    tablePatient.errors[errorKey] = err.message
+                })
             },
             changePractice() {
                 this.tableData = [];
@@ -366,7 +384,7 @@
                 if (isDetach) {
                     data.detach = true
                 }
-                return this.axios.post(rootUrl('reports/monthly-billing/setPracticeServices'), data).then(response => {
+                return this.axios.post(rootUrl('reports/monthly-billing/set-practice-services'), data).then(response => {
                     (response.data || []).forEach(summary => {
                         const tableItem = this.tableData.find(row => row.id == summary.id)
                         if (tableItem) {
@@ -408,6 +426,43 @@
                         });
                     });
             },
+
+            getSuccessfulCalls(patientIds, isBackground) {
+                if (!isBackground) {
+                    this.loaders.callsCount = true;
+                }
+
+                this.axios
+                    .post(rootUrl('reports/monthly-billing/successful-calls-count'), {
+                        practice_id: this.selectedPractice,
+                        patient_ids: patientIds,
+                        date: this.selectedMonth
+                    })
+                    .then(response => {
+                        this.loaders.callsCount = false;
+                        const callsCount = response.data || [];
+                        callsCount.forEach(item => {
+                            const patientEntry = this.tableData.find(patient => patient.id === item.id);
+                            if (patientEntry) {
+                                patientEntry['#Successful Calls'] = item.count;
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        this.loaders.callsCount = false;
+                        Event.$emit('notifications-billing:create', {
+                            text: this.parseError(err),
+                            type: 'error',
+                            interval: 5000
+                        });
+                        console.error(err);
+                    })
+            },
+
+            isNewVersion() {
+                return this.version === '3';
+            },
+
             retrieve(isBackground) {
 
                 if (isBackground) {
@@ -425,6 +480,12 @@
                     .then(response => {
                         console.log('billables:response', response);
                         const pagination = response.data || [];
+
+                        if (this.isNewVersion()) {
+                            const retrievedIds = pagination.data.map(i => i.id);
+                            this.getSuccessfulCalls(retrievedIds, isBackground);
+                        }
+
                         const ids = this.tableData.map(i => i.id);
                         this.url = pagination.next_page_url;
                         this.isClosed = !!Number(response.headers['is-closed']);
@@ -516,10 +577,11 @@
                         return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
                     },
                     onChargeableServicesUpdate: (serviceIDs) => {
+                        const original = item.chargeable_services;
                         item.chargeable_services = serviceIDs
                         console.log('service-ids', serviceIDs, item)
                         item.promises.update_chargeables = true
-                        return this.axios.post(rootUrl('reports/monthly-billing/setPatientServices'), {
+                        return this.axios.post(rootUrl('reports/monthly-billing/set-patient-services'), {
                             report_id: item.reportId,
                             patient_chargeable_services: serviceIDs,
                             version: this.version
@@ -534,6 +596,7 @@
                             });
                             console.error('billing:chargeable-services:update', err)
                             item.promises.update_chargeables = false
+                            item.chargeable_services = original;
                         })
                     },
                     isBhiEligible() {
@@ -717,9 +780,6 @@
             },
         },
         computed: {
-            isSupported() {
-                return this.version !== '3';
-            },
             practice() {
                 return this.practices.find(p => +p.id === +this.selectedPractice);
             },

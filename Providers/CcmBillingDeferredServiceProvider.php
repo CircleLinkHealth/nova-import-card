@@ -24,6 +24,8 @@ use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorReposi
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
+use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -45,6 +47,9 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             PatientProcessorEloquentRepositoryInterface::class,
             BillingCache::class,
 
+            ApproveBillablePatientsService::class,
+            ApproveBillablePatientsServiceV3::class,
+
             GenerateDataForApproveBillablePatientsPage::class,
             TestAbpV2vsV3::class,
             SeedChargeableServices::class,
@@ -64,6 +69,8 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
         $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
         $this->app->singleton(BillingCache::class, BillingDataCache::class);
+        $this->app->singleton(ApproveBillablePatientsService::class);
+        $this->app->singleton(ApproveBillablePatientsServiceV3::class);
 
         $this->commands([
             GenerateDataForApproveBillablePatientsPage::class,

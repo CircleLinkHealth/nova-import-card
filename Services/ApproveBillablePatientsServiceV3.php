@@ -9,11 +9,14 @@ namespace CircleLinkHealth\CcmBilling\Services;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ApproveBillablePatientsServiceV3
 {
@@ -53,12 +56,39 @@ class ApproveBillablePatientsServiceV3
         return $this->practiceProcessor->openMonth($practiceId, $month);
     }
 
-    public function setPatientChargeableServices(int $reportId, array $csIds, Carbon $month = null)
+    public function setPatientBillingStatus(int $reportId, string $newStatus)
+    {
+        /** @var PatientMonthlyBillingStatus $billingStatus */
+        $billingStatus = PatientMonthlyBillingStatus::with([
+            'patientUser' => fn ($q) => $q->select(['id', 'program_id']),
+        ])->find($reportId);
+        if ( ! $billingStatus) {
+            return null;
+        }
+
+        $billingStatus->status   = $newStatus;
+        $billingStatus->actor_id = auth()->id();
+        $billingStatus->save();
+
+        $counts = $this->counts($billingStatus->patientUser->primaryProgramId(), $billingStatus->chargeable_month)->toArray();
+
+        return [
+            'report_id' => $billingStatus->id,
+            'counts'    => $counts,
+            'status'    => [
+                'approved' => 'approved' === $billingStatus->status,
+                'rejected' => 'rejected' === $billingStatus->status,
+            ],
+            'actor_id' => $billingStatus->actor_id,
+        ];
+    }
+
+    public function setPatientChargeableServices(int $reportId, array $csIds, Carbon $month = null): bool
     {
         //todo: Modify Patient Activity
         $billingStatus = PatientMonthlyBillingStatus::find($reportId);
         if ( ! $billingStatus) {
-            return null;
+            return false;
         }
 
         $patientId     = $billingStatus->patient_user_id;
@@ -73,5 +103,25 @@ class ApproveBillablePatientsServiceV3
                 $month ?? now()->subMonth()->startOfMonth()
             );
         }
+
+        return true;
+    }
+
+    public function successfulCallsCount(array $patientIds, Carbon $month): ResourceCollection
+    {
+        $arr = Call::whereIn('inbound_cpm_id', $patientIds)
+            ->whereBetween('called_date', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+            ->where('status', '=', 'reached')
+            ->groupBy('inbound_cpm_id')
+            ->selectRaw('inbound_cpm_id as id, count(id) as count')
+            ->get()
+            ->map(function (Call $call) {
+                $call->setAppends([]);
+
+                return $call->toArray();
+            })
+            ->toArray();
+
+        return PatientSuccessfulCallsCountForMonth::collection($arr);
     }
 }
