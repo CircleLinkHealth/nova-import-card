@@ -54,6 +54,9 @@ class PatientIsOfServiceCode
 
     private function hasClashingService(): bool
     {
+        if ($this->isAClashWithForcedService()){
+            return true;
+        }
         $clashes = ChargeableService::getClashesWithService($this->serviceCode);
 
         if (empty($clashes)) {
@@ -101,6 +104,7 @@ class PatientIsOfServiceCode
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
+            //todo:make sure this does not pass for past months
             ->where('code', $this->serviceCode)
             ->isNotEmpty();
     }
@@ -142,5 +146,18 @@ class PatientIsOfServiceCode
         return ! User::hasBhiConsent()
             ->whereId($this->patientId)
             ->exists();
+    }
+
+    private function isAClashWithForcedService():bool
+    {
+        return $this->repo()
+             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
+            ->forcedChargeableServices
+            ->filter(function ($fcs){
+                $clashes = ChargeableService::getClashesWithService($fcs->code);
+
+                return in_array($this->serviceCode, $clashes);
+            })
+            ->isNotEmpty();
     }
 }
