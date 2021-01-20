@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -63,6 +64,10 @@ class ImportEnrollee
             }
 
             $static->importFromEligibilityJob($enrollee, $job);
+        }
+
+        if (Enrollee::SOURCE_PRACTICE_PULL === $enrollee->source) {
+            $static->importFromPracticePull($enrollee);
         }
 
         if (Enrollee::ENROLLED === $enrollee->status) {
@@ -173,11 +178,9 @@ class ImportEnrollee
 
         $enrolleeUser = $enrollee->user;
 
-        if ($enrolleeUser) {
-            if ($enrolleeUser->isSurveyOnly()) {
-                $ccdaArgs['patient_id']          = $enrolleeUser->id;
-                $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
-            }
+        if ($enrolleeUser && $enrolleeUser->isSurveyOnly()) {
+            $ccdaArgs['patient_id']          = $enrolleeUser->id;
+            $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
         }
 
         $ccda = Ccda::create($ccdaArgs);
@@ -188,7 +191,35 @@ class ImportEnrollee
 
         //We need to refresh the model before we perform the import, to make sure virtual columns contain the proper data
         //since the model that gets returned from Ccda::create method contains null values fro virtual columns
-        $ccda = $ccda->fresh()->import($enrollee);
+        $ccda->fresh()->import($enrollee);
+
+        $this->enrolleeMedicalRecordImported($enrollee);
+    }
+
+    private function importFromPracticePull(Enrollee $enrollee)
+    {
+        $ccdaArgs = [
+            'json'        => (new PracticePullMedicalRecord($enrollee->mrn, $enrollee->practice_id))->toJson(),
+            'mrn'         => $enrollee->mrn,
+            'practice_id' => $enrollee->practice_id,
+        ];
+
+        $enrolleeUser = $enrollee->user;
+
+        if ($enrolleeUser && $enrolleeUser->isSurveyOnly()) {
+            $ccdaArgs['patient_id']          = $enrolleeUser->id;
+            $ccdaArgs['billing_provider_id'] = $enrollee->provider_id;
+        }
+
+        $ccda = Ccda::create($ccdaArgs);
+        $ccda->bluebuttonJson(true);
+        $ccda->save();
+
+        $enrollee->medical_record_type = get_class($ccda);
+        $enrollee->medical_record_id   = $ccda->id;
+        $enrollee->save();
+
+        $ccda->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
     }

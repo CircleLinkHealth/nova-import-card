@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\SharedModels\ProviderSignature;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * CircleLinkHealth\Customer\Entities\ProviderInfo.
@@ -85,7 +86,7 @@ class ProviderInfo extends \CircleLinkHealth\Core\Entities\BaseModel
      * @var string
      */
     protected $table = 'provider_info';
-
+    
     public function getAddressAttribute()
     {
         return $this->user->address;

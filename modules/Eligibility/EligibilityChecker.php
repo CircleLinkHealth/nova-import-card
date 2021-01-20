@@ -780,7 +780,7 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
-        if ( ! $args['provider_id']) {
+        if (empty($args['provider_id'])) {
             $args['provider_id'] = CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id);
         }
 
@@ -868,7 +868,9 @@ class EligibilityChecker
         $enrolledPatientExists = User::withTrashed()
             ->where(
                 function ($u) use ($args) {
-                    $u->whereProgramId($args['practice_id'])
+                    $u
+                        ->ofType('participant')
+                        ->whereProgramId($args['practice_id'])
                         ->whereHas(
                             'patientInfo',
                             function ($q) use ($args) {
@@ -878,7 +880,9 @@ class EligibilityChecker
                 }
             )->orWhere(
                 function ($u) use ($args) {
-                    $u->where(
+                    $u
+                        ->ofType('participant')
+                        ->where(
                         [
                             [
                                 'program_id',

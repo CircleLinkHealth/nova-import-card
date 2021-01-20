@@ -20,6 +20,7 @@
     <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/SharedModels" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Synonyms" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Twofa" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/VaporDevopsHelpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CcdaParserProcessorPhp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CcmBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CerberusGatekeeper" vcs="Git" />

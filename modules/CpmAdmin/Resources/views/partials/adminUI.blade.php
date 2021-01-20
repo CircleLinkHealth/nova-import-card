@@ -287,6 +287,7 @@
     @endif
 
     @yield('content')
+
 </div>
 
 @if (Agent::isIE())
@@ -310,6 +311,8 @@
 @stack('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
         integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+
+@include('core::partials.clickup-bug-collector')
 
 @include('core::partials.sentry-js')
 

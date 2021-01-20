@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Allergy;
 
-use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
 use Illuminate\Support\Str;
 
 class CommaDelimitedListAllergyLogger implements Logger

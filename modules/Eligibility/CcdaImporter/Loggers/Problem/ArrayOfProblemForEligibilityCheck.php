@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem;
 
-use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
 use CircleLinkHealth\Eligibility\Entities\Problem;
 
 class ArrayOfProblemForEligibilityCheck implements Logger
