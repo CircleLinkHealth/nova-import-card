@@ -142,12 +142,13 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 $month = Carbon::now()->startOfMonth()
             )
         );
+        $careCoachId = $this->careCoach()->id;
 
         //todo: calls refactored away from view table - todo fix test
 //        Call::insert([
 //            [
 //                'inbound_cpm_id'  => $patientId,
-//                'outbound_cpm_id' => $careCoachId = $this->careCoach()->id,
+//                'outbound_cpm_id' => $careCoachId,
 //                'type'            => 'call',
 //                'status'          => Call::REACHED,
 //                'called_date'     => Carbon::now()->startOfMonth()->addDay(10),
