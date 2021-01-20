@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\CareCenter\WorkScheduleController;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\TestCase;
 
 class NursesWorkCalendarTest extends TestCase
 {

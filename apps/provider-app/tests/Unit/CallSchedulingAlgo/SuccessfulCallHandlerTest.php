@@ -9,10 +9,10 @@ namespace Tests\Unit\CallSchedulingAlgo;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {

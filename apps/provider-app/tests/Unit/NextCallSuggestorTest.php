@@ -11,11 +11,11 @@ use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use Mockery;
-use Tests\TestCase;
 
 class NextCallSuggestorTest extends TestCase
 {

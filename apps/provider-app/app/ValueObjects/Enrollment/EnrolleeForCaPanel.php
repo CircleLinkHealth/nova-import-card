@@ -182,7 +182,7 @@ class EnrolleeForCaPanel
     private function getPhoneAttributes($enrollable)
     {
         $attributes            = $enrollable->getAttributes();
-        $shouldSanitizeNumbers = isProductionEnv() && ! $enrollable->practice->is_demo;
+        $shouldSanitizeNumbers = isProductionEnv() && ! optional($enrollable->practice)->is_demo;
         //These phone numbers will be used to call by Twilio.
         //This will allow us to use custom numbers on non-prod environments or on production with demo practices
         $otherPhoneSanitized = $shouldSanitizeNumbers

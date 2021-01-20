@@ -8,8 +8,8 @@ namespace Tests\Feature;
 
 use App\Console\Commands\SendTestDirectMail;
 use CircleLinkHealth\Core\Services\PhiMail\SendResult;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
-use Tests\TestCase;
 
 class SendReceiveDirectMailTest extends TestCase
 {
