@@ -1,5 +1,6 @@
-id: 16674
+id: 17428
 name: app-self-enrollment
+separate-vendor: true
 environments:
   production:
     domain: self-enrollment.careplanmanager.com
@@ -12,7 +13,7 @@ environments:
     concurrency: 40
     queue-concurrency: 10
     cli-concurrency: 10
-    runtime: php-7.4:al2
+    runtime: docker
     mail: false
     timeout: 60
     queues:
@@ -28,8 +29,6 @@ environments:
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'
   staging:
-    domain: self-enrollment.clh-staging.com
-    storage: self-enrollment-staging-vapor-storage
     memory: 512
     cli-memory: 512
     queue-memory: 512
@@ -38,7 +37,7 @@ environments:
     queue-timeout: 600
     concurrency: 5
     mail: false
-    runtime: php-7.4:al2
+    runtime: php-7.4
     queues:
       - self-enrollment-low-staging
       - self-enrollment-high-staging
