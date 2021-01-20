@@ -29,6 +29,8 @@ environments:
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'
   staging:
+    domain: self-enrollment.clh-staging.com
+    storage: self-enrollment-staging-vapor-storage
     memory: 512
     cli-memory: 512
     queue-memory: 512
