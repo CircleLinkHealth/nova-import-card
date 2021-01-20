@@ -57,6 +57,6 @@ class RemoveFamilyMemberAction extends Action
 
         $patientId = $fields->get('patient_id');
         Patient::where('user_id', '=', $patientId)
-               ->update(['family_id' => null]);
+            ->update(['family_id' => null]);
     }
 }
