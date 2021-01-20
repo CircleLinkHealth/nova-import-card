@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Observers;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 
 class EligibilityBatchObserver
 {

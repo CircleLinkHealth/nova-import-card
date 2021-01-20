@@ -9,9 +9,9 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -36,7 +36,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     public $timeout = 900;
 
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
 

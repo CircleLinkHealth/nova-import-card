@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Eligibility\EligibilityChecker;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,9 +21,9 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     protected int $eligibilityJobId;
-    
+
     /**
      * Create a new job instance.
      *
@@ -44,7 +44,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
     {
         $ej = EligibilityJob::with('batch.practice')->findOrFail($this->eligibilityJobId);
         $batch = $ej->batch;
-        
+
         //Only process if EligibilityJob status is 0 (not_started), or 1 (processing) and last update is more than 10 minutes ago
         if (0 == $ej->status
             || (1 == $ej->status && $ej->updated_at->lt(now()->subMinutes(10)))

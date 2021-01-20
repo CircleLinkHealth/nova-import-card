@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCommonwealthPatientForPcm;
 use Illuminate\Console\Command;
 

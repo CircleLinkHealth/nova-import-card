@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Entities;
+namespace CircleLinkHealth\Eligibility\DTO;
 
 use CircleLinkHealth\Eligibility\Lists\Csv\NumberedFieldsValidator;
 use CircleLinkHealth\Eligibility\Lists\Csv\PatientListValidator;
