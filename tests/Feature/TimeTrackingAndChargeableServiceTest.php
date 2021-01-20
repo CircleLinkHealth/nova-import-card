@@ -6,13 +6,13 @@
 
 namespace Tests\Feature;
 
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class TimeTrackingAndChargeableServiceTest extends TestCase
 {
