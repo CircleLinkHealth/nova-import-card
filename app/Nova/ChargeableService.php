@@ -14,6 +14,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class ChargeableService extends Resource
 {
@@ -110,5 +111,19 @@ class ChargeableService extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    /**
+     * Build a "relatable" query for the given resource.
+     *
+     * This query determines which instances of the model may be attached to other resources.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function relatableQuery(NovaRequest $request, $query)
+    {
+        return $query->whereNotNull('display_name');
     }
 }

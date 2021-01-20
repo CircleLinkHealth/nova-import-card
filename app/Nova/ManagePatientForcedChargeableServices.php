@@ -144,7 +144,7 @@ class ManagePatientForcedChargeableServices extends Resource
                     ->map(function ($s) {
                         $minutes = secondsToMMSS($s->total_time);
 
-                        return "<li>$s->chargeable_service_name - $s->chargeable_service_code (time: $minutes)</li>";
+                        return "<li><strong>$s->chargeable_service_name</strong> - $s->chargeable_service_code (time: $minutes)</li>";
                     })->implode('');
 
                 return "<ul>$summaries</ul>";
