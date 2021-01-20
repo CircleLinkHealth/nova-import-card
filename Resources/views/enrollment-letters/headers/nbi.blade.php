@@ -40,5 +40,9 @@
             font-size: 15px;
         }
 
+        .practice-logo img{
+            height: 35px;
+        }
+
     }
 </style>
