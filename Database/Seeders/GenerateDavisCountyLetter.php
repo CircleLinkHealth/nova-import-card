@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\App;
 class GenerateDavisCountyLetter extends Seeder
 {
     const PRACTICE_SIGNATORY_NAME = 'Robert D Floyd, DO <br> Davis County Medical Associates, Medical Director';
+    const DAVIS_PRACTICE_NAME = 'davis-county';
 
     /**
      * Run the database seeds.
@@ -91,7 +92,7 @@ class GenerateDavisCountyLetter extends Seeder
         if ( ! App::environment(['production'])) {
             $davisCountyPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'davis-county',
+                    'name' => self::DAVIS_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,

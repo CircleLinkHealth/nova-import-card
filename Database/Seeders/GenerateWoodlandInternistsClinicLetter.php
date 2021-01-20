@@ -16,6 +16,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 {
     const PRACTICE_SIGNATORY_NAME = 'Nadeem Jamil, MD';
     const UI_REQUESTS             = 'ui_requests';
+    const WOODLANDS_PRACTICE_NAME = 'woodlands-internists-pa';
 
     /**
      * Run the database seeds.
@@ -91,7 +92,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
         if ( ! App::environment(['production'])) {
             $woodlandsPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'woodlands-internists-pa',
+                    'name' => self::WOODLANDS_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,

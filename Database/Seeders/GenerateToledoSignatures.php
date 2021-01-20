@@ -1,5 +1,5 @@
 <?php
-
+namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */

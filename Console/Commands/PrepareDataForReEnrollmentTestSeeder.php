@@ -89,34 +89,9 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     {
         $phoneTester = AppConfig::pull('tester_phone', null) ?? config('services.tester.phone');
 
-        $practice = Practice::firstOrCreate(
-            [
-                'name' => $this->practiceName ?? 'test',
-            ],
-            [
-                'active'                => 1,
-                'display_name'          => ucfirst(str_replace('-', ' ', $this->practiceName)),
-                'is_demo'               => 1,
-                'clh_pppm'              => 0,
-                'term_days'             => 30,
-                'outgoing_phone_number' => 2025550196,
-                'saas_account_id'       => SaasAccount::whereName('CircleLink Health')->first()->id,
-            ]
-        );
+        $practice = $this->selfEnrollmentTestPractice($this->practiceName);
 
-        $location = Location::firstOrCreate(
-            [
-                'practice_id' => $practice->id,
-            ],
-            [
-                'is_primary'     => 1,
-                'name'           => $practice->name,
-                'address_line_1' => '84982 This is demo Address, AZ 58735-9955',
-                'city'           => 'West Guantanamo Demo World',
-                'state'          => 'MD',
-                'postal_code'    => '21335 - 9764',
-            ]
-        );
+        $location = $this->selfEnrollmentTestLocation($practice->id, $practice->name);
 
         $n       = 1;
         $limit   = 5;

@@ -7,11 +7,15 @@
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 
 class ManuallyCreateEnrollmentTestData extends Command
 {
+    use UserHelpers;
     /**
      * The console command description.
      *
@@ -55,24 +59,22 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         if (is_null($practiceName)) {
             $this->warn('Practice input is required');
-
             return 'Practice input is required';
         }
 
         $practice = Practice::whereName($practiceName)->first();
 
-        if ( ! $practice) {
-            $this->error("$practiceName practice model not found.");
-
-            return "$practiceName practice model not found.";
+        if (! $practice && ! App::environment('production')){
+            $this->info("Practice $practiceName to test not found. Creating practice with Location now...");
+            $practice = $this->selfEnrollmentTestPractice($practiceName);
+            $this->selfEnrollmentTestLocation($practice->id, $practiceName);
         }
 
         $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
 
-        if ( ! $letter) {
-            $this->error("$practiceName practice letter not found.");
-
-            return "$practiceName practice letter not found.";
+        if ( ! $letter && ! App::environment('production')) {
+            $this->info("$practiceName practice letter not found. Generating Letter for $practiceName now...");
+            Artisan::call(RegenerateMissingSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
         }
 
         $uiRequestsForThisPractice = '';

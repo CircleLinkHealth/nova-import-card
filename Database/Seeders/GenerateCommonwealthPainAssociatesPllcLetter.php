@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\App;
 class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 {
     const PRACTICE_SIGNATORY_NAME = 'Jeff Ellison <br> Chief Operating Officer';
+    const COMMON_WEALTH_NAME = 'commonwealth-pain-associates-pllc';
 
     /**
      * Run the database seeds.
@@ -154,16 +155,15 @@ class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 
     private function getPractice()
     {
-        $commonwealthName     = 'commonwealth-pain-associates-pllc';
-        $commonwealthPractice = Practice::where('name', '=', $commonwealthName)->first();
+        $commonwealthPractice = Practice::where('name', '=', self::COMMON_WEALTH_NAME)->first();
         if (App::environment(['testing', 'review', 'local'])) {
             $commonwealthPractice = Practice::firstOrCreate(
                 [
-                    'name' => $commonwealthName,
+                    'name' => self::COMMON_WEALTH_NAME,
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ', $commonwealthName)),
+                    'display_name'          => ucfirst(str_replace('-', ' ', self::COMMON_WEALTH_NAME)),
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,

@@ -16,6 +16,7 @@ class GenerateCalvaryClinicLetter extends Seeder
 {
     const PRACTICE_SIGNATORY_NAME = 'Joseph E. Goin, MD <br> Medical Director';
     const UI_REQUESTS             = 'ui_requests';
+    const CALVARY_PRACTICE_NAME = 'calvary-medical-clinic';
 
     /**
      * Run the database seeds.
@@ -91,7 +92,7 @@ class GenerateCalvaryClinicLetter extends Seeder
         if ( ! App::environment(['production'])) {
             $calvaryPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'calvary-medical-clinic',
+                    'name' => self::CALVARY_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
 
 class GenerateNbiLetter extends Seeder
 {
-    const NBI_NAME = 'bethcare-newark-beth-israel';
+    const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
     const PRACTICE_SIGNATORY_NAME = 'Dr. Johanny Garcia <br> Beth Prime Practice';
     const UI_REQUESTS             = 'ui_requests';
     private string $practiceNumber;
@@ -71,16 +71,16 @@ class GenerateNbiLetter extends Seeder
 
     private function getPractice()
     {
-        $nbiPractice = Practice::where('name', '=', self::NBI_NAME)->first();
+        $nbiPractice = Practice::where('name', '=', self::NBI_PRACTICE_NAME)->first();
 
         if ( ! App::environment(['production']) && ! $nbiPractice) {
             $nbiPractice = Practice::firstOrCreate(
                 [
-                    'name' =>  self::NBI_NAME,
+                    'name' =>  self::NBI_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ',  self::NBI_NAME)),
+                    'display_name'          => ucfirst(str_replace('-', ' ',  self::NBI_PRACTICE_NAME)),
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,

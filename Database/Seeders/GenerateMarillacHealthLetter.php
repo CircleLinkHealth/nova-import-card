@@ -15,6 +15,7 @@ use Illuminate\Database\Seeder;
 class GenerateMarillacHealthLetter extends Seeder
 {
     const SIGNATORY_NAME = 'Crystal Owens, MD <br> Chief Medical Officer, MarillacHealth';
+    const MARILLAC_PRACTICE_NAME = 'marillac-clinic-inc';
 
     /**
      * Run the database seeds.
@@ -90,7 +91,7 @@ class GenerateMarillacHealthLetter extends Seeder
         if ( ! App::environment(['production'])) {
             $marillacPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'marillac-clinic-inc',
+                    'name' => self::MARILLAC_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,

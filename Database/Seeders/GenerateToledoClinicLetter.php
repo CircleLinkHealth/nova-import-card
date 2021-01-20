@@ -9,7 +9,6 @@ namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Exception;
-use GenerateToledoSignatures;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
 
@@ -76,15 +75,15 @@ class GenerateToledoClinicLetter extends Seeder
 
     private function getPractice()
     {
-        $toledoPractice = Practice::where('name', '=', GenerateToledoSignatures::TOLEDO_CLINIC)->first();
+        $toledoPractice = Practice::where('name', '=', \CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoSignatures::TOLEDO_CLINIC)->first();
         if (App::environment(['testing', 'review'])) {
             $toledoPractice = Practice::firstOrCreate(
                 [
-                    'name' => GenerateToledoSignatures::TOLEDO_CLINIC,
+                    'name' => \CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoSignatures::TOLEDO_CLINIC,
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ', GenerateToledoSignatures::TOLEDO_CLINIC)),
+                    'display_name'          => ucfirst(str_replace('-', ' ', \CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoSignatures::TOLEDO_CLINIC)),
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,

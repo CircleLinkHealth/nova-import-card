@@ -8,6 +8,8 @@ namespace CircleLinkHealth\SelfEnrollment\Services;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\RegenerateMissingSelfEnrollmentLetters;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCommonwealthPainAssociatesPllcLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Model;
@@ -114,7 +116,7 @@ class EnrollmentBaseLetter
         if (empty($this->letter)) {
             try {
                 $className = ucfirst(Str::camel('generate'.'-'.$this->practice->name.'-letter'));
-                Artisan::call("module:seed --class=$className SelfEnrollment");
+                Artisan::call(RegenerateMissingSelfEnrollmentLetters::class, ['--forPractice' => $this->practice->name]);
             } catch (\Exception $exception) {
                 throw $exception;
             }

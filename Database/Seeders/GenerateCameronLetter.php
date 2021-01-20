@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\App;
 class GenerateCameronLetter extends Seeder
 {
     use UserHelpers;
-    const CAMERON_DB_NAME = 'cameron-memorial';
+    const CAMERON_PRACTICE_NAME = 'cameron-memorial';
 
     const CAMERON_LOGO          = '/img/logos/CameronMemorial/cameron_logo.png';
     const FAUR_SIGNATURE        = '/img/signatures/cameron-memorial/faurs_signature.png';
@@ -116,12 +116,12 @@ class GenerateCameronLetter extends Seeder
 
     private function getPractice()
     {
-        $cameronPractice = Practice::where('name', '=', self::CAMERON_DB_NAME)->first();
+        $cameronPractice = Practice::where('name', '=', self::CAMERON_PRACTICE_NAME)->first();
 
         if ($this->testingMode) {
             $cameronPractice = Practice::firstOrCreate(
                 [
-                    'name' => self::CAMERON_DB_NAME,
+                    'name' => self::CAMERON_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,
