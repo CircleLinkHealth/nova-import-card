@@ -13,13 +13,12 @@ use CircleLinkHealth\Customer\DTO\CarePlanApprovalReminderRecipient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
-class CarePlanApprovalReminder extends Notification implements ShouldQueue, DirectMailableNotification
+class CarePlanApprovalReminder extends Notification implements DirectMailableNotification
 {
     use Queueable;
     /**

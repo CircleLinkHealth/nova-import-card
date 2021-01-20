@@ -72,6 +72,25 @@ trait UserHelpers
         );
     }
 
+    public function createPatientCall(int $patientId, int $nurseId, $status = 'scheduled')
+    {
+        return Call::create([
+            'service' => 'phone',
+            'status'  => $status,
+
+            'scheduler' => 'core algorithm',
+
+            'inbound_cpm_id'  => $patientId,
+            'outbound_cpm_id' => $nurseId,
+
+            'inbound_phone_number'  => '+12016922000',
+            'outbound_phone_number' => '+12016922000',
+            'scheduled_date'        => now()->addWeek()->toDateString(),
+
+            'is_cpm_outbound' => true,
+        ]);
+    }
+
     /**
      * @param int    $practiceId
      * @param string $roleName
@@ -434,24 +453,5 @@ trait UserHelpers
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;
-    }
-    
-    public function createPatientCall(int $patientId, int $nurseId, $status = 'scheduled')
-    {
-        return Call::create([
-            'service' => 'phone',
-            'status'  => $status,
-            
-            'scheduler' => 'core algorithm',
-            
-            'inbound_cpm_id'  => $patientId,
-            'outbound_cpm_id' => $nurseId,
-            
-            'inbound_phone_number'  => '+12016922000',
-            'outbound_phone_number' => '+12016922000',
-            'scheduled_date'        => now()->addWeek()->toDateString(),
-            
-            'is_cpm_outbound' => true,
-        ]);
     }
 }
