@@ -53,6 +53,19 @@ Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'
 ```bash
 sh bin/run.sh admin-app "php artisan module:make-migration TestMigration CpmMigrations"
 ```
+### Merging from separate repositories into the monorepo
+```bash
+# Assuming I want to merge provider-app/master into the monorepo's master branch
+
+# Make sure I'm on the master branch
+git checkout master
+# Make sure I have the latest version
+git pull
+# Make a new branch that I'd make a PR with
+git checkout -b provider_master
+# Merge provider-app/master in directory apps/provider-app
+git merge --strategy recursive --strategy-option subtree=apps/provider-app provider-app/master 
+```
 
 ### How to build the monorepo from scratch
 This is like a hard "reset". What it does is it will erase everything, and re-build the monorepo from scratch by mirroring each repository. 
