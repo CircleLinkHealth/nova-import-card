@@ -31,7 +31,8 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
      */
     protected $description = 'Some Letters are missing from enrollment_invitation_letters.
     This command will look for them and then ran the appropriate seeder.
-    If the letter for Practice is known then pass the practice name from DB to --forPractice option';
+    If the letter for Practice is known then pass the practice name from DB to --forPractice option, else it will
+    UPDDATEorCreate for all.';
 
     /**
      * Create a new command instance.
