@@ -13,7 +13,7 @@ class SeedChargeableServices
     public static function execute()
     {
         ChargeableService::updateOrCreate([
-            'code' => 'CPT 99490',
+            'code' => ChargeableService::CCM,
         ], [
             'order'        => 1,
             'is_enabled'   => true,
@@ -23,7 +23,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'CPT 99484',
+            'code' => ChargeableService::BHI,
         ], [
             'order'        => 2,
             'is_enabled'   => true,
@@ -33,7 +33,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'G2058(>40mins)',
+            'code' => ChargeableService::CCM_PLUS_40,
         ], [
             'order'        => 3,
             'is_enabled'   => true,
@@ -43,7 +43,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'G2058(>60mins)',
+            'code' => ChargeableService::CCM_PLUS_60,
         ], [
             'order'        => 4,
             'is_enabled'   => true,
@@ -53,7 +53,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'G0511',
+            'code' => ChargeableService::GENERAL_CARE_MANAGEMENT,
         ], [
             'order'        => 5,
             'is_enabled'   => true,
@@ -63,7 +63,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'Software-Only',
+            'code' => ChargeableService::SOFTWARE_ONLY,
         ], [
             'order'       => 6,
             'is_enabled'  => true,
@@ -72,7 +72,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'AWV: G0438',
+            'code' => ChargeableService::AWV_INITIAL,
         ], [
             'order'        => 7,
             'is_enabled'   => true,
@@ -82,7 +82,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'AWV: G0439',
+            'code' => ChargeableService::AWV_SUBSEQUENT,
         ], [
             'order'        => 8,
             'is_enabled'   => true,
@@ -119,7 +119,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'G2065',
+            'code' => ChargeableService::PCM,
         ], [
             'order'        => 9,
             'is_enabled'   => true,
@@ -129,7 +129,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'CPT 99457',
+            'code' => ChargeableService::RPM,
         ], [
             'order'        => 10,
             'is_enabled'   => true,
@@ -139,7 +139,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'CPT 99458(>40mins)',
+            'code' => ChargeableService::RPM40,
         ], [
             'order'        => 11,
             'is_enabled'   => true,
@@ -148,7 +148,7 @@ class SeedChargeableServices
             'display_name' => 'RPM40',
         ]);
         ChargeableService::updateOrCreate([
-            'code' => 'CPT 99458(>60mins)',
+            'code' => ChargeableService::RPM60,
         ], [
             'order'        => 12,
             'is_enabled'   => true,
