@@ -70,9 +70,9 @@ class ManuallyCreateEnrollmentTestData extends Command
         $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
 
         if ( ! $letter) {
-            $this->error("$practiceName practice model not found.");
+            $this->error("$practiceName practice letter not found.");
 
-            return "$practiceName practice model not found.";
+            return "$practiceName practice letter not found.";
         }
 
         $uiRequestsForThisPractice = '';
