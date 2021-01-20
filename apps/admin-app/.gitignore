@@ -28,7 +28,6 @@ public/*.js
 public/*.js.map
 /coverage/
 .php_cs.cache
-CircleLinkHealth/
 .phpunit.result.cache
 .vapor/
 .env.production
