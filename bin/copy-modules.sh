@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-set -e
 set -x
+
 
 for SUBDOMAIN in $(ls "$PWD/apps/")
 do
@@ -14,13 +14,17 @@ do
             if [ ! -d "$APP_PATH/CircleLinkHealth" ]; then
               mkdir "$APP_PATH/CircleLinkHealth"
             fi
-            if [ -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
-              rm -rf "$APP_PATH/CircleLinkHealth/$DIR"
-            fi
-            ln -s "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/$DIR"
-        done
-    else
-        echo "$APP_PATH: monorepo-modules.txt not found!"
-    fi
 
+            echo "Installing $DIR in $APP_PATH"
+
+            if [ -e "$APP_PATH/CircleLinkHealth/$DIR" ]; then
+                echo "Deleting existing $APP_PATH/CircleLinkHealth/$DIR"
+                rm -rf "$APP_PATH/CircleLinkHealth/$DIR"
+            fi
+
+            echo "Copying modules"
+
+            cp -rf "$PWD/modules/$DIR" "$APP_PATH/CircleLinkHealth/$DIR"
+        done
+    fi
 done
