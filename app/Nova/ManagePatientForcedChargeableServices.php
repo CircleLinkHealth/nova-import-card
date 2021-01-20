@@ -86,7 +86,7 @@ class ManagePatientForcedChargeableServices extends Resource
 
     public function authorizedToUpdate(Request $request)
     {
-        return true;
+        return false;
     }
 
     public static function availableForNavigation(Request $request)
