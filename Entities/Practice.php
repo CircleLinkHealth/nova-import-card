@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
@@ -659,5 +660,10 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
             ->withPivot('role_id', 'send_billing_reports')
             ->withTimestamps();
+    }
+
+    public function enrollmentLetter()
+    {
+        return $this->hasOne(EnrollmentInvitationLetter::class);
     }
 }
