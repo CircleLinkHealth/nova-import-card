@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42067af24da4ef3edb611956d2c1ed84",
+    "content-hash": "fa0f5d5337d4187c137b0aac666f1233",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1399,11 +1399,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v2.1",
+            "version": "2.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "3aa2d1c660dd3b8740495097fa8761a5ca4a7526"
+                "reference": "2e71976a6f49494c0b81690a73b86248e1f2883f"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1431,7 +1431,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T08:01:19+00:00"
+            "time": "2021-01-19T16:17:40+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -17879,6 +17879,7 @@
         "circlelinkhealth/self-enrollment-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/time-tracking-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20,

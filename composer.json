@@ -169,7 +169,7 @@
     "circlelinkhealth/self-enrollment-module": "1.0.0.x-dev",
     "circlelinkhealth/shared-models-module": "2.3.1.x-dev",
     "circlelinkhealth/sharedvuecomponents-module": "1.1.x-dev",
-    "circlelinkhealth/sqlviews-module": "2.1",
+    "circlelinkhealth/sqlviews-module": "2.1.x-dev",
     "circlelinkhealth/synonyms-module": "*",
     "circlelinkhealth/time-tracking-module": "2.0.x-dev",
     "circlelinkhealth/twilio-integration-module": "1.0.x-dev",
