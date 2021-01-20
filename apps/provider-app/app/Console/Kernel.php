@@ -13,6 +13,7 @@ use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForDraftCarePlans;
 use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
+use App\Console\Commands\CheckForNullPatientActivities;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
@@ -41,9 +42,6 @@ use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocat
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
@@ -58,7 +56,6 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Scout\Console\ImportCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -258,6 +255,11 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
             ->dailyAt('10:27');
+
+        $schedule->command(CheckForNullPatientActivities::class)
+            ->days([Schedule::MONDAY, Schedule::WEDNESDAY, Schedule::FRIDAY])
+            ->at('11:00')
+            ->onOneServer();
 
         $schedule->job(GenerateServiceSummariesForAllPracticeLocations::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:00')

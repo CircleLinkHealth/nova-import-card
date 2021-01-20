@@ -50,11 +50,12 @@ jobs:
           extensions: redis, zip, gd, exif, imagick, opcache, intl, libxml, pdo, dom, bcmath, sockets
           coverage: none
 
-      - name: Predeploy
+      - name: Predeploy 1 - Generate app key
         if: ${{ env.CI_SKIP == 'false' }}
         run: php artisan key:generate && php artisan config:clear
 
-      - name: Export .env file to $GITHUB_ENV (testing)
+      - name: Predeploy 2 - Export .env file to $GITHUB_ENV
+        if: ${{ env.CI_SKIP == 'false' }}
         uses: c-py/action-dotenv-to-setenv@v2
         with:
           env-file: .env
@@ -94,6 +95,10 @@ jobs:
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
+
+      - name: Set permissions to allow creating env files
+        if: ${{ env.CI_SKIP == 'false' }}
+        run: sudo chmod -R 777 ./vendor/laravel/vapor-cli/src/BuildProcess
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}

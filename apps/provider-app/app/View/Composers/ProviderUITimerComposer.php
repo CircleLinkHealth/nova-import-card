@@ -182,26 +182,21 @@ class ProviderUITimerComposer extends ServiceProvider
     {
         if ( ! empty($patientId)) {
             $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
-        } elseif ($isForEnrollment) {
-            /** @var User $user */
-            $user                             = auth()->user();
-            $record1                          = new ChargeablePatientMonthlySummaryView();
-            $record1->patient_user_id         = $patientId;
-            $record1->chargeable_service_id   = -1;
-            $record1->chargeable_service_code = 'NONE';
-            $record1->chargeable_service_name = 'NONE';
-            $record1->total_time              = optional(\CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
-            $chargeableServices               = new PatientChargeableSummaryCollection(collect([
-                new PatientChargeableSummary($record1),
-            ]));
         } else {
             $record1                          = new ChargeablePatientMonthlySummaryView();
             $record1->patient_user_id         = $patientId;
             $record1->chargeable_service_id   = -1;
             $record1->chargeable_service_code = 'NONE';
             $record1->chargeable_service_name = 'NONE';
-            $record1->total_time              = 0;
-            $chargeableServices               = new PatientChargeableSummaryCollection(collect([
+
+            if ($isForEnrollment) {
+                /** @var User $user */
+                $user                = auth()->user();
+                $record1->total_time = optional(\CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+            } else {
+                $record1->total_time = 0;
+            }
+            $chargeableServices = new PatientChargeableSummaryCollection(collect([
                 new PatientChargeableSummary($record1),
             ]));
         }

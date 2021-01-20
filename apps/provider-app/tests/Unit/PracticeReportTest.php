@@ -8,11 +8,11 @@ namespace Tests\Unit;
 
 use App\Exports\PracticeReports\PracticeCallsReport;
 use App\Traits\SetupTestCustomerTrait;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\TestCase;
 
 class PracticeReportTest extends TestCase
 {

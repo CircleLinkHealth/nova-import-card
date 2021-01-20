@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class CareDirectorPanel extends TestCase
 {

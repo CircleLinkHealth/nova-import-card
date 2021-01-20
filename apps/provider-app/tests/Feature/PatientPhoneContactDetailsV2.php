@@ -6,10 +6,10 @@
 
 namespace Tests\Feature;
 
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use Tests\TestCase;
 
 class PatientPhoneContactDetailsV2 extends TestCase
 {
