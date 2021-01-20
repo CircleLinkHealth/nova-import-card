@@ -13,7 +13,7 @@ use CircleLinkHealth\Eligibility\Tests\Fakers\AthenaApiResponses;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class AddInsuranceFromAthenaToEligibilityJobTest extends TestCase
 {
