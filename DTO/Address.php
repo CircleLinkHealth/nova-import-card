@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\DTOs;
+namespace CircleLinkHealth\Eligibility\DTO;
 
 class Address
 {
