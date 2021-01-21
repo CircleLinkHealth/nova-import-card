@@ -1,47 +1,53 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Raygun;
 
-use Bugsnag\PsrLogger\MultiLogger as BaseLogger;
+use CircleLinkHealth\Raygun\PsrLogger\MultiLogger as BaseLogger;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Logging\Log;
 
-class MultiLogger extends BaseLogger implements Log
+class MultiLogger extends BaseLogger
 {
     use EventTrait;
-    
+
     /**
      * Create a new multi logger instance.
      *
-     * @param \Psr\Log\LoggerInterface[]                   $loggers
-     * @param \Illuminate\Contracts\Events\Dispatcher|null $dispatcher
+     * @param \Psr\Log\LoggerInterface[] $loggers
      *
      * @return void
      */
     public function __construct(array $loggers, Dispatcher $dispatcher = null)
     {
         parent::__construct($loggers);
-        
+
         $this->dispatcher = $dispatcher;
     }
-    
+
     /**
-     * Register a file log handler.
+     * Get the underlying Monolog instance.
      *
-     * @param string $path
-     * @param string $level
-     *
-     * @return void
+     * @return \Monolog\Logger
      */
-    public function useFiles($path, $level = 'debug')
+    public function getMonolog()
     {
         foreach ($this->loggers as $logger) {
-            if ($logger instanceof Log) {
-                $logger->useFiles($path, $level);
+            if (is_callable([$logger, 'getMonolog'])) {
+                $monolog = $logger->getMonolog();
+
+                if (null === $monolog) {
+                    continue;
+                }
+
+                return $monolog;
             }
         }
     }
-    
+
     /**
      * Register a daily file log handler.
      *
@@ -59,23 +65,20 @@ class MultiLogger extends BaseLogger implements Log
             }
         }
     }
-    
+
     /**
-     * Get the underlying Monolog instance.
+     * Register a file log handler.
      *
-     * @return \Monolog\Logger
+     * @param string $path
+     * @param string $level
+     *
+     * @return void
      */
-    public function getMonolog()
+    public function useFiles($path, $level = 'debug')
     {
         foreach ($this->loggers as $logger) {
-            if (is_callable([$logger, 'getMonolog'])) {
-                $monolog = $logger->getMonolog();
-                
-                if ($monolog === null) {
-                    continue;
-                }
-                
-                return $monolog;
+            if ($logger instanceof Log) {
+                $logger->useFiles($path, $level);
             }
         }
     }

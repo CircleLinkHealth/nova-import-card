@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 return [
     /*
    |--------------------------------------------------------------------------
@@ -12,7 +16,7 @@ return [
    | which should receive your application's uncaught exceptions.
    |
    */
-    'api_key'    => env('RAYGUN_API_KEY', 'yourapikey'),
+    'api_key' => env('RAYGUN_API_KEY', 'yourapikey'),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,8 +43,8 @@ return [
     | Defaults to 'debug'.
     |
     */
-    'logger_notify_level' => env('RAYGUN_CRASH_REPORTING_LOGGER_LEVEL', 'debug'),
-    
+    'logger_notify_level' => env('RAYGUN_CRASH_REPORTING_LOGGER_LEVEL', 'warning'),
+
     /*
     |--------------------------------------------------------------------------
     | Enable Crash Reporting Async Mode
@@ -52,7 +56,7 @@ return [
     | Defaults to false.
     |
     */
-    'async'     => env('ENABLE_RAYGUN_CRASH_REPORTING_ASYNC_MODE', false),
+    'async' => env('ENABLE_RAYGUN_CRASH_REPORTING_ASYNC_MODE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -94,6 +98,32 @@ return [
     'enable_real_user_monitoring_pulse' => env('ENABLE_RAYGUN_REAL_USER_MONITORING_PULSE', false),
 
     /*
+   |--------------------------------------------------------------------------
+   | Log contents of XHR calls
+   |--------------------------------------------------------------------------
+   |
+   | Enable logging contents of XHR calls in this application.
+   |
+   |
+   | Defaults to false.
+   |
+   */
+    'log_contents_of_xhr_calls' => env('RAYGUN_LOG_CONTENTS_OF_XHR_CALLS', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Raygun User
+    |--------------------------------------------------------------------------
+    |
+    | A User to be reported to Real User Monitoring
+    |
+    |
+    |
+    |
+    */
+    'raygun_user' => CircleLinkHealth\Raygun\Entities\RaygunUser::class,
+
+    /*
     |--------------------------------------------------------------------------
     | App Version Variable in .env
     |--------------------------------------------------------------------------
@@ -105,4 +135,6 @@ return [
     |
     */
     'app_version' => env('APP_VERSION', ''),
+
+    'grouping_key' => env('RAYGUN_GROUPING_KEY', ''),
 ];

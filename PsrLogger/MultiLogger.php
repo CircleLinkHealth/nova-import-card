@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Raygun\PsrLogger;
 
 class MultiLogger extends AbstractLogger
@@ -28,7 +32,6 @@ class MultiLogger extends AbstractLogger
      *
      * @param string $level
      * @param mixed  $message
-     * @param array  $context
      *
      * @return void
      */
