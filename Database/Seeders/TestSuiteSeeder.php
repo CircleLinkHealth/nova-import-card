@@ -10,7 +10,7 @@ namespace CircleLinkHealth\Customer\Database\Seeders;
 
 use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 use CircleLinkHealth\CcmBilling\Database\Seeders\ChargeableServiceSeeder;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
@@ -40,7 +40,8 @@ class TestSuiteSeeder extends Seeder
         $this->call(ChargeableServiceSeeder::class);
         $this->call(ProblemCodeSystemsSeeder::class);
         $this->call(EnrolleesSeeder::class);
-        $this->call(PrepareDataForReEnrollmentTestSeeder::class);
+        // todo: Antonis?
+        // $this->call(PrepareDataForReEnrollmentTestSeeder::class);
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
         $this->call(NekatostrasClinicSeeder::class);

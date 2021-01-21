@@ -40,7 +40,7 @@ class NekatostrasClinicSeeder extends Seeder
                 'software-only',
                 'clh-ccm-admin',
             ]) as $roleName) {
-                $u                       = $this->createUser($practice, $roleName);
+                $u                       = $this->createUser($practice->id, $roleName);
                 $u->first_name           = $roleName;
                 $u->last_name            = 'User';
                 $u->display_name         = "$u->first_name $u->last_name";
