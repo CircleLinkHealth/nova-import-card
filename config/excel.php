@@ -11,10 +11,11 @@ $lambdaRoot       = env('LAMBDA_STORAGE_ROOT', '/mnt/local');
 
 if ($useLambdaStorage) {
     $tempPath = $lambdaRoot;
-}
-else {
+} else {
     $tempPath = storage_path('tmp');
-    resolvePath($tempPath);
+    if ( ! file_exists($tempPath)) {
+        mkdir($tempPath, 0777, true);
+    }
 }
 
 return [
