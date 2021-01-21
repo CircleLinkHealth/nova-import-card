@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Jobs\CreatePracticeInvoice;
-use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -16,11 +16,9 @@ use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Notification;
 
 class PracticeInvoiceController extends Controller
 {
@@ -43,25 +41,22 @@ class PracticeInvoiceController extends Controller
         $this->practiceReportsService     = $practiceReportsService;
     }
 
-    public function createInvoices()
+    public function index(Request $request)
     {
-        $currentMonth = Carbon::now()->startOfMonth();
-
-        $dates = [];
-
-        $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
-
-        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
+        $currentMonth   = Carbon::now()->startOfMonth();
+        $numberOfMonths = $this->getNumberOfMonths($request, $currentMonth);
+        $dates          = [];
 
         for ($i = 0; $i <= $numberOfMonths; ++$i) {
-            $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
+            $date = $currentMonth->copy()->subMonths($i)->startOfMonth();
 
             $dates[$date->toDateString()] = $date->format('F, Y');
         }
 
         $readyToBill = Practice::active()
-            ->authUserCanAccess()
+            ->authUserCanAccess(auth()->user()->isSoftwareOnly())
             ->get();
+
         $invoice_no = AppConfig::pull('billing_invoice_count', 0);
 
         return view('ccmbilling::create', compact(
@@ -71,27 +66,6 @@ class PracticeInvoiceController extends Controller
                 'dates',
             ]
         ));
-    }
-
-    /**
-     * @deprecated This will be phased out. It's here only to support older links
-     *
-     * @param $practice
-     * @param $name
-     *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|void
-     */
-    public function downloadInvoice(
-        $practice,
-        $name
-    ) {
-        if ( ! auth()->user()->practice((int) $practice) && ! auth()->user()->isAdmin()) {
-            return abort(403, 'Unauthorized action.');
-        }
-
-        return response()->download(storage_path('/download/'.$name), $name, [
-            'Content-Length: '.filesize(storage_path('/download/'.$name)),
-        ]);
     }
 
     /**
@@ -121,50 +95,19 @@ class PracticeInvoiceController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return string
-     */
-    public function send(Request $request)
+    private function getNumberOfMonths(Request $request, Carbon $startMonth)
     {
-        $invoices = (array) json_decode($request->input('links'));
-
-        $logger = '';
-
-        foreach ($invoices as $key => $value) {
-            $practice = Practice::whereDisplayName($key)->first();
-
-            $data = (array) $value;
-
-            $patientReportUrl = $data['patient_report_url'];
-            $invoiceURL       = $data['invoice_url'];
-
-            if ( ! empty($practice->invoice_recipients)) {
-                $recipients = $practice->getInvoiceRecipientsArray();
-                $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
-            } else {
-                $recipients = $practice->getInvoiceRecipients()->pluck('email')->all();
-            }
-
-            if (count($recipients) > 0) {
-                foreach ($recipients as $recipient) {
-                    $user = User::whereEmail($recipient)->first();
-
-                    $notification = new PracticeInvoice($patientReportUrl, $invoiceURL);
-
-                    if ($user) {
-                        $user->notify($notification);
-                    } else {
-                        Notification::route('mail', $recipient)
-                            ->notify($notification);
-                    }
-
-                    $logger .= "Sent report for {$practice->name} to ${recipient} <br />";
-                }
-            } else {
-                $logger .= "No recipients setup for {$practice->name}...";
-            }
+        $version = intval($request->input('version', 2));
+        if ($version < 3) {
+            $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
+        } else {
+            $oldestSummary = PatientMonthlyBillingStatus::orderBy('created_at', 'asc')->first();
         }
 
-        return $logger;
+        if ( ! $oldestSummary) {
+            return 12;
+        }
+
+        return $startMonth->diffInMonths($oldestSummary->created_at) ?? 12;
     }
 }

@@ -64,9 +64,9 @@ Route::group([
     });
 
     Route::group(['prefix' => 'practice/billing'], function () {
-        Route::get('create', [
-            'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@createInvoices',
-            'as'   => 'practices.billing.create',
+        Route::get('', [
+            'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@index',
+            'as'   => 'practices.billing.index',
         ])->middleware('permission:practiceInvoice.read');
 
         Route::post('make', [

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsCountsRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsDataRequest;
 use CircleLinkHealth\CcmBilling\Http\Requests\ApproveBillablePatientsIndexRequest;
@@ -85,13 +86,9 @@ class ApproveBillablePatientsController extends Controller
 
         $cpmProblems = (new CpmProblemService())->all();
 
-        $currentMonth = Carbon::now()->startOfMonth();
-
-        $dates = [];
-
-        $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
-
-        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at->copy()->startOfMonth()) ?? 12;
+        $currentMonth   = Carbon::now()->startOfMonth();
+        $numberOfMonths = $this->getNumberOfMonths($request, $currentMonth);
+        $dates          = [];
 
         for ($i = 0; $i <= $numberOfMonths; ++$i) {
             $date = $currentMonth->copy()->subMonths($i)->startOfMonth();
@@ -180,6 +177,22 @@ class ApproveBillablePatientsController extends Controller
         $response   = app(ApproveBillablePatientsServiceV3::class)->successfulCallsCount($patientIds, $date);
 
         return $this->ok($response);
+    }
+
+    private function getNumberOfMonths(Request $request, Carbon $startMonth)
+    {
+        $version = intval($request->input('version', 2));
+        if ($version < 3) {
+            $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
+        } else {
+            $oldestSummary = PatientMonthlyBillingStatus::orderBy('created_at', 'asc')->first();
+        }
+
+        if ( ! $oldestSummary) {
+            return 12;
+        }
+
+        return $startMonth->diffInMonths($oldestSummary->created_at) ?? 12;
     }
 
     private function getService(Request $request)
