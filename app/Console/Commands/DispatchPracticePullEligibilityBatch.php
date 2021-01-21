@@ -89,7 +89,7 @@ class DispatchPracticePullEligibilityBatch extends Command
         }
 
         if ( ! $this->option('create-only')) {
-            ProcessSinglePatientEligibility::dispatch($ej, $batch, $this->practice);
+            ProcessSinglePatientEligibility::dispatch($ej->id);
         }
 
         return $ej;
