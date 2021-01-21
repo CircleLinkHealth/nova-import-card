@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class CcmBillingTest extends \CircleLinkHealth\Core\Tests\TestCase
 {

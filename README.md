@@ -57,6 +57,7 @@ sh bin/run.sh admin-app "php artisan module:make-migration TestMigration CpmMigr
 ```bash
 # Assuming I want to merge provider-app/master into the monorepo's master branch
 
+git fetch --all --no-tags
 # Make sure I'm on the master branch
 git checkout master
 # Make sure I have the latest version

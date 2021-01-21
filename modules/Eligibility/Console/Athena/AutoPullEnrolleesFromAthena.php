@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
