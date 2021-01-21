@@ -18,7 +18,6 @@ SharedModels
 SharedVueComponents
 SqlViews
 Synonyms
-Revisionable
 TimeTracking
 TwilioIntegration
 TwoFA

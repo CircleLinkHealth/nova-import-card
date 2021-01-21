@@ -21,7 +21,6 @@ SharedVueComponents
 ShortUrl
 SqlViews
 Synonyms
-Revisionable
 TimeTracking
 TwilioIntegration
 TwoFA
