@@ -6,6 +6,9 @@
 
 use Maatwebsite\Excel\Excel;
 
+$useLambdaStorage = env('USE_LAMBDA_STORAGE', false);
+$lambdaRoot       = env('LAMBDA_STORAGE_ROOT', '/mnt/local');
+
 return [
     'exports' => [
         /*
@@ -161,7 +164,7 @@ return [
         | storing reading or downloading. Here you can customize that path.
         |
         */
-        'local_path' => storage_path('tmp'),
+        'local_path' => $useLambdaStorage ? $lambdaRoot : storage_path('tmp'),
 
         /*
         |--------------------------------------------------------------------------
