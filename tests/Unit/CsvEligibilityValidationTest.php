@@ -10,7 +10,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class CsvEligibilityValidationTest extends TestCase
 {

@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ConsolidateMedicationInfoTest extends TestCase
 {

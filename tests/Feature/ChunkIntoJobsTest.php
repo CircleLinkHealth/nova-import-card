@@ -15,7 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Queue;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ChunkIntoJobsTest extends TestCase
 {

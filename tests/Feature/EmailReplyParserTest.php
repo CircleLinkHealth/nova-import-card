@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class EmailReplyParserTest extends TestCase
 {

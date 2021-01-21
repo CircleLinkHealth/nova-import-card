@@ -168,11 +168,7 @@
 </script>
 @endif
 
-@auth
-    @if(!isset($isPdf) && (auth()->user()->isAdmin() || auth()->user()->isCareCoach()))
-        @include('partials.jira-issue-collector')
-    @endif
-@endauth
+@include('core::partials.clickup-bug-collector')
 
 @include('core::partials.sentry-js')
 </body>

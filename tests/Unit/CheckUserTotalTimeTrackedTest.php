@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class CheckUserTotalTimeTrackedTest extends TestCase
 {

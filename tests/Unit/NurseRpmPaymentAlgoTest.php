@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class NurseRpmPaymentAlgoTest extends TestCase
 {

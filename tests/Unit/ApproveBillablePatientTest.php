@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ApproveBillablePatientTest extends TestCase
 {

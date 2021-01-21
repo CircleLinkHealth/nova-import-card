@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {

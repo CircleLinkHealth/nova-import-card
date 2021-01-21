@@ -27,7 +27,7 @@ use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\SharedModels\Traits\Tests\PostmarkCallbackHelpers;
 use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Notification;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class AutoAssignCallbackTest extends TestCase
 {

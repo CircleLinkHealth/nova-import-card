@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use App\Traits\SetupTestCustomerTrait;
 use Carbon\Carbon;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class TestHelpersTest extends TestCase
 {

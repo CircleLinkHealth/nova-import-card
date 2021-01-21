@@ -7,7 +7,7 @@
 namespace Tests\Unit\Rules;
 
 use App\Rules\DateValidatorMultipleFormats;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class DateValidatorMultipleFormatsTest extends TestCase
 {

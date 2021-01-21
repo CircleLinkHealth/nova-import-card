@@ -11,7 +11,7 @@ use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Problem;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class AthenaApiCallsTest extends TestCase
 {

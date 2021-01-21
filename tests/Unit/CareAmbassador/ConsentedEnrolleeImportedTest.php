@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Bus;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ConsentedEnrolleeImportedTest extends TestCase
 {

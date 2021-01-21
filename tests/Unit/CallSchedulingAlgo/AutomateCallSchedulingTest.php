@@ -17,7 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Carbon;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class AutomateCallSchedulingTest extends TestCase
 {

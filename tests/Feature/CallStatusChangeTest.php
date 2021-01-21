@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class CallStatusChangeTest extends TestCase
 {

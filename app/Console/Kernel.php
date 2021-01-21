@@ -9,11 +9,11 @@ namespace App\Console;
 use App\Console\Commands\AlertSlackForPatientsWithNoLocation;
 use App\Console\Commands\AssignUnassignedPatientsToStandByNurse;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
-use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForDraftCarePlans;
 use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
+use App\Console\Commands\CheckForNullPatientActivities;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
@@ -32,7 +32,6 @@ use App\Console\Commands\RemoveDuplicateScheduledCalls;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
-use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\CheckLocationSummariesHaveBeenCreated;
@@ -43,9 +42,6 @@ use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocat
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
@@ -60,7 +56,6 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Scout\Console\ImportCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -94,18 +89,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        ini_set('max_execution_time', 900);
-        ini_set('memory_limit', '800M');
-
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)
             ->everyMinute()
             ->when(function () {
                 return SendMonthlyNurseInvoiceLAN::shouldSend();
             })
             ->onOneServer();
-
-        $schedule->command(CheckEmrDirectInbox::class)
-            ->everyFiveMinutes();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyFifteenMinutes();
@@ -133,9 +122,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(RemoveScheduledCallsForUnenrolledPatients::class)
             ->everyFifteenMinutes()
             ->onOneServer();
-
-        $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
-            ->everyThirtyMinutes();
 
         /*
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
@@ -209,18 +195,6 @@ class Kernel extends ConsoleKernel
             ->dailyAt('03:00')
             ->onOneServer();
 
-        $schedule->command(ImportCommand::class, [
-            User::class,
-        ])->dailyAt('03:05');
-
-        $schedule->command(ImportCommand::class, [
-            Practice::class,
-        ])->dailyAt('03:10');
-
-        $schedule->command(ImportCommand::class, [
-            Location::class,
-        ])->dailyAt('03:15');
-
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
 
@@ -281,6 +255,11 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
             ->dailyAt('10:27');
+
+        $schedule->command(CheckForNullPatientActivities::class)
+            ->days([Schedule::MONDAY, Schedule::WEDNESDAY, Schedule::FRIDAY])
+            ->at('11:00')
+            ->onOneServer();
 
         $schedule->job(GenerateServiceSummariesForAllPracticeLocations::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:00')

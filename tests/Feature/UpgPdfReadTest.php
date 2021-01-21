@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\UPG\UPGPdfCarePlan;
 use App\UPG\ValueObjects\PdfCarePlan;
 use Carbon\Carbon;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class UpgPdfReadTest extends TestCase
 {

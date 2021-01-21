@@ -8,7 +8,7 @@ environments:
             - worker.careplanmanager.com
             - mycpm.link
         storage: cpm-production-vapor-storage
-        memory: 2048
+        memory: 1024
         cli-memory: 1024
         queue-memory: 1024
         runtime: docker

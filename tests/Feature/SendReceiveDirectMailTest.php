@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\Console\Commands\SendTestDirectMail;
 use CircleLinkHealth\Core\Services\PhiMail\SendResult;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class SendReceiveDirectMailTest extends TestCase
 {

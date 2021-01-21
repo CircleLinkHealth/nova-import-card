@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class HelpersTest extends TestCase
 {

@@ -80,12 +80,12 @@ return [
             ],
         ],
         'mail-vendor-envelope-options' => [
-            'scale'  => 0.7,
+            'scale'  => 1.0,
             'margin' => [
-                'top'    => '12mm',
-                'bottom' => '15mm',
+                'top'    => '4mm',
+                'bottom' => '25mm',
                 'left'   => '25mm',
-                'right'  => '0.75mm',
+                'right'  => '0.5mm',
             ],
         ],
     ],

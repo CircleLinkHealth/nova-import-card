@@ -15,7 +15,7 @@ use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use Mockery;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class NextCallSuggestorTest extends TestCase
 {

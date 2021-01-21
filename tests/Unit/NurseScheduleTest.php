@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class NurseScheduleTest extends TestCase
 {
