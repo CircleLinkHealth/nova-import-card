@@ -22,4 +22,3 @@ Revisionable
 TimeTracking
 TwilioIntegration
 TwoFA
-VaporDevopsHelpers
