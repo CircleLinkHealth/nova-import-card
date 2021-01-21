@@ -20,7 +20,7 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
 </style>";
     }
 
-    public static function parseExcelDate($date = null):?Carbon
+    public static function parseExcelDate($date = null, bool $isDob = true):?Carbon
     {
         if (empty($date)) {
             return null;
@@ -34,6 +34,10 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
             return null;
         }
 
+        if(! $isDob){
+            return self::parseDate($date);
+        }
+
         try {
             $date = ImportPatientInfo::parseDOBDate($date);
         } catch (\Throwable $throwable) {
@@ -41,5 +45,40 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
         }
 
         return $date;
+    }
+
+    public static function parseDate($date = null):? Carbon
+    {
+        if (empty($date)){
+            return null;
+        }
+
+        try {
+            $date = Carbon::parse($date);
+
+            if ($date->isToday()) {
+                throw new \InvalidArgumentException('date note parsed correctly');
+            }
+        } catch (\InvalidArgumentException $e) {
+            if (Str::contains($date, '/')) {
+                $delimiter = '/';
+            } elseif (Str::contains($date, '-')) {
+                $delimiter = '-';
+            }
+            $date = explode($delimiter, $date);
+
+            if (count($date) < 3) {
+                return null;
+            }
+
+            $year = $date[2];
+
+            if (2 == strlen($year)) {
+                //if date is two digits we are assuming it's from the 1900s
+                $year = (int) $year + 1900;
+            }
+
+            return Carbon::createFromDate($year, $date[0], $date[1]);
+        }
     }
 }
