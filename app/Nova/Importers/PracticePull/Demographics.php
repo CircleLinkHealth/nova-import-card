@@ -56,7 +56,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
             'mrn'                      => $this->nullOrValue($row['patientid']),
             'first_name'               => $this->nullOrValue($row['first_name']),
             'last_name'                => $this->nullOrValue($row['last_name']),
-            'last_encounter'           => Carbon::parse($row['last_encounter']),
+            'last_encounter'           => Utils::parseExcelDate($this->nullOrValue($row['last_encounter'] ?? null), false),
             'dob'                      => Utils::parseExcelDate($this->nullOrValue($row['dob'])),
             'gender'                   => $this->nullOrValue($row['gender']),
             'lang'                     => $this->nullOrValue($row['lang']),
@@ -85,7 +85,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
      *
      * @return string|null
      */
-    public function nullOrValue($value)
+    public function nullOrValue($value = null)
     {
         return empty($value) || in_array($value, $this->nullValues())
             ? null
