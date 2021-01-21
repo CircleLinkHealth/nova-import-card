@@ -24,7 +24,7 @@ use CircleLinkHealth\Customer\Observers\PatientMonthlySummaryObserver;
 use CircleLinkHealth\Customer\Observers\PracticeObserver;
 use CircleLinkHealth\Customer\Observers\SaasAccountObserver;
 use CircleLinkHealth\Customer\Observers\UserObserver;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Observers\EligibilityBatchObserver;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use CircleLinkHealth\Revisionable\Observers\RevisionObserver;

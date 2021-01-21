@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Decorators\DepartmentFromAthena;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Console\Command;
 
 class FixAddLocationToCommonwealthPatients extends Command

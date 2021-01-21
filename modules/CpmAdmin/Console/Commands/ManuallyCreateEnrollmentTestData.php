@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SharedModels\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use Illuminate\Console\Command;
 

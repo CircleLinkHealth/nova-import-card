@@ -7,8 +7,8 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Core\Tests\TestCase;
 
 class JsonMedicalRecordAdapterTest extends TestCase

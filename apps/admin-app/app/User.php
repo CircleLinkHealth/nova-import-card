@@ -97,7 +97,7 @@ use Laravel\Nova\Actions\Actionable;
  * @property int|null                                                                                                                $cpm_symptoms_count
  * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                              $disputes
  * @property int|null                                                                                                                $disputes_count
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient|null                                                               $ehrInfo
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient|null                                                               $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo|null                                                            $ehrReportWriterInfo
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                         $emrDirect
  * @property int|null                                                                                                                $emr_direct_count

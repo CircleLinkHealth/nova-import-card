@@ -80,7 +80,7 @@ class PostRefactoringRenaming extends Command
             [
                 'table' => 'revisions',
                 'field' => 'revisionable_type',
-                'old'   => 'CircleLinkHealth\Eligibility\Entities\Enrollee',
+                'old'   => 'CircleLinkHealth\SharedModels\Entities\Enrollee',
                 'new'   => 'CircleLinkHealth\SharedModels\Entities\Enrollee',
             ],
         ];
