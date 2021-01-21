@@ -6,7 +6,7 @@
 # Naming conventions
 #   - Add suffix "-app" to remote
 #   - Use kebab-case for dir name
-git@github.com:CircleLinkHealth/app-awv.git awv-app apps/awv-app
+# git@github.com:CircleLinkHealth/app-awv.git awv-app apps/awv-app
 # git@github.com:CircleLinkHealth/app-cpm-admin.git admin-app apps/admin-app
 # git@github.com:CircleLinkHealth/app-cpm-web.git provider-app apps/provider-app
 git@github.com:CircleLinkHealth/app-cpm-caller.git caller-app apps/caller-app
