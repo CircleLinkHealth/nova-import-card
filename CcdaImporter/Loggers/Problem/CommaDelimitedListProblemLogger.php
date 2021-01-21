@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem;
 
-use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
 use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
-use CircleLinkHealth\Eligibility\Entities\Problem;
+use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
+use CircleLinkHealth\Eligibility\DTO\Problem;
 use Illuminate\Support\Str;
 
 class CommaDelimitedListProblemLogger implements Logger

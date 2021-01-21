@@ -6,10 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,49 +22,17 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
     use Queueable;
     use SerializesModels;
 
-    /**
-     * @var EligibilityBatch
-     */
-    private $batch;
-    /**
-     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
-     */
-    private $eligibilityJob;
-
-    /**
-     * @var bool
-     */
-    private $filterInsurance;
-
-    /**
-     * @var bool
-     */
-    private $filterLastEncounter;
-
-    /**
-     * @var bool
-     */
-    private $filterProblems;
-
-    /**
-     * @var \CircleLinkHealth\Customer\Entities\Practice
-     */
-    private $practice;
+    protected int $eligibilityJobId;
 
     /**
      * Create a new job instance.
+     *
+     * @param int $eligibilityJobId
      */
     public function __construct(
-        EligibilityJob $eligibilityJob,
-        EligibilityBatch $batch,
-        Practice $practice
+        int $eligibilityJobId
     ) {
-        $this->practice            = $practice;
-        $this->batch               = $batch;
-        $this->filterLastEncounter = $batch->shouldFilterLastEncounter();
-        $this->filterProblems      = $batch->shouldFilterProblems();
-        $this->filterInsurance     = $batch->shouldFilterInsurance();
-        $this->eligibilityJob      = $eligibilityJob;
+        $this->eligibilityJobId = $eligibilityJobId;
     }
 
     /**
@@ -76,17 +42,20 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
+        $ej = EligibilityJob::with('batch.practice')->findOrFail($this->eligibilityJobId);
+        $batch = $ej->batch;
+
         //Only process if EligibilityJob status is 0 (not_started), or 1 (processing) and last update is more than 10 minutes ago
-        if (0 == $this->eligibilityJob->status
-            || (1 == $this->eligibilityJob->status && $this->eligibilityJob->updated_at->lt(now()->subMinutes(10)))
+        if (0 == $ej->status
+            || (1 == $ej->status && $ej->updated_at->lt(now()->subMinutes(10)))
         ) {
             new EligibilityChecker(
-                $this->eligibilityJob,
-                $this->practice,
-                $this->batch,
-                $this->filterLastEncounter,
-                $this->filterInsurance,
-                $this->filterProblems,
+                $ej,
+                $batch->practice,
+                $batch,
+                $batch->shouldFilterLastEncounter(),
+                $batch->shouldFilterInsurance(),
+                $batch->shouldFilterProblems(),
                 true
             );
         }
