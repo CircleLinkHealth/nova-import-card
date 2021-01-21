@@ -674,7 +674,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "dd7e4a88d266a797d220f5cc0180e45269208e2b"
+                "reference": "99eb1a802d04eb7dd0681cf5ffc3b7371473dcca"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -721,7 +721,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-20T23:36:01+00:00"
+            "time": "2021-01-21T10:22:58+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -969,7 +969,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "128869e8c4cb0e09be5830261ca22a44bafbabeb"
+                "reference": "247d1e4cbf0355e27de6cb5089db218d6ead0c3c"
             },
             "type": "laravel-module",
             "extra": {
@@ -989,7 +989,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T14:46:38+00:00"
+            "time": "2021-01-21T10:22:58+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -997,7 +997,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e3f9e3994bc64280aaa1be1cdb5b83581ea79353"
+                "reference": "959eab1f7dc5677f709263e791dc13571318076c"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1038,7 +1038,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T23:36:02+00:00"
+            "time": "2021-01-21T10:22:58+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
