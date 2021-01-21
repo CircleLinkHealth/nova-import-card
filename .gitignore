@@ -1,3 +1,4 @@
 .DS_Store
 apps/*/CircleLinkHealth
-apps/*/*-deploy-s3.env
+apps/*/staging-deploy-s3.env
+apps/*/production-deploy-s3.env
