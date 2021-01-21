@@ -224,46 +224,55 @@ class CreateEnrolleesSurveySeeder extends Seeder
      */
     public function run()
     {
-        $time                 = Carbon::now();
-        $surveyInstancesTable = 'survey_instances';
 
-        $enrolleeSurveyExists = $this->surveyAttributesExists();
-        if ( ! $enrolleeSurveyExists) {
-            $enrolleesSurveyId = DB::table('surveys')->insertGetId(
-                [
-                    'name'        => 'Enrollees',
-                    'description' => 'Enrollees Survey',
-                ]
-            );
-
-            DB::table($surveyInstancesTable)->insert(
-                [
-                    'survey_id'  => $enrolleesSurveyId,
-                    'year'       => $time->year,
-                    'created_at' => $time,
-                    'updated_at' => $time,
-                ]
-            );
-
-            $currentInstance = DB::table($surveyInstancesTable)->where('survey_id', '=', $enrolleesSurveyId)->first();
-
-            $questionsData = $this->enrolleesQuestionData();
-            $this->createQuestions($currentInstance, $questionsData);
-        }
-    }
-
-    private function surveyAttributesExists()
-    {
         $survey = DB::table('surveys')
             ->where('name', '=', self::SURVEY_NAME)
             ->first();
 
         if ($survey){
-            return DB::table('questions')
+            $surveyQuestionsExists =  DB::table('questions')
                 ->where('survey_id', '=', $survey->id)
                 ->exists();
+
+            if($surveyQuestionsExists){
+                return;
+            }
+
+            $this->createSurvey($survey->id);
+            return;
         }
 
-        return false;
+        $enrolleesSurveyId = DB::table('surveys')->insertGetId(
+            [
+                'name'        => 'Enrollees',
+                'description' => 'Enrollees Survey',
+            ]
+        );
+
+        $this->createSurvey($enrolleesSurveyId);
+
     }
+
+    private function createSurvey(int $enrolleesSurveyId)
+    {
+        $time                 = Carbon::now();
+        $surveyInstancesTable = 'survey_instances';
+
+        DB::table($surveyInstancesTable)->updateOrInsert(
+            [
+                'survey_id'  => $enrolleesSurveyId,
+                'year'       => $time->year,
+            ],
+            [
+                'created_at' => $time,
+                'updated_at' => $time,
+            ]
+        );
+
+        $currentInstance = DB::table($surveyInstancesTable)->where('survey_id', '=', $enrolleesSurveyId)->first();
+
+        $questionsData = $this->enrolleesQuestionData();
+        $this->createQuestions($currentInstance, $questionsData);
+    }
+
 }
