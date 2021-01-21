@@ -1,0 +1,26 @@
+{
+    "name": "circlelinkhealth/vapor-devops-helpers-module",
+    "type": "laravel-module",
+    "description": "A collection of helpers to assist with various devops tasks.",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@circlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\VaporDevOpsHelpers\\Providers\\VaporDevOpsHelpersServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\VaporDevOpsHelpers\\": ""
+        }
+    }
+}
