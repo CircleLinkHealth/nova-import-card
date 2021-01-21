@@ -38,7 +38,5 @@ class HomeController extends Controller
         if ($user->isCallbacksAdmin()) {
             return redirect()->route('patientCallManagement.v2.index');
         }
-
-        return redirect()->to(config('core.apps.cpm-provider.url'));
     }
 }

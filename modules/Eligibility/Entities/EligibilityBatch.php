@@ -292,7 +292,9 @@ class EligibilityBatch extends BaseModel
             ->chunkById($pageSize, function ($ejs) use ($onQueue) {
                 $ejs->each(function ($job) use ($onQueue) {
                     ProcessSinglePatientEligibility::dispatch(
-                        $job->id
+                        $job,
+                        $this,
+                        $this->practice
                     )->onQueue($onQueue);
                 });
             });

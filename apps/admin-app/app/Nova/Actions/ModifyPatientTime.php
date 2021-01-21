@@ -48,8 +48,8 @@ class ModifyPatientTime
     public function execute()
     {
         $this->chargeableServiceId = ChargeableService::cached()
-            ->where('code', '=', $this->chargeableServiceCode)
-            ->first()
+                                                      ->where('code', '=', $this->chargeableServiceCode)
+                                                      ->first()
             ->id;
 
         $this->currentTimeSeconds = PatientMonthlyServiceTime::forChargeableServiceId($this->chargeableServiceId, $this->patientId, $this->monthYear);
@@ -82,54 +82,54 @@ class ModifyPatientTime
     private function generateNurseInvoices(array $nurseCareRateLogIds)
     {
         NurseCareRateLog::with('nurse')
-            ->whereIn('id', $nurseCareRateLogIds)
-            ->distinct('nurse_id')
-            ->select('nurse_id')
-            ->each(function (NurseCareRateLog $nurseLog) {
-                \Artisan::call('nurseinvoices:create', [
-                    'month'   => now()->startOfMonth()->toDateString(),
-                    'userIds' => $nurseLog->nurse->user_id,
-                ]);
-            });
+                        ->whereIn('id', $nurseCareRateLogIds)
+                        ->distinct('nurse_id')
+                        ->select('nurse_id')
+                        ->each(function (NurseCareRateLog $nurseLog) {
+                            \Artisan::call('nurseinvoices:create', [
+                                'month'   => now()->startOfMonth()->toDateString(),
+                                'userIds' => $nurseLog->nurse->user_id,
+                            ]);
+                        });
     }
 
     private function getActivities(): Collection
     {
         return Activity::wherePatientId($this->patientId)
-            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
-            ->whereBetween('performed_at', [
-                $this->monthYear->copy()->startOfMonth(),
-                $this->monthYear->copy()->endOfMonth(),
-            ])
-            ->orderBy('performed_at', 'desc')
-            ->get();
+                       ->where('chargeable_service_id', '=', $this->chargeableServiceId)
+                       ->whereBetween('performed_at', [
+                           $this->monthYear->copy()->startOfMonth(),
+                           $this->monthYear->copy()->endOfMonth(),
+                       ])
+                       ->orderBy('performed_at', 'desc')
+                       ->get();
     }
 
     private function getNurseCareRateLogs(): Collection
     {
         return NurseCareRateLog::wherePatientUserId($this->patientId)
-            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
-            ->whereBetween('performed_at', [
-                $this->monthYear->copy()->startOfMonth(),
-                $this->monthYear->copy()->endOfMonth(),
-            ])
-            ->orderBy('time_before', 'asc')
-            ->get();
+                               ->where('chargeable_service_id', '=', $this->chargeableServiceId)
+                               ->whereBetween('performed_at', [
+                                   $this->monthYear->copy()->startOfMonth(),
+                                   $this->monthYear->copy()->endOfMonth(),
+                               ])
+                               ->orderBy('time_before', 'asc')
+                               ->get();
     }
 
     private function getPageTimers(): Collection
     {
         return PageTimer::wherePatientId($this->patientId)
-            ->whereHas('logger', function ($q) {
-                $q->ofType(Role::CCM_TIME_ROLES);
-            })
-            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
-            ->whereBetween('start_time', [
-                $this->monthYear->copy()->startOfMonth(),
-                $this->monthYear->copy()->endOfMonth(),
-            ])
-            ->orderBy('start_time', 'desc')
-            ->get();
+                        ->whereHas('logger', function ($q) {
+                            $q->ofType(Role::CCM_TIME_ROLES);
+                        })
+                        ->where('chargeable_service_id', '=', $this->chargeableServiceId)
+                        ->whereBetween('start_time', [
+                            $this->monthYear->copy()->startOfMonth(),
+                            $this->monthYear->copy()->endOfMonth(),
+                        ])
+                        ->orderBy('start_time', 'desc')
+                        ->get();
     }
 
     private function modifyActivities(): array
@@ -138,20 +138,20 @@ class ModifyPatientTime
         $result    = collect();
 
         $this->getActivities()
-            ->each(function (Activity $activity) use ($result, &$remaining) {
-                if ($remaining <= 0) {
-                    return false;
-                }
-                if ($activity->duration >= $remaining) {
-                    $activity->duration = $activity->duration - $remaining;
-                    $remaining = 0;
-                } else {
-                    $remaining -= $activity->duration;
-                    $activity->duration = 0;
-                }
-                $activity->save();
-                $result->push($activity->id);
-            });
+             ->each(function (Activity $activity) use ($result, &$remaining) {
+                 if ($remaining <= 0) {
+                     return false;
+                 }
+                 if ($activity->duration >= $remaining) {
+                     $activity->duration = $activity->duration - $remaining;
+                     $remaining = 0;
+                 } else {
+                     $remaining -= $activity->duration;
+                     $activity->duration = 0;
+                 }
+                 $activity->save();
+                 $result->push($activity->id);
+             });
 
         if ($remaining > 0) {
             Log::warning("Something's wrong modifying this patient's time.");
@@ -164,42 +164,42 @@ class ModifyPatientTime
     {
         $result = collect();
         NurseCareRateLog::with([
-            'activity' => fn ($q) => $q->select(['id', 'duration']),
-        ])
-            ->whereIn('activity_id', $activityIds)
-            ->orderByDesc('performed_at')
-            ->get()
-            ->groupBy('activity_id')
-            ->each(function (Collection $group) use ($result) {
-                $hasMoreThanOne = $group->count() > 1;
-                $remainingTime = $group->first()->activity->duration;
-                $group->each(function (NurseCareRateLog $nurseCareRateLog) use ($result, $hasMoreThanOne, &$remainingTime) {
-                    if ($hasMoreThanOne) {
-                        if ('accrued_towards_ccm' === $nurseCareRateLog->ccm_type
+                                   'activity' => fn ($q) => $q->select(['id', 'duration']),
+                               ])
+                        ->whereIn('activity_id', $activityIds)
+                        ->orderByDesc('performed_at')
+                        ->get()
+                        ->groupBy('activity_id')
+                        ->each(function (Collection $group) use ($result) {
+                            $hasMoreThanOne = $group->count() > 1;
+                            $remainingTime = $group->first()->activity->duration;
+                            $group->each(function (NurseCareRateLog $nurseCareRateLog) use ($result, $hasMoreThanOne, &$remainingTime) {
+                                if ($hasMoreThanOne) {
+                                    if ('accrued_towards_ccm' === $nurseCareRateLog->ccm_type
                                         && ($nurseCareRateLog->time_before + $remainingTime) > CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
-                            $nurseCareRateLog->increment = CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS - $nurseCareRateLog->time_before;
-                            $remainingTime = $remainingTime - $nurseCareRateLog->increment;
-                        } else {
-                            $nurseCareRateLog->increment = $remainingTime;
-                            $remainingTime = 0;
-                        }
-                    } else {
-                        $nurseCareRateLog->increment = $nurseCareRateLog->activity->duration;
-                    }
-                    $nurseCareRateLog->save();
-                    $result->push($nurseCareRateLog->id);
-                });
-            });
+                                        $nurseCareRateLog->increment = CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS - $nurseCareRateLog->time_before;
+                                        $remainingTime = $remainingTime - $nurseCareRateLog->increment;
+                                    } else {
+                                        $nurseCareRateLog->increment = $remainingTime;
+                                        $remainingTime = 0;
+                                    }
+                                } else {
+                                    $nurseCareRateLog->increment = $nurseCareRateLog->activity->duration;
+                                }
+                                $nurseCareRateLog->save();
+                                $result->push($nurseCareRateLog->id);
+                            });
+                        });
 
         $timeBefore = 0;
         $this->getNurseCareRateLogs()
-            ->each(function (NurseCareRateLog $nurseCareRateLog) use (&$timeBefore) {
-                if ($nurseCareRateLog->time_before !== $timeBefore) {
-                    $nurseCareRateLog->time_before = $timeBefore;
-                    $nurseCareRateLog->save();
-                }
-                $timeBefore += $nurseCareRateLog->increment;
-            });
+             ->each(function (NurseCareRateLog $nurseCareRateLog) use (&$timeBefore) {
+                 if ($nurseCareRateLog->time_before !== $timeBefore) {
+                     $nurseCareRateLog->time_before = $timeBefore;
+                     $nurseCareRateLog->save();
+                 }
+                 $timeBefore += $nurseCareRateLog->increment;
+             });
 
         return $result->toArray();
     }
@@ -209,14 +209,14 @@ class ModifyPatientTime
         $result = collect();
 
         PageTimer::with('activity')
-            ->whereHas('activity', function ($q) use ($activityIds) {
-                $q->whereIn('id', $activityIds);
-            })
-            ->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
-                $pageTimer->duration = $pageTimer->activity->duration;
-                $pageTimer->save();
-                $result->push($pageTimer->id);
-            });
+                 ->whereHas('activity', function ($q) use ($activityIds) {
+                     $q->whereIn('id', $activityIds);
+                 })
+                 ->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
+                     $pageTimer->duration = $pageTimer->activity->duration;
+                     $pageTimer->save();
+                     $result->push($pageTimer->id);
+                 });
 
         return $result->toArray();
     }
@@ -225,8 +225,8 @@ class ModifyPatientTime
     {
         /** @var PatientMonthlySummary $pms */
         $pms = PatientMonthlySummary::where('patient_id', '=', $this->patientId)
-            ->where('month_year', '=', now()->startOfMonth()->toDateString())
-            ->first();
+                                    ->where('month_year', '=', now()->startOfMonth()->toDateString())
+                                    ->first();
 
         if (in_array($this->chargeableServiceCode, [ChargeableService::CCM, ChargeableService::GENERAL_CARE_MANAGEMENT, ChargeableService::PCM, ChargeableService::RPM])) {
             $pms->ccm_time = $this->newTimeSeconds;

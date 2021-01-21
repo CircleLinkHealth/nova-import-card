@@ -120,5 +120,16 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+   |--------------------------------------------------------------------------
+   | Enable 2 Factor Authentication (2FA)
+   |--------------------------------------------------------------------------
+   |
+   | Set this to true if you want 2FA enabled.
+   |
+   */
+
+    'two_fa_enabled' => env('TWO_FA_ENABLED', false),
+
     'force_password_change' => env('FORCE_PASSWORD_CHANGE', true),
 ];

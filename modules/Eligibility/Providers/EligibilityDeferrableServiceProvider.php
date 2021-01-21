@@ -23,6 +23,7 @@ use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Console\RestoreEnrolleeProvidersFromRevisions;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -55,6 +56,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
+            SendSelfEnrollmentReminders::class,
             RestoreEnrolleeProvidersFromRevisions::class,
         ];
     }
@@ -80,6 +82,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
+            SendSelfEnrollmentReminders::class,
             RestoreEnrolleeProvidersFromRevisions::class,
         ]);
 

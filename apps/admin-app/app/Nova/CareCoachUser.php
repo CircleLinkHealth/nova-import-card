@@ -7,7 +7,6 @@
 namespace App\Nova;
 
 use App\Nova\User as NovaUser;
-use Illuminate\Http\Request;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class CareCoachUser extends NovaUser
@@ -27,16 +26,6 @@ class CareCoachUser extends NovaUser
     public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
 
     /**
-     * Get the actions available for the resource.
-     *
-     * @return array
-     */
-    public function actions(Request $request)
-    {
-        return [];
-    }
-
-    /**
      * Build an "index" query for the given resource.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -50,7 +39,7 @@ class CareCoachUser extends NovaUser
 
     public static function label()
     {
-        return 'Care Coaches';
+        return 'Users';
     }
 
     /**

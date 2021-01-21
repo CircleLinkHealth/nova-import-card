@@ -6,7 +6,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Pagination\Paginator;
+use App\Observers\OutgoingSmsObserver;
+use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Paginator::useBootstrapThree();
+        OutgoingSms::observe(OutgoingSmsObserver::class);
     }
 
     /**

@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem;
 
-use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
+use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Eligibility\Entities\Problem;
 use Illuminate\Support\Str;
 

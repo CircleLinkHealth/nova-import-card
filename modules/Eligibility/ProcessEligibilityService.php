@@ -652,7 +652,7 @@ class ProcessEligibilityService
                     ]
                 );
 
-                ProcessSinglePatientEligibility::dispatch($job->id);
+                ProcessSinglePatientEligibility::dispatch($job, $batch, $batch->practice);
             }
 
             \Log::info(

@@ -132,7 +132,7 @@ class Note extends Resource
                 ->sortable()
                 ->readonly(),
 
-            BelongsTo::make('Patient', 'patient', PatientUser::class)
+            BelongsTo::make('Patient', 'patient', CareCoachUser::class)
                 ->sortable()
                 ->readonly(),
 

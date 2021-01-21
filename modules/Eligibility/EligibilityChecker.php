@@ -781,7 +781,7 @@ class EligibilityChecker
 
         $args['practice_id'] = $this->practice->id;
         if (empty($args['provider_id'])) {
-            $args['provider_id'] = optional(CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id))->id;
+            $args['provider_id'] = CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id);
         }
 
         if (empty($args['email'])) {
@@ -883,29 +883,29 @@ class EligibilityChecker
                     $u
                         ->ofType('participant')
                         ->where(
+                        [
                             [
-                                [
-                                    'program_id',
-                                    '=',
-                                    $args['practice_id'],
-                                ],
-                                [
-                                    'first_name',
-                                    '=',
-                                    $args['first_name'],
-                                ],
-                                [
-                                    'last_name',
-                                    '=',
-                                    $args['last_name'],
-                                ],
-                            ]
-                        )->whereHas(
-                            'patientInfo',
-                            function ($q) use ($args) {
+                                'program_id',
+                                '=',
+                                $args['practice_id'],
+                            ],
+                            [
+                                'first_name',
+                                '=',
+                                $args['first_name'],
+                            ],
+                            [
+                                'last_name',
+                                '=',
+                                $args['last_name'],
+                            ],
+                        ]
+                    )->whereHas(
+                        'patientInfo',
+                        function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
-                        );
+                    );
                 }
             )->first();
 

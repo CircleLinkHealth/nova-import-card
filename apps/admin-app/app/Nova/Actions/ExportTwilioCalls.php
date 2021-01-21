@@ -10,8 +10,9 @@ use App\Nova\TwilioCall;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
-class ExportTwilioCalls extends CustomDownloadExcel implements WithMapping
+class ExportTwilioCalls extends DownloadExcel implements WithMapping
 {
     use InteractsWithQueue;
     use Queueable;

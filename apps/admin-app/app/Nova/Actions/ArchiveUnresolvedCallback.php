@@ -6,7 +6,7 @@
 
 namespace App\Nova\Actions;
 
-use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
+use App\UnresolvedPostmarkCallback;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
