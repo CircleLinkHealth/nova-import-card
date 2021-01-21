@@ -45,8 +45,8 @@ class PracticePullToEnrolleeAdapter
 
             'location_id' => $this->demographics->location_id,
             'provider_id' => $this->getProviderId(),
-            'address'   => $this->demographics->street,
-            'address_2' => $this->demographics->street2,
+            'address'     => $this->demographics->street,
+            'address_2'   => $this->demographics->street2,
 
             'city'  => $this->demographics->city,
             'state' => $this->demographics->state,
@@ -69,6 +69,11 @@ class PracticePullToEnrolleeAdapter
         ];
     }
 
+    private function getProviderId(): ?int
+    {
+        return $this->demographics->billing_provider_user_id ?? optional(CcdaImporterWrapper::mysqlMatchProvider($this->demographics->referring_provider_name, $this->practiceId))->id;
+    }
+
     private function setPracticePullDemographics(): self
     {
         $this->demographics = Demographics::where('practice_id', $this->practiceId)
@@ -76,10 +81,5 @@ class PracticePullToEnrolleeAdapter
             ->first();
 
         return $this;
-    }
-
-    private function getProviderId():? int
-    {
-        return $this->demographics->billing_provider_user_id ?? optional(CcdaImporterWrapper::mysqlMatchProvider($this->demographics->referring_provider_name, $this->practiceId))->id;
     }
 }

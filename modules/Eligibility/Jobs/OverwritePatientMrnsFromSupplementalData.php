@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;

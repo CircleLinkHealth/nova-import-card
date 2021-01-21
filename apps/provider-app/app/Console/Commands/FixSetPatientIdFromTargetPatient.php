@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Console\Command;
 
 class FixSetPatientIdFromTargetPatient extends Command

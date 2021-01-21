@@ -7,7 +7,9 @@ CpmAdmin
 CpmMigrations
 Customer
 Eligibility
+LaravelModuleInstaller
 NurseInvoices
+OpcacheGui
 PatientApi
 PdfService
 Raygun
@@ -16,9 +18,11 @@ SamlSp
 SelfEnrollment
 SharedModels
 SharedVueComponents
+ShortUrl
 SqlViews
 Synonyms
 Revisionable
 TimeTracking
 TwilioIntegration
 TwoFA
+VaporCore

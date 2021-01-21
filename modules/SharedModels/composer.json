@@ -10,7 +10,8 @@
     ],
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2.x-dev"
+            "dev-master": "2.2.x-dev",
+            "dev-road_547_sharedModels": "3.0.x-dev"
         }
     },
     "autoload": {
@@ -20,13 +21,13 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
         }
     ],
     "minimum-stability": "dev",
     "require": {
-        "circlelinkhealth/eligibility-module": "^4.1"
+        "circlelinkhealth/eligibility-module": "*"
     },
     "config": {
         "optimize-autoloader": true,

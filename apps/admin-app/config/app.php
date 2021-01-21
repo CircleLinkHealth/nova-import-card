@@ -10,11 +10,15 @@ use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
+use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
+use CircleLinkHealth\CpmAdmin\Providers\CommandsServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
+use CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider;
 use MichaelLedin\LaravelJob\LaravelJobServiceProvider;
 
 return [
@@ -43,6 +47,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    'unique_env_name' => env('UNIQUE_ENV_NAME', env('APP_ENV', '')),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +89,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/New_York',
 
     /*
     |--------------------------------------------------------------------------
@@ -183,11 +189,13 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        \App\Providers\ObserversServiceProvider::class,
 
         CpmMigrationsServiceProvider::class,
         ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
         CpmAdminServiceProvider::class,
+        CommandsServiceProvider::class,
         RaygunServiceProvider::class,
         CoreServiceProvider::class,
         CoreDeferredBindingsServiceProvider::class,
@@ -201,9 +209,11 @@ return [
         BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
         DirectMailServiceProvider::class,
+        GoogleDriveServiceProvider::class,
 
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
-        \CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider::class
+        TwilioIntegrationServiceProvider::class,
+        NurseInvoicesServiceProvider::class,
     ],
 
     /*
@@ -218,6 +228,7 @@ return [
     */
 
     'aliases' => [
+        'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'App'          => Illuminate\Support\Facades\App::class,
         'Arr'          => Illuminate\Support\Arr::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,

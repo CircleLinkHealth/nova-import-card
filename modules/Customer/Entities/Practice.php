@@ -16,14 +16,13 @@ use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
-use CircleLinkHealth\Eligibility\Entities\RpmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -155,7 +154,7 @@ class Practice extends BaseModel implements HasMedia
     use HasSettings;
     use Notifiable;
     use SaasAccountable;
-    use Searchable;
+    
     use SoftDeletes;
 
     protected $casts = [
@@ -456,16 +455,6 @@ class Practice extends BaseModel implements HasMedia
         return $providers;
     }
 
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
-    {
-        return $this->id;
-    }
-
     public function getSubdomainAttribute()
     {
         return explode('.', $this->domain)[0];
@@ -622,36 +611,13 @@ class Practice extends BaseModel implements HasMedia
         ])
             ->whereHas('patients.patientInfo');
     }
-
-    /**
-     * Get Scout index name for the model.
-     *
-     * @return string
-     */
-    public function searchableAs()
-    {
-        return 'practices_index';
-    }
-
+    
     public function setDirectMailCareplanApprovalReminders($bool)
     {
         $settings = $this->cpmSettings();
 
         $settings->dm_careplan_approval_reminders = $bool;
         $settings->save();
-    }
-
-    /**
-     * Get the indexable data array for the model.
-     *
-     * @return array
-     */
-    public function toSearchableArray()
-    {
-        return [
-            'name'         => $this->name,
-            'display_name' => $this->display_name,
-        ];
     }
 
     public function users()

@@ -12,7 +12,7 @@ use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Survey;
 use App\User;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SharedModels\Entities\EnrollmentInvitationLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

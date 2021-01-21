@@ -11,40 +11,14 @@
         {
             "type": "composer",
             "url": "https://nova.laravel.com"
-        }, {
+        },
+        {
             "type": "path",
             "url": "./nova-components/ClhImportCardExtended"
-        },{
+        },
+        {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
         },
         {
             "type": "path",
@@ -59,14 +33,6 @@
             "url": "./nova-components/EnrollmentInvites"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
-        },
-        {
             "type": "path",
             "url": "./nova-components/InvoicesDownload"
         },
@@ -75,52 +41,104 @@
             "url": "./nova-components/ImportPracticeStaffCsv"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
-        },
-        {
             "type": "path",
             "url": "./nova-components/GeneratePatientCallDataCsv"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git"
         },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
         },
         {
-            "type": "git",
-            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcdaParser"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcmBilling"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/synonyms.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CerberusGatekeeper"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/ConditionCodeLookup"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmAdmin"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmMigrations"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Customer"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/NurseInvoices"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PatientApi"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Raygun"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SamlSp"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedModels"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedVueComponents"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Synonyms"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TimeTracking"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwilioIntegration"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwoFA"
         }
     ],
     "require": {
@@ -144,6 +162,19 @@
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
         "circlelinkhealth/invoices-download": "*",
+        "circlelinkhealth/ccm-billing-module": "*",
+        "circlelinkhealth/cerberus-gatekeeper-module": "*",
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/cpm-migrations-module": "*",
+        "circlelinkhealth/customer-module": "*",
+        "circlelinkhealth/eligibility-module": "*",
+        "circlelinkhealth/raygun-module": "*",
+        "circlelinkhealth/revisionable-module": "*",
+        "circlelinkhealth/saml-sp-module": "*",
+        "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/sqlviews-module": "*",
+        "circlelinkhealth/synonyms-module": "*",
+        "circlelinkhealth/twilio-integration-module":"*",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
@@ -151,17 +182,13 @@
         "fourstacks/nova-checkboxes": "^0.1.5",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.9.1",
-        "guzzlehttp/guzzle": "^6.3",
         "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
-        "jenssegers/agent": "^2.5",
-        "joshbrw/laravel-module-installer": "^0.1.4",
         "jubeki/nova-card-linkable": "^1.0",
-        "kreitje/nova-horizon-stats": "^0.3.0",
-        "laravel/framework": "^7.24",
         "laravel/nova": "^3.0",
-        "laravel/tinker": "^2.0",
         "maatwebsite/laravel-nova-excel": "^1.2",
+        "mediconesystems/livewire-datatables": "^0.4.3",
         "phaxio/phaxio": "^2.0",
+        "sloveniangooner/searchable-select": "^1.3",
         "sparclex/nova-import-card": "^7.0.1",
         "suenerds/nova-searchable-belongs-to-filter": "^1.0",
         "titasgailius/search-relations": "^1.0",
@@ -172,13 +199,12 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
         "barryvdh/laravel-ide-helper": "^2.8",
-        "facade/ignition": "^2.0",
+        "facade/ignition": "^2.3.6",
         "friendsofphp/php-cs-fixer": "^2.17",
-        "joshgaber/novaunit": "1.2",
-        "laravel/vapor-cli": "^1.11",
+        "joshgaber/novaunit": "^2.0",
         "mockery/mockery": "^1.3.1",
-        "nunomaduro/collision": "^4.1",
-        "nwidart/laravel-modules": "^7.1",
+        "nunomaduro/collision": "^5.0",
+        "nwidart/laravel-modules": "^8.2",
         "phpunit/phpunit": "^9.0",
         "psalm/plugin-laravel": "^1.4",
         "vimeo/psalm": "^4.3"
@@ -207,7 +233,7 @@
             "CircleLinkHealth\\": "CircleLinkHealth/"
         },
         "classmap": [
-            "database/seeds",
+            "database/seeders",
             "database/factories"
         ]
     },

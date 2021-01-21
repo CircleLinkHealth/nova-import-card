@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Practice as CpmPractice;
+
 /**
  * App\Practice.
  *
@@ -62,11 +64,11 @@ namespace App;
  * @property int|null                                                                                                                 $notification_contact_preferences_count
  * @property \Illuminate\Notifications\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection                $notifications
  * @property int|null                                                                                                                 $notifications_count
- * @property \CircleLinkHealth\Eligibility\Entities\PcmProblem[]|\Illuminate\Database\Eloquent\Collection                             $pcmProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\PcmProblem[]|\Illuminate\Database\Eloquent\Collection                             $pcmProblems
  * @property int|null                                                                                                                 $pcm_problems_count
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                              $revisionHistory
  * @property int|null                                                                                                                 $revision_history_count
- * @property \CircleLinkHealth\Eligibility\Entities\RpmProblem[]|\Illuminate\Database\Eloquent\Collection                             $rpmProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\RpmProblem[]|\Illuminate\Database\Eloquent\Collection                             $rpmProblems
  * @property int|null                                                                                                                 $rpm_problems_count
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                                                     $saasAccount
  * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection                                  $settings
@@ -112,7 +114,7 @@ namespace App;
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice whereWeeklyReportRecipients($value)
  * @mixin \Eloquent
  */
-class Practice extends \CircleLinkHealth\Customer\Entities\Practice
+class Practice extends CpmPractice
 {
     use \Laravel\Nova\Actions\Actionable;
 }

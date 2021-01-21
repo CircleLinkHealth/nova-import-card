@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -28,7 +28,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue, ShouldBeEncrypted
     protected $practice;
     protected $transformer;
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     private $batch;
 

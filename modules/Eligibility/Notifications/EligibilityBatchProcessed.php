@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Notifications;
 
 use CircleLinkHealth\Core\Contracts\LiveNotification;
 use CircleLinkHealth\Core\Traits\ArrayableNotification;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -19,7 +19,7 @@ class EligibilityBatchProcessed extends Notification implements LiveNotification
     use ArrayableNotification;
     use Queueable;
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     private $batch;
 
