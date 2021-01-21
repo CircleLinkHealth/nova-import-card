@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2abdb3b2263caf4285ef250ebc8ef21c",
+    "content-hash": "d288844689c798fa117ad47d8d069696",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -663,11 +663,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "e25af4a741291b89cc7e1dcf86b30e14bc69d702"
+                "reference": "92dddb7a9a494837474d209314909ac1d1f306e3"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -717,7 +717,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-20T07:59:41+00:00"
+            "time": "2021-01-21T21:23:53+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1019,11 +1019,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.2.1",
+            "version": "v4.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "7bf05813c4ca50e0bea27a03b76a7b38ff597277"
+                "reference": "69db72d85325f89f97e769dc3bf1754f6202ff0a"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1064,7 +1064,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T07:58:28+00:00"
+            "time": "2021-01-21T21:23:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",

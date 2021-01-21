@@ -6,7 +6,7 @@
 
 namespace App\Nova\Importers;
 
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;

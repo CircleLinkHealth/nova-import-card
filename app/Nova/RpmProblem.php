@@ -28,7 +28,7 @@ class RpmProblem extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\Eligibility\Entities\RpmProblem::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\RpmProblem::class;
 
     /**
      * The columns that should be searched.
