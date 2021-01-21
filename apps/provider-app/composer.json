@@ -7,135 +7,6 @@
     "laravel"
   ],
   "license": "MIT",
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://packagist.org"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-raygun.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-customer.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-core.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/scout.git"
-    },
-    {
-      "packagist": false
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:circlelinkhealth/revisionable-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/synonyms.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
-    },
-    {
-      "type": "git",
-      "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/short-url.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/vapor-cli.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/vapor-core.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
-    }
-  ],
   "require": {
     "php": "^7.4",
     "ext-bcmath": "*",
@@ -148,9 +19,6 @@
     "ext-redis": "*",
     "ext-simplexml": "*",
     "ext-zend-opcache": "*",
-    "algolia/algoliasearch-client-php": "^2.2",
-    "algolia/scout-extended": "^1.8",
-    "ashallendesign/short-url": "3.0.4",
     "danielme85/laravel-log-to-db": "^2.3",
     "doctrine/dbal": "2.9.2",
     "fideloper/proxy": "^4.2",
@@ -182,7 +50,6 @@
     "jkocik/laravel-profiler": "^2.0",
     "kitloong/laravel-migrations-generator": "^4.3",
     "laravel/dusk": "^6.0",
-    "laravel/vapor-cli": "^1.11.8",
     "mockery/mockery": "^1.3.1",
     "nunomaduro/collision": "^5.0",
     "nwidart/laravel-modules": "^8.2",

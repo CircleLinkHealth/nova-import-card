@@ -7,7 +7,9 @@ CpmAdmin
 CpmMigrations
 Customer
 Eligibility
+LaravelModuleInstaller
 NurseInvoices
+OpcacheGui
 PatientApi
 PdfService
 Raygun
@@ -22,3 +24,4 @@ Revisionable
 TimeTracking
 TwilioIntegration
 TwoFA
+VaporCore
