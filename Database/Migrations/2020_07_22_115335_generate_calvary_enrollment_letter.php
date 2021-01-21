@@ -24,6 +24,8 @@ class GenerateCalvaryEnrollmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCalvaryClinicLetter']);
+        if ( ! isUnitTestingEnv() && isCpm()) {
+            Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCalvaryClinicLetter']);
+        }
     }
 }

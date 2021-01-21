@@ -25,6 +25,8 @@ class CreateCameronEnrolmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('create:cameronLetter');
+        if ( ! isUnitTestingEnv() && isCpm()) {
+            Artisan::call('create:cameronLetter');
+        }
     }
 }
