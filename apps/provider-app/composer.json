@@ -30,7 +30,7 @@
     "circlelinkhealth/saml-sp-module": "*",
     "circlelinkhealth/shared-models-module": "*",
     "circlelinkhealth/sqlviews-module": "*",
-    "circlelinkhealth/synonyms": "*",
+    "circlelinkhealth/synonyms-module": "*",
     "circlelinkhealth/twilio-integration-module":"*",
     "danielme85/laravel-log-to-db": "^2.3",
     "doctrine/dbal": "2.9.2",
