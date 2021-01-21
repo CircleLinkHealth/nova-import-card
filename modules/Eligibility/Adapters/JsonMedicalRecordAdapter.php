@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\Eligibility\Adapters;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\MedicalRecordForEligibilityCheck;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\DTO\MedicalRecordForEligibilityCheck;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;

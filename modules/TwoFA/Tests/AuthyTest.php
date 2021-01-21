@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\TwoFA\Tests;
 
-use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\User;
+use Tests\TestCase;
 
 class AuthyTest extends TestCase
 {

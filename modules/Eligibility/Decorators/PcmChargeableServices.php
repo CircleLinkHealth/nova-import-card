@@ -8,9 +8,9 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
-use CircleLinkHealth\Eligibility\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\DTO\Problem;
 use Illuminate\Support\Facades\Cache;
 
 class PcmChargeableServices implements MedicalRecordDecorator
@@ -22,7 +22,7 @@ class PcmChargeableServices implements MedicalRecordDecorator
 
         $eligibilityJob->loadMissing('batch');
 
-        /** @var Problem $p */
+        /** @var \CircleLinkHealth\Eligibility\DTO\Problem $p */
         foreach (EligibilityChecker::getProblemsForEligibility($eligibilityJob) as $p) {
             if ( ! $p instanceof Problem) {
                 continue;

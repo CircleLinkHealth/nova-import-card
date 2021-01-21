@@ -11,40 +11,14 @@
         {
             "type": "composer",
             "url": "https://nova.laravel.com"
-        }, {
+        },
+        {
             "type": "path",
             "url": "./nova-components/ClhImportCardExtended"
-        },{
+        },
+        {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
         },
         {
             "type": "path",
@@ -59,14 +33,6 @@
             "url": "./nova-components/EnrollmentInvites"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
-        },
-        {
             "type": "path",
             "url": "./nova-components/InvoicesDownload"
         },
@@ -75,16 +41,8 @@
             "url": "./nova-components/ImportPracticeStaffCsv"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
-        },
-        {
             "type": "path",
             "url": "./nova-components/GeneratePatientCallDataCsv"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git"
         },
         {
             "type": "git",
@@ -144,6 +102,19 @@
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
         "circlelinkhealth/invoices-download": "*",
+        "circlelinkhealth/ccm-billing-module": "*",
+        "circlelinkhealth/cerberus-gatekeeper-module": "*",
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/cpm-migrations-module": "*",
+        "circlelinkhealth/customer-module": "*",
+        "circlelinkhealth/eligibility-module": "*",
+        "circlelinkhealth/raygun-module": "*",
+        "circlelinkhealth/revisionable-module": "*",
+        "circlelinkhealth/saml-sp-module": "*",
+        "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/sqlviews-module": "*",
+        "circlelinkhealth/synonyms": "*",
+        "circlelinkhealth/twilio-integration-module":"*",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
@@ -154,7 +125,6 @@
         "guzzlehttp/guzzle": "^6.3",
         "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
         "jenssegers/agent": "^2.5",
-        "joshbrw/laravel-module-installer": "^0.1.4",
         "jubeki/nova-card-linkable": "^1.0",
         "kreitje/nova-horizon-stats": "^0.3.0",
         "laravel/framework": "^7.24",

@@ -20,8 +20,8 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
         }
     ],
     "minimum-stability": "dev",

@@ -49,22 +49,11 @@
     "yajra/laravel-datatables-oracle": "~9.0",
     "sentry/sentry-laravel": "^2.3",
     "laravel/legacy-factories": "^1.1",
-    "joshbrw/laravel-module-installer": "*",
     "genealabs/laravel-caffeine": "^8.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "laravel/framework": "^8.0",
-    "laravel/vapor-core": "^2.10.6",
     "laravel/tinker": "^2.0",
     "wildbit/swiftmailer-postmark": "*",
     "nao-pon/flysystem-google-drive": "~1.1"
-  },
-  "require-dev": {
-    "laravel/vapor-cli": "^1.11.7.2"
-  },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/vapor-core.git"
-    }
-  ]
+  }
 }
