@@ -30,6 +30,7 @@ class CreateEnrolleesSurveySeeder extends Seeder
     const SELECT        = 'select';
     const TEXT          = 'text';
     const TIME          = 'time';
+    const SURVEY_NAME = 'Enrollees';
 
     public function createQuestions($instance, $questionsData)
     {
@@ -225,13 +226,10 @@ class CreateEnrolleesSurveySeeder extends Seeder
     {
         $time                 = Carbon::now();
         $surveyInstancesTable = 'survey_instances';
-        $surveysTable         = 'surveys';
-        $enrolleeSurveyExists = DB::table($surveysTable)
-            ->where('name', '=', 'Enrollees')
-            ->exists();
 
+        $enrolleeSurveyExists = $this->surveyAttributesExists();
         if ( ! $enrolleeSurveyExists) {
-            $enrolleesSurveyId = DB::table($surveysTable)->insertGetId(
+            $enrolleesSurveyId = DB::table('surveys')->insertGetId(
                 [
                     'name'        => 'Enrollees',
                     'description' => 'Enrollees Survey',
@@ -252,5 +250,20 @@ class CreateEnrolleesSurveySeeder extends Seeder
             $questionsData = $this->enrolleesQuestionData();
             $this->createQuestions($currentInstance, $questionsData);
         }
+    }
+
+    private function surveyAttributesExists()
+    {
+        $survey = DB::table('surveys')
+            ->where('name', '=', self::SURVEY_NAME)
+            ->first();
+
+        if ($survey){
+            return DB::table('questions')
+                ->where('survey_id', '=', $survey->id)
+                ->exists();
+        }
+
+        return false;
     }
 }
