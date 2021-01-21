@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\Eligibility\Exceptions;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 
 class CsvEligibilityListStructureValidationException extends \Exception
 {
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
     /**

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 
 interface MedicalRecordDecorator
 {
