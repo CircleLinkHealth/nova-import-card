@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CareTeamFromAthena implements MedicalRecordDecorator
@@ -25,7 +25,7 @@ class CareTeamFromAthena implements MedicalRecordDecorator
     }
 
     /**
-     * @param \CircleLinkHealth\SharedModels\Entities\TargetPatient $targetPatient
+     * @param TargetPatient $targetPatient
      * @param Ccda          $ccda
      *
      * @throws \Exception

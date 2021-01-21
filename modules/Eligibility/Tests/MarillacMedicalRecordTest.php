@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
-use CircleLinkHealth\Core\Tests\TestCase;
+use Tests\TestCase;
 
 class MarillacMedicalRecordTest extends TestCase
 {

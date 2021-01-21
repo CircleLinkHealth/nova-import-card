@@ -10,7 +10,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Contracts\Validation\Rule;
 
 class MrnWasReplacedIfPracticeImportingHooks implements Rule

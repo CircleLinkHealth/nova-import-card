@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 use CircleLinkHealth\Core\Traits\ValidatesDates;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use Illuminate\Support\Facades\DB;
 
 class MedicalHistoryFromAthena implements MedicalRecordDecorator

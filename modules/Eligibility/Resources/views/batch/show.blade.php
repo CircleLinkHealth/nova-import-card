@@ -81,7 +81,7 @@
                             </div>
                         @endif
 
-                        @if ($batch->type == CircleLinkHealth\SharedModels\Entities\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                        @if ($batch->type == CircleLinkHealth\Eligibility\Entities\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
                                    class="btn btn-danger">Reprocess</a>
@@ -109,7 +109,7 @@
                         <br><br>
 
                             <div class="row">
-                                @if (CircleLinkHealth\SharedModels\Entities\EligibilityBatch::ATHENA_API == $batch->type)
+                                @if (CircleLinkHealth\Eligibility\Entities\EligibilityBatch::ATHENA_API == $batch->type)
                                     <div class="col-md-12">ELIGIBLES ARE PATIENTS W/ OFFICE VISIT IN LAST 12 MONTHS SINCE BATCH START DATE</div>
                                 @endif
                         <div class="col-md-4">

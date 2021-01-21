@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\Eligibility\Exports;
 
 use CircleLinkHealth\Customer\Exports\BasePracticeReport;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
 
 class CommonwealthPcmEligibleExport extends BasePracticeReport

@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\DTO\Athena\Insurances;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
@@ -52,7 +52,7 @@ class InsuranceFromAthena implements MedicalRecordDecorator
     }
 
     /**
-     * @param \CircleLinkHealth\SharedModels\Entities\TargetPatient $targetPatient
+     * @param TargetPatient $targetPatient
      * @param Ccda          $ccda
      *
      * @throws \Exception
@@ -73,9 +73,9 @@ class InsuranceFromAthena implements MedicalRecordDecorator
     }
 
     /**
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityJob
      * @throws \Exception
      *
+     * @return EligibilityJob
      */
     private function addInsuranceFromAthenaApi(EligibilityJob &$eligibilityJob)
     {
@@ -102,7 +102,7 @@ class InsuranceFromAthena implements MedicalRecordDecorator
     }
 
     /**
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityJob
+     * @return EligibilityJob
      */
     private function addInsuranceFromEligibilityJob(EligibilityJob &$eligibilityJob)
     {

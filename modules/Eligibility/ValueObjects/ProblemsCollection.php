@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\ValueObjects;
 
-use CircleLinkHealth\Eligibility\DTO\Problem;
+use CircleLinkHealth\Eligibility\Entities\Problem;
 
 class ProblemsCollection
 {
