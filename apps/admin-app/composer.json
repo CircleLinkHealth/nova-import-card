@@ -199,6 +199,21 @@
             "dont-discover": [
                 "barryvdh/laravel-snappy"
             ]
+        },
+        "merge-plugin": {
+            "include": [
+                "CircleLinkHealth/*/composer.json"
+            ],
+            "require": [
+
+            ],
+            "recurse": true,
+            "replace": false,
+            "ignore-duplicates": false,
+            "merge-dev": true,
+            "merge-extra": false,
+            "merge-extra-deep": false,
+            "merge-scripts": false
         }
     },
     "autoload": {

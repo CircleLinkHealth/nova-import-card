@@ -170,6 +170,7 @@
     "spatie/laravel-slack-slash-command": "^1.10",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
+    "wikimedia/composer-merge-plugin": "^1.4",
     "wildbit/swiftmailer-postmark": "^3.1",
     "willdurand/email-reply-parser": "^2.9"
   },
