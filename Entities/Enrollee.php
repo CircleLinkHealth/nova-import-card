@@ -18,9 +18,9 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -90,7 +90,7 @@ use Illuminate\Support\Str;
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection
  *     $confirmedFamilyMembers
  * @property int|null                                                                    $confirmed_family_members_count
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob|null                  $eligibilityJob
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null                  $eligibilityJob
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
  *     $enrollmentInvitationLinks
@@ -112,7 +112,7 @@ use Illuminate\Support\Str;
  *     $revisionHistory
  * @property int|null                                                  $revision_history_count
  * @property mixed                                                     $primary_phone_number
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient|null $targetPatient
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient|null $targetPatient
  * @property \CircleLinkHealth\Customer\Entities\User|null             $user
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda
@@ -143,7 +143,7 @@ use Illuminate\Support\Str;
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     withCaPanelRelationships()
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null $batch
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null $batch
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     lastCalledBetween(\Carbon\Carbon $start, \Carbon\Carbon $end)
  * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
