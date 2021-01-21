@@ -7,36 +7,45 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
 
 class ForcePatientChargeableService
 {
     protected int $chargeableServiceId;
-    protected bool $force;
+    protected string $actionType;
     protected ?Carbon $month;
     protected int $patientUserId;
 
-    public function __construct(int $patientUserId, int $chargeableServiceId, bool $force = true, ?Carbon $month = null)
+    public function __construct(int $patientUserId, int $chargeableServiceId, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?Carbon $month = null)
     {
         $this->patientUserId       = $patientUserId;
         $this->chargeableServiceId = $chargeableServiceId;
-        $this->force               = $force;
+        $this->actionType              = $actionType;
         $this->month               = $month;
     }
 
     public static function force(int $patientUserId, int $chargeableServiceId, ?Carbon $month = null): void
     {
-        (new static($patientUserId, $chargeableServiceId, true, $month))
+        (new static($patientUserId, $chargeableServiceId, PatientForcedChargeableService::FORCE_ACTION_TYPE, $month))
+            ->guaranteeHistoricallyAccurateRecords()
             ->setForcedChargeableService()
             ->reprocessPatientForBilling();
     }
 
-    public static function unForce(int $patientUserId, int $chargeableServiceId, ?Carbon $month = null): void
+    public static function block(int $patientUserId, int $chargeableServiceId, ?Carbon $month = null): void
     {
-        (new static($patientUserId, $chargeableServiceId, false, $month))
+        (new static($patientUserId, $chargeableServiceId, PatientForcedChargeableService::BLOCK_ACTION_TYPE, $month))
+            ->guaranteeHistoricallyAccurateRecords()
             ->setForcedChargeableService()
             ->reprocessPatientForBilling();
+    }
+
+    private function guaranteeHistoricallyAccurateRecords() : self
+    {
+        //todo: add logic
+        return $this;
     }
 
     private function reprocessPatientForBilling(): void
@@ -53,7 +62,7 @@ class ForcePatientChargeableService
             ->syncWithPivotValues([
                 $this->chargeableServiceId,
             ], [
-                'is_forced'        => $this->force,
+                'action_type'        => $this->actionType,
                 'chargeable_month' => $this->month,
             ], false);
 
