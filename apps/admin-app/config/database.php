@@ -47,6 +47,21 @@ return [
 
         'mysql' => CpmAppMySqlConfig::toArray(),
 
+        'test_suite' => [
+            'driver'      => 'mysql',
+            'host'        => env('DB_HOST', '127.0.0.1'),
+            'port'        => env('DB_PORT', '3306'),
+            'database'    => env('TEST_SUITE_DB_DATABASE', 'cpm_test_suite'),
+            'username'    => env('DB_USERNAME', 'forge'),
+            'password'    => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset'     => 'utf8mb4',
+            'collation'   => 'utf8mb4_unicode_ci',
+            'prefix'      => '',
+            'strict'      => false,
+            'engine'      => null,
+        ],
+
         'pgsql' => [
             'driver'         => 'pgsql',
             'url'            => env('DATABASE_URL'),
@@ -99,7 +114,6 @@ return [
     | such as APC or Memcached. Laravel makes it easy to dig right in.
     |
     */
-
     'redis' => [
         'client' => env('REDIS_CLIENT', 'phpredis'),
 
@@ -114,6 +128,10 @@ return [
             'password' => env('REDIS_PASSWORD', null),
             'port'     => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
+            'context'  => [
+                //                 'auth' => ['username', 'secret'],
+                // 'stream' => ['verify_peer' => false],
+            ],
         ],
 
         'cache' => [
@@ -122,6 +140,17 @@ return [
             'password' => env('REDIS_PASSWORD', null),
             'port'     => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
+        ],
+
+        // need a specific connection for the pub/sub channel
+        // otherwise, we get errors (tried both phpredis and predis)
+        'pub_sub' => [
+            'url'                => env('REDIS_URL'),
+            'host'               => env('REDIS_HOST', '127.0.0.1'),
+            'password'           => env('REDIS_PASSWORD', null),
+            'port'               => env('REDIS_PORT', 6379),
+            'database'           => env('REDIS_DB', 0),
+            'read_write_timeout' => -1,
         ],
     ],
 ];
