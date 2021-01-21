@@ -8,11 +8,9 @@ namespace App\Listeners;
 
 use App\Events\SurveyInstancePivotSaved;
 use App\Jobs\GeneratePatientReportsJob as GenerateReports;
-use App\Services\GenerateProviderReportService;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
-use Aws\DynamoDb\DynamoDbClient;
 use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use CircleLinkHealth\Customer\CpmConstants;
 
