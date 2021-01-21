@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * CircleLinkHealth\Eligibility\Entities\SupplementalPatientData.
+ * CircleLinkHealth\SharedModels\Entities\SupplementalPatientData.
  *
  * @property int                             $id
  * @property \Illuminate\Support\Carbon      $dob
@@ -42,10 +42,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null                                     $billing_provider_user_id
  * @property string|null                                  $location
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
- * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereBillingProviderUserId($value)
- * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereLocation($value)
- * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereLocationId($value)
- * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData wherePracticeId($value)
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SupplementalPatientData whereBillingProviderUserId($value)
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SupplementalPatientData whereLocation($value)
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SupplementalPatientData whereLocationId($value)
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SupplementalPatientData wherePracticeId($value)
  */
 class SupplementalPatientData extends Model
 {

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility;
+namespace CircleLinkHealth\SharedModels\Traits;
 
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 

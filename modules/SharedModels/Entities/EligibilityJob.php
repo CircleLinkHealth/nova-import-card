@@ -4,15 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * CircleLinkHealth\Eligibility\Entities\EligibilityJob.
+ * CircleLinkHealth\SharedModels\Entities\EligibilityJob.
  *
  * @property int                                                     $id
  * @property int                                                     $batch_id
@@ -41,7 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                     $invalid_dob
  * @property int                                                     $invalid_problems
  * @property int                                                     $invalid_phones
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch $batch
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch $batch
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee        $enrollee
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
@@ -84,7 +86,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  * @property \App\EligibilityJob                                  $eligibilityJob
  * @property int|null                                             $revision_history_count
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient $targetPatient
  * @property string|null                                          $patient_first_name
  * @property string|null                                          $patient_last_name
  * @property string|null                                          $patient_mrn

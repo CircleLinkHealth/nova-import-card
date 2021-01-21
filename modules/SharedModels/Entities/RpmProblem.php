@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * CircleLinkHealth\Eligibility\Entities\RpmProblem.
+ * CircleLinkHealth\SharedModels\Entities\RpmProblem.
  *
  * @property int                             $id
  * @property int                             $practice_id

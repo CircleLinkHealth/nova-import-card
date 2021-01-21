@@ -4,18 +4,20 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\BelongsToCcda;
+use CircleLinkHealth\SharedModels\Traits\BelongsToCcda;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 /**
- * CircleLinkHealth\Eligibility\Entities\TargetPatient.
+ * CircleLinkHealth\SharedModels\Entities\TargetPatient.
  *
  * @property int                                                                                         $id
  * @property int|null                                                                                    $batch_id
@@ -52,7 +54,7 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
  * @property int                                                          $practice_id
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null $batch
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice                 $practice
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
  * @property int|null                                                     $ccda_id
@@ -61,7 +63,7 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
  * @property int|null                                                     $revision_history_count
  * @property int                                                          $department_id
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob|null   $eligibilityJob
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null   $eligibilityJob
  */
 class TargetPatient extends BaseModel
 {
@@ -113,31 +115,6 @@ class TargetPatient extends BaseModel
     public function practice()
     {
         return $this->belongsTo(Practice::class);
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return EligibilityJob
-     */
-    public function processEligibility()
-    {
-        $this->loadMissing('batch');
-
-        if ( ! $this->batch) {
-            throw new \Exception('A batch is necessary to process a target patient.');
-        }
-
-        return tap(
-            app(AthenaEligibilityCheckableFactory::class)
-                ->makeAthenaEligibilityCheckable($this)
-                ->createAndProcessEligibilityJobFromMedicalRecord(),
-            function (EligibilityJob $eligibilityJob) {
-                $this->setStatusFromEligibilityJob($eligibilityJob);
-                $this->eligibility_job_id = $eligibilityJob->id;
-                $this->save();
-            }
-        );
     }
 
     public function setStatusFromEligibilityJob(EligibilityJob $eligibilityJob)
