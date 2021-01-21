@@ -18,19 +18,40 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('home', 'HomeController@index');
 
-Route::get('ccd-importer', [
-    'uses' => 'RedirectToProviderApp@ccdImporter',
-    'as' => 'import.ccd.remix',
-]);
+Route::group([
+    'middleware' => [
+        'auth',
+    ],
+], function () {
+    Route::get('home', 'HomeController@index');
 
-Route::get('patient/{patientId}/notes', [
-    'uses' => 'RedirectToProviderApp@notesIndex',
-    'as' => 'patient.note.index',
-]);
+    Route::get('hospitalisation-notes-dashboard', [
+        'uses' => 'HospitalisationNotesController@index',
+        'as'   => 'hospitalization-notes.table',
+    ]);
+    Route::get('patient/{patientId}/note/{noteId}', [
+        'uses' => 'RedirectToProviderApp@notesShow',
+        'as'   => 'patient.note.show',
+    ]);
 
-Route::get('patient/{patientId}/careplan', [
-    'uses' => 'RedirectToProviderApp@showCareplan',
-    'as' => 'patient.careplan.print',
-]);
+    Route::get('ccd-importer', [
+        'uses' => 'RedirectToProviderApp@ccdImporter',
+        'as'   => 'import.ccd.remix',
+    ]);
+
+    Route::get('patient/{patientId}/demographics', [
+        'uses' => 'RedirectToProviderApp@showPatientDemographics',
+        'as'   => 'patient.demographics.show',
+    ]);
+
+    Route::get('patient/{patientId}/notes', [
+        'uses' => 'RedirectToProviderApp@notesIndex',
+        'as'   => 'patient.note.index',
+    ]);
+    
+    Route::get('patient/{patientId}/careplan', [
+        'uses' => 'RedirectToProviderApp@showCareplan',
+        'as'   => 'patient.careplan.print',
+    ]);
+});

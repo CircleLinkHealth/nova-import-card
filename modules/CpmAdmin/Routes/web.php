@@ -398,35 +398,6 @@ Route::group([
         ]);
     });
 
-    // families
-    Route::group([
-    ], function () {
-        Route::get('families', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@index',
-            'as'   => 'admin.families.index',
-        ])->middleware('permission:family.read');
-        Route::post('families', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@store',
-            'as'   => 'admin.families.store',
-        ])->middleware('permission:family.create,family.delete');
-        Route::get('families/create', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@create',
-            'as'   => 'admin.families.create',
-        ])->middleware('permission:patient.read');
-        Route::get('families/{id}/edit', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@edit',
-            'as'   => 'admin.families.edit',
-        ]);
-        Route::get('families/{id}/destroy', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@destroy',
-            'as'   => 'admin.families.destroy',
-        ]);
-        Route::post('families/{id}/edit', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@update',
-            'as'   => 'admin.families.update',
-        ]);
-    });
-
     Route::get('reports/nurse/daily', [
         'uses' => 'NurseController@makeDailyReport',
         'as'   => 'admin.reports.nurse.daily',
