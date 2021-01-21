@@ -8,11 +8,11 @@ namespace Tests\Unit;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
-use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ApproveBillablePatientTest extends TestCase
 {

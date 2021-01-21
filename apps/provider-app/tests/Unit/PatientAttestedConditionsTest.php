@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -29,6 +28,7 @@ use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Tests\Helpers\CarePlanHelpers;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientAttestedConditionsTest extends TestCase
 {

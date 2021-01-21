@@ -8,8 +8,8 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use Illuminate\Console\Command;
 
