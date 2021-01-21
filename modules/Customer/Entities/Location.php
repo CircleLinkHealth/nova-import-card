@@ -96,7 +96,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use HasEmrDirectAddress;
     use Notifiable;
-    use Searchable;
+    
     use SoftDeletes;
     use Synonymable;
 

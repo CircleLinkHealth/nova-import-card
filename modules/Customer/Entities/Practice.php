@@ -155,7 +155,7 @@ class Practice extends BaseModel implements HasMedia
     use HasSettings;
     use Notifiable;
     use SaasAccountable;
-    use Searchable;
+    
     use SoftDeletes;
 
     protected $casts = [

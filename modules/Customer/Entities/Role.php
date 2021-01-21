@@ -35,7 +35,7 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  */
 class Role extends CerberusRole
 {
-    use Searchable;
+    
     const ALL_CPM_ROLES_CACHE_KEY = 'all_cpm_roles';
 
     const CCM_TIME_ROLES = [

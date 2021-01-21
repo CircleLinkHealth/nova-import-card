@@ -38,7 +38,7 @@ use Laravel\Scout\Searchable;
 class PcmProblem extends Model
 {
     use MySQLSearchable;
-    use Searchable;
+    
 
     protected $fillable = [
         'practice_id',
