@@ -932,6 +932,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.delete',
                     'phoneNumber.read',
                     'notification.read',
+                    'practiceInvoice.read',
+                    'practiceInvoice.create',
                 ],
             ],
             [
