@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class PatientForcedChargeableService extends Pivot
 {
+    //todo: test this works on pivot model, i.e: do the same model events fire for pivot models?
+    //create Pivot revisionable if necessary
     use RevisionableTrait;
 
     const FORCE_ACTION_TYPE = 'force';
