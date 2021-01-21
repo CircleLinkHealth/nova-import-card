@@ -48,7 +48,7 @@ describe('Tests Admin Endpoints API Status Code = 200', () => {
 	});
 
 	it('Practice Billing', () => {
-		api.validateStatusCode200('/admin/practice/billing/create');
+		api.validateStatusCode200('/practice/billing');
 	});
 
 	it('CCD Importer', () => {
