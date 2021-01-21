@@ -1,7 +1,7 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "AWV App",
     "keywords": [
         "framework",
         "laravel"
@@ -17,34 +17,6 @@
             "url": "git@github.com:subzero10/url-shortener.git"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
-        },
-        {
             "type": "composer",
             "url": "https://packagist.org"
         },
@@ -52,60 +24,52 @@
             "packagist": false
         },
         {
-            "type": "git",
-            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcmBilling"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CerberusGatekeeper"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmMigrations"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Customer"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedModels"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Synonyms"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/TimeTracking"
         },
         {
-            "type": "vcs",
-            "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/synonyms.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/TwoFA"
         }
     ],
     "require": {
@@ -120,17 +84,16 @@
         "algolia/algoliasearch-client-php": "^2.6",
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
-        "circlelinkhealth/cerberus-gatekeeper-module": "3.1.9",
-        "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
-        "circlelinkhealth/core-module": "dev-vaporizing-admin",
-        "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
+        "circlelinkhealth/ccm-billing-module": "*",
+        "circlelinkhealth/cerberus-gatekeeper-module": "*",
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/cpm-migrations-module": "*",
+        "circlelinkhealth/customer-module": "*",
+        "circlelinkhealth/eligibility-module": "*",
+        "circlelinkhealth/revisionable-module": "*",
+        "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/sqlviews-module": "*",
         "circlelinkhealth/synonyms-module": "*",
-        "circlelinkhealth/customer-module": "dev-vaporizing-admin",
-        "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
-        "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
-        "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
-        "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
-        "circlelinkhealth/timetracking-module": "dev-vaporizing-admin",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.2",
         "friendsofphp/php-cs-fixer": "^2.16",
