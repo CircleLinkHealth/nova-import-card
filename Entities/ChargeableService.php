@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV1;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV2;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -203,8 +204,10 @@ class ChargeableService extends BaseModel
     public function forcedForPatients()
     {
         return $this->belongsToMany(User::class, 'patient_forced_chargeable_services', 'chargeable_service_id', 'patient_user_id')
-            ->withPivot([
-                'is_forced',
+            ->using(PatientForcedChargeableService::class)
+            ->using('forcedDetails')
+                    ->withPivot([
+                'action_type',
                 'chargeable_month',
             ])->withTimestamps();
     }

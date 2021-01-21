@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -1103,8 +1104,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function forcedChargeableServices()
     {
         return $this->belongsToMany(ChargeableService::class, 'patient_forced_chargeable_services', 'patient_user_id', 'chargeable_service_id')
-            ->withPivot([
-                'is_forced',
+                    ->using(PatientForcedChargeableService::class)
+            ->as('forcedDetails')
+                    ->withPivot([
+                'action_type',
                 'chargeable_month',
             ])
             ->withTimestamps();
