@@ -10,41 +10,5 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/CcmBilling" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Core" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/CpmAdmin" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/CpmMigrations" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Customer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Eligibility" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Raygun" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/SharedModels" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Synonyms" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/Twofa" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/admin-app/CircleLinkHealth/VaporDevopsHelpers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CcdaParserProcessorPhp" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CcmBilling" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CerberusGatekeeper" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/ConditionCodeLookup" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Core" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CpmAdmin" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/CpmMigrations" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Customer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Eligibility" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Nurseinvoices" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Patientapi" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/PdfService" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Raygun" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Revisionable" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/SamlSp" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/SelfEnrollment" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/SharedModels" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Sharedvuecomponents" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Sqlviews" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Synonyms" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/TimeTracking" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/TwilioIntegration" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/Twofa" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/apps/provider-app/CircleLinkHealth/VaporDevopsHelpers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/modules/VaporDevopsHelpers" vcs="Git" />
   </component>
 </project>
