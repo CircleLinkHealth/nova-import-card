@@ -5,7 +5,7 @@
  */
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -36,7 +36,7 @@ class AddPracticeIdFkToTargetPatients extends Migration
             $table->unsignedInteger('practice_id')->after('id');
         });
 
-        \CircleLinkHealth\Eligibility\Entities\TargetPatient::select('ehr_practice_id')->groupBy('ehr_practice_id')->get()->each(function ($tpPractice) {
+        \CircleLinkHealth\SharedModels\Entities\TargetPatient::select('ehr_practice_id')->groupBy('ehr_practice_id')->get()->each(function ($tpPractice) {
             $practice = Practice::where('external_id', $tpPractice->ehr_practice_id)->firstOrFail();
             TargetPatient::where('ehr_practice_id', $tpPractice->ehr_practice_id)->update(['practice_id' => $practice->id]);
         });

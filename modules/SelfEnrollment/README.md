@@ -1,1 +1,1 @@
-# module-self-enrollment
+# self-enrollment-module
