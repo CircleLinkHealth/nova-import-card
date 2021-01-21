@@ -2,6 +2,7 @@ git merge --strategy recursive --strategy-option subtree=apps/provider-app provi
 git merge --strategy recursive --strategy-option subtree=apps/provider-app provider-app/development
 git merge --strategy recursive --strategy-option subtree=apps/admin-app admin-app/master
 git merge --strategy recursive --strategy-option subtree=apps/admin-app admin-app/development
+git merge --strategy recursive --strategy-option subtree=apps/admin-app admin-app/main
 
 git merge --strategy recursive --strategy-option subtree=modules/CcdaParser CcdaParser/master
 git merge --strategy recursive --strategy-option subtree=modules/CcdaParser CcdaParser/development

@@ -338,9 +338,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
         $unprocessedQuery->take(200)->get()->each(
             function ($job) use ($batch) {
                 ProcessSinglePatientEligibility::dispatchNow(
-                    $job,
-                    $batch,
-                    $batch->practice
+                    $job->id
                 );
             }
         );

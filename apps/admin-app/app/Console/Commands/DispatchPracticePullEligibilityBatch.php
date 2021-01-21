@@ -73,14 +73,14 @@ class DispatchPracticePullEligibilityBatch extends Command
 
     protected function dispatchEligibilityJob(Demographics $demos, EligibilityBatch $batch)
     {
-        if ( ! $demos->billing_provider_user_id && $demos->referring_provider_name) {
+        if (! $demos->billing_provider_user_id && $demos->referring_provider_name) {
             $provider = CcdaImporterWrapper::mysqlMatchProvider($demos->referring_provider_name, $demos->practice_id);
             if ($provider) {
                 $demos->billing_provider_user_id = $provider->id;
                 $demos->save();
             }
         }
-
+        
         $ej = $this->createFromBlueButtonObject((new PracticePullMedicalRecord($demos->mrn, $demos->practice_id))->toObject(), $batch, $this->practice);
 
         if ( ! $demos->eligibility_job_id) {
