@@ -9,7 +9,7 @@ namespace CircleLinkHealth\SharedModels\Services\Postmark;
 use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
-use CircleLinkHealth\Eligibility\DTO\InboundCallbackNameFields;
+use CircleLinkHealth\SharedModels\DTO\InboundCallbackNameFields;
 use CircleLinkHealth\SharedModels\Entities\PostmarkMultipleMatchData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
