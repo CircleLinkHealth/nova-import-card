@@ -73,12 +73,20 @@ This is like a hard "reset". What it does is it will erase everything, and re-bu
 
 Building from scratch **has to** happen on the `master` branch.
 
+```bash
+git checkout master
+```
+
 Firstly, delete all apps and modules. 
 ```bash
-rm apps/* modules/*
+rm -rf apps/* modules/*
 ```
 
 After, uncomment all lines in `repos.txt` by removing the leading `#`, and **commit and push** all changes.
+
+```bash
+git add . && git commit -m"About to reset" && git push
+```
 
 After, delete the repo from your local, and clone it again. This step is a mandatory CLH best practice to test the monorepo works from scratch, and to avoid any "git mess-ups" and errors in case we are renaming any remotes, or attempting to re-add existing remotes.
 
