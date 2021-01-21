@@ -75,16 +75,3 @@ Route::group([
         ])->middleware('permission:practiceInvoice.create');
     });
 });
-
-//This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
-//We keep it here to support Report links mailed before 5/12/17.
-Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
-    'uses'       => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@downloadInvoice',
-    'middleware' => ['auth'],
-]);
-
-Route::get('/downloadInvoice/{practice}/{name}', [
-    'uses'       => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@downloadInvoice',
-    'as'         => 'monthly.billing.download',
-    'middleware' => ['auth'],
-]);
