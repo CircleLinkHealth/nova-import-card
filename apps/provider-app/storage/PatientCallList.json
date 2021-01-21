@@ -1,0 +1,38 @@
+{
+  "nurse_user_id": 332,
+  "comments": ".",
+  "data": {
+    "version": "0.1",
+    "event_date_time": "2016-07-21 09:25:45"
+  },
+  "call_list": [
+    {
+      "user_id": 1000,
+      "first_name": "",
+      "last_name": "",
+      "dob": "",
+      "call_window_start": "",
+      "call_window_end": "",
+      "call_center_status": "",
+      "last_call_date": "",
+      "ccm_time": "",
+      "num_success_calls": "",
+      "provider": "",
+      "program": ""
+    },
+    {
+      "user_id": 1001,
+      "first_name": "",
+      "last_name": "",
+      "dob": "",
+      "call_window_start": "",
+      "call_window_end": "",
+      "call_center_status": "",
+      "last_call_date": "",
+      "ccm_time": "",
+      "num_success_calls": "",
+      "provider": "",
+      "program": ""
+    }
+  ]
+}
