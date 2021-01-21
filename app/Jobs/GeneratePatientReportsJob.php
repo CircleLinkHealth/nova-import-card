@@ -6,7 +6,6 @@
 
 namespace App\Jobs;
 
-use App\CPM\PatientReportCreatedEvent;
 use App\PersonalizedPreventionPlan;
 use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\Services\GenerateProviderReportService;
@@ -116,7 +115,7 @@ class GeneratePatientReportsJob implements ShouldQueue
             ->findOrFail($this->patientId);
 
         //instantiate Redis Event class to emit report created events to CPM
-        $redisEvent = new PatientReportCreatedEvent($patient);
+//        $redisEvent = new PatientReportCreatedEvent($patient);
 
         //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
@@ -135,7 +134,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
 
         if ( ! $this->debug) {
-            $redisEvent->publishReportCreated($providerReportMedia);
+//            $redisEvent->publishReportCreated($providerReportMedia);
         }
 
         $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
@@ -144,7 +143,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
 
         if ( ! $this->debug) {
-            $redisEvent->publishReportCreated($pppMedia);
+//            $redisEvent->publishReportCreated($pppMedia);
         }
 
         if ($this->debug) {
