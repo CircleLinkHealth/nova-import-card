@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Eligibility\Decorators\EncountersFromAthena;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;

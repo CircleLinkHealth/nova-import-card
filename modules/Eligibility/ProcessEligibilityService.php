@@ -12,9 +12,9 @@ use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
@@ -38,7 +38,7 @@ class ProcessEligibilityService
      * @param $type
      * @param array $options
      *
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
+     * @return EligibilityBatch
      */
     public function createBatch($type, int $practiceId, $options = [])
     {
@@ -120,7 +120,7 @@ class ProcessEligibilityService
     }
 
     /**
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityJob|\Illuminate\Database\Eloquent\Model
+     * @return EligibilityJob|\Illuminate\Database\Eloquent\Model
      */
     public function createEligibilityJobFromCsvRow(array $patient, EligibilityBatch $batch)
     {
@@ -192,7 +192,7 @@ class ProcessEligibilityService
      * @param $filterInsurance
      * @param $filterProblems
      *
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
+     * @return \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     public function createSingleCSVBatch(
         int $practiceId,
@@ -253,7 +253,7 @@ class ProcessEligibilityService
      *
      * @param array $options
      *
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
+     * @return EligibilityBatch
      */
     public function editBatch(EligibilityBatch $batch, $options = [])
     {
@@ -457,7 +457,7 @@ class ProcessEligibilityService
      * @param $filterProblems
      * @param $reprocessingMethod
      *
-     * @return \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
+     * @return \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     public function prepareClhMedicalRecordTemplateBatchForReprocessing(
         EligibilityBatch $batch,

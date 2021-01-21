@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -22,7 +22,7 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue, ShouldBeEncrypte
     use Queueable;
     use SerializesModels;
     /**
-     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     private $batch;
     private $dir;

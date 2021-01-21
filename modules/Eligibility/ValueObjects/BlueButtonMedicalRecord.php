@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\ValueObjects;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 class BlueButtonMedicalRecord
 {
@@ -16,7 +16,7 @@ class BlueButtonMedicalRecord
      */
     private $data;
     /**
-     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityJob
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     private $job;
     /**

@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\ValidatesDates;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 class EncountersFromAthena implements MedicalRecordDecorator
 {

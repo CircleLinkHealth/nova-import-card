@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 class DemographicsFromAthena implements MedicalRecordDecorator
 {

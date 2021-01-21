@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +22,7 @@ class CreateEligibilityJobFromJsonMedicalRecord implements ShouldQueue, ShouldBe
     use Queueable;
     use SerializesModels;
     /**
-     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
+     * @var EligibilityBatch
      */
     public $batch;
     /**
