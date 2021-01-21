@@ -18,6 +18,7 @@ SamlSp
 SelfEnrollment
 SharedModels
 SharedVueComponents
+ShortUrl
 SqlViews
 Synonyms
 Revisionable

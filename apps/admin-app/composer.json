@@ -182,14 +182,13 @@
         "fourstacks/nova-checkboxes": "^0.1.5",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.9.1",
-        "guzzlehttp/guzzle": "^6.3",
         "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
-        "jenssegers/agent": "^2.5",
         "jubeki/nova-card-linkable": "^1.0",
-        "kreitje/nova-horizon-stats": "^0.3.0",
         "laravel/nova": "^3.0",
         "maatwebsite/laravel-nova-excel": "^1.2",
+        "mediconesystems/livewire-datatables": "^0.4.3",
         "phaxio/phaxio": "^2.0",
+        "sloveniangooner/searchable-select": "^1.3",
         "sparclex/nova-import-card": "^7.0.1",
         "suenerds/nova-searchable-belongs-to-filter": "^1.0",
         "titasgailius/search-relations": "^1.0",
@@ -200,13 +199,12 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
         "barryvdh/laravel-ide-helper": "^2.8",
-        "facade/ignition": "^2.0",
+        "facade/ignition": "^2.3.6",
         "friendsofphp/php-cs-fixer": "^2.17",
-        "joshgaber/novaunit": "1.2",
-        "laravel/vapor-cli": "^1.11",
+        "joshgaber/novaunit": "^2.0",
         "mockery/mockery": "^1.3.1",
-        "nunomaduro/collision": "^4.1",
-        "nwidart/laravel-modules": "^7.1",
+        "nunomaduro/collision": "^5.0",
+        "nwidart/laravel-modules": "^8.2",
         "phpunit/phpunit": "^9.0",
         "psalm/plugin-laravel": "^1.4",
         "vimeo/psalm": "^4.3"
@@ -227,21 +225,6 @@
             "dont-discover": [
                 "barryvdh/laravel-snappy"
             ]
-        },
-        "merge-plugin": {
-            "include": [
-                "CircleLinkHealth/*/composer.json"
-            ],
-            "require": [
-
-            ],
-            "recurse": true,
-            "replace": false,
-            "ignore-duplicates": false,
-            "merge-dev": true,
-            "merge-extra": false,
-            "merge-extra-deep": false,
-            "merge-scripts": false
         }
     },
     "autoload": {
