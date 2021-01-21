@@ -8,6 +8,7 @@ namespace App\Nova\Helpers;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use Illuminate\Support\Str;
 
 class Utils
 {
@@ -57,9 +58,13 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
             $date = Carbon::parse($date);
 
             if ($date->isToday()) {
-                throw new \InvalidArgumentException('date note parsed correctly');
+                throw new \Exception('date note parsed correctly');
             }
-        } catch (\InvalidArgumentException $e) {
+        } catch (\Throwable $e) {
+            if ($date instanceof Carbon) {
+                $date = $date->toDateString();
+            }
+
             if (Str::contains($date, '/')) {
                 $delimiter = '/';
             } elseif (Str::contains($date, '-')) {
