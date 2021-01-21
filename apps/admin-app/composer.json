@@ -49,36 +49,96 @@
             "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
         },
         {
-            "type": "git",
-            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcdaParser"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcmBilling"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/synonyms.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CerberusGatekeeper"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/ConditionCodeLookup"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmAdmin"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmMigrations"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Customer"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/NurseInvoices"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PatientApi"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Raygun"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SamlSp"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedModels"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedVueComponents"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Synonyms"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TimeTracking"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwilioIntegration"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwoFA"
         }
     ],
     "require": {
