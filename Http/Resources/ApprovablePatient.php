@@ -102,6 +102,7 @@ class ApprovablePatient extends JsonResource
         $user = $this->resource;
 
         return $user->chargeableMonthlySummariesView
+            ->filter(fn (ChargeablePatientMonthlySummaryView $item) => $item->is_fulfilled)
             ->map(function (ChargeablePatientMonthlySummaryView $view) {
                 return [
                     'id'   => $view->chargeable_service_id,

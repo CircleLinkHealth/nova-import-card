@@ -483,7 +483,9 @@
 
                         if (this.isNewVersion()) {
                             const retrievedIds = pagination.data.map(i => i.id);
-                            this.getSuccessfulCalls(retrievedIds, isBackground);
+                            if (retrievedIds.length) {
+                                this.getSuccessfulCalls(retrievedIds, isBackground);
+                            }
                         }
 
                         const ids = this.tableData.map(i => i.id);

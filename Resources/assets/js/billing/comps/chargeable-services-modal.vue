@@ -7,7 +7,7 @@
               <div class="col-sm-12 form-control margin-5" v-for="service in patientServices" :key="service.id">
                 <label>
                     <input :disabled="!isServiceChargeableForPatient(service.code)" type="checkbox" v-model="service.selected" :value="service.id">
-                    <span>{{service.code}}</span>
+                    <span>{{service.code}} [{{service.display_name}}]</span>
                 </label>
               </div>
             </div>

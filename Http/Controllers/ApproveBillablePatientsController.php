@@ -76,7 +76,9 @@ class ApproveBillablePatientsController extends Controller
     {
         $practices = Practice::orderBy('display_name')
             ->select(['name', 'id', 'display_name'])
-            ->with('chargeableServices')
+            ->with([
+                'chargeableServices' => fn ($q) => $q->orderBy('order', 'asc'),
+            ])
             ->authUserCanAccess(auth()->user()->isSoftwareOnly())
             ->active()
             ->get();
@@ -100,7 +102,7 @@ class ApproveBillablePatientsController extends Controller
             ];
         }
 
-        $chargeableServices = ChargeableService::cached();
+        $chargeableServices = ChargeableService::cached()->sortBy('order');
         $version            = $request->get('version', '2');
 
         return view('ccmbilling::billing', compact([
