@@ -169,7 +169,7 @@ class AutoPatientAttestation
         return $this;
     }
 
-    public function setPmsId(int $pmsId): AutoPatientAttestation
+    public function setPmsId(?int $pmsId): AutoPatientAttestation
     {
         $this->pmsId = $pmsId;
 
