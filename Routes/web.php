@@ -66,20 +66,13 @@ Route::group([
     Route::group(['prefix' => 'practice/billing'], function () {
         Route::get('create', [
             'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@createInvoices',
-            'as'   => 'practice.billing.create',
+            'as'   => 'practices.billing.create',
         ])->middleware('permission:practiceInvoice.read');
 
         Route::post('make', [
             'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@makeInvoices',
-            'as'   => 'practice.billing.make',
+            'as'   => 'practices.billing.make',
         ])->middleware('permission:practiceInvoice.create');
-    });
-
-    Route::group(['prefix' => 'practice/billing'], function () {
-        Route::get('create', [
-            'uses' => '\CircleLinkHealth\CcmBilling\Http\Controllers\PracticeInvoiceController@createInvoices',
-            'as'   => 'saas-admin.practices.billing.create',
-        ]);
     });
 });
 

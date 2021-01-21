@@ -25,7 +25,7 @@
 
     @include('core::partials.errors.messages')
 
-    {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('practices.billing.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid" style="padding-top: 10px">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
