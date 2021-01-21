@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -456,16 +455,6 @@ class Practice extends BaseModel implements HasMedia
         return $providers;
     }
 
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
-    {
-        return $this->id;
-    }
-
     public function getSubdomainAttribute()
     {
         return explode('.', $this->domain)[0];
@@ -622,36 +611,13 @@ class Practice extends BaseModel implements HasMedia
         ])
             ->whereHas('patients.patientInfo');
     }
-
-    /**
-     * Get Scout index name for the model.
-     *
-     * @return string
-     */
-    public function searchableAs()
-    {
-        return 'practices_index';
-    }
-
+    
     public function setDirectMailCareplanApprovalReminders($bool)
     {
         $settings = $this->cpmSettings();
 
         $settings->dm_careplan_approval_reminders = $bool;
         $settings->save();
-    }
-
-    /**
-     * Get the indexable data array for the model.
-     *
-     * @return array
-     */
-    public function toSearchableArray()
-    {
-        return [
-            'name'         => $this->name,
-            'display_name' => $this->display_name,
-        ];
     }
 
     public function users()

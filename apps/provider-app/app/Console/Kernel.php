@@ -111,10 +111,6 @@ class Kernel extends ConsoleKernel
             ->everyFifteenMinutes()
             ->between('8:00', '23:00');
 
-        $schedule->command(ProcessNextEligibilityBatchChunk::class)
-            ->everyThirtyMinutes()
-            ->withoutOverlapping();
-
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
             ->onOneServer();

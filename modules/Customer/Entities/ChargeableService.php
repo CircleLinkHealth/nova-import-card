@@ -74,8 +74,8 @@ class ChargeableService extends BaseModel
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
     ];
-    const CCM_PLUS_40 = 'CPT 99439(>40mins)';
-    const CCM_PLUS_60 = 'CPT 99439(>60mins)';
+    const CCM_PLUS_40 = 'G2058(>40mins)';
+    const CCM_PLUS_60 = 'G2058(>60mins)';
 
     const CCM_PLUS_CODES = [
         self::CCM_PLUS_40,

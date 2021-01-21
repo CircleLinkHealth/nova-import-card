@@ -142,23 +142,22 @@ class PatientBillingDatabaseTest extends CustomerTestCase
             )
         );
 
-        //todo: calls refactored away from view table - todo fix test
-//        Call::insert([
-//            [
-//                'inbound_cpm_id'  => $patientId,
-//                'outbound_cpm_id' => $careCoachId = $this->careCoach()->id,
-//                'type'            => 'call',
-//                'status'          => Call::REACHED,
-//                'called_date'     => Carbon::now()->startOfMonth()->addDay(10),
-//            ],
-//            [
-//                'inbound_cpm_id'  => $patientId,
-//                'outbound_cpm_id' => $careCoachId,
-//                'type'            => 'call',
-//                'status'          => Call::NOT_REACHED,
-//                'called_date'     => Carbon::now()->startOfMonth()->addDay(5),
-//            ],
-//        ]);
+        Call::insert([
+            [
+                'inbound_cpm_id'  => $patientId,
+                'outbound_cpm_id' => $careCoachId = $this->careCoach()->id,
+                'type'            => 'call',
+                'status'          => Call::REACHED,
+                'called_date'     => Carbon::now()->startOfMonth()->addDay(10),
+            ],
+            [
+                'inbound_cpm_id'  => $patientId,
+                'outbound_cpm_id' => $careCoachId,
+                'type'            => 'call',
+                'status'          => Call::NOT_REACHED,
+                'called_date'     => Carbon::now()->startOfMonth()->addDay(5),
+            ],
+        ]);
 
         Activity::insert([
             [
@@ -184,9 +183,8 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 ->first()
         );
 
-        //TODO: Refactored away, fix test
-//        self::assertEquals($viewSummary->no_of_calls, 2);
-//        self::assertEquals($viewSummary->no_of_successful_calls, 1);
+        self::assertEquals($viewSummary->no_of_calls, 2);
+        self::assertEquals($viewSummary->no_of_successful_calls, 1);
 
         self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
     }

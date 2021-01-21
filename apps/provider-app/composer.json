@@ -63,7 +63,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/CcdaParser"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/CcmBilling"
     },
@@ -71,7 +71,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/CerberusGatekeeper"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/ConditionCodeLookup"
     },
@@ -79,7 +79,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/CpmAdmin"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/CpmMigrations"
     },
@@ -87,7 +87,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/Customer"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/Eligibility"
     },
@@ -95,7 +95,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/NurseInvoices"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/PatientApi"
     },
@@ -103,7 +103,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/PdfService"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/Raygun"
     },
@@ -111,7 +111,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/Revisionable"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/SamlSp"
     },
@@ -119,7 +119,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/SelfEnrollment"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/SharedModels"
     },
@@ -127,7 +127,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/SharedVueComponents"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/SqlViews"
     },
@@ -135,7 +135,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/Synonyms"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/Revisionable"
     },
@@ -143,7 +143,7 @@
       "type": "path",
       "url": "./CircleLinkHealth/TimeTracking"
     },
-{
+    {
       "type": "path",
       "url": "./CircleLinkHealth/TwilioIntegration"
     },

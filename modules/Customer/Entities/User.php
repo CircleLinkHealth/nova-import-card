@@ -2029,16 +2029,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->rules;
     }
 
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
-    {
-        return $this->id;
-    }
-
     public function getSendAlertTo()
     {
         $ctmsa = [];
@@ -3585,16 +3575,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * Get Scout index name for the model.
-     *
-     * @return string
-     */
-    public function searchableAs()
-    {
-        return 'provider_users_index';
-    }
-
-    /**
      * Send a CarePlan Approval reminder, if there are CarePlans pending approval.
      *
      * @param $numberOfCareplans
@@ -4197,11 +4177,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return true;
     }
 
-    public function shouldBeSearchable()
-    {
-        return $this->loadMissing('roles')->isProvider();
-    }
-
     /**
      * @return bool
      */
@@ -4293,27 +4268,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return Cache::remember("{$this->id}_rpm_badge", 60 * 24, function () {
             return isPatientRpmBadgeEnabled() && $this->isRpm();
         });
-    }
-
-    /**
-     * Get the indexable data array for the model.
-     *
-     * @return array
-     */
-    public function toSearchableArray()
-    {
-        //@todo: confirm if scout already does this. Adding for extra clarity
-        if ($this->shouldBeSearchable()) {
-            return [
-                'first_name'   => $this->first_name,
-                'last_name'    => $this->last_name,
-                'suffix'       => $this->suffix,
-                'practice_ids' => $this->practices->pluck('id')->all(),
-                'location_ids' => $this->locations->pluck('id')->all(),
-            ];
-        }
-
-        return [];
     }
 
     public function ucp()

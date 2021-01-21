@@ -14,7 +14,6 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Synonyms\Traits\Synonymable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 
 /**
  * CircleLinkHealth\Customer\Entities\Location.
@@ -214,16 +213,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return Location::where('parent_id', '=', $id)->pluck('name', 'id')->all();
     }
 
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
-    {
-        return $this->id;
-    }
-
     public function isNotSaas()
     {
         return ! $this->isSaas();
@@ -276,16 +265,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return 'CircleLink Health';
     }
 
-    /**
-     * Get Scout index name for the model.
-     *
-     * @return string
-     */
-    public function searchableAs()
-    {
-        return 'locations_index';
-    }
-
     public static function setPrimary(Location $loc)
     {
         //set all other practices to 0
@@ -300,18 +279,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         $loc->save();
 
         return $loc;
-    }
-
-    /**
-     * Get the indexable data array for the model.
-     *
-     * @return array
-     */
-    public function toSearchableArray()
-    {
-        return [
-            'name' => $this->name,
-        ];
     }
 
     public function user()
