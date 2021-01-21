@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
@@ -44,7 +45,8 @@ class SelfEnrollmentProvider extends ServiceProvider
             ManuallyCreateEnrollmentTestData::class,
             EnrollmentFinalAction::class,
             GenerateNbiLetterCommand::class,
-            RegenerateMissingSelfEnrollmentLetters::class
+            RegenerateMissingSelfEnrollmentLetters::class,
+            UpdateEnrolmentLettersSignatoryName::class
         ]);
         $this->app->register(RouteServiceProvider::class);
 
