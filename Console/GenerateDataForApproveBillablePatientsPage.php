@@ -39,7 +39,7 @@ class GenerateDataForApproveBillablePatientsPage extends Command
      *
      * @var string
      */
-    protected $signature = 'generate-data:abp {numberOfPatients}';
+    protected $signature = 'generate-data:abp {practiceId} {numberOfPatients}';
 
     /**
      * Create a new command instance.
@@ -58,12 +58,12 @@ class GenerateDataForApproveBillablePatientsPage extends Command
      */
     public function handle()
     {
-        $practiceId = 8;
+        $practiceId = $this->argument('practiceId');
 
         $count = intval($this->argument('numberOfPatients'));
 
         $practice = Practice::find($practiceId);
-        $this->setupExistingPractice($practice, true, true, false, false, false);
+        $this->setupExistingPractice($practice, true, true, true, true, true);
         $practice->locations->each(fn (Location $l) => GenerateLocationSummaries::dispatchNow($l->id));
 
         $nurse = $this->createUser($practice->id, 'care-center');
@@ -100,9 +100,11 @@ class GenerateDataForApproveBillablePatientsPage extends Command
 
     private function createPatient(Practice $practice, User $nurse)
     {
-        $patient = $this->setupPatient($practice, false, false, false, false);
+        $patient = $this->setupPatient($practice, false, true, false, false);
         $this->createNoteAndCall($nurse, $patient);
-        $this->storeTime($nurse, $patient, 23);
+
+        $chargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
+        $this->storeTime($nurse, $patient, 21, $chargeableServiceId);
 
         $this->info("Created patient[$patient->id]");
     }
