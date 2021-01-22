@@ -14,7 +14,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "CircleLinkHealth\\CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
+        "CircleLinkHealth\\CcdaParser\\Providers\\CcdaParserProcessorProvider"
       ],
       "aliases": {
       }
