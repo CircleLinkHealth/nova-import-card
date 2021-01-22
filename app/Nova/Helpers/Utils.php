@@ -60,6 +60,8 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
             if ($date->isToday()) {
                 throw new \Exception('date note parsed correctly');
             }
+
+            return $date;
         } catch (\Throwable $e) {
             if ($date instanceof Carbon) {
                 $date = $date->toDateString();
