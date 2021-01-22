@@ -1,0 +1,147 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/synonyms.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=7.4.0",
+        "ext-json": "*",
+        "ext-redis": "*",
+        "ext-simplexml": "*",
+        "circlelinkhealth/core-module": "dev-laravel-8.0",
+        "circlelinkhealth/cpm-migrations-module": "dev-laravel-8",
+        "circlelinkhealth/customer-module": "dev-laravel-8",
+        "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
+        "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
+        "circlelinkhealth/twilio-integration-module": "dev-master",
+        "fakerphp/faker": "^1.9.1",
+        "fideloper/proxy": "^4.4",
+        "fruitcake/laravel-cors": "^2.0",
+        "laravel/vapor-cli": "^1.11",
+        "propaganistas/laravel-phone": "^4.1"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "*",
+        "barryvdh/laravel-ide-helper": "^2.6",
+        "friendsofphp/php-cs-fixer": "^2.16.3",
+        "facade/ignition": "^2.3.6",
+        "nwidart/laravel-modules": "dev-master",
+        "mockery/mockery": "^1.3.1",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "github-oauth": {
+            "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
+        }
+    },
+    "extra": {
+        "module-dir": "CircleLinkHealth",
+        "laravel": {
+            "dont-discover": [
+                "barryvdh/laravel-snappy"
+            ]
+        }
+    },
+    "autoload": {
+        "classmap": [
+
+        ],
+        "psr-4": {
+            "App\\": "app/",
+            "CircleLinkHealth\\": "CircleLinkHealth/"
+        },
+        "files": [
+
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "lint-php": [
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs.dist"
+        ],
+        "lint-views": [
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs_views.php"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models -W --dir=\"app\""
+        ],
+        "ide": [
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models -W --dir=\"app\""
+        ]
+    }
+}
