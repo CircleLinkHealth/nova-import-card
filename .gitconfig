@@ -1,0 +1,121 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = git@github.com:CircleLinkHealth/cpm-monorepo.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[remote "awv-app"]
+	url = git@github.com:CircleLinkHealth/app-awv.git
+	fetch = +refs/heads/*:refs/remotes/awv-app/*
+[remote "admin-app"]
+	url = git@github.com:CircleLinkHealth/app-cpm-admin.git
+	fetch = +refs/heads/*:refs/remotes/admin-app/*
+[remote "provider-app"]
+	url = git@github.com:CircleLinkHealth/app-cpm-web.git
+	fetch = +refs/heads/*:refs/remotes/provider-app/*
+[remote "caller-app"]
+	url = git@github.com:CircleLinkHealth/app-cpm-caller.git
+	fetch = +refs/heads/*:refs/remotes/caller-app/*
+[remote "self-enrollment-app"]
+	url = git@github.com:CircleLinkHealth/cpm-app-blueprint.git
+	fetch = +refs/heads/*:refs/remotes/self-enrollment-app/*
+[remote "time-tracker-app"]
+	url = git@github.com:CircleLinkHealth/app-time-tracker.git
+	fetch = +refs/heads/*:refs/remotes/time-tracker-app/*
+[remote "CcdaParser"]
+	url = git@github.com:CircleLinkHealth/ccda-parser-module.git
+	fetch = +refs/heads/*:refs/remotes/CcdaParser/*
+[remote "CcmBilling"]
+	url = git@github.com:CircleLinkHealth/ccm-billing-module.git
+	fetch = +refs/heads/*:refs/remotes/CcmBilling/*
+[remote "CerberusGatekeeper"]
+	url = git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git
+	fetch = +refs/heads/*:refs/remotes/CerberusGatekeeper/*
+[remote "ConditionCodeLookup"]
+	url = git@github.com:CircleLinkHealth/condition-code-lookup-module.git
+	fetch = +refs/heads/*:refs/remotes/ConditionCodeLookup/*
+[remote "Core"]
+	url = git@github.com:CircleLinkHealth/module-core.git
+	fetch = +refs/heads/*:refs/remotes/Core/*
+[remote "CpmAdmin"]
+	url = git@github.com:CircleLinkHealth/cpm-admin-module.git
+	fetch = +refs/heads/*:refs/remotes/CpmAdmin/*
+[remote "CpmMigrations"]
+	url = git@github.com:CircleLinkHealth/cpm-migrations-module.git
+	fetch = +refs/heads/*:refs/remotes/CpmMigrations/*
+[remote "Customer"]
+	url = git@github.com:CircleLinkHealth/module-customer.git
+	fetch = +refs/heads/*:refs/remotes/Customer/*
+[remote "Eligibility"]
+	url = git@github.com:CircleLinkHealth/eligibility-module.git
+	fetch = +refs/heads/*:refs/remotes/Eligibility/*
+[remote "LaravelModuleInstaller"]
+	url = git@github.com:CircleLinkHealth/laravel-module-installer.git
+	fetch = +refs/heads/*:refs/remotes/LaravelModuleInstaller/*
+[remote "NurseInvoices"]
+	url = git@github.com:CircleLinkHealth/nurse-invoices-module.git
+	fetch = +refs/heads/*:refs/remotes/NurseInvoices/*
+[remote "OpcacheGui"]
+	url = git@github.com:CircleLinkHealth/opcache-gui.git
+	fetch = +refs/heads/*:refs/remotes/OpcacheGui/*
+[remote "PatientApi"]
+	url = git@github.com:CircleLinkHealth/patient-api-module.git
+	fetch = +refs/heads/*:refs/remotes/PatientApi/*
+[remote "PdfService"]
+	url = git@github.com:CircleLinkHealth/pdf-service-module.git
+	fetch = +refs/heads/*:refs/remotes/PdfService/*
+[remote "Raygun"]
+	url = git@github.com:CircleLinkHealth/module-raygun.git
+	fetch = +refs/heads/*:refs/remotes/Raygun/*
+[remote "Revisionable"]
+	url = git@github.com:CircleLinkhealth/revisionable-module.git
+	fetch = +refs/heads/*:refs/remotes/Revisionable/*
+[remote "SamlSp"]
+	url = git@github.com:CircleLinkHealth/saml-sp-module.git
+	fetch = +refs/heads/*:refs/remotes/SamlSp/*
+[remote "SelfEnrollment"]
+	url = git@github.com:CircleLinkHealth/module-self-enrollment.git
+	fetch = +refs/heads/*:refs/remotes/SelfEnrollment/*
+[remote "SharedModels"]
+	url = git@github.com:CircleLinkHealth/shared-models-module.git
+	fetch = +refs/heads/*:refs/remotes/SharedModels/*
+[remote "SharedVueComponents"]
+	url = git@github.com:CircleLinkHealth/shared-vue-components-module.git
+	fetch = +refs/heads/*:refs/remotes/SharedVueComponents/*
+[remote "ShortUrl"]
+	url = git@github.com:CircleLinkHealth/short-url.git
+	fetch = +refs/heads/*:refs/remotes/ShortUrl/*
+[remote "SqlViews"]
+	url = git@github.com:CircleLinkHealth/sqlviews-module.git
+	fetch = +refs/heads/*:refs/remotes/SqlViews/*
+[remote "Synonyms"]
+	url = git@github.com:CircleLinkHealth/synonyms.git
+	fetch = +refs/heads/*:refs/remotes/Synonyms/*
+[remote "TimeTracking"]
+	url = git@github.com:CircleLinkHealth/module-time-tracking.git
+	fetch = +refs/heads/*:refs/remotes/TimeTracking/*
+[remote "TwoFA"]
+	url = git@github.com:CircleLinkHealth/module-two-fa.git
+	fetch = +refs/heads/*:refs/remotes/TwoFA/*
+[remote "TwilioIntegration"]
+	url = git@github.com:CircleLinkHealth/twilio-integration-module.git
+	fetch = +refs/heads/*:refs/remotes/TwilioIntegration/*
+[remote "VaporCli"]
+	url = git@github.com:CircleLinkHealth/vapor-cli.git
+	fetch = +refs/heads/*:refs/remotes/VaporCli/*
+[remote "VaporCore"]
+	url = git@github.com:CircleLinkHealth/vapor-core.git
+	fetch = +refs/heads/*:refs/remotes/VaporCore/*
+[remote "VaporDevopsHelpers"]
+	url = git@github.com:CircleLinkHealth/vapor-devops-helpers.git
+	fetch = +refs/heads/*:refs/remotes/VaporDevopsHelpers/*
+[branch "new"]
+	remote = origin
+	merge = refs/heads/new
