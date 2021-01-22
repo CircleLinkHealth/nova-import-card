@@ -40,6 +40,7 @@ git merge --strategy recursive --strategy-option subtree=modules/SamlSp SamlSp/m
 git merge --strategy recursive --strategy-option subtree=modules/SamlSp SamlSp/development
 git merge --strategy recursive --strategy-option subtree=modules/SelfEnrollment SelfEnrollment/master
 git merge --strategy recursive --strategy-option subtree=modules/SelfEnrollment SelfEnrollment/development
+git merge --strategy recursive --strategy-option subtree=modules/SelfEnrollment SelfEnrollment/main
 git merge --strategy recursive --strategy-option subtree=modules/SharedModels SharedModels/master
 git merge --strategy recursive --strategy-option subtree=modules/SharedModels SharedModels/development
 git merge --strategy recursive --strategy-option subtree=modules/SharedVueComponents SharedVueComponents/master
