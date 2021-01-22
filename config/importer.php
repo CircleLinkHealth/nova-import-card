@@ -6,11 +6,11 @@
 
 return [
     'validators' => [
-        \CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull::class,
-        \CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus::class,
-        \CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidEndDate::class,
-        \CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStartDateNoEndDate::class,
-        \CircleLinkHealth\Eligibility\CcdaImporter\Validators\ImportAllItems::class,
+        \CircleLinkHealth\SamlSp\Tests\CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull::class,
+        \CircleLinkHealth\SamlSp\Tests\CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus::class,
+        \CircleLinkHealth\SamlSp\Tests\CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidEndDate::class,
+        \CircleLinkHealth\SamlSp\Tests\CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStartDateNoEndDate::class,
+        \CircleLinkHealth\SamlSp\Tests\CircleLinkHealth\Eligibility\CcdaImporter\Validators\ImportAllItems::class,
     ],
 
     'allergy_loggers' => [
