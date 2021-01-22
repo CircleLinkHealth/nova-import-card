@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class UpdateAwvSurveyInstances extends Command
 {
@@ -15,14 +16,18 @@ class UpdateAwvSurveyInstances extends Command
      *
      * @var string
      */
-    protected $signature = 'create:awv-survey-instances {surveyName}';
+    protected $signature = 'create:survey-current-instance {surveyName}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create the Awv Survey Instances for Current Year.';
+    protected $description = 'Create the Awv Survey Instances and Survey Questions instances for Current Year.';
+    /**
+     * @var array|string|null
+     */
+    private $surveyName;
 
     /**
      * Create a new command instance.
@@ -41,25 +46,39 @@ class UpdateAwvSurveyInstances extends Command
      */
     public function handle()
     {
-        $surveyName = $this->argument('surveyName');
+        $this->surveyName = $this->argument('surveyName');
 
-        if (!$surveyName){
+        if (!$this->surveyName){
             $this->error("Survey name is required.");
             return;
         }
 
-        $survey = \DB::table('surveys')->where('name', $surveyName)->select('id')->first();
+        $survey = \DB::table('surveys')->where('name', $this->surveyName)->select('id')->first();
 
         if (!$survey){
-            $this->error("Survey $surveyName not found in surveys table.");
+            $this->error("Survey $this->surveyName not found in surveys table.");
             return;
         }
 
-        $year = Carbon::now()->year;
+        $currentSurveyQuestionsInstance =  $this->updateSurveyInstance($survey->id);
 
-        $created =  \DB::table('survey_instances')->updateOrInsert([
-           'survey_id' => $survey->id,
-           'year'=> $year
+        if (!$currentSurveyQuestionsInstance){
+            $this->error("Current Survey Questions Instance not found");
+            return;
+        }
+
+        $this->copySurveyQuestionsForCurrentInstance($survey->id, $currentSurveyQuestionsInstance->id);
+    }
+
+    /**
+     * @param int $surveyId
+     */
+    private function updateSurveyInstance(int $surveyId)
+    {
+        $currentYear = Carbon::now()->year;
+        $created =  DB::table('survey_instances')->updateOrInsert([
+            'survey_id' => $surveyId,
+            'year'=> $currentYear
         ]);
 
         if (! $created){
@@ -67,7 +86,46 @@ class UpdateAwvSurveyInstances extends Command
             return;
         }
 
-        $this->info("$surveyName instance was created for $year");
+        $this->info("$this->surveyName instance was created for $currentYear");
+        return DB::table('survey_instances')->where('year', $currentYear)->first();
+    }
 
+    private function copySurveyQuestionsForCurrentInstance(int $surveyId, int $currentSurveyQuestionsInstanceId)
+    {
+        $previousYear = Carbon::now()->subYear()->year;
+        $surveyInstance = DB::table('survey_instances');
+        $previousYearInstance = $surveyInstance
+            ->where('survey_id', $surveyId)
+            ->where('year', $previousYear)
+            ->select('id')
+            ->first();
+
+        if (!$previousYearInstance){
+            $this->error("Previous year's instance is missing. Cannot create Survey Questions for current instance.");
+            return;
+        }
+
+        $previousSurveyQuestionsInstance = DB::table('survey_questions')
+            ->where('survey_instance_id', $previousYearInstance->id)
+            ->get();
+
+        if (!$previousSurveyQuestionsInstance){
+         $this->error("Previous Survey Questions instance missing. Cannot create Survey Questions for current instance.");
+         return;
+        }
+
+        foreach ($previousSurveyQuestionsInstance as $question){
+            DB::table('survey_questions')
+                ->updateOrInsert([
+                    'survey_instance_id'=> $currentSurveyQuestionsInstanceId,
+                    'question_id'=>$question->id,
+                ],
+                    [
+
+                        'order'=>$question->order,
+                        'sub_order'=>$question->sub_order,
+                    ]
+                );
+        }
     }
 }
