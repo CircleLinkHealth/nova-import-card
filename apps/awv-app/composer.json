@@ -95,7 +95,6 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-pdo": "*",
-        "ext-redis": "*",
         "ext-simplexml": "*",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/ccm-billing-module": "*",
