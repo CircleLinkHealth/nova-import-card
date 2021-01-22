@@ -30,8 +30,8 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+            "type": "path",
+            "url": "../Customer"
         }
     ]
 }

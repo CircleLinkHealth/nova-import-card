@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 
 /**
  * CircleLinkHealth\Customer\Entities\Ehr.
@@ -24,7 +24,7 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
  * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection     $revisionHistory
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient[]|\Illuminate\Database\Eloquent\Collection $targetPatient
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient[]|\Illuminate\Database\Eloquent\Collection $targetPatient
  * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr newModelQuery()
  * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr newQuery()
  * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr query()

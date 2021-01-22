@@ -6,8 +6,9 @@
 
 namespace App\Nova\Importers\PracticePull;
 
-use App\Nova\Helpers\Utils;
+use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -54,8 +55,8 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
             'mrn'                      => $this->nullOrValue($row['patientid']),
             'first_name'               => $this->nullOrValue($row['first_name']),
             'last_name'                => $this->nullOrValue($row['last_name']),
-            'last_encounter'           => Utils::parseExcelDate($this->nullOrValue($row['last_encounter'] ?? null), false),
-            'dob'                      => Utils::parseExcelDate($this->nullOrValue($row['dob'])),
+            'last_encounter'           => Carbon::parse($row['last_encounter']),
+            'dob'                      => ImportPatientInfo::parseDOBDate($this->nullOrValue($row['dob'])),
             'gender'                   => $this->nullOrValue($row['gender']),
             'lang'                     => $this->nullOrValue($row['lang']),
             'referring_provider_name'  => $this->nullOrValue($row['referring_provider_name']),
@@ -83,7 +84,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
      *
      * @return string|null
      */
-    public function nullOrValue($value = null)
+    public function nullOrValue($value)
     {
         return empty($value) || in_array($value, $this->nullValues())
             ? null

@@ -8,11 +8,11 @@ namespace Tests\Unit;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ProtectPHITest extends TestCase
 {

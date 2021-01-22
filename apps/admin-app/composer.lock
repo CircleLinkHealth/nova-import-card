@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d288844689c798fa117ad47d8d069696",
+    "content-hash": "8171dbe4eebaf9d94855e9b7c5be9c63",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -619,55 +619,12 @@
             "time": "2021-01-16T14:35:30+00:00"
         },
         {
-            "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
-                "reference": "7d347b6ff26378bd7c9cccc0c28cfbf59a28a27b"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\CcdaParserProcessorPhp\\": ""
-                },
-                "files": []
-            },
-            "scripts": {
-                "post-install-cmd": [
-                    "npm install"
-                ],
-                "post-update-cmd": [
-                    "npm install"
-                ]
-            },
-            "authors": [
-                {
-                    "name": "Pangratios Cosma",
-                    "email": "pagcosma@gmail.com"
-                }
-            ],
-            "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2021-01-05T10:34:53+00:00"
-        },
-        {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v2.0.2",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "92dddb7a9a494837474d209314909ac1d1f306e3"
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/CcmBilling",
+                "reference": "48da3a0eb31840388f5e5259ef4da52f1e71bf30"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -717,14 +674,16 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-21T21:23:53+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "v3.2.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/CerberusGatekeeper",
                 "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
             },
             "require": {
@@ -798,7 +757,9 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-12-28T01:46:18+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -875,9 +836,9 @@
         {
             "name": "circlelinkhealth/core-module",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-core.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/Core",
                 "reference": "664de263aef56a886531a9f34c69be922494dccd"
             },
             "require": {
@@ -888,12 +849,10 @@
                 "genealabs/laravel-caffeine": "^8.0",
                 "guzzlehttp/guzzle": "^7.0.1",
                 "jeremykenedy/slack-laravel": "*",
-                "joshbrw/laravel-module-installer": "*",
                 "laravel/framework": "^8.0",
                 "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/tinker": "^2.0",
-                "laravel/vapor-core": "^2.10.6",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.2",
                 "lcobucci/jwt": "^4.0",
@@ -905,9 +864,6 @@
                 "spatie/laravel-view-models": "^1.3",
                 "wildbit/swiftmailer-postmark": "*",
                 "yajra/laravel-datatables-oracle": "~9.0"
-            },
-            "require-dev": {
-                "laravel/vapor-cli": "^1.11.7.2"
             },
             "type": "laravel-module",
             "extra": {
@@ -933,69 +889,17 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-16T02:35:25+00:00"
-        },
-        {
-            "name": "circlelinkhealth/cpm-admin-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "859b7dbf22b1f883b217ad0facbc7f7679a99ff6"
-            },
-            "require": {
-                "circlelinkhealth/ccda-parser-processor-php-module": "*",
-                "circlelinkhealth/core-module": "*",
-                "circlelinkhealth/customer-module": "*",
-                "circlelinkhealth/raygun-module": "*",
-                "circlelinkhealth/shared-models-module": "*"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1.x-dev"
-                },
-                "laravel": {
-                    "providers": [],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\CpmAdmin\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Antonis Antoniou",
-                    "email": "antonis@cirlelinkhealth.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Constantinos Kakoushias",
-                    "email": "constantinos@cirlelinkhealth.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@cirlelinkhealth.com",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Pangratios Cosma",
-                    "email": "pangratios@cirlelinkhealth.com",
-                    "role": "Lead Developer"
-                }
-            ],
-            "time": "2021-01-16T03:06:48+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v3.0.1",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "f4b6de7cf117fea3fd933d178ff94bf16349634a"
+            "version": "v3.0",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/CpmMigrations",
+                "reference": "f891f9766706c52019c3ca7cbec0cec7a779397f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1015,20 +919,22 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T08:00:20+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.2.3",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "69db72d85325f89f97e769dc3bf1754f6202ff0a"
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/Customer",
+                "reference": "5c8e288daefad0444933dd443ee4b110c381e53e"
             },
             "require": {
-                "circlelinkhealth/ccm-billing-module": "^2.0",
-                "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
-                "circlelinkhealth/core-module": "^2.1",
+                "circlelinkhealth/ccm-billing-module": "*",
+                "circlelinkhealth/cerberus-gatekeeper-module": "*",
+                "circlelinkhealth/core-module": "*",
                 "circlelinkhealth/twofa-module": "*",
                 "fico7489/laravel-pivot": "^3.0",
                 "jenssegers/agent": "^2.5",
@@ -1064,15 +970,17 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-21T21:23:53+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "4.4.1",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "b9601c6c246f4b7fbb093f2bbb6a03d8f713168e"
+            "version": "4.5.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/Eligibility",
+                "reference": "ecdc8f2e462fed8805349a46585995f0e7adec6e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1102,7 +1010,9 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-21T14:23:10+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1287,86 +1197,11 @@
             }
         },
         {
-            "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "db4ebf1b411fe84ad7877caf96db95fd5a1e958b"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\NurseInvoices\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@cirlelinkhealth.com"
-                }
-            ],
-            "time": "2021-01-04T23:50:46+00:00"
-        },
-        {
-            "name": "circlelinkhealth/pdf-service-module",
-            "version": "v1.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "bb78555bec140e02e16cbfbee72b1f5bc072d119"
-            },
-            "require": {
-                "circlelinkhealth/core-module": "*",
-                "daltcore/lara-pdf-merger": "2.0.6"
-            },
-            "suggest": {
-                "api2pdf/api2pdf.php": "Required to use Api2Pdf",
-                "barryvdh/laravel-snappy": "Required to use SnappyPdf (wkhtmltopdf)"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceProvider",
-                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceDeferrableProvider"
-                    ],
-                    "aliases": [],
-                    "dont-discover": [
-                        "barryvdh/laravel-snappy"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\PdfService\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Pangratios Cosma",
-                    "email": "pangratios@cirlelinkhealth.com"
-                }
-            ],
-            "time": "2020-12-27T23:42:52+00:00"
-        },
-        {
             "name": "circlelinkhealth/raygun-module",
             "version": "v2.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-raygun.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/Raygun",
                 "reference": "33a8a93b16d336ba08ccdf19be3491249c0c9da6"
             },
             "require": {
@@ -1393,14 +1228,16 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:04:30+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/revisionable-module",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:circlelinkhealth/revisionable-module.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/Revisionable",
                 "reference": "d711ccea87ad5dc02a8d5be8939e8c895d458d69"
             },
             "require": {
@@ -1443,15 +1280,17 @@
                 "model",
                 "revision"
             ],
-            "time": "2021-01-04T23:50:46+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "v2.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "76b3f32e131f0b7b65522001f03f16116024737f"
+            "version": "v2.0.1",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/SamlSp",
+                "reference": "936baf88bbe3a471cacfc863ae92d26c528df1c0"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1481,18 +1320,20 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:11:03+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.3.4",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "bd66d5ecda40c45a226dbfd89b7b4b08f3d6c339"
+            "version": "v2.2.2",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/SharedModels",
+                "reference": "b7233591089e06f0dd9b64e3e27a8c2d452a8a39"
             },
             "require": {
-                "circlelinkhealth/eligibility-module": "^4.1"
+                "circlelinkhealth/eligibility-module": "*"
             },
             "type": "laravel-module",
             "extra": {
@@ -1512,43 +1353,17 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-21T20:20:37+00:00"
-        },
-        {
-            "name": "circlelinkhealth/sharedvuecomponents-module",
-            "version": "v1.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "93a5aef49dee23e6b21f98e086d868cfe23afb5e"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "laravel": {
-                    "providers": [],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\Sharedvuecomponents\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "",
-                    "email": ""
-                }
-            ],
-            "time": "2021-01-01T04:59:46+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v2.1",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "3aa2d1c660dd3b8740495097fa8761a5ca4a7526"
+            "version": "v2.0",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/SqlViews",
+                "reference": "c0f9bc8aa85791f02a03d8e2739a917e03efaf0d"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1576,14 +1391,16 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T08:01:19+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/synonyms-module",
             "version": "v1.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/synonyms.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/Synonyms",
                 "reference": "e0bb71dd5c8e897bfc9da0f1f47960bf01088a96"
             },
             "type": "laravel-module",
@@ -1605,50 +1422,16 @@
                 }
             ],
             "description": "Add synonyms for a specific Model and Field.",
-            "time": "2020-09-30T13:48:52+00:00"
-        },
-        {
-            "name": "circlelinkhealth/time-tracking-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "17e395803c44d9543fced089cf2112783a58cb15"
-            },
-            "require": {
-                "circlelinkhealth/customer-module": "*"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\TimeTracking\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@cirlelinkhealth.com"
-                }
-            ],
-            "time": "2021-01-05T09:52:32+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/twilio-integration-module",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/TwilioIntegration",
                 "reference": "8090487f425fc60db15283ed20f8954407c303a2"
             },
             "require": {
@@ -1678,14 +1461,16 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-05T09:52:32+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/twofa-module",
             "version": "v2.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/TwoFA",
                 "reference": "7904806d4746126e95d4584d80a7a4f054937003"
             },
             "require": {
@@ -1713,7 +1498,9 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:14:38+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "clue/stream-filter",
@@ -1845,72 +1632,6 @@
                 }
             ],
             "time": "2020-11-11T10:22:58+00:00"
-        },
-        {
-            "name": "daltcore/lara-pdf-merger",
-            "version": "2.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DALTCORE/lara-pdf-merger.git",
-                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DALTCORE/lara-pdf-merger/zipball/f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
-                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "LynX39\\LaraPdfMerger\\PdfMergerServiceProvider"
-                    ],
-                    "aliases": {
-                        "PdfMerger": "LynX39\\LaraPdfMerger\\Facades\\PdfMerger"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "LynX39\\LaraPdfMerger": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Musso",
-                    "email": "lynx@deltaaskii.com",
-                    "homepage": "https://github.com/LynX39"
-                },
-                {
-                    "name": "Ramon Smit",
-                    "email": "rsmit@daltcore.com",
-                    "homepage": "https://github.com/daltcore"
-                },
-                {
-                    "name": "Marouan Sami",
-                    "email": "sami.marwen.isetcom@gmail.com",
-                    "homepage": "https://github.com/MarwenSami"
-                }
-            ],
-            "homepage": "https://github.com/MarwenSami/lara-pdf-merger",
-            "keywords": [
-                "duplex merge",
-                "laravel",
-                "manage",
-                "merge",
-                "merger",
-                "paginate",
-                "pdf"
-            ],
-            "time": "2020-05-06T07:49:12+00:00"
         },
         {
             "name": "danielme85/laravel-log-to-db",
@@ -3924,72 +3645,6 @@
             "time": "2020-09-30T07:37:11+00:00"
         },
         {
-            "name": "hollodotme/fast-cgi-client",
-            "version": "v3.1.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hollodotme/fast-cgi-client.git",
-                "reference": "8a9b2bd38ccfd8fc6905a6b1acfbb9f84ed700dd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hollodotme/fast-cgi-client/zipball/8a9b2bd38ccfd8fc6905a6b1acfbb9f84ed700dd",
-                "reference": "8a9b2bd38ccfd8fc6905a6b1acfbb9f84ed700dd",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "ext-xdebug": ">=2.6.0",
-                "tm/tooly-composer-script": "^1.4.1"
-            },
-            "type": "library",
-            "extra": {
-                "tools": {
-                    "phpunit7": {
-                        "url": "https://phar.phpunit.de/phpunit-7.phar",
-                        "replace": true,
-                        "only-dev": true
-                    },
-                    "phpunit8": {
-                        "url": "https://phar.phpunit.de/phpunit-8.phar",
-                        "replace": true,
-                        "only-dev": true
-                    },
-                    "phpunit9": {
-                        "url": "https://phar.phpunit.de/phpunit-9.phar",
-                        "replace": true,
-                        "only-dev": true
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "hollodotme\\FastCGI\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Holger Woltersdorf",
-                    "email": "hw@hollo.me"
-                }
-            ],
-            "description": "A PHP fast CGI client to send requests (a)synchronously to PHP-FPM.",
-            "keywords": [
-                "Socket",
-                "async",
-                "fastcgi",
-                "php-fpm"
-            ],
-            "time": "2020-12-10T10:15:06+00:00"
-        },
-        {
             "name": "http-interop/http-factory-guzzle",
             "version": "1.0.0",
             "source": {
@@ -4493,44 +4148,6 @@
                 }
             ],
             "time": "2020-10-19T17:05:23+00:00"
-        },
-        {
-            "name": "joshbrw/laravel-module-installer",
-            "version": "v0.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/joshbrw/laravel-module-installer.git",
-                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/joshbrw/laravel-module-installer/zipball/06bf72e947c313ba7d84c498fb6947a00ba313ef",
-                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.1",
-                "php": "^5.4|7.*"
-            },
-            "require-dev": {
-                "composer/composer": "^1.3",
-                "mockery/mockery": "~1.0",
-                "phpunit/phpunit": "~6.0"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "Joshbrw\\LaravelModuleInstaller\\LaravelModuleInstallerPlugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "Joshbrw\\LaravelModuleInstaller\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "time": "2017-11-08T10:06:42+00:00"
         },
         {
             "name": "jubeki/nova-card-linkable",
@@ -5266,77 +4883,6 @@
                 "ui"
             ],
             "time": "2021-01-06T19:20:22+00:00"
-        },
-        {
-            "name": "laravel/vapor-core",
-            "version": "v2.10.6",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/vapor-core.git",
-                "reference": "4df0406f1e46f22ebbeb2ab500709b445f2f7263"
-            },
-            "require": {
-                "aws/aws-sdk-php": "^3.80",
-                "guzzlehttp/guzzle": "^6.3|^7.0",
-                "hollodotme/fast-cgi-client": "^3.0",
-                "illuminate/container": "^6.0|^7.0|^8.0",
-                "illuminate/http": "^6.0|^7.0|^8.0",
-                "illuminate/queue": "^6.0|^7.0|^8.0",
-                "illuminate/support": "^6.0|^7.0|^8.0",
-                "monolog/monolog": "^1.12|^2.0",
-                "nyholm/psr7": "^1.0",
-                "php": "^7.2|^8.0",
-                "riverline/multipart-parser": "^2.0",
-                "symfony/process": "^4.3|^5.0",
-                "symfony/psr-http-message-bridge": "^1.0|^2.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.2",
-                "orchestra/testbench": "^4.0|^5.0|^6.0",
-                "phpunit/phpunit": "^8.0|^9.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Laravel\\Vapor\\VaporServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Vapor\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Laravel\\Vapor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The kernel and invokation handlers for Laravel Vapor",
-            "homepage": "https://github.com/laravel/vapor-core",
-            "keywords": [
-                "laravel",
-                "vapor"
-            ],
-            "time": "2021-01-08T17:33:22+00:00"
         },
         {
             "name": "laravel/vapor-ui",
@@ -9154,58 +8700,6 @@
                 }
             ],
             "time": "2020-08-18T17:17:46+00:00"
-        },
-        {
-            "name": "riverline/multipart-parser",
-            "version": "2.0.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Riverline/multipart-parser.git",
-                "reference": "2fe9026789754c1ff07c06047f0acc113e90933a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Riverline/multipart-parser/zipball/2fe9026789754c1ff07c06047f0acc113e90933a",
-                "reference": "2fe9026789754c1ff07c06047f0acc113e90933a",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "laminas/laminas-diactoros": "^1.8.7",
-                "phpunit/phpunit": "^5.2 || ^6.0 || ^7.0",
-                "psr/http-message": "^1.0",
-                "symfony/psr-http-message-bridge": "^1.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Riverline\\MultiPartParser\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Romain Cambien",
-                    "email": "romain@cambien.net"
-                },
-                {
-                    "name": "Riverline",
-                    "homepage": "http://www.riverline.fr"
-                }
-            ],
-            "description": "One class library to parse multipart content with encoding and charset support.",
-            "keywords": [
-                "http",
-                "multipart",
-                "parser"
-            ],
-            "time": "2020-01-24T09:39:24+00:00"
         },
         {
             "name": "robrichards/xmlseclibs",
@@ -13722,37 +13216,6 @@
             "time": "2018-12-13T10:34:14+00:00"
         },
         {
-            "name": "circlelinkhealth/vapor-devops-helpers-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git",
-                "reference": "acbe59b4886beb77e3f4281111d73a759addd135"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\VaporDevOpsHelpers\\Providers\\VaporDevOpsHelpersServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\VaporDevOpsHelpers\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@circlelinkhealth.com"
-                }
-            ],
-            "description": "A collection of helpers to assist with various devops tasks.",
-            "time": "2020-12-22T12:46:56+00:00"
-        },
-        {
             "name": "composer/ca-bundle",
             "version": "1.2.9",
             "source": {
@@ -14869,70 +14332,6 @@
                 "schema"
             ],
             "time": "2020-05-27T16:41:55+00:00"
-        },
-        {
-            "name": "laravel/vapor-cli",
-            "version": "v1.11.8.1",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "fbe0f2ce1cf98f0eea0869d967559f9349d3d174"
-            },
-            "require": {
-                "aws/aws-sdk-php": "^3.80",
-                "ext-zip": "*",
-                "guzzlehttp/guzzle": "^6.3|^7.0",
-                "illuminate/container": "^6.0|^7.0|^8.0",
-                "illuminate/filesystem": "^6.0|^7.0|^8.0",
-                "illuminate/support": "^6.0|^7.0|^8.0",
-                "league/flysystem": "^1.0",
-                "league/flysystem-aws-s3-v3": "^1.0",
-                "php": "^7.2|^8.0",
-                "ramsey/uuid": "^3.8|^4.0",
-                "symfony/console": "^4.2|^5.0",
-                "symfony/process": "^4.2|^5.0",
-                "symfony/var-dumper": "^4.2|^5.0",
-                "symfony/yaml": "^4.2|^5.0",
-                "vlucas/phpdotenv": "^3.0|^4.0|^5.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.0|^9.0"
-            },
-            "bin": [
-                "vapor"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\VaporCli\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Laravel\\VaporCli\\Tests\\": "tests"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The Laravel Vapor CLI",
-            "homepage": "https://github.com/laravel/vapor-cli",
-            "keywords": [
-                "laravel",
-                "vapor"
-            ],
-            "time": "2021-01-01T16:27:41+00:00"
         },
         {
             "name": "maximebf/debugbar",
@@ -17899,16 +17298,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "circlelinkhealth/ccda-parser-processor-php-module": 20,
-        "circlelinkhealth/core-module": 20,
-        "circlelinkhealth/cpm-admin-module": 20,
-        "circlelinkhealth/nurseinvoices-module": 20,
-        "circlelinkhealth/revisionable-module": 20,
-        "circlelinkhealth/time-tracking-module": 20,
-        "circlelinkhealth/twilio-integration-module": 20,
-        "circlelinkhealth/vapor-devops-helpers-module": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

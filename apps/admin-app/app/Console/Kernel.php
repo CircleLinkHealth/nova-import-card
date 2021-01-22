@@ -48,10 +48,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
-
+    
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
-            ->everyFiveMinutes()
-            ->withoutOverlapping();
+                 ->everyFiveMinutes()
+                 ->withoutOverlapping();
 
 //        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
 //            ->hourly()

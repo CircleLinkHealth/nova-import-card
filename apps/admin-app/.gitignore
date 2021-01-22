@@ -28,9 +28,10 @@ public/*.js
 public/*.js.map
 /coverage/
 .php_cs.cache
-CircleLinkHealth/
 .phpunit.result.cache
 .vapor/
 .env.production
 lsp/log/*
 *deploy-s3.env
+staging-deploy-s3.env
+production-deploy-s3.env

@@ -210,3 +210,5 @@ Route::group([
 
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
     ->name('twilio.sms.status');
+
+Route::get('/short/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');

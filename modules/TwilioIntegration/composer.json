@@ -33,16 +33,16 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+            "type": "path",
+            "url": "../Customer"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "type": "path",
+            "url": "../Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+            "type": "path",
+            "url": "../SharedModels"
         }
     ]
 }

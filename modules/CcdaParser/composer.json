@@ -12,12 +12,9 @@
   "repositories": [
   ],
   "extra": {
-    "branch-alias": {
-      "dev-master": "1.1.x-dev"
-    },
     "laravel": {
       "providers": [
-        "CircleLinkHealth\\CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
+        "CircleLinkHealth\\CcdaParser\\Providers\\CcdaParserProcessorProvider"
       ],
       "aliases": {
       }

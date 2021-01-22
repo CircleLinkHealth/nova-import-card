@@ -35,13 +35,13 @@
         "sort-packages": true
     },
     "require": {
-        "circlelinkhealth/core-module": "^2.1",
-        "circlelinkhealth/ccm-billing-module": "^2.0",
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/ccm-billing-module": "*",
         "laravel/ui": "^3.0",
         "laravel/scout": "^7.1|^8.0",
-        "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
+        "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "fico7489/laravel-pivot": "^3.0",
-        "circlelinkhealth/twofa-module": "*",
+        "circlelinkhealth/twofa-module":"*",
         "lab404/laravel-impersonate": "^1.2",
         "propaganistas/laravel-phone": "^4.2.2",
         "spatie/laravel-medialibrary": "^7.0.0",
@@ -50,20 +50,20 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+            "type": "path",
+            "url": "../TwoFA"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "type": "path",
+            "url": "../Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
+            "type": "path",
+            "url": "../CerberusGatekeeper"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
+            "type": "path",
+            "url": "../CcmBilling"
         }
     ]
 }

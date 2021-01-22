@@ -8,7 +8,7 @@ namespace Tests\Helpers\Users\Patient;
 
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 
 trait Problems

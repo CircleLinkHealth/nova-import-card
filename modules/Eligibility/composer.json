@@ -28,12 +28,12 @@
   },
   "repositories": [
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/synonyms.git"
+      "type": "path",
+      "url": "../Customer"
     },
     {
-      "type": "git",
-      "url": "git@github.com:circlelinkhealth/module-customer.git"
+      "type": "path",
+      "url": "../Synonyms"
     }
   ],
   "require": {

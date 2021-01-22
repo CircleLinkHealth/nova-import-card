@@ -7,7 +7,6 @@
 namespace Tests\Unit;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -17,6 +16,7 @@ use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 /**
  * This class tests the new ccm plus algorithm for G2058 code.

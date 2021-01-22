@@ -8,7 +8,6 @@ namespace Tests\Feature;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ChunksEloquentBuilderJob;
-use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Queue;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ChunkIntoJobsTest extends TestCase
 {
