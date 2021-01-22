@@ -7,8 +7,6 @@
 namespace App\Nova;
 
 use App\Nova\Actions\SelfEnrollmentManualInvite;
-use App\Nova\Metrics\AllInvitesButtonColor;
-use App\Nova\Metrics\SelfEnrolledButtonColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
 use CircleLinkHealth\SelfEnrollment\Helpers;
@@ -118,8 +116,6 @@ class EnrolleesInvitationPanel extends Resource
                 ]
             ),
             (new SelfEnrolledPatientTotal($practiceId)),
-            (new SelfEnrolledButtonColor($practiceId)),
-            (new AllInvitesButtonColor($practiceId)),
             (new TotalInvitationsSentHourly($practiceId)),
         ];
     }
