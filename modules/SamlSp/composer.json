@@ -29,8 +29,8 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
+            "type": "path",
+            "url": "../Core"
         }
     ],
     "require": {

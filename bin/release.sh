@@ -14,6 +14,18 @@ RELEASE_BRANCH=$1
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 VERSION=$1
 
+# Always prepend with "release-"
+if [[ $RELEASE_BRANCH != release-*  ]]
+then
+    echo "Release branches must begin with `release-`."
+
+    exit 1
+fi
+
+# Removes lines containing CircleLinkHealth from git .gitignore
+# so we can copy modules and have them committed
+sed -i '' '/CircleLinkHealth/d' $PWD/.gitignore
+
 # Make sure current branch and release branch match.
 if [[ "$RELEASE_BRANCH" != "$CURRENT_BRANCH" ]]
 then

@@ -51,19 +51,19 @@
     "repositories": [
         {
             "type": "path",
-            "url": "./CircleLinkHealth/TwoFA"
+            "url": "../TwoFA"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Core"
+            "url": "../Core"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CerberusGatekeeper"
+            "url": "../CerberusGatekeeper"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CcmBilling"
+            "url": "../CcmBilling"
         }
     ]
 }

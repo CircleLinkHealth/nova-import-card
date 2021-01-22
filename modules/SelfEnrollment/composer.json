@@ -21,10 +21,6 @@
     ],
 
     "extra": {
-        "branch-alias": {
-            "dev-main": "0.0.x-dev"
-        },
-
         "laravel": {
             "providers": [],
             "aliases": {

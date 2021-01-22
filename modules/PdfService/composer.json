@@ -29,8 +29,8 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "type": "path",
+            "url": "../Core"
         },
         {
             "type": "vcs",
