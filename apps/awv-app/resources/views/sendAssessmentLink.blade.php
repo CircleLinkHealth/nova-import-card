@@ -1,0 +1,10 @@
+@extends('layouts.app')
+@section('content')
+    <send-assessment-link
+            :debug="@json(!isProductionEnv())"
+            :patient-id="{{json_encode($patientId)}}"
+            :patient-name="{{json_encode($patientName)}}"
+            :survey-name="{{json_encode($surveyName)}}"
+            :channel="{{json_encode($channel)}}"
+    ></send-assessment-link>
+@endsection
