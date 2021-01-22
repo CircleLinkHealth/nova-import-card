@@ -1,0 +1,50 @@
+id: 16674
+name: app-self-enrollment
+environments:
+  production:
+    domain: self-enrollment.careplanmanager.com
+    storage: self-enrollment-production-vapor-storage
+    cache: cpm-production-vapor-cache
+    network: cpm-production
+    memory: 1024
+    cli-memory: 1024
+    runtime: docker
+    queue-timeout: 300
+    mail: false
+    warm: 40
+    timeout: 45
+    queues:
+      - self-enrollment-provider-low-production
+      - self-enrollment-provider-high-production
+      - self-enrollment-provider-revisionable-production
+    build:
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'php artisan event:cache'
+      - 'npm ci && npm run prod && rm -rf node_modules'
+      - 'php artisan route:cache'
+    deploy:
+      - 'php artisan migrate --force'
+      - 'php artisan migrate:views'
+  staging:
+    domain: self-enrollment.clh-staging.com
+    storage: self-enrollment-staging-vapor-storage
+    cache: cpm-staging-vapor-cache
+    network: cpm-staging
+    memory: 1024
+    cli-memory: 1024
+    runtime: docker
+    queue-timeout: 300
+    mail: false
+    timeout: 45
+    queues:
+      - self-enrollment-provider-low-staging
+      - self-enrollment-provider-high-staging
+      - self-enrollment-provider-revisionable-staging
+    build:
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'php artisan event:cache'
+      - 'npm ci && npm run prod && rm -rf node_modules'
+      - 'php artisan route:cache'
+    deploy:
+      - 'php artisan migrate --force'
+      - 'php artisan migrate:views'
