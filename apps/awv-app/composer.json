@@ -122,30 +122,23 @@
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.4",
         "grofgraf/laravel-pdf-merger": "^1.0",
-        "h4cc/wkhtmltopdf-amd64": "0.12.x",
-        "lab404/laravel-impersonate": "^1.2",
         "laravel-notification-channels/twilio": "3.1.2",
         "circlelinkhealth/self-enrollment-module": "*",
         "laravel/nova": "^3.0",
-        "laravel/ui": "^3.0",
-        "league/flysystem-aws-s3-v3": "^1.0",
         "moontoast/math": "1.1.2 as 1.999.999",
-        "propaganistas/laravel-phone": "^4.2",
-        "squizlabs/php_codesniffer": "^3.5",
         "twilio/sdk": "6.0.0",
         "ashallendesign/short-url": "*"
     },
     "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5",
         "friendsofphp/php-cs-fixer": "^2.16",
         "ext-xdebug": "*",
         "barryvdh/laravel-ide-helper": "^2.6.7",
-        "laravel/vapor-cli": "^1.11",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.0",
         "facade/ignition": "^2.3.6",
-        "fzaninotto/faker": "^1.9.1",
-        "nwidart/laravel-modules": "dev-master"
+        "fzaninotto/faker": "^1.9.1"
     },
     "config": {
         "optimize-autoloader": true,
