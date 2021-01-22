@@ -79,7 +79,7 @@ Building from scratch **has to** happen on the `master` branch.
 
 Firstly, delete all apps and modules. 
 ```bash
-rm apps/* modules/*
+rm -rf apps/* modules/*
 ```
 
 After, uncomment all lines in `repos.txt` by removing the leading `#`, and **commit and push** all changes.
