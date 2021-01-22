@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb7784d17414ca5601af36f94d67b6e2",
+    "content-hash": "a396f25f1ba2f1e95b9bc5b9ca1fe016",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -534,13 +534,13 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/CcdaParser",
-                "reference": "31beb36afb8f1c75c48b711f07843cbf9b82b566"
+                "reference": "7f49d4cd417a709bcaba73a5756f6429d03136ca"
             },
             "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
+                        "CircleLinkHealth\\CcdaParser\\Providers\\CcdaParserProcessorProvider"
                     ],
                     "aliases": []
                 }

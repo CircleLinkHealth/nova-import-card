@@ -23,9 +23,6 @@
 [remote "provider-app"]
 	url = git@github.com:CircleLinkHealth/app-cpm-web.git
 	fetch = +refs/heads/*:refs/remotes/provider-app/*
-[remote "caller-app"]
-	url = git@github.com:CircleLinkHealth/app-cpm-caller.git
-	fetch = +refs/heads/*:refs/remotes/caller-app/*
 [remote "self-enrollment-app"]
 	url = git@github.com:CircleLinkHealth/cpm-app-blueprint.git
 	fetch = +refs/heads/*:refs/remotes/self-enrollment-app/*
