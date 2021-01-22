@@ -128,8 +128,8 @@ class ManagePatientForcedChargeableServices extends Resource
                             PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Attach Service',
                         ]),
                         Text::make('For Month', 'chargeable_month')->displayUsing(function () {
-                            return isset($this->pivot->chargeable_month) && ! is_null($this->pivot->chargeable_month)
-                                ? Carbon::parse($this->pivot->chargeable_month)->toDateString()
+                            return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)
+                                ? Carbon::parse($this->forcedDetails->chargeable_month)->toDateString()
                                 : '-';
                         })->readonly()->onlyOnIndex(),
                         Select::make('Chargeable Month', 'chargeable_month')->options([

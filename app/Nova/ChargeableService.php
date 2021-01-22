@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
@@ -72,24 +73,27 @@ class ChargeableService extends Resource
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('code'),
 
-            BelongsToMany::make('Patients', 'forcedForPatients', 'App\Nova\ManagePatientForcedChargeableServices')->fields(function () {
-                return [
-                    Boolean::make('Is forced', 'is_forced')->displayUsing(function () {
-                        return $this->pivot->is_forced ?? '-';
-                    }),
-                    Text::make('For Month', 'chargeable_month')->displayUsing(function () {
-                        return isset($this->pivot->chargeable_month) && ! is_null($this->pivot->chargeable_month)
-                            ? Carbon::parse($this->pivot->chargeable_month)->toDateString()
-                            : '-';
-                    })->readonly()->onlyOnDetail(),
-                    Select::make('Chargeable Month', 'chargeable_month')->options([
-                        null                                                      => 'Permanently',
-                        Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
-                        Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
-                    ]),
-                ];
-            })->hideFromIndex()
-              ->hideFromDetail(),
+            BelongsToMany::make('Patients', 'forcedForPatients', 'App\Nova\ManagePatientForcedChargeableServices')
+                ->fields(function () {
+                    return [
+                        Select::make('Action Type', 'action_type')->options([
+                            PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Attach Service',
+                            PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Attach Service',
+                        ]),
+                        Text::make('For Month', 'chargeable_month')->displayUsing(function () {
+                            return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)
+                                ? Carbon::parse($this->forcedDetails->chargeable_month)->toDateString()
+                                : '-';
+                        })->readonly()->onlyOnIndex(),
+                        Select::make('Chargeable Month', 'chargeable_month')->options([
+                            null                                                      => 'Permanently',
+                            Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
+                            Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
+                        ]),
+                    ];
+                })
+                ->hideFromIndex()
+                ->hideFromDetail(),
         ];
     }
 
