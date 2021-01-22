@@ -255,13 +255,13 @@ class CreateEnrolleesSurveySeeder extends Seeder
                 ->exists();
 
             if($questionsExists){
-                $surveyQuestionsExists =  DB::table('survey_questions')
-                    ->where('survey_instance_id', '=', $this->currentInstance->id)
-                    ->exists();
+//                $surveyQuestionsExists =  DB::table('survey_questions')
+//                    ->where('survey_instance_id', '=', $this->currentInstance->id)
+//                    ->exists();
 
-                if (!$surveyQuestionsExists){
-                    $this->copySurveyQuestionsEntries($survey->id);
-                }
+//                if (!$surveyQuestionsExists){
+//                    $this->copySurveyQuestionsEntries($survey->id);
+//                }
                 return;
             }
 
