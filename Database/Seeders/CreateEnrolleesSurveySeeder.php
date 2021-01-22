@@ -30,15 +30,6 @@ class CreateEnrolleesSurveySeeder extends Seeder
     const SELECT        = 'select';
     const TEXT          = 'text';
     const TIME          = 'time';
-    const SURVEY_NAME = 'Enrollees';
-    /**
-     * @var \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
-     */
-    private $currentInstance;
-    /**
-     * @var Carbon
-     */
-    private Carbon $time;
 
     public function createQuestions($instance, $questionsData)
     {
@@ -90,13 +81,12 @@ class CreateEnrolleesSurveySeeder extends Seeder
                 }
             }
 
-            DB::table('survey_questions')
+            DB::table('survey_questions')->where('survey_instance_id', '=', $instance->id)
+                ->where('question_id', '=', $questionId)
                 ->updateOrInsert(
                     [
                         'survey_instance_id' => $instance->id,
                         'question_id'        => $questionId,
-                    ],
-                    [
                         'order'              => $questionData['order'],
                         'sub_order'          => array_key_exists('sub_order', $questionData)
                             ? $questionData['sub_order']
@@ -233,59 +223,22 @@ class CreateEnrolleesSurveySeeder extends Seeder
      */
     public function run()
     {
-        $this->currentInstance = null;
-        $this->time = Carbon::now();
+        $time                 = Carbon::now();
+        $surveyInstancesTable = 'survey_instances';
+        $surveysTable         = 'surveys';
+        $enrolleeSurveyExists = DB::table($surveysTable)
+            ->where('name', '=', 'Enrollees')
+            ->exists();
 
-        $survey = DB::table('surveys')
-            ->where('name', '=', self::SURVEY_NAME)
-            ->first();
+        if ( ! $enrolleeSurveyExists) {
+            $enrolleesSurveyId = DB::table($surveysTable)->insertGetId(
+                [
+                    'name'        => 'Enrollees',
+                    'description' => 'Enrollees Survey',
+                ]
+            );
 
-        if ($survey){
-            $this->currentInstance = DB::table('survey_instances')
-                ->where('survey_id', '=', $survey->id)
-                ->where('year', $this->time->year)
-                ->first();
-
-            if (!$this->currentInstance){
-                return;
-            }
-
-            $questionsExists =  DB::table('questions')
-                ->where('survey_id', '=', $survey->id)
-                ->exists();
-
-            if($questionsExists){
-                $surveyQuestionsExists =  DB::table('survey_questions')
-                    ->where('survey_instance_id', '=', $this->currentInstance->id)
-                    ->exists();
-
-                if (!$surveyQuestionsExists){
-                    $this->copyPreviousSurveyQuestionsEntriesInstances($survey->id);
-                }
-                return;
-            }
-
-            $this->createSurveyData($survey->id);
-            return;
-        }
-
-        $enrolleesSurveyId = DB::table('surveys')->insertGetId(
-            [
-                'name'        => 'Enrollees',
-                'description' => 'Enrollees Survey',
-            ]
-        );
-
-        $this->createSurveyData($enrolleesSurveyId);
-
-    }
-
-    private function createSurveyData(int $enrolleesSurveyId)
-    {
-        $time                 = $this->time;
-
-        if (!$this->currentInstance){
-            $this->currentInstance = DB::table('survey_instances')->insert(
+            DB::table($surveyInstancesTable)->insert(
                 [
                     'survey_id'  => $enrolleesSurveyId,
                     'year'       => $time->year,
@@ -293,40 +246,12 @@ class CreateEnrolleesSurveySeeder extends Seeder
                     'updated_at' => $time,
                 ]
             );
+
+            $currentInstance = DB::table($surveyInstancesTable)->where('survey_id', '=', $enrolleesSurveyId)->first();
+
+            $questionsData = $this->enrolleesQuestionData();
+            $this->createQuestions($currentInstance, $questionsData);
         }
-
-        $questionsData = $this->enrolleesQuestionData();
-        $this->createQuestions($this->currentInstance, $questionsData);
-    }
-
-    private function copyPreviousSurveyQuestionsEntriesInstances(int $surveyId)
-    {
-        $instance = DB::table('survey_instances')->where('survey_id', $surveyId)->first();
-
-        if (!$instance){
-            return;
-        }
-
-        $surveyQuestionsLastInstance = DB::table('survey_questions')->where('survey_instance_id', $instance->id)->get();
-
-        if (!$surveyQuestionsLastInstance){
-            return;
-        }
-
-        foreach ($surveyQuestionsLastInstance as $question){
-            DB::table('survey_questions')
-                ->updateOrInsert([
-                    'survey_instance_id'=> $this->currentInstance->id,
-                    'question_id'=>$question->id,
-                ],
-                [
-
-                    'order'=>$question->order,
-                    'sub_order'=>$question->sub_order,
-                ]
-            );
-        }
-
     }
 
 }
