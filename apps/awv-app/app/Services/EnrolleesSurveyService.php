@@ -31,7 +31,7 @@ class EnrolleesSurveyService
         $letterLink = '';
 
         if ($isSurveyOnly) {
-            $letterLink = url(config('services.cpm.url')."/review-letter/{$user->id}");
+            $letterLink = url(config('services.selfEnrollment.url')."/review-letter/{$user->id}");
         }
 
         return [

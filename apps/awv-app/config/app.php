@@ -172,7 +172,6 @@ return [
         App\Providers\HorizonServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
-        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GrofGraf\LaravelPDFMerger\Providers\PDFMergerServiceProvider::class,
     ],
 
@@ -222,6 +221,5 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 ];

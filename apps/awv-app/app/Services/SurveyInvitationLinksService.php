@@ -14,7 +14,6 @@ use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Support\Facades\URL;
-use Waavi\UrlShortener\Facades\UrlShortener;
 
 class SurveyInvitationLinksService
 {
@@ -69,13 +68,8 @@ class SurveyInvitationLinksService
                 ]
             );
 
-            try {
-                $shortUrl = UrlShortener::shorten($url);
-            } catch (\Exception $e) {
-                \Log::warning($e->getMessage());
-            }
-
             $urlToken = $this->parseUrl($url);
+            $shortUrl = shortenUrl($url);
 
             InvitationLink::create([
                 'patient_info_id'     => $patientInfoId,

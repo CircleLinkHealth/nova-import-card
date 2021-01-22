@@ -51,23 +51,23 @@
     "repositories": [
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Raygun"
+            "url": "../Raygun"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/SharedModels"
+            "url": "../SharedModels"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Customer"
+            "url": "../Customer"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CcdaParser"
+            "url": "../CcdaParser"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Core"
+            "url": "../Core"
         }
     ]
 }

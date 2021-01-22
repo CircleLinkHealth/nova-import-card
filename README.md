@@ -6,6 +6,8 @@ The monorepo is created by mirroring all CPM repositories into one, while mainta
 ### New workflow for pulling CLH Modules
 Instead of pulling modules using composer, we'll just copy them from the mono-repo as a step in the release command. To do that create a `monorepo-modules.txt` file in the root of your app, and include one module directory name per line as it appears in `cpm-monorepo/modules`. When we run the split command, the monorepo will copy the modules in directory `CircleLinkHealth` in the root of your project.
 
+**Make sure you only have the monorepo in PHPStorm's VCS settings otherwise things can go seriously wrong.**
+
 ```
 // monorepo-modules.txt
 

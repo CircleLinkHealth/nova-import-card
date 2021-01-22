@@ -29,11 +29,11 @@
   "repositories": [
     {
       "type": "path",
-      "url": "./CircleLinkHealth/Customer"
+      "url": "../Customer"
     },
     {
       "type": "path",
-      "url": "./CircleLinkHealth/Synonyms"
+      "url": "../Synonyms"
     }
   ],
   "require": {
