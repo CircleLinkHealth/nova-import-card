@@ -9,28 +9,8 @@
     "license": "MIT",
     "repositories": [
         {
-            "type": "path",
-            "url": "./CircleLinkHealth/Raygun"
-        },
-        {
-            "type": "path",
-            "url": "./CircleLinkHealth/SharedModels"
-        },
-        {
-            "type": "path",
-            "url": "./CircleLinkHealth/Customer"
-        },
-        {
-            "type": "path",
-            "url": "./CircleLinkHealth/CcdaParser"
-        },
-        {
             "type": "composer",
             "url": "https://nova.laravel.com"
-        },
-        {
-            "type": "path",
-            "url": "./CircleLinkHealth/ShortUrl"
         },
         {
             "type": "composer",
@@ -41,7 +21,7 @@
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Core"
+            "url": "./CircleLinkHealth/CcdaParser"
         },
         {
             "type": "path",
@@ -50,6 +30,10 @@
         {
             "type": "path",
             "url": "./CircleLinkHealth/CerberusGatekeeper"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Core"
         },
         {
             "type": "path",
@@ -69,6 +53,10 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/Raygun"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/Revisionable"
         },
         {
@@ -78,6 +66,10 @@
         {
             "type": "path",
             "url": "./CircleLinkHealth/SharedModels"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/ShortUrl"
         },
         {
             "type": "path",
