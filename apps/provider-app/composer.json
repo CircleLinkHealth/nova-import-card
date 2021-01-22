@@ -51,7 +51,8 @@
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
     "wildbit/swiftmailer-postmark": "^3.1",
-    "willdurand/email-reply-parser": "^2.9"
+    "willdurand/email-reply-parser": "^2.9",
+    "ashallendesign/short-url": "*"
   },
   "repositories": [
     {
@@ -145,6 +146,10 @@
     {
       "type": "path",
       "url": "./CircleLinkHealth/TwilioIntegration"
+    },
+    {
+      "type": "path",
+      "url": "./CircleLinkHealth/ShortUrl"
     },
     {
       "type": "path",
