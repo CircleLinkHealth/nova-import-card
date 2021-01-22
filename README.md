@@ -62,7 +62,7 @@ sh bin/run.sh admin-app "php artisan module:make-migration TestMigration CpmMigr
 git fetch --all --no-tags
 # Make sure I'm on the master branch
 git checkout master
-# Make sure I have the latest version1
+# Make sure I have the latest version
 git pull
 # Make a new branch that I'd make a PR with
 git checkout -b provider_master
