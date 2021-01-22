@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
@@ -42,6 +43,10 @@ class PatientIsOfServiceCode
     {
         if ($this->patientHasForcedService()) {
             return true;
+        }
+
+        if ($this->patientHasBlockedService()){
+            return false;
         }
 
         return $this->hasSummary() && $this->hasEnoughProblems() && $this->patientLocationHasService() && ! $this->hasClashingService();
@@ -117,6 +122,18 @@ class PatientIsOfServiceCode
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
+            ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
+            //todo:make sure this does not pass for past months
+            ->where('code', $this->serviceCode)
+            ->isNotEmpty();
+    }
+
+    private function patientHasBlockedService(): bool
+    {
+        return $this->repo()
+                    ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
+            ->forcedChargeableServices
+            ->where('action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
             //todo:make sure this does not pass for past months
             ->where('code', $this->serviceCode)
             ->isNotEmpty();

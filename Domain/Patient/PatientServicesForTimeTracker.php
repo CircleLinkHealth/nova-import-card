@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
@@ -103,7 +104,7 @@ class PatientServicesForTimeTracker
         $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId)
             ->forcedChargeableServices
-            ->where('pivot.is_forced', true)
+            ->where('forcedDetails.action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
             ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->code));
 
         $servicesDerivedFromPatientProblems->filter()->unique();
