@@ -122,7 +122,7 @@ class PatientIsOfServiceCode
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
-            ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
+            ->where('forcedDetails.action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
             //todo:make sure this does not pass for past months
             ->where('code', $this->serviceCode)
             ->isNotEmpty();
@@ -133,7 +133,7 @@ class PatientIsOfServiceCode
         return $this->repo()
                     ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
-            ->where('action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
+            ->where('forcedDetails.action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
             //todo:make sure this does not pass for past months
             ->where('code', $this->serviceCode)
             ->isNotEmpty();

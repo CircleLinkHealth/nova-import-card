@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
@@ -13,7 +14,7 @@ class ForcedPatientChargeableServicesForProcessing
 {
     protected string $chargeableServiceCode;
 
-    protected bool $isForced;
+    protected string $actionType;
 
     public static function fromCollection(EloquentCollection $collection): array
     {
@@ -26,13 +27,13 @@ class ForcedPatientChargeableServicesForProcessing
 
     public static function fromRelationship(ChargeableService $cs): ?self
     {
-        if ( ! $cs->pivot) {
+        if ( ! $cs->forcedDetails) {
             return null;
         }
 
         return (new static())
             ->setChargeableServiceCode($cs->code)
-            ->setIsForced($cs->pivot->is_forced);
+            ->setActionType($cs->forcedDetails->action_type);
     }
 
     public function getChargeableServiceCode(): string
@@ -42,7 +43,7 @@ class ForcedPatientChargeableServicesForProcessing
 
     public function isForced(): bool
     {
-        return $this->isForced;
+        return $this->actionType === PatientForcedChargeableService::FORCE_ACTION_TYPE;
     }
 
     public function setChargeableServiceCode(string $chargeableServiceCode): self
@@ -52,9 +53,9 @@ class ForcedPatientChargeableServicesForProcessing
         return $this;
     }
 
-    public function setIsForced(bool $isForced): self
+    public function setActionType(bool $actionType): self
     {
-        $this->isForced = $isForced;
+        $this->actionType = $actionType;
 
         return $this;
     }
