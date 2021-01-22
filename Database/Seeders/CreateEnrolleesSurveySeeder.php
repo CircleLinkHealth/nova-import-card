@@ -94,9 +94,9 @@ class CreateEnrolleesSurveySeeder extends Seeder
                 ->updateOrInsert(
                     [
                         'survey_instance_id' => $instance->id,
+                        'question_id'        => $questionId,
                     ],
                     [
-                        'question_id'        => $questionId,
                         'order'              => $questionData['order'],
                         'sub_order'          => array_key_exists('sub_order', $questionData)
                             ? $questionData['sub_order']
@@ -255,17 +255,17 @@ class CreateEnrolleesSurveySeeder extends Seeder
                 ->exists();
 
             if($questionsExists){
-//                $surveyQuestionsExists =  DB::table('survey_questions')
-//                    ->where('survey_instance_id', '=', $this->currentInstance->id)
-//                    ->exists();
+                $surveyQuestionsExists =  DB::table('survey_questions')
+                    ->where('survey_instance_id', '=', $this->currentInstance->id)
+                    ->exists();
 
-//                if (!$surveyQuestionsExists){
-//                    $this->copySurveyQuestionsEntries($survey->id);
-//                }
+                if (!$surveyQuestionsExists){
+                    $this->copyPreviousSurveyQuestionsEntriesInstances($survey->id);
+                }
                 return;
             }
 
-            $this->createSurvey($survey->id);
+            $this->createSurveyData($survey->id);
             return;
         }
 
@@ -276,35 +276,44 @@ class CreateEnrolleesSurveySeeder extends Seeder
             ]
         );
 
-        $this->createSurvey($enrolleesSurveyId);
+        $this->createSurveyData($enrolleesSurveyId);
 
     }
 
-    private function createSurvey(int $enrolleesSurveyId)
+    private function createSurveyData(int $enrolleesSurveyId)
     {
         $time                 = $this->time;
 
-        DB::table('survey_instances')->updateOrInsert(
-            [
-                'survey_id'  => $enrolleesSurveyId,
-                'year'       => $time->year,
-            ],
-            [
-                'created_at' => $time,
-                'updated_at' => $time,
-            ]
-        );
+        if (!$this->currentInstance){
+            $this->currentInstance = DB::table('survey_instances')->insert(
+                [
+                    'survey_id'  => $enrolleesSurveyId,
+                    'year'       => $time->year,
+                    'created_at' => $time,
+                    'updated_at' => $time,
+                ]
+            );
+        }
 
         $questionsData = $this->enrolleesQuestionData();
         $this->createQuestions($this->currentInstance, $questionsData);
     }
 
-    private function copySurveyQuestionsEntries(int $surveyId)
+    private function copyPreviousSurveyQuestionsEntriesInstances(int $surveyId)
     {
         $instance = DB::table('survey_instances')->where('survey_id', $surveyId)->first();
-        $surveyQuestions = DB::table('survey_questions')->where('survey_instance_id', $instance->id)->get();
 
-        foreach ($surveyQuestions as $question){
+        if (!$instance){
+            return;
+        }
+
+        $surveyQuestionsLastInstance = DB::table('survey_questions')->where('survey_instance_id', $instance->id)->get();
+
+        if (!$surveyQuestionsLastInstance){
+            return;
+        }
+
+        foreach ($surveyQuestionsLastInstance as $question){
             DB::table('survey_questions')
                 ->updateOrInsert([
                     'survey_instance_id'=> $this->currentInstance->id,

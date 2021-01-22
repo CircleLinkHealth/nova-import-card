@@ -39,6 +39,14 @@ class GenerateSelfEnrollmentSurveyCommand extends Command
      */
     public function handle()
     {
+
+        /**
+         * Cases that this will work:
+         *  1. No Enrollee Questions Data Exists at all.
+         *  2. Enrollee Questions Data Exists but survey_questions are missing current survey_instance(instance for current year).
+         *
+         * You are bout to enter a not great written seeder...
+         */
         Artisan::call('db:seed', ['--class' => CreateEnrolleesSurveySeeder::class]);
         $this->info("done");
     }
