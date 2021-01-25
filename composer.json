@@ -131,9 +131,10 @@
         "circlelinkhealth/twilio-integration-module": "1.0.x-dev",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
+        "fzaninotto/faker": "^1.4",
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "lab404/laravel-impersonate": "^1.7",
-        "fzaninotto/faker": "^1.4"
+        "sentry/sentry-laravel": "^2.3"
     },
     "require-dev": {
         "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
