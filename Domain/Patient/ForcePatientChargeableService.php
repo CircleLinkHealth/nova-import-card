@@ -44,7 +44,9 @@ class ForcePatientChargeableService
 
     private function guaranteeHistoricallyAccurateRecords() : self
     {
-        //todo: add logic
+        //get all records
+
+        //
         return $this;
     }
 
