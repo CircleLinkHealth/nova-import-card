@@ -81,12 +81,12 @@ class ChargeableService extends Resource
                             PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Service',
                             PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Service',
                         ])->onlyOnDetail(),
-                        Text::make('For Month', 'chargeable_month')->displayUsing(function () {
+                        Text::make('For Month')->displayUsing(function () {
                             return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)
                                 ? Carbon::parse($this->forcedDetails->chargeable_month)->toDateString()
                                 : '-';
                         })->readonly()->onlyOnIndex(),
-                        Text::make('Action Type', 'action_type')->displayUsing(function () {
+                        Text::make('Action Type')->displayUsing(function () {
                             return ucwords($this->forcedDetails->action_type);
                         })->readonly()->onlyOnIndex(),
                         Select::make('Chargeable Month', 'chargeable_month')->options([
