@@ -125,11 +125,6 @@ class SendInvitation implements ShouldQueue
 
         $this->link     = $url;
         $this->shortUrl = shortenUrl(url($url));
-
-        if (App::environment(['review'])) {
-            return $this->link;
-        }
-
         return $this->shortUrl;
     }
 
