@@ -106,6 +106,8 @@ class SelfEnrollmentInviteNotification extends Notification
         $mailMessage           = new MailMessage();
         $mailMessage->viewData = ['excludeLogo' => true, 'practiceName' => $fromName];
 
+        $x = $mailMessage->from(config('mail.marketing_from.address'), $fromName);
+
         return $mailMessage
             ->mailer('smtp')
             ->from(config('mail.marketing_from.address'), $fromName)
