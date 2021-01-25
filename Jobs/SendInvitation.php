@@ -62,13 +62,6 @@ class SendInvitation implements ShouldQueue
     private $user;
 
     /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 1;
-
-    /**
      * Create a new job instance.
      */
     public function __construct(
@@ -97,18 +90,11 @@ class SendInvitation implements ShouldQueue
      */
     public function handle()
     {
-        try {
-            if ( ! $this->shouldRun()) {
+        if ( ! $this->shouldRun()) {
                 return;
             }
 
-            $this->sendInvite($this->createLink());
-        }catch(\Exception $exception){
-            $message = $exception->getMessage();
-            Log::error("['SELF ENROLLMENT'] $message");
-            throw new \Exception($message);
-        }
-
+        $this->sendInvite($this->createLink());
     }
 
     private function createLink(): string
