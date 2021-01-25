@@ -1073,7 +1073,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "c9c7dc5d2aca4e3906c002d8f8cae89d3fb71fd0"
+                "reference": "fe1c171c24185e94f92f6a639b271dde18fab932"
             },
             "require": {
                 "laravel/nova": "~3.0"
@@ -1099,7 +1099,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-25T17:41:17+00:00"
+            "time": "2021-01-25T19:31:02+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -5815,16 +5815,16 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.34",
+            "version": "2.8.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "6f8113f57a508494ca36acbcfa2dc2d923c7ed5b"
+                "reference": "68a35170fdf36e7b35f9c125e5102338dbc3ff65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/6f8113f57a508494ca36acbcfa2dc2d923c7ed5b",
-                "reference": "6f8113f57a508494ca36acbcfa2dc2d923c7ed5b",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/68a35170fdf36e7b35f9c125e5102338dbc3ff65",
+                "reference": "68a35170fdf36e7b35f9c125e5102338dbc3ff65",
                 "shasum": ""
             },
             "require": {
@@ -5863,7 +5863,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2019-09-18T18:44:20+00:00"
+            "time": "2021-01-25T19:09:34+00:00"
         },
         {
             "name": "monolog/monolog",
