@@ -3359,6 +3359,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function scopePatientOfLocation($query, int $locationId, ?string $ccmStatus = null)
+    {
+        return $query->whereHas(
+            'patientInfo',
+            function ($info) use ($locationId, $ccmStatus) {
+                $info->where('preferred_contact_location', $locationId)
+                     ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
+                         $query->ccmStatus($ccmStatus);
+                     });
+            }
+        );
+    }
     /**
      * Scope for patients who belong to one of the given practice IDs.
      *
