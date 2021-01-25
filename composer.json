@@ -57,10 +57,6 @@
             "url": "./nova-components/ClhNovaTheme"
         },
         {
-            "type": "path",
-            "url": "./nova-components/EnrollmentInvites"
-        },
-        {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
         },
@@ -165,7 +161,6 @@
         "circlelinkhealth/cpm-migrations-module": "3.0",
         "circlelinkhealth/customer-module": "4.2.x-dev",
         "circlelinkhealth/eligibility-module": "4.5.x-dev",
-        "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
