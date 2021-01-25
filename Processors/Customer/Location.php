@@ -36,7 +36,7 @@ class Location implements CustomerProcessor
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
         $this->repo()
-            ->patientsQuery($locationId, $chargeableMonth, Patient::ENROLLED)
+            ->locationPatients($locationId,Patient::ENROLLED)
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(

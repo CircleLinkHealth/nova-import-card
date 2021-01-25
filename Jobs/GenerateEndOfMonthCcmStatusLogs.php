@@ -45,7 +45,6 @@ class GenerateEndOfMonthCcmStatusLogs extends Job
     {
         User::ofType('participant')
             ->has('patientInfo')
-            ->with('patientInfo')
             ->chunkIntoJobs(500, new GenerateEndOfMonthCcmStatusLogsChunk($this->getMonth()));
     }
 }

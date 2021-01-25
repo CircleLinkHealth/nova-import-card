@@ -185,4 +185,9 @@ class Eloquent implements LocationProcessorRepository
             ->unique()
             ->count();
     }
+
+    public function locationPatients($locationId, ?string $ccmStats = null): Builder
+    {
+        // TODO: Implement locationPatients() method.
+    }
 }

@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -86,15 +87,7 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
     public function patientsQuery(int $locationId, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
-            ->whereHas(
-                'patientInfo',
-                function ($info) use ($locationId, $ccmStatus) {
-                    $info->where('preferred_contact_location', $locationId)
-                        ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
-                            $query->ccmStatus($ccmStatus);
-                        });
-                }
-            );
+            ->patientOfLocation($locationId, $ccmStatus);
     }
 
     public function servicesExistForMonth(int $locationId, Carbon $month): bool
@@ -140,5 +133,11 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->filter()
             ->values()
             ->toArray();
+    }
+
+    public function locationPatients($locationId, ?string $ccmStatus = null): Builder
+    {
+        return User::ofType('participant')
+            ->patientOfLocation($locationId, $ccmStatus);
     }
 }
