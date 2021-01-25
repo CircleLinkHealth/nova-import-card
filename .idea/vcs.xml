@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GithubSharedProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="master" />
+      </list>
+    </option>
+  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcdaParserProcessorPhp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcmBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CerberusGatekeeper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Core" vcs="Git" />
@@ -12,6 +20,7 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SamlSp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SelfEnrollment" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Synonyms" vcs="Git" />
