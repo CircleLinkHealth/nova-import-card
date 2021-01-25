@@ -31,9 +31,12 @@ class UserPolicy
         return true;
     }
 
-    public function attachChargeableService()
+    public function attachChargeableService(User $user, User $patient, ChargeableService $service)
     {
-        return false;
+        if ($patient->forcedChargeableServices()->where('chargeable_service_id', $service->id)->where('chargeable_month', optional($service->forcedDetails)->chargeable_month)->exists()){
+            return false;
+        }
+        return $this->attachAnyChargeableService();
     }
 
     public function attachAnyChargeableService(){
@@ -43,7 +46,9 @@ class UserPolicy
     public function detachChargeableService(User $user, User $patient, ChargeableService $service)
     {
         return $user->monthlyBillingStatus()
-                    ->where('chargeable_month', $service->forcedDetails->chargeable_month)
+                    ->when(! is_null($service->forcedDetals->chargeable_month),
+                        fn($q) => $q->where('chargeable_month', $service->forcedDetails->chargeable_month)
+                    )
                     ->where(fn($q) => $q->whereNull('actor_id')->orWhere('status', 'approved'))
                     ->exists();
     }
