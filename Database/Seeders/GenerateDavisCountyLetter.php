@@ -96,7 +96,7 @@ class GenerateDavisCountyLetter extends Seeder
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ', 'davis-county')),
+                    'display_name'          => 'Davis County Medical Associates',
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
