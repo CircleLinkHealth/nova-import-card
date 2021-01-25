@@ -2,7 +2,22 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\VerifyCsrfToken;
+use CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled;
+use CircleLinkHealth\Core\Http\Middleware\SentryContext;
+use CircleLinkHealth\Customer\Http\Middleware\PatientProgramSecurity;
+use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Http\Middleware\FrameGuard;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
+use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
+use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
+use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
 
 class Kernel extends HttpKernel
 {
@@ -21,6 +36,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        FrameGuard::class,
+        SentryContext::class,
     ];
 
     /**
@@ -30,18 +47,33 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            // \Illuminate\Session\Middleware\AuthenticateSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            LogoutIfAccessDisabled::class,
+            CreateFreshApiToken::class,
+            AuthyMiddleware::class,
+        ],
+
+        'sessions' => [
+            StartSession::class,
         ],
 
         'api' => [
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'saml' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+            LogoutIfAccessDisabled::class,
         ],
     ];
 
@@ -63,5 +95,11 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
+        //CLH Middleware
+        'ability'                => CerberusAbility::class,
+        'permission'             => CerberusPermission::class,
+        'patientProgramSecurity' => PatientProgramSecurity::class,
+        'role'                   => CerberusRole::class,
     ];
 }
