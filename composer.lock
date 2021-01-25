@@ -595,7 +595,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ef72da0ffc31ccaaf13d43cad9840716ab3c7e76"
+                "reference": "5445f18ba00dc8585c077d25ed0c76005053bfb7"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -646,7 +646,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-20T14:56:29+00:00"
+            "time": "2021-01-25T11:01:48+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -827,7 +827,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c8d65f8e4fd2fff37690b212cbf771d95b25007e"
+                "reference": "deee185ee912aecbe70390437031176d230cf195"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -869,7 +869,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T22:35:57+00:00"
+            "time": "2021-01-25T11:02:59+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -12375,16 +12375,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.9.1",
+            "version": "2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "307fb34a5ab697461ec4c9db865b20ff2fd40771"
+                "reference": "df7933820090489623ce0be5e85c7e693638e536"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/307fb34a5ab697461ec4c9db865b20ff2fd40771",
-                "reference": "307fb34a5ab697461ec4c9db865b20ff2fd40771",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/df7933820090489623ce0be5e85c7e693638e536",
+                "reference": "df7933820090489623ce0be5e85c7e693638e536",
                 "shasum": ""
             },
             "require": {
@@ -12432,7 +12432,13 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2020-11-01T12:00:00+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/denis-sokolov",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-24T12:00:00+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
