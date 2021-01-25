@@ -81,11 +81,13 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
             $faursTeam   = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::FAUR_SIGNATURE);
 
             if (in_array($provider->id, $millersTeam)) {
-                return "'<img src='/img/signatures/cameron-memorial/millers_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
+                $signature = asset('/img/signatures/cameron-memorial/millers_signature.png');
+                return "'<img src=$signature alt='$practice->dipslay_name' style='max-width: 17%;'/>";
             }
 
             if (in_array($provider->id, $faursTeam)) {
-                return "'<img src='/img/signatures/cameron-memorial/faurs_signature.png'  alt='$practice->dipslay_name' style='max-width: 14%;'/>";
+                $signature = asset('/img/signatures/cameron-memorial/faurs_signature.png');
+                return "'<img src=$signature  alt='$practice->dipslay_name' style='max-width: 14%;'/>";
             }
         }
 

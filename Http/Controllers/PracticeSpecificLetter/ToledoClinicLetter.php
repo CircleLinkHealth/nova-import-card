@@ -96,7 +96,8 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
                 $practiceNameToGetSignature = $practice->name;
                 $npiNumber                  = $provider->load('providerInfo')->providerInfo->npi_number;
                 $type                       = ProviderSignature::SIGNATURE_PIC_TYPE;
-                $practiceSigSrc             = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+                $signature = asset("/img/signatures/$practiceNameToGetSignature/$npiNumber$type");
+                $practiceSigSrc             = "<img src=$signature alt='$practice->dipslay_name' style='max-width: 100%;'/>";
             }
         }
 
