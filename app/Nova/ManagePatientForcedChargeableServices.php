@@ -124,8 +124,8 @@ class ManagePatientForcedChargeableServices extends Resource
                 ->fields(function () {
                     return [
                         Select::make('Action Type', 'action_type')->options([
-                            PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Attach Service',
-                            PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Attach Service',
+                            PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Service',
+                            PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Service',
                         ]),
                         Text::make('For Month', 'chargeable_month')->displayUsing(function () {
                             return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)

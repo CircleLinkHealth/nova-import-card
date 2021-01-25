@@ -71,25 +71,29 @@ class ChargeableService extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
+
             Text::make('code'),
 
             BelongsToMany::make('Patients', 'forcedForPatients', 'App\Nova\ManagePatientForcedChargeableServices')
                 ->fields(function () {
                     return [
                         Select::make('Action Type', 'action_type')->options([
-                            PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Attach Service',
-                            PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Attach Service',
-                        ]),
+                            PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Service',
+                            PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Service',
+                        ])->onlyOnDetail(),
                         Text::make('For Month', 'chargeable_month')->displayUsing(function () {
                             return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)
                                 ? Carbon::parse($this->forcedDetails->chargeable_month)->toDateString()
                                 : '-';
                         })->readonly()->onlyOnIndex(),
+                        Text::make('Action Type', 'action_type')->displayUsing(function () {
+                            return ucwords($this->forcedDetails->action_type);
+                        })->readonly()->onlyOnIndex(),
                         Select::make('Chargeable Month', 'chargeable_month')->options([
                             null                                                      => 'Permanently',
                             Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
                             Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
-                        ]),
+                        ])->onlyOnDetail(),
                     ];
                 })
                 ->hideFromIndex()
