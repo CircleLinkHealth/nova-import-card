@@ -931,7 +931,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c8d65f8e4fd2fff37690b212cbf771d95b25007e"
+                "reference": "704ae4025dd7fdfba8910ccd0766e12262096597"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -973,7 +973,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T22:35:57+00:00"
+            "time": "2021-01-25T11:43:45+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1103,7 +1103,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "38506e2689c1acaa0b0a01cda9430d0e32f286df"
+                "reference": "353bef26e460e2ccdfff45f5d1729b9c5b759a18"
             },
             "require": {
                 "laravel/nova": "~3.0"
@@ -1129,7 +1129,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-22T22:11:29+00:00"
+            "time": "2021-01-25T11:43:45+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1137,7 +1137,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "c5ba79293c64f34e66df3846c871cce487e0a2dc"
+                "reference": "9e880a5f228020e1ecdca31c86bc401d613421de"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1160,7 +1160,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-16T18:59:24+00:00"
+            "time": "2021-01-25T11:43:45+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -8844,16 +8844,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "3.1.2",
+            "version": "3.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "e9b2d45b248d75f4c79a9d166b13b947b72f01fa"
+                "reference": "db8a322f87983bb4f3cd8db01f9a9a593efe72a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/e9b2d45b248d75f4c79a9d166b13b947b72f01fa",
-                "reference": "e9b2d45b248d75f4c79a9d166b13b947b72f01fa",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/db8a322f87983bb4f3cd8db01f9a9a593efe72a3",
+                "reference": "db8a322f87983bb4f3cd8db01f9a9a593efe72a3",
                 "shasum": ""
             },
             "require": {
@@ -8941,7 +8941,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-01-07T18:51:44+00:00"
+            "time": "2021-01-25T08:47:45+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -8949,12 +8949,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "c5af38e42f5cd513731613a64a2c6bc8039892a0"
+                "reference": "be9658a57d554f8bfe587facc1492a45c6bd0e1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/c5af38e42f5cd513731613a64a2c6bc8039892a0",
-                "reference": "c5af38e42f5cd513731613a64a2c6bc8039892a0",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/be9658a57d554f8bfe587facc1492a45c6bd0e1c",
+                "reference": "be9658a57d554f8bfe587facc1492a45c6bd0e1c",
                 "shasum": ""
             },
             "require": {
@@ -9023,7 +9023,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-12-07T10:57:58+00:00"
+            "time": "2021-01-23T13:49:59+00:00"
         },
         {
             "name": "setasign/fpdf",
@@ -13505,16 +13505,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.9.1",
+            "version": "2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "307fb34a5ab697461ec4c9db865b20ff2fd40771"
+                "reference": "df7933820090489623ce0be5e85c7e693638e536"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/307fb34a5ab697461ec4c9db865b20ff2fd40771",
-                "reference": "307fb34a5ab697461ec4c9db865b20ff2fd40771",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/df7933820090489623ce0be5e85c7e693638e536",
+                "reference": "df7933820090489623ce0be5e85c7e693638e536",
                 "shasum": ""
             },
             "require": {
@@ -13562,7 +13562,13 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2020-11-01T12:00:00+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/denis-sokolov",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-24T12:00:00+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
