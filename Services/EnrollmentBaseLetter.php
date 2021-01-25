@@ -179,11 +179,20 @@ class EnrollmentBaseLetter
 
         $practiceSigSrc = $this->getPracticeSignatures($practiceLetter);
 
+
+        $signatoryName = $provider->display_name;
+
+        if (isset($practiceLetter->signatory_name)) {
+            if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER !== $practiceLetter->customer_signature_src) {
+                $signatoryName = $practiceLetter->signatory_name;
+            }
+        }
+
         // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
             $practiceNumber,
-            $provider->display_name,
+            $signatoryName,
             $practice->display_name,
             $buttonsLocation,
             $practiceSigSrc,
