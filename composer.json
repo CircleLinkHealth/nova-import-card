@@ -125,7 +125,7 @@
         "circlelinkhealth/revisionable-module": "7.0.x-dev",
         "circlelinkhealth/saml-sp-module": "2.0",
         "circlelinkhealth/self-enrollment-module": "dev-main",
-        "circlelinkhealth/shared-models-module": "2.3.4",
+        "circlelinkhealth/shared-models-module": "dev-road_547_sharedModels",
         "circlelinkhealth/sqlviews-module": "2.0",
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/twilio-integration-module": "1.0.x-dev",
