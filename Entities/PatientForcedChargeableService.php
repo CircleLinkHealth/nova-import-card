@@ -18,6 +18,13 @@ class PatientForcedChargeableService extends Pivot
     const FORCE_ACTION_TYPE = 'force';
     const BLOCK_ACTION_TYPE = 'block';
 
+    protected $fillable = [
+        'action_type',
+        'chargeable_month',
+        'chargeable_service_id',
+        'patient_user_id'
+    ];
+
     protected $appends = [
         'action_type',
         'chargeable_month'
