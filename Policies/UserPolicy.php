@@ -36,8 +36,12 @@ class UserPolicy
 
     public function attachChargeableService(User $user, User $patient, ChargeableService $service)
     {
-        if ($patient->forcedChargeableServices()->where('chargeable_service_id',
-            $service->id)->where('chargeable_month', optional($service->forcedDetails)->chargeable_month)->exists()) {
+        if (
+            $patient->forcedChargeableServices()
+                    ->where('chargeable_service_id', $service->id)
+                    ->where('chargeable_month', optional($service->forcedDetails)->chargeable_month)
+                    ->exists()
+        ) {
             return false;
         }
 
