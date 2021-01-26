@@ -124,7 +124,7 @@ class GenerateNbiLetter extends Seeder
         <p><span>One of our coordinators will be calling you from </span><strong> $phoneNumber </strong><span>in the coming days to give you more information. The Beth Care program is covered under Medicare Part B. However, some health insurance plans may charge a co-payment. You can contact your health plan if you are not sure or you can ask for assistance from our care coordinators when they reach out to you. If you&rsquo;d like any more information, please see enclosed Frequently Asked Questions or call the same number, </span><strong>$phoneNumber</strong><span>.</span></p>
         <p><span>On behalf of Dr. $providerName and your care team, we look forward to continuing to work with you for </span><span>better health.</span></p>
         <span>Sincerely,&nbsp;</span>
-
+        <br>
         $customerSignaturePic
         <br>
         $practiceSignatoryName
