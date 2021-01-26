@@ -14,6 +14,8 @@ use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -123,6 +125,7 @@ class ManagePatientForcedChargeableServices extends Resource
             BelongsToMany::make('Forced Chargeable Services', 'forcedChargeableServices', 'App\Nova\ChargeableService')
                 ->fields(function () {
                     return [
+//                        BelongsToMany::make('PatientForcedChargeableServices', 'PatientForcedChargeableServices', \App\Nova\PatientForcedChargeableService::class),
                         Select::make('Action Type', 'action_type')->options([
                             PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Service',
                             PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Service',
