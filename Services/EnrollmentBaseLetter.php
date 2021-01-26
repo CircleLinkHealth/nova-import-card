@@ -188,6 +188,11 @@ class EnrollmentBaseLetter
             }
         }
 
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $practiceLetter->customer_signature_src) {
+            $uiRequests    = json_decode($practiceLetter->ui_requests);
+            $signatoryName = $this->getSpecificGroupSignatoryName($uiRequests);
+        }
+
         // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
@@ -225,5 +230,14 @@ class EnrollmentBaseLetter
         }
 
         return $letterPages;
+    }
+
+    /**
+     * @param $uiRequests
+     * @return mixed
+     */
+    private function getSpecificGroupSignatoryName($uiRequests)
+    {
+        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
     }
 }

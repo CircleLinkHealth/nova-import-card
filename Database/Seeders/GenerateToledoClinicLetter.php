@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\App;
 class GenerateToledoClinicLetter extends Seeder
 {
     const UI_REQUESTS = 'ui_requests';
-    const PRACTICE_SIGNATORY_NAME = 'dependent';
 
     /**
      * Run the database seeds.
@@ -51,7 +50,7 @@ class GenerateToledoClinicLetter extends Seeder
             [
                 'practice_logo_src'      => '/img/logos/Toledo/toledo_logo.png',
                 'customer_signature_src' => EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER,
-                'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
+                'signatory_name'         => '',
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
