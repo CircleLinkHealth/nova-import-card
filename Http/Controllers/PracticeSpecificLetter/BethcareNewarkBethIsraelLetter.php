@@ -63,6 +63,6 @@ class BethcareNewarkBethIsraelLetter extends EnrollmentLetterDefaultConfigs impl
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $signature = asset($practiceLetter->customer_signature_src);
-        return "<img src=$signature  alt='$practice->dipslay_name' style='width: 200px;'/>";
+        return "<img src=$signature  alt='$practice->dipslay_name' style='width: 200px; transform: rotate(-86deg);'/>";
     }
 }
