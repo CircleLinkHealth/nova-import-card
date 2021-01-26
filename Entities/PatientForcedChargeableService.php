@@ -6,6 +6,10 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Revisionable\RevisionableTrait;
@@ -22,10 +26,14 @@ class PatientForcedChargeableService extends Pivot
     {
         parent::boot();
 
-//        static::saving(function ($item)  {
-//            // this will die and dump on the first element passed to ->sync()
-//            dd($item);
-//        });
+        static::saved(function ($item)  {
+            //if permanent process all non closed months? Just so if they chose permanent to apply changes for the past month as well
+            ForcePatientChargeableService::onPivotModelEvent($item->patient_user_id, $item->chargeable_service_id, $item->action_type, $item->chargeable_month);
+        });
+
+        static::deleted(function ($item)  {
+            ForcePatientChargeableService::onPivotModelEvent($item->patient_user_id, $item->chargeable_service_id, $item->action_type, $item->chargeable_month);
+        });
     }
 
     const FORCE_ACTION_TYPE = 'force';

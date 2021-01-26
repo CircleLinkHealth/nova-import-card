@@ -9,6 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
@@ -31,6 +33,17 @@ class ProcessPatientSummaries
     {
         $this->processor = $processor;
         $this->repo      = $repo;
+    }
+
+    public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month):void
+    {
+        //check if billing is closed
+        ChargeablePatientMonthlySummary::where('patient_user_id', $patientUserId)
+            ->where('chargeable_month', $month)
+            ->delete();
+
+        BillingCache::clearPatients([$patientUserId]);
+        (app(self::class))->execute($patientUserId, $month);
     }
 
     public function execute(int $patientId, Carbon $month): void
