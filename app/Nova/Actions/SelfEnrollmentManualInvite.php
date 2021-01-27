@@ -66,6 +66,7 @@ class SelfEnrollmentManualInvite extends Action
             }
 
             $manualInviteBatch = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+
             SendInvitation::dispatch(
                 $enrollee->user,
                 EnrollmentInvitationsBatch::firstOrCreateAndRemember(
