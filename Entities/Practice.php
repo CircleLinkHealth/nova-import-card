@@ -264,8 +264,6 @@ class Practice extends BaseModel implements HasMedia
     }
 
     /**
-     * @throws \Exception
-     *
      * @return array
      */
     public function getAddress()

@@ -674,9 +674,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where('is_monitored', true);
     }
 
+    /**
+     * @deprecated
+     * @return string
+     */
     public function billingCodes(Carbon $monthYear)
     {
-        //todo: replace with revamped code
+        //update: do not use this method to get billing codes. no need to have this logic in this file
         $summary = $this->patientSummaries()
             ->where('month_year', $monthYear->toDateString())
             ->with('chargeableServices')
