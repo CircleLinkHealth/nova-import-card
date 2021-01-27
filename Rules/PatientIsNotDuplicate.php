@@ -76,9 +76,7 @@ class PatientIsNotDuplicate implements Rule
 
     private function mysqlMatchPatient(): ?int
     {
-        $term = prepareForMysqlMatch("$this->firstName $this->lastName");
-
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('+$this->firstName +$this->lastName' IN BOOLEAN MODE)")
             ->ofPractice($this->practiceId)
             ->whereHas(
                 'patientInfo',
@@ -88,7 +86,7 @@ class PatientIsNotDuplicate implements Rule
             ->when($this->patientUserId, function ($q) {
                 $q->where('id', '!=', $this->patientUserId);
             })
-            ->ofType('participant')
+            ->ofType(['participant', 'survey-only'])
             ->value('id');
     }
 
