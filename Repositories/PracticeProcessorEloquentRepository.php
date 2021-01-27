@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
+use CircleLinkHealth\CcmBilling\Builders\ApprovedBillingStatusesQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
@@ -19,6 +20,12 @@ class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
+    use ApprovedBillingStatusesQuery;
+
+    public function approvedBillingStatuses(int $practiceId, Carbon $month, bool $withRelations = false): Builder
+    {
+        return $this->approvedBillingStatusesQuery($practiceId, $month, $withRelations);
+    }
 
     public function billingStatuses(int $practiceId, Carbon $month): \Illuminate\Support\Collection
     {

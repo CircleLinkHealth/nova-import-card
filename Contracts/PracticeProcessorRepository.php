@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 interface PracticeProcessorRepository
 {
+    public function approvedBillingStatuses(int $practiceId, Carbon $month, bool $withRelations = false): Builder;
+
     public function billingStatuses(int $practiceId, Carbon $month);
 
     public function closeMonth(int $actorId, int $practiceId, Carbon $month);

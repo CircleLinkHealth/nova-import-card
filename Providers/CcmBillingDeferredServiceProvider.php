@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 
 use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
-use CircleLinkHealth\CcmBilling\Console\GenerateDataForApproveBillablePatientsPage;
+use CircleLinkHealth\CcmBilling\Console\GenerateFakeDataForApproveBillablePatientsPage;
 use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
 use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
 use CircleLinkHealth\CcmBilling\Console\TestAbpV2vsV3;
@@ -73,7 +73,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
         $this->app->singleton(ApproveBillablePatientsServiceV3::class);
 
         $this->commands([
-            GenerateDataForApproveBillablePatientsPage::class,
+            GenerateFakeDataForApproveBillablePatientsPage::class,
             TestAbpV2vsV3::class,
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,

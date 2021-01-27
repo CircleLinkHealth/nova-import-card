@@ -22,7 +22,7 @@ use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class GenerateDataForApproveBillablePatientsPage extends Command
+class GenerateFakeDataForApproveBillablePatientsPage extends Command
 {
     use PracticeHelpers;
     use TimeHelpers;

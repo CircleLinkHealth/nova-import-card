@@ -8,7 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Http\Requests\PracticeInvoiceControllerMakeInvoiceRequest;
 use CircleLinkHealth\CcmBilling\Jobs\CreatePracticeInvoice;
+use CircleLinkHealth\CcmBilling\Jobs\CreatePracticesInvoices;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -68,20 +70,22 @@ class PracticeInvoiceController extends Controller
         ));
     }
 
-    /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
-     */
-    public function makeInvoices(Request $request)
+    public function makeInvoices(PracticeInvoiceControllerMakeInvoiceRequest $request)
     {
         $date      = Carbon::parse($request->input('date'));
-        $format    = $request['format'];
-        $practices = $request['practices'];
+        $format    = $request->input('format');
+        $practices = $request->input('practices');
 
-        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
-
+        $version = intval($request->input('version', 2));
+        if ($version < 3) {
+            CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())
+                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        } else {
+            CreatePracticesInvoices::dispatch($practices, $date, $format, auth()->id())
+                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        }
         $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
-
-        $niceDate = "{$date->shortEnglishMonth} {$date->year}";
+        $niceDate  = "{$date->shortEnglishMonth} {$date->year}";
 
         session()->put(
             'messages',
