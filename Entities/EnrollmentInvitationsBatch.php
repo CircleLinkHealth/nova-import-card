@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Entities;
 
-use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 

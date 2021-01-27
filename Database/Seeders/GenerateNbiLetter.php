@@ -100,10 +100,10 @@ class GenerateNbiLetter extends Seeder
         $providerName = $this->signatoryName;
         $phoneNumber = $this->practiceNumber;
         $practiceSignatoryName = self::PRACTICE_SIGNATORY_NAME;
-        return "<p><span>We are reaching out to you on behalf of your provider, $providerName, to let you know about a program called the </span><strong><em>Beth Care Coordination Program</em></strong><span>.
+        return "<p><span>We are reaching out to you on behalf of your provider, $providerName, to let you know about a program called the </span><strong style='font-weight: 600;'>Beth Care Coordination Program</strong><span>.
         </span></p>
         <p><span>The Beth Care Coordination Program was created to help people living with chronic medical illnesses like diabetes, heart disease and kidney disease. People with these kinds of illnesses have lots of doctor visits, tests and medications. Keeping track of all this can be very hard.</span></p>
-        <p><span>The Beth Care Coordination Program can help by connecting you to </span><strong>a registered nurse who works with your provider.</strong><span> The nurse is able to answer questions about your care, sends messages to your provider and checks up on how you are doing without you having to leave your home! This at home care can be especially helpful given current events to supplement your appointments with your provider.&nbsp;</span></p>
+        <p><span>The Beth Care Coordination Program can help by connecting you to </span><strong style='font-weight: 600;'>a registered nurse who works with your provider.</strong><span> The nurse is able to answer questions about your care, sends messages to your provider and checks up on how you are doing without you having to leave your home! This at home care can be especially helpful given current events to supplement your appointments with your provider.&nbsp;</span></p>
         <p><span>The nurses in the Program, Rita, Audrey, Dillenis, Elizabeth, Pam and Jean, have many years of experience.</span></p>
         <p><span>Some of the help they provide include:&nbsp;</span></p>
         <ul class='browser-default'>
@@ -123,7 +123,7 @@ class GenerateNbiLetter extends Seeder
 
         <p><span>One of our coordinators will be calling you from </span><strong> $phoneNumber </strong><span>in the coming days to give you more information. The Beth Care program is covered under Medicare Part B. However, some health insurance plans may charge a co-payment. You can contact your health plan if you are not sure or you can ask for assistance from our care coordinators when they reach out to you. If you&rsquo;d like any more information, please see enclosed Frequently Asked Questions or call the same number, </span><strong>$phoneNumber</strong><span>.</span></p>
         <p><span>On behalf of Dr. $providerName and your care team, we look forward to continuing to work with you for </span><span>better health.</span></p>
-        <p><span>Sincerely,&nbsp;</span></p>
+        <span>Sincerely,&nbsp;</span>
         <br>
         $customerSignaturePic
         <br>

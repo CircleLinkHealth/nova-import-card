@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Jobs;
 
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
+use CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AppConfig\Reminders;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;

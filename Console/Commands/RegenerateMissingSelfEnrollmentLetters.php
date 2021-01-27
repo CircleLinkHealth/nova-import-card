@@ -22,7 +22,7 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:missingLetters {--forPractice=}';
+    protected $signature = 'generate:missingLetters {--forPractice=} {--forceUpdateAll}';
 
     /**
      * The console command description.
@@ -31,8 +31,9 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
      */
     protected $description = 'Some Letters are missing from enrollment_invitation_letters.
     This command will look for them and then ran the appropriate seeder.
-    If the letter for Practice is known then pass the practice name from DB to --forPractice option, else it will
-    UPDDATEorCreate for all.';
+      {--forPractice} option = practice->name. If is set it will updateOrCreate the letter for given practice.
+      {--forceUpdateAll} = UpdateOrCreate on ALL Letters
+      --If options are left empty = Update or Create all Practices ONLY if their letter is missing.';
 
     /**
      * Create a new command instance.
@@ -52,6 +53,18 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
     public function handle()
     {
         $practiceName = $this->option('forPractice');
+        $forceUpdate = $this->option('forceUpdateAll');
+
+        if ($forceUpdate){
+            $practiceNames = collect($this->selfEnrollmentPractices());
+
+            $practiceNames->each(function ($practiceName){
+                    $this->info("Updating [$practiceName] Letter.");
+                    $this->generateLetterFor($practiceName);
+                });
+                return;
+            }
+
 
         if (! $practiceName){
             $this->checkAllPracticesLetters();
@@ -117,11 +130,7 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
     {
         $practiceNames = $this->selfEnrollmentPractices();
 
-        $practicesMissingLetter = Practice::with('enrollmentLetter')
-            ->whereDoesntHave('enrollmentLetter')
-            ->whereIn('name', $practiceNames)
-            ->select('name')
-            ->get();
+        $practicesMissingLetter = $this->getPracticesMissingLetter($practiceNames);
 
         if ($practicesMissingLetter->isNotEmpty()){
             $practiceNamesMissingLetter = $practicesMissingLetter->pluck('name');
@@ -148,5 +157,18 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
             GenerateCameronLetter::CAMERON_PRACTICE_NAME,
             GenerateNbiLetter::NBI_PRACTICE_NAME,
         ];
+    }
+
+    /**
+     * @param array $practiceNames
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function getPracticesMissingLetter(array $practiceNames)
+    {
+        return Practice::with('enrollmentLetter')
+            ->whereDoesntHave('enrollmentLetter')
+            ->whereIn('name', $practiceNames)
+            ->select('name')
+            ->get();
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 class SendInvitation implements ShouldQueue
@@ -90,8 +91,8 @@ class SendInvitation implements ShouldQueue
     public function handle()
     {
         if ( ! $this->shouldRun()) {
-            return;
-        }
+                return;
+            }
 
         $this->sendInvite($this->createLink());
     }
@@ -125,11 +126,6 @@ class SendInvitation implements ShouldQueue
 
         $this->link     = $url;
         $this->shortUrl = shortenUrl(url($url));
-
-        if (App::environment(['review'])) {
-            return $this->link;
-        }
-
         return $this->shortUrl;
     }
 

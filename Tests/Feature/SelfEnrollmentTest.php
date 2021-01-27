@@ -10,7 +10,7 @@ use App\Jobs\LogSuccessfulLoginToDB;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\CpmConstants\ProviderClinicalTypes;
+use CircleLinkHealth\Customer\Constants\ProviderClinicalTypes;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AppConfig\Reminders;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Facades\Notification;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\TestCase;
+use CircleLinkHealth\SelfEnrollment\Tests\TestCase;
 
 class SelfEnrollmentTest extends TestCase
 {
@@ -699,5 +699,30 @@ class SelfEnrollmentTest extends TestCase
         ]);
 
         return $surveyId;
+    }
+
+    public function test_it_will_not_create_second_enrollee_when_last_names_match()
+    {
+        $enrollee1 = $this->createEnrollees(1);
+        $enrollee2 = $this->createEnrollees(1);
+        $commonLastName = 'Andreou';
+
+        $enrollee1->update([
+           'last_name' => $commonLastName
+        ]);
+        $enrollee2->update([
+            'last_name' => $commonLastName
+        ]);
+
+        $enrollee1->fresh();
+        $enrollee2->fresh();
+
+        CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee1);
+        self::assertTrue( ! is_null($enrollee1->user_id));
+        self::assertTrue( ! is_null($enrollee2->user_id));
+        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
+
+
+
     }
 }
