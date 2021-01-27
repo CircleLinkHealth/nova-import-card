@@ -82,16 +82,17 @@ class ForcePatientChargeableService
     {
         $start = $startingMonth->copy();
         $end = $endingMonth->copy();
-        //todo: or collect and attach many? Or sync? (sync may override? check current entries?)
+        $toCreate = [];
         while ($start->lt($end)){
-            $patient->forcedChargeableServices()->attach([
+            $toCreate[]= [
                 'chargeable_service_id' => $this->input->getChargeableServiceId(),
                 'chargeable_month' => $start->startOfMonth(),
                 'action_type' => $this->input->getActionType(),
-            ]);
+            ];
 
             $start->addMonth();
         }
+        $patient->forcedChargeableServices()->createMany($toCreate);
     }
 
     private function setPatientForcedChargeableService(): self
