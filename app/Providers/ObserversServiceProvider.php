@@ -7,6 +7,8 @@
 namespace App\Providers;
 
 use App\Observers\OutgoingSmsObserver;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
+use CircleLinkHealth\CcmBilling\Observers\PatientForcedChargeableServiceObserver;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Observers\AppConfigObserver;
 use CircleLinkHealth\Customer\Entities\Holiday;
@@ -84,6 +86,7 @@ class ObserversServiceProvider extends ServiceProvider
         Enrollee::observe(EnrolleeObserver::class);
         Location::observe(LocationObserver::class);
         OutgoingSms::observe(OutgoingSmsObserver::class);
+        PatientForcedChargeableService::observe(PatientForcedChargeableServiceObserver::class);
     }
 
     /**

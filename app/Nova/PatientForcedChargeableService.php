@@ -71,9 +71,6 @@ class PatientForcedChargeableService extends Resource
 
             BelongsTo::make('Chargeable Service', 'chargeableService', ChargeableService::class),
 
-//            BelongsTo::make('Patient', 'patient', ManagePatientForcedChargeableServices::class),
-
-//            Select::make('Chargeable Service', 'chargeable_service_id', ChargeableService::class),
             Select::make('Action Type', 'action_type')->options([
                 PatientForcedChargeableServiceModel::FORCE_ACTION_TYPE => 'Force Service',
                 PatientForcedChargeableServiceModel::BLOCK_ACTION_TYPE => 'Block Service',
