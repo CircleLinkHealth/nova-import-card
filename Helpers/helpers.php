@@ -22,6 +22,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
+if ( ! function_exists('prepareForMysqlMatch')) {
+    function prepareForMysqlMatch(string $term)
+    {
+        return collect(explode(' ', $term))->transform(function ($term) {
+            return "+$term";
+        })->implode(' ');
+    }
+}
+
 if ( ! function_exists('isProductionEnv')) {
     /**
      * Returns whether or not this is a Production server, ie. used by real users.
