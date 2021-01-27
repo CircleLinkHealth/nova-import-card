@@ -13,9 +13,6 @@ use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -125,7 +122,7 @@ class ManagePatientForcedChargeableServices extends Resource
             BelongsToMany::make('Forced Chargeable Services', 'forcedChargeableServices', 'App\Nova\ChargeableService')
                 ->fields(function () {
                     return [
-//                        BelongsToMany::make('PatientForcedChargeableServices', 'PatientForcedChargeableServices', \App\Nova\PatientForcedChargeableService::class),
+                        //                        BelongsToMany::make('PatientForcedChargeableServices', 'PatientForcedChargeableServices', \App\Nova\PatientForcedChargeableService::class),
                         Select::make('Action Type', 'action_type')->options([
                             PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Service',
                             PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Service',
@@ -146,14 +143,15 @@ class ManagePatientForcedChargeableServices extends Resource
             Text::make('Patient Eligible Chargeable Services', function () {
                 $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
                     ->get()
-                    ->map(function ($s){
+                    ->map(function ($s) {
                         $minutes = secondsToMMSS($s->total_time);
 
                         $line = "<li><strong>$s->chargeable_service_name</strong> - $s->chargeable_service_code (time: $minutes)</li>";
 
-                        if ($this->forcedChargeableServices->where('code', $s->chargeable_service_code)->isNotEmpty()){
+                        if ($this->forcedChargeableServices->where('code', $s->chargeable_service_code)->isNotEmpty()) {
                             $line .= '(forced)';
                         }
+
                         return $line;
                     })->implode('');
 

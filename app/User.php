@@ -248,6 +248,7 @@ use Laravel\Nova\Actions\Actionable;
  * @property int|null                                                                                                     $forced_chargeable_services_count
  * @property \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[]|\Illuminate\Database\Eloquent\Collection $monthlyBillingStatus
  * @property int|null                                                                                                     $monthly_billing_status_count
+ * @method   static                                                                                                       \Illuminate\Database\Eloquent\Builder|User patientOfLocation(int $locationId, ?string $ccmStatus = null)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

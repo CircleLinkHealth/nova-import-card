@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova;
 
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService as PatientForcedChargeableServicePivot;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Http\Requests\NovaRequest;
-use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService as PatientForcedChargeableServicePivot;
 
 class PatientForcedChargeableService extends Resource
 {
@@ -18,13 +21,6 @@ class PatientForcedChargeableService extends Resource
     public static $model = PatientForcedChargeableServicePivot::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
-     *
-     * @var string
-     */
-    public static $title = 'id';
-
-    /**
      * The columns that should be searched.
      *
      * @var array
@@ -34,9 +30,35 @@ class PatientForcedChargeableService extends Resource
     ];
 
     /**
+     * The single value that should be used to represent the resource when being displayed.
+     *
+     * @var string
+     */
+    public static $title = 'id';
+
+    /**
+     * Get the actions available for the resource.
+     *
+     * @return array
+     */
+    public function actions(Request $request)
+    {
+        return [];
+    }
+
+    /**
+     * Get the cards available for the request.
+     *
+     * @return array
+     */
+    public function cards(Request $request)
+    {
+        return [];
+    }
+
+    /**
      * Get the fields displayed by the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function fields(Request $request)
@@ -46,25 +68,13 @@ class PatientForcedChargeableService extends Resource
 
             BelongsTo::make('Chargeable Service', 'chargeableService', ChargeableService::class),
 
-            BelongsTo::make('Patient', 'patient', ManagePatientForcedChargeableServices::class)
+            BelongsTo::make('Patient', 'patient', ManagePatientForcedChargeableServices::class),
         ];
-    }
-
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function cards(Request $request)
-    {
-        return [];
     }
 
     /**
      * Get the filters available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function filters(Request $request)
@@ -75,21 +85,9 @@ class PatientForcedChargeableService extends Resource
     /**
      * Get the lenses available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function lenses(Request $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function actions(Request $request)
     {
         return [];
     }
