@@ -86,7 +86,7 @@ class ForcePatientChargeableService
         while ($start->lt($end)){
             $toCreate[]= [
                 'chargeable_service_id' => $this->input->getChargeableServiceId(),
-                'chargeable_month' => $start->startOfMonth(),
+                'chargeable_month' => $start->startOfMonth()->copy(),
                 'action_type' => $this->input->getActionType(),
             ];
 
