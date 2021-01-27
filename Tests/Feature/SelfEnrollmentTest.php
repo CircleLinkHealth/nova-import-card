@@ -35,6 +35,7 @@ use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Facades\Notification;
 use Tests\Concerns\TwilioFake\Twilio;
 use CircleLinkHealth\SelfEnrollment\Tests\TestCase;
+use function PHPUnit\Framework\assertTrue;
 
 class SelfEnrollmentTest extends TestCase
 {
@@ -701,27 +702,38 @@ class SelfEnrollmentTest extends TestCase
         return $surveyId;
     }
 
-    public function test_it_will_not_create_second_enrollee_when_last_names_match()
+    public function test_it_will_not_assigned_two_enrollees_to_one_user_when_last_names_match()
     {
-        $enrollee1 = $this->createEnrollees(1);
-        $enrollee2 = $this->createEnrollees(1);
         $commonLastName = 'Andreou';
 
-        $enrollee1->update([
-           'last_name' => $commonLastName
-        ]);
-        $enrollee2->update([
-            'last_name' => $commonLastName
-        ]);
+        $samePersonAttributes = [
+            'last_name' => $commonLastName,
+            'dob'=> Carbon::now()->subYears(80),
+            'practice_id'=> $this->practice()->id
+        ];
 
-        $enrollee1->fresh();
-        $enrollee2->fresh();
+        $enrollee1 = $this->createEnrollees(1);
+        $enrollee1->update($samePersonAttributes);
 
-        CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee1);
-        self::assertTrue( ! is_null($enrollee1->user_id));
-        self::assertTrue( ! is_null($enrollee2->user_id));
-        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
+        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee1->fresh());
+        $enrollee2 = $this->createEnrollees(1);
+        self::assertTrue($enrollee1->first_name !== $enrollee2->first_name);
+        $enrollee2->update($samePersonAttributes);
 
+
+        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee2->fresh());
+
+        /** @var Enrollee $enrollee1Fresh */
+        $enrollee1Fresh = $enrollee1->fresh();
+        $enrollee2Fresh = $enrollee2->fresh();
+
+        self::assertTrue($enrollee1Fresh->first_name !== $enrollee2Fresh->first_name);
+        self::assertTrue(! is_null($enrollee1Fresh->user_id));
+        self::assertTrue( ! is_null($enrollee2Fresh->user_id));
+        self::assertTrue( $enrollee1Fresh->last_name === $enrollee2Fresh->last_name);
+        self::assertTrue( $enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
+        self::assertTrue( $enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
+        self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
 
 
     }
