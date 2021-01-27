@@ -1073,7 +1073,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "88beb884bdcaf9f170dc4b05129131cb453d78cc"
+                "reference": "007021b1c19c561a968704b2ead89cae3a7ecc0b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1096,7 +1096,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-27T19:40:29+00:00"
+            "time": "2021-01-27T22:49:13+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -11733,16 +11733,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.16.0",
+            "version": "6.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa"
+                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa",
-                "reference": "2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/28c5dd21e95a5fe5221965ec89863a485c625d43",
+                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43",
                 "shasum": ""
             },
             "require": {
@@ -11779,7 +11779,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2021-01-13T22:45:35+00:00"
+            "time": "2021-01-27T20:57:17+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
