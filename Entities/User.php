@@ -1104,9 +1104,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function forcedChargeableServices()
     {
         return $this->belongsToMany(ChargeableService::class, 'patient_forced_chargeable_services', 'patient_user_id', 'chargeable_service_id')
-                    ->using(PatientForcedChargeableService::class)
+            ->using(PatientForcedChargeableService::class)
             ->as('forcedDetails')
-                    ->withPivot([
+            ->withPivot([
                 'action_type',
                 'chargeable_month',
             ])
@@ -3359,18 +3359,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
-    public function scopePatientOfLocation($query, int $locationId, ?string $ccmStatus = null)
-    {
-        return $query->whereHas(
-            'patientInfo',
-            function ($info) use ($locationId, $ccmStatus) {
-                $info->where('preferred_contact_location', $locationId)
-                     ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
-                         $query->ccmStatus($ccmStatus);
-                     });
-            }
-        );
-    }
     /**
      * Scope for patients who belong to one of the given practice IDs.
      *
@@ -3448,6 +3436,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeOfTypePatients($query)
     {
         return $query->ofType(CpmConstants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+    }
+
+    public function scopePatientOfLocation($query, int $locationId, ?string $ccmStatus = null)
+    {
+        return $query->whereHas(
+            'patientInfo',
+            function ($info) use ($locationId, $ccmStatus) {
+                $info->where('preferred_contact_location', $locationId)
+                    ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
+                         $query->ccmStatus($ccmStatus);
+                     });
+            }
+        );
     }
 
     /**

@@ -206,7 +206,7 @@ class ChargeableService extends BaseModel
         return $this->belongsToMany(User::class, 'patient_forced_chargeable_services', 'chargeable_service_id', 'patient_user_id')
             ->using(PatientForcedChargeableService::class)
             ->using('forcedDetails')
-                    ->withPivot([
+            ->withPivot([
                 'action_type',
                 'chargeable_month',
             ])->withTimestamps();
