@@ -39,8 +39,9 @@ class ApproveBillablePatientsServiceV3
 
     public function getBillablePatientsForMonth($practiceId, Carbon $date): BillablePatientsForMonthDTO
     {
-        $pagination     = AppConfig::pull('abp-pagination-size', 20);
-        $date           = $date->copy()->startOfMonth();
+        $pagination = AppConfig::pull('abp-pagination-size', 20);
+        $date       = $date->copy()->startOfMonth();
+        //todo: change this to call FetchApprovablePatients action class (which should use the practiceProcessor internally)
         $jsonCollection = $this->practiceProcessor->fetchApprovablePatients($practiceId, $date, $pagination);
         $isClosed       = (bool) $jsonCollection->collection->every(
             function ($summary) {

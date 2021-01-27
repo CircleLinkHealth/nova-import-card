@@ -51,6 +51,11 @@ class PatientMonthlyBillingStatus extends BaseModel
 
     protected $table = 'patient_monthly_billing_statuses';
 
+    public function chargeableMonthlySummariesView()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id', 'patient_user_id');
+    }
+
     public function patientUser()
     {
         return $this->belongsTo(User::class, 'patient_user_id');

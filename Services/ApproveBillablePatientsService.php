@@ -17,6 +17,11 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 
+/**
+ * @deprecated Replaced with {@link ApproveBillablePatientsServiceV3}
+ *
+ * Class ApproveBillablePatientsService
+ */
 class ApproveBillablePatientsService
 {
     public $approvePatientsRepo;
