@@ -667,7 +667,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "2ea5f4652674feff95bde600238654887eeb1dbb"
+                "reference": "2efe8824cce7ee84f9aaab5ae67fb19db156d9f8"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -714,7 +714,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-27T19:53:30+00:00"
+            "time": "2021-01-27T21:28:19+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -12895,16 +12895,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.16.0",
+            "version": "6.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa"
+                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa",
-                "reference": "2f1bb71f25c5ea141d75969ef0cdb895a63fdbaa",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/28c5dd21e95a5fe5221965ec89863a485c625d43",
+                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43",
                 "shasum": ""
             },
             "require": {
@@ -12941,7 +12941,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2021-01-13T22:45:35+00:00"
+            "time": "2021-01-27T20:57:17+00:00"
         },
         {
             "name": "vink/nova-cache-card",
