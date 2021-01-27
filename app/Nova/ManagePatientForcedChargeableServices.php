@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -119,26 +120,7 @@ class ManagePatientForcedChargeableServices extends Resource
 
             Text::make('Display Name', 'display_name')->sortable(),
 
-            BelongsToMany::make('Forced Chargeable Services', 'forcedChargeableServices', 'App\Nova\ChargeableService')
-                ->fields(function () {
-                    return [
-                        //                        BelongsToMany::make('PatientForcedChargeableServices', 'PatientForcedChargeableServices', \App\Nova\PatientForcedChargeableService::class),
-                        Select::make('Action Type', 'action_type')->options([
-                            PatientForcedChargeableService::FORCE_ACTION_TYPE => 'Force Service',
-                            PatientForcedChargeableService::BLOCK_ACTION_TYPE => 'Block Service',
-                        ]),
-                        Text::make('For Month')->displayUsing(function () {
-                            return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)
-                                ? Carbon::parse($this->forcedDetails->chargeable_month)->toDateString()
-                                : '-';
-                        })->readonly()->onlyOnIndex(),
-                        Select::make('Chargeable Month', 'chargeable_month')->options([
-                            null                                                      => 'Permanently',
-                            Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
-                            Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
-                        ]),
-                    ];
-                }),
+            HasMany::make('Forced Chargeable Services', 'forcedChargeableServices', \App\Nova\PatientForcedChargeableService::class),
 
             Text::make('Patient Eligible Chargeable Services', function () {
                 $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
@@ -148,7 +130,7 @@ class ManagePatientForcedChargeableServices extends Resource
 
                         $line = "<li><strong>$s->chargeable_service_name</strong> - $s->chargeable_service_code (time: $minutes)</li>";
 
-                        if ($this->forcedChargeableServices->where('code', $s->chargeable_service_code)->isNotEmpty()) {
+                        if ($this->forcedChargeableServices->where('chargeableService.code', $s->chargeable_service_code)->isNotEmpty()) {
                             $line .= '(forced)';
                         }
 

@@ -6,10 +6,14 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService as PatientForcedChargeableServicePivot;
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService as PatientForcedChargeableServiceModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Text;
 
 class PatientForcedChargeableService extends Resource
 {
@@ -18,7 +22,7 @@ class PatientForcedChargeableService extends Resource
      *
      * @var string
      */
-    public static $model = PatientForcedChargeableServicePivot::class;
+    public static $model = PatientForcedChargeableServiceModel::class;
 
     /**
      * The columns that should be searched.
@@ -66,9 +70,24 @@ class PatientForcedChargeableService extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
 
-            BelongsTo::make('Chargeable Service', 'chargeableService', ChargeableService::class),
+            HasOne::make('Chargeable Service', 'chargeableService', ChargeableService::class),
 
             BelongsTo::make('Patient', 'patient', ManagePatientForcedChargeableServices::class),
+
+            Select::make('Action Type', 'action_type')->options([
+                PatientForcedChargeableServiceModel::FORCE_ACTION_TYPE => 'Force Service',
+                PatientForcedChargeableServiceModel::BLOCK_ACTION_TYPE                                       => 'Block Service',
+            ]),
+            Text::make('For Month')->displayUsing(function () {
+                return isset($this->forcedDetails->chargeable_month) && ! is_null($this->forcedDetails->chargeable_month)
+                    ? Carbon::parse($this->forcedDetails->chargeable_month)->toDateString()
+                    : '-';
+            })->readonly()->onlyOnIndex(),
+            Select::make('Chargeable Month', 'chargeable_month')->options([
+                null                                                      => 'Permanently',
+                Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
+                Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
+            ]),
         ];
     }
 
