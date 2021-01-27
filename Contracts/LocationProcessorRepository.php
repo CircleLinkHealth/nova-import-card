@@ -25,6 +25,8 @@ interface LocationProcessorRepository
 
     public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool;
 
+    public function locationPatients($locationId, ?string $ccmStats = null): Builder;
+
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
     public function pastMonthSummaries(int $locationId, Carbon $month): Collection;
@@ -34,8 +36,6 @@ interface LocationProcessorRepository
     public function patientServices(int $customerModelId, Carbon $monthYear): Builder;
 
     public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder;
-
-    public function locationPatients($locationId, ?string $ccmStats=null):Builder;
 
     public function servicesExistForMonth(int $locationId, Carbon $month): bool;
 

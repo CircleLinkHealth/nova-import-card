@@ -8,24 +8,23 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
-use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
 
 class ForcePatientChargeableService
 {
-    protected int $chargeableServiceId;
     protected string $actionType;
+    protected int $chargeableServiceId;
+    protected bool $isDetaching;
     protected ?Carbon $month;
     protected int $patientUserId;
-    protected bool $isDetaching;
 
     public function __construct(int $patientUserId, int $chargeableServiceId, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?Carbon $month = null, bool $isDetaching)
     {
         $this->patientUserId       = $patientUserId;
         $this->chargeableServiceId = $chargeableServiceId;
-        $this->actionType              = $actionType;
+        $this->actionType          = $actionType;
         $this->month               = $month;
-        $this->isDetaching            = $isDetaching;
+        $this->isDetaching         = $isDetaching;
     }
 
     public static function execute(int $patientUserId, int $chargeableServiceId, ?Carbon $month = null, bool $isDetaching): void
@@ -36,14 +35,16 @@ class ForcePatientChargeableService
             ->reprocessPatientForBilling();
     }
 
-    private function guaranteeHistoricallyAccurateRecords() : self
+    public static function onPivotModelEvent(int $patientUserId, int $chargeableServiceId, string $actionType, ?Carbon $month, bool $isDetaching): void
     {
-        self::processHistoricalRecords($this->patientUserId, $this->chargeableServiceId, $this->actionType, $this->month, $this->isDetaching);
-
-        return $this;
+        self::processHistoricalRecords($patientUserId, $chargeableServiceId, $actionType, $month, $isDetaching);
+        ProcessPatientSummaries::wipeAndReprocessForMonth(
+            $patientUserId,
+            is_null($month) ? Carbon::now()->startOfMonth() : $month
+        );
     }
 
-    public static function processHistoricalRecords(int $patientUserId, int $chargeableServiceId, string $actionType, ?Carbon $month, bool $isDetaching = false) : void
+    public static function processHistoricalRecords(int $patientUserId, int $chargeableServiceId, string $actionType, ?Carbon $month, bool $isDetaching = false): void
     {
         $patient = User::ofType('participant')
             ->with('forcedChargeableServices')
@@ -52,13 +53,13 @@ class ForcePatientChargeableService
         //if detaching forced CS
         //1. IF detaching perma force or block, create historical records from created_at date until now  (maybe double check for intermediary opposite type entries for month)
         //2. If for specific month just detach
-        if ($isDetaching){
-            if (is_null($month)){
-                $startingMonth = '';//need starting month
+        if ($isDetaching) {
+            if (is_null($month)) {
+                $startingMonth = ''; //need starting month
             }
+
             return;
         }
-
 
         //iF not detaching
         //
@@ -70,17 +71,12 @@ class ForcePatientChargeableService
         //if type is block above or opposite
     }
 
-
-
-    public static function onPivotModelEvent(int $patientUserId, int $chargeableServiceId, string $actionType, ?Carbon $month, bool $isDetaching):void
+    private function guaranteeHistoricallyAccurateRecords(): self
     {
-        self::processHistoricalRecords($patientUserId, $chargeableServiceId, $actionType, $month, $isDetaching);
-        ProcessPatientSummaries::wipeAndReprocessForMonth(
-            $patientUserId,
-            is_null($month) ? Carbon::now()->startOfMonth() : $month
-        );
-    }
+        self::processHistoricalRecords($this->patientUserId, $this->chargeableServiceId, $this->actionType, $this->month, $this->isDetaching);
 
+        return $this;
+    }
 
     private function reprocessPatientForBilling(): void
     {
@@ -99,7 +95,7 @@ class ForcePatientChargeableService
             ->syncWithPivotValues([
                 $this->chargeableServiceId,
             ], [
-                'action_type'        => $this->actionType,
+                'action_type'      => $this->actionType,
                 'chargeable_month' => $this->month,
             ], false);
 

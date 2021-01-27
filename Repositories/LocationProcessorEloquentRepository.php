@@ -61,6 +61,12 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         });
     }
 
+    public function locationPatients($locationId, ?string $ccmStatus = null): Builder
+    {
+        return User::ofType('participant')
+            ->patientOfLocation($locationId, $ccmStatus);
+    }
+
     public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
     {
         return $this->patientsQuery($locationId, $chargeableMonth)->paginate($pageSize);
@@ -133,11 +139,5 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->filter()
             ->values()
             ->toArray();
-    }
-
-    public function locationPatients($locationId, ?string $ccmStatus = null): Builder
-    {
-        return User::ofType('participant')
-            ->patientOfLocation($locationId, $ccmStatus);
     }
 }

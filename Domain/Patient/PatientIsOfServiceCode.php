@@ -45,7 +45,7 @@ class PatientIsOfServiceCode
             return true;
         }
 
-        if ($this->patientHasBlockedService()){
+        if ($this->patientHasBlockedService()) {
             return false;
         }
 
@@ -117,23 +117,23 @@ class PatientIsOfServiceCode
         return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
     }
 
+    private function patientHasBlockedService(): bool
+    {
+        return $this->repo()
+            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
+            ->forcedChargeableServices
+            ->where('forcedDetails.action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
+            //todo:make sure this does not pass for past months
+            ->where('code', $this->serviceCode)
+            ->isNotEmpty();
+    }
+
     private function patientHasForcedService(): bool
     {
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
             ->where('forcedDetails.action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
-            //todo:make sure this does not pass for past months
-            ->where('code', $this->serviceCode)
-            ->isNotEmpty();
-    }
-
-    private function patientHasBlockedService(): bool
-    {
-        return $this->repo()
-                    ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
-            ->forcedChargeableServices
-            ->where('forcedDetails.action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
             //todo:make sure this does not pass for past months
             ->where('code', $this->serviceCode)
             ->isNotEmpty();

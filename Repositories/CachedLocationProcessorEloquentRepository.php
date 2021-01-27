@@ -76,6 +76,11 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         });
     }
 
+    public function locationPatients($locationId, ?string $ccmStatus = null): Builder
+    {
+        return $this->repo->locationPatients($locationId, $ccmStatus);
+    }
+
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->repo->paginatePatients($customerModelId, $monthYear, $pageSize);
@@ -154,10 +159,5 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
         BillingCache::forgetLocationSummaries($locationId);
         BillingCache::setLocationSummariesInCache($summaries);
-    }
-
-    public function locationPatients($locationId, ?string $ccmStatus = null): Builder
-    {
-        return $this->repo->locationPatients($locationId, $ccmStatus);
     }
 }

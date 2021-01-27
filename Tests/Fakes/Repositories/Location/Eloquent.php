@@ -78,6 +78,11 @@ class Eloquent implements LocationProcessorRepository
         });
     }
 
+    public function locationPatients($locationId, ?string $ccmStats = null): Builder
+    {
+        // TODO: Implement locationPatients() method.
+    }
+
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         // TODO: Implement paginatePatients() method.
@@ -184,10 +189,5 @@ class Eloquent implements LocationProcessorRepository
             })
             ->unique()
             ->count();
-    }
-
-    public function locationPatients($locationId, ?string $ccmStats = null): Builder
-    {
-        // TODO: Implement locationPatients() method.
     }
 }

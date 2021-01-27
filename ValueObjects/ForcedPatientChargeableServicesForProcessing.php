@@ -12,9 +12,8 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class ForcedPatientChargeableServicesForProcessing
 {
-    protected string $chargeableServiceCode;
-
     protected string $actionType;
+    protected string $chargeableServiceCode;
 
     public static function fromCollection(EloquentCollection $collection): array
     {
@@ -43,19 +42,19 @@ class ForcedPatientChargeableServicesForProcessing
 
     public function isForced(): bool
     {
-        return $this->actionType === PatientForcedChargeableService::FORCE_ACTION_TYPE;
-    }
-
-    public function setChargeableServiceCode(string $chargeableServiceCode): self
-    {
-        $this->chargeableServiceCode = $chargeableServiceCode;
-
-        return $this;
+        return PatientForcedChargeableService::FORCE_ACTION_TYPE === $this->actionType;
     }
 
     public function setActionType(bool $actionType): self
     {
         $this->actionType = $actionType;
+
+        return $this;
+    }
+
+    public function setChargeableServiceCode(string $chargeableServiceCode): self
+    {
+        $this->chargeableServiceCode = $chargeableServiceCode;
 
         return $this;
     }

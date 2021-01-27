@@ -35,17 +35,6 @@ class ProcessPatientSummaries
         $this->repo      = $repo;
     }
 
-    public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month):void
-    {
-        //check if billing is closed
-        ChargeablePatientMonthlySummary::where('patient_user_id', $patientUserId)
-            ->where('chargeable_month', $month)
-            ->delete();
-
-        BillingCache::clearPatients([$patientUserId]);
-        (app(self::class))->execute($patientUserId, $month);
-    }
-
     public function execute(int $patientId, Carbon $month): void
     {
         $this->setPatientId($patientId)
@@ -59,6 +48,17 @@ class ProcessPatientSummaries
     {
         $this->setPatientDto($dto)
             ->process();
+    }
+
+    public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void
+    {
+        //check if billing is closed
+        ChargeablePatientMonthlySummary::where('patient_user_id', $patientUserId)
+            ->where('chargeable_month', $month)
+            ->delete();
+
+        BillingCache::clearPatients([$patientUserId]);
+        (app(self::class))->execute($patientUserId, $month);
     }
 
     private function process()
