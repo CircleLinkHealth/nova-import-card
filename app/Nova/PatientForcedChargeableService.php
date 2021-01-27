@@ -17,6 +17,13 @@ use Laravel\Nova\Fields\Text;
 class PatientForcedChargeableService extends Resource
 {
     /**
+     * Indicates if the resource should be displayed in the sidebar.
+     *
+     * @var bool
+     */
+    public static $displayInNavigation = false;
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string
