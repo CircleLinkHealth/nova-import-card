@@ -104,8 +104,8 @@ class PatientServicesForTimeTracker
         $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId)
             ->forcedChargeableServices
-            ->where('forcedDetails.action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
-            ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->code));
+            ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
+            ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->chargeableServive->code));
 
         $servicesDerivedFromPatientProblems->filter()->unique();
 

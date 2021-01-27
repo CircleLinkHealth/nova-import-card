@@ -104,8 +104,8 @@ class PatientIsOfServiceCode
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
-            ->filter(function ($fcs) {
-                $clashes = ChargeableService::getClashesWithService($fcs->code);
+            ->filter(function (PatientForcedChargeableService $fcs) {
+                $clashes = ChargeableService::getClashesWithService($fcs->chargeableService->code);
 
                 return in_array($this->serviceCode, $clashes);
             })
@@ -122,9 +122,8 @@ class PatientIsOfServiceCode
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
-            ->where('forcedDetails.action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
-            //todo:make sure this does not pass for past months
-            ->where('code', $this->serviceCode)
+            ->where('action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
+            ->where('chargeableService.code', $this->serviceCode)
             ->isNotEmpty();
     }
 
@@ -133,9 +132,8 @@ class PatientIsOfServiceCode
         return $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
-            ->where('forcedDetails.action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
-            //todo:make sure this does not pass for past months
-            ->where('code', $this->serviceCode)
+            ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
+            ->where('chargeableService.code', $this->serviceCode)
             ->isNotEmpty();
     }
 

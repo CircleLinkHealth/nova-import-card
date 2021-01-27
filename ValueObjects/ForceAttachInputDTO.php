@@ -7,10 +7,11 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 
 class ForceAttachInputDTO
 {
-    protected string $actionType;
+    protected string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE;
 
     protected int $chargeableServiceId;
     protected ?Carbon $entryCreatedAt;

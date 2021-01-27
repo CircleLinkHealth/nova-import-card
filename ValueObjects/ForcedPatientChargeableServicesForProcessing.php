@@ -18,21 +18,21 @@ class ForcedPatientChargeableServicesForProcessing
     public static function fromCollection(EloquentCollection $collection): array
     {
         return $collection->map(
-            fn (ChargeableService $cs) => self::fromRelationship($cs)
+            fn (PatientForcedChargeableService $s) => self::fromRelationship($s)
         )
             ->filter()
             ->toArray();
     }
 
-    public static function fromRelationship(ChargeableService $cs): ?self
+    public static function fromRelationship(PatientForcedChargeableService $s): ?self
     {
-        if ( ! $cs->forcedDetails) {
+        if ( ! $s->chargeableService) {
             return null;
         }
 
         return (new static())
-            ->setChargeableServiceCode($cs->code)
-            ->setActionType($cs->forcedDetails->action_type);
+            ->setChargeableServiceCode($s->chargeableService->code)
+            ->setActionType($s->action_type);
     }
 
     public function getChargeableServiceCode(): string

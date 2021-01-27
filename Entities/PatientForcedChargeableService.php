@@ -7,24 +7,18 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForceAttachInputDTO;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Revisionable\RevisionableTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PatientForcedChargeableService extends Pivot
+class PatientForcedChargeableService extends BaseModel
 {
-    //todo: test this works on pivot model, i.e: do the same model events fire for pivot models?
-    //create Pivot revisionable if necessary
-    use RevisionableTrait;
     const BLOCK_ACTION_TYPE = 'block';
 
     const FORCE_ACTION_TYPE = 'force';
-
-    protected $appends = [
-        'action_type',
-        'chargeable_month',
-    ];
 
     protected $dates = [
         'chargeable_month',
@@ -40,24 +34,31 @@ class PatientForcedChargeableService extends Pivot
     ];
     protected $table = 'patient_forced_chargeable_services';
 
-    //todo: Hack for Laravel\Nova\Http\Controllers\ResourceAttachController@handle
-    public function attributesToArray()
-    {
-        return $this->getAttributes();
-    }
-
     public static function boot()
     {
         parent::boot();
 
         static::saved(function ($item) {
             //if permanent process all non closed months? Just so if they chose permanent to apply changes for the past month as well
-            ForcePatientChargeableService::onPivotModelEvent($item->patient_user_id, $item->chargeable_service_id, $item->action_type, $item->chargeable_month);
+            ForcePatientChargeableService::executeWithoutAttaching(
+                (new ForceAttachInputDTO())->setActionType($item->action_type)
+                ->setChargeableServiceId($item->chargeable_service_id)
+                ->setPatientUserId($item->patient_user_id)
+                ->setMonth($item->chargeable_month)
+            );
         });
 
-        static::deleted(function ($item) {
-            ForcePatientChargeableService::onPivotModelEvent($item->patient_user_id, $item->chargeable_service_id, $item->action_type, $item->chargeable_month);
-        });
+//        static::deleting(function ($item) {
+//            dd($item);
+//            ForcePatientChargeableService::executeWithoutAttaching(
+//                (new ForceAttachInputDTO())->setActionType($item->action_type)
+//                                           ->setChargeableServiceId($item->chargeable_service_id)
+//                                           ->setPatientUserId($item->patient_user_id)
+//                                           ->setMonth($item->chargeable_month)
+//                ->setEntryCreatedAt($item->created_at)
+//                ->setIsDetaching(true)
+//            );
+//        });
     }
 
     public function chargeableService()
@@ -68,5 +69,16 @@ class PatientForcedChargeableService extends Pivot
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id', 'id');
+    }
+
+    public static function getOpposingActionType(string $actionType): string
+    {
+        if (! in_array($actionType, [
+            self::FORCE_ACTION_TYPE,
+            self::BLOCK_ACTION_TYPE
+        ])){
+            throw new \Exception("Invalid Patient Forced Chargeable Service Action Type: $actionType");
+        }
+        return $actionType === self::FORCE_ACTION_TYPE ? self::BLOCK_ACTION_TYPE : self::FORCE_ACTION_TYPE;
     }
 }
