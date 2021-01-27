@@ -134,6 +134,7 @@
         "fzaninotto/faker": "^1.4",
         "guzzlehttp/guzzle": "^7.2",
         "lab404/laravel-impersonate": "^1.7",
+        "laravel/nova": "~3.0",
         "sentry/sentry-laravel": "^2.3",
         "ext-pdo": "*"
     },
