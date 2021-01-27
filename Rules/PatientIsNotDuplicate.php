@@ -74,6 +74,24 @@ class PatientIsNotDuplicate implements Rule
         return 'This patient is a duplicate of patient with ID '.$this->duplicatePatientUserId;
     }
 
+    private function mysqlMatchPatient(): ?int
+    {
+        $term = prepareForMysqlMatch("$this->firstName $this->lastName");
+
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")
+            ->ofPractice($this->practiceId)
+            ->whereHas(
+                'patientInfo',
+                function ($q) {
+                    $q->where('birth_date', $this->dob);
+                })
+            ->when($this->patientUserId, function ($q) {
+                $q->where('id', '!=', $this->patientUserId);
+            })
+            ->ofType('participant')
+            ->value('id');
+    }
+
     /**
      * Determine if the validation rule passes.
      *
@@ -84,17 +102,7 @@ class PatientIsNotDuplicate implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->duplicatePatientUserId = User::whereLastName($this->lastName)
-            ->whereHas(
-                'patientInfo',
-                function ($q) {
-                    $q->where('birth_date', $this->dob);
-                }
-            )->where('program_id', $this->practiceId)
-            ->when($this->patientUserId, function ($q) {
-                $q->where('id', '!=', $this->patientUserId);
-            })
-            ->value('id');
+        $this->duplicatePatientUserId = $this->mysqlMatchPatient();
 
         if ($this->duplicatePatientUserId) {
             return false;
