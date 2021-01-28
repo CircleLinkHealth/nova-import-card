@@ -139,7 +139,7 @@
         "ext-pdo": "*"
     },
     "require-dev": {
-        "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
+        "circlelinkhealth/vapor-devops-helpers-module": "dev-master",
         "facade/ignition": "^2.0",
         "laravel/vapor-cli": "^1.11",
         "mockery/mockery": "^1.3.1",
