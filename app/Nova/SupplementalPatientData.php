@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\ImportSupplementalPatientData;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData as Model;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData as Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;

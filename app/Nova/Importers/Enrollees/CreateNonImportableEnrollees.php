@@ -6,11 +6,11 @@
 
 namespace App\Nova\Importers\Enrollees;
 
+use App\Nova\Helpers\Utils;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Validator;
@@ -30,7 +30,7 @@ class CreateNonImportableEnrollees extends EnrolleeImportingAction
 
     protected function getActionInput(Enrollee $enrollee, array $row): array
     {
-        $row['dob']         = $this->determineDob($row);
+        $row['dob']         = Utils::parseExcelDate($row['dob'] ?? null);
         $row['provider_id'] = $this->getProviderId($row);
         $row['practice_id'] = $this->practiceId;
 
@@ -90,31 +90,6 @@ class CreateNonImportableEnrollees extends EnrolleeImportingAction
             'dob'          => 'required',
             'phone_number' => 'required',
         ])->passes();
-    }
-
-    private function determineDob(array $row): ?Carbon
-    {
-        $date = $row['dob'];
-
-        if (empty($date)) {
-            return null;
-        }
-
-        if (is_numeric($date)) {
-            $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
-        }
-
-        if ( ! $date) {
-            return null;
-        }
-
-        try {
-            $date = ImportPatientInfo::parseDOBDate($date);
-        } catch (\Throwable $throwable) {
-            $date = null;
-        }
-
-        return $date;
     }
 
     private function getProviderId(array $row): ?int

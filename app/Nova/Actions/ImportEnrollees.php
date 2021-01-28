@@ -33,7 +33,7 @@ class ImportEnrollees extends Action
     const LABEL_ASSIGN_ENROLLEES_TO_CA               = 'Assign Patients to Care Ambassador';
     const LABEL_CREATE_ENROLLEES                     = 'Create Patients from CSV (non-importable)';
     const LABEL_CREATE_ENROLLEES_FROM_PRACTICE_PULL  = 'Create Patients from Practice Pull Data';
-    const LABEL_MARK_AUTO_ENROLLMENT                 = 'Mark Patients for Auto Enrollment';
+    const LABEL_MARK_AUTO_ENROLLMENT                 = 'Mark Patients for Self Enrollment';
     const LABEL_MARK_INELIGIBLE                      = 'Mark Patients as Ineligible';
 
     /**

@@ -9,10 +9,10 @@ namespace App\Console\Commands;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Adapters\CreatesEligibilityJobFromObject;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Console\Command;
 
@@ -73,14 +73,14 @@ class DispatchPracticePullEligibilityBatch extends Command
 
     protected function dispatchEligibilityJob(Demographics $demos, EligibilityBatch $batch)
     {
-        if (! $demos->billing_provider_user_id && $demos->referring_provider_name) {
+        if ( ! $demos->billing_provider_user_id && $demos->referring_provider_name) {
             $provider = CcdaImporterWrapper::mysqlMatchProvider($demos->referring_provider_name, $demos->practice_id);
             if ($provider) {
                 $demos->billing_provider_user_id = $provider->id;
                 $demos->save();
             }
         }
-        
+
         $ej = $this->createFromBlueButtonObject((new PracticePullMedicalRecord($demos->mrn, $demos->practice_id))->toObject(), $batch, $this->practice);
 
         if ( ! $demos->eligibility_job_id) {

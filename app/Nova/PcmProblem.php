@@ -28,7 +28,7 @@ class PcmProblem extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\Eligibility\Entities\PcmProblem::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\PcmProblem::class;
 
     /**
      * The columns that should be searched.
