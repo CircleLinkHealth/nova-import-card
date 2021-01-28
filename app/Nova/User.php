@@ -6,9 +6,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\UserEnroll;
-use App\Nova\Actions\UserUnreachable;
-use App\Nova\Actions\UserWithdraw;
 use App\Nova\Filters\UserPracticeFilter;
 use App\Nova\Filters\UserRoleFilter;
 use App\Nova\Helpers\Utils;
@@ -76,9 +73,6 @@ class User extends Resource
     public function actions(Request $request)
     {
         return [
-            new UserUnreachable(),
-            new UserEnroll(),
-            new UserWithdraw(),
         ];
     }
 

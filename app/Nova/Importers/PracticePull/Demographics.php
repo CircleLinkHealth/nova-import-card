@@ -7,9 +7,7 @@
 namespace App\Nova\Importers\PracticePull;
 
 use App\Nova\Helpers\Utils;
-use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;

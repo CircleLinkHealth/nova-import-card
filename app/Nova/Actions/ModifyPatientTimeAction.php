@@ -24,6 +24,8 @@ class ModifyPatientTimeAction extends Action implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public $name = 'Modify Patient Time';
+
     /**
      * Get the fields available on the action.
      *

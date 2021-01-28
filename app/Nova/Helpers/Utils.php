@@ -21,36 +21,9 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
 </style>";
     }
 
-    public static function parseExcelDate($date = null, bool $isDob = true):?Carbon
+    public static function parseDate($date = null): ?Carbon
     {
         if (empty($date)) {
-            return null;
-        }
-
-        if (is_numeric($date)) {
-            $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date);
-        }
-
-        if ( ! $date) {
-            return null;
-        }
-
-        if(! $isDob){
-            return self::parseDate($date);
-        }
-
-        try {
-            $date = ImportPatientInfo::parseDOBDate($date);
-        } catch (\Throwable $throwable) {
-            $date = null;
-        }
-
-        return $date;
-    }
-
-    public static function parseDate($date = null):? Carbon
-    {
-        if (empty($date)){
             return null;
         }
 
@@ -60,6 +33,8 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
             if ($date->isToday()) {
                 throw new \Exception('date note parsed correctly');
             }
+
+            return $date;
         } catch (\Throwable $e) {
             if ($date instanceof Carbon) {
                 $date = $date->toDateString();
@@ -85,5 +60,32 @@ a[dusk='{$row->id}-edit-button'], a[dusk='edit-resource-button'] {
 
             return Carbon::createFromDate($year, $date[0], $date[1]);
         }
+    }
+
+    public static function parseExcelDate($date = null, bool $isDob = true): ?Carbon
+    {
+        if (empty($date)) {
+            return null;
+        }
+
+        if (is_numeric($date)) {
+            $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date);
+        }
+
+        if ( ! $date) {
+            return null;
+        }
+
+        if ( ! $isDob) {
+            return self::parseDate($date);
+        }
+
+        try {
+            $date = ImportPatientInfo::parseDOBDate($date);
+        } catch (\Throwable $throwable) {
+            $date = null;
+        }
+
+        return $date;
     }
 }
