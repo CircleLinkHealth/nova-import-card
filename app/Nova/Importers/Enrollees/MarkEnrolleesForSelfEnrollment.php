@@ -40,7 +40,7 @@ class MarkEnrolleesForSelfEnrollment extends EnrolleeImportingAction
 
     protected function shouldPerformAction(Enrollee $enrollee, array $row): bool
     {
-        return Enrollee::QUEUE_AUTO_ENROLLMENT != $enrollee->status && $enrollee->enrollmentInvitationLinks->isNotEmpty();
+        return Enrollee::QUEUE_AUTO_ENROLLMENT != $enrollee->status && $enrollee->enrollmentInvitationLinks->isEmpty();
     }
 
     protected function validateRow(array $row): bool
