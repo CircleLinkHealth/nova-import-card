@@ -54,7 +54,7 @@ class GeneratePracticeQuickbooksReportRows
 
     public function setDate(Carbon $date): self
     {
-        $this->date;
+        $this->date = $date;
 
         return $this;
     }
