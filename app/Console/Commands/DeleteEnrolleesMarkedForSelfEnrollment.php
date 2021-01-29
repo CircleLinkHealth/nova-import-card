@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
@@ -11,18 +15,17 @@ use Illuminate\Console\Command;
 class DeleteEnrolleesMarkedForSelfEnrollment extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'delete:enrollees-marked-for-selfEnrollment {practiceId} {updatedAt}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = "Delete all Enrollees with their User Patient and Role. updatedAt = in format '2021-01-28 16:00:00'";
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'delete:enrollees-marked-for-selfEnrollment {practiceId} {updatedAt}';
 
     /**
      * Create a new command instance.
@@ -42,60 +45,58 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
     public function handle()
     {
         $updatedAtString = $this->argument('updatedAt');
-        $practiceId = intval($this->argument('practiceId'));
-
+        $practiceId      = intval($this->argument('practiceId'));
 
         /** @var Carbon $updatedAt */
         $updatedAt = Carbon::parse($updatedAtString);
 
-
-      User::with(
-          [
-              'enrollee' => function($enrollee) use($updatedAt){
-                  $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
-                  $enrollee->where('updated_at','>', $updatedAt);
-              },
-              'patientInfo',
-              'roles'
-          ]
-      )
-            ->whereHas('enrollee', function ($enrollee) use ($updatedAt){
+        User::with(
+            [
+                'enrollee' => function ($enrollee) use ($updatedAt) {
+                    $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
+                    $enrollee->where('updated_at', '>', $updatedAt);
+                },
+                'patientInfo',
+                'roles',
+            ]
+        )
+            ->whereHas('enrollee', function ($enrollee) use ($updatedAt) {
                 $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
-                $enrollee->where('updated_at','>', $updatedAt);
+                $enrollee->where('updated_at', '>', $updatedAt);
             })
-          ->whereDoesntHave('patientInfo', function ($patient){
+            ->whereDoesntHave('patientInfo', function ($patient) {
               $patient->where('ccm_status', Patient::ENROLLED);
           })
-          ->whereDoesntHave('roles', function ($role){
+            ->whereDoesntHave('roles', function ($role) {
               $role->where('name', 'participant');
           })
-          ->whereDoesntHave('careplan')
-          ->whereDoesntHave('enrollmentInvitationLinks')
-          ->where('program_id', $practiceId)
-            ->chunk(50, function($users){
-                $users->each(function ($user){
+            ->whereDoesntHave('careplan')
+            ->whereDoesntHave('enrollmentInvitationLinks')
+            ->where('program_id', $practiceId)
+            ->chunk(50, function ($users) {
+                $users->each(function ($user) {
                     try {
                         $enrollee = $user->enrollee;
                         $patient = $user->patientInfo;
-                        if ($enrollee){
-                            $enrollee->delete();
+                        if ($enrollee) {
+                            $deleted = $enrollee->delete();
                         }
 
-                        if ($patient){
-                            $patient->delete();
+                        if ($patient) {
+                            $deleted = $patient->delete();
                         }
 
-                        $user->roles()->detach();
-                        $user->delete();
+                        $detached = $user->roles()->detach();
+                        $deleted = $user->delete();
 
                         $this->info("User $user->id has been processed successfully.");
-                    }catch (\Exception $exception){
+                    } catch (\Exception $exception) {
                         $errorMessage = $exception->getMessage();
                         $this->error("[Something went wrong with user $user->id], $errorMessage");
                     }
                 });
             });
 
-        $this->info("Done");
+        $this->info('Done');
     }
 }
