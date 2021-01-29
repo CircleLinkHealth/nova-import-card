@@ -52,9 +52,9 @@ class UserPolicy
         return ! $patient->monthlyBillingStatus()
             ->where('chargeable_month', $service->forcedDetails->chargeable_month)
             ->where(function ($q) {
-                             $q->whereNotNull('actor_id')
-                                 ->orWhere('status', 'approved');
-                         })
+                $q->whereNotNull('actor_id')
+                    ->orWhere('status', 'approved');
+            })
             ->exists();
     }
 

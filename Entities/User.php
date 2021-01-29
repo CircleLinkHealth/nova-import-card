@@ -33,7 +33,6 @@ use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
@@ -64,6 +63,7 @@ use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -335,6 +335,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|EloquentCollection                              $forcedChargeableServices
  * @property int|null                                                                                                $forced_chargeable_services_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User patientOfLocation(int $locationId, ?string $ccmStatus = null)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -1107,7 +1108,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function forcedChargeableServices()
     {
-        return $this->hasMany(PatientForcedChargeableService::class,  'patient_user_id');
+        return $this->hasMany(PatientForcedChargeableService::class, 'patient_user_id');
     }
 
     public function foreignId()
@@ -3442,8 +3443,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             function ($info) use ($locationId, $ccmStatus) {
                 $info->where('preferred_contact_location', $locationId)
                     ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
-                         $query->ccmStatus($ccmStatus);
-                     });
+                        $query->ccmStatus($ccmStatus);
+                    });
             }
         );
     }
