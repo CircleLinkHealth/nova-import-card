@@ -49,7 +49,16 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
         $updatedAt = Carbon::parse($updatedAtString);
 
 
-      User::with(['enrollee','patientInfo','roles'])
+      User::with(
+          [
+              'enrollee' => function($enrollee) use($updatedAt){
+                  $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
+                  $enrollee->where('updated_at','>', $updatedAt);
+              },
+              'patientInfo',
+              'roles'
+          ]
+      )
             ->whereHas('enrollee', function ($enrollee) use ($updatedAt){
                 $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
                 $enrollee->where('updated_at','>', $updatedAt);
