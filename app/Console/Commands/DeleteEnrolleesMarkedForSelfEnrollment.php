@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -52,7 +53,15 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
             ->whereHas('enrollee', function ($enrollee) use ($updatedAt){
                 $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
                 $enrollee->where('updated_at','>', $updatedAt);
-            })->where('program_id', $practiceId)
+            })
+          ->whereDoesntHave('patientInfo', function ($patient){
+              $patient->where('ccm_status', Patient::ENROLLED);
+          })
+          ->whereDoesntHave('roles', function ($role){
+              $role->where('name', 'participant');
+          })
+          ->whereDoesntHave('careplan')
+          ->where('program_id', $practiceId)
             ->chunk(50, function($users){
                 $users->each(function ($user){
                     try {
