@@ -20,7 +20,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM60;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use Illuminate\Support\Collection;
+use CircleLinkHealth\Core\Traits\Cacheable;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -67,6 +67,8 @@ use Illuminate\Support\Facades\Cache;
  */
 class ChargeableService extends BaseModel
 {
+    use Cacheable;
+
     const AWV_INITIAL    = 'AWV: G0438';
     const AWV_SUBSEQUENT = 'AWV: G0439';
     const BHI            = 'CPT 99484';
@@ -184,17 +186,6 @@ class ChargeableService extends BaseModel
         'description',
         'amount',
     ];
-
-    private static ?Collection $cached = null;
-
-    public static function cached()
-    {
-        if ( ! self::$cached) {
-            self::$cached = ChargeableService::all();
-        }
-
-        return self::$cached;
-    }
 
     public static function defaultServices()
     {
