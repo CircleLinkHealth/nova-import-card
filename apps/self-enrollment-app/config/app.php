@@ -6,7 +6,6 @@ use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
-use CircleLinkHealth\CpmAdmin\Providers\CommandsServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
+use CircleLinkHealth\SelfEnrollment\Providers\SelfEnrollmentProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Collective\Html\HtmlServiceProvider;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
@@ -34,7 +34,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'CarePlan Manager'),
 
     /*
     |--------------------------------------------------------------------------
@@ -194,6 +194,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\NovaServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         DirectMailServiceProvider::class,
         FaxServiceProvider::class,
@@ -217,7 +218,7 @@ return [
         LaravelJobServiceProvider::class,
         CoreServiceProvider::class,
         CoreDeferredBindingsServiceProvider::class,
-        CommandsServiceProvider::class,
+        SelfEnrollmentProvider::class,
     ],
 
     /*

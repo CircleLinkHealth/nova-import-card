@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,7 +25,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
+            ->dailyAt('10:27');
+
+        $schedule->command(EnrollmentFinalAction::class)
+            ->dailyAt('08:27');
     }
 
     /**
