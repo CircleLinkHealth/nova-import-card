@@ -11,9 +11,8 @@ use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConf
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
 use Illuminate\Database\Eloquent\Model;
 
-class BethcareNewarkBethIsraelLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
+class DemoLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
 {
-
     public bool $disableButtons;
     public $practice;
     public $enrollee;

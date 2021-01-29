@@ -74,6 +74,7 @@ class CreateSurveyOnlyUserFromEnrollee
         }
 
         try {
+            $this->enrollee->fresh();
             UserRepository::validatePatientDoesNotAlreadyExist(
                 $this->enrollee->practice_id,
                 $this->enrollee->first_name,
@@ -84,7 +85,6 @@ class CreateSurveyOnlyUserFromEnrollee
         } catch (PatientAlreadyExistsException $e) {
             $this->enrollee->user_id = $e->getPatientUserId();
             $this->enrollee->save();
-
             return;
         }
 

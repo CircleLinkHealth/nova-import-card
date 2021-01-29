@@ -3,19 +3,22 @@
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateNbiLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 
-class GenerateNbiLetter extends Seeder
+class GenerateDemoLetter extends Seeder
 {
-    const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
-    const PRACTICE_SIGNATORY_NAME = 'Dr. Johanny Garcia <br> Beth Prime Practice';
+    const DEMO_PRACTICE_NAME = 'demo';
+    const PRACTICE_SIGNATORY_NAME = "Dr. Demo Testing <br> Cardiologist";
     const UI_REQUESTS             = 'ui_requests';
     private string $practiceNumber;
     private string $signatoryName;
     private string $practiceName;
+
 
     /**
      * Run the database seeds.
@@ -29,7 +32,7 @@ class GenerateNbiLetter extends Seeder
         $this->practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $nbiPractice = $this->getPractice();
+        $demoPractice = $this->getPractice();
 
         $bodyPageOne = $this->pageOne($customerSignaturePic);
         $bodyPageTwo = $this->pageTwo();
@@ -37,7 +40,7 @@ class GenerateNbiLetter extends Seeder
 
         EnrollmentInvitationLetter::updateOrCreate(
             [
-                'practice_id' => $nbiPractice->id,
+                'practice_id' => $demoPractice->id,
             ],
             [
                 'practice_logo_src'      => '/img/logos/Nbi/nbi_logo.png',
@@ -71,16 +74,16 @@ class GenerateNbiLetter extends Seeder
 
     private function getPractice()
     {
-        $nbiPractice = Practice::where('name', '=', self::NBI_PRACTICE_NAME)->first();
+        $demoPractice = Practice::where('name', '=', self::DEMO_PRACTICE_NAME)->first();
 
-        if ( ! App::environment(['production']) && ! $nbiPractice) {
-            $nbiPractice = Practice::firstOrCreate(
+        if ( ! App::environment(['production']) && ! $demoPractice) {
+            $demoPractice = Practice::firstOrCreate(
                 [
-                    'name' =>  self::NBI_PRACTICE_NAME,
+                    'name' =>  self::DEMO_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ',  self::NBI_PRACTICE_NAME)),
+                    'display_name'          => "Demo Clinic",
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
@@ -88,11 +91,11 @@ class GenerateNbiLetter extends Seeder
                 ]
             );
         }
-        if ( ! $nbiPractice) {
-            throw new Exception('Nbi Practice not found in Practices');
+        if ( ! $demoPractice) {
+            throw new Exception('Demo Practice not found in Practices');
         }
 
-        return $nbiPractice;
+        return $demoPractice;
     }
 
     private function pageOne(string $customerSignaturePic)

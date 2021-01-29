@@ -179,11 +179,25 @@ class EnrollmentBaseLetter
 
         $practiceSigSrc = $this->getPracticeSignatures($practiceLetter);
 
+
+        $signatoryName = $provider->display_name;
+
+        if (isset($practiceLetter->signatory_name)) {
+            if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER !== $practiceLetter->customer_signature_src) {
+                $signatoryName = $practiceLetter->signatory_name;
+            }
+        }
+
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $practiceLetter->customer_signature_src) {
+            $uiRequests    = json_decode($practiceLetter->ui_requests);
+            $signatoryName = $this->getSpecificGroupSignatoryName($uiRequests);
+        }
+
         // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
             $practiceNumber,
-            $provider->display_name,
+            $signatoryName,
             $practice->display_name,
             $buttonsLocation,
             $practiceSigSrc,
@@ -216,5 +230,14 @@ class EnrollmentBaseLetter
         }
 
         return $letterPages;
+    }
+
+    /**
+     * @param $uiRequests
+     * @return mixed
+     */
+    private function getSpecificGroupSignatoryName($uiRequests)
+    {
+        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
     }
 }

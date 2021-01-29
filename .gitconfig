@@ -81,7 +81,7 @@
 	url = git@github.com:CircleLinkHealth/saml-sp-module.git
 	fetch = +refs/heads/*:refs/remotes/SamlSp/*
 [remote "SelfEnrollment"]
-	url = git@github.com:CircleLinkHealth/module-self-enrollment.git
+	url = git@github.com:CircleLinkHealth/self-enrollment-module.git
 	fetch = +refs/heads/*:refs/remotes/SelfEnrollment/*
 [remote "SharedModels"]
 	url = git@github.com:CircleLinkHealth/shared-models-module.git
