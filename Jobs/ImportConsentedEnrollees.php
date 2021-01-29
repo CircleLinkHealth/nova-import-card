@@ -10,7 +10,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use Illuminate\Bus\Queueable;
@@ -34,7 +34,7 @@ class ImportConsentedEnrollees implements ShouldQueue, ShouldBeEncrypted
      */
     public $tries = 2;
     /**
-     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     private $batch;
     /**

@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;

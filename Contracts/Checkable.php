@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\HasMedicalRecord;
 
 /**

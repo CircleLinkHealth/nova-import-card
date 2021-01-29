@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Tests\Fakers\AthenaApiResponses;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
