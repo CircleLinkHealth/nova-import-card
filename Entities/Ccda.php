@@ -16,9 +16,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Traits\BelongsToPatientUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,7 +49,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon                                                                  $created_at
  * @property \Illuminate\Support\Carbon                                                                  $updated_at
  * @property \Illuminate\Support\Carbon|null                                                             $deleted_at
- * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null                                $batch
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null                               $batch
  * @property \CircleLinkHealth\SharedModels\Entities\CcdaRequest                                         $ccdaRequest
  * @property \CircleLinkHealth\SharedModels\Entities\DirectMailMessage|null                              $directMessage
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                           $location
@@ -62,7 +59,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                           $practice
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                        $targetPatient
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                       $targetPatient
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda exclude($value = [])
  * @method   static                                                                                      bool|null forceDelete()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506Media()
@@ -114,13 +111,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
-    const EMR_DIRECT   = 'emr_direct';
-    const GOOGLE_DRIVE = 'google_drive';
-    const IMPORTER     = 'importer';
-    const IMPORTER_AWV = 'importer_awv';
-    const SFTP_DROPBOX = 'sftp_dropbox';
-    const UPLOADED     = 'uploaded';
-    const IMPORTER_SELF_ENROLLMENT     = 'importer_self_enrollment';
+    const EMR_DIRECT               = 'emr_direct';
+    const GOOGLE_DRIVE             = 'google_drive';
+    const IMPORTER                 = 'importer';
+    const IMPORTER_AWV             = 'importer_awv';
+    const IMPORTER_SELF_ENROLLMENT = 'importer_self_enrollment';
+    const SFTP_DROPBOX             = 'sftp_dropbox';
+    const UPLOADED                 = 'uploaded';
 
     /**
      * Duplicate patient user ID.
