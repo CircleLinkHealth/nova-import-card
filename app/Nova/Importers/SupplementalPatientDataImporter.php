@@ -9,7 +9,7 @@ namespace App\Nova\Importers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
