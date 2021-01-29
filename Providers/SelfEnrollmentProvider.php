@@ -51,14 +51,14 @@ class SelfEnrollmentProvider extends ServiceProvider
             GenerateSelfEnrollmentSurveyCommand::class
         ]);
         $this->app->register(RouteServiceProvider::class);
-
     }
 
     private function publishConfigurations()
     {
-        $this->publishes([
-            __DIR__.'/../Config/services.php' => config_path('selfEnrollment.php'),
-        ],
+        $this->publishes(
+            [
+                __DIR__.'/../Config/services.php' => config_path('selfEnrollment.php'),
+            ],
             'config'
         );
 

@@ -12,6 +12,7 @@ use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateNbiLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoClinicLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateWoodlandInternistsClinicLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoSignatures;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDemoLetter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
@@ -124,6 +125,11 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
             Artisan::call('db:seed', ['--class' => GenerateNbiLetter::class]);
             return;
         }
+
+        if ($practiceName === GenerateDemoLetter::DEMO_PRACTICE_NAME){
+            Artisan::call('db:seed', ['--class' => GenerateDemoLetter::class]);
+            return;
+        }
     }
 
     private function checkAllPracticesLetters()
@@ -156,6 +162,7 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
             GenerateMarillacHealthLetter::MARILLAC_PRACTICE_NAME,
             GenerateCameronLetter::CAMERON_PRACTICE_NAME,
             GenerateNbiLetter::NBI_PRACTICE_NAME,
+            GenerateDemoLetter::DEMO_PRACTICE_NAME,
         ];
     }
 

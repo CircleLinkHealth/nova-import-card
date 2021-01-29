@@ -9,10 +9,6 @@
         }
     ],
 
-    "require": {
-        "laravel/nova": "~3.0"
-    },
-
     "repositories": [
         {
             "type": "composer",
