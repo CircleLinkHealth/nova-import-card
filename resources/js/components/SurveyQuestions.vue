@@ -65,7 +65,8 @@
                         will also reach out shortly. Thanks!
                     </div>
                     <div v-else-if="isEnrollees"
-                         class="survey-sub-welcome-text survey-sub-welcome-text-enrollee">
+                         class="survey-sub-welcome-text survey-sub-welcome-text-enrollee"
+                    style="line-height: unset;">
                         <div>Dear {{this.surveyData.first_name}},</div>
                         <br>
                         <div>

@@ -6,12 +6,12 @@
 
 namespace App\Listeners;
 
-use App\CPM\EnrollableCompletedSurvey;
 use App\Events\SurveyInstancePivotSaved;
 use App\Jobs\GeneratePatientReportsJob as GenerateReports;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use CircleLinkHealth\Customer\CpmConstants;
 
 class GeneratePatientReports
@@ -43,11 +43,13 @@ class GeneratePatientReports
                         ->where('users_surveys.status', SurveyInstance::COMPLETED);
                 },
             ])->find($instance->pivot->user_id);
-
             if (Survey::ENROLLEES === $surveyName) {
-                //Instantiate Redis Event class to emit report created events to CPM
-                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient->id);
-                $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
+                $enrolledUserData = [
+                    'enrollable_id'      => (int) $patient->id,
+                    'survey_instance_id' => $instance->id,
+                ];
+
+                EnrollableSurveyCompleted::dispatch($enrolledUserData);
             } else {
                 $otherInstance = $patient->surveyInstances->first();
                 if ($otherInstance) {
