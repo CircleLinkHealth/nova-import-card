@@ -9,10 +9,10 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
-use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -336,7 +336,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             ->where('status', '<', 2);
 
         $unprocessedQuery->take(200)->get()->each(
-            function ($job) use ($batch) {
+            function ($job) {
                 ProcessSinglePatientEligibility::dispatchNow(
                     $job->id
                 );

@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\ProcessTargetPatientForEligibility;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Console\Command;
 
 class DetermineTargetPatientEligibility extends Command

@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Console\Command;
 
 class ProcessNextEligibilityBatchChunk extends Command

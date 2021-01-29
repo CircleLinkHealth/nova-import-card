@@ -26,8 +26,6 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
 
     /**
      * Create a new job instance.
-     *
-     * @param int $eligibilityJobId
      */
     public function __construct(
         int $eligibilityJobId
@@ -42,7 +40,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
-        $ej = EligibilityJob::with('batch.practice')->findOrFail($this->eligibilityJobId);
+        $ej    = EligibilityJob::with('batch.practice')->findOrFail($this->eligibilityJobId);
         $batch = $ej->batch;
 
         //Only process if EligibilityJob status is 0 (not_started), or 1 (processing) and last update is more than 10 minutes ago
