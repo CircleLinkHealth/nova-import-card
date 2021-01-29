@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
+use CircleLinkHealth\Core\Traits\Cacheable;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
@@ -73,7 +74,9 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    use Cacheable;
     use Instructable;
+
     const DEMENTIA = 'Dementia';
 
     const DEPRESSION = 'Depression';
