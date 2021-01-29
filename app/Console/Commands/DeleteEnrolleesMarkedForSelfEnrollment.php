@@ -75,10 +75,19 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
             ->chunk(50, function($users){
                 $users->each(function ($user){
                     try {
-                        $user->enrollee->forceDelete();
-                        $user->patientInfo->forceDelete();
+                        $enrollee = $user->enrollee;
+                        $patient = $user->patientInfo;
+                        if ($enrollee){
+                            $enrollee->delete();
+                        }
+
+                        if ($patient){
+                            $patient->delete();
+                        }
+
                         $user->roles()->detach();
-                        $user->forceDelete();
+                        $user->delete();
+
                         $this->info("User $user->id has been processed successfully.");
                     }catch (\Exception $exception){
                         $errorMessage = $exception->getMessage();
