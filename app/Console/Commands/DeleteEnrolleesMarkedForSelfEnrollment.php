@@ -61,6 +61,7 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
               $role->where('name', 'participant');
           })
           ->whereDoesntHave('careplan')
+          ->whereDoesntHave('enrollmentInvitationLinks')
           ->where('program_id', $practiceId)
             ->chunk(50, function($users){
                 $users->each(function ($user){
