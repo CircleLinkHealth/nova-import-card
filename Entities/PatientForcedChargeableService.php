@@ -11,9 +11,26 @@ use CircleLinkHealth\CcmBilling\ValueObjects\ForceAttachInputDTO;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Revisionable\RevisionableTrait;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService.
+ *
+ * @property int                                                                                         $id
+ * @property int                                                                                         $patient_user_id
+ * @property int                                                                                         $chargeable_service_id
+ * @property \Illuminate\Support\Carbon                                                                  $chargeable_month
+ * @property string                                                                                      $action_type
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property ChargeableService                                                                           $chargeableService
+ * @property User                                                                                        $patient
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService query()
+ * @mixin \Eloquent
+ */
 class PatientForcedChargeableService extends BaseModel
 {
     const BLOCK_ACTION_TYPE = 'block';
@@ -42,9 +59,9 @@ class PatientForcedChargeableService extends BaseModel
             //if permanent process all non closed months? Just so if they chose permanent to apply changes for the past month as well
             ForcePatientChargeableService::executeWithoutAttaching(
                 (new ForceAttachInputDTO())->setActionType($item->action_type)
-                ->setChargeableServiceId($item->chargeable_service_id)
-                ->setPatientUserId($item->patient_user_id)
-                ->setMonth($item->chargeable_month)
+                    ->setChargeableServiceId($item->chargeable_service_id)
+                    ->setPatientUserId($item->patient_user_id)
+                    ->setMonth($item->chargeable_month)
             );
         });
 
@@ -66,19 +83,20 @@ class PatientForcedChargeableService extends BaseModel
         return $this->belongsTo(ChargeableService::class, 'chargeable_service_id', 'id');
     }
 
+    public static function getOpposingActionType(string $actionType): string
+    {
+        if ( ! in_array($actionType, [
+            self::FORCE_ACTION_TYPE,
+            self::BLOCK_ACTION_TYPE,
+        ])) {
+            throw new \Exception("Invalid Patient Forced Chargeable Service Action Type: $actionType");
+        }
+
+        return self::FORCE_ACTION_TYPE === $actionType ? self::BLOCK_ACTION_TYPE : self::FORCE_ACTION_TYPE;
+    }
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id', 'id');
-    }
-
-    public static function getOpposingActionType(string $actionType): string
-    {
-        if (! in_array($actionType, [
-            self::FORCE_ACTION_TYPE,
-            self::BLOCK_ACTION_TYPE
-        ])){
-            throw new \Exception("Invalid Patient Forced Chargeable Service Action Type: $actionType");
-        }
-        return $actionType === self::FORCE_ACTION_TYPE ? self::BLOCK_ACTION_TYPE : self::FORCE_ACTION_TYPE;
     }
 }

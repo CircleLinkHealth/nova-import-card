@@ -1,11 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PatientForcedChargeableServicesTest extends CustomerTestCase
 {
@@ -14,7 +15,7 @@ class PatientForcedChargeableServicesTest extends CustomerTestCase
      *
      * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         $this->assertTrue(true);
     }

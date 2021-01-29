@@ -45,8 +45,8 @@ trait ApprovablePatientUsersQuery
             },
             'forcedChargeableServices' => function ($f) use ($monthYear) {
                 $f->with(['chargeableService'])
-                    ->where(fn ($q)      => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
-                    ->orWhere(fn ($q)  => $q->where('chargeable_month', null));
+                    ->where(fn ($q)   => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
+                    ->orWhere(fn ($q) => $q->where('chargeable_month', null));
             },
         ];
 

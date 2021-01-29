@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class ForcedPatientChargeableServicesForProcessing

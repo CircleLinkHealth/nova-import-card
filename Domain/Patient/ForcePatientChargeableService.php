@@ -35,6 +35,23 @@ class ForcePatientChargeableService
             ->reprocessPatientForBilling();
     }
 
+    private function createHistoricalRecords(User $patient, Carbon $startingMonth, Carbon $endingMonth, string $actionType): void
+    {
+        $start    = $startingMonth->copy();
+        $end      = $endingMonth->copy();
+        $toCreate = [];
+        while ($start->lt($end)) {
+            $toCreate[] = [
+                'chargeable_service_id' => $this->input->getChargeableServiceId(),
+                'chargeable_month'      => $start->startOfMonth()->copy(),
+                'action_type'           => $this->input->getActionType(),
+            ];
+
+            $start->addMonth();
+        }
+        $patient->forcedChargeableServices()->createMany($toCreate);
+    }
+
     private function guaranteeHistoricallyAccurateRecords(): self
     {
         $patient = User::ofType('participant')
@@ -44,17 +61,18 @@ class ForcePatientChargeableService
         $isPermanent = is_null($this->input->getMonth());
         if ($this->input->isDetaching() && $isPermanent) {
             $this->createHistoricalRecords($patient, $this->input->getEntryCreatedAt(), Carbon::now()->startOfMonth(), $this->input->getActionType());
+
             return $this;
         }
 
-        $opposingActionType = PatientForcedChargeableService::getOpposingActionType($this->input->getActionType());
+        $opposingActionType      = PatientForcedChargeableService::getOpposingActionType($this->input->getActionType());
         $opposingPermanentAction = $patient->forcedChargeableServices
             ->whereNull('chargeable_month')
             ->where('chargeable_service_id', $this->input->getChargeableServiceId())
             ->where('action_type', $opposingActionType)
             ->first();
 
-        if ($isPermanent && ! is_null($opposingPermanentAction)){
+        if ($isPermanent && ! is_null($opposingPermanentAction)) {
             $this->createHistoricalRecords($patient, $opposingPermanentAction->forcedDetails->created_at, Carbon::now()->startOfMonth(), $opposingActionType);
             //detach
         }
@@ -76,23 +94,6 @@ class ForcePatientChargeableService
             $this->input->getPatientUserId(),
             is_null($this->input->getMonth()) ? Carbon::now()->startOfMonth() : $this->input->getMonth()
         );
-    }
-
-    private function createHistoricalRecords(User $patient, Carbon $startingMonth, Carbon $endingMonth, string $actionType) : void
-    {
-        $start = $startingMonth->copy();
-        $end = $endingMonth->copy();
-        $toCreate = [];
-        while ($start->lt($end)){
-            $toCreate[]= [
-                'chargeable_service_id' => $this->input->getChargeableServiceId(),
-                'chargeable_month' => $start->startOfMonth()->copy(),
-                'action_type' => $this->input->getActionType(),
-            ];
-
-            $start->addMonth();
-        }
-        $patient->forcedChargeableServices()->createMany($toCreate);
     }
 
     private function setPatientForcedChargeableService(): self

@@ -26,13 +26,15 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus query()
  * @mixin \Eloquent
- * @property User   $patientUser
- * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdInMonth(\Carbon\Carbon $date, string $field = 'created_at')
- * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdOn(\Carbon\Carbon $date, string $field = 'created_at')
- * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdOnIfNotNull(?\Carbon\Carbon $date = null, $field = 'created_at')
- * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdThisMonth(string $field = 'created_at')
- * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdToday(string $field = 'created_at')
- * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdYesterday(string $field = 'created_at')
+ * @property User                                                                                                                 $patientUser
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdInMonth(\Carbon\Carbon $date, string $field = 'created_at')
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdOn(\Carbon\Carbon $date, string $field = 'created_at')
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdOnIfNotNull(?\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdThisMonth(string $field = 'created_at')
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdToday(string $field = 'created_at')
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|PatientMonthlyBillingStatus createdYesterday(string $field = 'created_at')
+ * @property \CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView[]|\Illuminate\Database\Eloquent\Collection $chargeableMonthlySummariesView
+ * @property int|null                                                                                                             $chargeable_monthly_summaries_view_count
  */
 class PatientMonthlyBillingStatus extends BaseModel
 {
