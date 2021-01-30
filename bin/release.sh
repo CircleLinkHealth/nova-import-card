@@ -64,7 +64,7 @@ git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in $(ls ../apps ../modules)
+for REMOTE in $(ls $PWD/apps $PWD/modules)
 do
     echo ""
     echo ""
