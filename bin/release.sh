@@ -3,16 +3,16 @@
 set -e
 
 # Make sure the release tag is provided.
-if (( "$#" != 1 ))
+if (( "$#" != 2 ))
 then
-    echo "Tag has to be provided."
+    echo "Release Branch and Tag have to be provided."
 
     exit 1
 fi
 
 RELEASE_BRANCH=$1
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-VERSION=$1
+VERSION=$2
 
 # Always prepend with "release-"
 if [[ $RELEASE_BRANCH != release-*  ]]
