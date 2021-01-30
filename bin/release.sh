@@ -59,12 +59,19 @@ fi
 # so we can copy modules and have them committed
 sed -i '' '/CircleLinkHealth/d' $PWD/.gitignore
 
+if [[ ! -z "$(git status --porcelain)" ]]
+then
+    git add .
+    git commit -m "Enable copying modules"
+    git push
+fi
+
 # Tag Framework
 git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE_URL in $(awk '{print $1}' $PWD/repos.txt | grep git@)
+for REMOTE_URL in $(awk '{print $1}' $PWD/repos.txt | grep -v app | grep git@)
 do
     echo ""
     echo ""
