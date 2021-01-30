@@ -64,14 +64,13 @@ git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in $(ls $PWD/apps $PWD/modules)
+for REMOTE_URL in $(awk '{print $1}' $PWD/repos.txt | grep git@)
 do
     echo ""
     echo ""
     echo "Releasing $REMOTE";
 
-    TMP_DIR="/tmp/laravel-split"
-    REMOTE_URL="git@github.com:illuminate/$REMOTE.git"
+    TMP_DIR="/tmp/cpm-monorepo-split"
 
     rm -rf $TMP_DIR;
     mkdir $TMP_DIR;
