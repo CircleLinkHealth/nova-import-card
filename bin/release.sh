@@ -22,10 +22,6 @@ then
     exit 1
 fi
 
-# Removes lines containing CircleLinkHealth from git .gitignore
-# so we can copy modules and have them committed
-sed -i '' '/CircleLinkHealth/d' $PWD/.gitignore
-
 # Make sure current branch and release branch match.
 if [[ "$RELEASE_BRANCH" != "$CURRENT_BRANCH" ]]
 then
@@ -58,6 +54,10 @@ if [[ $VERSION != v*  ]]
 then
     VERSION="v$VERSION"
 fi
+
+# Removes lines containing CircleLinkHealth from git .gitignore
+# so we can copy modules and have them committed
+sed -i '' '/CircleLinkHealth/d' $PWD/.gitignore
 
 # Tag Framework
 git tag $VERSION
