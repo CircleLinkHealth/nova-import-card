@@ -11,7 +11,6 @@ use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PracticePatientReportData;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Support\Collection;
 
 class GeneratePracticePatientReport
@@ -50,7 +49,7 @@ class GeneratePracticePatientReport
         }
 
         return $problems
-            ->map(fn (Problem $problem) => $problem->icd10Code())
+            ->map(fn (PatientProblemForProcessing $problem) => $problem->getCode())
             ->filter()
             ->unique()
             ->implode(', ');
@@ -58,31 +57,31 @@ class GeneratePracticePatientReport
 
     private function getAllTimeExceptBhi(): int
     {
-        return $this->billingStatus->chargeableMonthlySummariesView
+        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
             ->where('chargeable_service_code', '!=', ChargeableService::BHI)
             ->sum('total_time');
     }
 
     private function getBhiTime(): int
     {
-        return $this->billingStatus->chargeableMonthlySummariesView
+        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
             ->where('chargeable_service_code', '=', ChargeableService::BHI)
             ->sum('total_time');
     }
 
     private function getBillingCodes(): string
     {
-        return $this->billingStatus->chargeableMonthlySummariesView
+        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
             ->where('is_fulfilled', '=', 1)
             ->implode('chargeable_service_code', ', ');
     }
 
     private function hasServiceCode(string $code): bool
     {
-        return $this->billingStatus->chargeableMonthlySummariesView
+        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
             ->where('is_fulfilled', '=', 1)
             ->where('chargeable_service_code', '=', $code)
-            ->exists();
+            ->isNotEmpty();
     }
 
     private function roundToMinutes(int $seconds)
@@ -100,7 +99,7 @@ class GeneratePracticePatientReport
         $result->allCcmProblemCodes = $this->formatProblemCodesForReport($ccmProblems);
 
         $bhiProblems         = PatientProblemsForBillingProcessing::getForCodes($this->billingStatus->patient_user_id, [ChargeableService::BHI]);
-        $bhiProblemCodes     = $this->hasServiceCode(ChargeableService::BHI) ? $bhiProblems->filter(fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested)) : [];
+        $bhiProblemCodes     = $this->hasServiceCode(ChargeableService::BHI) ? $bhiProblems->filter(fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested)) : collect();
         $result->bhiCodes    = $this->formatProblemCodesForReport($bhiProblemCodes);
         $result->allBhiCodes = $this->formatProblemCodesForReport($bhiProblems);
     }

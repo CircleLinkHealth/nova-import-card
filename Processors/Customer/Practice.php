@@ -10,8 +10,9 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class Practice implements CustomerProcessor
@@ -31,7 +32,7 @@ class Practice implements CustomerProcessor
     public function counts(int $practiceId, Carbon $month): BillablePatientsCountForMonthDTO
     {
         /** @var Collection|PatientMonthlyBillingStatus[] $statuses */
-        $statuses = $this->repo->billingStatuses($practiceId, $month);
+        $statuses = $this->repo->approvableBillingStatuses($practiceId, $month)->get();
         $approved = $statuses->where('status', '=', 'approved')->count();
         $rejected = $statuses->where('status', '=', 'rejected')->count();
         $needQa   = $statuses->where('status', '=', 'needs_qa')->count();
@@ -40,9 +41,22 @@ class Practice implements CustomerProcessor
         return new BillablePatientsCountForMonthDTO($approved, $needQa, $rejected, $other);
     }
 
-    public function fetchApprovablePatients(int $practiceId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
+    public function fetchApprovablePatients(int $customerModelId, Carbon $month, int $pageSize = 30): LengthAwarePaginator
     {
-        return new ApprovablePatientCollection($this->repo->paginatePatients($practiceId, $month, $pageSize));
+        $collection = $this->repo
+            ->approvableBillingStatuses($customerModelId, $month, true)
+            ->paginate($pageSize);
+
+        $rawArray = collect($collection->items())
+            ->map(fn (PatientMonthlyBillingStatus $billingStatus) => ApprovablePatient::make($billingStatus)->toArray(null));
+
+        return new LengthAwarePaginator(
+            $rawArray,
+            $collection->total(),
+            $collection->perPage(),
+            $collection->currentPage(),
+            ['path' => request()->url()]
+        );
     }
 
     public function openMonth(int $practiceId, Carbon $month)

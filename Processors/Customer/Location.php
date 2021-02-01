@@ -10,9 +10,11 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\RenewLocationSummaries;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
 use CircleLinkHealth\Customer\Entities\Patient;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class Location implements CustomerProcessor
 {
@@ -23,9 +25,21 @@ class Location implements CustomerProcessor
         $this->repo = $repo;
     }
 
-    public function fetchApprovablePatients(int $locationId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
+    public function fetchApprovablePatients(int $locationId, Carbon $month, int $pageSize = 30): LengthAwarePaginator
     {
-        return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
+        $collection = $this->repo->patientsQuery($locationId, $month)
+            ->paginate($pageSize);
+
+        $rawArray = collect($collection->items())
+            ->map(fn (PatientMonthlyBillingStatus $billingStatus) => ApprovablePatient::make($billingStatus)->toArray(null));
+
+        return new LengthAwarePaginator(
+            $rawArray,
+            $collection->total(),
+            $collection->perPage(),
+            $collection->currentPage(),
+            ['path' => request()->url()]
+        );
     }
 
     public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool

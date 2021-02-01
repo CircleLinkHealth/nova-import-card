@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Builders\ApprovableBillingStatusesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
-use CircleLinkHealth\CcmBilling\Builders\ApprovedBillingStatusesQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
@@ -18,22 +18,18 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 {
+    use ApprovableBillingStatusesQuery;
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
-    use ApprovedBillingStatusesQuery;
+
+    public function approvableBillingStatuses(int $practiceId, Carbon $month, bool $withRelations = false): Builder
+    {
+        return $this->approvableBillingStatusesQuery($practiceId, $month, $withRelations);
+    }
 
     public function approvedBillingStatuses(int $practiceId, Carbon $month, bool $withRelations = false): Builder
     {
         return $this->approvedBillingStatusesQuery($practiceId, $month, $withRelations);
-    }
-
-    public function billingStatuses(int $practiceId, Carbon $month): \Illuminate\Support\Collection
-    {
-        return PatientMonthlyBillingStatus::whereHas(
-            'patientUser',
-            fn ($q) => $q->ofPractice($practiceId)
-        )->where('chargeable_month', $month)
-            ->get();
     }
 
     public function closeMonth(int $actorId, int $practiceId, Carbon $month)
@@ -44,12 +40,6 @@ class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
     public function openMonth(int $practiceId, Carbon $month)
     {
         return $this->changeMonthStatus($practiceId, $month, null, false);
-    }
-
-    public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
-    {
-        return $this->patientsQuery($customerModelId, $chargeableMonth)
-            ->paginate($pageSize);
     }
 
     public function patients(int $customerModelId, Carbon $monthYear): Collection

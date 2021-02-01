@@ -62,4 +62,11 @@ class PatientMonthlyBillingStatus extends BaseModel
     {
         return $this->belongsTo(User::class, 'patient_user_id');
     }
+
+    public function scopeOfLocations($query, array $locationIds)
+    {
+        return $query->whereHas('patientUser.patientInfo', function ($patientInfo) use ($locationIds) {
+            $patientInfo->whereIn('preferred_contact_location', $locationIds);
+        });
+    }
 }

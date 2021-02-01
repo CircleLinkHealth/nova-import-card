@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Builders\ApprovedBillingStatusesQuery;
+use CircleLinkHealth\CcmBilling\Builders\ApprovableBillingStatusesQuery;
 use CircleLinkHealth\CcmBilling\Domain\Invoices\GeneratePracticePatientReport;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Repositories\BatchableStoreRepository;
@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
 
 class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
 {
-    use ApprovedBillingStatusesQuery;
+    use ApprovableBillingStatusesQuery;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;

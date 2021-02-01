@@ -40,9 +40,7 @@ class PatientProblemsForBillingProcessing
 
     public static function getArray(int $patientId): array
     {
-        return (new static($patientId))
-            ->setPatient()
-            ->getProblems()
+        return self::getCollection($patientId)
             ->toArray();
     }
 

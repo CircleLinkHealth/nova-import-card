@@ -7,12 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CustomerProcessor
 {
     //For ABP
-    public function fetchApprovablePatients(int $customerModelId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection;
+    public function fetchApprovablePatients(int $customerModelId, Carbon $month, int $pageSize = 30): LengthAwarePaginator;
 
     //attach, and fulfill services whenever pertinent
     public function processServicesForAllPatients(int $customerModelId, Carbon $month): void;

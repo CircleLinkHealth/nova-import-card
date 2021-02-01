@@ -6,11 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
-use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,15 +25,14 @@ class ApprovablePatient extends JsonResource
      */
     public function toArray($request)
     {
-        /** @var User $user */
-        $user = $this->resource;
+        /** @var PatientMonthlyBillingStatus $billingStatus */
+        $billingStatus = $this->resource;
+        $user          = $billingStatus->patientUser;
 
-        $monthYear       = $this->getMonthYearFromRelations();
         $ccmTime         = $this->getAllTimeExceptBhi();
         $bhiTime         = $this->getBhiTime();
         $totalTime       = $ccmTime + $bhiTime;
-        $billingStatus   = optional($this->getBillingStatus());
-        $autoAttestation = AutoPatientAttestation::fromUser($user)->setMonth($monthYear);
+        $autoAttestation = AutoPatientAttestation::fromUser($user)->setMonth($billingStatus->chargeable_month);
 
         return [
             'id'                     => $user->id,
@@ -52,8 +48,8 @@ class ApprovablePatient extends JsonResource
             'bhi_time'               => $bhiTime,
             'ccm_time'               => $ccmTime,
             'problems'               => $this->getProblems()->toArray(),
-            'no_of_successful_calls' => $this->getNumberOfSuccessfulCalls(),
-            'status'                 => $user->getCcmStatusForMonth($monthYear),
+            'no_of_successful_calls' => 0,
+            'status'                 => $user->getCcmStatusForMonth($billingStatus->chargeable_month),
             'approve'                => 'approved' === $billingStatus->status,
             'reject'                 => 'rejected' === $billingStatus->status,
             'report_id'              => $billingStatus->id,
@@ -78,28 +74,17 @@ class ApprovablePatient extends JsonResource
     private function getBhiTime(): int
     {
         /** @var User $user */
-        $user = $this->resource;
+        $user = $this->resource->patientUser;
 
         return $user->chargeableMonthlySummariesView
             ->where('chargeable_service_code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
             ->sum('total_time');
     }
 
-    private function getBillingStatus(): ?PatientMonthlyBillingStatus
-    {
-        /** @var User $user */
-        $user = $this->resource;
-        if ( ! $user->monthlyBillingStatus || $user->monthlyBillingStatus->isEmpty()) {
-            return null;
-        }
-
-        return $user->monthlyBillingStatus->first();
-    }
-
     private function getChargeableServices(): Collection
     {
         /** @var User $user */
-        $user = $this->resource;
+        $user = $this->resource->patientUser;
 
         return $user->chargeableMonthlySummariesView
             ->filter(fn (ChargeablePatientMonthlySummaryView $item) => $item->is_fulfilled)
@@ -111,48 +96,10 @@ class ApprovablePatient extends JsonResource
             });
     }
 
-    private function getMonthYearFromRelations(): Carbon
-    {
-        /** @var User $user */
-        $user = $this->resource;
-
-        if ($user->relationLoaded('monthlyBillingStatus') && $user->monthlyBillingStatus->isNotEmpty()) {
-            /** @var PatientMonthlyBillingStatus $ccmStatus */
-            $billingStatus = $user->monthlyBillingStatus->first();
-
-            return $billingStatus->chargeable_month;
-        }
-
-        if ($user->relationLoaded('endOfMonthCcmStatusLogs') && $user->endOfMonthCcmStatusLogs->isNotEmpty()) {
-            /** @var EndOfMonthCcmStatusLog $ccmStatus */
-            $ccmStatus = $user->endOfMonthCcmStatusLogs->first();
-
-            return $ccmStatus->chargeable_month;
-        }
-
-        if ($user->relationLoaded('chargeableMonthlySummaries') && $user->chargeableMonthlySummaries->isNotEmpty()) {
-            /** @var ChargeablePatientMonthlySummary $cms */
-            $cms = $user->chargeableMonthlySummaries->first();
-
-            return $cms->chargeable_month;
-        }
-
-        return now()->startOfMonth();
-    }
-
-    private function getNumberOfSuccessfulCalls()
-    {
-        /** @var User $user */
-        $user = $this->resource;
-
-        return optional($user->chargeableMonthlySummariesView
-            ->first())->no_of_successful_calls;
-    }
-
     private function getProblems(): Collection
     {
         /** @var User $user */
-        $user = $this->resource;
+        $user = $this->resource->patientUser;
 
         return $user->ccdProblems->map(function ($prob) {
             return [
@@ -167,15 +114,13 @@ class ApprovablePatient extends JsonResource
     private function getProviderName(): ?string
     {
         /** @var User $user */
-        $user = $this->resource;
+        $user = $this->resource->patientUser;
 
         $bP = $user
-            ->careTeamMembers
-            ->where('type', '=', 'billing_provider')
-            ->first();
+            ->billingProviderUser();
 
         return $bP
-            ? optional($bP->user)->getFullName()
+            ? optional($bP)->getFullName()
             : '';
     }
 }

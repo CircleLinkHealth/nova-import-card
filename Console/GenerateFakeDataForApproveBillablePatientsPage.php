@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class GenerateFakeDataForApproveBillablePatientsPage extends Command
@@ -62,19 +63,37 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
 
         $count = intval($this->argument('numberOfPatients'));
 
-        $practice = Practice::find($practiceId);
-        $this->setupExistingPractice($practice, true, true, true, true, true);
-        $practice->locations->each(fn (Location $l) => GenerateLocationSummaries::dispatchNow($l->id));
+        $practice = measureTime('practice', function () use ($practiceId) {
+            $practice = Practice::find($practiceId);
+            $this->setupExistingPractice($practice, true, true, true, true, true);
+            $practice->locations->each(fn (Location $l) => GenerateLocationSummaries::dispatchNow($l->id));
 
-        $nurse = $this->createUser($practice->id, 'care-center');
-        $this->setupNurse($nurse, true, 29.0, true, 12.50);
+            return $practice;
+        });
+
+        measureTime('provider', function () use ($practiceId) {
+            return $this->createUser($practiceId, 'provider');
+        });
+
+        $nurse = measureTime('nurse', function () use ($practiceId) {
+            $nurse = $this->createUser($practiceId, 'care-center');
+            $this->setupNurse($nurse, true, 29.0, true, 12.50);
+
+            return $nurse;
+        });
 
         for ($i = 0; $i < $count; ++$i) {
-            $this->createPatient($practice, $nurse);
+            echo "---------------------\n";
+            measureTime('patient'.($i + 1), function () use ($practice, $nurse) {
+                $this->createPatient($practice, $nurse);
+            });
+            echo "\n";
         }
 
-        BillingCache::clearPatients();
-        ProcessPracticePatientMonthlyServices::dispatchNow($practiceId);
+        measureTime('processing', function () use ($practiceId) {
+            BillingCache::clearPatients();
+            ProcessPracticePatientMonthlyServices::dispatchNow($practiceId);
+        });
 
         $this->info('Done');
 
@@ -83,28 +102,44 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
 
     private function createNoteAndCall(User $author, User $patient)
     {
-        auth()->loginUsingId($author->id);
-        session()->regenerateToken();
-        $args = [
-            '_token'      => session()->token(),
-            'body'        => 'test',
-            'patient_id'  => $patient->id,
-            'phone'       => 1,
-            'call_status' => Call::REACHED,
-        ];
+        measureTime('login', function () use ($author) {
+            auth()->loginUsingId($author->id);
+            session()->regenerateToken();
+        });
 
-        $request = Request::create(route('patient.note.store', ['patientId' => $patient->id]), 'POST', $args);
-        app()->handle($request);
-        auth()->logout();
+        measureTime('request', function () use ($patient) {
+            $args = [
+                '_token'      => session()->token(),
+                'body'        => 'test',
+                'patient_id'  => $patient->id,
+                'phone'       => 1,
+                'call_status' => Call::REACHED,
+            ];
+
+            $request = Request::create(route('patient.note.store', ['patientId' => $patient->id]), 'POST', $args);
+            app()->handle($request);
+        });
+
+        measureTime('logout', fn () => auth()->logout());
     }
 
     private function createPatient(Practice $practice, User $nurse)
     {
-        $patient = $this->setupPatient($practice, false, true, false, false);
-        $this->createNoteAndCall($nurse, $patient);
+        $patient = $this->setupPatient($practice, false, true, false, false, false);
+        measureTime('createNoteAndCall', fn () => $this->createNoteAndCall($nurse, $patient));
 
-        $chargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
-        $this->storeTime($nurse, $patient, 21, $chargeableServiceId);
+        $chargeableServiceId = ChargeableService::cached()
+            ->firstWhere('code', '=', ChargeableService::PCM)->id;
+
+        measureTime('storeTime', function () use ($nurse, $patient, $chargeableServiceId) {
+            if (app()->runningUnitTests()) {
+                Event::fakeFor(function () use ($nurse, $patient, $chargeableServiceId) {
+                    $this->storeTime($nurse, $patient, 31, $chargeableServiceId);
+                });
+            } else {
+                $this->storeTime($nurse, $patient, 31, $chargeableServiceId);
+            }
+        });
 
         $this->info("Created patient[$patient->id]");
     }
