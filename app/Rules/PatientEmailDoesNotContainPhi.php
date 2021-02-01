@@ -67,31 +67,12 @@ class PatientEmailDoesNotContainPhi implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->field = 'patient_email_body' == $attribute ? 'body' : 'subject';
+        $this->setFieldForValidationMessage($attribute);
 
-        //check if string contains and just add fields that are found. Looping over each one individually, so we can report back to the user which phi exist in the message
         $value = strtolower($value);
 
-        //For User
-        foreach ($this->patientUser->phi as $phi) {
-            if ($this->shouldAllowPhiInEmail($phi)) {
-                continue;
-            }
-            $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
-
-            if ($string) {
-                $stringMatches = $this->stringsMatch($string, $value);
-    
-                if ($stringMatches && $this->fieldIsName($phi) && $this->stringsMatch('nurse'.' '.$string, $value)) {
-                    continue;
-                }
-                $this->phiFound[] = $stringMatches
-                    ? $phi
-                    : null;
-            }
-        }
-
-        //For Relationships
+        $this->validateAgainstPatientUserModel($value);
+        
         $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
         foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
             foreach ($this->patientUser->{$relation}->phi as $phi) {
@@ -139,6 +120,11 @@ class PatientEmailDoesNotContainPhi implements Rule
         return $string;
     }
 
+    private function setFieldForValidationMessage(string $attribute): void
+    {
+        $this->field = 'patient_email_body' == $attribute ? 'body' : 'subject';
+    }
+
     private function shouldAllowPhiInEmail(string $phiField): bool
     {
         if ( ! isset($this->allowedFields)) {
@@ -151,5 +137,26 @@ class PatientEmailDoesNotContainPhi implements Rule
     private function stringsMatch(string $string1, string $string2)
     {
         return preg_match("/\b".preg_quote($string1, '/')."\b/", $string2);
+    }
+
+    private function validateAgainstPatientUserModel(string $text)
+    {
+        foreach ($this->patientUser->phi as $phi) {
+            if ($this->shouldAllowPhiInEmail($phi)) {
+                continue;
+            }
+            $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
+
+            if ($string) {
+                $stringMatches = $this->stringsMatch($string, $text);
+
+                if ($stringMatches && $this->fieldIsName($phi) && $this->stringsMatch('nurse'.' '.$string, $text)) {
+                    continue;
+                }
+                $this->phiFound[] = $stringMatches
+                    ? $phi
+                    : null;
+            }
+        }
     }
 }
