@@ -30,7 +30,6 @@ class PatientEmailDoesNotContainPhi implements Rule
             'm' => 'male',
             'f' => 'female',
         ],
-        'state' => 'usStatesArrayForDropdown',
     ];
 
     /**
@@ -75,7 +74,7 @@ class PatientEmailDoesNotContainPhi implements Rule
 
         //For User
         foreach ($this->patientUser->phi as $phi) {
-            if ( ! $this->shouldAllowPhiInEmail($phi)) {
+            if ($this->shouldAllowPhiInEmail($phi)) {
                 continue;
             }
             $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
@@ -91,7 +90,7 @@ class PatientEmailDoesNotContainPhi implements Rule
         $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
         foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
             foreach ($this->patientUser->{$relation}->phi as $phi) {
-                if ( ! $this->shouldAllowPhiInEmail($phi)) {
+                if ($this->shouldAllowPhiInEmail($phi)) {
                     continue;
                 }
                 $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
@@ -112,10 +111,16 @@ class PatientEmailDoesNotContainPhi implements Rule
     {
         $string = trim(strtolower($model->getAttribute($phi)));
 
-        if (array_key_exists($phi, $this->transformable)) {
-            if ( ! empty($string) && isset($this->transformable[$phi][$string])) {
-                $string = $this->transformable[$phi][$string];
-            }
+        if (empty($string)) {
+            return $string;
+        }
+
+        if ( ! isset($this->transformable[$phi])) {
+            return $string;
+        }
+
+        if (is_array($this->transformable[$phi])) {
+            return $this->transformable[$phi][$string] ?? $string;
         }
 
         return $string;
