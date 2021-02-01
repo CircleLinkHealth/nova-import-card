@@ -18,6 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use function JmesPath\search;
 
 class ChangePatientChargeableServiceAndTransferTimeForLegacyABP implements ShouldQueue, ShouldBeEncrypted
 {
@@ -52,6 +53,7 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP implements Shoul
     public function handle()
     {
         $patientSupportUserId = PatientSupportUser::id();
+
         User::ofType('participant')
             ->whereHas('patientInfo')
             ->with([
@@ -60,19 +62,19 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP implements Shoul
             ])
             ->whereIn('id', $this->patientIds)
             ->each(function (User $patient) use ($patientSupportUserId) {
-                if ($patient->primaryPractice->chargeableServices->contains($this->toCs->id)) {
+                if ( ! $patient->primaryPractice->chargeableServices->contains($this->toCs->id)) {
                     Log::info("Patient ($patient->id) Primary Practice ({$patient->primaryPractice->id}), does not have CS ({$this->toCs->id}). Cannot attach to patient.");
-
+                    $this->unsetPatientId($patient->id);
                     return;
                 }
 
                 $summary = $patient->patientSummaries->first();
 
                 if ($summary->chargeableServices->contains($this->fromCs->id)) {
-                    $summary->chargeableServices->detach($this->fromCs->id);
+                    $summary->chargeableServices()->detach($this->fromCs->id);
                 }
 
-                $summary->chargeableServices->syncWithoutDetaching([
+                $summary->chargeableServices()->syncWithoutDetaching([
                     $this->toCs->id,
                     [
                         'is_fulfilled' => true,
@@ -83,11 +85,28 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP implements Shoul
                 $summary->save();
             });
 
+        if (empty($this->patientIds)){
+            Log::info("Aborting Time Processing, no valid patient IDs left");
+            return;
+        }
+
         TransferTimeFromCsForLegacyABP::dispatch(
             $this->patientIds,
             $this->month,
             $this->fromCs->id,
             $this->toCs->code
         )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+    }
+
+    private function unsetPatientId(int $patientId): void
+    {
+        $index = array_search($patientId, $this->patientIds);
+
+        if ($index === false){
+            Log::info("Patient ID: '$patientId' not found in patient IDs array.");
+            return;
+        }
+
+        unset($this->patientIds[$index]);
     }
 }

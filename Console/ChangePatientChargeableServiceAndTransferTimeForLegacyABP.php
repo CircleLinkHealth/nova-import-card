@@ -74,7 +74,12 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
             return;
         }
 
-        $this->setPatientIds();
+        $this->filterAndSetPatientIds();
+
+        if (empty($this->patientIds)){
+            $this->warn("Aborting Time Processing, no valid patient IDs left");
+            return;
+        }
 
         Job::dispatch(
             $this->patientIds,
@@ -101,7 +106,7 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
         $this->month = Carbon::createFromFormat('Y-m-d', $this->argument('month'))->startOfMonth();
     }
 
-    private function setPatientIds(): void
+    private function filterAndSetPatientIds(): void
     {
         $this->patientIds = collect(explode(',', $this->argument('patientIds')))
             ->map(function ($id) {

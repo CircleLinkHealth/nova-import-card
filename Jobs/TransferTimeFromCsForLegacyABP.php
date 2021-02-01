@@ -54,7 +54,7 @@ class TransferTimeFromCsForLegacyABP implements ShouldQueue, ShouldBeEncrypted
             ->createdInMonth($this->month, 'performed_at')
             ->pluck('id');
 
-        (new ModifyPatientActivity($this->toCsCode, $activityIds))->execute();
+        (new ModifyPatientActivity($this->toCsCode, $activityIds->toArray()))->execute();
 
         (app(ActivityService::class))->processMonthlyActivityTime($this->patientIds, $this->month);
     }
