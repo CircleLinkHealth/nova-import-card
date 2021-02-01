@@ -56,8 +56,8 @@
 <script>
     import {rootUrl} from '../../../../app.config.js';
     import Modal from '../../../common/modal';
-    import Notifications from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
-    import Loader from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
+    import Notifications from '../../../../../../../../SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import Loader from '../../../../../../../../SharedVueComponents/Resources/assets/js/components/loader';
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'
 

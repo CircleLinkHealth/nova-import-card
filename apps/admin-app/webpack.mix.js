@@ -40,7 +40,13 @@ const webpackConfig = {
             ignore: ["node_modules", "bower_components", "webpack.config.js"],
             configFile: "sentry.properties",
         }),
-    ] : []
+    ] : [],
+    resolve: {
+        modules: [
+            path.resolve(__dirname, 'node_modules'),
+            path.resolve(__dirname, './'),
+        ]
+    }
 };
 
 mix.webpackConfig(webpackConfig);
