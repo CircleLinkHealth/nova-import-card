@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use App\Nova\Actions\ModifyPatientActivity;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Bus\Queueable;
@@ -40,7 +39,7 @@ class TransferTimeFromCsForLegacyABP implements ShouldQueue, ShouldBeEncrypted
         $this->patientIds = $patientIds;
         $this->month      = $month;
         $this->fromCsId   = $fromCsId;
-        $this->toCsCode     = $toCsCode;
+        $this->toCsCode   = $toCsCode;
     }
 
     /**
