@@ -10,24 +10,23 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Support\Facades\Log;
 
 class ModifyPatientActivity
 {
-    private array $activityIds;
+    private array $activityIds = [];
 
-    private string $chargeableService;
+    private ?string $chargeableService = null;
 
-    private ?Carbon $month;
+    private ?Carbon $month = null;
+
+    private array $patientIds = [];
 
     private ?string $sourceChargeableService;
 
-    private function __construct(string $chargeableService, array $activityIds = [], ?Carbon $month = null, ?string $sourceChargeableService = null)
+    private function __construct()
     {
-        $this->chargeableService       = $chargeableService;
-        $this->activityIds             = $activityIds;
-        $this->month                   = $month;
-        $this->sourceChargeableService = $sourceChargeableService;
     }
 
     /**
@@ -42,7 +41,7 @@ class ModifyPatientActivity
         }
 
         if (empty($this->activityIds)) {
-            $this->setActivityIds();
+            $this->fillActivityIds();
         }
 
         if (empty($this->activityIds)) {
@@ -60,16 +59,72 @@ class ModifyPatientActivity
             ]);
 
         $this->generateNurseInvoices();
+
+        $this->processLegacyPms();
     }
 
     public static function forActivityIds(string $chargeableService, array $activityIds): self
     {
-        return new ModifyPatientActivity($chargeableService, $activityIds);
+        return (new ModifyPatientActivity())
+            ->setChargeableService($chargeableService)
+            ->setActivityIds($activityIds);
     }
 
     public static function forMonth(string $chargeableService, Carbon $month, string $current = null): self
     {
-        return new ModifyPatientActivity($chargeableService, [], $month, $current);
+        return (new ModifyPatientActivity())
+            ->setChargeableService($chargeableService)
+            ->setMonth($month)
+            ->setSourceChargeableService($current);
+    }
+
+    public function setActivityIds(array $activityIds): ModifyPatientActivity
+    {
+        $this->activityIds = $activityIds;
+
+        return $this;
+    }
+
+    public function setChargeableService(string $chargeableService): ModifyPatientActivity
+    {
+        $this->chargeableService = $chargeableService;
+
+        return $this;
+    }
+
+    public function setMonth(?Carbon $month): ModifyPatientActivity
+    {
+        $this->month = $month;
+
+        return $this;
+    }
+
+    public function setSourceChargeableService(?string $sourceChargeableService): ModifyPatientActivity
+    {
+        $this->sourceChargeableService = $sourceChargeableService;
+
+        return $this;
+    }
+
+    private function fillActivityIds()
+    {
+        $sourceCsId = $this->getSourceCsId();
+        Activity::whereBetween('performed_at', [$this->month->copy()->startOfMonth(), $this->month->copy()->endOfMonth()])
+            ->when( ! is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
+            ->get(['id', 'patient_id'])
+            ->each(function (Activity $activity) {
+                $this->activityIds[] = $activity->id;
+                $this->patientIds[] = $activity->patient_id;
+            });
+    }
+
+    private function fillPatientIds()
+    {
+        $sourceCsId       = $this->getSourceCsId();
+        $this->patientIds = Activity::whereBetween('performed_at', [$this->month->copy()->startOfMonth(), $this->month->copy()->endOfMonth()])
+            ->when( ! is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
+            ->pluck('patient_id')
+            ->toArray();
     }
 
     private function generateNurseInvoices()
@@ -88,15 +143,18 @@ class ModifyPatientActivity
             });
     }
 
-    private function setActivityIds()
+    private function getSourceCsId(): ?int
     {
-        $sourceCsId = $this->sourceChargeableService
+        return $this->sourceChargeableService
             ? ChargeableService::cached()->firstWhere('code', '=', $this->sourceChargeableService)->id
             : null;
+    }
 
-        $this->activityIds = Activity::whereBetween('performed_at', [$this->month->copy()->startOfMonth(), $this->month->copy()->endOfMonth()])
-            ->when( ! is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
-            ->pluck('id')
-            ->toArray();
+    private function processLegacyPms()
+    {
+        if (empty($this->patientIds)) {
+            $this->fillPatientIds();
+        }
+        app(ActivityService::class)->processMonthlyActivityTime($this->patientIds, $this->month);
     }
 }
