@@ -3,12 +3,14 @@
 namespace CircleLinkHealth\CcmBilling\Console;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
+/**
+ * @deprecated
+*/
 class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
 {
     protected Carbon $month;
@@ -55,13 +57,13 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
     {
         try {
             $this->setMonth();
-        } catch (\Throwable $throwable){
+        } catch (\Throwable $throwable) {
             $this->error("Invalid month input: {$this->argument('month')}");
         }
 
         try {
             $this->setServices();
-        } catch (\Throwable $throwable){
+        } catch (\Throwable $throwable) {
             $this->error("Invalid CS input: {$throwable->getMessage()}");
         }
 
@@ -70,57 +72,71 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
 
         User::ofType('participant')
             ->whereHas('patientInfo')
-            ->with(['primaryPractice.chargeableServices',
-                    'patientSummaries' => fn($pms) => $pms->where('month_year', $this->month) ])
+            ->with([
+                'primaryPractice.chargeableServices',
+                'patientSummaries' => fn($pms) => $pms->with('chargeableServices')->where('month_year', $this->month),
+            ])
             ->whereIn('id', $this->patientIds)
-            ->each(function (User $patient){
-                if ($patient->primaryPractice->chargeableServices->contains($this->toCs)){
+            ->each(function (User $patient) {
+                if ($patient->primaryPractice->chargeableServices->contains($this->toCs)) {
                     $this->warn("Patient ($patient->id) Primary Practice ({$patient->primaryPractice->id}), does not have CS ({$this->toCs->id}). Cannot attach to patient.");
+
                     return;
                 }
 
-                //detach previous CS from PMS
-                //attach new to PMS
+                $summary = $patient->patientSummaries->first();
 
-                //transfer time
+                if ($summary->chargeableServices->contains($this->fromCs)) {
+                    $summary->chargeableServices->detach($this->fromCs->id);
+                }
 
+                $summary->chargeableServices->syncWithoutDetaching([
+                    $this->toCs,
+                    [
+                        'is_fulfilled' => true,
+                    ],
+                ]);
+
+                $summary->actorId = PatientSupportUser::id();
+                $summary->save();
             });
     }
 
     private function getChargeableService($input): ChargeableService
     {
-        if (is_numeric($input)){
+        if (is_numeric($input)) {
             return ChargeableService::findOrFail($input);
         }
 
         return ChargeableService::where('code', $input)
-            ->orWhere('display_name', strtoupper($input))
-            ->firstOrFail();
+                                ->orWhere('display_name', strtoupper($input))
+                                ->firstOrFail();
     }
 
-    private function setServices() : void
+    private function setServices(): void
     {
         $this->fromCs = $this->getChargeableService($this->argument('fromCs'));
-        $this->toCs = $this->getChargeableService($this->argument('toCs'));
+        $this->toCs   = $this->getChargeableService($this->argument('toCs'));
     }
 
-    private function setPatientIds():void
+    private function setPatientIds(): void
     {
         $this->patientIds = collect(explode(',', $this->argument('patientIds')))
-            ->map(function($id){
+            ->map(function ($id) {
                 $numId = (int)$id;
 
-                if ((string)$numId !== $id){
+                if ((string)$numId !== $id) {
                     $this->info("Invalid ID: $id, will not process patient");
+
                     return null;
                 }
 
                 return $numId;
             })->filter()
-        ->toArray();
+            ->toArray();
     }
 
-    private function setMonth() : void
+    private function setMonth(): void
     {
         $this->month = Carbon::createFromFormat('YYYY-MM-DD', $this->argument('month'))->startOfMonth();
     }
