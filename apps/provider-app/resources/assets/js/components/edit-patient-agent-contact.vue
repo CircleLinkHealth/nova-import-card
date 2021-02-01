@@ -86,11 +86,11 @@
 </template>
 
 <script>
-    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
-    import axios from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap-axios";
-    import EventBus from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
+    import axios from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios";
+    import EventBus from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
     import {mapActions} from 'vuex';
-    import {addNotification} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions.js';
+    import {addNotification} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions.js';
 
     export default {
 

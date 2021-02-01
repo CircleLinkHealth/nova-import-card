@@ -194,18 +194,18 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../../../Sharedvuecomponents/Resources/assets/js/app.config.js'
+    import {rootUrl} from '../../../../../../SharedVueComponents/Resources/assets/js/app.config.js'
     import {Event} from 'vue-tables-2'
-    import TextEditable from '../../../../../../Sharedvuecomponents/Resources/assets/js/admin/comps/text-editable'
+    import TextEditable from '../../../../../../SharedVueComponents/Resources/assets/js/admin/comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
     import ChargeableServicesModal from './comps/chargeable-services-modal'
     import ErrorModal from './comps/error-modal'
-    import buildReport, {styles} from '../../../../../../Sharedvuecomponents/Resources/assets/js/excel'
-    import Select2Component from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2'
-    import Loader from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/loader'
-    import timeDisplay from '../../../../../../Sharedvuecomponents/Resources/assets/js/util/time-display'
-    import NotificationsComponent from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
-    import SERVICES from '../../../../../../Sharedvuecomponents/Resources/assets/js/constants/services.types'
+    import buildReport, {styles} from '../../../../../../SharedVueComponents/Resources/assets/js/excel'
+    import Select2Component from '../../../../../../SharedVueComponents/Resources/assets/js/components/src/select2'
+    import Loader from '../../../../../../SharedVueComponents/Resources/assets/js/components/loader'
+    import timeDisplay from '../../../../../../SharedVueComponents/Resources/assets/js/util/time-display'
+    import NotificationsComponent from '../../../../../../SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
+    import SERVICES from '../../../../../../SharedVueComponents/Resources/assets/js/constants/services.types'
 
     export default {
         name: 'billing-report',
