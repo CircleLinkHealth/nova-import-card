@@ -7,15 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Console;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Jobs\ChangePatientChargeableServiceAndTransferTimeForLegacyABP as Job;
+use CircleLinkHealth\CcmBilling\Jobs\ModifyPatientActivityAndReprocessTime as Job;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Console\Command;
 
-/**
- * @deprecated
- */
-class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
+class ModifyPatientActivityAndReprocessTime extends Command
 {
     /**
      * The console command description.
@@ -37,7 +34,8 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
     protected $signature = 'billing:patient-change-cs-and-time {patientIds : Comma delimited Patient Ids} 
                                                                {month : YYYY-MM-DD} 
                                                                {fromCs : ID, user friendly name or CS code} 
-                                                               {toCs : ID, user friendly name or CS code} 
+                                                               {toCs : ID, user friendly name or CS code}
+                                                               {--legacy} 
                                                           ';
     protected ChargeableService $toCs;
 
@@ -76,18 +74,19 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
 
         $this->filterAndSetPatientIds();
 
-        if (empty($this->patientIds)){
+        if (empty($this->patientIds)) {
             $this->warn("Aborting Time Processing, no valid patient IDs left");
+
             return;
         }
 
         Job::dispatch(
             $this->patientIds,
             $this->month,
-            $this->fromCs,
-            $this->toCs,
-        )
-            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+            $this->fromCs->id,
+            $this->toCs->code,
+            (bool) $this->option('legacy')
+        )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     private function getChargeableService($input): ChargeableService
@@ -97,8 +96,8 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
         }
 
         return ChargeableService::where('code', $input)
-            ->orWhere('display_name', strtoupper($input))
-            ->firstOrFail();
+                                ->orWhere('display_name', strtoupper($input))
+                                ->firstOrFail();
     }
 
     private function setMonth(): void
@@ -110,9 +109,9 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
     {
         $this->patientIds = collect(explode(',', $this->argument('patientIds')))
             ->map(function ($id) {
-                $numId = (int) $id;
+                $numId = (int)$id;
 
-                if ((string) $numId !== $id) {
+                if ((string)$numId !== $id) {
                     $this->info("Invalid ID: '$id'. Will not process patient");
 
                     return null;
