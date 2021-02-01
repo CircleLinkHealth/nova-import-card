@@ -72,25 +72,9 @@ class PatientEmailDoesNotContainPhi implements Rule
         $value = strtolower($value);
 
         $this->validateAgainstPatientUserModel($value);
-        
-        $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
-        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
-            foreach ($this->patientUser->{$relation}->phi as $phi) {
-                if ($this->shouldAllowPhiInEmail($phi)) {
-                    continue;
-                }
-                $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
-                if ($string) {
-                    $this->phiFound[] = $this->stringsMatch($string, $value)
-                        ? $phi
-                        : null;
-                }
-            }
-        }
+        $this->validateAgainstPatientRelationships($value);
 
-        $this->phiFound = array_filter($this->phiFound);
-
-        return empty($this->phiFound);
+        return ! $this->phiIsFound();
     }
 
     private function fieldIsName(string $field): bool
@@ -120,6 +104,13 @@ class PatientEmailDoesNotContainPhi implements Rule
         return $string;
     }
 
+    private function phiIsFound(): bool
+    {
+        $this->phiFound = array_filter($this->phiFound);
+
+        return ! empty($this->phiFound);
+    }
+
     private function setFieldForValidationMessage(string $attribute): void
     {
         $this->field = 'patient_email_body' == $attribute ? 'body' : 'subject';
@@ -137,6 +128,24 @@ class PatientEmailDoesNotContainPhi implements Rule
     private function stringsMatch(string $string1, string $string2)
     {
         return preg_match("/\b".preg_quote($string1, '/')."\b/", $string2);
+    }
+
+    private function validateAgainstPatientRelationships(string $text)
+    {
+        $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
+        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
+            foreach ($this->patientUser->{$relation}->phi as $phi) {
+                if ($this->shouldAllowPhiInEmail($phi)) {
+                    continue;
+                }
+                $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
+                if ($string) {
+                    $this->phiFound[] = $this->stringsMatch($string, $text)
+                        ? $phi
+                        : null;
+                }
+            }
+        }
     }
 
     private function validateAgainstPatientUserModel(string $text)
