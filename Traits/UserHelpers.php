@@ -101,7 +101,12 @@ trait UserHelpers
         bool $withSuccessfulCall = true
     ): User {
         $practiceId = parseIds($practiceId)[0];
-        $roles      = [Role::whereName($roleName)->firstOrFail()->id];
+        /** @var Role $role */
+        $role = Role::cached()->firstWhere('name', '=', $roleName);
+        if ( ! $role) {
+            throw new \Exception("role[$roleName] not found in DB");
+        }
+        $roles = [$role->id];
 
         //creates the User
         $user = $this->setupUser($practiceId, $roles, $ccmStatus);
@@ -224,6 +229,20 @@ trait UserHelpers
         $email     = $faker->email;
         $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 
+        $hasParticipantRole = Role::cached()
+            ->whereIn('id', $roles)
+            ->some(fn (Role $q) => 'participant' === $q->name);
+
+        $providerId = null;
+        if ($hasParticipantRole) {
+            $provider = User::ofPractice($practiceId)
+                ->ofType('provider')
+                ->first();
+            if ($provider) {
+                $providerId = $provider->id;
+            }
+        }
+
         $bag = new ParameterBag(
             [
                 'saas_account_id' => SaasAccount::firstOrFail()->id,
@@ -261,6 +280,12 @@ trait UserHelpers
                 'birth_date'                 => $faker->date('Y-m-d'),
             ]
         );
+
+        if ($providerId) {
+            $bag->add([
+                'provider_id' => $providerId,
+            ]);
+        }
 
         //create a user
         $user = (new UserRepository())->createNewUser($bag);
@@ -357,99 +382,110 @@ trait UserHelpers
         return $nurse;
     }
 
-    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false, bool $withSuccessfulCall = true)
+    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false, bool $withSuccessfulCall = true, bool $processBilling = true)
     {
-        $patient = $this->createUser($practice->id, 'participant', 'enrolled', $withSuccessfulCall);
+        $patient = measureTime('createUser', function () use ($practice, $withSuccessfulCall) {
+            return $this->createUser($practice->id, 'participant', 'enrolled', $withSuccessfulCall);
+        });
 
-        /** @var Location $location */
-        $location = $practice->locations()->first();
-        if ( ! $location) {
-            $location = factory(Location::class)->create(['practice_id' => $practice->id]);
-        }
-
-        $patient->setPreferredContactLocation($location->id);
-
-        if ($isBhi) {
-            $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
-            $consentDate->addDay();
-            $patient->patientInfo->consent_date = $consentDate;
-        }
-
-        $patient->patientInfo->ccm_status = Patient::ENROLLED;
-        $patient->patientInfo->save();
-        $cpmProblems = CpmProblem::get();
-
-        if ($addRpm) {
-            $cpmProb = $cpmProblems->get(1);
-
-            RpmProblem::create([
-                'practice_id' => $practice->id,
-                'code'        => $icd10 = 'rpm_test',
-                'description' => $cpmProb->name,
-            ]);
-
-            (app(CcdProblemService::class))->addPatientCcdProblem(
-                (new CcdProblemInput())
-                    ->setCpmProblemId($cpmProb->id)
-                    ->setUserId($patient->id)
-                    ->setName($cpmProb->name)
-                    ->setIsMonitored(true)
-                    ->setIcd10($icd10)
-            );
-        }
-
-        $ccdProblems = collect();
-        if ($pcmOnly) {
-            $cpmProb = $cpmProblems->get(2);
-            PcmProblem::create([
-                'practice_id' => $practice->id,
-                'code'        => $icd10 = 'pcm_test',
-                'description' => $cpmProb->name,
-            ]);
-
-            (app(CcdProblemService::class))->addPatientCcdProblem(
-                (new CcdProblemInput())
-                    ->setCpmProblemId($cpmProb->id)
-                    ->setUserId($patient->id)
-                    ->setName($cpmProb->name)
-                    ->setIsMonitored(true)
-                    ->setIcd10($icd10)
-            );
-        } else {
-            $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
-                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
-                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
-            ]);
-        }
-
-        if (($pcmOnly || $addRpm) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
-            SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
-        }
-
-        //todo:revisit/cleanup in next iteration of billing
-        if ($ccdProblems->isNotEmpty()) {
-            $len = $ccdProblems->count();
-            for ($i = 0; $i < $len; ++$i) {
-                $problem = $ccdProblems->get($i);
-                $isLast  = $i === $len - 1;
-                if ($isLast && $isBhi) {
-                    $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
-                } else {
-                    $method = '';
-                    if (0 == $i) {
-                        $method = 'first';
-                    } else {
-                        $method = 'last';
-                    }
-                    $problem->cpmProblem()->associate($cpmProblems->where('is_behavioral', '=', 0)->$method());
-                }
-                $problem->save();
+        measureTime('setPreferredContactLocation', function () use ($patient, $practice) {
+            /** @var Location $location */
+            $location = $practice->locations()->first();
+            if ( ! $location) {
+                $location = factory(Location::class)->create(['practice_id' => $practice->id]);
             }
-        }
 
-        BillingCache::clearPatients();
-        ProcessSinglePatientMonthlyServices::dispatch($patient->id);
+            $patient->setPreferredContactLocation($location->id);
+        });
+
+        measureTime('setCcmStatus', function () use ($patient, $isBhi) {
+            if ($isBhi) {
+                $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
+                $consentDate->addDay();
+                $patient->patientInfo->consent_date = $consentDate;
+            }
+
+            $patient->patientInfo->ccm_status = Patient::ENROLLED;
+            $patient->patientInfo->save();
+        });
+
+        measureTime('addProblems', function () use ($patient, $practice, $pcmOnly, $addRpm, $isBhi) {
+            $cpmProblems = CpmProblem::cached();
+
+            if ($addRpm) {
+                $cpmProb = $cpmProblems->get(1);
+
+                RpmProblem::create([
+                    'practice_id' => $practice->id,
+                    'code'        => $icd10 = 'rpm_test',
+                    'description' => $cpmProb->name,
+                ]);
+
+                (app(CcdProblemService::class))->addPatientCcdProblem(
+                    (new CcdProblemInput())
+                        ->setCpmProblemId($cpmProb->id)
+                        ->setUserId($patient->id)
+                        ->setName($cpmProb->name)
+                        ->setIsMonitored(true)
+                        ->setIcd10($icd10)
+                );
+            }
+
+            $ccdProblems = collect();
+            if ($pcmOnly) {
+                $cpmProb = $cpmProblems->get(2);
+                PcmProblem::create([
+                    'practice_id' => $practice->id,
+                    'code'        => $icd10 = 'pcm_test',
+                    'description' => $cpmProb->name,
+                ]);
+
+                (app(CcdProblemService::class))->addPatientCcdProblem(
+                    (new CcdProblemInput())
+                        ->setCpmProblemId($cpmProb->id)
+                        ->setUserId($patient->id)
+                        ->setName($cpmProb->name)
+                        ->setIsMonitored(true)
+                        ->setIcd10($icd10)
+                );
+            } else {
+                $ccdProblems = $patient->ccdProblems()->createMany([
+                    ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                    ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                    ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                ]);
+            }
+
+            if (($pcmOnly || $addRpm) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
+                SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
+            }
+
+            //todo:revisit/cleanup in next iteration of billing
+            if ($ccdProblems->isNotEmpty()) {
+                $len = $ccdProblems->count();
+                for ($i = 0; $i < $len; ++$i) {
+                    $problem = $ccdProblems->get($i);
+                    $isLast = $i === $len - 1;
+                    if ($isLast && $isBhi) {
+                        $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
+                    } else {
+                        $method = '';
+                        if (0 == $i) {
+                            $method = 'first';
+                        } else {
+                            $method = 'last';
+                        }
+                        $problem->cpmProblem()->associate($cpmProblems->where('is_behavioral', '=', 0)->$method());
+                    }
+                    $problem->save();
+                }
+            }
+        });
+
+        if ($processBilling) {
+            BillingCache::clearPatients();
+            ProcessSinglePatientMonthlyServices::dispatch($patient->id);
+        }
 
         return $patient;
     }
