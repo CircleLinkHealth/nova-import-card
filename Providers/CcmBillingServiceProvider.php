@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 
 use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
+use CircleLinkHealth\CcmBilling\Console\ModifyPatientActivityAndReprocessTime;
 use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
 use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
@@ -50,6 +51,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->commands([
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
+            ModifyPatientActivityAndReprocessTime::class,
         ]);
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
