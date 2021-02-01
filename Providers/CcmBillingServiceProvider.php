@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Console\ChangePatientChargeableServiceAndTransferTimeForLegacyABP;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\CachedLocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
@@ -50,6 +51,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->commands([
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
+            ChangePatientChargeableServiceAndTransferTimeForLegacyABP::class
         ]);
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');

@@ -4,9 +4,11 @@ namespace CircleLinkHealth\CcmBilling\Console;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
+use CircleLinkHealth\CcmBilling\Jobs\ChangePatientChargeableServiceAndTransferTimeForLegacyABP as Job;
 
 /**
  * @deprecated
@@ -26,10 +28,10 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
      * @var string
      */
     protected $signature = 'billing:patient-change-cs-and-time {patientIds : Comma delimited Patient Ids} 
-                                                               {month: YYYY-MM-DD} 
-                                                               {fromCs: ID, user friendly name or CS code} 
-                                                               {toCs: ID, user friendly name or CS code} 
-                                                               {--transfer-time=true}';
+                                                               {month : YYYY-MM-DD} 
+                                                               {fromCs : ID, user friendly name or CS code} 
+                                                               {toCs : ID, user friendly name or CS code} 
+                                                          ';
 
     /**
      * The console command description.
@@ -59,47 +61,26 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
             $this->setMonth();
         } catch (\Throwable $throwable) {
             $this->error("Invalid month input: {$this->argument('month')}");
+            return;
         }
 
         try {
             $this->setServices();
         } catch (\Throwable $throwable) {
             $this->error("Invalid CS input: {$throwable->getMessage()}");
+            return;
         }
 
         $this->setPatientIds();
 
 
-        User::ofType('participant')
-            ->whereHas('patientInfo')
-            ->with([
-                'primaryPractice.chargeableServices',
-                'patientSummaries' => fn($pms) => $pms->with('chargeableServices')->where('month_year', $this->month),
-            ])
-            ->whereIn('id', $this->patientIds)
-            ->each(function (User $patient) {
-                if ($patient->primaryPractice->chargeableServices->contains($this->toCs)) {
-                    $this->warn("Patient ($patient->id) Primary Practice ({$patient->primaryPractice->id}), does not have CS ({$this->toCs->id}). Cannot attach to patient.");
-
-                    return;
-                }
-
-                $summary = $patient->patientSummaries->first();
-
-                if ($summary->chargeableServices->contains($this->fromCs)) {
-                    $summary->chargeableServices->detach($this->fromCs->id);
-                }
-
-                $summary->chargeableServices->syncWithoutDetaching([
-                    $this->toCs,
-                    [
-                        'is_fulfilled' => true,
-                    ],
-                ]);
-
-                $summary->actorId = PatientSupportUser::id();
-                $summary->save();
-            });
+        Job::dispatch(
+            $this->patientIds,
+            $this->month,
+            $this->fromCs->id,
+            $this->toCs->id,
+            )
+            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     private function getChargeableService($input): ChargeableService
@@ -126,7 +107,7 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
                 $numId = (int)$id;
 
                 if ((string)$numId !== $id) {
-                    $this->info("Invalid ID: $id, will not process patient");
+                    $this->info("Invalid ID: '$id'. Will not process patient");
 
                     return null;
                 }
@@ -138,6 +119,6 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
 
     private function setMonth(): void
     {
-        $this->month = Carbon::createFromFormat('YYYY-MM-DD', $this->argument('month'))->startOfMonth();
+        $this->month = Carbon::createFromFormat('Y-m-d', $this->argument('month'))->startOfMonth();
     }
 }
