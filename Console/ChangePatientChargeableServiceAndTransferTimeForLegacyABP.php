@@ -1,26 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Console;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
+use CircleLinkHealth\CcmBilling\Jobs\ChangePatientChargeableServiceAndTransferTimeForLegacyABP as Job;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
-use CircleLinkHealth\CcmBilling\Jobs\ChangePatientChargeableServiceAndTransferTimeForLegacyABP as Job;
 
 /**
  * @deprecated
-*/
+ */
 class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Change specific patient CS to another and transfer time from that CS to the other, for a specific month, for Legacy Billing (Inc. PMS)';
+
+    protected ChargeableService $fromCs;
     protected Carbon $month;
 
     protected array $patientIds;
-
-    protected ChargeableService $fromCs;
-    protected ChargeableService $toCs;
 
     /**
      * The name and signature of the console command.
@@ -32,13 +39,7 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
                                                                {fromCs : ID, user friendly name or CS code} 
                                                                {toCs : ID, user friendly name or CS code} 
                                                           ';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Change specific patient CS to another and transfer time from that CS to the other, for a specific month, for Legacy Billing (Inc. PMS)';
+    protected ChargeableService $toCs;
 
     /**
      * Create a new command instance.
@@ -61,6 +62,7 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
             $this->setMonth();
         } catch (\Throwable $throwable) {
             $this->error("Invalid month input: {$this->argument('month')}");
+
             return;
         }
 
@@ -68,18 +70,18 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
             $this->setServices();
         } catch (\Throwable $throwable) {
             $this->error("Invalid CS input: {$throwable->getMessage()}");
+
             return;
         }
 
         $this->setPatientIds();
 
-
         Job::dispatch(
             $this->patientIds,
             $this->month,
-            $this->fromCs->id,
-            $this->toCs->id,
-            )
+            $this->fromCs,
+            $this->toCs,
+        )
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
@@ -90,23 +92,22 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
         }
 
         return ChargeableService::where('code', $input)
-                                ->orWhere('display_name', strtoupper($input))
-                                ->firstOrFail();
+            ->orWhere('display_name', strtoupper($input))
+            ->firstOrFail();
     }
 
-    private function setServices(): void
+    private function setMonth(): void
     {
-        $this->fromCs = $this->getChargeableService($this->argument('fromCs'));
-        $this->toCs   = $this->getChargeableService($this->argument('toCs'));
+        $this->month = Carbon::createFromFormat('Y-m-d', $this->argument('month'))->startOfMonth();
     }
 
     private function setPatientIds(): void
     {
         $this->patientIds = collect(explode(',', $this->argument('patientIds')))
             ->map(function ($id) {
-                $numId = (int)$id;
+                $numId = (int) $id;
 
-                if ((string)$numId !== $id) {
+                if ((string) $numId !== $id) {
                     $this->info("Invalid ID: '$id'. Will not process patient");
 
                     return null;
@@ -117,8 +118,9 @@ class ChangePatientChargeableServiceAndTransferTimeForLegacyABP extends Command
             ->toArray();
     }
 
-    private function setMonth(): void
+    private function setServices(): void
     {
-        $this->month = Carbon::createFromFormat('Y-m-d', $this->argument('month'))->startOfMonth();
+        $this->fromCs = $this->getChargeableService($this->argument('fromCs'));
+        $this->toCs   = $this->getChargeableService($this->argument('toCs'));
     }
 }
