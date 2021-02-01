@@ -6,6 +6,7 @@
 
 namespace App\Rules;
 
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
@@ -14,18 +15,21 @@ use Illuminate\Support\Str;
 
 class PatientEmailDoesNotContainPhi implements Rule
 {
+    const ALLOWED_PHI_FIELDS_KEY = 'allowed_phi_fields_in_patient_emails';
+
+    private array $allowedFields;
+
     private $field;
     private $patientUser;
 
     private $phiFound = [];
 
     private $transformable = [
-        //attribute key/field
         'gender' => [
-            //value -> transform to
             'm' => 'male',
             'f' => 'female',
         ],
+        'state' => 'usStatesArrayForDropdown',
     ];
 
     /**
@@ -70,6 +74,9 @@ class PatientEmailDoesNotContainPhi implements Rule
 
         //For User
         foreach ($this->patientUser->phi as $phi) {
+            if ( ! $this->shouldAllowPhiInEmail($phi)) {
+                continue;
+            }
             $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
 
             if ($string) {
@@ -83,6 +90,9 @@ class PatientEmailDoesNotContainPhi implements Rule
         $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
         foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
             foreach ($this->patientUser->{$relation}->phi as $phi) {
+                if ( ! $this->shouldAllowPhiInEmail($phi)) {
+                    continue;
+                }
                 $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
                 if ($string) {
                     $this->phiFound[] = $this->stringsMatch($string, $value)
@@ -108,6 +118,15 @@ class PatientEmailDoesNotContainPhi implements Rule
         }
 
         return $string;
+    }
+
+    private function shouldAllowPhiInEmail(string $phiField): bool
+    {
+        if ( ! isset($this->allowedFields)) {
+            $this->allowedFields = explode(',', AppConfig::pull(self::ALLOWED_PHI_FIELDS_KEY, 'city,state,zip'));
+        }
+
+        return in_array($phiField, $this->allowedFields);
     }
 
     private function stringsMatch(string $string1, string $string2)
