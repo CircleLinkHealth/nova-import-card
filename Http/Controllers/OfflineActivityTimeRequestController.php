@@ -40,7 +40,6 @@ class OfflineActivityTimeRequestController extends Controller
 
         if ($isApproved) {
             $timeRequest->approve();
-            event(new PatientActivityCreated($timeRequest->patient_id, false));
         } else {
             $timeRequest->reject();
         }
