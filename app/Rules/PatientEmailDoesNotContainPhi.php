@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 class PatientEmailDoesNotContainPhi implements Rule
 {
     const ALLOWED_PHI_FIELDS_KEY = 'allowed_phi_fields_in_patient_emails';
+    const DEFAULT_ALLOWED_FIELDS = 'city,state,zip';
 
     private array $allowedFields;
 
@@ -123,7 +124,7 @@ class PatientEmailDoesNotContainPhi implements Rule
     private function shouldAllowPhiInEmail(string $phiField): bool
     {
         if ( ! isset($this->allowedFields)) {
-            $this->allowedFields = explode(',', AppConfig::pull(self::ALLOWED_PHI_FIELDS_KEY, 'city,state,zip'));
+            $this->allowedFields = explode(',', AppConfig::pull(self::ALLOWED_PHI_FIELDS_KEY, self::DEFAULT_ALLOWED_FIELDS));
         }
 
         return in_array($phiField, $this->allowedFields);
