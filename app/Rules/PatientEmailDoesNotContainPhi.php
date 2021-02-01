@@ -80,7 +80,12 @@ class PatientEmailDoesNotContainPhi implements Rule
             $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
 
             if ($string) {
-                $this->phiFound[] = $this->stringsMatch($string, $value)
+                $stringMatches = $this->stringsMatch($string, $value);
+    
+                if ($stringMatches && $this->fieldIsName($phi) && $this->stringsMatch('nurse'.' '.$string, $value)) {
+                    continue;
+                }
+                $this->phiFound[] = $stringMatches
                     ? $phi
                     : null;
             }
@@ -105,6 +110,14 @@ class PatientEmailDoesNotContainPhi implements Rule
         $this->phiFound = array_filter($this->phiFound);
 
         return empty($this->phiFound);
+    }
+
+    private function fieldIsName(string $field): bool
+    {
+        return in_array($field, [
+            'first_name',
+            'last_name',
+        ]);
     }
 
     private function getSanitizedAndTransformedAttribute(Model $model, $phi)
