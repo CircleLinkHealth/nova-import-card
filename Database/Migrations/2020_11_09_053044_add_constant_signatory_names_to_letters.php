@@ -24,8 +24,11 @@ class AddConstantSignatoryNamesToLetters extends Migration
      */
     public function up()
     {
+        /*
+         * this command does not exist anymore.
         if ( ! isUnitTestingEnv() || ! App::environment('review')) {
             Artisan::call('update:enrolmentLettersSignatoryName');
         }
+        */
     }
 }
