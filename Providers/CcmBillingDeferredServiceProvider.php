@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
 use CircleLinkHealth\CcmBilling\Console\GenerateFakeDataForApproveBillablePatientsPage;
+use CircleLinkHealth\CcmBilling\Console\ModifyPatientActivityAndReprocessTime;
 use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
 use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
 use CircleLinkHealth\CcmBilling\Console\TestAbpV2vsV3;
@@ -51,6 +52,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             TestAbpV2vsV3::class,
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
+            ModifyPatientActivityAndReprocessTime::class,
         ];
     }
 
@@ -73,6 +75,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             TestAbpV2vsV3::class,
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
+            ModifyPatientActivityAndReprocessTime::class,
         ]);
     }
 }
