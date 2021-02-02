@@ -164,7 +164,6 @@ class Enrollee extends BaseModel
     use Filterable;
     use MySQLSearchable;
     use Notifiable;
-    use SelfEnrollableTrait;
     use SoftDeletes;
 
     // Agent array keys
