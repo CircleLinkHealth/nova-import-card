@@ -10,7 +10,8 @@
   ],
   "extra": {
     "branch-alias": {
-      "dev-master": "4.4.x-dev"
+      "dev-master": "4.4.x-dev",
+      "road_547_moving_self_enrollment_eligibility": "4.5.x-dev"
     },
     "laravel": {
       "providers": [
@@ -18,6 +19,7 @@
         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
       ],
       "aliases": {
+
       }
     }
   },
