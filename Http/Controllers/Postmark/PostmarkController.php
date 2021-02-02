@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Http\Controllers\Postmark;
 
-use App\Http\Controllers\Controller;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\Controller;
 use CircleLinkHealth\Core\Jobs\ProcessPostmarkMailStatusCallbackJob;
 use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
