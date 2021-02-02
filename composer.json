@@ -152,7 +152,7 @@
     "algolia/scout-extended": "^1.8",
     "ashallendesign/short-url": "3.0.4",
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.4",
-    "circlelinkhealth/ccm-billing-module": "2.0.3",
+    "circlelinkhealth/ccm-billing-module": "2.0.4",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
     "circlelinkhealth/condition-code-lookup-module": "1.1.7",
     "circlelinkhealth/core-module": "2.6",
@@ -199,7 +199,7 @@
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.6.7",
-    "circlelinkhealth/vapor-devops-helpers-module": "dev-main",
+    "circlelinkhealth/vapor-devops-helpers-module": "dev-master",
     "facade/ignition": "^2.3.6",
     "friendsofphp/php-cs-fixer": "^2.16.3",
     "fzaninotto/faker": "^1.4",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4eb8b4f4ff900841ea944147ce5fd3a",
+    "content-hash": "e1f171112647530a4163bd1b481e064e",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -670,11 +670,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v2.0.3",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "436a757a7b0df444369458ab287c29ba9f9d55eb"
+                "reference": "a60332bf953e6dc96de2392ab97552c0495d32af"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -684,7 +684,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.0.x-dev",
+                    "dev-road_547_ccmBilling": "2.1.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -724,7 +725,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-01T18:59:09+00:00"
+            "time": "2021-02-02T18:27:32+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -771,11 +772,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -13261,7 +13258,7 @@
         },
         {
             "name": "circlelinkhealth/vapor-devops-helpers-module",
-            "version": "dev-main",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git",
