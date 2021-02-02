@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2582245f07a3861db00e7a30058bfb4",
+    "content-hash": "5bfd796efa66595ed6c51a051d384781",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1069,11 +1069,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.2",
+            "version": "v1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "4a1585f99fb3c3f7f4d2ec5d11a1149af7ab1b2a"
+                "reference": "915b8cc878f6250f37d00aaca25f16715cebc531"
             },
             "type": "laravel-module",
             "extra": {
@@ -1096,7 +1096,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-29T23:12:06+00:00"
+            "time": "2021-02-02T18:02:37+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -4201,17 +4201,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.20.0",
+            "version": "3.21.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea"
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea-zip-38e8b1.zip",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea",
-                "shasum": "9782ab64f7dc798b5499b8eb0f65f1a2985629fb"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-a50eb75d8c5ea26320353f96c26266ad53c5ff93-zip-714e68.zip",
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93",
+                "shasum": "3d2d72bd42bf44b4df671194cb5381a3167f3aa6"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -4289,9 +4289,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/nova/tree/v3.20.0"
+                "source": "https://github.com/laravel/nova/tree/v3.21.0"
             },
-            "time": "2021-01-19T18:52:03+00:00"
+            "time": "2021-02-02T17:55:49+00:00"
         },
         {
             "name": "laravel/passport",
