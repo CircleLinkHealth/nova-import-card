@@ -43,12 +43,6 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
     {
         $this->registerFactories();
 
-        if (class_exists(\App\User::class)) {
-            Relation::morphMap([
-                \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
-            ]);
-        }
-
         $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Core\Entities\DatabaseNotification::class);
         $this->app->bind(
             HasDatabaseNotifications::class,
