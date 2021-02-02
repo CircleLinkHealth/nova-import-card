@@ -80,7 +80,7 @@ trait CareAmbassadorHelpers
 
     private function createEligibilityJobDataForEnrollee(Enrollee $enrollee)
     {
-        $job = factory(\CircleLinkHealth\Eligibility\Entities\EligibilityJob::class)->create();
+        $job = factory(\CircleLinkHealth\SharedModels\Entities\EligibilityJob::class)->create();
 
         $job->hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
 
