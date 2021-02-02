@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abd1b044a7f19f685b33d98fc118db03",
+    "content-hash": "1431f2d05ac3e828cc3ac07e579a058c",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1069,11 +1069,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.4",
+            "version": "v1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "7e821bd3eced8b6277c6326f962f5deed141aa3b"
+                "reference": "51ebb4be5499b1d5bd43fc7de9aa2d11cb46e50c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1096,15 +1096,15 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T20:36:40+00:00"
+            "time": "2021-02-02T21:33:33+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.3.6",
+            "version": "v2.3.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "4f36682470638287f350ad607f31fd8f613e7c95"
+                "reference": "856053ba27ffd459b250bce4f1c44b82f9cae32b"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1127,7 +1127,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T15:45:40+00:00"
+            "time": "2021-02-02T21:56:22+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
