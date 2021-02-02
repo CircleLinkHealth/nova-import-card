@@ -29,16 +29,16 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
 
     protected AvailableServiceProcessors $availableServiceProcessors;
 
-    protected int $locationId;
+    protected array $locationIds;
 
     protected Carbon $month;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $locationId, AvailableServiceProcessors $availableServiceProcessors, Carbon $month)
+    public function __construct(array $locationIds, AvailableServiceProcessors $availableServiceProcessors, Carbon $month)
     {
-        $this->locationId                 = $locationId;
+        $this->locationIds                = $locationIds;
         $this->availableServiceProcessors = $availableServiceProcessors;
         $this->month                      = $month;
     }
@@ -51,7 +51,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function getBuilder(): Builder
     {
         return $this->repo()
-            ->patientsQuery($this->locationId, $this->month, Patient::ENROLLED)
+            ->patientsQuery($this->locationIds, $this->month, Patient::ENROLLED)
             ->offset($this->getOffset())
             ->limit($this->getLimit());
     }
@@ -59,11 +59,6 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function getChargeableMonth()
     {
         return $this->month;
-    }
-
-    public function getLocationId(): int
-    {
-        return $this->locationId;
     }
 
     /**
@@ -78,7 +73,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
                 (new PatientMonthlyBillingDTO())
                     ->subscribe($this->getAvailableServiceProcessors())
                     ->forPatient($patient->id)
-                    ->ofLocation($this->locationId)
+                    ->ofLocation($patient->patientInfo->preferred_contact_location)
                     ->forMonth($this->getChargeableMonth())
                     ->withForcedPatientServices(
                         ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)

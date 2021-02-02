@@ -38,6 +38,6 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
 
     private function shouldNotTouch(string $csCode, int $locationId, Carbon $month): bool
     {
-        return $this->locationRepository->isLockedForMonth($locationId, $csCode, $month);
+        return $this->locationRepository->isLockedForMonth([$locationId], $csCode, $month);
     }
 }

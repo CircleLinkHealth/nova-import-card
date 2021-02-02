@@ -7,13 +7,14 @@
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Builders\ApprovableBillingStatusesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Builders\LocationServicesQuery;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -22,37 +23,53 @@ use Illuminate\Database\Eloquent\Collection;
 
 class LocationProcessorEloquentRepository implements LocationProcessorRepository
 {
+    use ApprovableBillingStatusesQuery;
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
     use LocationServicesQuery;
 
-    public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
+    public function approvableBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder
     {
-        return AvailableServiceProcessors::push($this->locationServiceProcessors($locationId, $chargeableMonth));
+        return $this->approvableBillingStatusesQuery($locationIds, $month, $withRelations);
     }
 
-    public function enrolledPatients(int $locationId, Carbon $monthYear): Collection
+    public function approvedBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder
     {
-        return $this->patientsQuery($locationId, $monthYear, Patient::ENROLLED)
+        return $this->approvedBillingStatusesQuery($locationIds, $month, $withRelations);
+    }
+
+    public function availableLocationServiceProcessors(array $locationIds, Carbon $chargeableMonth): AvailableServiceProcessors
+    {
+        return AvailableServiceProcessors::push($this->locationServiceProcessors($locationIds, $chargeableMonth));
+    }
+
+    public function closeMonth(array $locationIds, Carbon $month, int $actorId): void
+    {
+        $this->changeMonthStatus($locationIds, $month, $actorId, true);
+    }
+
+    public function enrolledPatients(array $locationIds, Carbon $monthYear): Collection
+    {
+        return $this->patientsQuery($locationIds, $monthYear, Patient::ENROLLED)
             ->get();
     }
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): ?Collection
+    public function getLocationSummaries(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): ?Collection
     {
-        return $this->servicesForMonth($locationId, $month, $excludeLocked)->get();
+        return $this->servicesForMonth($locationIds, $month, $excludeLocked)->get();
     }
 
-    public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
+    public function hasServicesForMonth(array $locationIds, array $chargeableServiceCodes, Carbon $month): bool
     {
         //todo: add test
-        return $this->servicesForMonth($locationId, $month)
+        return $this->servicesForMonth($locationIds, $month)
             ->whereHas('chargeableService', fn ($cs) => $cs->whereIn('code', $chargeableServiceCodes))
             ->exists();
     }
 
-    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool
+    public function isLockedForMonth(array $locationIds, string $chargeableServiceCode, Carbon $month): bool
     {
-        $summaries = ChargeableLocationMonthlySummary::where('id', '=', $locationId)
+        $summaries = ChargeableLocationMonthlySummary::whereIn('location_id', $locationIds)
             ->where('chargeable_month', '=', $month)
             ->get(['id', 'is_locked']);
 
@@ -61,63 +78,54 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         });
     }
 
-    public function locationPatients($locationId, ?string $ccmStatus = null): Builder
+    public function locationPatients(array $locationIds, ?string $ccmStatus = null): Builder
     {
         return User::ofType('participant')
-            ->patientOfLocation($locationId, $ccmStatus);
+            ->patientInLocations($locationIds, $ccmStatus);
     }
 
-    public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
+    public function openMonth(array $locationIds, Carbon $month): void
     {
-        return $this->patientsQuery($locationId, $chargeableMonth)->paginate($pageSize);
+        $this->changeMonthStatus($locationIds, $month, null, false);
     }
 
-    public function pastMonthSummaries(int $locationId, Carbon $month): Collection
+    public function paginatePatients(array $locationIds, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
     {
-        return $this->servicesForLocation($locationId)
+        return $this->patientsQuery($locationIds, $chargeableMonth)->paginate($pageSize);
+    }
+
+    public function pastMonthSummaries(array $locationIds, Carbon $month): Collection
+    {
+        return $this->servicesForLocations($locationIds)
             ->where('chargeable_month', '<', $month)
             ->get();
     }
 
-    public function patients(int $locationId, Carbon $monthYear): Collection
+    public function patients(array $locationIds, Carbon $monthYear): Collection
     {
-        return $this->patientsQuery($locationId, $monthYear)->get();
+        return $this->patientsQuery($locationIds, $monthYear)->get();
     }
 
-    public function patientServices(int $locationId, Carbon $monthYear): Builder
+    public function patientServices(array $locationIds, Carbon $monthYear): Builder
     {
         return $this->approvablePatientServicesQuery($monthYear)
-            ->whereHas('patient.patientInfo', fn ($info) => $info->where('preferred_contact_location', $locationId));
+            ->whereHas('patient.patientInfo', fn ($info) => $info->whereIn('preferred_contact_location', $locationIds));
     }
 
-    public function patientsQuery(int $locationId, Carbon $monthYear, ?string $ccmStatus = null): Builder
+    public function patientsQuery(array $locationIds, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
-            ->patientOfLocation($locationId, $ccmStatus);
+            ->patientInLocations($locationIds, $ccmStatus);
     }
 
-    public function servicesExistForMonth(int $locationId, Carbon $month): bool
+    public function servicesExistForMonth(array $locationIds, Carbon $month): bool
     {
-        return $this->servicesForLocation($locationId)
+        return $this->servicesForLocations($locationIds)
             ->createdOn($month, 'chargeable_month')
             ->exists();
     }
 
-    public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
-    {
-        return ChargeableLocationMonthlySummary::updateOrCreate(
-            [
-                'location_id'           => $locationId,
-                'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
-                'chargeable_month'      => $month,
-            ],
-            [
-                'amount' => $amount,
-            ]
-        );
-    }
-
-    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
+    public function store(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
         return ChargeableLocationMonthlySummary::updateOrCreate(
             [
@@ -131,9 +139,30 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         );
     }
 
-    private function locationServiceProcessors(int $locationId, Carbon $chargeableMonth): array
+    private function changeMonthStatus(array $locationIds, Carbon $month, ?int $actorId, bool $isLocked)
     {
-        return $this->servicesForMonth($locationId, $chargeableMonth)
+        $updated = PatientMonthlyBillingStatus::whereHas(
+            'patientUser',
+            fn ($q) => $q->patientInLocations($locationIds)
+        )->where('chargeable_month', $month)
+            ->update([
+                'actor_id' => $actorId,
+            ]);
+
+        ChargeableLocationMonthlySummary::whereHas(
+            'location',
+            fn ($q) => $q->whereIn('location_id', '=', $locationIds)
+        )->where('chargeable_month', '=', $month)
+            ->update([
+                'is_locked' => $isLocked,
+            ]);
+
+        return $updated;
+    }
+
+    private function locationServiceProcessors(array $locationIds, Carbon $chargeableMonth): array
+    {
+        return $this->servicesForMonth($locationIds, $chargeableMonth)
             ->get()
             ->map(fn (ChargeableLocationMonthlySummary $summary) => $summary->getServiceProcessor())
             ->filter()

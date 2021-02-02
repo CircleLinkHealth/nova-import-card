@@ -46,6 +46,7 @@ class PracticeInvoiceController extends Controller
     public function index(Request $request)
     {
         $currentMonth   = Carbon::now()->startOfMonth();
+        $version        = $request->input('version', 2);
         $numberOfMonths = $this->getNumberOfMonths($request, $currentMonth);
         $dates          = [];
 
@@ -66,6 +67,7 @@ class PracticeInvoiceController extends Controller
                 'readyToBill',
                 'invoice_no',
                 'dates',
+                'version',
             ]
         ));
     }
@@ -81,7 +83,7 @@ class PracticeInvoiceController extends Controller
             CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())
                 ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         } else {
-            CreatePracticesInvoices::dispatch($practices, $date, $format, auth()->id())
+            CreatePracticesInvoices::dispatch($practices, $date->toDateString(), $format, auth()->id())
                 ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         }
         $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();

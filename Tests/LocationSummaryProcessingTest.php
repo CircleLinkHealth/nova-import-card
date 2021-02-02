@@ -119,7 +119,7 @@ class LocationSummaryProcessingTest extends TestCase
         );
 
         $processor = app(Location::class);
-        $processor->processServicesForLocation($locationId, $startOfMonth = Carbon::now()->startOfMonth());
+        $processor->processServicesForLocations($locationId, $startOfMonth = Carbon::now()->startOfMonth());
 
         FakeLocationRepository::assertChargeableSummaryCreated($locationId, $cs1, $startOfMonth, $amount1);
         FakeLocationRepository::assertChargeableSummaryCreated($locationId, $cs2, $startOfMonth, $amount2);
@@ -128,7 +128,7 @@ class LocationSummaryProcessingTest extends TestCase
 
         FakeLocationRepository::storeUsingServiceId($locationId, $cs4, $pastMonth);
 
-        $processor->processServicesForLocation($locationId, $startOfMonth);
+        $processor->processServicesForLocations($locationId, $startOfMonth);
 
         FakeLocationRepository::assertChargeableSummaryNotCreated($locationId, $cs4, $startOfMonth);
     }

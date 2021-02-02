@@ -32,19 +32,19 @@ class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
 
     public int $practiceId;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(int $practiceId, string $date, string $batchId)
+    private array $locationIds;
+    
+    public function __construct(int $practiceId, array $locationIds, string $date, string $batchId)
     {
-        $this->date       = Carbon::parse($date);
-        $this->practiceId = $practiceId;
-        $this->batchId    = $batchId;
+        $this->date        = Carbon::parse($date);
+        $this->practiceId  = $practiceId;
+        $this->locationIds = $locationIds;
+        $this->batchId     = $batchId;
     }
 
     public function getBuilder(): Builder
     {
-        return $this->approvedBillingStatusesQuery($this->practiceId, $this->date, true)
+        return $this->approvedBillingStatusesQuery($this->locationIds, $this->date, true)
             ->offset($this->getOffset())
             ->limit($this->getLimit());
     }

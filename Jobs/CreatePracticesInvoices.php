@@ -22,7 +22,7 @@ class CreatePracticesInvoices implements ShouldQueue, ShouldBeEncrypted
     use Queueable;
     use SerializesModels;
 
-    public string $date;
+    public Carbon $date;
 
     public string $format;
 
@@ -35,10 +35,10 @@ class CreatePracticesInvoices implements ShouldQueue, ShouldBeEncrypted
     /**
      * Create a new job instance.
      */
-    public function __construct(array $practices, Carbon $date, string $format, int $requestedByUserId)
+    public function __construct(array $practices, string $date, string $format, int $requestedByUserId)
     {
         $this->practices         = $practices;
-        $this->date              = $date;
+        $this->date              = Carbon::parse($date);
         $this->format            = $format;
         $this->requestedByUserId = $requestedByUserId;
     }
@@ -62,7 +62,7 @@ class CreatePracticesInvoices implements ShouldQueue, ShouldBeEncrypted
     {
         return [
             'CreatePracticesInvoices',
-            'date:'.$this->date->toDateTimeString(),
+            'date:'.$this->date->toDateString(),
             'format:'.$this->format,
             'practices:'.implode(',', $this->practices),
             'requestedByUserId:'.$this->requestedByUserId,

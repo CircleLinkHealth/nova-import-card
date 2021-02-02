@@ -9,37 +9,44 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 interface LocationProcessorRepository
 {
-    public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors;
+    public function approvedBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder;
+    
+    public function approvableBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder;
 
-    public function enrolledPatients(int $locationId, Carbon $monthYear): Collection;
+    public function availableLocationServiceProcessors(array $locationIds, Carbon $chargeableMonth): AvailableServiceProcessors;
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection;
+    public function closeMonth(array $locationIds, Carbon $month, int $actorId): void;
 
-    public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool;
+    public function enrolledPatients(array $locationIds, Carbon $monthYear): Collection;
 
-    public function isLockedForMonth(int $locationId, string $chargeableServiceCode, Carbon $month): bool;
+    public function getLocationSummaries(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection;
 
-    public function locationPatients($locationId, ?string $ccmStats = null): Builder;
+    public function hasServicesForMonth(array $locationIds, array $chargeableServiceCodes, Carbon $month): bool;
 
-    public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function isLockedForMonth(array $locationIds, string $chargeableServiceCode, Carbon $month): bool;
 
-    public function pastMonthSummaries(int $locationId, Carbon $month): Collection;
+    public function locationPatients(array $locationIds, ?string $ccmStats = null): Builder;
 
-    public function patients(int $customerModelId, Carbon $monthYear): Collection;
+    public function openMonth(array $locationIds, Carbon $month): void;
 
-    public function patientServices(int $customerModelId, Carbon $monthYear): Builder;
+    public function paginatePatients(array $locationIds, Carbon $monthYear, int $pageSize): LengthAwarePaginator;
 
-    public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder;
+    public function pastMonthSummaries(array $locationIds, Carbon $month): Collection;
 
-    public function servicesExistForMonth(int $locationId, Carbon $month): bool;
+    public function patients(array $locationIds, Carbon $monthYear): Collection;
 
-    public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
+    public function patientServices(array $locationIds, Carbon $monthYear): Builder;
 
-    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
+    public function patientsQuery(array $locationIds, Carbon $monthYear, ?string $ccmStatus = null): Builder;
+
+    public function servicesExistForMonth(array $locationIds, Carbon $month): bool;
+
+    public function store(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
 }

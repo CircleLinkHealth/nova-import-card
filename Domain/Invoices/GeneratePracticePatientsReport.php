@@ -21,7 +21,7 @@ class GeneratePracticePatientsReport
     {
         $practice   = Practice::find($this->practiceId);
         $dateStr    = $this->date->toDateString();
-        $reportName = trim($practice).'-'.$dateStr.'-patients';
+        $reportName = trim($practice->name).'-'.$dateStr.'-patients';
 
         return (new FromArray("${reportName}.csv", $this->patientsData, []))
             ->storeAndAttachMediaTo($practice, "patient_report_for_{$dateStr}");

@@ -8,69 +8,53 @@ namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class Practice implements CustomerProcessor
 {
-    private PracticeProcessorRepository $repo;
+    private Location $locationProcessor;
 
-    public function __construct(PracticeProcessorRepository $repo)
+    public function __construct(Location $locationProcessor)
     {
-        $this->repo = $repo;
+        $this->locationProcessor = $locationProcessor;
     }
 
-    public function closeMonth(int $actorId, int $practiceId, Carbon $month)
+    public function closeMonth(array $practiceIds, Carbon $month, int $actorId): void
     {
-        return $this->repo->closeMonth($actorId, $practiceId, $month);
+        $locations = $this->getLocations($practiceIds);
+        $this->locationProcessor->closeMonth($locations, $month, $actorId);
     }
 
-    public function counts(int $practiceId, Carbon $month): BillablePatientsCountForMonthDTO
+    public function counts(array $practiceIds, Carbon $month): BillablePatientsCountForMonthDTO
     {
-        /** @var Collection|PatientMonthlyBillingStatus[] $statuses */
-        $statuses = $this->repo->approvableBillingStatuses($practiceId, $month)->get();
-        $approved = $statuses->where('status', '=', 'approved')->count();
-        $rejected = $statuses->where('status', '=', 'rejected')->count();
-        $needQa   = $statuses->where('status', '=', 'needs_qa')->count();
-        $other    = $statuses->whereNull('status')->count();
-
-        return new BillablePatientsCountForMonthDTO($approved, $needQa, $rejected, $other);
+        $locations = $this->getLocations($practiceIds);
+        return $this->locationProcessor->counts($locations, $month);
     }
 
-    public function fetchApprovablePatients(int $customerModelId, Carbon $month, int $pageSize = 30): LengthAwarePaginator
+    public function fetchApprovablePatients(array $practiceIds, Carbon $month, int $pageSize = 30): LengthAwarePaginator
     {
-        $collection = $this->repo
-            ->approvableBillingStatuses($customerModelId, $month, true)
-            ->paginate($pageSize);
+        $locations = $this->getLocations($practiceIds);
 
-        $rawArray = collect($collection->items())
-            ->map(fn (PatientMonthlyBillingStatus $billingStatus) => ApprovablePatient::make($billingStatus)->toArray(null));
-
-        return new LengthAwarePaginator(
-            $rawArray,
-            $collection->total(),
-            $collection->perPage(),
-            $collection->currentPage(),
-            ['path' => request()->url()]
-        );
+        return $this->locationProcessor->fetchApprovablePatients($locations, $month, $pageSize);
     }
 
-    public function openMonth(int $practiceId, Carbon $month)
+    public function openMonth(array $practiceIds, Carbon $month): void
     {
-        return $this->repo->openMonth($practiceId, $month);
+        $locations = $this->getLocations($practiceIds);
+        $this->locationProcessor->openMonth($locations, $month);
     }
 
-    public function processServicesForAllPatients(int $practiceId, Carbon $month): void
+    public function processServicesForAllPatients(array $practiceIds, Carbon $month): void
     {
-        // TODO: Implement processServicesForAllPatients() method.
+        $locations = $this->getLocations($practiceIds);
+        $this->locationProcessor->processServicesForAllPatients($locations, $month);
     }
 
-    public function repo(): PracticeProcessorRepository
+    private function getLocations(array $practiceIds): array
     {
-        return $this->repo;
+        return \CircleLinkHealth\Customer\Entities\Location::whereIn('practice_id', $practiceIds)
+            ->pluck('id')
+            ->toArray();
     }
 }

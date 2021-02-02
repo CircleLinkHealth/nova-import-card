@@ -12,15 +12,15 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait LocationServicesQuery
 {
-    public function servicesForLocation(int $locationId): Builder
+    public function servicesForLocations(array $locationIds): Builder
     {
         return ChargeableLocationMonthlySummary::with(['chargeableService'])
-            ->where('location_id', $locationId);
+            ->whereIn('location_id', $locationIds);
     }
 
-    public function servicesForMonth(int $locationId, ?Carbon $month = null, bool $excludeLocked = true): Builder
+    public function servicesForMonth(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): Builder
     {
-        return $this->servicesForLocation($locationId)
+        return $this->servicesForLocations($locationIds)
             ->when($excludeLocked, fn ($q) => $q->where('is_locked', false))
             ->createdOnIfNotNull($month, 'chargeable_month');
     }

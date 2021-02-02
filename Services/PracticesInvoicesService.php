@@ -7,20 +7,21 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportFromBatch;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportJob;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticesQuickbooksReportJob;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Jobs\ChainableJob;
 use CircleLinkHealth\Customer\CpmConstants;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class PracticesInvoicesService
 {
-    private PracticeProcessorRepository $repository;
+    private LocationProcessorRepository $repository;
 
-    public function __construct(PracticeProcessorRepository $repository)
+    public function __construct(LocationProcessorRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -32,19 +33,30 @@ class PracticesInvoicesService
 
         $jobs = [];
 
+        $locations = $this->getLocations($practices);
+
         foreach ($practices as $practiceId) {
+            $locationIds = $locations->where('practice_id', '=', $practiceId)
+                ->pluck('id')
+                ->toArray();
             $chunkedJobs = $this->repository
-                ->approvedBillingStatuses($practiceId, $date)
-                ->chunkIntoJobsAndGetArray($patientsToProcessPerJob, new GeneratePracticePatientsReportJob($practiceId, $date, $batchId));
+                ->approvedBillingStatuses($locationIds, $date)
+                ->chunkIntoJobsAndGetArray($patientsToProcessPerJob, new GeneratePracticePatientsReportJob($practiceId, $locationIds, $date->toDateString(), $batchId));
 
             $jobs   = array_merge($jobs, $chunkedJobs);
-            $jobs[] = new GeneratePracticePatientsReportFromBatch($practiceId, $date, $batchId);
+            $jobs[] = new GeneratePracticePatientsReportFromBatch($practiceId, $date->toDateString(), $batchId);
         }
 
-        $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date, $batchId, $format, $requestedByUserId);
+        $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
         ChainableJob::withChain($jobs)
             ->dispatch()
             ->allOnQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+    }
+
+    private function getLocations(array $practiceIds): Collection
+    {
+        return \CircleLinkHealth\Customer\Entities\Location::whereIn('practice_id', $practiceIds)
+            ->get(['id', 'practice_id']);
     }
 }

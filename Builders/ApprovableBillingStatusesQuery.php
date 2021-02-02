@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovableBillingStatusesQuery
 {
-    public function approvableBillingStatusesQuery(int $practiceId, Carbon $monthYear, $withRelations = false): Builder
+    public function approvableBillingStatusesQuery(array $locationIds, Carbon $monthYear, $withRelations = false): Builder
     {
         return PatientMonthlyBillingStatus::where('chargeable_month', '=', $monthYear)
-            ->whereHas('patientUser', fn ($q) => $q->ofPractice($practiceId))
+            ->whereHas('patientUser', fn ($q) => $q->patientInLocations($locationIds))
             ->when($withRelations, function ($q) use ($monthYear) {
                 return $q->with([
                     'patientUser' => fn ($q) => $q->with(array_merge($this->sharedUserRelations($monthYear), [
@@ -30,11 +30,11 @@ trait ApprovableBillingStatusesQuery
             });
     }
 
-    public function approvedBillingStatusesQuery(int $practiceId, Carbon $monthYear, $withRelations = false): Builder
+    public function approvedBillingStatusesQuery(array $locationIds, Carbon $monthYear, $withRelations = false): Builder
     {
         return PatientMonthlyBillingStatus::where('chargeable_month', '=', $monthYear)
             ->where('status', '=', 'approved')
-            ->whereHas('patientUser', fn ($q) => $q->ofPractice($practiceId))
+            ->whereHas('patientUser', fn ($q) => $q->patientInLocations($locationIds))
             ->when($withRelations, function ($q) use ($monthYear) {
                 return $q->with([
                     'patientUser' => fn ($q) => $q->with($this->sharedUserRelations($monthYear)),

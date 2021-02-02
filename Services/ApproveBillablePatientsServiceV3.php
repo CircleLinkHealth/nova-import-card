@@ -27,29 +27,33 @@ class ApproveBillablePatientsServiceV3
         $this->practiceProcessor = $practiceProcessor;
     }
 
-    public function closeMonth(int $actorId, int $practiceId, Carbon $month)
+    public function closeMonth(int $actorId, int $practiceId, Carbon $month): bool
     {
-        return $this->practiceProcessor->closeMonth($actorId, $practiceId, $month);
+        $this->practiceProcessor->closeMonth([$practiceId], $month, $actorId);
+
+        return true;
     }
 
     public function counts(int $practiceId, Carbon $month): BillablePatientsCountForMonthDTO
     {
-        return $this->practiceProcessor->counts($practiceId, $month);
+        return $this->practiceProcessor->counts([$practiceId], $month);
     }
 
     public function getBillablePatientsForMonth($practiceId, Carbon $date): BillablePatientsForMonthDTO
     {
         $pagination     = AppConfig::pull('abp-pagination-size', 20);
         $date           = $date->copy()->startOfMonth();
-        $jsonCollection = $this->practiceProcessor->fetchApprovablePatients($practiceId, $date, $pagination);
+        $jsonCollection = $this->practiceProcessor->fetchApprovablePatients([$practiceId], $date, $pagination);
         $isClosed       = (bool) collect($jsonCollection->items())->every(fn ($summary) => (bool) $summary['actor_id']);
 
         return new BillablePatientsForMonthDTO($jsonCollection, $isClosed);
     }
 
-    public function openMonth(int $practiceId, Carbon $month)
+    public function openMonth(int $practiceId, Carbon $month): bool
     {
-        return $this->practiceProcessor->openMonth($practiceId, $month);
+        $this->practiceProcessor->openMonth([$practiceId], $month);
+
+        return true;
     }
 
     public function setPatientBillingStatus(int $reportId, string $newStatus)
