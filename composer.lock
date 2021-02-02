@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e30a01397b5bed68963e86af077ee2c2",
+    "content-hash": "28029fa8e37aaeb09fda94e2e7114a86",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -670,11 +670,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v2.0.3",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "436a757a7b0df444369458ab287c29ba9f9d55eb"
+                "reference": "a60332bf953e6dc96de2392ab97552c0495d32af"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -684,7 +684,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.0.x-dev",
+                    "dev-road_547_ccmBilling": "2.1.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -724,7 +725,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-01T18:59:09+00:00"
+            "time": "2021-02-02T18:27:32+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -771,11 +772,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1314,11 +1311,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.2",
+            "version": "v1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "4a1585f99fb3c3f7f4d2ec5d11a1149af7ab1b2a"
+                "reference": "915b8cc878f6250f37d00aaca25f16715cebc531"
             },
             "type": "laravel-module",
             "extra": {
@@ -1341,7 +1338,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-29T23:12:06+00:00"
+            "time": "2021-02-02T18:02:37+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -13261,7 +13258,7 @@
         },
         {
             "name": "circlelinkhealth/vapor-devops-helpers-module",
-            "version": "dev-main",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git",
