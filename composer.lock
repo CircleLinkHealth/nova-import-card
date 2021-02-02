@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c8bf537ee32045289bd29a20ea289ab1",
+    "content-hash": "c4eb8b4f4ff900841ea944147ce5fd3a",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -851,11 +851,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v2.5",
+            "version": "v2.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "b8fdae64d4ae6cedf120ebbcd7a7248d3340fb35"
+                "reference": "08764efebfea0184a7906a0da5d83165578ee667"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T15:10:05+00:00"
+            "time": "2021-02-02T16:56:09+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -998,11 +998,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.2.7",
+            "version": "v4.2.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e1571440663805584dc8dad384c1b74c90319d93"
+                "reference": "f5bd32ba28a05efa62c7640e59a8239d7f17e21b"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1044,7 +1044,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T16:22:32+00:00"
+            "time": "2021-02-02T16:56:08+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
