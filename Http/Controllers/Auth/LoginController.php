@@ -114,7 +114,7 @@ class LoginController extends Controller
             : $this->traitLogin($request);
 
         if ('username' === $this->username) {
-            \Log::debug('User['.auth()->id().'] logged in using Username.');
+            Log::debug('User['.auth()->id().'] logged in using Username.');
         }
 
         $agent = new Agent();

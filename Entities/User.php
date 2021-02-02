@@ -31,7 +31,6 @@ use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
@@ -173,7 +172,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
  * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                      $disputes
  * @property int|null                                                                                                        $disputes_count
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
  * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                           $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
@@ -303,8 +302,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                       $enrollmentInvitationLinks
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                             $enrollableInfoRequest
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink|null                       $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo|null                             $enrollableInfoRequest
  * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection          $loginEvents
  * @property int|null                                                                                                $login_events_count
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                                   $enrollee
@@ -351,7 +350,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
-    use SelfEnrollableTrait;
     use SoftDeletes;
     use TimezoneTrait;
 
