@@ -247,6 +247,7 @@ namespace App;
  * @property int|null                                                                                                             $monthly_billing_status_count
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                     $forcedChargeableServices
  * @property int|null                                                                                                             $forced_chargeable_services_count
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
