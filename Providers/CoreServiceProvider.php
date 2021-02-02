@@ -30,8 +30,8 @@ class CoreServiceProvider extends ServiceProvider
             Call::class                                     => 'App\Call',
             PatientUnsuccessfulCallNotification::class      => 'App\Notifications\PatientUnsuccessfulCallNotification',
             PatientUnsuccessfulCallReplyNotification::class => 'App\Notifications\PatientUnsuccessfulCallReplyNotification',
-            User::class => 'App\User',
-            User::class => 'App\User',
+            User::class                                     => 'App\User',
+            User::class                                     => 'CircleLinkHealth\SelfEnrollment\Entities\User',
         ]);
 
         $this->registerViews();
