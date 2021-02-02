@@ -39,41 +39,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait UserHelpers
 {
-    public function selfEnrollmentTestLocation(int $practiceId, string $practiceName)
-    {
-      return Location::firstOrCreate(
-            [
-                'practice_id' => $practiceId,
-            ],
-            [
-                'is_primary'     => 1,
-                'name'           => $practiceName,
-                'address_line_1' => '84982 This is demo Address, AZ 58735-9955',
-                'city'           => 'West Guantanamo Demo World',
-                'state'          => 'MD',
-                'postal_code'    => '21335 - 9764',
-            ]
-        );
-    }
-
-    public function selfEnrollmentTestPractice(string $practiceName)
-    {
-        return Practice::firstOrCreate(
-            [
-                'name' => $practiceName,
-            ],
-            [
-                'active'                => 1,
-                'display_name'          => ucfirst(str_replace('-', ' ', $practiceName)),
-                'is_demo'               => 1,
-                'clh_pppm'              => 0,
-                'term_days'             => 30,
-                'outgoing_phone_number' => 2025550196,
-                'saas_account_id'       => SaasAccount::whereName('CircleLink Health')->first()->id,
-            ]
-        );
-    }
-
     public function createLastCallForPatient(
         Patient $patient,
         Nurse $scheduler
@@ -253,6 +218,41 @@ trait UserHelpers
     public function makePatientMonthlyRecord(Patient $patient, bool $withSuccessfulCall = true)
     {
         return (app(PatientWriteRepository::class))->updateCallLogs($patient, $withSuccessfulCall);
+    }
+
+    public function selfEnrollmentTestLocation(int $practiceId, string $practiceName)
+    {
+        return Location::firstOrCreate(
+            [
+                'practice_id' => $practiceId,
+            ],
+            [
+                'is_primary'     => 1,
+                'name'           => $practiceName,
+                'address_line_1' => '84982 This is demo Address, AZ 58735-9955',
+                'city'           => 'West Guantanamo Demo World',
+                'state'          => 'MD',
+                'postal_code'    => '21335 - 9764',
+            ]
+        );
+    }
+
+    public function selfEnrollmentTestPractice(string $practiceName)
+    {
+        return Practice::firstOrCreate(
+            [
+                'name' => $practiceName,
+            ],
+            [
+                'active'                => 1,
+                'display_name'          => ucfirst(str_replace('-', ' ', $practiceName)),
+                'is_demo'               => 1,
+                'clh_pppm'              => 0,
+                'term_days'             => 30,
+                'outgoing_phone_number' => 2025550196,
+                'saas_account_id'       => SaasAccount::whereName('CircleLink Health')->first()->id,
+            ]
+        );
     }
 
     public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')

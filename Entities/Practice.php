@@ -146,6 +146,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice hasImportingHookEnabled($hook, $listener)
  * @property \Illuminate\Database\Eloquent\Collection|RpmProblem[]                                                                    $rpmProblems
  * @property int|null                                                                                                                 $rpm_problems_count
+ * @property EnrollmentInvitationLetter|null                                                                                          $enrollmentLetter
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -254,6 +255,11 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return $data;
+    }
+
+    public function enrollmentLetter()
+    {
+        return $this->hasOne(EnrollmentInvitationLetter::class);
     }
 
     /**
@@ -658,10 +664,5 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
             ->withPivot('role_id', 'send_billing_reports')
             ->withTimestamps();
-    }
-
-    public function enrollmentLetter()
-    {
-        return $this->hasOne(EnrollmentInvitationLetter::class);
     }
 }
