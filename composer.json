@@ -159,7 +159,7 @@
     "circlelinkhealth/cpm-admin-module": "1.1.x-dev",
     "circlelinkhealth/cpm-migrations-module": "3.0.1",
     "circlelinkhealth/customer-module": "4.2.4",
-    "circlelinkhealth/eligibility-module": "4.5.x-dev",
+    "circlelinkhealth/eligibility-module": "4.5.1",
     "circlelinkhealth/nurseinvoices-module": "2.0.x-dev",
     "circlelinkhealth/patientapi-module": "2.0",
     "circlelinkhealth/pdf-service-module": "1.0",
