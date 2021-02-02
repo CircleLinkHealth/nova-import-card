@@ -335,7 +335,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|EloquentCollection                              $forcedChargeableServices
  * @property int|null                                                                                                $forced_chargeable_services_count
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User patientOfLocation(int $locationId, ?string $ccmStatus = null)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -3436,12 +3435,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $query->ofType(CpmConstants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
     }
 
-    public function scopePatientOfLocation($query, int $locationId, ?string $ccmStatus = null)
+    public function scopePatientInLocations($query, array $locationIds, ?string $ccmStatus = null)
     {
         return $query->whereHas(
             'patientInfo',
-            function ($info) use ($locationId, $ccmStatus) {
-                $info->where('preferred_contact_location', $locationId)
+            function ($info) use ($locationIds, $ccmStatus) {
+                $info->whereIn('preferred_contact_location', $locationIds)
                     ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
                         $query->ccmStatus($ccmStatus);
                     });
