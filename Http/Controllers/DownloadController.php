@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Http\Controllers;
 
-use CircleLinkHealth\SelfEnrollment\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
@@ -23,6 +22,7 @@ use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaStream;
+use Illuminate\Routing\Controller;
 
 class DownloadController extends Controller
 {
