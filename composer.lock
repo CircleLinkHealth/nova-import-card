@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c78509ecec5409d9b062a0f02ea0b4f9",
+    "content-hash": "dff6d5667b5d0aa8f946db145913ac03",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -674,7 +674,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ead301f0b899b50a760915d02c168074c9159ef4"
+                "reference": "ffc5cc41790d2ab214d885e1d2dd95bdc568f05b"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -721,7 +721,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-01T14:28:33+00:00"
+            "time": "2021-02-02T16:25:18+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -915,7 +915,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "594f23a6c7238d171fcd130f36b3e842fe42c51d"
+                "reference": "1d311ce907ec80fb228804a2e359059bc1b9c067"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -961,7 +961,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-27T19:50:53+00:00"
+            "time": "2021-02-01T17:12:58+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -997,7 +997,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f104062d53b33757553011b21deb0815bdf17b19"
+                "reference": "29f5646b57d9d31c3a1dd899cfa829fb7fedf6b7"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1038,7 +1038,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-01T14:19:13+00:00"
+            "time": "2021-02-02T16:25:19+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1342,7 +1342,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "60204f32ff2b81605e938cb71ae9dce3783c5dcc"
+                "reference": "c10ef5627c868a8ccc33eef5f0794475f4edf283"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1365,7 +1365,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-29T19:52:59+00:00"
+            "time": "2021-02-01T19:29:53+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1433,11 +1433,11 @@
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "v1.0",
+            "version": "v1.12",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/synonyms.git",
-                "reference": "e0bb71dd5c8e897bfc9da0f1f47960bf01088a96"
+                "reference": "34d80d68fdfc9040fc4a17ae797742b1453ba942"
             },
             "type": "laravel-module",
             "extra": {
@@ -1458,7 +1458,7 @@
                 }
             ],
             "description": "Add synonyms for a specific Model and Field.",
-            "time": "2020-09-30T13:48:52+00:00"
+            "time": "2021-01-22T22:42:25+00:00"
         },
         {
             "name": "circlelinkhealth/time-tracking-module",
@@ -4450,16 +4450,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.25.0",
+            "version": "v8.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "05da44d6823c2923597519ac10151f5827a24f80"
+                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/05da44d6823c2923597519ac10151f5827a24f80",
-                "reference": "05da44d6823c2923597519ac10151f5827a24f80",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
+                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
                 "shasum": ""
             },
             "require": {
@@ -4610,7 +4610,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-01-26T14:40:21+00:00"
+            "time": "2021-02-02T14:07:24+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -13254,7 +13254,7 @@
         },
         {
             "name": "circlelinkhealth/vapor-devops-helpers-module",
-            "version": "dev-main",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git",
@@ -14096,16 +14096,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.9",
+            "version": "2.5.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "66b3138ecce38024723fb3bfc66ef8852a779ea9"
+                "reference": "98154e8b991fb616304c213cd405299ffedc26f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/66b3138ecce38024723fb3bfc66ef8852a779ea9",
-                "reference": "66b3138ecce38024723fb3bfc66ef8852a779ea9",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/98154e8b991fb616304c213cd405299ffedc26f5",
+                "reference": "98154e8b991fb616304c213cd405299ffedc26f5",
                 "shasum": ""
             },
             "require": {
@@ -14163,7 +14163,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2021-01-26T14:45:19+00:00"
+            "time": "2021-02-02T10:15:48+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -15689,16 +15689,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.70",
+            "version": "0.12.71",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "07f0ef37f5f876e8cee44cc8ea0ec3fe80d499ee"
+                "reference": "d508fa3b0ecc5fc91ac70c6c7ac2862f968ba2b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/07f0ef37f5f876e8cee44cc8ea0ec3fe80d499ee",
-                "reference": "07f0ef37f5f876e8cee44cc8ea0ec3fe80d499ee",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d508fa3b0ecc5fc91ac70c6c7ac2862f968ba2b5",
+                "reference": "d508fa3b0ecc5fc91ac70c6c7ac2862f968ba2b5",
                 "shasum": ""
             },
             "require": {
@@ -15741,7 +15741,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-27T17:06:47+00:00"
+            "time": "2021-02-01T18:24:00+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -16043,16 +16043,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.1",
+            "version": "9.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360"
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7bdf4085de85a825f4424eae52c99a1cec2f360",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f661659747f2f87f9e72095bb207bceb0f151cb4",
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4",
                 "shasum": ""
             },
             "require": {
@@ -16138,7 +16138,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-17T07:42:25+00:00"
+            "time": "2021-02-02T14:45:58+00:00"
         },
         {
             "name": "react/event-loop",
