@@ -35,4 +35,4 @@ CLHPackages/
 lsp/log/*
 *deploy-s3.env
 CircleLinkHealth/*/vendor
-CircleLinkHealth/*/node_modules
+CircleLinkHealth/*/node_modules.env.review-patient-email-phi-fixes
