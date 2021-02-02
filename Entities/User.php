@@ -344,7 +344,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
-    use SelfEnrollableTrait;
     use SoftDeletes;
     use TimezoneTrait;
 
