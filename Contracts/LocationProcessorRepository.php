@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 interface LocationProcessorRepository
 {
-    public function approvedBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder;
-    
     public function approvableBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder;
+
+    public function approvedBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder;
 
     public function availableLocationServiceProcessors(array $locationIds, Carbon $chargeableMonth): AvailableServiceProcessors;
 

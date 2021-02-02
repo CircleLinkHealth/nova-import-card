@@ -33,7 +33,7 @@ class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
     public int $practiceId;
 
     private array $locationIds;
-    
+
     public function __construct(int $practiceId, array $locationIds, string $date, string $batchId)
     {
         $this->date        = Carbon::parse($date);

@@ -29,6 +29,7 @@ class Practice implements CustomerProcessor
     public function counts(array $practiceIds, Carbon $month): BillablePatientsCountForMonthDTO
     {
         $locations = $this->getLocations($practiceIds);
+
         return $this->locationProcessor->counts($locations, $month);
     }
 
