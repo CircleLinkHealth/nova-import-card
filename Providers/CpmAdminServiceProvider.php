@@ -36,11 +36,6 @@ class CpmAdminServiceProvider extends ServiceProvider
     {
         $this->registerTranslations();
         $this->registerViews();
-        if (class_exists(\App\User::class)) {
-            Relation::morphMap([
-                \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
-            ]);
-        }
     }
 
     /**
