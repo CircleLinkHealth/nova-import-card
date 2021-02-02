@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -71,7 +72,7 @@ class PatientEmailDoesNotContainPhi implements Rule
 
         $value = strtolower($value);
 
-        $this->validateAgainstPatientUserModel($value);
+        $this->validateAgainstModel($this->patientUser, $value);
         $this->validateAgainstPatientRelationships($value);
 
         return ! $this->phiIsFound();
@@ -104,6 +105,18 @@ class PatientEmailDoesNotContainPhi implements Rule
         return $string;
     }
 
+    private function isPreFixedWithTheWordNurse(string $string, $text): bool
+    {
+        return $this->stringsMatch('nurse'.' '.$string, $text);
+    }
+
+    private function patientNameMatchesNurseName($value): bool
+    {
+        $nurse = auth()->user();
+
+        return strtolower($nurse->first_name) === $value || strtolower($nurse->last_name) === $value;
+    }
+
     private function phiIsFound(): bool
     {
         $this->phiFound = array_filter($this->phiFound);
@@ -114,6 +127,11 @@ class PatientEmailDoesNotContainPhi implements Rule
     private function setFieldForValidationMessage(string $attribute): void
     {
         $this->field = 'patient_email_body' == $attribute ? 'body' : 'subject';
+    }
+
+    private function shouldAllowIfItMatchesNurseNameAndIsPrefixedByTheWordNurse($field, $string, $text): bool
+    {
+        return $this->fieldIsName($field) && $this->patientNameMatchesNurseName($string) && $this->isPreFixedWithTheWordNurse($string, $text);
     }
 
     private function shouldAllowPhiInEmail(string $phiField): bool
@@ -133,45 +151,50 @@ class PatientEmailDoesNotContainPhi implements Rule
     private function validateAgainstPatientRelationships(string $text)
     {
         $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
-        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
-            foreach ($this->patientUser->{$relation}->phi as $phi) {
-                if ($this->shouldAllowPhiInEmail($phi)) {
-                    continue;
-                }
-                $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
-                if ($string) {
-                    $this->phiFound[] = $this->stringsMatch($string, $text)
-                        ? $phi
-                        : null;
-                }
-            }
-        }
-    }
 
-    private function validateAgainstPatientUserModel(string $text)
-    {
-        foreach ($this->patientUser->phi as $phi) {
-            if ($this->shouldAllowPhiInEmail($phi)) {
+        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
+            $relation = $this->patientUser->{$relation};
+            if (is_a($relation, Collection::class)) {
+                $this->validateAgainstCollection($relation, $text);
                 continue;
             }
-            $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
-
-            if ($string) {
-                $stringMatches = $this->stringsMatch($string, $text);
-
-                if ($stringMatches && $this->fieldIsName($phi) && $this->patientNameMatchesNurseName($string) && $this->stringsMatch('nurse'.' '.$string, $text)) {
-                    continue;
-                }
-                $this->phiFound[] = $stringMatches
-                    ? $phi
-                    : null;
-            }
+            $this->validateAgainstModel($relation, $text);
         }
     }
-    
-    private function patientNameMatchesNurseName($value)
+
+    private function validateAgainstCollection(Collection $collection, string $text)
     {
-        $nurse = auth()->user();
-        return  strtolower($nurse->first_name) === $value ||  strtolower($nurse->last_name) === $value;
+        foreach ($collection as $modelWithinCollection) {
+            $this->validateAgainstModel($modelWithinCollection, $text);
+        }
+    }
+
+    private function validateAgainstModel(Model $model, string $text)
+    {
+        foreach ($model->phi as $phi) {
+            $this->validatePhiValue($this->patientUser, $phi, $text);
+        }
+    }
+
+    private function validatePhiValue($model, $field, $text): void
+    {
+        if ($this->shouldAllowPhiInEmail($field)) {
+            return;
+        }
+        $string = $this->getSanitizedAndTransformedAttribute($model, $field);
+
+        if (empty($string)) {
+            return;
+        }
+
+        $stringMatches = $this->stringsMatch($string, $text);
+
+        if ($stringMatches && $this->shouldAllowIfItMatchesNurseNameAndIsPrefixedByTheWordNurse($field, $string, $text)) {
+            return;
+        }
+
+        $this->phiFound[] = $stringMatches
+                ? $field
+                : null;
     }
 }
