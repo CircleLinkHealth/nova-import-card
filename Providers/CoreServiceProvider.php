@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Core\Providers;
 
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallReplyNotification;
@@ -29,6 +30,8 @@ class CoreServiceProvider extends ServiceProvider
             Call::class                                     => 'App\Call',
             PatientUnsuccessfulCallNotification::class      => 'App\Notifications\PatientUnsuccessfulCallNotification',
             PatientUnsuccessfulCallReplyNotification::class => 'App\Notifications\PatientUnsuccessfulCallReplyNotification',
+            User::class => 'App\User',
+            User::class => 'App\User',
         ]);
 
         $this->registerViews();
