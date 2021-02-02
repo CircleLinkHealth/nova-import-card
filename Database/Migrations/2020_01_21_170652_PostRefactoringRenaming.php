@@ -116,11 +116,11 @@ class PostRefactoringRenaming extends Migration
             ],
             [
                 'old' => 'App\EligibilityBatch',
-                'new' => 'CircleLinkHealth\Eligibility\Entities\EligibilityBatch',
+                'new' => 'CircleLinkHealth\SharedModels\Entities\EligibilityBatch',
             ],
             [
                 'old' => 'App\EligibilityJob',
-                'new' => 'CircleLinkHealth\Eligibility\Entities\EligibilityJob',
+                'new' => 'CircleLinkHealth\SharedModels\Entities\EligibilityJob',
             ],
             [
                 'old' => 'App\Enrollee',
