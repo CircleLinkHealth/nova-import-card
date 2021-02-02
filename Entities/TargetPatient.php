@@ -11,10 +11,6 @@ use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Traits\BelongsToCcda;
-use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\TargetPatient.
