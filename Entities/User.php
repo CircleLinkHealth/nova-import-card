@@ -2,7 +2,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Entities;
 
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
+use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
 
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
