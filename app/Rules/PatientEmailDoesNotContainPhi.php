@@ -159,7 +159,7 @@ class PatientEmailDoesNotContainPhi implements Rule
             if ($string) {
                 $stringMatches = $this->stringsMatch($string, $text);
 
-                if ($stringMatches && $this->fieldIsName($phi) && $this->stringsMatch('nurse'.' '.$string, $text)) {
+                if ($stringMatches && $this->fieldIsName($phi) && $this->patientNameMatchesNurseName($string) && $this->stringsMatch('nurse'.' '.$string, $text)) {
                     continue;
                 }
                 $this->phiFound[] = $stringMatches
@@ -167,5 +167,11 @@ class PatientEmailDoesNotContainPhi implements Rule
                     : null;
             }
         }
+    }
+    
+    private function patientNameMatchesNurseName($value)
+    {
+        $nurse = auth()->user();
+        return  strtolower($nurse->first_name) === $value ||  strtolower($nurse->last_name) === $value;
     }
 }
