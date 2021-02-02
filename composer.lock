@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e1f171112647530a4163bd1b481e064e",
+    "content-hash": "4092ab402e8f3fcf3ac22f6e1866ac42",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -493,16 +493,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.172.4",
+            "version": "3.173.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "506e60798bb7d13bdafadce9727ab9cc9ac987b0"
+                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/506e60798bb7d13bdafadce9727ab9cc9ac987b0",
-                "reference": "506e60798bb7d13bdafadce9727ab9cc9ac987b0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
+                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
                 "shasum": ""
             },
             "require": {
@@ -574,7 +574,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-01-29T19:17:51+00:00"
+            "time": "2021-02-02T20:01:31+00:00"
         },
         {
             "name": "brick/math",
@@ -772,7 +772,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -848,11 +852,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v2.6",
+            "version": "v2.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "08764efebfea0184a7906a0da5d83165578ee667"
+                "reference": "4889ae71776b08585e6a2de18934c8462e080331"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -908,7 +912,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T16:56:09+00:00"
+            "time": "2021-02-02T20:36:07+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1311,11 +1315,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.3",
+            "version": "v1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "915b8cc878f6250f37d00aaca25f16715cebc531"
+                "reference": "7e821bd3eced8b6277c6326f962f5deed141aa3b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1338,7 +1342,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T18:02:37+00:00"
+            "time": "2021-02-02T20:36:40+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
