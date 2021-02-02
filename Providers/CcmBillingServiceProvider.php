@@ -6,45 +6,61 @@
 
 namespace CircleLinkHealth\CcmBilling\Providers;
 
+use CircleLinkHealth\CcmBilling\Caches\BillingCache;
+use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
+use CircleLinkHealth\CcmBilling\Console\ModifyPatientActivityAndReprocessTime;
+use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
+use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\CachedLocationProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class CcmBillingServiceProvider extends ServiceProvider
+class CcmBillingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    public function register()
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-
-        $this->app->register(RouteServiceProvider::class);
-        $this->registerViews();
+        return [
+            PatientMonthlyBillingProcessor::class,
+            PatientServiceRepositoryInterface::class,
+            LocationProcessorRepository::class,
+            LocationProblemServiceRepositoryInterface::class,
+            PatientProcessorEloquentRepositoryInterface::class,
+            BillingCache::class,
+        ];
     }
 
     /**
-     * Register views.
+     * Register the service provider.
      */
-    public function registerViews()
+    public function register()
     {
-        $viewPath = resource_path('views/modules/ccmbilling');
+        $this->commands([
+            SeedChargeableServices::class,
+            ResetPMSChargeableServicesForMonth::class,
+            ModifyPatientActivityAndReprocessTime::class,
+        ]);
 
-        $sourcePath = __DIR__.'/../Resources/views';
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
-        $this->publishes(
-            [
-                $sourcePath => $viewPath,
-            ],
-            'views'
-        );
-
-        $this->loadViewsFrom(
-            array_merge(
-                array_map(
-                    function ($path) {
-                        return $path.'/modules/ccmbilling';
-                    },
-                    \Config::get('view.paths')
-                ),
-                [$sourcePath]
-            ),
-            'ccmbilling'
-        );
+        $this->app->singleton(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, CachedPatientServiceProcessorRepository::class);
+        $this->app->singleton(LocationProcessorRepository::class, CachedLocationProcessorEloquentRepository::class);
+        $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
+        $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
+        $this->app->singleton(BillingCache::class, BillingDataCache::class);
     }
 }
