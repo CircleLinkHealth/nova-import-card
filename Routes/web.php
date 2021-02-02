@@ -483,60 +483,6 @@ Route::group([
     });
 });
 
-Route::group([
-    'prefix'     => 'admin',
-    'middleware' => [
-        'auth',
-        'permission:admin-access',
-    ],
-], function () {
-    Route::get('/send-enrollee-reminder-test', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
-        'as'   => 'send.reminder.enrollee.qa',
-    ])->middleware('auth');
-
-    Route::get('/send-patient-reminder-test', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
-        'as'   => 'send.reminder.patient.qa',
-    ])->middleware('auth');
-
-    Route::get('/final-action-unreachables-test', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
-        'as'   => 'final.action.qa',
-    ])->middleware('auth');
-
-    Route::get('/evaluate-enrolled-from-survey', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
-        'as'   => 'evaluate.survey.completed',
-    ])->middleware('auth');
-
-    Route::get('/reset-enrollment-test', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
-        'as'   => 'reset.test.qa',
-    ])->middleware('auth');
-
-    Route::get('/send-enrollee-invites', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
-        'as'   => 'send.enrollee.invitations',
-    ])->middleware('auth');
-
-    Route::get('/send-unreachable-invites', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
-        'as'   => 'send.unreachable.invitations',
-    ])->middleware('auth');
-
-    Route::get('/trigger-enrolldata-test', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
-        'as'   => 'trigger.enrolldata.test',
-    ])->middleware('auth');
-
-    Route::get('/invite-unreachable', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
-        'as'   => 'send.invitates.panel',
-    ])->middleware('auth');
-    //---------------------------------------
-});
-
 Route::prefix('admin')->group(
     function () {
         Route::prefix('users')->group(
