@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Http\Controllers\NotesController;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -17,7 +18,6 @@ use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientWithdrawnTest extends TestCase
 {
