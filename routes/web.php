@@ -13,4 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'HomeController@showHomepage');
+Route::get('/', 'HomeController@showHomepage')->name('home');
+
+Route::group([
+    'middleware' => [
+        'auth',
+    ],
+], function () {
+    Route::get('/home', 'HomeController@showHomepage');
+});
+
+
+
+
+
+
+
