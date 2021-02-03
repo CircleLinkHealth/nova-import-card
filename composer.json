@@ -119,7 +119,7 @@
         "circlelinkhealth/core-module": "2.8",
         "circlelinkhealth/cpm-migrations-module": "3.0.4",
         "circlelinkhealth/customer-module": "4.2.9",
-        "circlelinkhealth/eligibility-module": "4.5.4",
+        "circlelinkhealth/eligibility-module": "4.5.7",
         "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/raygun-module": "2.0",
         "circlelinkhealth/revisionable-module": "8.0",
