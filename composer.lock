@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c1b959c36b5d0bf56af36a16323cd9a",
+    "content-hash": "d1e397560154abb73e1b964379a267ac",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1576,11 +1576,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v2.1",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "3aa2d1c660dd3b8740495097fa8761a5ca4a7526"
+                "reference": "21ae6f5316f85f701d228bdcd58f12829af1ce4f"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1608,7 +1608,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T08:01:19+00:00"
+            "time": "2021-02-02T23:58:51+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -4955,17 +4955,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.20.0",
+            "version": "3.21.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea"
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea-zip-38e8b1.zip",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea",
-                "shasum": "9782ab64f7dc798b5499b8eb0f65f1a2985629fb"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-a50eb75d8c5ea26320353f96c26266ad53c5ff93-zip-714e68.zip",
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93",
+                "shasum": "3d2d72bd42bf44b4df671194cb5381a3167f3aa6"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5043,9 +5043,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/nova/tree/v3.20.0"
+                "source": "https://github.com/laravel/nova/tree/v3.21.0"
             },
-            "time": "2021-01-19T18:52:03+00:00"
+            "time": "2021-02-02T17:55:49+00:00"
         },
         {
             "name": "laravel/passport",
@@ -6269,16 +6269,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v2.3.13",
+            "version": "v2.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "80a734ed3a2688a1f3558e12b3f679e1407ba455"
+                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/80a734ed3a2688a1f3558e12b3f679e1407ba455",
-                "reference": "80a734ed3a2688a1f3558e12b3f679e1407ba455",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/5036ba31571c7ec3feca9a171e96e33628bab5ea",
+                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea",
                 "shasum": ""
             },
             "require": {
@@ -6333,7 +6333,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-03T14:33:58+00:00"
+            "time": "2021-02-03T01:16:27+00:00"
         },
         {
             "name": "maatwebsite/excel",
