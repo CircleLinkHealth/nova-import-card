@@ -19,7 +19,6 @@ use App\Console\Commands\CheckUserTotalTimeTracked;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
-use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
 use App\Console\Commands\GenerateReportForScheduledPAM;
@@ -230,9 +229,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForDraftNotesAndQAApproved::class)
             ->dailyAt('08:10')
             ->onOneServer();
-
-        $schedule->command(EnrollmentFinalAction::class)
-            ->dailyAt('08:27');
 
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)
             ->monthlyOn(1, '08:30')

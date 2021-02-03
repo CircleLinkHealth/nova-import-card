@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
-use Tests\DuskTestCase;
+use CircleLinkHealth\SelfEnrollment\Tests\DuskTestCase;
 
 class DashboardTest extends DuskTestCase
 {
