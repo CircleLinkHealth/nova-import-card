@@ -17,7 +17,7 @@ use CircleLinkHealth\Core\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
+use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
@@ -91,8 +91,8 @@ use Illuminate\Support\Str;
  *     $confirmedFamilyMembers
  * @property int|null                                                                    $confirmed_family_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null                  $eligibilityJob
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
  *     $enrollmentInvitationLinks
  * @property int|null                                          $enrollment_invitation_links_count
  * @property mixed                                             $agent
@@ -164,6 +164,7 @@ class Enrollee extends BaseModel
     use Filterable;
     use MySQLSearchable;
     use Notifiable;
+    use SelfEnrollableTrait;
     use SoftDeletes;
 
     // Agent array keys
