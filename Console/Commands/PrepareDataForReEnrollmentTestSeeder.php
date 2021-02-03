@@ -60,7 +60,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $this->uiRequestsForThisPractice = $uiRequestsForThisPractice;
     }
 
-    public function createEnrollee(Practice $practice, User $provider, array $args = [])
+    public function createEnrollee(Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider, array $args = [])
     {
         $enrolleeForTesting = factory(Enrollee::class)->create(array_merge($args, [
             'provider_id'             => $provider->id,
