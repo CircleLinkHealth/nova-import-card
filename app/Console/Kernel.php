@@ -106,9 +106,9 @@ class Kernel extends ConsoleKernel
             ->everyFifteenMinutes()
             ->between('8:00', '23:00');
 
-        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
-            ->everyFifteenMinutes()
-            ->between('8:00', '23:00');
+//        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
+//            ->everyFifteenMinutes()
+//            ->between('8:00', '23:00');
 
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
