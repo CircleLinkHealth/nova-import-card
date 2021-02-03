@@ -15,7 +15,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
 use CircleLinkHealth\Customer\Notifications\NotifyPatientCarePlanApproved;
-use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Rules\MrnWasReplacedIfPracticeImportingHooks;
@@ -545,7 +545,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'billingProvider' => 'required|numeric',
                 'practice'        => 'required|numeric',
                 'location'        => 'required|numeric',
-                'duplicate'       => [new PatientIsNotDuplicate($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
+                'duplicate'       => [new PatientIsUnique($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
                 'address'         => 'required|filled',
                 'city'            => 'required|filled',
                 'state'           => 'required|filled',
