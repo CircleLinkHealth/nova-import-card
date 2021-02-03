@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
-use App\Jobs\LogSuccessfulLoginToDB;
+use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
