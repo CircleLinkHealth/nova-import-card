@@ -25,12 +25,12 @@ class ImportAndApproveEnrollee implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    
+    protected int   $enrolleeId;
 
-    public Enrollee $enrollee;
-
-    public function __construct(Enrollee $enrollee)
+    public function __construct(int $enrolleeId)
     {
-        $this->enrollee = $enrollee;
+        $this->enrolleeId = $enrolleeId;
     }
 
     /**
@@ -40,8 +40,11 @@ class ImportAndApproveEnrollee implements ShouldQueue
      */
     public function handle()
     {
-        $enrollee = $this->enrollee;
+        $enrollee = Enrollee::with('user.patientInfo')->find($this->enrolleeId);
 
+        if ( ! $enrollee) {
+            return;
+        }
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
         }
@@ -89,11 +92,6 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ($enrollee->user->patientInfo->isDirty()) {
             $enrollee->user->patientInfo->save();
         }
-    }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
     }
 
     private function searchByFakeClhEmail(Enrollee $enrollee)
