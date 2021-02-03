@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
