@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
-use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
