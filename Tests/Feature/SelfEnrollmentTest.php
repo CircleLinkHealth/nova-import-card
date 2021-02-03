@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
 use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
+use CircleLinkHealth\SelfEnrollment\Constants;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -156,9 +157,8 @@ class SelfEnrollmentTest extends TestCase
     public function test_it_creates_user_from_enrollee()
     {
         $enrollee = $this->createEnrollees();
-        CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-        $enrolleeUserId = $enrollee->fresh()->user_id;
-        self::assertTrue( ! is_null($enrolleeUserId));
+//        Will trigger EnrolleeObserver to Create User
+        self::assertTrue( ! is_null($enrollee->user_id));
     }
 
     public function test_it_does_not_send_sms_if_only_email_selected()
@@ -254,7 +254,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
     {
         $enrollee = $this->createEnrollees($number = 1);
-        $patient  = $enrollee->user;
+        $patient  = new User($enrollee->user->toArray());
 
         Notification::fake();
         SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
@@ -292,7 +292,7 @@ class SelfEnrollmentTest extends TestCase
         InvitePracticeEnrollees::dispatchNow(
             $number,
             $this->practice()->id,
-            $color = SelfEnrollmentController::RED_BUTTON_COLOR,
+            $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             ['mail', 'twilio']
         );
 
@@ -363,9 +363,9 @@ class SelfEnrollmentTest extends TestCase
         });
 
         $initialInviteSentAt  = now();
-        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
-        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
-        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
+        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
+        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
+        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
 
         Carbon::setTestNow($firstReminderSentAt);
         RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
@@ -435,7 +435,7 @@ class SelfEnrollmentTest extends TestCase
         Mail::fake();
         Twilio::fake();
         $toMarkAsInvited->each(function (Enrollee $enrollee) {
-            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            SendInvitation::dispatchNow(new User($enrollee->user->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
                 $enrollee->practice_id,
                 now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
             )->id);
@@ -461,7 +461,7 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->user;
         $practice = $patient->primaryPractice;
         $this->disableReminders($practice->name);
-        self::assertFalse((new SendReminder($patient))->shouldRun());
+        self::assertFalse((new SendReminder(new User($patient->toArray())))->shouldRun());
         self::assertFalse(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
     }
 
@@ -473,7 +473,7 @@ class SelfEnrollmentTest extends TestCase
         $practice = $patient->primaryPractice;
         $this->disableReminders($practice->name);
 
-        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        SendInvitation::dispatchNow(new User($patient->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         )->id);
@@ -493,7 +493,7 @@ class SelfEnrollmentTest extends TestCase
 
         self::assertTrue(ProviderClinicalTypes::DR === $specialty);
 
-        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $emailContent     = $this->getEnrolleeMessageContent(new User($patient->toArray()), false);
         $providerLastName = $emailContent['providerLastName'];
         $nameWithType     = "$specialty $providerLastName";
 
@@ -511,7 +511,7 @@ class SelfEnrollmentTest extends TestCase
         $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
         self::assertTrue(ProviderClinicalTypes::LPN === $specialty);
 
-        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $emailContent     = $this->getEnrolleeMessageContent(new User($patient->toArray()), false);
         $providerLastName = $emailContent['providerLastName'];
         $nameWithType     = "$specialty $providerLastName";
 
