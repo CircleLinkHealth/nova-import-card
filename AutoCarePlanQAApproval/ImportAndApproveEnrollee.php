@@ -75,6 +75,10 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if (Enrollee::UPLOADED_CSV === $enrollee->source && ! $enrollee->user->patientInfo) {
             return;
         }
+        
+        if (!$enrollee->user->patientInfo) {
+            return;
+        }
 
         $enrollee->user->patientInfo->ccm_status = Patient::ENROLLED;
         $enrollee->status                        = Enrollee::ENROLLED;
