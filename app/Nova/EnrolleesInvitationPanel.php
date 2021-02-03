@@ -127,7 +127,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
-        $surveyInstance = $this->getSurveyInstance()->first();
+        $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
 
         $awvUserSurvey = null;
 
@@ -214,20 +214,24 @@ class EnrolleesInvitationPanel extends Resource
                 return self::IN_PROGRESS === optional($awvUserSurvey)->status;
             }),
 
-            Boolean::make('Survey Completed', function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
-                if ( ! $enroleeHasLoggedIn) {
+            Boolean::make('Survey Completed', function () use ($awvUserSurvey) {
+                if ( ! $awvUserSurvey) {
                     return false;
                 }
 
-                return self::COMPLETED === optional($awvUserSurvey)->status;
+                return self::COMPLETED === $awvUserSurvey->status;
             }),
 
-            Boolean::make('Enrolled', function () {
+
+            Boolean::make('Enrolled/Imported', function () use($awvUserSurvey) {
+                if ( ! $awvUserSurvey) {
+                    return false;
+                }
+
                 return Enrollee::ENROLLED === $this->resource->status;
             }),
         ];
     }
-
     /**
      * Get the filters available for the resource.
      *
@@ -241,12 +245,16 @@ class EnrolleesInvitationPanel extends Resource
 
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->whereIn('status', [
-            Enrollee::QUEUE_AUTO_ENROLLMENT,
-            Enrollee::UNREACHABLE,
-            Enrollee::ENROLLED,
-            Enrollee::TO_CALL,
-        ])->where('practice_id', self::getPracticeId())
+        return $query->where(function ($q){
+            $q->whereIn('status', [
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
+                Enrollee::UNREACHABLE,
+                Enrollee::ENROLLED,
+                Enrollee::TO_CALL,
+            ])->orWhere('status', Enrollee::CONSENTED, function ($q){
+                $q->where('auto_enrollment_triggered', true);
+            });
+        })->where('practice_id', self::getPracticeId())
             ->where(function ($q) {
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
@@ -286,11 +294,5 @@ class EnrolleesInvitationPanel extends Resource
         }
 
         return null;
-    }
-
-    private function getSurveyInstance()
-    {
-        return DB::table('survey_instances')
-            ->where('survey_id', '=', Helpers::getEnrolleeSurvey()->id);
     }
 }
