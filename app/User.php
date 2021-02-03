@@ -212,7 +212,7 @@ namespace App;
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                                    $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink|null                                    $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                          $enrollableInfoRequest
  * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                                                             $login_events_count

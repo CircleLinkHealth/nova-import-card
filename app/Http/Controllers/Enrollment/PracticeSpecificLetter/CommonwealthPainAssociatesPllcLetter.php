@@ -10,7 +10,7 @@ use App\Contracts\SelfEnrollmentLetter;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Illuminate\Database\Eloquent\Model;
 
 class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
