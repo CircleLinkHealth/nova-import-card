@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05511bfa0120155edf8d2bb5fe5ed87d",
+    "content-hash": "1eab9fc3c6fbe20915ed6603c49a51b9",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -348,16 +348,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.0",
+            "version": "3.173.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9"
+                "reference": "152c4869240ba809655fffedc28a5834e3d8615b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
-                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/152c4869240ba809655fffedc28a5834e3d8615b",
+                "reference": "152c4869240ba809655fffedc28a5834e3d8615b",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-02T20:01:31+00:00"
+            "time": "2021-02-03T19:15:23+00:00"
         },
         {
             "name": "brick/math",
@@ -1069,11 +1069,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.8",
+            "version": "v1.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "df36f76d2f94dcf07db0ae42d30e04e93499e757"
+                "reference": "5ecf9562fce6b881189fdd7421152ca8b0b53f55"
             },
             "type": "laravel-module",
             "extra": {
@@ -1096,7 +1096,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T17:05:12+00:00"
+            "time": "2021-02-03T18:59:24+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
