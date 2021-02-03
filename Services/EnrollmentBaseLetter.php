@@ -92,6 +92,7 @@ class EnrollmentBaseLetter
         }
 
         if (null === $provider) {
+            /** @var \CircleLinkHealth\Customer\Entities\User $provider */
             $provider = $userForEnrollment->billingProviderUser();
         }
 
@@ -141,13 +142,15 @@ class EnrollmentBaseLetter
     }
 
     /**
-     * @param $practice
+     * @param Practice $practice
+     * @param Model $practiceLetter
      * @param $practiceNumber
+     * @param \CircleLinkHealth\Customer\Entities\User $provider
      * @param bool $hideButtons
      *
      * @return array
      */
-    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
+    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, \CircleLinkHealth\Customer\Entities\User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,

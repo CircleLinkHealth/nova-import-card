@@ -486,10 +486,12 @@ class SelfEnrollmentTest extends TestCase
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
         $patient                                = $enrollee->user;
-        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::DO_SUFFIX;
-        $patient->save();
+        $billingProviderUser = $patient->billingProviderUser();
+        $billingProviderUser->suffix = ProviderClinicalTypes::DO_SUFFIX;
         $patient->fresh();
-        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+        $patient->save();
+        $billingProviderUser->save();
+        $specialty = Helpers::providerMedicalType($billingProviderUser->suffix);
 
         self::assertTrue(ProviderClinicalTypes::DR === $specialty);
 
@@ -505,11 +507,14 @@ class SelfEnrollmentTest extends TestCase
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
         $patient                                = $enrollee->user;
-        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::LPN_SUFFIX;
-        $patient->save();
+        $billingProviderUser = $patient->billingProviderUser();
+        $billingProviderUser->suffix = ProviderClinicalTypes::LPN_SUFFIX;
         $patient->fresh();
-        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+        $patient->save();
+        $billingProviderUser->save();
+        $specialty = Helpers::providerMedicalType($billingProviderUser->suffix);
         self::assertTrue(ProviderClinicalTypes::LPN === $specialty);
+
         $patient = new User($patient->toArray());
 
         $emailContent     = $this->getEnrolleeMessageContent($patient, false);
@@ -524,10 +529,12 @@ class SelfEnrollmentTest extends TestCase
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
         $patient                                = $enrollee->user;
-        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::MD_SUFFIX;
-        $patient->save();
+        $billingProviderUser = $patient->billingProviderUser();
+        $billingProviderUser->suffix = ProviderClinicalTypes::MD_SUFFIX;
         $patient->fresh();
-        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+        $patient->save();
+        $billingProviderUser->save();
+        $specialty = Helpers::providerMedicalType($billingProviderUser->suffix);
 
         self::assertTrue(ProviderClinicalTypes::DR === $specialty);
 
@@ -543,10 +550,12 @@ class SelfEnrollmentTest extends TestCase
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
         $patient                                = $enrollee->user;
-        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::NP_SUFFIX;
-        $patient->save();
+        $billingProviderUser = $patient->billingProviderUser();
+        $billingProviderUser->suffix = ProviderClinicalTypes::NP_SUFFIX;
         $patient->fresh();
-        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+        $patient->save();
+        $billingProviderUser->save();
+        $specialty = Helpers::providerMedicalType($billingProviderUser->suffix);
         self::assertTrue(ProviderClinicalTypes::NP === $specialty);
 
         $emailContent     = $this->getEnrolleeMessageContent(new User($patient->toArray()), false);
@@ -561,7 +570,7 @@ class SelfEnrollmentTest extends TestCase
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
         $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_PENDING);
-        self::assertTrue(Helpers::awvUserSurveyQuery($patient, $surveyInstance)->exists());
+        self::assertTrue(Helpers::awvUserSurveyQuery(new User($patient->toArray()), $surveyInstance)->exists());
     }
 
     public function test_patient_has_logged_in()

@@ -88,7 +88,7 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
         return $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
+    public static function signatures(Model $practiceLetter, Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider): string
     {
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
