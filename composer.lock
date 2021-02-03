@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc3ce81776d03703ccc0dd48035ffe4c",
+    "content-hash": "a70954b831475b22aa08266e4ebceda3",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -6269,16 +6269,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v2.3.11",
+            "version": "v2.3.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea"
+                "reference": "80a734ed3a2688a1f3558e12b3f679e1407ba455"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/5036ba31571c7ec3feca9a171e96e33628bab5ea",
-                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/80a734ed3a2688a1f3558e12b3f679e1407ba455",
+                "reference": "80a734ed3a2688a1f3558e12b3f679e1407ba455",
                 "shasum": ""
             },
             "require": {
@@ -6333,7 +6333,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-03T01:16:27+00:00"
+            "time": "2021-02-03T14:33:58+00:00"
         },
         {
             "name": "maatwebsite/excel",
