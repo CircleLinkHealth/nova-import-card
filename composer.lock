@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "982af6cc6fa3a2720a173bd1499a15f3",
+    "content-hash": "aa0195fec890295e7cbba7199679c173",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -848,11 +848,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v2.7",
+            "version": "v2.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4889ae71776b08585e6a2de18934c8462e080331"
+                "reference": "83823aa3b343c3ea760cb1bd982afe0227b6ddae"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T20:36:07+00:00"
+            "time": "2021-02-02T23:08:19+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1401,11 +1401,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v2.1",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "3aa2d1c660dd3b8740495097fa8761a5ca4a7526"
+                "reference": "21ae6f5316f85f701d228bdcd58f12829af1ce4f"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1433,7 +1433,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T08:01:19+00:00"
+            "time": "2021-02-02T23:58:51+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
