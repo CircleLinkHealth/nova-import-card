@@ -13,7 +13,6 @@ use CircleLinkHealth\SelfEnrollment\Helpers;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
