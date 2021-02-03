@@ -8,10 +8,10 @@ namespace Tests\Browser;
 
 use AshAllenDesign\ShortURL\Models\ShortURL;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SharedModels\Entities\EnrollmentInvitationLetter;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InvitePracticeEnrollees;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Notification;
 use Tests\DuskTestCase;
 use Tests\Helpers\CustomerTestCaseHelper;
