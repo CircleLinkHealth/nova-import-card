@@ -43,7 +43,6 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
-use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
@@ -105,10 +104,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(AutoQAApproveValidPatients::class)
             ->everyFifteenMinutes()
             ->between('8:00', '23:00');
-
-//        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
-//            ->everyFifteenMinutes()
-//            ->between('8:00', '23:00');
 
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
