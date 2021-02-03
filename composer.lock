@@ -911,7 +911,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-master_self_enrollment_bugs",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
