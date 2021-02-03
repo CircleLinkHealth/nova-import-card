@@ -166,7 +166,7 @@
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/core-module": "2.8",
         "circlelinkhealth/cpm-admin-module": "1.3",
-        "circlelinkhealth/cpm-migrations-module": "3.0.3",
+        "circlelinkhealth/cpm-migrations-module": "3.0.4",
         "circlelinkhealth/customer-module": "4.2.8",
         "circlelinkhealth/eligibility-module": "4.5.1",
         "circlelinkhealth/enrollment-invites": "*",
