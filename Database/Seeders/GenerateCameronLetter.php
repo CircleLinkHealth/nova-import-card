@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SelfEnrollment\DTO\CameronLetterProductionValueObject;
 use CircleLinkHealth\SelfEnrollment\DTO\CameronLetterTestValueObject;

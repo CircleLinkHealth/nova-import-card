@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers;
 
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Requests\EnrollmentLinkValidation;

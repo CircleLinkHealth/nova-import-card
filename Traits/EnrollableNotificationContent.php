@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Traits;
 
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use Illuminate\Support\Facades\Log;
 
 trait EnrollableNotificationContent

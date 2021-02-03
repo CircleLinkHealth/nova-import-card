@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Notifications;
 
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
