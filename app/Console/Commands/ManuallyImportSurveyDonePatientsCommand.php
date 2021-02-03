@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
+use CircleLinkHealth\SelfEnrollment\Helpers;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Console\Command;
 
 class ManuallyImportSurveyDonePatientsCommand extends Command

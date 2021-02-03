@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\ListenToAwvChannel;
+use CircleLinkHealth\SelfEnrollment\Jobs\ListenToAwvChannel;
 use Illuminate\Console\Command;
 
 class SubscribeToRedisAWVChannel extends Command
