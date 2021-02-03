@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7012ef01042a46332a8f3e6a6304a4de",
+    "content-hash": "ff91d84df0464ec63d6dd630c9d73d4f",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -4955,17 +4955,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.20.0",
+            "version": "3.21.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea"
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea-zip-38e8b1.zip",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea",
-                "shasum": "9782ab64f7dc798b5499b8eb0f65f1a2985629fb"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-a50eb75d8c5ea26320353f96c26266ad53c5ff93-zip-714e68.zip",
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93",
+                "shasum": "3d2d72bd42bf44b4df671194cb5381a3167f3aa6"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5043,9 +5043,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/nova/tree/v3.20.0"
+                "source": "https://github.com/laravel/nova/tree/v3.21.0"
             },
-            "time": "2021-01-19T18:52:03+00:00"
+            "time": "2021-02-02T17:55:49+00:00"
         },
         {
             "name": "laravel/passport",
@@ -6269,16 +6269,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v2.3.12",
+            "version": "v2.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "55e8a6269376945a59cecf998a25440af6df934a"
+                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/55e8a6269376945a59cecf998a25440af6df934a",
-                "reference": "55e8a6269376945a59cecf998a25440af6df934a",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/5036ba31571c7ec3feca9a171e96e33628bab5ea",
+                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea",
                 "shasum": ""
             },
             "require": {
@@ -6333,7 +6333,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-03T13:17:17+00:00"
+            "time": "2021-02-03T01:16:27+00:00"
         },
         {
             "name": "maatwebsite/excel",
