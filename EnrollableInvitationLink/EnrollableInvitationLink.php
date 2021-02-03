@@ -9,7 +9,7 @@ namespace CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink.
+ * CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink.
  *
  * @property int                                                                    $id
  * @property int                                                                    $invitationable_id
