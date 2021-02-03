@@ -157,7 +157,8 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee = $this->createEnrollees();
         CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-        self::assertTrue( ! is_null($enrollee->user_id));
+        $enrolleeUserId = $enrollee->fresh()->user_id;
+        self::assertTrue( ! is_null($enrolleeUserId));
     }
 
     public function test_it_does_not_send_sms_if_only_email_selected()
