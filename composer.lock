@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf33875824d6ede5e8a5f65e39bc8432",
+    "content-hash": "07351a73de9d60faf1903b79221ecb16",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1045,11 +1045,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.5.1",
+            "version": "v4.5.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "73962f5d05a0070d1bda24d18af2247ef2bb44aa"
+                "reference": "91d22791a1d877740a813a5821b447979fb5bcea"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1080,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T15:33:32+00:00"
+            "time": "2021-02-03T17:36:38+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1311,11 +1311,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.6",
+            "version": "v1.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "e39b71cfcbd893cf5f80052660d7f907b9ad8660"
+                "reference": "df36f76d2f94dcf07db0ae42d30e04e93499e757"
             },
             "type": "laravel-module",
             "extra": {
@@ -1338,7 +1338,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T13:22:20+00:00"
+            "time": "2021-02-03T17:05:12+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
