@@ -41,6 +41,14 @@ class ImportAndApproveEnrollee implements ShouldQueue
     public function handle()
     {
         $enrollee = $this->enrollee;
+    
+        //If enrollee is from uploaded CSV from Nova Page,
+        //Where we create Enrollees without any other data,
+        //so we can consent them and then ask the practice to send us the CCDs
+        //It is expected to reach this point, do not throw error
+        if (Enrollee::UPLOADED_CSV === $enrollee->source) {
+            return;
+        }
 
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
