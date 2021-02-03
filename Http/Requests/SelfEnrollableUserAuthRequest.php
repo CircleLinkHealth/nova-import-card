@@ -88,9 +88,8 @@ class SelfEnrollableUserAuthRequest extends FormRequest
         return User::where('id', $userId)
             ->whereHas('patientInfo', function ($q) use ($dob) {
                 $q->where('birth_date', $dob);
-            })->whereHas('enrollee', function ($q) use ($dob) {
-                $q->where('dob', $dob)
-                    ->whereIn('status', [
+            })->whereHas('enrollee', function ($q) {
+                $q->whereIn('status', [
                         Enrollee::QUEUE_AUTO_ENROLLMENT,
                         Enrollee::TO_CALL,
                         Enrollee::SOFT_REJECTED,
