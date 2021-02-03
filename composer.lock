@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc3ce81776d03703ccc0dd48035ffe4c",
+    "content-hash": "d1e397560154abb73e1b964379a267ac",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1576,11 +1576,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v2.1",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "3aa2d1c660dd3b8740495097fa8761a5ca4a7526"
+                "reference": "21ae6f5316f85f701d228bdcd58f12829af1ce4f"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -1608,7 +1608,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-20T08:01:19+00:00"
+            "time": "2021-02-02T23:58:51+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
