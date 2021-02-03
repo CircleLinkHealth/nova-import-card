@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
+use CircleLinkHealth\SelfEnrollment\Helpers;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
