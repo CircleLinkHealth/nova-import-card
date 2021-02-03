@@ -510,8 +510,9 @@ class SelfEnrollmentTest extends TestCase
         $patient->fresh();
         $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
         self::assertTrue(ProviderClinicalTypes::LPN === $specialty);
+        $patient = new User($patient->toArray());
 
-        $emailContent     = $this->getEnrolleeMessageContent(new User($patient->toArray()), false);
+        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
         $providerLastName = $emailContent['providerLastName'];
         $nameWithType     = "$specialty $providerLastName";
 
@@ -530,7 +531,7 @@ class SelfEnrollmentTest extends TestCase
 
         self::assertTrue(ProviderClinicalTypes::DR === $specialty);
 
-        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $emailContent     = $this->getEnrolleeMessageContent(new User($patient->toArray()), false);
         $providerLastName = $emailContent['providerLastName'];
         $nameWithType     = "$specialty $providerLastName";
 
@@ -548,7 +549,7 @@ class SelfEnrollmentTest extends TestCase
         $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
         self::assertTrue(ProviderClinicalTypes::NP === $specialty);
 
-        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $emailContent     = $this->getEnrolleeMessageContent(new User($patient->toArray()), false);
         $providerLastName = $emailContent['providerLastName'];
         $nameWithType     = "$specialty $providerLastName";
 
@@ -592,7 +593,7 @@ class SelfEnrollmentTest extends TestCase
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
         $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED);
-        self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
+        self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED === Helpers::awvUserSurveyQuery(new User($patient->toArray()), $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_survey_in_progress()
@@ -600,7 +601,7 @@ class SelfEnrollmentTest extends TestCase
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
         $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS);
-        self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
+        self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS === Helpers::awvUserSurveyQuery(new User($patient->toArray()), $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_viewed_login_form()
@@ -609,7 +610,7 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->user;
         Notification::fake();
         Mail::fake();
-        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        SendInvitation::dispatch(new User($patient->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         )->id);
