@@ -117,7 +117,7 @@
         "circlelinkhealth/ccm-billing-module": "2.0.3",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/core-module": "2.8",
-        "circlelinkhealth/cpm-migrations-module": "3.0.3",
+        "circlelinkhealth/cpm-migrations-module": "3.0.4",
         "circlelinkhealth/customer-module": "4.2.8",
         "circlelinkhealth/eligibility-module": "4.5.1",
         "circlelinkhealth/enrollment-invites": "*",
