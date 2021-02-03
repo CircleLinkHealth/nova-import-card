@@ -189,4 +189,22 @@ class Enrollees extends Resource
     {
         return [];
     }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
 }
