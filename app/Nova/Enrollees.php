@@ -8,7 +8,6 @@ namespace App\Nova;
 
 use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Actions\ImportEnrollees;
-use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
 use App\Nova\Filters\NullProviderId;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
@@ -74,7 +73,7 @@ class Enrollees extends Resource
         return [
             new ImportEnrollee(),
             new ImportEnrollees(),
-            new SelfEnrollmentManualInvite(),
+//            new SelfEnrollmentManualInvite(),
             //try to implement in a future date - coordinate with Zach
             //            new MarkEnrolleesForAutoEnrollment(),
         ];

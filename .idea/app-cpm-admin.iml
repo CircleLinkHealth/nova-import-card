@@ -129,7 +129,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/chronos" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/enrollment-invites" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
