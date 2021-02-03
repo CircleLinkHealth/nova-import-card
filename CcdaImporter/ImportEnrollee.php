@@ -28,7 +28,7 @@ class ImportEnrollee
             /** @var User|null $patientUser */
             $patientUserImported = $static->handleExistingUser($enrollee);
 
-            if ( ! is_null($patientUserImported)) {
+            if ( ! is_null($patientUserImported) && ! is_null($patientUserImported->patientInfo)) {
                 return $patientUserImported;
             }
         }
@@ -113,7 +113,7 @@ class ImportEnrollee
             return null;
         }
 
-        $user = User::withTrashed()->find($enrollee->user_id);
+        $user = User::withTrashed()->with('patientInfo')->find($enrollee->user_id);
 
         if ( ! $user) {
             $enrollee->user_id = null;
