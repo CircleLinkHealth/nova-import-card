@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.172.4",
+            "version": "3.173.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "506e60798bb7d13bdafadce9727ab9cc9ac987b0"
+                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/506e60798bb7d13bdafadce9727ab9cc9ac987b0",
-                "reference": "506e60798bb7d13bdafadce9727ab9cc9ac987b0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
+                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-01-29T19:17:51+00:00"
+            "time": "2021-02-02T20:01:31+00:00"
         },
         {
             "name": "brick/math",
@@ -878,7 +878,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "664de263aef56a886531a9f34c69be922494dccd"
+                "reference": "83823aa3b343c3ea760cb1bd982afe0227b6ddae"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -912,7 +912,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4.x-dev"
+                    "dev-master": "2.4.x-dev",
+                    "dev-road_547_core": "2.3.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -933,7 +934,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-16T02:35:25+00:00"
+            "time": "2021-02-02T23:08:19+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -941,7 +942,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "859b7dbf22b1f883b217ad0facbc7f7679a99ff6"
+                "reference": "8bd00a8d054276b72d25125714dadf9565615e8f"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -953,7 +954,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.1.x-dev",
+                    "dev-road_547_cpmAdmin": "1.2.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -987,7 +989,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-16T03:06:48+00:00"
+            "time": "2021-02-02T16:56:08+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1580,7 +1582,7 @@
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "v1.11",
+            "version": "v1.12",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/synonyms.git",
@@ -4707,16 +4709,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.25.0",
+            "version": "v8.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "05da44d6823c2923597519ac10151f5827a24f80"
+                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/05da44d6823c2923597519ac10151f5827a24f80",
-                "reference": "05da44d6823c2923597519ac10151f5827a24f80",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
+                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
                 "shasum": ""
             },
             "require": {
@@ -4867,7 +4869,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-01-26T14:40:21+00:00"
+            "time": "2021-02-02T14:07:24+00:00"
         },
         {
             "name": "laravel/legacy-factories",
@@ -4923,17 +4925,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.20.0",
+            "version": "3.21.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea"
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea-zip-38e8b1.zip",
-                "reference": "1aac226bb9cd928bde1c7daa9b90c53e8b62e3ea",
-                "shasum": "9782ab64f7dc798b5499b8eb0f65f1a2985629fb"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-a50eb75d8c5ea26320353f96c26266ad53c5ff93-zip-714e68.zip",
+                "reference": "a50eb75d8c5ea26320353f96c26266ad53c5ff93",
+                "shasum": "3d2d72bd42bf44b4df671194cb5381a3167f3aa6"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5010,7 +5012,10 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2021-01-19T18:52:03+00:00"
+            "support": {
+                "source": "https://github.com/laravel/nova/tree/v3.21.0"
+            },
+            "time": "2021-02-02T17:55:49+00:00"
         },
         {
             "name": "laravel/passport",
@@ -6234,16 +6239,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v2.3.8",
+            "version": "v2.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "c661e295428b2baaff04320d0a9424db5ca72be5"
+                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/c661e295428b2baaff04320d0a9424db5ca72be5",
-                "reference": "c661e295428b2baaff04320d0a9424db5ca72be5",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/5036ba31571c7ec3feca9a171e96e33628bab5ea",
+                "reference": "5036ba31571c7ec3feca9a171e96e33628bab5ea",
                 "shasum": ""
             },
             "require": {
@@ -6298,7 +6303,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-21T14:01:48+00:00"
+            "time": "2021-02-03T01:16:27+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -9424,16 +9429,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "3.1.3",
+            "version": "3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "db8a322f87983bb4f3cd8db01f9a9a593efe72a3"
+                "reference": "5ff718099ac0050385c562b7c1da88dd215c48f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/db8a322f87983bb4f3cd8db01f9a9a593efe72a3",
-                "reference": "db8a322f87983bb4f3cd8db01f9a9a593efe72a3",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/5ff718099ac0050385c562b7c1da88dd215c48f9",
+                "reference": "5ff718099ac0050385c562b7c1da88dd215c48f9",
                 "shasum": ""
             },
             "require": {
@@ -9441,8 +9446,7 @@
                 "ext-mbstring": "*",
                 "guzzlehttp/promises": "^1.4",
                 "guzzlehttp/psr7": "^1.7",
-                "jean85/pretty-package-versions": "^1.5",
-                "ocramius/package-versions": "^1.8",
+                "jean85/pretty-package-versions": "^1.5|^2.0.1",
                 "php": "^7.2|^8.0",
                 "php-http/async-client-implementation": "^1.0",
                 "php-http/client-common": "^1.5|^2.0",
@@ -9521,7 +9525,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-01-25T08:47:45+00:00"
+            "time": "2021-02-02T08:56:03+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -14879,11 +14883,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.11.8.1",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "fbe0f2ce1cf98f0eea0869d967559f9349d3d174"
+                "reference": "3a155c3836814d7f53387066c7ab758734d037cd"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14939,7 +14943,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-01T16:27:41+00:00"
+            "time": "2021-02-02T23:38:10+00:00"
         },
         {
             "name": "maximebf/debugbar",
@@ -16183,16 +16187,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.1",
+            "version": "9.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360"
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7bdf4085de85a825f4424eae52c99a1cec2f360",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f661659747f2f87f9e72095bb207bceb0f151cb4",
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4",
                 "shasum": ""
             },
             "require": {
@@ -16278,7 +16282,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-17T07:42:25+00:00"
+            "time": "2021-02-02T14:45:58+00:00"
         },
         {
             "name": "psalm/plugin-laravel",
