@@ -67,7 +67,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
 
         ApproveIfValid::dispatch($enrollee->user, CarePlanAutoApprover::user());
-    
+
         //If enrollee is from uploaded CSV from Nova Page,
         //Where we create Enrollees without any other data,
         //so we can consent them and then ask the practice to send us the CCDs
@@ -75,8 +75,8 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if (Enrollee::UPLOADED_CSV === $enrollee->source && ! $enrollee->user->patientInfo) {
             return;
         }
-        
-        if (!$enrollee->user->patientInfo) {
+
+        if ( ! $enrollee->user->patientInfo) {
             return;
         }
 

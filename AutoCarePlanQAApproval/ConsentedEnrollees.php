@@ -27,7 +27,7 @@ class ConsentedEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        $this->consentedEnrollees()->orderBy('consented_at')
+        $this->consentedEnrollees()->orderByDesc('consented_at')
             ->each(function (Enrollee $enrollee) {
                 ImportAndApproveEnrollee::dispatch($enrollee);
             });
