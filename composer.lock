@@ -12489,11 +12489,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
-                "reference": "d17085afe09b75ed31d9794384521161ad1efa32"
+                "reference": "3a155c3836814d7f53387066c7ab758734d037cd"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -12549,7 +12549,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-22T22:43:29+00:00"
+            "time": "2021-02-02T23:38:10+00:00"
         },
         {
             "name": "mockery/mockery",
