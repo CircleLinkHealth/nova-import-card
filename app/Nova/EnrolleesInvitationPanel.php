@@ -222,14 +222,13 @@ class EnrolleesInvitationPanel extends Resource
                 return self::COMPLETED === $awvUserSurvey->status;
             }),
 
-            Boolean::make('Enrolled', function () use($awvUserSurvey) {
+
+            Boolean::make('Enrolled/Imported', function () use($awvUserSurvey) {
                 if ( ! $awvUserSurvey) {
                     return false;
                 }
 
-                return Enrollee::ENROLLED === $this->resource->status
-                    || (Enrollee::CONSENTED === $this->resource->status
-                        && self::COMPLETED === $awvUserSurvey->status);
+                return Enrollee::ENROLLED === $this->resource->status;
             }),
         ];
     }
