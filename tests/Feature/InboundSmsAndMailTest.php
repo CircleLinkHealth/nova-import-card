@@ -19,7 +19,7 @@ use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use CircleLinkHealth\Customer\Tests\Concerns\TwilioFake\Twilio;
+use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
 
 class InboundSmsAndMailTest extends CustomerTestCase
 {
