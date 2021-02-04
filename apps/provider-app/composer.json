@@ -155,6 +155,10 @@
     {
       "type": "path",
       "url": "./CircleLinkHealth/TwoFA"
+    },
+    {
+      "type": "path",
+      "url": "./CircleLinkHealth/VaporCli"
     }
   ],
   "require-dev": {
@@ -167,6 +171,7 @@
     "jkocik/laravel-profiler": "^2.0",
     "kitloong/laravel-migrations-generator": "^4.3",
     "laravel/dusk": "^6.0",
+    "laravel/vapor-cli": "*",
     "mockery/mockery": "^1.3.1",
     "nunomaduro/collision": "^5.0",
     "orangehill/iseed": "dev-master",
