@@ -7,7 +7,11 @@
 namespace App\Console;
 
 use App\Console\Commands\CheckVoiceCalls;
+use App\Console\Commands\GenerateReportForScheduledPAM;
 use CircleLinkHealth\Core\Console\Commands\CheckEmrDirectInbox;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
+use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
+use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
@@ -57,9 +61,24 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
 //            ->hourly()
 //            ->between('7:00', '23:00');
+    
+        $schedule->command(GenerateReportForScheduledPAM::class)
+                 ->monthlyOn(date('t'), '23:30');
 
 //        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
 //            ->everyFifteenMinutes()
 //            ->between('8:00', '23:00');
+
+//        $schedule->job(AutoQAApproveValidPatients::class)
+//                 ->everyFifteenMinutes()
+//                 ->between('8:00', '23:00');
+    
+        $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
+                 ->dailyAt('22:30')
+                 ->onOneServer();
+    
+        $schedule->command(GetCcds::class)
+                 ->dailyAt('03:00')
+                 ->onOneServer();
     }
 }
