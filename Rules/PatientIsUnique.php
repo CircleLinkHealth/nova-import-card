@@ -10,6 +10,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Collection;
 
 class PatientIsUnique implements Rule
 {
@@ -34,9 +35,9 @@ class PatientIsUnique implements Rule
      */
     protected $practiceId;
     /**
-     * @var int
+     * @var Collection
      */
-    private $duplicatePatientUserId;
+    private $duplicatePatientUserIds;
     /**
      * @var int|null
      */
@@ -61,9 +62,15 @@ class PatientIsUnique implements Rule
 
     public function getPatientUserId(): ?int
     {
-        return $this->duplicatePatientUserId;
+        return $this->duplicatePatientUserIds->first();
     }
-
+    
+    public function getPatientUserIds(): ?Collection
+    {
+        return $this->duplicatePatientUserIds;
+    }
+    
+    
     /**
      * Get the validation error message.
      *
@@ -71,7 +78,7 @@ class PatientIsUnique implements Rule
      */
     public function message()
     {
-        return 'This patient is a duplicate of patient with ID '.$this->duplicatePatientUserId;
+        return 'This patient is a duplicate of patient with ID '.$this->duplicatePatientUserIds;
     }
 
     /**
@@ -84,25 +91,25 @@ class PatientIsUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->duplicatePatientUserId = $this->mysqlMatchPatient();
+        $this->duplicatePatientUserIds = $this->mysqlMatchPatient();
 
-        if ($this->duplicatePatientUserId) {
+        if ($this->duplicatePatientUserIds->isNotEmpty()) {
             return false;
         }
 
         if ($this->mrn) {
-            $this->duplicatePatientUserId = Patient::whereHas(
+            $this->duplicatePatientUserIds = Patient::whereHas(
                 'user',
                 function ($q) {
                     $q->where('program_id', $this->practiceId);
                 }
             )->whereMrnNumber($this->mrn)->whereNotNull('mrn_number')
-                ->when($this->patientUserId, function ($q) {
+                                                    ->when($this->patientUserId, function ($q) {
                     $q->where('user_id', '!=', $this->patientUserId);
                 })
-                ->value('user_id');
+                                                    ->pluck('user_id');
 
-            if ($this->duplicatePatientUserId) {
+            if ($this->duplicatePatientUserIds) {
                 return false;
             }
         }
@@ -110,7 +117,7 @@ class PatientIsUnique implements Rule
         return true;
     }
 
-    private function mysqlMatchPatient(): ?int
+    private function mysqlMatchPatient(): ?Collection
     {
         return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('+$this->firstName +$this->lastName' IN BOOLEAN MODE)")
             ->ofPractice($this->practiceId)
@@ -127,6 +134,6 @@ class PatientIsUnique implements Rule
                 $q->ofType(['participant', 'survey-only'])
                     ->orWhereDoesntHave('roles');
             })
-            ->value('id');
+            ->pluck('id');
     }
 }
