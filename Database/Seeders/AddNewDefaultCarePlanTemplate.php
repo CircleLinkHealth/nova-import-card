@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace CircleLinkHealth\Customer\Database\Seeders;
+
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;

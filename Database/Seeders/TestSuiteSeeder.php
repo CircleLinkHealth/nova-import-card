@@ -4,9 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace CircleLinkHealth\Customer\Database\Seeders;
+
+// This file is part of CarePlan Manager by CircleLink Health.
+
 use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 use CircleLinkHealth\CcmBilling\Database\Seeders\ChargeableServiceSeeder;
-use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 

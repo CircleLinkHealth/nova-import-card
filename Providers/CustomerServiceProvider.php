@@ -6,21 +6,15 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
-use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
-use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
-use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
-use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
-use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
-use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Notifications\HasDatabaseNotifications;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 
-class CustomerServiceProvider extends ServiceProvider implements DeferrableProvider
+class CustomerServiceProvider extends ServiceProvider
 {
+    public function boot()
+    {
+        $this->registerConfig();
+    }
+
     /**
      * Get the services provided by the provider.
      *
@@ -29,12 +23,6 @@ class CustomerServiceProvider extends ServiceProvider implements DeferrableProvi
     public function provides()
     {
         return [
-            CreateRolesPermissionsMigration::class,
-            CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
-            CreateLocationsFromAthenaApi::class,
-            HasDatabaseNotifications::class,
-            Notifiable::class,
-            DatabaseNotification::class,
         ];
     }
 
@@ -43,54 +31,7 @@ class CustomerServiceProvider extends ServiceProvider implements DeferrableProvi
      */
     public function register()
     {
-        $this->registerTranslations();
-        $this->registerConfig();
         $this->registerViews();
-        $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        $this->app->register(CpmMigrationsServiceProvider::class);
-        $this->app->register(SqlViewsServiceProvider::class);
-        if (class_exists(\App\User::class)) {
-            Relation::morphMap([
-                \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
-            ]);
-        }
-
-        $this->app->register(RouteServiceProvider::class);
-        $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Core\Entities\DatabaseNotification::class);
-        $this->app->bind(
-            HasDatabaseNotifications::class,
-            \CircleLinkHealth\Core\Traits\HasDatabaseNotifications::class
-        );
-        $this->app->bind(Notifiable::class, \CircleLinkHealth\Core\Traits\Notifiable::class);
-
-        $this->commands([
-            CreateRolesPermissionsMigration::class,
-            CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
-            CreateLocationsFromAthenaApi::class,
-        ]);
-    }
-
-    /**
-     * Register an additional directory of factories.
-     */
-    public function registerFactories()
-    {
-        app(Factory::class)->load(__DIR__.'/../Database/Factories');
-    }
-
-    /**
-     * Register translations.
-     */
-    public function registerTranslations()
-    {
-        $langPath = resource_path('lang/modules/customer');
-
-        if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, 'customer');
-        } else {
-            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'customer');
-        }
     }
 
     /**
@@ -149,6 +90,15 @@ class CustomerServiceProvider extends ServiceProvider implements DeferrableProvi
         $this->mergeConfigFrom(
             __DIR__.'/../Config/cerberus.php',
             'cerberus'
+        );
+
+        $this->publishes([
+            __DIR__.'/../Config/medialibrary.php' => config_path('medialibrary.php'),
+        ], 'medialibrary');
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../Config/medialibrary.php',
+            'medialibrary'
         );
     }
 }

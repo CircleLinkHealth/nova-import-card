@@ -4,10 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Call;
-use App\DirectMailMessage;
-use App\Models\PracticePull\Demographics;
-use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
@@ -16,10 +12,14 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 
 $factory->define(
     \CircleLinkHealth\Customer\Entities\User::class,
@@ -51,8 +51,8 @@ $factory->define(Patient::class, function (Faker\Generator $faker) use ($factory
 });
 
 $factory->define(
-    \CircleLinkHealth\TimeTracking\Entities\Activity::class,
-    function (Faker\Generator $faker) use ($factory) {
+    \CircleLinkHealth\SharedModels\Entities\Activity::class,
+    function (Faker\Generator $faker) {
         return [
             'type'          => $faker->text(15),
             'duration'      => $faker->numberBetween(1, 120),
@@ -62,7 +62,7 @@ $factory->define(
     }
 );
 
-$factory->define(App\Note::class, function (Faker\Generator $faker) use ($factory) {
+$factory->define(\CircleLinkHealth\SharedModels\Entities\Note::class, function (Faker\Generator $faker) use ($factory) {
     return [
         'patient_id'           => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
         'author_id'            => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
@@ -165,7 +165,7 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
+$factory->define(Enrollee::class, function (Faker\Generator $faker) {
     if (isProductionEnv()) {
         $practice = Practice::whereName('demo')->firstOrFail();
         $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')

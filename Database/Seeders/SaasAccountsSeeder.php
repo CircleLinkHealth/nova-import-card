@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace CircleLinkHealth\Customer\Database\Seeders;
+
+// This file is part of CarePlan Manager by CircleLink Health.
+
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Database\Seeder;
 

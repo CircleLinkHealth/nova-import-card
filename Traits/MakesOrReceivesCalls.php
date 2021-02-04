@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 /**
  * Trait MakesOrReceivesCalls.
@@ -21,7 +21,7 @@ trait MakesOrReceivesCalls
                 ->orWhere('type', '=', 'call')
                 ->orWhere('sub_type', '=', 'Call Back');
         })
-            ->where(function ($q) use ($date) {
+            ->where(function ($q) {
                 $q->where('outbound_cpm_id', $this->id)
                     ->orWhere('inbound_cpm_id', $this->id);
             })

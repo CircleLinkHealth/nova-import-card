@@ -8,12 +8,12 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\Traits\DateScopesTrait;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Support\Collection;
 
 /**

@@ -6,18 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\Call;
-use App\CareplanAssessment;
-use App\Constants;
-use App\ForeignId;
-use App\LoginLogout;
-use App\Message;
-use App\Models\EmailSettings;
-use App\Notifications\CarePlanApprovalReminder;
-use App\Notifications\ResetPassword;
-use App\Repositories\Cache\EmptyUserNotificationList;
-use App\Repositories\Cache\UserNotificationList;
-use App\Services\UserService;
+use App\Jobs\SendCarePlanApprovalReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
@@ -31,22 +20,23 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
+use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
+use CircleLinkHealth\Customer\Services\UserService;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
@@ -60,9 +50,17 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
 use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use CircleLinkHealth\SharedModels\Entities\CpmWeight;
+use CircleLinkHealth\SharedModels\Entities\Dispute;
+use CircleLinkHealth\SharedModels\Entities\EmailSettings;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\ForeignId;
+use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Message;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -77,7 +75,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
@@ -123,16 +120,16 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property string|null                                                                                                     $last_session_id
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[]                                    $actions
  * @property int|null                                                                                                        $actions_count
- * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activities
+ * @property \CircleLinkHealth\SharedModels\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activities
  * @property int|null                                                                                                        $activities_count
- * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activitiesAsProvider
+ * @property \CircleLinkHealth\SharedModels\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activitiesAsProvider
  * @property int|null                                                                                                        $activities_as_provider_count
  * @property \CircleLinkHealth\Customer\Entities\Appointment[]|\Illuminate\Database\Eloquent\Collection                      $appointments
  * @property int|null                                                                                                        $appointments_count
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
  * @property \CircleLinkHealth\Customer\Entities\CareAmbassador                                                              $careAmbassador
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
- * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
+ * @property \CircleLinkHealth\SharedModels\Entities\CareplanAssessment                                                      $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
  * @property int|null                                                                                                        $care_team_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies
@@ -151,7 +148,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $clients_count
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $clinicalEmergencyContactLocations
  * @property int|null                                                                                                        $clinical_emergency_contact_locations_count
- * @property \App\Comment[]|\Illuminate\Database\Eloquent\Collection                                                         $comment
+ * @property \CircleLinkHealth\SharedModels\Entities\Comment[]|\Illuminate\Database\Eloquent\Collection                      $comment
  * @property int|null                                                                                                        $comment_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                 $cpmBiometrics
  * @property int|null                                                                                                        $cpm_biometrics_count
@@ -171,14 +168,14 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                   $cpmSymptoms
  * @property int|null                                                                                                        $cpm_symptoms_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
- * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
+ * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                      $disputes
  * @property int|null                                                                                                        $disputes_count
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
- * @property \App\Models\EmailSettings                                                                                       $emailSettings
+ * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                           $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
  * @property int|null                                                                                                        $emr_direct_count
- * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
+ * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                    $foreignId
  * @property int|null                                                                                                        $foreign_id_count
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardAlertsTo
  * @property int|null                                                                                                        $forward_alerts_to_count
@@ -192,35 +189,35 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property mixed                                                                                                           $timezone_abbr
  * @property mixed                                                                                                           $timezone_offset
  * @property mixed                                                                                                           $timezone_offset_hours
- * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundActivities
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundActivities
  * @property int|null                                                                                                        $inbound_activities_count
- * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundCalls
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundCalls
  * @property int|null                                                                                                        $inbound_calls_count
- * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $inboundMessages
  * @property int|null                                                                                                        $inbound_messages_count
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $locations
  * @property int|null                                                                                                        $locations_count
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
  * @property int|null                                                                                                        $media_count
- * @property \App\Note[]|\Illuminate\Database\Eloquent\Collection                                                            $notes
+ * @property \CircleLinkHealth\SharedModels\Entities\Note[]|\Illuminate\Database\Eloquent\Collection                         $notes
  * @property int|null                                                                                                        $notes_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
+ * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection            $nurseBonuses
  * @property int|null                                                                                                        $nurse_bonuses_count
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
- * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
+ * @property \CircleLinkHealth\SharedModels\Entities\Observation[]|\Illuminate\Database\Eloquent\Collection                  $observations
  * @property int|null                                                                                                        $observations_count
- * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count
- * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $outboundMessages
  * @property int|null                                                                                                        $outbound_messages_count
- * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
+ * @property \CircleLinkHealth\SharedModels\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
  * @property int|null                                                                                                        $page_timers_as_provider_count
  * @property \CircleLinkHealth\Customer\Entities\UserPasswordsHistory                                                        $passwordsHistory
  * @property \CircleLinkHealth\Customer\Entities\PatientAWVSummary[]|\Illuminate\Database\Eloquent\Collection                $patientAWVSummaries
  * @property int|null                                                                                                        $patient_a_w_v_summaries_count
- * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
+ * @property \CircleLinkHealth\SharedModels\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
  * @property int|null                                                                                                        $patient_activities_count
  * @property \CircleLinkHealth\Customer\Entities\Patient                                                                     $patientInfo
  * @property \CircleLinkHealth\Customer\Entities\PatientNurse                                                                $patientNurseAsPatient
@@ -245,7 +242,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $ucp_count
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
  * @method   static                                                                                                          bool|null forceDelete()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasBillingProvider($billing_provider_id)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectLocationsWith($user)
@@ -301,18 +298,16 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                       $enrollmentInvitationLinks
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                             $enrollableInfoRequest
- * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                             $loginEvents
+ * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection          $loginEvents
  * @property int|null                                                                                                $login_events_count
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                                                    $enrollee
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                                   $enrollee
  * @property int|null                                                                                                $enrollment_invitation_links_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection              $assignedEnrollees
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection             $assignedEnrollees
  * @property int|null                                                                                                $assigned_enrollees_count
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
  * @property int|null                                                                                                $patient_ccm_status_revisions_count
@@ -329,6 +324,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -340,13 +337,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
-    use \Laravel\Nova\Actions\Actionable;
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
-    use SelfEnrollableTrait;
     use SoftDeletes;
     use TimezoneTrait;
 
@@ -354,6 +349,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
+    const MAX_SUFFIX_LENGTH                                        = 3;
 
     const SCOPE_LOCATION = 'location';
     const SCOPE_PRACTICE = 'practice';
@@ -428,10 +424,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     protected $rules = [];
 
-    //we need this for ProtectsPHI.php
-    //it is used with CerberusSiteUserTrait::setRelation
-    protected $with = ['roles', 'perms'];
-
     private static $canSeePhi = [];
 
     private $isAllowedToSeePhi;
@@ -450,12 +442,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function activities()
     {
-        return $this->hasMany(\CircleLinkHealth\TimeTracking\Entities\Activity::class, 'patient_id');
+        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\Activity::class, 'patient_id');
     }
 
     public function activitiesAsProvider()
     {
-        return $this->hasMany(\CircleLinkHealth\TimeTracking\Entities\Activity::class, 'provider_id');
+        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\Activity::class, 'provider_id');
     }
 
     public function appointments()
@@ -770,15 +762,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
-    public function cachedNotificationsList()
-    {
-        if (in_array(config('cache.default'), ['redis'])) {
-            return new UserNotificationList($this->id);
-        }
-
-        return new EmptyUserNotificationList();
-    }
-
     public function calls()
     {
         return $this->outboundCalls();
@@ -951,7 +934,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function comment()
     {
-        return $this->hasMany('App\Comment', 'user_id', 'id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\Comment', 'user_id', 'id');
     }
 
     /**
@@ -1286,9 +1269,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return string
      */
-    public function getBillingProviderName()
+    public function getBillingProviderName(bool $lookInCareTeam = false)
     {
-        $billingProvider = $this->billingProviderUser();
+        if ($lookInCareTeam && $this->relationLoaded('careTeamMembers')) {
+            $billingProvider = optional($this->careTeamMembers->firstWhere('type', '=', CarePerson::BILLING_PROVIDER))->user;
+        } else {
+            $billingProvider = $this->billingProviderUser();
+        }
 
         return $billingProvider
             ? $billingProvider->getFullName()
@@ -1560,24 +1547,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->date_withdrawn;
     }
 
-    public function getDoctorFullNameWithSpecialty()
-    {
-        $specialty = '';
-
-        if ($this->providerInfo) {
-            $specialty = $this->getSpecialty() == $this->getSuffix()
-                ? ''
-                : "\n {$this->getSpecialty()}";
-        }
-
-        $fullName = $this->getFullName();
-        $doctor   = Str::startsWith(strtolower($fullName), 'dr.')
-            ? ''
-            : 'Dr. ';
-
-        return $doctor.$fullName.$specialty;
-    }
-
     public function getEmailForPasswordReset()
     {
         return $this->email;
@@ -1590,11 +1559,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getFullName()
     {
-        $firstName = $this->first_name;
-        $lastName  = $this->last_name;
-        $suffix    = $this->getSuffix();
+        $doctorPrefix = '';
+        $suffix       = $this->getSuffix();
 
-        return trim("${firstName} ${lastName} ${suffix}");
+        if ($this->isProvider()) {
+            $specialty = $this->getSpecialty();
+
+            if (empty($suffix) && ! empty($specialty) && strlen($specialty) <= self::MAX_SUFFIX_LENGTH) {
+                $suffix = $specialty;
+            }
+            $doctorPrefix = new DoctorOrEmptyStringPrefix($this->first_name, $suffix);
+        }
+
+        return trim("$doctorPrefix $this->first_name $this->last_name $suffix");
     }
 
     public function getFullNameWithId()
@@ -2082,6 +2059,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
+        if (strtolower(extractLetters($this->providerInfo->specialty)) === strtolower(extractLetters($this->getSuffix()))) {
+            return '';
+        }
+
         return $this->providerInfo->specialty;
     }
 
@@ -2156,7 +2137,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return null;
         }
 
-        $cacheKey = str_replace('{$userId}', $this->id, Constants::CACHE_USER_HAS_CCDA);
+        $cacheKey = str_replace('{$userId}', $this->id, CpmConstants::CACHE_USER_HAS_CCDA);
 
         return Cache::remember(
             $cacheKey,
@@ -2361,7 +2342,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isInternalUser()
     {
-        return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
+        return $this->hasRole(CpmConstants::CLH_INTERNAL_USER_ROLE_NAMES);
     }
 
     /**
@@ -2404,7 +2385,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isPracticeStaff(): bool
     {
-        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+        return $this->hasRole(CpmConstants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
     /**
@@ -2520,7 +2501,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function notes()
     {
-        return $this->hasMany('App\Note', 'patient_id', 'id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\Note', 'patient_id', 'id');
     }
 
     /**
@@ -2540,7 +2521,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function observations()
     {
-        return $this->hasMany('App\Observation', 'user_id', 'id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\Observation', 'user_id', 'id');
     }
 
     public function onFirstCall(): bool
@@ -2586,7 +2567,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientActivities()
     {
-        return $this->hasMany(\CircleLinkHealth\TimeTracking\Entities\Activity::class, 'patient_id', 'id');
+        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\Activity::class, 'patient_id', 'id');
     }
 
     public function patientAWVSummaries()
@@ -2979,6 +2960,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function samlUsers()
     {
         return $this->hasMany(SamlUser::class, 'cpm_user_id', 'id');
+    }
+
+    public function scopeActiveNurses($builder)
+    {
+        return $builder->whereHas(
+            'nurseInfo',
+            function ($info) {
+                $info->where('status', 'active')
+                    ->when(
+                        isProductionEnv(),
+                        function ($info) {
+                            $info->where('is_demo', false);
+                        }
+                    );
+            }
+        );
     }
 
     public function scopeCareCoaches($query)
@@ -3397,6 +3394,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function scopeOfTypePatients($query)
+    {
+        return $query->ofType(CpmConstants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+    }
+
     /**
      * @param mixed $query
      *
@@ -3480,12 +3482,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopePracticeStaff($query)
     {
-        return $query->ofType(Constants::PRACTICE_STAFF_ROLE_NAMES);
-    }
-    
-    public function scopeOfTypePatients($query)
-    {
-        return $query->ofType(Constants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+        return $query->ofType(CpmConstants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
     /**
@@ -3559,35 +3556,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
     {
-        return $query->careCoaches()->with([
-            'nurseInfo' => function ($nurseInfo) use ($startDate) {
-                $nurseInfo->with(
-                    [
-                        'invoices' => function ($invoice) use ($startDate) {
-                            $invoice->where('month_year', $startDate);
-                        },
-                    ]
-                );
-            },
-            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
-                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
-            },
-        ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
-            $invoice->where('month_year', $startDate);
-        })
-            //            Need nurses that are currently active or used to be for selected month
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->whereHas(
-                    'nurseInfo',
-                    function ($info) {
-                        $info->where('status', 'active')->when(
-                            isProductionEnv(),
-                            function ($info) {
-                                $info->where('is_demo', false);
-                            }
-                        );
-                    }
-                )
+        return $query->careCoaches()
+            ->without(['roles', 'perms'])
+            ->with([
+                'nurseInfo' => function ($nurseInfo) use ($startDate) {
+                    $nurseInfo->with(
+                        [
+                            'invoices' => function ($invoice) use ($startDate) {
+                                $invoice->where('month_year', $startDate);
+                            },
+                        ]
+                    );
+                },
+                'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                    $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+                },
+            ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
+                $invoice->where('month_year', $startDate);
+            })->where(function ($query) use ($startDate, $endDate) {
+                $query->activeNurses()
                     ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
                         $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
                     });
@@ -3615,16 +3602,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function sendCarePlanApprovalReminder($numberOfCareplans, $force = false)
     {
         if ( ! $this->shouldSendCarePlanApprovalReminder() && ! $force) {
+            Log::debug('not sending cp approval reminder because cp1');
+
             return false;
         }
 
         if ($numberOfCareplans < 1) {
+            Log::debug('not sending cp approval reminder because cp2');
+
             return false;
         }
 
-        $this->loadMissing(['primaryPractice.settings']);
-
-        $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
+        SendCarePlanApprovalReminder::dispatch($this->id, $numberOfCareplans);
 
         return true;
     }

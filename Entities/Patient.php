@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Revisionable\Entities\Revision;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -84,7 +84,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolled()
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\App\Filters\QueryFilters $filters)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
  * @method   static                                                                                              bool|null forceDelete()
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient hasFamily()
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newModelQuery()
@@ -335,7 +335,7 @@ class Patient extends BaseModel
      * 1. Get next month
      * 2. Find first entry from end of month
      * 3. If exists, then return the `old_value`
-     * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}.
+     * 4. Otherwise, return ccm_status from {@link \CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient @patientInfo}.
      *
      * NOTE: if relation is already loaded, data from relation will be used
      *
@@ -497,7 +497,7 @@ class Patient extends BaseModel
 
     public function lastNurseThatPerformedActivity()
     {
-        $id = \CircleLinkHealth\TimeTracking\Entities\Activity::where('patient_id', $this->user_id)
+        $id = \CircleLinkHealth\SharedModels\Entities\Activity::where('patient_id', $this->user_id)
             ->whereHas('provider', function ($q) {
                 $q->ofType('care-center');
             })

@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Repositories;
 
-use App\Http\Controllers\API\PracticeStaffController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -24,7 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Exceptions\ValidationException;
-use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
@@ -381,7 +381,7 @@ class UserRepository
             if ('date_paused' == $key
                 || 'date_withdrawn' == $key
             ) {
-                continue 1;
+                continue;
             }
 
             if ('ccm_status' == $key) {
@@ -619,7 +619,7 @@ class UserRepository
      */
     public static function validatePatientDoesNotAlreadyExist(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null)
     {
-        $validator = new PatientIsNotDuplicate(
+        $validator = new PatientIsUnique(
             $practiceId,
             $firstName,
             $lastName,
@@ -692,7 +692,7 @@ class UserRepository
     {
         $isPracticeStaff = Role::allRoles()
             ->whereIn('id', $roleIds)
-            ->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)
+            ->whereIn('name', CpmConstants::PRACTICE_STAFF_ROLES)
             ->isNotEmpty();
 
         if ($isPracticeStaff) {
