@@ -16,7 +16,7 @@ class GenerateCalvaryEnrollmentLetter extends Migration
     public function down()
     {
     }
-    
+
     /**
      * Run the migrations.
      *
@@ -24,7 +24,8 @@ class GenerateCalvaryEnrollmentLetter extends Migration
      */
     public function up()
     {
-        if (class_exists($class = 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCalvaryClinicLetter'))
+        if (class_exists($class = 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCalvaryClinicLetter')) {
             Artisan::call('db:seed', ['--class' => $class]);
+        }
     }
 }

@@ -25,6 +25,8 @@ class CreateCameronEnrolmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('create:cameronLetter');
+        if (class_exists('CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter')) {
+            Artisan::call('create:cameronLetter');
+        }
     }
 }
