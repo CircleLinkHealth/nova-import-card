@@ -8,8 +8,8 @@ namespace Tests\Helpers\Users\Patient;
 
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
-use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 
 trait Problems
 {
