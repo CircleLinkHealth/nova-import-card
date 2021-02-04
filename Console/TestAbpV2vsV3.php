@@ -72,18 +72,26 @@ class TestAbpV2vsV3 extends Command
         $month      = $this->argument('month');
         $month      = ($month ? Carbon::parse($month) : now())->startOfMonth();
 
-        $service = app(ApproveBillablePatientsService::class);
-        $results = $service->getBillablePatientsForMonth($practiceId, $month);
-        $jsoned  = json_decode(json_encode($results), true);
+        $jsoned = measureTime('v2', function () use ($practiceId, $month) {
+            $service = app(ApproveBillablePatientsService::class);
+            $results = $service->getBillablePatientsForMonth($practiceId, $month);
 
-        $serviceV3 = app(ApproveBillablePatientsServiceV3::class);
-        $v3Results = $serviceV3->getBillablePatientsForMonth($practiceId, $month);
-        $v3Jsoned  = json_decode(json_encode($v3Results), true);
+            return json_decode(json_encode($results), true);
+        });
+
+        $v3Jsoned = measureTime('v3', function () use ($practiceId, $month) {
+            $serviceV3 = app(ApproveBillablePatientsServiceV3::class);
+            $v3Results = $serviceV3->getBillablePatientsForMonth($practiceId, $month);
+
+            return json_decode(json_encode($v3Results), true);
+        });
 
         $this->checkIsClosed($jsoned, $v3Jsoned);
-        $this->checkDataCount($jsoned, $v3Jsoned);
-        $this->checkPatientIdsRetrieved($jsoned, $v3Jsoned);
-        $this->checkPatients($jsoned, $v3Jsoned);
+        $checkMore = $this->checkDataCount($jsoned, $v3Jsoned);
+        if ($checkMore) {
+            $this->checkPatientIdsRetrieved($jsoned, $v3Jsoned);
+            $this->checkPatients($jsoned, $v3Jsoned);
+        }
 
         $this->newLine();
         $this->info('Done');
@@ -119,10 +127,12 @@ class TestAbpV2vsV3 extends Command
         return true;
     }
 
-    private function checkDataCount(array $old, array $new)
+    private function checkDataCount(array $old, array $new): bool
     {
         $countEquals = $old['summaries']['total'] === $new['summaries']['total'];
         $this->printResult('count', $countEquals);
+
+        return $countEquals;
     }
 
     private function checkIsClosed(array $old, array $new)
