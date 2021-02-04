@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\AutoCarePlanQAApproval;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Rules\PatientIsUnique;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class DuplicatePatientResolver
 {
@@ -31,7 +32,7 @@ class DuplicatePatientResolver
      *
      * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model $enrollee
      */
-    public function __construct($enrollee)
+    public function __construct(Enrollee &$enrollee)
     {
         $this->enrollee = $enrollee;
     }
@@ -65,6 +66,7 @@ class DuplicatePatientResolver
         $this->deleteAllExcept($keep, $results->pluck('user_id')->all(), $users);
 
         $this->enrollee->user_id = $keep;
+        $this->enrollee->setRelation('user', $users->where('id', $keep)->first());
     }
 
     private function calculateScore(User $user)
