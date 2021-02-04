@@ -111,6 +111,9 @@ class Kernel extends ConsoleKernel
             ->between('7:00', '23:00');
         */
 
+        $schedule->command('schedule-monitor:sync')
+            ->dailyAt('04:56');
+
         $schedule->command('schedule-monitor:clean')
             ->daily();
 

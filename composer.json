@@ -183,6 +183,7 @@
     "league/flysystem-aws-s3-v3": "^1.0",
     "macellan/laravel-zip": "^1.0",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
+    "ohdearapp/ohdear-php-sdk": "^3.0",
     "phaxio/phaxio": "^2.0",
     "propaganistas/laravel-phone": "^4.2.2",
     "pusher/pusher-php-server": "^4.0",

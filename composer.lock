@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "097405bf162d510d23d4af8340107287",
+    "content-hash": "89c4a91b590667ca80c115ebb5f9b819",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -7079,6 +7079,58 @@
                 }
             ],
             "time": "2020-11-14T17:35:34+00:00"
+        },
+        {
+            "name": "ohdearapp/ohdear-php-sdk",
+            "version": "3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ohdearapp/ohdear-php-sdk.git",
+                "reference": "4173e8d0871c496bba4d9c691168f5b33d4cc16d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ohdearapp/ohdear-php-sdk/zipball/4173e8d0871c496bba4d9c691168f5b33d4cc16d",
+                "reference": "4173e8d0871c496bba4d9c691168f5b33d4cc16d",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "nesbot/carbon": "^2.35.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0",
+                "psalm/plugin-laravel": "^1.2",
+                "vlucas/phpdotenv": "^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OhDear\\PhpSdk\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "support@ohdear.app",
+                    "homepage": "https://ohdear.app",
+                    "role": "Developer"
+                }
+            ],
+            "description": "An SDK to easily work with the Oh Dear API",
+            "homepage": "https://github.com/ohdearapp/ohdear-php-sdk",
+            "keywords": [
+                "api",
+                "monitoring",
+                "oh dear",
+                "sdk"
+            ],
+            "time": "2021-01-09T23:13:27+00:00"
         },
         {
             "name": "onelogin/php-saml",
