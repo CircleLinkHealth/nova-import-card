@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Core\Entities;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
-
 /**
  * CircleLinkHealth\Core\Entities\DatabaseNotification.
  *
@@ -116,7 +114,11 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     {
         return $builder->where(function ($q) {
             //legacy and new classes
-            return $q->whereIn('type', ['App\Notifications\SendEnrollementSms', 'App\Notifications\SendEnrollmentEmail', SelfEnrollmentInviteNotification::class]);
+            return $q->whereIn('type', [
+                'App\Notifications\SendEnrollementSms',
+                'App\Notifications\SendEnrollmentEmail',
+                'CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification',
+            ]);
         });
     }
 }
