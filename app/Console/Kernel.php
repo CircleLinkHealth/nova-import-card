@@ -42,6 +42,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('schedule-monitor:sync')
+                 ->dailyAt('04:56');
+
+        $schedule->command('schedule-monitor:clean')
+                 ->daily();
+
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyFiveMinutes();
 

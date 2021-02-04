@@ -27,6 +27,7 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
     staging:
         domain: cpm-admin.clh-staging.com
         storage: cpm-staging-vapor-storage
