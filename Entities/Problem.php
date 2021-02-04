@@ -205,9 +205,9 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         return $query->join('patient_info', 'patient_info.user_id', '=', 'ccd_problems.patient_id')
             ->whereHas('cpmProblem', function (Builder $cpmProblem) use ($service) {
                 $cpmProblem->whereHas('locationChargeableServices', function (Builder $lcs) use ($service) {
-                        $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location')
-                            ->where('code', $service);
-                    });
+                    $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location')
+                        ->where('code', $service);
+                });
             });
     }
 

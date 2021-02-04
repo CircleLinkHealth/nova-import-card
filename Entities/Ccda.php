@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\DirectMailMessage;
-use App\Entities\CcdaRequest;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
@@ -18,16 +16,17 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Traits\BelongsToPatientUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -53,9 +52,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon                                                                  $created_at
  * @property \Illuminate\Support\Carbon                                                                  $updated_at
  * @property \Illuminate\Support\Carbon|null                                                             $deleted_at
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null                                $batch
- * @property \App\Entities\CcdaRequest                                                                   $ccdaRequest
- * @property \App\DirectMailMessage|null                                                                 $directMessage
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null                                $batch
+ * @property \CircleLinkHealth\SharedModels\Entities\CcdaRequest                                         $ccdaRequest
+ * @property \CircleLinkHealth\SharedModels\Entities\DirectMailMessage|null                              $directMessage
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                           $location
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection        $media
  * @property int|null                                                                                    $media_count
@@ -63,7 +62,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                           $practice
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                        $targetPatient
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                        $targetPatient
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda exclude($value = [])
  * @method   static                                                                                      bool|null forceDelete()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506Media()
@@ -121,6 +120,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     const IMPORTER_AWV = 'importer_awv';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
+    const IMPORTER_SELF_ENROLLMENT     = 'importer_self_enrollment';
+
     /**
      * Duplicate patient user ID.
      *
@@ -299,8 +300,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $filename = "ccda-{$ccda->id}.xml";
         }
 
-        \Storage::disk('storage')->put($filename, $xml);
-        $ccda->addMedia(storage_path($filename))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
+        $storage = \Storage::disk('storage');
+        $storage->put($filename, $xml);
+        $ccda->addMedia($storage->path($filename))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
 
         return $ccda;
     }
@@ -542,10 +544,15 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             throw new InvalidCcdaException($this->id);
         }
 
-        $xmlPath = storage_path("ccdas/import/media_{$xmlMedia->id}.xml");
-        file_put_contents($xmlPath, $xml);
+        $xmlFilename  = "ccd_import_media_{$xmlMedia->id}.xml";
+        $jsonFilename = "ccda_import_json_{$this->id}.json";
 
-        $jsonPath = storage_path("ccdas/import/ccda_{$this->id}.json");
+        $drive = Storage::drive('storage');
+        $drive->put($xmlFilename, $xml);
+
+        $xmlPath  = $drive->path($xmlFilename);
+        $jsonPath = $drive->path($jsonFilename);
+        Log::debug("ccda[$this->id].parseToJson inputPath[$xmlPath] outputPath[$jsonPath]");
 
         Artisan::call(
             'ccd:parse',
@@ -556,14 +563,14 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ]
         );
 
-        if (file_exists($xmlPath)) {
-            \Storage::delete($xmlPath);
+        if ($drive->exists($xmlPath)) {
+            $drive->delete($xmlFilename);
         }
 
-        if (file_exists($jsonPath)) {
-            $this->json = file_get_contents($jsonPath);
+        if ($drive->exists($jsonPath)) {
+            $this->json = $drive->get($jsonPath);
             $this->save();
-            \Storage::delete($jsonPath);
+            $drive->delete($jsonFilename);
 
             return;
         }

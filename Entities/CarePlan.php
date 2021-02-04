@@ -6,26 +6,24 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Constants;
-use App\Contracts\PdfReport;
-use App\Contracts\ReportFormatter;
-use App\Note;
-use App\Notifications\CarePlanProviderApproved;
-use App\Notifications\Channels\DirectMailChannel;
-use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Rules\HasEnoughProblems;
-use App\Services\Calls\SchedulerService;
-use App\Services\CareplanService;
+use CircleLinkHealth\Core\Contracts\PdfReport;
+use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
+use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
+use CircleLinkHealth\Customer\Notifications\NotifyPatientCarePlanApproved;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Rules\MrnWasReplacedIfPracticeImportingHooks;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;
+use CircleLinkHealth\SharedModels\Rules\HasEnoughProblems;
+use CircleLinkHealth\SharedModels\Services\CareplanService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
@@ -48,7 +46,7 @@ use Validator;
  * @property \Carbon\Carbon                                                                         $created_at
  * @property \Carbon\Carbon                                                                         $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate                               $carePlanTemplate
- * @property \App\CareplanAssessment                                                                $assessment
+ * @property \CircleLinkHealth\SharedModels\Entities\CareplanAssessment                             $assessment
  * @property \CircleLinkHealth\Customer\Entities\User                                               $patient
  * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $providerApproverUser
@@ -484,7 +482,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'regularDoctor' => $regularDoctor,
             ],
             null,
-            Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+            config('services.serverless-pdf-generator.mail-vendor-envelope-options')
         );
     }
 
@@ -547,7 +545,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'billingProvider' => 'required|numeric',
                 'practice'        => 'required|numeric',
                 'location'        => 'required|numeric',
-                'duplicate'       => [new PatientIsNotDuplicate($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
+                'duplicate'       => [new PatientIsUnique($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
                 'address'         => 'required|filled',
                 'city'            => 'required|filled',
                 'state'           => 'required|filled',

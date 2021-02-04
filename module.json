@@ -1,11 +1,11 @@
 {
-    "name": "$STUDLY_NAME$",
-    "alias": "$LOWER_NAME$",
+    "name": "SharedModels",
+    "alias": "sharedmodels",
     "description": "",
     "keywords": [],
     "order": 0,
     "providers": [
-        "$MODULE_NAMESPACE$\\$STUDLY_NAME$\\$PROVIDER_NAMESPACE$\\$STUDLY_NAME$ServiceProvider"
+
     ],
     "aliases": {},
     "files": [],
