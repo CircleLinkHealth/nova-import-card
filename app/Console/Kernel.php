@@ -12,6 +12,7 @@ use CircleLinkHealth\Core\Console\Commands\CheckEmrDirectInbox;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
 use Illuminate\Console\Scheduling\Schedule;
@@ -67,7 +68,7 @@ class Kernel extends ConsoleKernel
 //        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
 //            ->everyFifteenMinutes()
 //            ->between('8:00', '23:00');
-
+//
 //        $schedule->job(AutoQAApproveValidPatients::class)
 //                 ->everyFifteenMinutes()
 //                 ->between('8:00', '23:00');
