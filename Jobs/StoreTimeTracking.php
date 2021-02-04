@@ -95,7 +95,7 @@ class StoreTimeTracking implements ShouldQueue, ShouldBeEncrypted
 
     public function retryUntil(): \DateTime
     {
-        return now()->addWeek();
+        return now()->addMinutes(5);
     }
 
     /**
