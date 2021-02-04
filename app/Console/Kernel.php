@@ -22,7 +22,6 @@ use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
-use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
@@ -43,9 +42,6 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
-use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
-use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
-use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
@@ -100,10 +96,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
             ->onOneServer()
             ->everyFiveMinutes();
-
-        $schedule->job(AutoQAApproveValidPatients::class)
-            ->everyFifteenMinutes()
-            ->between('8:00', '23:00');
 
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
@@ -181,10 +173,6 @@ class Kernel extends ConsoleKernel
             ->monthlyOn(1, '02:45')
             ->onOneServer();
 
-        $schedule->command(GetCcds::class)
-            ->dailyAt('03:00')
-            ->onOneServer();
-
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
 
@@ -259,10 +247,6 @@ class Kernel extends ConsoleKernel
             ->monthlyOn(date('t'), '22:10')
             ->onOneServer();
 
-        $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
-            ->dailyAt('22:30')
-            ->onOneServer();
-
         $schedule->command(
             CreateApprovableBillablePatientsReport::class,
             ['--reset-actor', now()->startOfMonth()->toDateString()]
@@ -275,9 +259,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(QueueGenerateOpsDailyReport::class)
             ->dailyAt('23:30')
             ->onOneServer();
-
-        $schedule->command(GenerateReportForScheduledPAM::class)
-            ->monthlyOn(date('t'), '23:30');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')
