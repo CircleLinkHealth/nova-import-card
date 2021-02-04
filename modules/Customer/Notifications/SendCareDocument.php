@@ -25,7 +25,7 @@ class SendCareDocument extends Notification implements FaxableNotification
         'database',
     ];
 
-    private $filePath;
+    public $filePath;
     private $media;
     private $patient;
     private $reportType;
