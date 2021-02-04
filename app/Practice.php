@@ -113,6 +113,7 @@ use CircleLinkHealth\Customer\Entities\Practice as CpmPractice;
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice whereUserId($value)
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice whereWeeklyReportRecipients($value)
  * @mixin \Eloquent
+ * @property \CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter|null $enrollmentLetter
  */
 class Practice extends CpmPractice
 {

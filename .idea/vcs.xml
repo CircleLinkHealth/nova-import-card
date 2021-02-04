@@ -4,6 +4,7 @@
     <option name="branchProtectionPatterns">
       <list>
         <option value="master" />
+        <option value="development" />
       </list>
     </option>
   </component>
@@ -22,6 +23,7 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SamlSp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SelfEnrollment" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sharedvuecomponents" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
