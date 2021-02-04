@@ -45,7 +45,7 @@ class CreateSuperadminMonitoredScheduledTasks extends Migration
             $table
                 ->foreign('monitored_scheduled_task_id', 'fk'.$this->getTasksName())
                 ->references('id')
-                ->on('monitored_scheduled_tasks')
+                ->on($this->getTasksName())
                 ->cascadeOnDelete();
 
             $table->string('type');
