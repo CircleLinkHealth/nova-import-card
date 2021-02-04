@@ -10,6 +10,7 @@ use App\Console\Commands\CheckVoiceCalls;
 use CircleLinkHealth\Core\Console\Commands\CheckEmrDirectInbox;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -56,5 +57,9 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
 //            ->hourly()
 //            ->between('7:00', '23:00');
+
+//        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
+//            ->everyFifteenMinutes()
+//            ->between('8:00', '23:00');
     }
 }

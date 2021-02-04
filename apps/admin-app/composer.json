@@ -110,6 +110,10 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/SelfEnrollment"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/SharedModels"
         },
         {
@@ -171,6 +175,7 @@
         "circlelinkhealth/raygun-module": "*",
         "circlelinkhealth/revisionable-module": "*",
         "circlelinkhealth/saml-sp-module": "*",
+        "circlelinkhealth/self-enrollment-module": "*",
         "circlelinkhealth/shared-models-module": "*",
         "circlelinkhealth/sqlviews-module": "*",
         "circlelinkhealth/synonyms-module": "*",

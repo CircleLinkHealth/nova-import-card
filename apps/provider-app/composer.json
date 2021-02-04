@@ -28,6 +28,7 @@
     "circlelinkhealth/raygun-module": "*",
     "circlelinkhealth/revisionable-module": "*",
     "circlelinkhealth/saml-sp-module": "*",
+    "circlelinkhealth/self-enrollment-module": "*",
     "circlelinkhealth/shared-models-module": "*",
     "circlelinkhealth/sqlviews-module": "*",
     "circlelinkhealth/synonyms-module": "*",
