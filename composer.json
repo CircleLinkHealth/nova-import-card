@@ -134,6 +134,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git"
     }
   ],
   "require": {
@@ -157,7 +161,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.7",
     "circlelinkhealth/core-module": "2.8",
     "circlelinkhealth/cpm-admin-module": "1.2",
-    "circlelinkhealth/cpm-migrations-module": "3.0.4",
+    "circlelinkhealth/cpm-migrations-module": "3.0.6",
     "circlelinkhealth/customer-module": "4.3.1",
     "circlelinkhealth/eligibility-module": "4.5.9",
     "circlelinkhealth/nurseinvoices-module": "2.2",
@@ -190,7 +194,7 @@
     "seld/jsonlint": "^1.8",
     "setasign/fpdi-fpdf": "^2.2",
     "spatie/laravel-medialibrary": "^7.19",
-    "spatie/laravel-schedule-monitor": "^1.0",
+    "spatie/laravel-schedule-monitor": "2.2.2",
     "spatie/laravel-slack-slash-command": "^1.10",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
