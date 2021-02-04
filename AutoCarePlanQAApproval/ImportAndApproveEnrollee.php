@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -18,6 +19,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class ImportAndApproveEnrollee implements ShouldQueue
 {
@@ -50,6 +52,11 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
+        }
+        $validator = new PatientIsUnique($enrollee->practice_id, $enrollee->first_name, $enrollee->last_name, $enrollee->dob, $enrollee->mrn, $enrollee->user_id);
+        if ( ! $validator->passes(null, null)) {
+            $resolver = new DuplicatePatientResolver($enrollee);
+            $resolver->resoveDuplicatePatients($enrollee->user_id, ...$validator->getPatientUserIds()->all());
         }
         if ( ! $enrollee->user || ! $enrollee->user->isParticipant()) {
             ImportEnrollee::import($enrollee);
@@ -99,7 +106,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
 
     private function searchByFakeClhEmail(Enrollee $enrollee)
     {
-        if (starts_with($enrollee->email, 'eJ_') && ends_with($enrollee->email, '@cpm.com')) {
+        if (Str::startsWith($enrollee->email, 'eJ_') && Str::endsWith($enrollee->email, '@cpm.com')) {
             $user = User::ofType(['participant', 'survey-only'])
                 ->where('first_name', $enrollee->first_name)
                 ->where('last_name', $enrollee->last_name)
