@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e4f3881a09f4c1e40079714e5334567",
+    "content-hash": "9f45c97dfd8f90578f2465b789420a8f",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -990,11 +990,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v3.0.5",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "812e80d853492730edca094433e4cd25ac944d63"
+                "reference": "733b59b174ff3e29fc52132db589a98cea0d4b38"
             },
             "type": "laravel-module",
             "extra": {
@@ -1014,7 +1014,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-04T19:52:14+00:00"
+            "time": "2021-02-04T20:05:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1068,11 +1068,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.5.8",
+            "version": "v4.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ab95fcdc739f2289d685c8d1f0f20c53d95bd6ba"
+                "reference": "b86675273b67078faec7cf08b35096e6b3b02ddc"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1103,7 +1103,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-04T04:48:44+00:00"
+            "time": "2021-02-04T14:32:23+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1449,11 +1449,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.9",
+            "version": "v1.9.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "5ecf9562fce6b881189fdd7421152ca8b0b53f55"
+                "reference": "b5893a0f97418e28a1ed8d3c5f9729a6887ced58"
             },
             "type": "laravel-module",
             "extra": {
@@ -1476,7 +1476,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T18:59:24+00:00"
+            "time": "2021-02-04T13:13:22+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
