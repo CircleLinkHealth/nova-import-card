@@ -9,6 +9,8 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class DuplicatePatientResolver
 {
+    private const IS_SURVEY_ONLY = 5;
+    private const IS_PARTICIPANT = 10;
     private const ENROLLED_PATIENT_SCORE = 30;
     private const PATIENT_INFO_SCORE = 2;
     private const CAREPLAN_SCORE = 3;
@@ -47,12 +49,21 @@ class DuplicatePatientResolver
                               'carePlan',
                               'inboundCalls',
                               'notes',
+                              'roles',
                           ])->findMany($userIds);
     }
     
     private function calculateScore(User $user)
     {
         $score = 0;
+    
+        if ($user->isParticipant()) {
+            $score += self::IS_PARTICIPANT;
+        }
+        
+        if ($user->isSurveyOnly()) {
+            $score += self::IS_SURVEY_ONLY;
+        }
         
         if (Patient::ENROLLED === $user->patientInfo->ccm_status) {
             $score += self::ENROLLED_PATIENT_SCORE;
