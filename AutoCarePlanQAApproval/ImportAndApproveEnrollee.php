@@ -53,10 +53,10 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
         }
-        $validator = new PatientIsUnique($enrollee->practice_id, $enrollee->first_name, $enrollee->last_name, $enrollee->dob, $enrollee->mrn, $enrollee->user_id);
-        if ( ! $validator->passes(null, null)) {
-            $resolver = new DuplicatePatientResolver($enrollee);
-            $resolver->resoveDuplicatePatients($enrollee->user_id, ...$validator->getPatientUserIds()->all());
+        
+        $resolver = new DuplicatePatientResolver($enrollee);
+        if ($resolver->hasDuplicateUsers()) {
+            $resolver->resoveDuplicatePatients($enrollee->user_id, ...$resolver->duplicateUserIds());
         }
         if ( ! $enrollee->user || ! $enrollee->user->isParticipant()) {
             ImportEnrollee::import($enrollee);

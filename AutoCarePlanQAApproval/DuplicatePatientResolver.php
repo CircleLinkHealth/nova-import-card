@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\AutoCarePlanQAApproval;
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 
 class DuplicatePatientResolver
 {
@@ -19,6 +20,11 @@ class DuplicatePatientResolver
     private const IS_SURVEY_ONLY         = 5;
     private const NOTES_SCORE            = 12;
     private const PATIENT_INFO_SCORE     = 2;
+    /**
+     * @var \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    protected $enrollee;
+    private ?PatientIsUnique $validator = null;
 
     /**
      * DuplicatePatientResolver constructor.
@@ -27,6 +33,17 @@ class DuplicatePatientResolver
      */
     public function __construct($enrollee)
     {
+        $this->enrollee = $enrollee;
+    }
+
+    public function duplicateUserIds()
+    {
+        return $this->validator()->getPatientUserIds()->all();
+    }
+
+    public function hasDuplicateUsers()
+    {
+        return ! $this->validator()->passes(null, null);
     }
 
     public function resoveDuplicatePatients(...$userIds)
@@ -35,15 +52,19 @@ class DuplicatePatientResolver
             ->unique()
             ->filter()
             ->transform(function (User $user) {
-                            return [
-                                'user_id' => $user->id,
-                                'score'   => $this->calculateScore($user)['score'],
-                                'logs'   => $this->calculateScore($user)['logs'],
-                            ];
-                        })
+                return [
+                    'user_id' => $user->id,
+                    'score'   => $this->calculateScore($user)['score'],
+                    'logs'    => $this->calculateScore($user)['logs'],
+                ];
+            })
             ->sortByDesc('score');
 
-        $keep = $results->first();
+        $keep = $results->first()['user_id'];
+
+        $this->deleteAllExcept($keep, $results->pluck('user_id')->all(), $users);
+
+        $this->enrollee->user_id = $keep;
     }
 
     private function calculateScore(User $user)
@@ -97,6 +118,27 @@ class DuplicatePatientResolver
         ];
     }
 
+    private function deleteAllExcept(int $userIdToKeep, array $allUserIds, \Illuminate\Database\Eloquent\Collection $users)
+    {
+        foreach ($allUserIds as $uId) {
+            if ($uId === $userIdToKeep) {
+                continue;
+            }
+
+            $deleteUser = $users->where('id', $uId)->first();
+            if ($deleteUser) {
+                $patientInfo = $deleteUser->patientInfo;
+                if ($patientInfo) {
+                    $deleted = $patientInfo->delete();
+                }
+                if ($carePlan = $deleteUser->carePlan) {
+                    $deleted = $carePlan->delete();
+                }
+                $deleted = $deleteUser->delete();
+            }
+        }
+    }
+
     private function getUsers(array $userIds)
     {
         return User::with([
@@ -106,5 +148,15 @@ class DuplicatePatientResolver
             'notes',
             'roles',
         ])->findMany($userIds);
+    }
+
+    private function validator()
+    {
+        if (is_null($this->validator)) {
+            $enrollee        = $this->enrollee;
+            $this->validator = new PatientIsUnique($enrollee->practice_id, $enrollee->first_name, $enrollee->last_name, $enrollee->dob, $enrollee->mrn, $enrollee->user_id);
+        }
+
+        return $this->validator;
     }
 }
