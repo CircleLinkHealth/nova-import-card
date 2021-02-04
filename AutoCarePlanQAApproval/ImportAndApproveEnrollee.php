@@ -25,7 +25,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     protected int   $enrolleeId;
 
     public function __construct(int $enrolleeId)
@@ -40,6 +40,9 @@ class ImportAndApproveEnrollee implements ShouldQueue
      */
     public function handle()
     {
+        if ( ! isset($this->enrolleeId) || empty($this->enrolleeId)) {
+            return;
+        }
         $enrollee = Enrollee::with('user.patientInfo')->find($this->enrolleeId);
 
         if ( ! $enrollee) {
