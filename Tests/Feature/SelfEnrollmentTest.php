@@ -35,9 +35,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Facades\Notification;
-use Tests\Concerns\TwilioFake\Twilio;
+use CircleLinkHealth\Customer\Tests\Concerns\TwilioFake\Twilio;
 use CircleLinkHealth\SelfEnrollment\Tests\TestCase;
-use function PHPUnit\Framework\assertTrue;
 
 class SelfEnrollmentTest extends TestCase
 {
@@ -201,7 +200,7 @@ class SelfEnrollmentTest extends TestCase
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         );
-        SendInvitation::dispatchNow($patient, $invitationBatch->id);
+        SendInvitation::dispatchNow(new User($patient->toArray()), $invitationBatch->id);
         self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
         self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
     }
@@ -213,7 +212,7 @@ class SelfEnrollmentTest extends TestCase
         Twilio::fake();
         Mail::fake();
 
-        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        SendInvitation::dispatchNow(new User($patient->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         )->id);
@@ -223,12 +222,12 @@ class SelfEnrollmentTest extends TestCase
 
         //It should show up on the list on the "needs reminder" list of patients we invited today
         self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
-        SendReminder::dispatchNow($patient);
+        SendReminder::dispatchNow(new User($patient->toArray()));
         //It should not show up because we just sent a reminder
         self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
 
         //SendReminder should be allowed to run one more time to send a second reminder
-        self::assertTrue(with(new SendReminder($patient))->shouldRun());
+        self::assertTrue(with(new SendReminder(new User($patient->toArray())))->shouldRun());
     }
 
     public function test_it_removes_email_channel_if_fake_email()
@@ -356,7 +355,7 @@ class SelfEnrollmentTest extends TestCase
         Mail::fake();
         Twilio::fake();
         $toMarkAsInvited->each(function (Enrollee $enrollee) {
-            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            SendInvitation::dispatchNow(new User($enrollee->user->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
                 $enrollee->practice_id,
                 now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
             )->id);
