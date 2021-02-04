@@ -13,7 +13,6 @@ use CircleLinkHealth\SelfEnrollment\Helpers;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
@@ -130,10 +129,9 @@ class EnrolleesInvitationPanel extends Resource
         $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
 
         $awvUserSurvey = null;
-
         $enroleeHasLoggedIn = false;
         if ( ! is_null($this->resource->user)) {
-            $awvUserSurvey      = Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
+            $awvUserSurvey      = Helpers::awvUserSurveyQuery(new \CircleLinkHealth\SelfEnrollment\Entities\User($this->resource->user->toArray()), $surveyInstance)->first();
             $enroleeHasLoggedIn = $this->resource->user->loginEvents->isNotEmpty();
         }
 
