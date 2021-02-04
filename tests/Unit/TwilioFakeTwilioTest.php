@@ -16,8 +16,8 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 use PHPUnit\Framework\ExpectationFailedException;
-use Tests\Concerns\TwilioFake\Twilio;
-use Tests\Concerns\TwilioFake\WithTwilioMock;
+use CircleLinkHealth\Customer\Tests\Concerns\TwilioFake\Twilio;
+use CircleLinkHealth\Customer\Tests\Concerns\TwilioFake\WithTwilioMock;
 
 class TwilioFakeTest extends CustomerTestCase
 {

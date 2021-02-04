@@ -17,7 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Tests\Concerns\TwilioFake\Twilio;
+use CircleLinkHealth\Customer\Tests\Concerns\TwilioFake\Twilio;
 
 class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 {

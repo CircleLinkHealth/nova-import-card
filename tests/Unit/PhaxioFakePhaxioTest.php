@@ -16,9 +16,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 use PHPUnit\Framework\ExpectationFailedException;
-use Tests\Concerns\PhaxioFake\Phaxio;
-use Tests\Concerns\PhaxioFake\WithPhaxioMock;
-use Tests\Concerns\TwilioFake\Twilio;
+use CircleLinkHealth\Customer\Tests\Concerns\PhaxioFake\Phaxio;
+use CircleLinkHealth\Customer\Tests\Concerns\PhaxioFake\WithPhaxioMock;
+use CircleLinkHealth\Customer\Tests\Concerns\TwilioFake\Twilio;
 
 class PhaxioFakeTest extends CustomerTestCase
 {
