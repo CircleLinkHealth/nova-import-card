@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "744e45781e503e84c1fd3d41e6ae20ab",
+    "content-hash": "3eb0194e0c875c4a114392c143d1e6ec",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -14798,19 +14798,14 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12.0",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/vapor-cli.git",
-                "reference": "e61b322fa0f3e3632c54415bb45df891c2c6239a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-cli/zipball/e61b322fa0f3e3632c54415bb45df891c2c6239a",
-                "reference": "e61b322fa0f3e3632c54415bb45df891c2c6239a",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
+                "reference": "3a155c3836814d7f53387066c7ab758734d037cd"
             },
             "require": {
+                "aws/aws-sdk-php": "^3.80",
                 "ext-zip": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "illuminate/container": "^6.0|^7.0|^8.0",
@@ -14843,7 +14838,11 @@
                     "Laravel\\VaporCli\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -14859,7 +14858,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-27T14:00:32+00:00"
+            "time": "2021-02-02T23:38:10+00:00"
         },
         {
             "name": "maximebf/debugbar",
