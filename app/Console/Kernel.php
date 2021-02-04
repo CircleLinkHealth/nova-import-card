@@ -6,11 +6,9 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CheckVoiceCalls;
 use CircleLinkHealth\Core\Console\Commands\CheckEmrDirectInbox;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
-use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
