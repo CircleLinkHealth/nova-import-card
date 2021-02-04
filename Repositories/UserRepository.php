@@ -24,7 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Exceptions\ValidationException;
-use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
@@ -619,7 +619,7 @@ class UserRepository
      */
     public static function validatePatientDoesNotAlreadyExist(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null)
     {
-        $validator = new PatientIsNotDuplicate(
+        $validator = new PatientIsUnique(
             $practiceId,
             $firstName,
             $lastName,

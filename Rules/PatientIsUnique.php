@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use Illuminate\Contracts\Validation\Rule;
 
-class PatientIsNotDuplicate implements Rule
+class PatientIsUnique implements Rule
 {
     /**
      * @var string
@@ -123,7 +123,10 @@ class PatientIsNotDuplicate implements Rule
             ->when($this->patientUserId, function ($q) {
                 $q->where('id', '!=', $this->patientUserId);
             })
-            ->ofType(['participant', 'survey-only'])
+            ->where(function ($q) {
+                $q->ofType(['participant', 'survey-only'])
+                    ->orWhereDoesntHave('roles');
+            })
             ->value('id');
     }
 }
