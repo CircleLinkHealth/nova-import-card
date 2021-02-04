@@ -63,10 +63,10 @@ class CpmConstants
     const NOVA_GROUP_ADMIN               = 'Admin';
     const NOVA_GROUP_CARE_COACHES        = 'Care Coaches';
     const NOVA_GROUP_ENROLLMENT          = 'Enrollment';
-    const NOVA_GROUP_SELF_ENROLLMENT     = 'Self Enrollment';
     const NOVA_GROUP_NBI                 = 'NBI';
     const NOVA_GROUP_PRACTICE_DATA_PULLS = 'Practice Data Pulls';
     const NOVA_GROUP_PRACTICES           = 'Practices';
+    const NOVA_GROUP_SELF_ENROLLMENT     = 'Self Enrollment';
     const NOVA_GROUP_SETTINGS            = 'Settings';
 
     const PATIENT_PHI_RELATIONSHIPS = ['patientInfo'];

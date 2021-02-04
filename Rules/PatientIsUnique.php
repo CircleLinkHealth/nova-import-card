@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use Illuminate\Contracts\Validation\Rule;
 
-class PatientIsDuplicate implements Rule
+class PatientIsUnique implements Rule
 {
     /**
      * @var string

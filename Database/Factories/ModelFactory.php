@@ -12,13 +12,13 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 
 $factory->define(
