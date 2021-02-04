@@ -49,6 +49,10 @@ class DuplicatePatientResolver
 
     public function resoveDuplicatePatients(...$userIds)
     {
+        if (empty(array_filter($userIds))) {
+            return;
+        }
+        
         $results = collect($users = $this->getUsers($userIds))
             ->unique()
             ->filter()
