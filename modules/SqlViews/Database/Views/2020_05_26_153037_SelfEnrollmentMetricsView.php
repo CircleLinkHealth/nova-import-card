@@ -4,13 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\SelfEnrollment\Helpers;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
+use Illuminate\Support\Facades\DB;
 
 class SelfEnrollmentMetricsView extends BaseSqlView
 {
+     // NOT SURE IF I SHOULD ALSO MOVE THIS TO SELF ENROLLMENT APP
     /**
      * Create the sql view.
      *
