@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetUPG0506ProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
-use Tests\CustomerTestCase;
 
 class ImportingHooksTest extends CustomerTestCase
 {

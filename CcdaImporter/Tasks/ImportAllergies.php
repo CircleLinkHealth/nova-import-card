@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use Illuminate\Support\Facades\DB;
-use  Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
 class ImportAllergies extends BaseCcdaImportTask
 {
@@ -39,7 +39,7 @@ class ImportAllergies extends BaseCcdaImportTask
 
             $createdAt = now()->toDateTimeString();
 
-            return[
+            return [
                 'patient_id'    => $this->patient->id,
                 'allergen_name' => ucfirst($new['allergen_name']),
                 'created_at'    => $createdAt,

@@ -6,16 +6,17 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\Jobs\ImportCcda;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ImportMedicalRecordsById implements ShouldQueue
+class ImportMedicalRecordsById implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -50,7 +51,7 @@ class ImportMedicalRecordsById implements ShouldQueue
             ->wherePracticeId($this->practice->id)
             ->get()
             ->map(function ($ccda) {
-                ImportCcda::dispatch($ccda)->onQueue('low');
+                ImportCcda::dispatch($ccda->id)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
             });
     }
 }

@@ -6,20 +6,20 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\Search\LocationByName;
+use CircleLinkHealth\Core\Search\LocationByName;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -122,7 +122,7 @@ class CcdaImporterWrapper
             });
 
             if ( ! $this->ccda->location_id && $ehrPracticeId = optional($this->ccda->targetPatient)->ehr_practice_id) {
-                $aLoc = \Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
+                $aLoc = Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
                     return collect(app(AthenaApiImplementation::class)->getDepartments($ehrPracticeId));
                 })->where('departmentid', $deptId)->first();
 
@@ -166,8 +166,10 @@ class CcdaImporterWrapper
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
         }
 
-        if ( ! $provider && $this->ccda->bluebuttonJson()->document && $this->ccda->bluebuttonJson()->document->author->name && $name = $this->ccda->bluebuttonJson()->document->author->name->given) {
-            $provider = $name[0].' '.$this->ccda->bluebuttonJson()->document->author->name->family;
+        $bb = $this->ccda->bluebuttonJson();
+
+        if ( ! $provider && $bb && $bb->document && $bb->document->author->name && $name = $bb->document->author->name->given) {
+            $provider = $name[0].' '.$bb->document->author->name->family;
         }
 
         if ($provider instanceof User) {
@@ -262,12 +264,12 @@ class CcdaImporterWrapper
             return $this;
         }
 
-        if ($patient) {
-            $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
+        if ( ! $this->ccda->json && ! $this->ccda->bluebuttonJson()) {
+            return $this;
         }
 
-        if ( ! $this->ccda->json) {
-            $this->ccda->bluebuttonJson();
+        if ($patient) {
+            $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
 
         if ( ! $this->ccda->patient_mrn) {
@@ -309,6 +311,13 @@ class CcdaImporterWrapper
         });
     }
 
+    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    {
+        $term = self::prepareForMysqlMatch($term);
+
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
+    }
+
     /**
      * Search for a Billing Provider using a search term.
      *
@@ -326,6 +335,8 @@ class CcdaImporterWrapper
         if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
             return $provider;
         }
+
+        return null;
     }
 
     /**
@@ -378,13 +389,6 @@ class CcdaImporterWrapper
         return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
     }
 
-    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
-    {
-        $term = self::prepareForMysqlMatch($term);
-
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
-    }
-
     private static function prepareForMysqlMatch(string $term)
     {
         return collect(explode(' ', $term))->transform(function ($term) {
@@ -425,7 +429,7 @@ class CcdaImporterWrapper
             return;
         }
 
-        if ($providerAddress = $this->ccda->bluebuttonJson()->demographics->provider->address->street[0] ?? null) {
+        if ($providerAddress = optional($this->ccda->bluebuttonJson())->demographics->provider->address->street[0] ?? null) {
             $locations = $provider->locations->whereIn('address_line_1', [$providerAddress, $this->replaceCommonAddressVariations($providerAddress)]);
 
             if (1 === $locations->count()) {
@@ -436,7 +440,7 @@ class CcdaImporterWrapper
 
     private function setLocationFromAuthorAddressInCcda(Ccda $ccda)
     {
-        if ( ! $this->ccda->bluebuttonJson()->document) {
+        if ( ! optional($this->ccda->bluebuttonJson())->document) {
             return;
         }
         $address = ((array) $ccda->bluebuttonJson()->document->author->address)['street'][0] ?? null;
@@ -452,11 +456,11 @@ class CcdaImporterWrapper
 
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
     {
-        if ( ! $this->ccda->bluebuttonJson()->document) {
+        if ( ! optional($bb = $this->ccda->bluebuttonJson())->document) {
             return;
         }
-        
-        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->map(function ($address) {
+
+        $addresses = collect($bb->document->documentation_of)->map(function ($address) {
             $address = ((array) $address->address)['street'] ?? null;
 
             if (empty($address[0] ?? null)) {
@@ -478,8 +482,10 @@ class CcdaImporterWrapper
 
     private function setLocationFromDocumentLocationName()
     {
-        if ( ! empty($this->ccda->practice_id) && $locationName = $this->ccda->bluebuttonJson()->document->location->name) {
-            $this->ccda->setLocationId(Location::where('name', $locationName)->where('practice_id', $this->ccda->practice_id)->value('id'));
+        if ($bb = $this->ccda->bluebuttonJson()) {
+            if ( ! empty($this->ccda->practice_id) && $locationName = $bb->document->location->name) {
+                $this->ccda->setLocationId(Location::where('name', $locationName)->where('practice_id', $this->ccda->practice_id)->value('id'));
+            }
         }
 
         return null;
@@ -534,7 +540,7 @@ class CcdaImporterWrapper
         if ( ! $location) {
             $location = LocationByName::first($enrollee->facility_name);
 
-            if ($location->practice_id !== $ccda->practice_id) {
+            if ($location && $location->practice_id !== $ccda->practice_id) {
                 $location = null;
             }
         }
@@ -547,11 +553,11 @@ class CcdaImporterWrapper
 
     private function setPracticeAndLocationFromDocumentCustodianName()
     {
-        if ( ! $this->ccda->bluebuttonJson()->document) {
+        if ( ! optional($bb = $this->ccda->bluebuttonJson())->document) {
             return;
         }
-        
-        if ($custodianName = $this->ccda->bluebuttonJson()->document->custodian->name) {
+
+        if ($custodianName = $bb->document->custodian->name) {
             $location = Location::whereColumnOrSynonym('name', $custodianName)->first();
 
             if ($location) {

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedItem;
+use CircleLinkHealth\Eligibility\Contracts\ImportedItem;
 
 /**
  * ImportedSections are CcdaSections that have been imported and stored in.

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Exceptions;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Throwable;
 
 class CcdaWasNotFetchedFromAthenaApi extends \Exception

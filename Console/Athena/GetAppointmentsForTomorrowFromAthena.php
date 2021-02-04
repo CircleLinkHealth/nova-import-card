@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Console\Command;
 
 class GetAppointmentsForTomorrowFromAthena extends Command

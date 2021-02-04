@@ -6,25 +6,27 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
-class ProcessCcdaFromGoogleDrive implements ShouldQueue
+class ProcessCcdaFromGoogleDrive implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
     /**
-     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
 
@@ -90,8 +92,8 @@ class ProcessCcdaFromGoogleDrive implements ShouldQueue
         $this->batch->loadMissing('practice');
 
         ProcessCcda::withChain([
-            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue('low'),
+            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE)),
         ])->dispatch($ccda->id)
-            ->onQueue('low');
+            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 }

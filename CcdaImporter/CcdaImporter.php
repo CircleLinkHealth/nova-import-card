@@ -6,13 +6,12 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\Events\PatientUserCreated;
-use App\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Events\PatientUserCreated;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
@@ -27,12 +26,13 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
-use CircleLinkHealth\Eligibility\DTOs\Address;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\DTO\Address;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
+use CircleLinkHealth\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -54,7 +54,7 @@ class CcdaImporter
      */
     protected $ccda;
     /**
-     * @var \CircleLinkHealth\Eligibility\Entities\Enrollee
+     * @var \CircleLinkHealth\SharedModels\Entities\Enrollee
      */
     protected $enrollee;
     /**
@@ -230,7 +230,7 @@ class CcdaImporter
             ->pluck('number')
             ->map(fn ($num) => formatPhoneNumberE164($num))
             ->when($enrollee, function ($col) use ($enrollee) {
-                $col->merge([
+                return $col->merge([
                     formatPhoneNumberE164($enrollee->primary_phone),
                     formatPhoneNumberE164($enrollee->cell_phone),
                     formatPhoneNumberE164($enrollee->home_phone),

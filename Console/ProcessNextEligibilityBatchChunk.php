@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityBatch;
 use Illuminate\Console\Command;
 

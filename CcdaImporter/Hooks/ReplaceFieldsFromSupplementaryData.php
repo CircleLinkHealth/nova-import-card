@@ -12,8 +12,9 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 
 class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
@@ -73,8 +74,8 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
                 ->primaryPractice;
         }
 
-        if ( ! \Cache::has($key)) {
-            $slackChannel = \Cache::remember(self::CUSTOMER_CPM_ALERTS_SLACK_CHANNEL_KEY, 2, function () {
+        if ( ! Cache::has($key)) {
+            $slackChannel = Cache::remember(self::CUSTOMER_CPM_ALERTS_SLACK_CHANNEL_KEY, 2, function () {
                 return AppConfig::pull(self::CUSTOMER_CPM_ALERTS_SLACK_CHANNEL_KEY);
             });
             $handles           = AppConfig::pull('supplemental_patient_data_replacement_alerts_slack_watchers', '');
@@ -91,7 +92,7 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
                 );
             }
 
-            \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
+            Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
     }
 }

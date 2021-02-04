@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\Decorators;
 
-use App\Traits\ValidatesDates;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ValidatesDates;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 
 class EncountersFromAthena implements MedicalRecordDecorator
 {

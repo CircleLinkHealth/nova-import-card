@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
-use App\Console\Commands\CreatePracticeReport;
+use CircleLinkHealth\Eligibility\Console\Commands\CreatePracticeReport;
 use CircleLinkHealth\Eligibility\Exports\CommonwealthPcmEligibleExport;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;

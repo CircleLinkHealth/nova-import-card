@@ -6,14 +6,17 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessTargetPatientForEligibility implements ShouldQueue
+class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -27,7 +30,7 @@ class ProcessTargetPatientForEligibility implements ShouldQueue
      */
     public $tries = 3;
     /**
-     * @var TargetPatient
+     * @var \CircleLinkHealth\SharedModels\Entities\TargetPatient
      */
     protected $targetPatient;
 
@@ -47,7 +50,7 @@ class ProcessTargetPatientForEligibility implements ShouldQueue
     public function handle()
     {
         try {
-            $this->targetPatient->processEligibility();
+            $this->processEligibility();
         } catch (\Exception $exception) {
             $this->targetPatient->status = TargetPatient::STATUS_ERROR;
             $this->targetPatient->save();
@@ -67,5 +70,25 @@ class ProcessTargetPatientForEligibility implements ShouldQueue
             'athena',
             'targetpatientid:'.$this->targetPatient->id,
         ];
+    }
+
+    private function processEligibility()
+    {
+        $this->targetPatient->loadMissing('batch');
+
+        if ( ! $this->targetPatient->batch) {
+            throw new \Exception('A batch is necessary to process a target patient.');
+        }
+
+        return tap(
+            app(AthenaEligibilityCheckableFactory::class)
+                ->makeAthenaEligibilityCheckable($this->targetPatient)
+                ->createAndProcessEligibilityJobFromMedicalRecord(),
+            function (EligibilityJob $eligibilityJob) {
+                $this->targetPatient->setStatusFromEligibilityJob($eligibilityJob);
+                $this->targetPatient->eligibility_job_id = $eligibilityJob->id;
+                $this->targetPatient->save();
+            }
+        );
     }
 }

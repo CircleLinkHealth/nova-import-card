@@ -18,6 +18,7 @@ class EligibilityServiceProvider extends ServiceProvider
         $this->registerViews();
 
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(EligibilityBatchViewComposerServiceProvider::class);
     }
 
     /**

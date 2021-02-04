@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\Eligibility\Http\Requests\UploadEligibilityCsv;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class WelcomeCallListController extends Controller
 {

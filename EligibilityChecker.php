@@ -6,21 +6,21 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use App\Constants;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
-use CircleLinkHealth\Eligibility\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\DTO\Problem;
 use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Validator;
@@ -65,7 +65,7 @@ class EligibilityChecker
      */
     private $batch;
     /**
-     * @var EligibilityJob
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityJob
      */
     private $eligibilityJob;
     private $enrollee;
@@ -355,7 +355,7 @@ class EligibilityChecker
             'map_icd_9_to_cpm_problems',
             2,
             function () {
-                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD9);
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', CpmConstants::ICD9);
             }
         );
 
@@ -363,7 +363,7 @@ class EligibilityChecker
             'map_icd_10_to_cpm_problems',
             2,
             function () {
-                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD10);
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', CpmConstants::ICD10);
             }
         );
 
@@ -371,7 +371,7 @@ class EligibilityChecker
             'map_snomed_to_cpm_problems',
             2,
             function () {
-                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::SNOMED);
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', CpmConstants::SNOMED);
             }
         );
 
@@ -449,7 +449,7 @@ class EligibilityChecker
                         return false;
                     }
 
-                    if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
+                    if (in_array($codeType, [CpmConstants::ICD9_NAME, 'all'])) {
                         $cpmProblemId = $icd9Map->get($p->getCode());
 
                         if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
@@ -464,7 +464,7 @@ class EligibilityChecker
                         }
                     }
 
-                    if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
+                    if (in_array($codeType, [CpmConstants::ICD10_NAME, 'all'])) {
                         $cpmProblemId = $icd10Map->get($p->getCode());
 
                         if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
@@ -479,7 +479,7 @@ class EligibilityChecker
                         }
                     }
 
-                    if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
+                    if (in_array($codeType, [CpmConstants::SNOMED_NAME, 'all'])) {
                         $cpmProblemId = $snomedMap->get($p->getCode());
 
                         if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
@@ -780,8 +780,8 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
-        if ( ! $args['provider_id']) {
-            $args['provider_id'] = CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id);
+        if (empty($args['provider_id'])) {
+            $args['provider_id'] = optional(CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id))->id;
         }
 
         if (empty($args['email'])) {
@@ -868,7 +868,9 @@ class EligibilityChecker
         $enrolledPatientExists = User::withTrashed()
             ->where(
                 function ($u) use ($args) {
-                    $u->whereProgramId($args['practice_id'])
+                    $u
+                        ->ofType('participant')
+                        ->whereProgramId($args['practice_id'])
                         ->whereHas(
                             'patientInfo',
                             function ($q) use ($args) {
@@ -878,30 +880,32 @@ class EligibilityChecker
                 }
             )->orWhere(
                 function ($u) use ($args) {
-                    $u->where(
-                        [
+                    $u
+                        ->ofType('participant')
+                        ->where(
                             [
-                                'program_id',
-                                '=',
-                                $args['practice_id'],
-                            ],
-                            [
-                                'first_name',
-                                '=',
-                                $args['first_name'],
-                            ],
-                            [
-                                'last_name',
-                                '=',
-                                $args['last_name'],
-                            ],
-                        ]
-                    )->whereHas(
-                        'patientInfo',
-                        function ($q) use ($args) {
+                                [
+                                    'program_id',
+                                    '=',
+                                    $args['practice_id'],
+                                ],
+                                [
+                                    'first_name',
+                                    '=',
+                                    $args['first_name'],
+                                ],
+                                [
+                                    'last_name',
+                                    '=',
+                                    $args['last_name'],
+                                ],
+                            ]
+                        )->whereHas(
+                            'patientInfo',
+                            function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
-                    );
+                        );
                 }
             )->first();
 

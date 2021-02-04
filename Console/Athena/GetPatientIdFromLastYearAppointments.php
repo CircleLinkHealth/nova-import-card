@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions\DetermineEnrollmentEligibility;
 use Illuminate\Console\Command;
 use Psr\Log\InvalidArgumentException;
 

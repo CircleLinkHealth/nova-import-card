@@ -6,20 +6,21 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ImportConsentedEnrollees implements ShouldQueue
+class ImportConsentedEnrollees implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -33,7 +34,7 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     public $tries = 2;
     /**
-     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     private $batch;
     /**

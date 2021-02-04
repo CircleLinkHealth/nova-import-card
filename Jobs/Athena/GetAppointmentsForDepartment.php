@@ -6,18 +6,19 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
-use App\Constants;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GetAppointmentsForDepartment implements ShouldQueue
+class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -119,7 +120,7 @@ class GetAppointmentsForDepartment implements ShouldQueue
             $target = TargetPatient::updateOrCreate(
                 [
                     'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
-                    'ehr_id'            => Constants::athenaEhrId(),
+                    'ehr_id'            => CpmConstants::athenaEhrId(),
                     'ehr_patient_id'    => $ehrPatientId,
                     'ehr_practice_id'   => $this->ehrPracticeId,
                     'ehr_department_id' => $departmentId,

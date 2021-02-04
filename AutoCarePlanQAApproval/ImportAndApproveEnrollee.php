@@ -11,14 +11,13 @@ use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ImportAndApproveEnrollee implements ShouldQueue
 {
@@ -26,12 +25,12 @@ class ImportAndApproveEnrollee implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    
+    protected int   $enrolleeId;
 
-    public Enrollee $enrollee;
-
-    public function __construct(Enrollee $enrollee)
+    public function __construct(int $enrolleeId)
     {
-        $this->enrollee = $enrollee;
+        $this->enrolleeId = $enrolleeId;
     }
 
     /**
@@ -41,8 +40,11 @@ class ImportAndApproveEnrollee implements ShouldQueue
      */
     public function handle()
     {
-        $enrollee = $this->enrollee;
+        $enrollee = Enrollee::with('user.patientInfo')->find($this->enrolleeId);
 
+        if ( ! $enrollee) {
+            return;
+        }
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
         }
@@ -69,6 +71,18 @@ class ImportAndApproveEnrollee implements ShouldQueue
 
         ApproveIfValid::dispatch($enrollee->user, CarePlanAutoApprover::user());
 
+        //If enrollee is from uploaded CSV from Nova Page,
+        //Where we create Enrollees without any other data,
+        //so we can consent them and then ask the practice to send us the CCDs
+        //It is expected to reach this point, do not throw error
+        if (Enrollee::UPLOADED_CSV === $enrollee->source && ! $enrollee->user->patientInfo) {
+            return;
+        }
+
+        if ( ! $enrollee->user->patientInfo) {
+            return;
+        }
+
         $enrollee->user->patientInfo->ccm_status = Patient::ENROLLED;
         $enrollee->status                        = Enrollee::ENROLLED;
 
@@ -78,21 +92,6 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ($enrollee->user->patientInfo->isDirty()) {
             $enrollee->user->patientInfo->save();
         }
-    }
-
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(12)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(30);
-
-        return [$rateLimitedMiddleware];
-    }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
     }
 
     private function searchByFakeClhEmail(Enrollee $enrollee)

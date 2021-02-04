@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use App\Services\AthenaAPI\Connection;
-use App\ValueObjects\Athena\Patient;
-use App\ValueObjects\Athena\Problem;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Problem;
 
 interface AthenaApiImplementation
 {

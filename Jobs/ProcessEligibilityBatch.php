@@ -7,19 +7,21 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
-class ProcessEligibilityBatch implements ShouldQueue
+class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -34,7 +36,7 @@ class ProcessEligibilityBatch implements ShouldQueue
     public $timeout = 900;
 
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
 
@@ -200,7 +202,7 @@ class ProcessEligibilityBatch implements ShouldQueue
                 $batch->save();
 
                 $targetPatients->each(
-                    function (TargetPatient $targetPatient) use ($batch) {
+                    function (TargetPatient $targetPatient) {
                         ProcessTargetPatientForEligibility::dispatch($targetPatient);
                     }
                 );
@@ -336,9 +338,7 @@ class ProcessEligibilityBatch implements ShouldQueue
         $unprocessedQuery->take(200)->get()->each(
             function ($job) use ($batch) {
                 ProcessSinglePatientEligibility::dispatchNow(
-                    $job,
-                    $batch,
-                    $batch->practice
+                    $job->id
                 );
             }
         );
@@ -393,7 +393,7 @@ class ProcessEligibilityBatch implements ShouldQueue
                 continue;
             }
 
-            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue('low');
+            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         }
     }
 }

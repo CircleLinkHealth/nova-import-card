@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\ValueObjects;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class SurveyOnlyEnrolleeMedicalRecord
 {
@@ -18,7 +18,7 @@ class SurveyOnlyEnrolleeMedicalRecord
      */
     private $data;
     /**
-     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityJob
      */
     private $job;
     /**

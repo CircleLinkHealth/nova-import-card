@@ -16,9 +16,9 @@ use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
@@ -27,7 +27,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 class AthenaCheckable implements Checkable
 {
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
     /**
@@ -39,7 +39,7 @@ class AthenaCheckable implements Checkable
      */
     protected $practice;
     /**
-     * @var TargetPatient
+     * @var \CircleLinkHealth\SharedModels\Entities\TargetPatient
      */
     protected $targetPatient;
 
