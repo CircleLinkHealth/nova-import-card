@@ -87,9 +87,4 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     {
         return app(LocationProcessorRepository::class);
     }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
-    }
 }

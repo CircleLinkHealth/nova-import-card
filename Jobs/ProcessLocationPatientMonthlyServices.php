@@ -64,9 +64,4 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue, ShouldBeEncr
     {
         $this->getProcessor()->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
     }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
-    }
 }
