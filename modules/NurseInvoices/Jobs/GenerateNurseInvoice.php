@@ -104,12 +104,7 @@ class GenerateNurseInvoice implements ShouldQueue, ShouldBeEncrypted
             }
         );
     }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
-    }
-
+    
     /**
      * @return Invoice
      */
