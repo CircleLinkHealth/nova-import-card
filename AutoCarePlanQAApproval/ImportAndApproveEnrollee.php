@@ -45,20 +45,19 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ( ! isset($this->enrolleeId) || empty($this->enrolleeId)) {
             return;
         }
-        $enrollee = Enrollee::with('user.patientInfo')->find($this->enrolleeId);
+        $enrollee = Enrollee::with([
+            'user.patientInfo',
+            'user.ccdProblems',
+                                   ])->find($this->enrolleeId);
 
         if ( ! $enrollee) {
             return;
         }
-        if ( ! $enrollee->user) {
-            $this->searchForExistingUser($enrollee);
-        }
-        
         $resolver = new DuplicatePatientResolver($enrollee);
         if ($resolver->hasDuplicateUsers()) {
             $resolver->resoveDuplicatePatients($enrollee->user_id, ...$resolver->duplicateUserIds());
         }
-        if ( ! $enrollee->user || ! $enrollee->user->isParticipant()) {
+        if ($shouldImport = $this->shouldImport($enrollee)) {
             ImportEnrollee::import($enrollee);
         }
         if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED, CarePlan::RN_APPROVED])) {
@@ -154,5 +153,18 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
 
         return null;
+    }
+    
+    private function shouldImport(Enrollee $enrollee)
+    {
+        return ! $enrollee->user
+               || ! (
+                   $enrollee->user
+                    && $enrollee->user->isParticipant()
+                    && $enrollee->user->patientInfo
+                    && Patient::ENROLLED === $enrollee->user->patientInfo->ccm_status
+                    && $enrollee->user->carePlan
+                    && $enrollee->user->ccdProblems->isNotEmpty()
+            );
     }
 }
