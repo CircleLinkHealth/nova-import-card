@@ -12,6 +12,11 @@ class CreateSuperadminMonitoredScheduledTasks extends Migration
 {
     public function up()
     {
+        if (Schema::hasTable($this->getTasksName())) {
+
+            return;
+        }
+
         Schema::create($this->getTasksName(), function (Blueprint $table) {
             $table->bigIncrements('id');
 
