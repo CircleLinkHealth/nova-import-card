@@ -141,6 +141,8 @@ class CreateSurveyOnlyUserFromEnrollee
             )
         );
 
+        $userCreatedFromEnrollee = new User($userCreatedFromEnrollee->toArray());
+
         if ($ccda) {
             $ccda->patient_id = $userCreatedFromEnrollee->id;
             $ccda->save();

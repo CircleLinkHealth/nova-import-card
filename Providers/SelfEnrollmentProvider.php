@@ -14,6 +14,8 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTes
 use CircleLinkHealth\SelfEnrollment\Console\Commands\RegenerateMissingSelfEnrollmentLetters;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Observers\EnrolleeObserver;
 use Illuminate\Support\ServiceProvider;
 
 class SelfEnrollmentProvider extends ServiceProvider
@@ -25,6 +27,7 @@ class SelfEnrollmentProvider extends ServiceProvider
      */
     public function boot()
     {
+        Enrollee::observe(EnrolleeObserver::class);
         $this->publishConfigurations();
         $this->publishPublicAssets();
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'selfEnrollment');
