@@ -20,9 +20,9 @@ use CircleLinkHealth\Customer\Http\Requests\DownloadZippedMediaWithSignedRequest
 use CircleLinkHealth\Customer\Jobs\CreateAuditReportForPatientForMonth;
 use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaStream;
-use Illuminate\Routing\Controller;
 
 class DownloadController extends Controller
 {
