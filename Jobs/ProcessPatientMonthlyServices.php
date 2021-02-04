@@ -60,9 +60,4 @@ class ProcessPatientMonthlyServices implements ShouldQueue, ShouldBeEncrypted
             ->execute();
         (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
-    }
 }
