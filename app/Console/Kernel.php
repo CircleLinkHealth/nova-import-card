@@ -65,13 +65,13 @@ class Kernel extends ConsoleKernel
         $schedule->command(GenerateReportForScheduledPAM::class)
                  ->monthlyOn(date('t'), '23:30');
 
-//        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
-//            ->everyFifteenMinutes()
-//            ->between('8:00', '23:00');
-//
-//        $schedule->job(AutoQAApproveValidPatients::class)
-//                 ->everyFifteenMinutes()
-//                 ->between('8:00', '23:00');
+        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
+            ->everyFifteenMinutes()
+            ->between('8:00', '23:00');
+
+        $schedule->job(AutoQAApproveValidPatients::class)
+                 ->everyFifteenMinutes()
+                 ->between('8:00', '23:00');
     
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
                  ->dailyAt('22:30')
