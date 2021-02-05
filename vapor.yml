@@ -30,6 +30,7 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
     staging:
         runtime: docker
         domain: cpm-provider.clh-staging.com

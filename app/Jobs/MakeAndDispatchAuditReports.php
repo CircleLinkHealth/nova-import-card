@@ -86,9 +86,4 @@ class MakeAndDispatchAuditReports implements ShouldQueue, ShouldBeEncrypted
             }
         });
     }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addHour();
-    }
 }

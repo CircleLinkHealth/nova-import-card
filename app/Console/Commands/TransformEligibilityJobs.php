@@ -6,10 +6,10 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Console\Command;
 
 class TransformEligibilityJobs extends Command

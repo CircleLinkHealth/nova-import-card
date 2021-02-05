@@ -355,6 +355,7 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-snappy" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-token-stream" />
       <path value="$PROJECT_DIR$/vendor/laracasts/cypress" />
+      <path value="$PROJECT_DIR$/vendor/ohdearapp/ohdear-php-sdk" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
