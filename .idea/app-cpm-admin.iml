@@ -373,6 +373,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/path-util" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/wildbit/swiftmailer-postmark" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yajra/laravel-datatables-oracle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/lorisleiva/cron-translator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-schedule-monitor" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ohdearapp/ohdear-php-sdk" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
