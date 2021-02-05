@@ -67,7 +67,7 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
 //            ->hourly()
 //            ->between('7:00', '23:00');
-    
+
         $schedule->command(GenerateReportForScheduledPAM::class)
                  ->monthlyOn(date('t'), '23:30');
 
@@ -78,13 +78,11 @@ class Kernel extends ConsoleKernel
 //        $schedule->job(AutoQAApproveValidPatients::class)
 //                 ->everyFifteenMinutes()
 //                 ->between('8:00', '23:00');
-    
+
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
-                 ->dailyAt('22:30')
-                 ->onOneServer();
-    
+                 ->dailyAt('22:30');
+
         $schedule->command(GetCcds::class)
-                 ->dailyAt('03:00')
-                 ->onOneServer();
+                 ->dailyAt('03:00');
     }
 }
