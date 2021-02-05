@@ -173,7 +173,7 @@
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
         "circlelinkhealth/invoices-download": "*",
-        "circlelinkhealth/nurseinvoices-module": "2.2",
+        "circlelinkhealth/nurseinvoices-module": "2.3",
         "circlelinkhealth/pdf-service-module": "1.1",
         "circlelinkhealth/raygun-module": "2.0",
         "circlelinkhealth/revisionable-module": "8.0",
