@@ -79,7 +79,7 @@ class TrixMailable extends Mailable
 
     private function getPracticePhone(): string
     {
-        $phone = (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->patient->primaryPractice->outgoing_phone);
+        $phone = (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->patient->primaryPractice->outgoing_phone_number);
 
         if (empty($phone)) {
             sendSlackMessage('#cpm_general_alerts', "URGENT! Practice {$this->patient->primaryPractice->id}, does not have an outgoing phone number!");
