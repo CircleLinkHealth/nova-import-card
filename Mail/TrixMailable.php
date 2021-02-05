@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class TrixMailable extends Mailable
 {
@@ -63,7 +64,7 @@ class TrixMailable extends Mailable
                 'practiceName'  => $this->patient->getPrimaryPracticeName(),
                 'practicePhone' => $this->getPracticePhone(),
                 'content'       => $this->content,
-                'attachments'   => $media->where('mime_type', 'like', '%'.'image'.'%'),
+                'attachments'   => $media->filter(fn ($m)   => Str::contains($m->mime_type, 'image')),
             ])
             ->from(config('mail.from.address'), 'Care Coaching Team')
             ->subject($this->emailSubject);
@@ -83,6 +84,7 @@ class TrixMailable extends Mailable
 
         if (empty($phone)) {
             sendSlackMessage('#cpm_general_alerts', "URGENT! Practice {$this->patient->primaryPractice->id}, does not have an outgoing phone number!");
+
             return $phone;
         }
 
