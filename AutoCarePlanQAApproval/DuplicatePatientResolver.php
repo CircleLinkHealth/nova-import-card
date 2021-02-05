@@ -132,7 +132,7 @@ class DuplicatePatientResolver
                     'patient_info_id' => $pI->id,
                     'dob' => optional($pI->birth_date)->toDateString(),
                     'mrn' => $pI->mrn_number,
-                    'careplan_id' => $user->carePlan->id,
+                    'careplan_id' => optional($user->carePlan)->id,
                 ],
                 'enrollee' => [
                     'name' => $this->enrollee->first_name.' '.$this->enrollee->last_name,
