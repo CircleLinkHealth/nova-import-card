@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07351a73de9d60faf1903b79221ecb16",
+    "content-hash": "f1595b05542e268c1e9a93a0bb6c3d86",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -493,16 +493,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.0",
+            "version": "3.173.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9"
+                "reference": "1ab4f565744aea8e9560ee8aaffb19b87238c7d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
-                "reference": "ab3ee1cba4219d5262ecac8f011f267e9b7f3af9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1ab4f565744aea8e9560ee8aaffb19b87238c7d5",
+                "reference": "1ab4f565744aea8e9560ee8aaffb19b87238c7d5",
                 "shasum": ""
             },
             "require": {
@@ -574,7 +574,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-02T20:01:31+00:00"
+            "time": "2021-02-03T21:12:51+00:00"
         },
         {
             "name": "brick/math",
@@ -670,11 +670,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v2.0.4",
+            "version": "v2.0.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "a60332bf953e6dc96de2392ab97552c0495d32af"
+                "reference": "39260fa683e4aa8df6d1289e30a22216eac071dc"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -725,7 +725,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-02T18:27:32+00:00"
+            "time": "2021-02-04T01:06:36+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -967,11 +967,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v3.0.4",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "1b0d99a8ac6a2a66fbb2a776602ebb20c2f0ccf7"
+                "reference": "733b59b174ff3e29fc52132db589a98cea0d4b38"
             },
             "type": "laravel-module",
             "extra": {
@@ -991,15 +991,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T14:32:34+00:00"
+            "time": "2021-02-04T20:05:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.2.8",
+            "version": "v4.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f5bd32ba28a05efa62c7640e59a8239d7f17e21b"
+                "reference": "8693b9da7536d66ae3fd0a6287efcdb26e5d22dd"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1041,15 +1041,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-02T16:56:08+00:00"
+            "time": "2021-02-04T10:50:26+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.5.3",
+            "version": "v4.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "91d22791a1d877740a813a5821b447979fb5bcea"
+                "reference": "b86675273b67078faec7cf08b35096e6b3b02ddc"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1080,15 +1080,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T17:36:38+00:00"
+            "time": "2021-02-04T14:32:23+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v2.1",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "db4ebf1b411fe84ad7877caf96db95fd5a1e958b"
+                "reference": "338d314db54faa7288132ed494f02d3bce5ebe05"
             },
             "type": "laravel-module",
             "extra": {
@@ -1113,7 +1113,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-04T23:50:46+00:00"
+            "time": "2021-02-04T01:05:53+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1273,11 +1273,11 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "936baf88bbe3a471cacfc863ae92d26c528df1c0"
+                "reference": "09fd5d88e1b4f450f97966d8bf53fa6af14710c4"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1307,15 +1307,15 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-07T14:31:39+00:00"
+            "time": "2021-02-04T03:55:10+00:00"
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.8",
+            "version": "v1.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "df36f76d2f94dcf07db0ae42d30e04e93499e757"
+                "reference": "5ecf9562fce6b881189fdd7421152ca8b0b53f55"
             },
             "type": "laravel-module",
             "extra": {
@@ -1338,15 +1338,15 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T17:05:12+00:00"
+            "time": "2021-02-03T18:59:24+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.3.8",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "e626c75bec38cb027df47f84604b32c8a0fe8a35"
+                "reference": "c5fec841671624f4969277132a9289b94d9a35ad"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1369,7 +1369,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-03T13:22:33+00:00"
+            "time": "2021-02-04T04:48:44+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -3931,16 +3931,16 @@
         },
         {
             "name": "jean85/pretty-package-versions",
-            "version": "1.5.1",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Jean85/pretty-package-versions.git",
-                "reference": "a917488320c20057da87f67d0d40543dd9427f7a"
+                "reference": "1e0104b46f045868f11942aea058cd7186d6c303"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/a917488320c20057da87f67d0d40543dd9427f7a",
-                "reference": "a917488320c20057da87f67d0d40543dd9427f7a",
+                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/1e0104b46f045868f11942aea058cd7186d6c303",
+                "reference": "1e0104b46f045868f11942aea058cd7186d6c303",
                 "shasum": ""
             },
             "require": {
@@ -3978,7 +3978,7 @@
                 "release",
                 "versions"
             ],
-            "time": "2020-09-14T08:43:34+00:00"
+            "time": "2021-02-04T16:20:16+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -7077,6 +7077,58 @@
             "time": "2020-11-14T17:35:34+00:00"
         },
         {
+            "name": "ohdearapp/ohdear-php-sdk",
+            "version": "3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ohdearapp/ohdear-php-sdk.git",
+                "reference": "4173e8d0871c496bba4d9c691168f5b33d4cc16d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ohdearapp/ohdear-php-sdk/zipball/4173e8d0871c496bba4d9c691168f5b33d4cc16d",
+                "reference": "4173e8d0871c496bba4d9c691168f5b33d4cc16d",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "nesbot/carbon": "^2.35.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0",
+                "psalm/plugin-laravel": "^1.2",
+                "vlucas/phpdotenv": "^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OhDear\\PhpSdk\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "support@ohdear.app",
+                    "homepage": "https://ohdear.app",
+                    "role": "Developer"
+                }
+            ],
+            "description": "An SDK to easily work with the Oh Dear API",
+            "homepage": "https://github.com/ohdearapp/ohdear-php-sdk",
+            "keywords": [
+                "api",
+                "monitoring",
+                "oh dear",
+                "sdk"
+            ],
+            "time": "2021-01-09T23:13:27+00:00"
+        },
+        {
             "name": "onelogin/php-saml",
             "version": "3.5.1",
             "source": {
@@ -9731,32 +9783,27 @@
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "1.0.4",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
-                "reference": "d4245bb9767071c50ea452261e4bb0bb0843c126"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/d4245bb9767071c50ea452261e4bb0bb0843c126",
-                "reference": "d4245bb9767071c50ea452261e4bb0bb0843c126",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git",
+                "reference": "b4a0a18a7d281362eb0cd71daf4e8df798c36e75"
             },
             "require": {
-                "illuminate/bus": "^7.19|^8.0",
+                "illuminate/bus": "^8.0",
                 "lorisleiva/cron-translator": "^0.1.1",
-                "php": "^7.4"
+                "nesbot/carbon": "^2.41.3",
+                "php": "^7.4|^8.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
-                "laravel/legacy-factories": "^1.0",
+                "laravel/legacy-factories": "^1.0.4",
+                "mockery/mockery": "^1.4",
                 "ohdearapp/ohdear-php-sdk": "^3.0",
-                "orchestra/testbench": "^5.0|^6.0",
-                "phpunit/phpunit": "^9.0",
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.3",
                 "spatie/phpunit-snapshot-assertions": "^4.2",
                 "spatie/test-time": "^1.2",
-                "vimeo/psalm": "^3.11"
+                "vimeo/psalm": "^4.0"
             },
             "suggest": {
                 "ohdearapp/ohdear-php-sdk": "Needed to sync your schedule with Oh Dear"
@@ -9774,7 +9821,25 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "psalm": [
+                    "vendor/bin/psalm"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ],
+                "format": [
+                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -9792,13 +9857,7 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-09-08T20:04:19+00:00"
+            "time": "2021-02-04T20:41:22+00:00"
         },
         {
             "name": "spatie/laravel-slack-slash-command",
@@ -14794,19 +14853,14 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12.0",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/vapor-cli.git",
-                "reference": "e61b322fa0f3e3632c54415bb45df891c2c6239a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-cli/zipball/e61b322fa0f3e3632c54415bb45df891c2c6239a",
-                "reference": "e61b322fa0f3e3632c54415bb45df891c2c6239a",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
+                "reference": "3a155c3836814d7f53387066c7ab758734d037cd"
             },
             "require": {
+                "aws/aws-sdk-php": "^3.80",
                 "ext-zip": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "illuminate/container": "^6.0|^7.0|^8.0",
@@ -14839,7 +14893,11 @@
                     "Laravel\\VaporCli\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -14855,7 +14913,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-27T14:00:32+00:00"
+            "time": "2021-02-02T23:38:10+00:00"
         },
         {
             "name": "maximebf/debugbar",

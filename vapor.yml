@@ -30,6 +30,7 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
     review-patient-email-phi:
         runtime: docker
         domain: cpm-provider-review-patient-email-phi.clh-staging.com

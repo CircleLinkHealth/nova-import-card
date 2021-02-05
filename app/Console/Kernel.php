@@ -22,7 +22,6 @@ use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
-use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
@@ -43,10 +42,6 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
-use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
-use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
-use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
-use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
@@ -93,30 +88,20 @@ class Kernel extends ConsoleKernel
             ->when(function () {
                 return SendMonthlyNurseInvoiceLAN::shouldSend();
             })
-            ->onOneServer();
+            ->doNotMonitor();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyFifteenMinutes();
 
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
-            ->onOneServer()
             ->everyFiveMinutes();
 
-        $schedule->job(AutoQAApproveValidPatients::class)
-            ->everyFifteenMinutes()
-            ->between('8:00', '23:00');
-
-        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
-            ->everyFifteenMinutes()
-            ->between('8:00', '23:00');
-
         $schedule->command(RescheduleMissedCalls::class)
-            ->everyFifteenMinutes()
-            ->onOneServer();
+            ->everyFifteenMinutes();
 
         $schedule->job(RemoveScheduledCallsForUnenrolledPatients::class)
             ->everyFifteenMinutes()
-            ->onOneServer();
+            ->monitorName('RemoveScheduledCallsForUnenrolledPatients');
 
         /*
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
@@ -124,8 +109,13 @@ class Kernel extends ConsoleKernel
             ->between('7:00', '23:00');
         */
 
+        $schedule->command('schedule-monitor:sync')
+            ->dailyAt('04:56')
+            ->doNotMonitor();
+
         $schedule->command('schedule-monitor:clean')
-            ->daily();
+            ->daily()
+            ->doNotMonitor();
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)
             ->twiceDaily(8, 14);
@@ -135,60 +125,49 @@ class Kernel extends ConsoleKernel
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)
-            ->cron('1 0 1 * *')
-            ->onOneServer();
+            ->cron('1 0 1 * *');
 
         $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)
-            ->dailyAt('00:10')
-            ->onOneServer();
+            ->dailyAt('00:10');
 
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)
-            ->dailyAt('00:10')
-            ->onOneServer();
+            ->dailyAt('00:10');
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)
-            ->dailyAt('00:10')
-            ->onOneServer();
+            ->dailyAt('00:10');
 
         //Run at 12:45am every 1st of month
         $schedule->command(
             CreateApprovableBillablePatientsReport::class,
             ['--reset-actor', '--auto-attest', now()->subMonth()->startOfMonth()->toDateString()]
         )
-            ->cron('45 0 1 * *')
-            ->onOneServer();
+            ->cron('45 0 1 * *');
 
         $schedule->command(
             NursesPerformanceDailyReport::class,
             [now()->yesterday()->startOfDay()->toDateString(), '--notify']
-        )->dailyAt('00:55')
-            ->onOneServer();
+        )->dailyAt('00:55');
 
         $schedule->command(CheckUserTotalTimeTracked::class)
-            ->dailyAt('01:10')
-            ->onOneServer();
+            ->dailyAt('01:10');
 
         $schedule->job(CheckLocationSummariesHaveBeenCreated::class, [
             Carbon::now()->startOfMonth()->toDateString(),
         ])
             ->monthlyOn(1, '02:20')
-            ->onOneServer();
+            ->monitorName('CheckLocationSummariesHaveBeenCreated');
 
         $schedule->job(CheckPatientSummariesHaveBeenCreated::class, [
             Carbon::now()->startOfMonth()->toDateString(),
         ])
             ->monthlyOn(1, '02:30')
-            ->onOneServer();
+            ->monitorName('CheckPatientSummariesHaveBeenCreated');
 
         $schedule->job(CheckPatientEndOfMonthCcmStatusLogsExistForMonth::class, [
             Carbon::now()->subMonth()->startOfMonth()->toDateString(),
         ])
             ->monthlyOn(1, '02:45')
-            ->onOneServer();
-
-        $schedule->command(GetCcds::class)
-            ->dailyAt('03:00')
-            ->onOneServer();
+            ->monitorName('CheckPatientEndOfMonthCcmStatusLogsExistForMonth');
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
@@ -197,12 +176,10 @@ class Kernel extends ConsoleKernel
             ->dailyAt('04:30');
 
         $schedule->command(CareplanEnrollmentAdminNotification::class)
-            ->dailyAt('07:00')
-            ->onOneServer();
+            ->dailyAt('07:00');
 
         $schedule->command(EmailRNDailyReport::class)
             ->dailyAt('07:05')
-            ->onOneServer()
             ->after(function () {
                 if ( ! DatabaseNotification::where('type', NurseDailyReport::class)->where(
                     'created_at',
@@ -215,58 +192,47 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(SendCarePlanApprovalReminders::class)
             ->weekdays()
-            ->at('08:00')
-            ->onOneServer();
+            ->at('08:00');
 
         $schedule->command(QueueSendAuditReports::class)
-            ->monthlyOn(1, '08:00')
-            ->onOneServer();
+            ->monthlyOn(1, '08:00');
 
         $schedule->command(CheckForDraftCarePlans::class)
-            ->dailyAt('08:00')
-            ->onOneServer();
+            ->dailyAt('08:00');
 
         $schedule->command(CheckForDraftNotesAndQAApproved::class)
-            ->dailyAt('08:10')
-            ->onOneServer();
+            ->dailyAt('08:10');
 
         $schedule->command(EnrollmentFinalAction::class)
             ->dailyAt('08:27');
 
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)
-            ->monthlyOn(1, '08:30')
-            ->onOneServer();
+            ->monthlyOn(1, '08:30');
 
         $schedule->command(SendResolveInvoiceDisputeReminder::class)
             ->dailyAt('08:35')
             ->skip(function () {
                 return SendResolveInvoiceDisputeReminder::shouldSkip();
             })
-            ->onOneServer();
+            ->doNotMonitor();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-            ->weeklyOn(1, '10:00')
-            ->onOneServer();
+            ->weeklyOn(1, '10:00');
 
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
             ->dailyAt('10:27');
 
         $schedule->command(CheckForNullPatientActivities::class)
             ->days([Schedule::MONDAY, Schedule::WEDNESDAY, Schedule::FRIDAY])
-            ->at('11:00')
-            ->onOneServer();
+            ->at('11:00');
 
         $schedule->job(GenerateServiceSummariesForAllPracticeLocations::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:00')
-            ->onOneServer();
+            ->monitorName('GenerateServiceSummariesForAllPracticeLocations');
 
         $schedule->job(ProcessAllPracticePatientMonthlyServices::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:10')
-            ->onOneServer();
-
-        $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
-            ->dailyAt('22:30')
-            ->onOneServer();
+            ->monitorName('ProcessAllPracticePatientMonthlyServices');
 
         $schedule->command(
             CreateApprovableBillablePatientsReport::class,
@@ -278,23 +244,17 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(6, 21);
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
-            ->dailyAt('23:30')
-            ->onOneServer();
-
-        $schedule->command(GenerateReportForScheduledPAM::class)
-            ->monthlyOn(date('t'), '23:30');
+            ->dailyAt('23:30');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
-            ->dailyAt('23:40')
-            ->onOneServer();
+            ->dailyAt('23:40');
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
             ->dailyAt('23:45')
-            ->withoutOverlapping()
-            ->onOneServer();
+            ->withoutOverlapping();
 
         $schedule->job(GenerateEndOfMonthCcmStatusLogs::class, [now()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '23:50')
-            ->onOneServer();
+            ->monitorName('GenerateEndOfMonthCcmStatusLogs');
     }
 }

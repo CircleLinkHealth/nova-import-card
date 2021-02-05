@@ -12,9 +12,9 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
