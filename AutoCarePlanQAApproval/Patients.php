@@ -29,6 +29,22 @@ class Patients implements ShouldQueue
     public function handle()
     {
         User::patientsPendingCLHApproval($approver = CarePlanAutoApprover::user())
+            ->whereHas(
+                'carePlan',
+                function ($q) {
+                    $q->where(function ($q){
+                        $q->whereNull('last_auto_qa_attempt_at')
+                          ->orWhere(function ($q) {
+                              $q->where('last_auto_qa_attempt_at', '<', now()->subHours(2));
+                          });
+                    })->where(function ($q){
+                        $q->whereNull('drafted_at')
+                          ->orWhere(function ($q) {
+                              $q->where('drafted_at', '>', now()->subDays(1));
+                          });
+                    });
+                }
+            )
             ->ofActiveBillablePractice(false)
             ->orderByDesc('id')
             ->each(function (User $patient) use ($approver) {
