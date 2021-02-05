@@ -10,7 +10,6 @@ use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -48,7 +47,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
         $enrollee = Enrollee::with([
             'user.patientInfo',
             'user.ccdProblems',
-                                   ])->find($this->enrolleeId);
+        ])->find($this->enrolleeId);
 
         if ( ! $enrollee) {
             return;
@@ -60,7 +59,12 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ($shouldImport = $this->shouldImport($enrollee)) {
             ImportEnrollee::import($enrollee);
         }
-        if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED, CarePlan::RN_APPROVED])) {
+        if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [
+            CarePlan::PROVIDER_APPROVED,
+            CarePlan::QA_APPROVED,
+            CarePlan::RN_APPROVED,
+            CarePlan::DRAFT,
+        ])) {
             $enrollee->status = Enrollee::ENROLLED;
             $enrollee->save();
 
@@ -141,6 +145,19 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
     }
 
+    private function shouldImport(Enrollee $enrollee)
+    {
+        return ! $enrollee->user
+               || ! (
+                   $enrollee->user
+                    && $enrollee->user->isParticipant()
+                    && $enrollee->user->patientInfo
+                    && Patient::ENROLLED === $enrollee->user->patientInfo->ccm_status
+                    && $enrollee->user->carePlan
+                    && $enrollee->user->ccdProblems->isNotEmpty()
+               );
+    }
+
     private function validateMatchAndAttachToEnrollee(Enrollee &$enrollee, ?User $user): ?User
     {
         if ($user
@@ -153,18 +170,5 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
 
         return null;
-    }
-    
-    private function shouldImport(Enrollee $enrollee)
-    {
-        return ! $enrollee->user
-               || ! (
-                   $enrollee->user
-                    && $enrollee->user->isParticipant()
-                    && $enrollee->user->patientInfo
-                    && Patient::ENROLLED === $enrollee->user->patientInfo->ccm_status
-                    && $enrollee->user->carePlan
-                    && $enrollee->user->ccdProblems->isNotEmpty()
-            );
     }
 }
