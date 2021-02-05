@@ -6,7 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Mail;
 
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -33,7 +35,7 @@ class TrixMailable extends Mailable
      * @param string $emailSubject
      */
     public function __construct(
-        $patient,
+        User $patient,
         $content,
         $mailAttachments = [],
         $emailSubject
@@ -59,6 +61,7 @@ class TrixMailable extends Mailable
         $email = $this->view('patient.patient-email')
             ->with([
                 'practiceName' => $this->patient->getPrimaryPracticeName(),
+                'practicePhone' => (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->patient->primaryPractice->outgoing_phone_number),
                 'content'      => $this->content,
                 'attachments'  => $media->where('mime_type', 'like', '%'.'image'.'%'),
             ])
