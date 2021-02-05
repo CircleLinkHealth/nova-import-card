@@ -9,7 +9,9 @@ namespace CircleLinkHealth\Eligibility\AutoCarePlanQAApproval;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Rules\PatientIsUnique;
+use CircleLinkHealth\SharedModels\Entities\DuplicatePatientResolverLog;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use Illuminate\Support\Collection;
 
 class DuplicatePatientResolver
 {
@@ -49,7 +51,7 @@ class DuplicatePatientResolver
 
     public function resoveDuplicatePatients(...$userIds)
     {
-        if (empty(array_filter($userIds))) {
+        if (empty($validUserIds = array_filter($userIds))) {
             return;
         }
         
@@ -57,17 +59,17 @@ class DuplicatePatientResolver
             ->unique()
             ->filter()
             ->transform(function (User $user) {
-                return [
-                    'user_id' => $user->id,
-                    'score'   => $this->calculateScore($user)['score'],
-                    'logs'    => $this->calculateScore($user)['logs'],
-                ];
+                return $this->calculateScore($user);
             })
             ->sortByDesc('score');
 
-        $keep = $results->first()['user_id'];
-
-        $this->deleteAllExcept($keep, $results->pluck('user_id')->all(), $users);
+        $keep = $results->first()['debug_logs']['patient']['user_id'];
+        
+        if (count($validUserIds) > 1) {
+            $this->storeLogs($results, $keep);
+        }
+    
+        $this->deleteAllExcept($keep, $results->pluck('debug_logs.patient.user_id')->all(), $users);
 
         $this->enrollee->user_id = $keep;
         $this->enrollee->setRelation('user', $users->where('id', $keep)->first());
@@ -75,52 +77,74 @@ class DuplicatePatientResolver
 
     private function calculateScore(User $user)
     {
+        $pI = optional($user->patientInfo);
         $score = 0;
-        $logs  = [];
+        $scoreLogs  = [];
 
         if ($user->isParticipant()) {
             $score += self::IS_PARTICIPANT;
-            $logs['is_participant'] = $score;
+            $scoreLogs['is_participant'] = self::IS_PARTICIPANT;
         }
 
         if ($user->isSurveyOnly()) {
             $score += self::IS_SURVEY_ONLY;
-            $logs['is_survey_only'] = $score;
+            $scoreLogs['is_survey_only'] = self::IS_SURVEY_ONLY;
         }
 
-        if (Patient::ENROLLED === $user->patientInfo->ccm_status) {
+        if (Patient::ENROLLED === $pI->ccm_status) {
             $score += self::ENROLLED_PATIENT_SCORE;
-            $logs['is_enrolled'] = $score;
+            $scoreLogs['is_enrolled'] = self::ENROLLED_PATIENT_SCORE;
         }
 
-        if ($user->patientInfo) {
+        if ($pI) {
             $score += self::PATIENT_INFO_SCORE;
-            $logs['has_patient_info'] = $score;
+            $scoreLogs['has_patient_info'] = self::PATIENT_INFO_SCORE;
         }
 
         if ($user->carePlan) {
             $score += self::CAREPLAN_SCORE;
-            $logs['has_careplan'] = $score;
+            $scoreLogs['has_careplan'] = self::CAREPLAN_SCORE;
         }
 
         if ($user->notes->isNotEmpty()) {
             $score += self::NOTES_SCORE;
-            $logs['has_notes'] = $score;
+            $scoreLogs['has_notes'] = self::NOTES_SCORE;
         }
 
         if ($user->calls->isNotEmpty()) {
             $score += self::CALLS_SCORE;
-            $logs['has_calls'] = $score;
+            $scoreLogs['has_calls'] = self::CALLS_SCORE;
         }
 
         if ($user->calls->where('scheduled_date', '>', now())->isNotEmpty()) {
             $score += self::FUTURE_CALLS_SCORE;
-            $logs['has_future_calls'] = $score;
+            $scoreLogs['has_future_calls'] = $score;
         }
-
+        
         return [
             'score' => $score,
-            'logs'  => $logs,
+            'debug_logs'  => [
+                'score' => $scoreLogs,
+                'patient' => [
+                    'user_id' => $user->id,
+                    'name' => $user->display_name,
+                    'practice_id' => $user->program_id,
+                    'patient_info_id' => $pI->id,
+                    'dob' => optional($pI->birth_date)->toDateString(),
+                    'mrn' => $pI->mrn_number,
+                    'careplan_id' => $user->carePlan->id,
+                ],
+                'enrollee' => [
+                    'name' => $this->enrollee->first_name.' '.$this->enrollee->last_name,
+                    'practice_id' => $user->practice_id,
+                    'dob' => optional($this->enrollee->dob)->toDateString(),
+                    'mrn' => $this->enrollee->mrn,
+                    'enrollee_id' => $this->enrollee->id,
+                ],
+                'future_call_ids' => $user->calls->pluck('id')->all(),
+                'call_ids' => $user->calls->where('scheduled_date', '>', now())->pluck('id')->all(),
+                'note_ids' => $user->notes->pluck('id')
+            ],
         ];
     }
 
@@ -164,5 +188,20 @@ class DuplicatePatientResolver
         }
 
         return $this->validator;
+    }
+    
+    private function storeLogs(Collection $results, int $userIdToKeep)
+    {
+        $results->each(function ($debugLog) use ($userIdToKeep) {
+            $userId = $debugLog['debug_logs']['patient']['user_id'];
+            if ($userIdToKeep === $userId) {
+                return;
+            }
+            
+            DuplicatePatientResolverLog::create([
+                                                    'user_id_kept' => $userIdToKeep,
+                                                    'debug_logs' => $debugLog,
+                                                ]);
+        });
     }
 }
