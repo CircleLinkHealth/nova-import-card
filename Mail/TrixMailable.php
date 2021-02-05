@@ -83,8 +83,7 @@ class TrixMailable extends Mailable
 
         if (empty($phone)) {
             sendSlackMessage('#cpm_general_alerts', "URGENT! Practice {$this->patient->primaryPractice->id}, does not have an outgoing phone number!");
-
-            return 'N/A';
+            return $phone;
         }
 
         return $phone;
