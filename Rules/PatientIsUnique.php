@@ -109,7 +109,7 @@ class PatientIsUnique implements Rule
                 })
                                                     ->pluck('user_id');
 
-            if ($this->duplicatePatientUserIds) {
+            if ($this->duplicatePatientUserIds->isNotEmpty()) {
                 return false;
             }
         }
