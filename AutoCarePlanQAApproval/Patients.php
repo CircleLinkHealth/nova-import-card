@@ -40,7 +40,7 @@ class Patients implements ShouldQueue
                     })->where(function ($q){
                         $q->whereNull('drafted_at')
                           ->orWhere(function ($q) {
-                              $q->where('drafted_at', '>', now()->subDays(1));
+                              $q->where('drafted_at', '>', now()->subDays(1)->startOfDay());
                           });
                     });
                 }
