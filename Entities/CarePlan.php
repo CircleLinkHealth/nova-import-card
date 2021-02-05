@@ -131,6 +131,8 @@ class CarePlan extends BaseModel implements PdfReport
         'rn_date',
         'provider_date',
         'first_printed',
+        'last_auto_qa_attempt_at',
+        'drafted_at',
     ];
 
     protected $fillable = [
@@ -150,6 +152,8 @@ class CarePlan extends BaseModel implements PdfReport
         'last_printed',
         'created_at',
         'updated_at',
+        'last_auto_qa_attempt_at',
+        'drafted_at',
     ];
 
     public function carePlanTemplate()
