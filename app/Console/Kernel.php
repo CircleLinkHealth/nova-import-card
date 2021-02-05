@@ -78,6 +78,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(AutoQAApproveValidPatients::class)
                  ->everyFifteenMinutes()
                  ->between('8:00', '23:00');
+        
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
                  ->dailyAt('22:30');
 
