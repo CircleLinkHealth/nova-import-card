@@ -107,6 +107,10 @@
         {
             "type": "path",
             "url": "./nova-components/EnrollmentInvites"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git"
         }
     ],
     "require": {
@@ -130,6 +134,7 @@
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/twilio-integration-module": "1.1",
         "ohdearapp/ohdear-php-sdk": "^3.0",
+        "spatie/laravel-schedule-monitor": "2.2.2",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.4",
