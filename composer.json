@@ -166,7 +166,6 @@
         "twilio/sdk": "6.0.0"
     },
     "require-dev": {
-        "ext-xdebug": "*",
         "barryvdh/laravel-ide-helper": "^2.6.7",
         "laravel/vapor-cli": "^1.11",
         "mockery/mockery": "^1.3.1",
