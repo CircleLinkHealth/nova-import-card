@@ -13,6 +13,7 @@ use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApprov
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedUploadedCsvEnrollees as ImportAndAutoQAApproveConsentedUploadedCsvEnrollees;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
 use Illuminate\Console\Scheduling\Schedule;
@@ -72,12 +73,13 @@ class Kernel extends ConsoleKernel
                  ->monthlyOn(date('t'), '23:30');
 
         $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
-            ->everyFifteenMinutes()
-            ->between('8:00', '23:00');
+            ->everyFourHours();
+
+        $schedule->job(ImportAndAutoQAApproveConsentedUploadedCsvEnrollees::class)
+            ->everyFourHours();
 
         $schedule->job(AutoQAApproveValidPatients::class)
-                 ->everyFifteenMinutes()
-                 ->between('8:00', '23:00');
+                 ->everyFourHours();
         
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
                  ->dailyAt('22:30');
