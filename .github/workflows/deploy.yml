@@ -1,4 +1,4 @@
-name: Vaporize
+name: Deploy
 on:
   push:
 jobs:
