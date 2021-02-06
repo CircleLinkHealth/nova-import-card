@@ -21,7 +21,7 @@ use CircleLinkHealth\SharedModels\Rules\HasEnoughProblems;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
-use Tests\Concerns\PhaxioFake\Phaxio;
+use CircleLinkHealth\Core\Tests\Concerns\PhaxioFake\Phaxio;
 use Tests\Helpers\CarePlanHelpers;
 
 class OnCarePlanProviderApprovalTest extends CustomerTestCase

@@ -45,7 +45,6 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNo
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
@@ -208,9 +207,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00');
-
-        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
-            ->dailyAt('10:27');
 
         $schedule->command(CheckForNullPatientActivities::class)
             ->days([Schedule::MONDAY, Schedule::WEDNESDAY, Schedule::FRIDAY])
