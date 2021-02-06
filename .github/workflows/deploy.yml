@@ -73,7 +73,7 @@ jobs:
         shell: bash
         env:
           ENV_TYPE: production
-          APP_NAME: provider
+          APP_NAME: awv
           S3_SECRETS_BUCKET: ${{ secrets.PRODUCTION_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.PRODUCTION_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
@@ -91,7 +91,7 @@ jobs:
         shell: bash
         env:
           ENV_TYPE: staging
-          APP_NAME: provider
+          APP_NAME: awv
           S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
