@@ -232,6 +232,8 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/twilio-integration-module" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/vapor-devops-helpers-module" />
       <path value="$PROJECT_DIR$/vendor/ohdearapp/ohdear-php-sdk" />
+      <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
+      <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
