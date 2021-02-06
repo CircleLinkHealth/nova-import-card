@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b8cc30abf23b0aa1d8d68ebcf77d623",
+    "content-hash": "5f94af6ace7904a41d40af077d3a5102",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1088,11 +1088,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v2.2",
+            "version": "v2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "338d314db54faa7288132ed494f02d3bce5ebe05"
+                "reference": "f0fbb483139af8109b4ae51ef471ab86c1666f4b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1117,7 +1117,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-04T01:05:53+00:00"
+            "time": "2021-02-05T19:52:06+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -7830,7 +7830,7 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.16.0",
+            "version": "1.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
