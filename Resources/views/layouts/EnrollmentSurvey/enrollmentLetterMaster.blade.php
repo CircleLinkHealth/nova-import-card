@@ -21,6 +21,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Get a Care Coach</title>
     @stack('styles')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 
 <body style="background-color: #f2f6f9;">
