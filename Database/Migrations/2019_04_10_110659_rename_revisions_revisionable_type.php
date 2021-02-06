@@ -28,9 +28,9 @@ class RenameRevisionsRevisionableType extends Migration
 //        CircleLinkHealth\Customer\Entities\ProviderInfo
 //        CircleLinkHealth\Customer\Entities\User
 //        CircleLinkHealth\Customer\Entities\WorkHours
-//        CircleLinkHealth\TimeTracking\Entities\Activity
-//        CircleLinkHealth\TimeTracking\Entities\ActivityMeta
-//        CircleLinkHealth\TimeTracking\Entities\PageTimer
+//        CircleLinkHealth\SharedModels\Entities\Activity
+//        CircleLinkHealth\SharedModels\Entities\ActivityMeta
+//        CircleLinkHealth\SharedModels\Entities\PageTimer
     }
 
     /**

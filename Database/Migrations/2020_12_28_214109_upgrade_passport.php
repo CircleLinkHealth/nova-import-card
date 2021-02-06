@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeShortUrlKeysUnique extends Migration
+class UpgradePassport extends Migration
 {
     /**
      * Reverse the migrations.
@@ -26,9 +26,14 @@ class MakeShortUrlKeysUnique extends Migration
      */
     public function up()
     {
-        Schema::table('short_urls', function (Blueprint $table) {
-            $table->unique('url_key');
-            $table->unique('default_short_url');
-        });
+        if (Schema::hasColumn('oauth_clients', 'provider')) {
+            return;
+        }
+        Schema::table(
+            'oauth_clients',
+            function (Blueprint $table) {
+                $table->string('provider')->after('secret')->nullable();
+            }
+        );
     }
 }

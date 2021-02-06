@@ -116,15 +116,15 @@ class PostRefactoringRenaming extends Migration
             ],
             [
                 'old' => 'App\EligibilityBatch',
-                'new' => 'CircleLinkHealth\Eligibility\Entities\EligibilityBatch',
+                'new' => 'CircleLinkHealth\SharedModels\Entities\EligibilityBatch',
             ],
             [
                 'old' => 'App\EligibilityJob',
-                'new' => 'CircleLinkHealth\Eligibility\Entities\EligibilityJob',
+                'new' => 'CircleLinkHealth\SharedModels\Entities\EligibilityJob',
             ],
             [
                 'old' => 'App\Enrollee',
-                'new' => 'CircleLinkHealth\Eligibility\Entities\Enrollee',
+                'new' => 'CircleLinkHealth\SharedModels\Entities\Enrollee',
             ],
         ])->each(function ($change) {
             echo "\nChanging {$change['old']} to {$change['new']}.\n";

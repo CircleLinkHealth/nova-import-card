@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Console\Commands\UpdateToledoProviderFromExcelCommand;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
-class AddToledoProvidersNpiNumber extends Migration
+class ChangePdfsFileColumnToLongText extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,8 +25,8 @@ class AddToledoProvidersNpiNumber extends Migration
      */
     public function up()
     {
-        if (isCpm()) {
-            \Illuminate\Support\Facades\Artisan::call(UpdateToledoProviderFromExcelCommand::class);
-        }
+        Schema::table('pdfs', function ($table) {
+            $table->longText('file')->change();
+        });
     }
 }

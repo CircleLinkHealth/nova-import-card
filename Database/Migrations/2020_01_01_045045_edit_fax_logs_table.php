@@ -35,8 +35,8 @@ class EditFaxLogsTable extends Migration
                 }
             );
 
-            if (class_exists('App\FaxLog')) {
-                App\FaxLog::orderBy('id')->chunkById(30, function ($faxes) {
+            if (class_exists('CircleLinkHealth\SharedModels\Entities\FaxLog')) {
+                \CircleLinkHealth\SharedModels\Entities\FaxLog::orderBy('id')->chunkById(30, function ($faxes) {
                     foreach ($faxes as $fax) {
                         $fax->event_type = $fax->status;
                         $fax->status = $fax->response['status'];

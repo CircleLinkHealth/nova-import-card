@@ -10,7 +10,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\CpmMigrations\\Providers\\CpmMigrationsServiceProvider"
+
             ],
             "aliases": {
                 
