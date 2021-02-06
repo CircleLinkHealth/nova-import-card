@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "531a4239ebb8df91e9c6cad8e0f1b654",
+    "content-hash": "27b46c7637c366b529bb42f528567010",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -13787,19 +13787,14 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12.0",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/vapor-cli.git",
-                "reference": "e61b322fa0f3e3632c54415bb45df891c2c6239a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-cli/zipball/e61b322fa0f3e3632c54415bb45df891c2c6239a",
-                "reference": "e61b322fa0f3e3632c54415bb45df891c2c6239a",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
+                "reference": "3a155c3836814d7f53387066c7ab758734d037cd"
             },
             "require": {
+                "aws/aws-sdk-php": "^3.80",
                 "ext-zip": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "illuminate/container": "^6.0|^7.0|^8.0",
@@ -13832,7 +13827,11 @@
                     "Laravel\\VaporCli\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -13848,7 +13847,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-01-27T14:00:32+00:00"
+            "time": "2021-02-02T23:38:10+00:00"
         },
         {
             "name": "mockery/mockery",
