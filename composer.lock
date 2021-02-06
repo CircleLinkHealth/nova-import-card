@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "240e20a97fb8683ea3f1c0c5052d472f",
+    "content-hash": "d6576d56995e5c456c11be44b284eb16",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -936,11 +936,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
-            "version": "v1.3",
+            "version": "v1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "b6570872077700737d0e7ddc1e354e64c04489c6"
+                "reference": "da5afc6b1fa307abd8c9f101ef8cda7c3c19853a"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -987,7 +987,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-03T02:39:04+00:00"
+            "time": "2021-02-06T16:41:23+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1328,11 +1328,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v2.0",
+            "version": "v2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "33a8a93b16d336ba08ccdf19be3491249c0c9da6"
+                "reference": "3c870ef18cc3bcc51c9f17dd49178a21c7a58083"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1358,7 +1358,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:04:30+00:00"
+            "time": "2021-02-06T16:38:26+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
