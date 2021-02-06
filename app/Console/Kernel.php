@@ -83,6 +83,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('schedule-monitor:sync')
+            ->dailyAt('04:56')
+            ->doNotMonitor();
+
+        $schedule->command('schedule-monitor:clean')
+            ->daily()
+            ->doNotMonitor();
+
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)
             ->everyMinute()
             ->when(function () {
@@ -102,20 +110,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(RemoveScheduledCallsForUnenrolledPatients::class)
             ->everyFifteenMinutes()
             ->monitorName('RemoveScheduledCallsForUnenrolledPatients');
-
-        /*
-        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
-            ->hourly()
-            ->between('7:00', '23:00');
-        */
-
-        $schedule->command('schedule-monitor:sync')
-            ->dailyAt('04:56')
-            ->doNotMonitor();
-
-        $schedule->command('schedule-monitor:clean')
-            ->daily()
-            ->doNotMonitor();
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)
             ->twiceDaily(8, 14);
