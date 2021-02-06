@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\DuskTestCase;
+use CircleLinkHealth\SelfEnrollment\Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class NurseWorkScheduleTest extends DuskTestCase
