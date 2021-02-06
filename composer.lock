@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb56a7ae3fd8ed8a2a6fd6355829d76d",
+    "content-hash": "149b83875c5d36e49caa32831b8ea975",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1100,11 +1100,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "df3fa3f466d6bd5d9b55d5cfbfa7f563ea765f6e"
+                "reference": "d61c2dd0814334a02fee0eb785abc53d75cb6330"
             },
             "type": "laravel-module",
             "extra": {
@@ -1127,7 +1127,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-05T20:02:37+00:00"
+            "time": "2021-02-06T17:33:19+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
