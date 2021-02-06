@@ -28,6 +28,7 @@ environments:
     deploy:
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'
+      - 'php artisan schedule-monitor:sync'
   staging:
     domain: self-enrollment.clh-staging.com
     storage: self-enrollment-staging-vapor-storage
