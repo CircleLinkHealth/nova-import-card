@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87b9ee5a702652df9b61e8dd98c5ebf7",
+    "content-hash": "8cb8da2f701a7b237e57adcbab595f0e",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -948,11 +948,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v2.0",
+            "version": "v2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "33a8a93b16d336ba08ccdf19be3491249c0c9da6"
+                "reference": "3c870ef18cc3bcc51c9f17dd49178a21c7a58083"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -978,7 +978,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-01-01T05:04:30+00:00"
+            "time": "2021-02-06T16:38:26+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
