@@ -6,10 +6,13 @@
 
 namespace CircleLinkHealth\Customer\Mail;
 
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class TrixMailable extends Mailable
 {
@@ -33,7 +36,7 @@ class TrixMailable extends Mailable
      * @param string $emailSubject
      */
     public function __construct(
-        $patient,
+        User $patient,
         $content,
         $mailAttachments = [],
         $emailSubject
@@ -58,9 +61,10 @@ class TrixMailable extends Mailable
 
         $email = $this->view('patient.patient-email')
             ->with([
-                'practiceName' => $this->patient->getPrimaryPracticeName(),
-                'content'      => $this->content,
-                'attachments'  => $media->where('mime_type', 'like', '%'.'image'.'%'),
+                'practiceName'  => $this->patient->getPrimaryPracticeName(),
+                'practicePhone' => $this->getPracticePhone(),
+                'content'       => $this->content,
+                'attachments'   => $media->filter(fn ($m)   => Str::contains($m->mime_type, 'image')),
             ])
             ->from(config('mail.from.address'), 'Care Coaching Team')
             ->subject($this->emailSubject);
@@ -72,5 +76,18 @@ class TrixMailable extends Mailable
         }
 
         return $email;
+    }
+
+    private function getPracticePhone(): string
+    {
+        $phone = (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->patient->primaryPractice->outgoing_phone_number);
+
+        if (empty($phone)) {
+            sendSlackMessage('#cpm_general_alerts', "URGENT! Practice {$this->patient->primaryPractice->id}, does not have an outgoing phone number!");
+
+            return $phone;
+        }
+
+        return $phone;
     }
 }
