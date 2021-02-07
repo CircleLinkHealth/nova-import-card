@@ -36,5 +36,3 @@ lsp/log/*
 *deploy-s3.env
 CircleLinkHealth/*/vendor
 CircleLinkHealth
-CircleLinkHealth/*/node_modules.env.review-patient-email-phi-fixes
-.env.review-patient-email-phi
