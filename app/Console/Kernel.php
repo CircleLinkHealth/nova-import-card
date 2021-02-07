@@ -19,7 +19,6 @@ use App\Console\Commands\CheckUserTotalTimeTracked;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
-use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -46,7 +45,6 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNo
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
@@ -83,6 +81,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('schedule-monitor:sync')
+            ->dailyAt('04:56')
+            ->doNotMonitor();
+
+        $schedule->command('schedule-monitor:clean')
+            ->daily()
+            ->doNotMonitor();
+
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)
             ->everyMinute()
             ->when(function () {
@@ -102,20 +108,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(RemoveScheduledCallsForUnenrolledPatients::class)
             ->everyFifteenMinutes()
             ->monitorName('RemoveScheduledCallsForUnenrolledPatients');
-
-        /*
-        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
-            ->hourly()
-            ->between('7:00', '23:00');
-        */
-
-        $schedule->command('schedule-monitor:sync')
-            ->dailyAt('04:56')
-            ->doNotMonitor();
-
-        $schedule->command('schedule-monitor:clean')
-            ->daily()
-            ->doNotMonitor();
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)
             ->twiceDaily(8, 14);
@@ -203,9 +195,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForDraftNotesAndQAApproved::class)
             ->dailyAt('08:10');
 
-        $schedule->command(EnrollmentFinalAction::class)
-            ->dailyAt('08:27');
-
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)
             ->monthlyOn(1, '08:30');
 
@@ -218,9 +207,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00');
-
-        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
-            ->dailyAt('10:27');
 
         $schedule->command(CheckForNullPatientActivities::class)
             ->days([Schedule::MONDAY, Schedule::WEDNESDAY, Schedule::FRIDAY])

@@ -74,8 +74,9 @@ environments:
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
-            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'npm ci && npm run prod'
             - 'php artisan route:cache'
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
