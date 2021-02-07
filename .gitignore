@@ -35,4 +35,3 @@ CLHPackages/
 lsp/log/*
 *deploy-s3.env
 CircleLinkHealth/*/vendor
-CircleLinkHealth
