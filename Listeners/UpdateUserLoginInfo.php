@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Core\Listeners;
 
+use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
 use CircleLinkHealth\Core\Jobs\PostLoginTasks;
 use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
 use Illuminate\Auth\Events\Login;
 
 class UpdateUserLoginInfo

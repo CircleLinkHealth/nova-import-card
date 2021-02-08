@@ -6,12 +6,10 @@
 
 namespace CircleLinkHealth\Core\Tests\Concerns\TwilioFake;
 
-use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\TwilioFake;
 use CircleLinkHealth\TwilioIntegration\Services\TwilioInterface;
 use Illuminate\Support\Facades\Facade;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
-
 
 class Twilio extends Facade
 {
