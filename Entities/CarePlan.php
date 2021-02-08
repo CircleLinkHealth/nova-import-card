@@ -15,7 +15,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\CarePlanProviderApproved;
 use CircleLinkHealth\Customer\Notifications\NotifyPatientCarePlanApproved;
-use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
+use CircleLinkHealth\Customer\Rules\PatientIsUnique;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Rules\MrnWasReplacedIfPracticeImportingHooks;
@@ -131,6 +131,8 @@ class CarePlan extends BaseModel implements PdfReport
         'rn_date',
         'provider_date',
         'first_printed',
+        'last_auto_qa_attempt_at',
+        'drafted_at',
     ];
 
     protected $fillable = [
@@ -150,6 +152,8 @@ class CarePlan extends BaseModel implements PdfReport
         'last_printed',
         'created_at',
         'updated_at',
+        'last_auto_qa_attempt_at',
+        'drafted_at',
     ];
 
     public function carePlanTemplate()
@@ -545,7 +549,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'billingProvider' => 'required|numeric',
                 'practice'        => 'required|numeric',
                 'location'        => 'required|numeric',
-                'duplicate'       => [new PatientIsNotDuplicate($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
+                'duplicate'       => [new PatientIsUnique($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
                 'address'         => 'required|filled',
                 'city'            => 'required|filled',
                 'state'           => 'required|filled',
