@@ -2,8 +2,9 @@
     use CircleLinkHealth\Customer\Entities\Patient;
 
     $ccmStatus = $patient->getCcmStatus();
+    $isUnreachableAndSurveyOnly= $ccmStatus === Patient::UNREACHABLE && $patient->isSurveyOnly();
 
-    if ($ccmStatus === Patient::UNREACHABLE && $patient->isSurveyOnly()){
+    if ($isUnreachableAndSurveyOnly){
         $ccmStatus = 'Enrollee';
     }
 
@@ -26,6 +27,10 @@
     //only add this if patient is already withdrawn.
     //We do not want to allow anyone to set status as unreachable
     if ($ccmStatus == Patient::UNREACHABLE){
+        $statusesForDropdown[Patient::UNREACHABLE] = 'Unreachable';
+    }
+
+    if ($isUnreachableAndSurveyOnly){
         $statusesForDropdown[Patient::UNREACHABLE] = 'Unreachable';
     }
 @endphp
