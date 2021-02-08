@@ -24,8 +24,8 @@ class GenerateWoodlandsInternistsLetter extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv() && isCpm()) {
-            Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateWoodlandInternistsClinicLetter']);
+        if (class_exists($class = 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateWoodlandInternistsClinicLetter')) {
+            Artisan::call('db:seed', ['--class' => $class]);
         }
     }
 }

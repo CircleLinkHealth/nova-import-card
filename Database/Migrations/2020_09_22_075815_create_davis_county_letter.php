@@ -5,6 +5,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Artisan;
 
 class CreateDavisCountyLetter extends Migration
 {
@@ -24,8 +25,8 @@ class CreateDavisCountyLetter extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv() && isCpm()) {
-            Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateDavisCountyLetter']);
+        if (class_exists($class = 'CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDavisCountyLetter')) {
+            Artisan::call('db:seed', ['--class' => $class]);
         }
     }
 }
