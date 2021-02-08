@@ -113,12 +113,12 @@ class SelfEnrollableUserAuthRequest extends FormRequest
     private function helpLoginMessage()
     {
         $practiceNumber =  $this->user->primaryProgramPhoneE164();
-
+        $mainMessageBody = "If you are having trouble to log in, please contact your practice";
         if ($practiceNumber){
-            return "If you are having trouble to log in, please contact your practice at $practiceNumber.";
+            return "$mainMessageBody at $practiceNumber.";
         }
 
-        return "If you are having trouble to log in, please contact your practice.";
+        return "$mainMessageBody.";
 
     }
 
