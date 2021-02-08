@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4fd47d966a799e868b45ba33054c620b",
+    "content-hash": "4eb042875319d5a43058ea265dca8584",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.4",
+            "version": "3.173.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1400b2d08ded25bd9c6876edb0490b8cb9aeaa60"
+                "reference": "45a5150c35ab4ee5e4eb05332179a094476d1dd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1400b2d08ded25bd9c6876edb0490b8cb9aeaa60",
-                "reference": "1400b2d08ded25bd9c6876edb0490b8cb9aeaa60",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45a5150c35ab4ee5e4eb05332179a094476d1dd5",
+                "reference": "45a5150c35ab4ee5e4eb05332179a094476d1dd5",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-05T19:19:35+00:00"
+            "time": "2021-02-08T19:13:12+00:00"
         },
         {
             "name": "brick/math",
@@ -868,11 +868,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-master",
+            "version": "2.4.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "1fbfca0258c3e0d827e73e052851b75ded374753"
+                "reference": "01e39ec52a474f3fdb475fc5ef46f8f7257f6d3b"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -928,7 +928,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-05T19:59:05+00:00"
+            "time": "2021-02-08T10:03:03+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
