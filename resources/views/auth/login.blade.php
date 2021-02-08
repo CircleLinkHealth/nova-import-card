@@ -52,9 +52,6 @@
                                         style="background-color: #50B2E2;">Log In
                                 </button>
                                 <br/>
-
-                                <a class="btn btn-link" href="{{ url('auth/password/reset') }}">Lost/Need a
-                                    password? Click Here</a>
                             </div>
                         </div>
                     </form>
