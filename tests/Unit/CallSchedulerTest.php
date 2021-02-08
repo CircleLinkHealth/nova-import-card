@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class CallSchedulerTest extends CustomerTestCase
 {

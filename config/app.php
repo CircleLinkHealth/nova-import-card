@@ -203,6 +203,7 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
         LaravelJobServiceProvider::class,
         CcmBillingServiceProvider::class,
+        \CircleLinkHealth\CcmBilling\Providers\CcmBillingDeferredServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
