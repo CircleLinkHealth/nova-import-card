@@ -13,6 +13,7 @@ use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApprov
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedUploadedCsvEnrollees as ImportAndAutoQAApproveConsentedUploadedCsvEnrollees;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Jobs\OverwritePatientMrnsFromSupplementalData;
 use Illuminate\Console\Scheduling\Schedule;
@@ -48,6 +49,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('schedule-monitor:sync')
+                 ->dailyAt('04:56');
+
+        $schedule->command('schedule-monitor:clean')
+                 ->daily();
+
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyFiveMinutes();
 
@@ -61,24 +68,23 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
 //            ->hourly()
 //            ->between('7:00', '23:00');
-    
+
         $schedule->command(GenerateReportForScheduledPAM::class)
                  ->monthlyOn(date('t'), '23:30');
 
-//        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
-//            ->everyFifteenMinutes()
-//            ->between('8:00', '23:00');
-//
-//        $schedule->job(AutoQAApproveValidPatients::class)
-//                 ->everyFifteenMinutes()
-//                 ->between('8:00', '23:00');
-    
+        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
+            ->everyFourHours();
+
+        $schedule->job(ImportAndAutoQAApproveConsentedUploadedCsvEnrollees::class)
+            ->everyFourHours();
+
+        $schedule->job(AutoQAApproveValidPatients::class)
+                 ->everyFourHours();
+        
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
-                 ->dailyAt('22:30')
-                 ->onOneServer();
-    
+                 ->dailyAt('22:30');
+
         $schedule->command(GetCcds::class)
-                 ->dailyAt('03:00')
-                 ->onOneServer();
+                 ->dailyAt('03:00');
     }
 }

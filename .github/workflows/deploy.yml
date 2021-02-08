@@ -1,9 +1,9 @@
-name: Vaporize
+name: Deploy
 on:
   push:
 jobs:
   deploy:
-    name: Vaporize
+    name: Deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master'
