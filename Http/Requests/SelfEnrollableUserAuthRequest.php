@@ -52,7 +52,7 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     //once we phase out problematic links batch, also check that user has survey only, or patient role
                     $user = User::find($value);
-                    if ( ! $user->exists()) {
+                    if ( ! $user) {
                         $fail('Invalid User.');
                     }
                     $this->user = $user;
@@ -82,7 +82,7 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             }
 
             Log::channel('database')->error('Failed to login patient with DOB['.$dob->toDateString()."] and UserId[$userId] and isSurveyOnly[$isSurveyOnly]");
-            $validator->errors()->add('field', 'Your credentials do not match our records');
+            $validator->errors()->add('field', 'Your credentials do not match our records.');
             $validator->errors()->add('help_login', $helpLoginMessage);
 
             $this->request->add([
