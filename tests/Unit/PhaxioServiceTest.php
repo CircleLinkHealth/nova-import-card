@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Core\Contracts\Efax;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class PhaxioServiceTest extends TestCase
 {

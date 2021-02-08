@@ -8,8 +8,8 @@ namespace App\Listeners;
 
 use CircleLinkHealth\Core\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Services\PhiMail\IncomingMessageHandler;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Support\Str;
 
 class NotifySlackChannel

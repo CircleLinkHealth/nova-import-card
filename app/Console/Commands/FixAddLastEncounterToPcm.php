@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\AddLastEncounterToEligibilityCheckFromTargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Console\Command;
 
 class FixAddLastEncounterToPcm extends Command

@@ -69,7 +69,7 @@
         }
     </style>
     @stack('styles')
-    @include('modules.raygun.partials.real-user-monitoring')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
     @include('core::partials.new-relic-tracking')
 </head>
 <body>
@@ -168,11 +168,7 @@
 </script>
 @endif
 
-@auth
-    @if(!isset($isPdf) && (auth()->user()->isAdmin() || auth()->user()->isCareCoach()))
-        @include('partials.jira-issue-collector')
-    @endif
-@endauth
+@include('core::partials.clickup-bug-collector')
 
 @include('core::partials.sentry-js')
 </body>

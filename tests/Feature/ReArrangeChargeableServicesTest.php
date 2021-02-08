@@ -10,6 +10,7 @@ use App\Console\Commands\ReArrangeActivityChargeableServices;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
@@ -26,7 +27,6 @@ use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use Illuminate\Support\Collection;
 use ReflectionMethod;
-use Tests\TestCase;
 
 class ReArrangeChargeableServicesTest extends TestCase
 {

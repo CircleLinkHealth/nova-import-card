@@ -7,12 +7,12 @@
 namespace Tests\Feature;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Tests\Helpers\CustomerTestCaseHelper;
-use Tests\TestCase;
+use CircleLinkHealth\Customer\Tests\Helpers\CustomerTestCaseHelper;
 
 class DailyReportPopUpModal extends TestCase
 {

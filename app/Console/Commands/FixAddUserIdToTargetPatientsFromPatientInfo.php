@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Console\Command;
 
 class FixAddUserIdToTargetPatientsFromPatientInfo extends Command
