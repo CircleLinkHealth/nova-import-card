@@ -245,7 +245,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                 ],
             ],
             'location' => [
-                'name'    => null,
+                'name'    => $this->data['cpm_location_name'] ?? null,
                 'address' => [
                     'street'  => [],
                     'city'    => null,

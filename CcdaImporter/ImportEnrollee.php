@@ -191,7 +191,7 @@ class ImportEnrollee
         $enrollee->save();
 
         //We need to refresh the model before we perform the import, to make sure virtual columns contain the proper data
-        //since the model that gets returned from Ccda::create method contains null values fro virtual columns
+        //since the model that gets returned from Ccda::create method contains null values from virtual columns
         $ccda->fresh()->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
