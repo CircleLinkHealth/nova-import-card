@@ -51,11 +51,11 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     //once we phase out problematic links batch, also check that user has survey only, or patient role
-                    $user = User::where('id', $value);
+                    $user = User::find($value);
                     if ( ! $user->exists()) {
                         $fail('Invalid User.');
                     }
-                    $this->user = $user->first();
+                    $this->user = $user;
                 },
             ],
         ];
@@ -113,7 +113,13 @@ class SelfEnrollableUserAuthRequest extends FormRequest
     private function helpLoginMessage()
     {
         $practiceNumber =  $this->user->primaryProgramPhoneE164();
-        return "If you are having trouble to log in. Please contact your Practice $practiceNumber";
+
+        if ($practiceNumber){
+            return "If you are having trouble to log in, please contact your practice at $practiceNumber.";
+        }
+
+        return "If you are having trouble to log in, please contact your practice.";
+
     }
 
 }
