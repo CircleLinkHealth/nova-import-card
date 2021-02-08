@@ -9,7 +9,6 @@
     }
 
     $statusesForDropdown = [
-    //option: value => display
          Patient::ENROLLED => 'Enrolled',
     ];
 
@@ -17,15 +16,12 @@
         $statusesForDropdown[Patient::PAUSED] = 'Paused';
     }
 
-    //It's either withdrawn first call or withdrawn
     if ($ccmStatus == Patient::WITHDRAWN_1ST_CALL){
         $statusesForDropdown[Patient::WITHDRAWN_1ST_CALL] = 'Wthdrn 1st Call';
     }else{
         $statusesForDropdown[Patient::WITHDRAWN] = 'Withdrawn';
     }
 
-    //only add this if patient is already withdrawn.
-    //We do not want to allow anyone to set status as unreachable
     if ($ccmStatus == Patient::UNREACHABLE){
         $statusesForDropdown[Patient::UNREACHABLE] = 'Unreachable';
     }
