@@ -150,17 +150,20 @@ class ProviderUITimerComposer extends ServiceProvider
                     : $preferredLocationName;
 
                 $patientIsBhiEligible = $patient->isBhi();
-    
+
                 $consecutiveUnsuccessfulCallCount = $patient->patientInfo->no_call_attempts_since_last_success;
                 $consecutiveUnsuccessfulCallLimit = \CircleLinkHealth\Customer\Repositories\PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS;
-    
-                if($consecutiveUnsuccessfulCallCount < 4) {
-                    $consecutiveUnsuccessfulCallColor = '#008000';
-                } elseif($consecutiveUnsuccessfulCallCount == 4) {
+
+                if (4 == $consecutiveUnsuccessfulCallCount) {
                     $consecutiveUnsuccessfulCallColor = '#FFA100';
-                } elseif($consecutiveUnsuccessfulCallCount == 5) {
+                } elseif (5 == $consecutiveUnsuccessfulCallCount) {
                     $consecutiveUnsuccessfulCallColor = '#FF0000';
+                } else {
+                    $consecutiveUnsuccessfulCallColor = '#008000';
                 }
+
+                $shouldShowConsecutiveUnsuccessfulCallCount = (auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+                    && isset($consecutiveUnsuccessfulCallCount, $consecutiveUnsuccessfulCallLimit, $consecutiveUnsuccessfulCallColor);
             } else {
                 $ccm_above = false;
                 $location = 'N/A';
@@ -181,6 +184,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'consecutiveUnsuccessfulCallCount',
                 'consecutiveUnsuccessfulCallLimit',
                 'consecutiveUnsuccessfulCallColor',
+                'shouldShowConsecutiveUnsuccessfulCallCount',
             ]));
         });
     }
