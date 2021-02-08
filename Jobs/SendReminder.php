@@ -51,8 +51,7 @@ class SendReminder implements ShouldQueue
             return;
         }
 
-        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->sortByDesc('id')->first();
-        $color      = optional($invitation)->button_color ?? SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $color      = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
         SendInvitation::dispatch($this->patient, $this->getBatch($this->patient->program_id, $color)->id, $color, true);
     }
 
