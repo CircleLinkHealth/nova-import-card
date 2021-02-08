@@ -68,21 +68,20 @@
                                         <br/>
                                         <center>
                                             <div class='row'>
-                                                @if ($errors->any())
-                                                    <div class="alert alert-danger" style="color: red">
-                                                        @foreach ($errors->all() as $error)
-                                                            <div>{{ $error }}</div>
-                                                        @endforeach
-                                                    </div>
-                                                    <br/>
-                                                @endif
-
                                                 <input type="hidden" name="user_id" value="{{$userId}}">
                                                 <input type="hidden" name="is_survey_only" value="{{$isSurveyOnly}}">
                                                 <input type="hidden" name="url_with_token" value="{{$urlWithToken}}">
                                                 <button type="submit" id="submit" class="waves-effect waves-light btn-large btn-prevent-multi-submit" style="background-color: #4CB2E1">
                                                     Continue
                                                 </button>
+                                                @if ($errors->any())
+                                                    <div class="alert alert-danger" style="color: #f53636">
+                                                        @foreach ($errors->all() as $error)
+                                                            <div>{{ $error }}</div>
+                                                        @endforeach
+                                                    </div>
+                                                    <br/>
+                                                @endif
                                             </div>
                                         </center>
                                     </form>
