@@ -156,7 +156,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
                 if (4 == $consecutiveUnsuccessfulCallCount) {
                     $consecutiveUnsuccessfulCallColor = '#FFA100';
-                } elseif (5 == $consecutiveUnsuccessfulCallCount) {
+                } elseif (5 >= $consecutiveUnsuccessfulCallCount) {
                     $consecutiveUnsuccessfulCallColor = '#FF0000';
                 } else {
                     $consecutiveUnsuccessfulCallColor = '#008000';
