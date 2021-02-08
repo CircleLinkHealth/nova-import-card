@@ -8,6 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
@@ -19,7 +20,6 @@ use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
 
 class InboundSmsAndMailTest extends CustomerTestCase
 {
