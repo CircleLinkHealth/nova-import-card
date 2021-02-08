@@ -28,8 +28,8 @@ class ConsentedEnrollees implements ShouldQueue
     public function handle()
     {
         $this->consentedEnrollees()
-             ->orderByDesc('consented_at')
-             ->orderBy('source')
+            ->orderByDesc('consented_at')
+            ->orderBy('source')
             ->each(function (Enrollee $enrollee) {
                 ImportAndApproveEnrollee::dispatch($enrollee->id);
             });
@@ -38,7 +38,7 @@ class ConsentedEnrollees implements ShouldQueue
     private function consentedEnrollees()
     {
         return Enrollee::where('status', '=', Enrollee::CONSENTED)
-            ->where(function ($q){
+            ->where(function ($q) {
                 $q->where('source', '<>', Enrollee::UPLOADED_CSV)
                     ->orWhereNull('source');
             })
