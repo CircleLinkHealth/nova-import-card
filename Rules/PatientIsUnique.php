@@ -64,13 +64,12 @@ class PatientIsUnique implements Rule
     {
         return $this->duplicatePatientUserIds->first();
     }
-    
+
     public function getPatientUserIds(): ?Collection
     {
         return $this->duplicatePatientUserIds;
     }
-    
-    
+
     /**
      * Get the validation error message.
      *
@@ -104,10 +103,10 @@ class PatientIsUnique implements Rule
                     $q->where('program_id', $this->practiceId);
                 }
             )->whereMrnNumber($this->mrn)->whereNotNull('mrn_number')
-                                                    ->when($this->patientUserId, function ($q) {
-                    $q->where('user_id', '!=', $this->patientUserId);
-                })
-                                                    ->pluck('user_id');
+                ->when($this->patientUserId, function ($q) {
+                                                        $q->where('user_id', '!=', $this->patientUserId);
+                                                    })
+                ->pluck('user_id');
 
             if ($this->duplicatePatientUserIds->isNotEmpty()) {
                 return false;
