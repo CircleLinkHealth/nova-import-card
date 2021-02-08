@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,7 +33,6 @@ class CreateSelfEnrollmentMonitoredScheduledTasks extends Migration
             $table->timestamps();
         });
 
-
         Schema::create($this->getTaskLogItemsTable(), function (Blueprint $table) {
             $table->bigIncrements('id');
 
@@ -48,11 +51,13 @@ class CreateSelfEnrollmentMonitoredScheduledTasks extends Migration
         });
     }
 
-    private function getTasksName(): string {
-        return config('schedule-monitor.tasks_db_table', 'monitored_scheduled_tasks');
+    private function getTaskLogItemsTable(): string
+    {
+        return config('schedule-monitor.tasks_log_items_db_table', 'monitored_scheduled_task_log_items');
     }
 
-    private function getTaskLogItemsTable(): string {
-        return config('schedule-monitor.tasks_log_items_db_table', 'monitored_scheduled_task_log_items');
+    private function getTasksName(): string
+    {
+        return config('schedule-monitor.tasks_db_table', 'monitored_scheduled_tasks');
     }
 }
