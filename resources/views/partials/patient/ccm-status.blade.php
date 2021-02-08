@@ -1,32 +1,34 @@
 @php
-use CircleLinkHealth\Customer\Entities\Patient;
+    use CircleLinkHealth\Customer\Entities\Patient;
 
-$ccmStatus = $patient->getCcmStatus();
+    $ccmStatus = $patient->getCcmStatus();
 
-$statusesForDropdown = [
-//option: value => display
-     Patient::ENROLLED => 'Enrolled',
-];
+    if ($ccmStatus === Patient::UNREACHABLE && $patient->isSurveyOnly()){
+        $ccmStatus = 'Enrollee';
+    }
 
-if (auth()->user()->isAdmin()) {
-    $statusesForDropdown[Patient::PAUSED] = 'Paused';
-}
+    $statusesForDropdown = [
+    //option: value => display
+         Patient::ENROLLED => 'Enrolled',
+    ];
 
-//It's either withdrawn first call or withdrawn
-if ($ccmStatus == Patient::WITHDRAWN_1ST_CALL){
-    $statusesForDropdown[Patient::WITHDRAWN_1ST_CALL] = 'Wthdrn 1st Call';
-}else{
-    $statusesForDropdown[Patient::WITHDRAWN] = 'Withdrawn';
-}
+    if (auth()->user()->isAdmin()) {
+        $statusesForDropdown[Patient::PAUSED] = 'Paused';
+    }
 
-//only add this if patient is already withdrawn.
-//We do not want to allow anyone to set status as unreachable
-if ($ccmStatus == Patient::UNREACHABLE){
-    $statusesForDropdown[Patient::UNREACHABLE] = 'Unreachable';
-}
+    //It's either withdrawn first call or withdrawn
+    if ($ccmStatus == Patient::WITHDRAWN_1ST_CALL){
+        $statusesForDropdown[Patient::WITHDRAWN_1ST_CALL] = 'Wthdrn 1st Call';
+    }else{
+        $statusesForDropdown[Patient::WITHDRAWN] = 'Withdrawn';
+    }
 
+    //only add this if patient is already withdrawn.
+    //We do not want to allow anyone to set status as unreachable
+    if ($ccmStatus == Patient::UNREACHABLE){
+        $statusesForDropdown[Patient::UNREACHABLE] = 'Unreachable';
+    }
 @endphp
-
 @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
     <li class="inline-block">
         <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control"
