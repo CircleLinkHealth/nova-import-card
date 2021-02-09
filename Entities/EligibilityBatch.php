@@ -294,7 +294,7 @@ class EligibilityBatch extends BaseModel
                 $ejs->each(function ($job) use ($onQueue) {
                     ProcessSinglePatientEligibility::dispatch(
                         $job->id
-                    )->onQueue($onQueue);
+                    )->onQueue(getCpmQueueName($onQueue));
                 });
             });
     }
