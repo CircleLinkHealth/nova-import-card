@@ -50,12 +50,19 @@ TwoFA
 3. Create a PR as soon as possible to get the code reviewed.
 
 ### Deployments
-We use a modified version of vapor cli that lives in the monorepo. 
+We use a modified version of vapor cli that lives in the monorepo. Use the commands below to setup an alias for easy use.
 ```bash
+# Run these commands in the monorepo root directory
 (cd $PWD/modules/VaporCli && COMPOSER_MEMORY_LIMIT=-1 composer install)
 echo 'alias monovapor="'$PWD'/modules/VaporCli/vapor"' >> ~/.zshrc 
 source ~/.zshrc
 ```
+Now to deploy an app, we need to run the deploy command from the app's directory
+```bash
+cd apps/provider-app
+monovapor deploy staging staging
+```
+
 
 
 ### Splitting the monorepo 
