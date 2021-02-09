@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateCameronEnrolleesMissingUserId;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
@@ -51,7 +52,8 @@ class SelfEnrollmentProvider extends ServiceProvider
             GenerateNbiLetterCommand::class,
             RegenerateMissingSelfEnrollmentLetters::class,
             UpdateEnrolmentLettersSignatoryName::class,
-            GenerateSelfEnrollmentSurveyCommand::class
+            GenerateSelfEnrollmentSurveyCommand::class,
+            UpdateCameronEnrolleesMissingUserId::class
         ]);
         $this->app->register(RouteServiceProvider::class);
     }
