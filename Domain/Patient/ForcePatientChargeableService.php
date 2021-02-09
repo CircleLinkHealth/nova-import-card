@@ -67,6 +67,7 @@ class ForcePatientChargeableService
         $start    = $startingMonth->copy();
         $end      = $endingMonth->copy();
         $toCreate = [];
+        //todo: needs more logic
         while ($start->lt($end)) {
             $toCreate[] = [
                 'chargeable_service_id' => $this->input->getChargeableServiceId(),
@@ -76,6 +77,7 @@ class ForcePatientChargeableService
 
             $start->addMonth();
         }
+        //create or update?
         $patient->forcedChargeableServices()->createMany($toCreate);
     }
 

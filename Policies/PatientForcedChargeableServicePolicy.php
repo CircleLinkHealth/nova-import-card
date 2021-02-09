@@ -59,7 +59,7 @@ class PatientForcedChargeableServicePolicy
 
     public function update(User $user, PatientForcedChargeableService $service)
     {
-        return false;
+        return $user->isAdmin();
     }
 
     public function view(User $user, PatientForcedChargeableService $service)
