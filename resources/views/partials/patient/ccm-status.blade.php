@@ -1,5 +1,3 @@
-
-
 @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
     @php
         $model =  \CircleLinkHealth\Customer\Entities\Patient::class;
