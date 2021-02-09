@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class SelfEnrollmentMetricsView extends BaseSqlView
 {
-     // NOT SURE IF I SHOULD ALSO MOVE THIS TO SELF ENROLLMENT APP
     /**
      * Create the sql view.
      *
@@ -24,13 +23,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
         $enrolled            = Enrollee::ENROLLED;
         $toCall              = Enrollee::TO_CALL;
         $queueAutoEnrollment = Enrollee::QUEUE_AUTO_ENROLLMENT;
-        $defaultBtnColor     = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $red                 = SelfEnrollmentController::RED_BUTTON_COLOR;
-        $blue                = SelfEnrollmentController::BLUE_BUTTON_COLOR;
         $manualInvite        = 'one-off_invitations';
-        $green               = 'Green';
-        $redString           = 'Red';
-        $blueString          = 'Blue';
         $survey              = Helpers::getEnrolleeSurvey();
         $surveyInstance      = DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
@@ -40,7 +33,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
         $showDemo = $this->showDemoPracticeDataOnly();
 
-        return \DB::statement("
+        return DB::statement("
         CREATE VIEW {$this->getViewName()}
          AS
          SELECT
@@ -48,17 +41,6 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        DATE_FORMAT(b.created_at, '%Y-%m-%d') batch_date,
        DATE_FORMAT(b.created_at,'%H:%i:%s') batch_time,
        p.display_name as practice_name,
-       CASE WHEN b.type = '$defaultBtnColor' THEN '$green'
-       WHEN b.type = '$red' THEN '$redString'
-       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$defaultBtnColor'
-       THEN '$green'
-       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$red'
-       THEN '$redString'
-       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$manualInvite'
-       THEN '$green'
-       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$blue'
-       THEN '$blueString'
-       END as button_color,
        COUNT(DISTINCT i.id) as total_invites_sent,
        SUM(i.manually_expired = true) as total_invites_opened,
        CONCAT(ROUND(SUM(i.manually_expired = true) * 100.0 / COUNT(DISTINCT i.id), 0), '%') as percentage_invites_opened,
