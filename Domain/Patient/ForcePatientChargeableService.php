@@ -20,14 +20,16 @@ class ForcePatientChargeableService
         $this->input = $input;
     }
 
+    //todo: change to actually performing the action through repo - the idea is to be able to validate input before performing any actions
+    //like for example know what/when to delete. 1. Don't delete data for billed month 2. Handle Perma deletions if exist
     public static function execute(ForceAttachInputDTO $input): void
     {
         (new static($input))
-            ->setPatientForcedChargeableService()
             ->guaranteeHistoricallyAccurateRecords()
             ->reprocessPatientForBilling();
     }
 
+    //todo: change name to handle observer event
     public static function executeWithoutAttaching(ForceAttachInputDTO $input): void
     {
         (new static($input))
@@ -54,8 +56,12 @@ class ForcePatientChargeableService
 
     private function guaranteeHistoricallyAccurateRecords(): self
     {
+        //todo: use repo
         $patient = User::ofType('participant')
-            ->with('forcedChargeableServices.chargeableService')
+            ->with([
+                'forcedChargeableServices.chargeableService',
+                'monthlyBillingStatus'
+            ])
             ->findOrFail($this->input->getPatientUserId());
 
         $isPermanent = is_null($this->input->getMonth());
@@ -90,26 +96,11 @@ class ForcePatientChargeableService
 
     private function reprocessPatientForBilling(): void
     {
+        //todo: if permanent(null month) reprocess past month as well if it's open
+        //add user model to class
         ProcessPatientSummaries::wipeAndReprocessForMonth(
             $this->input->getPatientUserId(),
             is_null($this->input->getMonth()) ? Carbon::now()->startOfMonth() : $this->input->getMonth()
         );
-    }
-
-    private function setPatientForcedChargeableService(): self
-    {
-        //set entry created at on dto
-        //don't sync, attach
-//        User::ofType('participant')
-//            ->findOrFail($this->patientUserId)
-//            ->forcedChargeableServices()
-//            ->syncWithPivotValues([
-//                $this->chargeableServiceId,
-//            ], [
-//                'action_type'      => $this->actionType,
-//                'chargeable_month' => $this->month,
-//            ], false);
-
-        return $this;
     }
 }

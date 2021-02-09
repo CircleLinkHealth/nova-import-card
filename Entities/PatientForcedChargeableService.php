@@ -64,18 +64,6 @@ class PatientForcedChargeableService extends BaseModel
                     ->setMonth($item->chargeable_month)
             );
         });
-
-//        static::deleting(function ($item) {
-//            dd($item);
-//            ForcePatientChargeableService::executeWithoutAttaching(
-//                (new ForceAttachInputDTO())->setActionType($item->action_type)
-//                                           ->setChargeableServiceId($item->chargeable_service_id)
-//                                           ->setPatientUserId($item->patient_user_id)
-//                                           ->setMonth($item->chargeable_month)
-//                ->setEntryCreatedAt($item->created_at)
-//                ->setIsDetaching(true)
-//            );
-//        });
     }
 
     public function chargeableService()

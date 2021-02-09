@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as R
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
@@ -290,5 +291,15 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         }
 
         $this->queryPatientData($patientId, $month);
+    }
+
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
+    {
+        $this->repo->attachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType);
+    }
+
+    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
+    {
+        $this->repo->detachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType);
     }
 }

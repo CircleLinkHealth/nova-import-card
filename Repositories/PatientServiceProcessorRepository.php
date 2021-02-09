@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as R
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
@@ -160,5 +161,28 @@ class PatientServiceProcessorRepository implements Repository
                 'requires_patient_consent' => $requiresPatientConsent,
             ]
         );
+    }
+
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
+    {
+        PatientForcedChargeableService::updateOrCreate(
+            [
+                'patient_user_id' => $patientId,
+                'chargeable_service_id' => $chargeableServiceId,
+                'chargeable_month'  => $month
+            ],
+            [
+                'action_type' => $actionType
+            ]
+        );
+    }
+
+    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
+    {
+        PatientForcedChargeableService::where('patient_user_id', $patientId)
+            ->where('chargeable_service_id', $chargeableServiceId)
+            ->where('chargeable_month',$month)
+            ->where('action_type', $actionType)
+            ->delete();
     }
 }
