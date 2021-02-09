@@ -83,7 +83,10 @@ class ForcePatientChargeableService
 
     private function guaranteeHistoricallyAccurateRecords(): self
     {
-        //todo: use repo - not cached repo though, because case of deleting a perm for another perm
+        if (! $this->input->isPermanent()){
+            return $this;
+        }
+
         $patient = User::ofType('participant')
             ->with([
                 'forcedChargeableServices.chargeableService',
@@ -111,14 +114,6 @@ class ForcePatientChargeableService
                 null,
                 $opposingActionType);
         }
-
-        //if type is force,
-        //1.remove block from month if exists
-        //2.if perma block, convert to historical records if you must
-        //3.if month, check for perma, and log error somewhere if perma exists.
-
-        //if type is block above or opposite
-        //if perma check opposite perma, detach, and create historical records
 
         return $this;
     }
