@@ -50,6 +50,10 @@
         {
             "type": "git",
             "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/VaporCli"
         }
     ],
     "license": "MIT",
@@ -67,7 +71,7 @@
         "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "laravel/vapor-cli": "^1.11",
+        "laravel/vapor-cli": "*",
         "propaganistas/laravel-phone": "^4.1"
     },
     "require-dev": {
