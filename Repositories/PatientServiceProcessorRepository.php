@@ -179,7 +179,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
     {
-        //need model event for historical records
+        //We're retrieving because we need model event to be triggered for historical records
         optional(PatientForcedChargeableService::where('patient_user_id', $patientId)
             ->where('chargeable_service_id', $chargeableServiceId)
             ->where('chargeable_month',$month)
