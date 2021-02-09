@@ -182,7 +182,7 @@
                                     <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('callback-messages.table')}}">Call-back Messages</a>
+                                    <a href="{{route('message-dispatch-messages.table')}}">Message Dispatch Messages</a>
                                 </li>
                             </ul>
                         </li>
