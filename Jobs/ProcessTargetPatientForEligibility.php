@@ -69,6 +69,7 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
         return [
             'athena',
             'targetpatientid:'.$this->targetPatient->id,
+            'batchid:'.$this->targetPatient->batch_id,
         ];
     }
 
