@@ -17,6 +17,12 @@ return [
     |
     */
 
+    'athena' => [
+        'key'     => env('ATHENA_KEY'),
+        'secret'  => env('ATHENA_SECRET'),
+        'version' => env('ATHENA_VERSION'),
+    ],
+
     'mailgun' => [
         'domain'   => env('MAILGUN_DOMAIN'),
         'secret'   => env('MAILGUN_SECRET'),
