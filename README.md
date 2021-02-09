@@ -53,7 +53,6 @@ TwoFA
 We use a modified version of vapor cli that lives in the monorepo. Use the commands below to setup an alias for easy use.
 ```bash
 # Run these commands in the monorepo root directory
-(cd $PWD/modules/VaporCli && COMPOSER_MEMORY_LIMIT=-1 composer install)
 echo 'alias monovapor="'$PWD'/modules/VaporCli/vapor"' >> ~/.zshrc 
 source ~/.zshrc
 ```
