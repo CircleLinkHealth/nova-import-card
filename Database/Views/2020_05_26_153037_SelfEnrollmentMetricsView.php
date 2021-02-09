@@ -170,9 +170,4 @@ class SelfEnrollmentMetricsView extends BaseSqlView
     {
         return (isSelfEnrollmentTestModeEnabled() || \Illuminate\Support\Facades\App::environment(['local', 'testing'])) ? 1 : 0;
     }
-
-    public function shouldIgnoreVersionCheck(): bool
-    {
-        return true;
-    }
 }
