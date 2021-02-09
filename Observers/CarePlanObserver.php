@@ -118,6 +118,10 @@ class CarePlanObserver
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
+    
+        if ($carePlan->isDirty('status') && $carePlan->status === CarePlan::DRAFT) {
+            $carePlan->drafted_at = now();
+        }
     }
 
     private function shouldScheduleCall(CarePlan $carePlan): bool
