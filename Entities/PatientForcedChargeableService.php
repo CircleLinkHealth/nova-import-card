@@ -51,21 +51,6 @@ class PatientForcedChargeableService extends BaseModel
     ];
     protected $table = 'patient_forced_chargeable_services';
 
-    public static function boot()
-    {
-        parent::boot();
-
-        static::saved(function ($item) {
-            //if permanent process all non closed months? Just so if they chose permanent to apply changes for the past month as well
-            ForcePatientChargeableService::executeWithoutAttaching(
-                (new ForceAttachInputDTO())->setActionType($item->action_type)
-                    ->setChargeableServiceId($item->chargeable_service_id)
-                    ->setPatientUserId($item->patient_user_id)
-                    ->setMonth($item->chargeable_month)
-            );
-        });
-    }
-
     public function chargeableService()
     {
         return $this->belongsTo(ChargeableService::class, 'chargeable_service_id', 'id');

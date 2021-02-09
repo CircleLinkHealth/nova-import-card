@@ -83,7 +83,7 @@ class ForcePatientChargeableService
 
     private function guaranteeHistoricallyAccurateRecords(): self
     {
-        //todo: use repo
+        //todo: use repo - not cached repo though, because case of deleting a perm for another perm
         $patient = User::ofType('participant')
             ->with([
                 'forcedChargeableServices.chargeableService',
@@ -91,8 +91,7 @@ class ForcePatientChargeableService
             ])
             ->findOrFail($this->input->getPatientUserId());
 
-        $isPermanent = is_null($this->input->getMonth());
-        if ($this->input->isDetaching() && $isPermanent) {
+        if ($this->input->isDetaching() && $this->input->isPermanent()) {
             $this->createHistoricalRecords($patient, $this->input->getEntryCreatedAt(), Carbon::now()->startOfMonth(), $this->input->getActionType());
 
             return $this;
@@ -105,9 +104,12 @@ class ForcePatientChargeableService
             ->where('action_type', $opposingActionType)
             ->first();
 
-        if ($isPermanent && ! is_null($opposingPermanentAction)) {
-            $this->createHistoricalRecords($patient, $opposingPermanentAction->forcedDetails->created_at, Carbon::now()->startOfMonth(), $opposingActionType);
-            //detach
+        if ($this->input->isPermanent() && ! is_null($opposingPermanentAction)) {
+            (app(PatientServiceProcessorRepository::class))->detachForcedChargeableService(
+                $this->input->getPatientUserId(),
+                $this->input->getChargeableServiceId(),
+                null,
+                $opposingActionType);
         }
 
         //if type is force,
