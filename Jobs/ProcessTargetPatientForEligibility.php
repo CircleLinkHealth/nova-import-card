@@ -81,15 +81,19 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
             throw new \Exception('A batch is necessary to process a target patient.');
         }
 
-        return tap(
-            app(AthenaEligibilityCheckableFactory::class)
-                ->makeAthenaEligibilityCheckable($this->targetPatient)
-                ->createAndProcessEligibilityJobFromMedicalRecord(),
-            function (EligibilityJob $eligibilityJob) {
-                $this->targetPatient->setStatusFromEligibilityJob($eligibilityJob);
-                $this->targetPatient->eligibility_job_id = $eligibilityJob->id;
-                $this->targetPatient->save();
-            }
-        );
+        try {
+            return tap(
+                app(AthenaEligibilityCheckableFactory::class)
+                    ->makeAthenaEligibilityCheckable($this->targetPatient)
+                    ->createAndProcessEligibilityJobFromMedicalRecord(),
+                function (EligibilityJob $eligibilityJob) {
+                    $this->targetPatient->setStatusFromEligibilityJob($eligibilityJob);
+                    $this->targetPatient->eligibility_job_id = $eligibilityJob->id;
+                    $this->targetPatient->save();
+                }
+            );
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
