@@ -49,8 +49,8 @@ TwoFA
 2. Any work done should be committed to the monorepo **only**.
 3. Create a PR as soon as possible to get the code reviewed.
 
-### Getting a feature on staging
-Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provdider App, and Admin App.
+### Splitting the monorepo 
+Splitting the monorepo means writing to branches in the original single repos. Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provider App, and Admin App.
 
 ### Available Scripts
 #### Run a shell command in an app
