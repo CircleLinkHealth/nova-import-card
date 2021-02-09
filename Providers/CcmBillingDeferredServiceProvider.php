@@ -8,11 +8,11 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 
 use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
+use CircleLinkHealth\CcmBilling\Console\CompareAbpV2vsV3;
 use CircleLinkHealth\CcmBilling\Console\GenerateFakeDataForApproveBillablePatientsPage;
 use CircleLinkHealth\CcmBilling\Console\ModifyPatientActivityAndReprocessTime;
 use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
 use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
-use CircleLinkHealth\CcmBilling\Console\TestAbpV2vsV3;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
@@ -49,7 +49,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             ApproveBillablePatientsServiceV3::class,
 
             GenerateFakeDataForApproveBillablePatientsPage::class,
-            TestAbpV2vsV3::class,
+            CompareAbpV2vsV3::class,
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
             ModifyPatientActivityAndReprocessTime::class,
@@ -72,7 +72,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
 
         $this->commands([
             GenerateFakeDataForApproveBillablePatientsPage::class,
-            TestAbpV2vsV3::class,
+            CompareAbpV2vsV3::class,
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
             ModifyPatientActivityAndReprocessTime::class,

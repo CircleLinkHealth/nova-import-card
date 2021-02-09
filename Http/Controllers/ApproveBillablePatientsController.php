@@ -144,7 +144,10 @@ class ApproveBillablePatientsController extends Controller
 
         /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
         $service = $this->getService($request);
-        $result  = $service->setPatientChargeableServices($reportId, $chargeableServiceIds);
+        if ($service instanceof ApproveBillablePatientsServiceV3) {
+            return $this->badRequest('not supported');
+        }
+        $result = $service->setPatientChargeableServices($reportId, $chargeableServiceIds);
 
         return $result ? $this->ok() : $this->error('there was an error');
     }
