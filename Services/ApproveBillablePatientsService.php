@@ -112,8 +112,6 @@ class ApproveBillablePatientsService
      *  is_closed Boolean
      *
      * @param $practiceId
-     *
-     * @return \Illuminate\Support\Collection
      */
     public function getBillablePatientsForMonth($practiceId, Carbon $date): BillablePatientsForMonthDTO
     {

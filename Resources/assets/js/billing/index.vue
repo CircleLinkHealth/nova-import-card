@@ -172,7 +172,7 @@
                     <loader v-if="loaders.callsCount"></loader>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
+                    <div class="blue" :class="isSoftwareOnly || isNewVersion() ? '' : 'pointer'"
                          @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block"
@@ -200,7 +200,8 @@
 
             <attest-call-conditions-modal ref="attestCallConditionsModal"
                                           :cpm-problems="cpmProblems"></attest-call-conditions-modal>
-            <chargeable-services-modal ref="chargeableServicesModal"
+            <chargeable-services-modal v-if="!isNewVersion()"
+                                       ref="chargeableServicesModal"
                                        :services="selectedPracticeChargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
             <notifications ref="notifications" name="billing"></notifications>
@@ -619,15 +620,14 @@
 
             showChargeableServicesModal(row) {
 
-                if (this.isSoftwareOnly) {
+                if (this.isSoftwareOnly || this.isNewVersion()) {
                     return;
                 }
 
-                const self = this
                 Event.$emit('modal-chargeable-services:show', {
                     title: 'Select Chargeable Services for ' + row.Patient,
                     row
-                })
+                });
             },
 
             showBhiModal(patient) {

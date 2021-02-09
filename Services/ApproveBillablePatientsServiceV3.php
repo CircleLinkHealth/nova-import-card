@@ -7,14 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -83,35 +81,11 @@ class ApproveBillablePatientsServiceV3
         ];
     }
 
-    public function setPatientChargeableServices(int $reportId, array $csIds, Carbon $month = null): bool
-    {
-        //todo: Modify Patient Activity
-        $billingStatus = PatientMonthlyBillingStatus::find($reportId);
-        if ( ! $billingStatus) {
-            return false;
-        }
-
-        $patientId     = $billingStatus->patient_user_id;
-        $coll          = collect($csIds);
-        $bhiId         = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::BHI)->id;
-        $indefiniteIds = $coll->reject(fn ($id) => $id == $bhiId);
-        $indefiniteIds->each(fn ($id) => ForcePatientChargeableService::force($patientId, $id));
-        if ($coll->has($bhiId)) {
-            ForcePatientChargeableService::force(
-                $patientId,
-                $bhiId,
-                $month ?? now()->subMonth()->startOfMonth()
-            );
-        }
-
-        return true;
-    }
-
     public function successfulCallsCount(array $patientIds, Carbon $month): ResourceCollection
     {
         $arr = Call::whereIn('inbound_cpm_id', $patientIds)
             ->whereBetween('called_date', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
-            ->where('status', '=', 'reached')
+            ->where('status', '=', Call::REACHED)
             ->groupBy('inbound_cpm_id')
             ->selectRaw('inbound_cpm_id as id, count(id) as count')
             ->get()
