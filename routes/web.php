@@ -65,8 +65,8 @@ Route::group([
         'as'   => 'hospitalization-notes.table',
     ]);
     
-    Route::get('callback-messages-dashboard', [
-        'uses' => 'CallbackMessagesController@index',
-        'as'   => 'callback-messages.table',
+    Route::get('message-dispatch-messages-dashboard', [
+        'uses' => 'MessageDispatchMessagesController@index',
+        'as'   => 'message-dispatch-messages.table',
     ]);
 });

@@ -376,6 +376,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/lorisleiva/cron-translator" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/ohdearapp/ohdear-php-sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/pusher/pusher-php-server" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/paragonie/sodium_compat" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
