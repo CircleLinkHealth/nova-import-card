@@ -278,6 +278,10 @@ class CcdToLogTranformer
      */
     public function provider($provider)
     {
+        if (is_array($provider)) {
+            $provider = (object) $provider;
+        }
+        
         $phones = $this->getAllPhoneNumbers($provider->phones);
 
         return [
