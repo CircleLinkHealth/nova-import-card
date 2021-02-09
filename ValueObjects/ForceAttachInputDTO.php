@@ -90,4 +90,9 @@ class ForceAttachInputDTO
 
         return $this;
     }
+
+    public function isPermanent():bool
+    {
+        return is_null($this->month);
+    }
 }

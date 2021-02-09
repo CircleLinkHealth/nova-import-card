@@ -7,7 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForceAttachInputDTO;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -24,17 +26,40 @@ class ForcePatientChargeableService
     //like for example know what/when to delete. 1. Don't delete data for billed month 2. Handle Perma deletions if exist
     public static function execute(ForceAttachInputDTO $input): void
     {
+        if (! self::shouldProceedToDatabase($input)){
+            return;
+        }
+
+        $repo = app(PatientServiceProcessorRepository::class);
+        $input->isDetaching()
+            ? $repo->detachForcedChargeableService($input->getPatientUserId(), $input->getChargeableServiceId(), $input->getMonth(), $input->getActionType())
+            : $repo->attachForcedChargeableService($input->getPatientUserId(), $input->getChargeableServiceId(), $input->getMonth(), $input->getActionType());
+    }
+
+    public static function handleObserverEvents(ForceAttachInputDTO $input): void
+    {
         (new static($input))
             ->guaranteeHistoricallyAccurateRecords()
             ->reprocessPatientForBilling();
     }
 
-    //todo: change name to handle observer event
-    public static function executeWithoutAttaching(ForceAttachInputDTO $input): void
+    public static function shouldProceedToDatabase(ForceAttachInputDTO $input):bool
     {
-        (new static($input))
-            ->guaranteeHistoricallyAccurateRecords()
-            ->reprocessPatientForBilling();
+        if ($input->isPermanent()){
+            return true;
+        }
+        if ($input->isDetaching()){
+            return ! PatientMonthlyBillingStatus::where('patient_user_id', $input->getPatientUserId())
+                                      ->where('chargeable_month', $input->getMonth())
+                                      ->where(function ($q) {
+                                          $q->whereNotNull('actor_id')
+                                            ->orWhere('status', 'approved');
+                                      })
+                                      ->exists();
+        }
+
+        //todo: should we check for existing blocks or is this handled by observer events static method?
+        return true;
     }
 
     private function createHistoricalRecords(User $patient, Carbon $startingMonth, Carbon $endingMonth, string $actionType): void

@@ -14,7 +14,7 @@ class PatientForcedChargeableServiceObserver
 {
     public function deleted(PatientForcedChargeableService $service)
     {
-        ForcePatientChargeableService::executeWithoutAttaching(
+        ForcePatientChargeableService::handleObserverEvents(
             (new ForceAttachInputDTO())->setPatientUserId($service->patient_user_id)
                 ->setMonth($service->chargeable_month)
                 ->setActionType($service->action_type)
@@ -26,7 +26,7 @@ class PatientForcedChargeableServiceObserver
 
     public function saved(PatientForcedChargeableService $service)
     {
-        ForcePatientChargeableService::executeWithoutAttaching(
+        ForcePatientChargeableService::handleObserverEvents(
             (new ForceAttachInputDTO())->setPatientUserId($service->patient_user_id)
                 ->setMonth($service->chargeable_month)
                 ->setActionType($service->action_type)
