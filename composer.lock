@@ -936,7 +936,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "637f3656bc68cb87052e6c31c7f3db103e85a3cc"
+                "reference": "5ad98208bdd616cf4a32f74105dd52387554c930"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -948,7 +948,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.1.x-dev",
+                    "dev-road_547_cpmAdmin": "1.2.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -982,7 +983,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-01-20T17:31:58+00:00"
+            "time": "2021-02-09T17:02:16+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
