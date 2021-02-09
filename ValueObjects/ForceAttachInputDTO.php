@@ -14,9 +14,9 @@ class ForceAttachInputDTO
     protected string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE;
 
     protected int $chargeableServiceId;
-    protected ?Carbon $entryCreatedAt;
+    protected ?Carbon $entryCreatedAt = null;
     protected bool $isDetaching = false;
-    protected ?Carbon $month;
+    protected ?Carbon $month = null;
     protected int $patientUserId;
 
     public function getActionType(): string

@@ -22,8 +22,6 @@ class ForcePatientChargeableService
         $this->input = $input;
     }
 
-    //todo: change to actually performing the action through repo - the idea is to be able to validate input before performing any actions
-    //like for example know what/when to delete. 1. Don't delete data for billed month 2. Handle Perma deletions if exist
     public static function execute(ForceAttachInputDTO $input): void
     {
         if (! self::shouldProceedToDatabase($input)){
