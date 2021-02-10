@@ -57,7 +57,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "./CircleLinkHealth/VaporCli"
+      "url": "../VaporCore"
     }
   ]
 }
