@@ -122,7 +122,7 @@
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/core-module": "^3.0",
         "circlelinkhealth/cpm-migrations-module": "3.0.8",
-        "circlelinkhealth/customer-module": "4.3.5",
+        "circlelinkhealth/customer-module": "4.3.6",
         "circlelinkhealth/eligibility-module": "4.6.7",
         "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/raygun-module": "2.1",
