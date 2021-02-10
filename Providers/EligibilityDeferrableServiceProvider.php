@@ -7,12 +7,9 @@
 namespace CircleLinkHealth\Eligibility\Providers;
 
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
-use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
 use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
-use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromAppointments;
-use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromLastYearAppointments;
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
 use CircleLinkHealth\Eligibility\Console\Athena\UpdatePracticeAppointments;
 use CircleLinkHealth\Eligibility\Console\CreatePCMListForCommonWealth;
@@ -43,12 +40,9 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             AthenaApiConnection::class,
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            DetermineTargetPatientEligibility::class,
             FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
-            GetPatientIdFromAppointments::class,
-            GetPatientIdFromLastYearAppointments::class,
             PostPatientCarePlanAsAppointmentNote::class,
             ReimportPatientMedicalRecord::class,
             ResetAthenaEligibilityBatch::class,
@@ -68,12 +62,9 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
         $this->commands([
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            DetermineTargetPatientEligibility::class,
             FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
-            GetPatientIdFromAppointments::class,
-            GetPatientIdFromLastYearAppointments::class,
             PostPatientCarePlanAsAppointmentNote::class,
             ReimportPatientMedicalRecord::class,
             ResetAthenaEligibilityBatch::class,
