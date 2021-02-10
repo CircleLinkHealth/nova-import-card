@@ -148,20 +148,6 @@ class PatientEmailDoesNotContainPhi implements Rule
         return preg_match("/\b".preg_quote($string1, '/')."\b/", $string2);
     }
 
-    private function validateAgainstPatientRelationships(string $text)
-    {
-        $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
-
-        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
-            $relation = $this->patientUser->{$relation};
-            if (is_a($relation, Collection::class)) {
-                $this->validateAgainstCollection($relation, $text);
-                continue;
-            }
-            $this->validateAgainstModel($relation, $text);
-        }
-    }
-
     private function validateAgainstCollection(Collection $collection, string $text)
     {
         foreach ($collection as $modelWithinCollection) {
@@ -173,6 +159,20 @@ class PatientEmailDoesNotContainPhi implements Rule
     {
         foreach ($model->phi as $phi) {
             $this->validatePhiValue($this->patientUser, $phi, $text);
+        }
+    }
+
+    private function validateAgainstPatientRelationships(string $text)
+    {
+        $this->patientUser->loadMissing(CpmConstants::PATIENT_PHI_RELATIONSHIPS);
+
+        foreach (CpmConstants::PATIENT_PHI_RELATIONSHIPS as $relation) {
+            $relation = $this->patientUser->{$relation};
+            if (is_a($relation, Collection::class)) {
+                $this->validateAgainstCollection($relation, $text);
+                continue;
+            }
+            $this->validateAgainstModel($relation, $text);
         }
     }
 
