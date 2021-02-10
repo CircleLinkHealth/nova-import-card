@@ -65,7 +65,7 @@
     @stack('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
           integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
-    @include('modules.raygun.partials.real-user-monitoring')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
     @include('core::partials.new-relic-tracking')
 </head>
 <body>
@@ -179,7 +179,10 @@
                                     <a href="{{route('revisions.phi.activity')}}">PHI Activity</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes Table</a>
+                                    <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('message-dispatch-messages.table')}}">Message Dispatch Messages</a>
                                 </li>
                             </ul>
                         </li>
