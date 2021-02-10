@@ -14,30 +14,34 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class MarkBatchAsReadyToStart implements ShouldBeEncrypted, ShouldQueue
+class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    protected int $batchId;
+    protected int    $batchId;
+    protected string $status;
 
     /**
-     * MarkBatchAsReadyToStart constructor.
+     * ChangeBatchStatus constructor.
      *
      * @param int $id
      */
-    public function __construct(int $batchId)
+    public function __construct(int $batchId, string $status)
     {
         $this->batchId = $batchId;
+        $this->status  = $status;
     }
 
     public function handle()
     {
-        EligibilityBatch::whereId($this->batchId)
-            ->update([
-                'status' => EligibilityBatch::STATUSES['not_started'],
-            ]);
+        if (in_array($this->status, EligibilityBatch::STATUSES)) {
+            EligibilityBatch::whereId($this->batchId)
+                ->update([
+                    'status' => $this->status,
+                ]);
+        }
     }
 }

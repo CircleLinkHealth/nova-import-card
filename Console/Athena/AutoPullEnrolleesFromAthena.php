@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Jobs\Athena\ProcessTargetPatientsForEligibilityInBatches;
-use CircleLinkHealth\Eligibility\Jobs\MarkBatchAsReadyToStart;
+use CircleLinkHealth\Eligibility\Jobs\ChangeBatchStatus;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions\DetermineEnrollmentEligibility;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
@@ -162,9 +162,10 @@ class AutoPullEnrolleesFromAthena extends Command
                 $offset,
                 $batch->id,
             ),
-            [new MarkBatchAsReadyToStart($batch->id)],
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
             (new ProcessTargetPatientsForEligibilityInBatches($practice->id))
                 ->splitToBatches(),
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         );
     }
 }
