@@ -10,7 +10,7 @@ use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
-use App\Listeners\CheckBeforeSendMessageListener;
+use CircleLinkHealth\Core\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\LogScheduledTask;
