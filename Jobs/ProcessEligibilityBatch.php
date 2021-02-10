@@ -29,13 +29,6 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     use SerializesModels;
 
     /**
-     * The number of seconds the job can run before timing out.
-     *
-     * @var int
-     */
-    public $timeout = 900;
-
-    /**
      * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
@@ -62,11 +55,6 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {
-        ini_set('upload_max_filesize', '200M');
-        ini_set('post_max_size', '200M');
-        ini_set('max_input_time', 900);
-        ini_set('max_execution_time', 900);
-
         $this->processEligibilityService = $processEligibilityService;
 
         switch ($this->batch->type) {
