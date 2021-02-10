@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Callback Messages Report</title>
+    <title>Message Dispatch Messages Report</title>
     @livewireStyles
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.9.2/tailwind.min.css"
           integrity="sha512-l7qZAq1JcXdHei6h2z8h8sMe3NbMrmowhOl+QkP3UhifPpCW2MC4M0i26Y8wYpbz1xD9t61MLT9L1N773dzlOA=="
@@ -12,11 +12,11 @@
 <div class="w-screen">
     <br/>
     <div class="flex items-center markdown">
-        <h1 style="font-size: 2em;"><b>Callback Messages Report</b></h1>
+        <h1 style="font-size: 2em;"><b>Message Dispatch Messages Report</b></h1>
     </div>
     <br/>
     <div class="w-screen mb-4">
-        <livewire:tables.callback-messages-report exportable per-page="15"/>
+        <livewire:tables.message-dispatch-messages-report exportable per-page="15"/>
     </div>
 
 </div>
