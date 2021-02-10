@@ -11,7 +11,6 @@ use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyIn
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
