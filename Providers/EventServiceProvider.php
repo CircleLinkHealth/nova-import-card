@@ -7,7 +7,7 @@ use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
 use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
 use CircleLinkHealth\Core\Listeners\LogSentNotification;
-use CircleLinkHealth\Core\Listeners\PostmarkAddSmtpIdOnHeader;
+use CircleLinkHealth\Core\Listeners\CheckBeforeSendMessageListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
