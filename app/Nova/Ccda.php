@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Models\CcdaView;
 use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Actions\ReimportCcda;
@@ -21,6 +20,7 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Ccda extends Resource
 {
@@ -35,7 +35,7 @@ class Ccda extends Resource
      *
      * @var string
      */
-    public static $model = CcdaView::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\Ccda::class;
 
     /**
      * The columns that should be searched.
@@ -43,13 +43,13 @@ class Ccda extends Resource
      * @var array
      */
     public static $search = [
-        'ccda_id',
-        'patient_user_id',
-        'mrn',
-        'first_name',
-        'last_name',
+        'id',
+        'patient_id',
+        'patient_mrn',
+        'patient_first_name',
+        'patient_last_name',
         'dm_from',
-        'dob',
+        'patient_dob',
     ];
 
     /**
@@ -57,7 +57,7 @@ class Ccda extends Resource
      *
      * @var string
      */
-    public static $title = 'ccda_id';
+    public static $title = 'id';
 
     /**
      * Get the actions available for the resource.
@@ -78,13 +78,13 @@ class Ccda extends Resource
                 return true;
             }),
             (new DownloadCsv())->setOnlyColumns([
-                'first_name',
-                'last_name',
-                'mrn',
-                'dob',
+                'patient_first_name',
+                'patient_last_name',
+                'patient_mrn',
+                'patient_dob',
                 'provider',
                 'practice_display_name',
-                'patient_user_id',
+                'patient_id',
             ], false)->canSee(function () {
                 return true;
             })->canRun(function () {
@@ -137,25 +137,25 @@ class Ccda extends Resource
     {
         return [
             Text::make('CarePlan', function ($row) {
-                if ( ! $row->patient_user_id) {
+                if ( ! $row->patient_id) {
                     return '';
                 }
 
-                return link_to(env('CPM_PROVIDER_APP_URL')."manage-patients/{$row->patient_user_id}/view-careplan", 'View', [$row->patient_user_id])->toHtml();
+                return link_to(env('CPM_PROVIDER_APP_URL')."manage-patients/{$row->patient_id}/view-careplan", 'View', [$row->patient_id])->toHtml();
             })->asHtml(),
-            Text::make('First Name', 'first_name')->sortable(),
-            Text::make('Last Name', 'last_name')->sortable(),
-            Date::make('DOB', 'dob')->sortable(),
-            Text::make('Mrn', 'mrn')->sortable(),
-            Text::make('Provider', 'provider_name')->sortable(),
-            Text::make('Practice', 'practice_display_name')->sortable(),
-            Text::make('Nurse', 'nurse_user_name')->sortable(),
-            Text::make('From (DM)', 'dm_from')->sortable(),
-            DateTime::make('Created At', 'created_at')->sortable(),
-            Code::make('Errors', 'validation_errors')->json(),
+            Text::make('First Name', 'patient_first_name')->sortable(),
+            Text::make('Last Name', 'patient_last_name')->sortable(),
+            Date::make('DOB', 'patient_dob')->sortable(),
+            Text::make('Mrn', 'patient_mrn')->sortable(),
+            Text::make('Provider', 'providers.display_name')->sortable(),
+            //            Text::make('Practice', 'practice_display_name')->sortable(),
+            //            Text::make('Nurse', 'nurse_user_name')->sortable(),
+            //            Text::make('From (DM)', 'dm_from')->sortable(),
+            DateTime::make('Created At', 'ccdas.created_at')->sortable(),
+            //            Code::make('Errors', 'validation_errors')->json(),
             Text::make('Source', 'source')->sortable(),
-            Text::make('patient_user_id')->sortable(),
-            ID::make('ccda_id')->sortable(),
+            Text::make('patient_id')->sortable(),
+            ID::make('id')->sortable(),
         ];
     }
 
@@ -168,11 +168,29 @@ class Ccda extends Resource
     {
         return [
             new PracticeFilter(),
-            (new CpmDateFilter('created_at'))->setName('Created on or after')->setOperator('>=')->setDefaultDate(now()->subWeeks(2)->toDateTimeString()),
-            (new CpmDateFilter('created_at'))->setName('Created before or on')->setOperator('<=')->setDefaultDate(now()->addDay()->toDateTimeString()),
+            (new CpmDateFilter('ccdas.created_at'))->setName('Created on or after')->setOperator('>=')->setDefaultDate(now()->subWeeks(2)->toDateTimeString()),
+            (new CpmDateFilter('ccdas.created_at'))->setName('Created before or on')->setOperator('<=')->setDefaultDate(now()->addDay()->toDateTimeString()),
             new ImportedCcdaViewFilter(),
             new ValidationErrorsCcdaFilter(),
         ];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return parent::indexQuery($request, $query)
+            ->join('users as providers', 'providers.id', '=', 'ccdas.billing_provider_id')
+            ->select([
+                'ccdas.patient_first_name',
+                'ccdas.patient_last_name',
+                'ccdas.patient_dob',
+                'ccdas.patient_mrn',
+                'ccdas.created_at',
+                'ccdas.source',
+                'ccdas.patient_id',
+                'ccdas.billing_provider_id',
+                'ccdas.id',
+                'providers.display_name',
+            ]);
     }
 
     public static function label()
