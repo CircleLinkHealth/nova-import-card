@@ -6,29 +6,19 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Core\GoogleDrive;
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
-use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
-use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
-use CircleLinkHealth\Eligibility\Jobs\ProcessCcdaFromGoogleDrive;
-use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityFromGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
 use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ProcessEligibilityService
 {
@@ -249,75 +239,6 @@ class ProcessEligibilityService
         );
 
         return $batch->fresh();
-    }
-
-    public function fromGoogleDrive(EligibilityBatch $batch)
-    {
-        ini_set('max_execution_time', 600);
-        ini_set('memory_limit', '1000M');
-
-        $cloudDisk = Storage::disk('google');
-        $recursive = false; // Get subdirectories also?
-        $dir       = $batch->options['dir'];
-
-        if ($batch->isFinishedFetchingFiles()) {
-            return null;
-        }
-
-        $collection = collect($cloudDisk->listContents($dir, $recursive));
-
-        $options                  = $batch->options;
-        $options['numberOfFiles'] = $collection->count();
-        $batch->options           = $options;
-        $batch->save();
-
-        echo "\n batch {$batch->id}: {$options['numberOfFiles']} total files on drive";
-
-        $alreadyProcessed = Media::select('file_name')->whereModelType(Ccda::class)->whereIn(
-            'model_id',
-            function ($query) use ($batch) {
-                $query->select('id')
-                    ->from((new Ccda())->getTable())
-                    ->where('batch_id', $batch->id);
-            }
-        )->distinct()->pluck('file_name');
-
-        echo "\n batch {$batch->id}: {$alreadyProcessed->count()} CCDs already processed from this batch.";
-
-        $col = $collection
-            ->where('type', '=', 'file')
-            ->whereIn(
-                'mimetype',
-                [
-                    'text/xml',
-                    'application/xml',
-                ]
-            )
-            ->whereNotIn('name', $alreadyProcessed->all());
-
-        echo "\n batch {$batch->id}: {$col->count()} CCDs to fetch from drive";
-
-        if ($col->isEmpty()) {
-            return false;
-        }
-        $col->whenNotEmpty(
-            function ($collection) use ($batch) {
-                $i = 0;
-                $collection->each(
-                    function ($file) use (
-                        $batch,
-                        &$i
-                    ) {
-                        ProcessCcdaFromGoogleDrive::dispatch($file, $batch);
-
-                        ++$i;
-                        echo "\n batch {$batch->id}: processing file $i";
-                    }
-                );
-            }
-        );
-
-        return true;
     }
     
     public function notify(EligibilityBatch $batch)

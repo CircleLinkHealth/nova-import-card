@@ -141,50 +141,17 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        echo "\n queuing {$batch->id}";
-        if ((int) $batch->status > 0 && $batch->updated_at->gt(now()->subMinutes(10))) {
-            echo "\n bail. did nothing for {$batch->id}";
-            echo "\n batch updated at {$batch->updated_at->toDateTimeString()}";
+        $jobs = $batch->orchestratePendingJobsProcessing();
 
-            return $batch;
-        }
-
-        $unprocessedCount = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', 0)
-            ->count();
-
-        echo "\n {$unprocessedCount} unprocessed records found";
-
-        $batch->orchestratePendingJobsProcessing();
-
-        if (0 < $unprocessedCount) {
-            echo "\n batch {$batch->id} has unprocessed ej that will be processed";
-
-            return $batch;
-        }
+        $jobs[] = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])];
 
         if ( ! $batch->isFinishedFetchingFiles()) {
-            echo "\n batch {$batch->id}: fetching CCDs from Drive";
-
-            $result = $this->processEligibilityService->fromGoogleDrive($batch);
-
-            if ($result) {
-                $batch->status = EligibilityBatch::STATUSES['processing'];
-                $batch->touch();
-
-                return $batch;
-            }
+            $jobs[] = new ProcessEligibilityFromGoogleDrive($batch->id);
         }
 
-        if (0 === $unprocessedCount) {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
-            $batch->touch();
+        $jobs[] = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])];
 
-            return $batch;
-        }
-
-        $batch->status = EligibilityBatch::STATUSES['processing'];
-        $batch->touch();
+        Bus::dispatchChain($jobs)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return $batch;
     }
