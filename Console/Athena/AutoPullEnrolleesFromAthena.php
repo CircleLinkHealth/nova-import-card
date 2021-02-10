@@ -146,8 +146,8 @@ class AutoPullEnrolleesFromAthena extends Command
         
         $batch = null;
     
-        if ($batchId = $this->argument('batchId')) {
-            $batch = EligibilityBatch::find($batchId);
+        if ($this->argument('batchId')) {
+            $batch = EligibilityBatch::find($this->argument('batchId'));
         }
     
         if ( ! $batch) {
@@ -163,7 +163,7 @@ class AutoPullEnrolleesFromAthena extends Command
                 $batch->id,
             ),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
-            (new ProcessTargetPatientsForEligibilityInBatches($practice->id))
+            (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
                 ->splitToBatches(),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         );

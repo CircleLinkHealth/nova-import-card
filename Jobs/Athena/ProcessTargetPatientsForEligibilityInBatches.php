@@ -11,23 +11,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ProcessTargetPatientsForEligibilityInBatches extends ChunksEloquentBuilderJobV2
 {
-    protected int $practiceId;
+    protected int $batchId;
     
-    public function __construct(int $practiceId)
+    public function __construct(int $batchId)
     {
-        $this->practiceId = $practiceId;
+        $this->batchId = $batchId;
     }
     
     public function query(): Builder
     {
         return TargetPatient::where('status', '=', TargetPatient::STATUS_TO_PROCESS)
-                            ->where('practice_id', $this->practiceId)
-                            ->with('batch');
+                            ->where('batch_id', $this->batchId)
+                            ->select('id');
     }
     
     public function handle() {
         $this->getBuilder()->eachById(function ($targetPatient) {
-            ProcessTargetPatientForEligibility::dispatch($targetPatient);
+            ProcessTargetPatientForEligibility::dispatch($targetPatient->id);
         });
     }
 }
