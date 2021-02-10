@@ -6,6 +6,12 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
+use App\Listeners\CheckBeforeSendMessageListener;
+use CircleLinkHealth\Core\Listeners\LogFailedNotification;
+use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
+use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
+use CircleLinkHealth\Core\Listeners\LogSentNotification;
+use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateCameronEnrolleesMissingUserId;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
@@ -17,6 +23,11 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteC
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Observers\EnrolleeObserver;
+use CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\ServiceProvider;
 
 class SelfEnrollmentProvider extends ServiceProvider
@@ -53,7 +64,7 @@ class SelfEnrollmentProvider extends ServiceProvider
             RegenerateMissingSelfEnrollmentLetters::class,
             UpdateEnrolmentLettersSignatoryName::class,
             GenerateSelfEnrollmentSurveyCommand::class,
-            UpdateCameronEnrolleesMissingUserId::class
+            UpdateCameronEnrolleesMissingUserId::class,
         ]);
         $this->app->register(RouteServiceProvider::class);
     }

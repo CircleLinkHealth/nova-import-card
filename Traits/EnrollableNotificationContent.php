@@ -124,14 +124,14 @@ trait EnrollableNotificationContent
      */
     private function getUnreachablePatientMessageContent(User $notifiable, $isReminder)
     {
-        $provider                       = $notifiable->billingProviderUser();
+        $provider                       = optional($notifiable->billingProviderUser());
         $lastNurseThatPerformedActivity = $notifiable->patientInfo->lastNurseThatPerformedActivity();
         $nurseFirstName                 = ! empty($lastNurseThatPerformedActivity)
             ? ucwords($lastNurseThatPerformedActivity->user->display_name)
             : '';
 
         $providerLastName    = ucwords($provider->last_name);
-        $providerNameAndType = $provider->primaryPractice->display_name;
+        $providerNameAndType = optional($provider->primaryPractice)->display_name;
         $providerSpecialty   = Helpers::providerMedicalType($provider->suffix);
 
         if ( ! empty($providerSpecialty)) {
@@ -148,7 +148,7 @@ trait EnrollableNotificationContent
                 : 'Your Nurse Care Coach was unable to reach you this month. Please re-start calls in this link: ';
         }
 
-        if ( ! empty($provider)) {
+        if ( ! empty($provider->last_name)) {
             $providerLastName = $provider->last_name;
         } else {
             $providerLastName = '';
