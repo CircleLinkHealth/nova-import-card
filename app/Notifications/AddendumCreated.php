@@ -7,7 +7,7 @@
 namespace App\Notifications;
 
 use App\Notifications\Channels\CircleLinkMailChannel;
-use App\Traits\NotificationSubscribable;
+use CircleLinkHealth\Core\Traits\NotificationSubscribable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Core\Contracts\LiveNotification;
