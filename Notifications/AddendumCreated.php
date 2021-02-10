@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Core\Notifications;
 
-use CircleLinkHealth\Core\Notifications\Channels\CircleLinkMailChannel;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Core\Contracts\LiveNotification;
+use CircleLinkHealth\Core\Notifications\Channels\CircleLinkMailChannel;
 use CircleLinkHealth\Core\Traits\ArrayableNotification;
 use CircleLinkHealth\Core\Traits\NotificationSubscribable;
 use CircleLinkHealth\Customer\Entities\User;
