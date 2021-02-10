@@ -7,9 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
@@ -52,13 +55,42 @@ class ProcessPatientSummaries
 
     public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void
     {
-        //check if billing is closed
-        ChargeablePatientMonthlySummary::where('patient_user_id', $patientUserId)
-            ->where('chargeable_month', $month)
-            ->delete();
+        //todo: general validation that should exist elsewhere
+        $static = app(self::class);
 
         BillingCache::clearPatients([$patientUserId]);
-        (app(self::class))->execute($patientUserId, $month);
+        $patient = $static->repo->getPatientWithBillingDataForMonth($patientUserId, $month);
+
+        $locationSummaries = $patient->patientInfo->location->chargeableServiceSummaries;
+        $locationMonthIsClosed = $locationSummaries->isNotEmpty() &&
+                                 $locationSummaries->every(function (ChargeableLocationMonthlySummary $summary) {
+                                     return $summary->is_locked;
+                                 });
+        $patientBillingStatusIsTouched = ! is_null(
+            $patient->monthlyBillingStatus
+                ->filter(fn($mbs) => $mbs->chargeable_month->equals($month))
+                ->whereNotNull('actor_id')
+                ->first()
+        );
+
+        if ($locationMonthIsClosed || $patientBillingStatusIsTouched){
+            return;
+        }
+
+        $dto = (new PatientMonthlyBillingDTO())
+            ->subscribe(
+                (app(LocationProcessorRepository::class))
+                    ->availableLocationServiceProcessors(
+                        $patient->getPreferredContactLocation(),
+                        $thisMonth = Carbon::now()->startOfMonth()
+                    )
+            )
+            ->forPatient($patient->id)
+            ->ofLocation(intval($patient->getPreferredContactLocation()))
+            ->forMonth($thisMonth)
+            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id));
+
+        (app(self::class))->fromDTO($dto);
     }
 
     private function process()
