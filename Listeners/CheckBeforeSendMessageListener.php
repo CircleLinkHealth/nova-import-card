@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Listeners;
 
-use App\Traits\NotificationSubscribable;
+use CircleLinkHealth\Core\Traits\NotificationSubscribable;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Str;
 
