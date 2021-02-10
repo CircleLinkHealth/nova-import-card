@@ -147,11 +147,11 @@ class Ccda extends Resource
             Text::make('Last Name', 'patient_last_name')->sortable(),
             Date::make('DOB', 'patient_dob')->sortable(),
             Text::make('Mrn', 'patient_mrn')->sortable(),
-            Text::make('Provider', 'providers.display_name')->sortable(),
+            Text::make('Provider', 'provider_name')->sortable(),
             //            Text::make('Practice', 'practice_display_name')->sortable(),
             //            Text::make('Nurse', 'nurse_user_name')->sortable(),
             //            Text::make('From (DM)', 'dm_from')->sortable(),
-            DateTime::make('Created At', 'ccdas.created_at')->sortable(),
+            DateTime::make('Created At', 'created_at')->sortable(),
             //            Code::make('Errors', 'validation_errors')->json(),
             Text::make('Source', 'source')->sortable(),
             Text::make('patient_id')->sortable(),
@@ -189,7 +189,7 @@ class Ccda extends Resource
                 'ccdas.patient_id',
                 'ccdas.billing_provider_id',
                 'ccdas.id',
-                'providers.display_name',
+                'providers.display_name as provider_name',
             ]);
     }
 
