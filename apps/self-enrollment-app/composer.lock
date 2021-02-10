@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7736da50d0fe6953af45ee33bd03ed1f",
+    "content-hash": "8d4acf09a2d3369e5246234b377f8445",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -348,16 +348,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.5",
+            "version": "3.173.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "45a5150c35ab4ee5e4eb05332179a094476d1dd5"
+                "reference": "439a161e46895cd1f7b93b4c0295f95d6a17385e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45a5150c35ab4ee5e4eb05332179a094476d1dd5",
-                "reference": "45a5150c35ab4ee5e4eb05332179a094476d1dd5",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/439a161e46895cd1f7b93b4c0295f95d6a17385e",
+                "reference": "439a161e46895cd1f7b93b4c0295f95d6a17385e",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-08T19:13:12+00:00"
+            "time": "2021-02-09T19:14:22+00:00"
         },
         {
             "name": "brick/math",
@@ -823,11 +823,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.3.4",
+            "version": "v4.3.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "dd8591911c410ba1ed3dd6589d49e37d44340590"
+                "reference": "1f6367851e2f3cd3e915cf68feb545fddd869a45"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -869,15 +869,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-05T22:45:52+00:00"
+            "time": "2021-02-07T21:31:26+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.6.4",
+            "version": "v4.6.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6fcf34278e5b30da8d87906411654e842b629104"
+                "reference": "466c10bbe8540edfa25ae7bd201f10592a3a813e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-06T00:13:51+00:00"
+            "time": "2021-02-09T19:24:40+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1070,11 +1070,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.9.6",
+            "version": "v1.9.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "be152b22224f58994eb3f321f1864cf631128c7e"
+                "reference": "867fdcb230ec8e4fed0a3e934bd0195527afaf56"
             },
             "type": "laravel-module",
             "extra": {
@@ -1097,15 +1097,15 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-09T09:23:52+00:00"
+            "time": "2021-02-09T23:49:17+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.4.1",
+            "version": "v2.4.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "0e780f1434a13c14c52e88b4456f6774c1c40554"
+                "reference": "fc293282d9a3bcbe50954ca5278243775a925951"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1128,7 +1128,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-05T18:14:45+00:00"
+            "time": "2021-02-09T19:24:39+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3986,16 +3986,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.26.1",
+            "version": "v8.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94"
+                "reference": "a6680d98f9dadaa363aa7d5218517a08706cee64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
-                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/a6680d98f9dadaa363aa7d5218517a08706cee64",
+                "reference": "a6680d98f9dadaa363aa7d5218517a08706cee64",
                 "shasum": ""
             },
             "require": {
@@ -4146,7 +4146,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-02-02T14:07:24+00:00"
+            "time": "2021-02-09T15:14:54+00:00"
         },
         {
             "name": "laravel/legacy-factories",
@@ -6585,16 +6585,16 @@
         },
         {
             "name": "ohdearapp/ohdear-php-sdk",
-            "version": "3.0.4",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ohdearapp/ohdear-php-sdk.git",
-                "reference": "4173e8d0871c496bba4d9c691168f5b33d4cc16d"
+                "reference": "a707adbfa2272e3a7b12bab5eb419dd326b47397"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ohdearapp/ohdear-php-sdk/zipball/4173e8d0871c496bba4d9c691168f5b33d4cc16d",
-                "reference": "4173e8d0871c496bba4d9c691168f5b33d4cc16d",
+                "url": "https://api.github.com/repos/ohdearapp/ohdear-php-sdk/zipball/a707adbfa2272e3a7b12bab5eb419dd326b47397",
+                "reference": "a707adbfa2272e3a7b12bab5eb419dd326b47397",
                 "shasum": ""
             },
             "require": {
@@ -6633,7 +6633,7 @@
                 "oh dear",
                 "sdk"
             ],
-            "time": "2021-01-09T23:13:27+00:00"
+            "time": "2021-02-09T16:04:50+00:00"
         },
         {
             "name": "onelogin/php-saml",
