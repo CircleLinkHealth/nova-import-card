@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Traits;
 
-use App\NotificationMailUnsubscribe;
+use CircleLinkHealth\Core\Entities\NotificationMailUnsubscribe;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
