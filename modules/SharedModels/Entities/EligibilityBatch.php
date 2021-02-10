@@ -290,11 +290,12 @@ class EligibilityBatch extends BaseModel
                 ['status', '=', 1],
                 ['updated_at', '<', now()->subMinutes(10)],
             ])
+            ->select('id')
             ->chunkById($pageSize, function ($ejs) use ($onQueue) {
                 $ejs->each(function ($job) use ($onQueue) {
                     ProcessSinglePatientEligibility::dispatch(
                         $job->id
-                    )->onQueue($onQueue);
+                    )->onQueue(getCpmQueueName($onQueue));
                 });
             });
     }
