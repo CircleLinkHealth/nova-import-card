@@ -64,9 +64,9 @@ class DashboardController extends Controller
     public function pullAthenaEnrollees(Request $request)
     {
         $practice = Practice::find($request->input('practice_id'));
-        $batchId = $request->input('batch_id');
-        
-        if ($batchId && !EligibilityBatch::wherePracticeId($practice->id)->exists()) {
+        $batchId  = $request->input('batch_id');
+
+        if ($batchId && ! EligibilityBatch::wherePracticeId($practice->id)->exists()) {
             return redirect()->back()->with(['pullMsg' => "Batch[$batchId] does not belong to {$practice->display_name}"]);
         }
 
@@ -80,7 +80,7 @@ class DashboardController extends Controller
                 'from'             => $from->format('y-m-d'),
                 'to'               => $to->format('y-m-d'),
                 'offset'           => false,
-                'batchId' => $batchId
+                'batchId'          => $batchId,
             ]
         );
 
