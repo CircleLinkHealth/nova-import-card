@@ -1,6 +1,6 @@
 # Description
 
-This PR resolves ticket https://circlelinkhealth.atlassian.net/browse/CPM-
+This PR resolves ticket [enter url here]
 
 **Summary**
 - Please include a summary of the feature/change/fix.
