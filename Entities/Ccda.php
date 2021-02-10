@@ -139,6 +139,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     protected $dates = [
         'date',
+        'patient_dob',
     ];
 
     protected $dontKeepRevisionOf = ['json'];
