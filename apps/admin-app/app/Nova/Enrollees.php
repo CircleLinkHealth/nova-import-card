@@ -73,10 +73,28 @@ class Enrollees extends Resource
         return [
             new ImportEnrollee(),
             new ImportEnrollees(),
-//            new SelfEnrollmentManualInvite(),
+            //            new SelfEnrollmentManualInvite(),
             //try to implement in a future date - coordinate with Zach
             //            new MarkEnrolleesForAutoEnrollment(),
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     /**
@@ -187,23 +205,5 @@ class Enrollees extends Resource
     public function lenses(Request $request)
     {
         return [];
-    }
-
-    public function authorizedToDelete(Request $request)
-    {
-        return false;
-    }
-
-    public function authorizedToUpdate(Request $request)
-    {
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function authorizedToCreate(Request $request)
-    {
-        return false;
     }
 }

@@ -42,7 +42,7 @@ class PatientUser extends NovaUser
                 ->confirmText("Modifying the duration may have side-effects on patient's time and care coach's compensation. Are you sure you want to proceed?")
                 ->confirmButtonText('Done')
                 ->cancelButtonText('Cancel')
-                ->onlyOnDetail(true)
+                ->onlyOnDetail(true),
         ];
     }
 

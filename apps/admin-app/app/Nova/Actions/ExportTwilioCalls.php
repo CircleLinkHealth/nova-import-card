@@ -7,6 +7,8 @@
 namespace App\Nova\Actions;
 
 use App\Nova\TwilioCall;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
 class ExportTwilioCalls extends CustomDownloadExcel implements WithMapping

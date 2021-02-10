@@ -7,8 +7,6 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
@@ -37,43 +35,8 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    public function enrolleeIDs()
     {
-        $updatedAtString = $this->argument('updatedAt');
-        $practiceId      = intval($this->argument('practiceId'));
-
-        /** @var Carbon $updatedAt */
-        $updatedAt = Carbon::parse($updatedAtString);
-        
-        Enrollee::with('user.patientInfo')->whereIn('id', $this->enrolleeIDs())->eachById(function ($enrollee) {
-            try {
-                if ($enrollee) {
-                    $deleted = $enrollee->delete();
-                }
-        
-                if ($user = $enrollee->user) {
-                    if ($patientInfo = $user->patientInfo) {
-                        $deleted = $patientInfo->delete();
-                    }
-                    $deleted = $user->delete();
-                }
-        
-                $this->info("User $user->id has been processed successfully.");
-            } catch (\Exception $exception) {
-                $errorMessage = $exception->getMessage();
-                $this->error("[Something went wrong with user $user->id], $errorMessage");
-            }
-        });
-
-        $this->info('Done');
-    }
-    
-    public function enrolleeIDs() {
         return [
             357079,
             357086,
@@ -3880,5 +3843,41 @@ class DeleteEnrolleesMarkedForSelfEnrollment extends Command
             361470,
             361471,
         ];
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $updatedAtString = $this->argument('updatedAt');
+        $practiceId      = intval($this->argument('practiceId'));
+
+        /** @var Carbon $updatedAt */
+        $updatedAt = Carbon::parse($updatedAtString);
+
+        Enrollee::with('user.patientInfo')->whereIn('id', $this->enrolleeIDs())->eachById(function ($enrollee) {
+            try {
+                if ($enrollee) {
+                    $deleted = $enrollee->delete();
+                }
+
+                if ($user = $enrollee->user) {
+                    if ($patientInfo = $user->patientInfo) {
+                        $deleted = $patientInfo->delete();
+                    }
+                    $deleted = $user->delete();
+                }
+
+                $this->info("User $user->id has been processed successfully.");
+            } catch (\Exception $exception) {
+                $errorMessage = $exception->getMessage();
+                $this->error("[Something went wrong with user $user->id], $errorMessage");
+            }
+        });
+
+        $this->info('Done');
     }
 }
