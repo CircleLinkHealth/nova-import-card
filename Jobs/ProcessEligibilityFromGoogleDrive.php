@@ -38,7 +38,7 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue, ShouldBeEncrypte
     /**
      * Execute the job.
      */
-    public function handle(ProcessEligibilityService $processEligibilityService)
+    public function handle()
     {
         $batch = EligibilityBatch::find($this->batchId);
 

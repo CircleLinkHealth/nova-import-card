@@ -10,7 +10,6 @@ use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Jobs\Athena\ProcessTargetPatientsForEligibilityInBatches;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -141,63 +140,47 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $jobs = $batch->orchestratePendingJobsProcessing();
-
-        $jobs[] = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])];
+        $jobs = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])];
 
         if ( ! $batch->isFinishedFetchingFiles()) {
             $jobs[] = new ProcessEligibilityFromGoogleDrive($batch->id);
         }
 
-        $jobs[] = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])];
-
-        Bus::dispatchChain($jobs)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        Bus::dispatchChain(array_merge(
+            $jobs,
+            $batch->orchestratePendingJobsProcessing(50),
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+        ))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return $batch;
     }
 
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
+        $jobs = [];
         if (array_keys_exist(
             ['folder', 'fileName'],
             $batch->options
         ) && true !== (bool) $batch->options['finishedReadingFile']) {
-            $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
-
-            if ($result) {
-                $batch->status = EligibilityBatch::STATUSES['processing'];
-                $batch->save();
-
-                return $batch;
-            }
+            $jobs[] = new ProcessGoogleDriveCsv($batch->id);
         }
 
-        $unprocessedQuery = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '<', 2);
-
-        $unprocessedQuery->take(200)->get()->each(
-            function ($job) {
-                ProcessSinglePatientEligibility::dispatchNow(
-                    $job->id
-                );
-            }
-        );
-
-        if ( ! $unprocessedQuery->exists()) {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
-            $batch->save();
-
-            return $batch;
-        }
-
-        $batch->status = EligibilityBatch::STATUSES['processing'];
-        $batch->save();
+        Bus::dispatchChain(array_merge(
+            $jobs,
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+            $batch->orchestratePendingJobsProcessing(50),
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+        ));
 
         return $batch;
     }
 
     private function queueSingleEligibilityJobs(EligibilityBatch $batch)
     {
-        $batch->orchestratePendingJobsProcessing(100);
+        Bus::dispatchChain(array_merge(
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+            $batch->orchestratePendingJobsProcessing(50),
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+        ));
     }
 }
