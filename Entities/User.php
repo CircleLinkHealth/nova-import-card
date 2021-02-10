@@ -73,6 +73,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -2372,6 +2373,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('participant');
     }
 
+    public function isAllowedToBubbleChat()
+    {
+        $bubbleChatters = AppConfig::pull('user_ids_to_show_bubble_chat', []);
+        return in_array($this->id, $bubbleChatters);
+    }
+    
     public function isPcm(): bool
     {
         if (is_null($this->id)) {
