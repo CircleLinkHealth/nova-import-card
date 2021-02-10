@@ -7,14 +7,19 @@
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Jobs\Athena\ProcessTargetPatientsForEligibilityInBatches;
+use CircleLinkHealth\Eligibility\Jobs\MarkBatchAsReadyToStart;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions\DetermineEnrollmentEligibility;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Bus;
 
 class AutoPullEnrolleesFromAthena extends Command
 {
+    const MAX_DAYS_TO_PULL_AT_ONCE = 5;
     /**
      * The console command description.
      *
@@ -67,11 +72,11 @@ class AutoPullEnrolleesFromAthena extends Command
         }
 
         if ($this->argument('from')) {
-            $from = $this->argument('from');
+            $from = Carbon::createFromFormat('Y-m-d', $this->argument('from'));
         }
 
         if ($this->argument('to')) {
-            $to = $this->argument('to');
+            $to = Carbon::createFromFormat('Y-m-d', $this->argument('to'));
         }
 
         if ($this->argument('athenaPracticeId')) {
@@ -104,15 +109,49 @@ class AutoPullEnrolleesFromAthena extends Command
         foreach ($practices as $practice) {
             $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
 
-            Artisan::call('athena:getPatientIdFromLastYearAppointments', [
-                'athenaPracticeId' => $practice->external_id,
-                'from'             => $from,
-                'to'               => $to,
-                'offset'           => $offset,
-                'batchId'          => $batch->id,
-            ]);
+            $jobs = array_merge(
+                $this->getAppointmentsJobs(
+                    $from,
+                    $to,
+                    $practice->external_id,
+                    $offset,
+                    $batch->id,
+                ),
+                [new MarkBatchAsReadyToStart($batch->id)],
+                (new ProcessTargetPatientsForEligibilityInBatches($practice->id))
+                    ->splitToBatches(10),
+            );
 
-            Artisan::call('athena:DetermineTargetPatientEligibility', ['batchId' => $batch->id]);
+            Bus::dispatchChain($jobs)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         }
+    }
+
+    /**
+     * @throws \Illuminate\Auth\AuthenticationException
+     * @return array                                    Array of Job objects
+     */
+    private function getAppointmentsJobs(Carbon $startDate, Carbon $endDate, int $athenaPracticeId, bool $offset, int $batchId): array
+    {
+        $service = app(DetermineEnrollmentEligibility::class);
+        if ($startDate->diffInDays($endDate) > self::MAX_DAYS_TO_PULL_AT_ONCE) {
+            $jobs        = [];
+            $currentDate = $startDate->copy();
+            do {
+                $chunkStartDate = $currentDate->copy();
+                $chunkEndDate   = $chunkStartDate->copy()->addDays(self::MAX_DAYS_TO_PULL_AT_ONCE);
+
+                if ($chunkEndDate->isAfter($endDate)) {
+                    $chunkEndDate = $endDate;
+                }
+
+                $jobs = array_merge($jobs, $service->getPatientIdFromAppointments($athenaPracticeId, $chunkStartDate, $chunkEndDate, $offset, $batchId));
+
+                $currentDate = $chunkEndDate->copy()->addDay();
+            } while ($currentDate->lt($endDate));
+
+            return $jobs;
+        }
+
+        return $service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
     }
 }

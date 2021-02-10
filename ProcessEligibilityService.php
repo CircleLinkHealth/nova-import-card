@@ -46,7 +46,7 @@ class ProcessEligibilityService
             [
                 'type'        => $type,
                 'practice_id' => $practiceId,
-                'status'      => EligibilityBatch::STATUSES['not_started'],
+                'status'      => EligibilityBatch::STATUSES['not_ready_to_start'],
                 'options'     => $options,
             ]
         );
@@ -167,22 +167,6 @@ class ProcessEligibilityService
                 'filterLastEncounter' => (bool) $filterLastEncounter,
                 'filterInsurance'     => (bool) $filterInsurance,
                 'filterProblems'      => (bool) $filterProblems,
-            ]
-        );
-    }
-
-    /**
-     * @return $this|\Illuminate\Database\Eloquent\Model
-     */
-    public function createPhoenixHeartBatch()
-    {
-        return $this->createBatch(
-            EligibilityBatch::TYPE_PHX_DB_TABLES,
-            Practice::whereName('phoenix-heart')->firstOrFail()->id,
-            [
-                'filterLastEncounter' => false,
-                'filterInsurance'     => true,
-                'filterProblems'      => true,
             ]
         );
     }
@@ -335,105 +319,7 @@ class ProcessEligibilityService
 
         return true;
     }
-
-    public function handleAlreadyDownloadedZip(
-        $dir,
-        $practiceName,
-        $filterLastEncounter,
-        $filterInsurance,
-        $filterProblems
-    ) {
-        $cloudDisk = Storage::disk('google');
-
-        $practice  = Practice::whereName($practiceName)->firstOrFail();
-        $recursive = false; // Get subdirectories also?
-        $contents  = collect($cloudDisk->listContents($dir, $recursive));
-
-        $processedDir = $contents->where('type', '=', 'dir')
-            ->where('filename', '=', 'processed')
-            ->first();
-
-        if ( ! $processedDir) {
-            $cloudDisk->makeDirectory("${dir}/processed");
-
-            $processedDir = collect($cloudDisk->listContents($dir, $recursive))
-                ->where('type', '=', 'dir')
-                ->where('filename', '=', 'processed')
-                ->first();
-        }
-
-        $zipFiles = $contents
-            ->where('type', '=', 'file')
-            ->where('mimetype', '=', 'application/zip')
-            ->map(
-                function ($file) use (
-                    $cloudDisk,
-                    $practice,
-                    $dir,
-                    $filterLastEncounter,
-                    $filterInsurance,
-                    $filterProblems,
-                    $processedDir
-                ) {
-                    $localDisk = Storage::disk('local');
-
-                    $unzipDir = "zip/${dir}/unzipped";
-
-                    $cloudFilePath = $file['path'];
-                    $cloudFileName = $file['filename'];
-                    $cloudDirName = $file['dirname'];
-
-                    foreach ($localDisk->allFiles($unzipDir) as $path) {
-                        if (Str::contains($path, 'xml')) {
-                            $now = Carbon::now()->toAtomString();
-                            $randomStr = Str::random();
-
-                            $put = $cloudDisk->put(
-                                "{$processedDir['path']}/${randomStr}-${now}",
-                                fopen($localDisk->path($path), 'r+')
-                            );
-                            $ccda = Ccda::create(
-                                [
-                                    'source'      => Ccda::GOOGLE_DRIVE."_${dir}",
-                                    'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
-                                    'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                                    'imported'    => false,
-                                    'practice_id' => (int) $practice->id,
-                                ]
-                            );
-
-                            //for some reason it doesn't save practice_id when using Ccda::create([])
-                            $ccda->practice_id = (int) $practice->id;
-                            $ccda->save();
-
-                            ProcessCcda::withChain(
-                                [
-                                    (new CheckCcdaEnrollmentEligibility(
-                                        $ccda->id,
-                                        $practice,
-                                        (bool) $filterLastEncounter,
-                                        (bool) $filterInsurance,
-                                        (bool) $filterProblems
-                                    ))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE)),
-                                ]
-                            )->dispatch($ccda->id)
-                                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
-                        } else {
-                            $pathWithUnderscores = str_replace('/', '_', $path);
-                            $put = $cloudDisk->put(
-                                "{$processedDir['path']}/${pathWithUnderscores}",
-                                fopen($localDisk->path($path), 'r+')
-                            );
-                        }
-
-                        $localDisk->delete($path);
-                    }
-                }
-            );
-
-        return true;
-    }
-
+    
     public function notify(EligibilityBatch $batch)
     {
         if (isProductionEnv()) {
@@ -492,58 +378,6 @@ class ProcessEligibilityService
         }
 
         return $batch;
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return bool
-     */
-    public function processCsvForEligibility(EligibilityBatch $batch)
-    {
-        ini_set('memory_limit', '-1');
-
-        if (EligibilityBatch::TYPE_ONE_CSV != $batch->type) {
-            throw new \Exception('$batch is not of type `'.EligibilityBatch::TYPE_ONE_CSV.'`.`');
-        }
-
-        $csvPatientList = $batch->options['patientList'];
-
-        if (empty($csvPatientList)) {
-            return false;
-        }
-
-        $processedAtLeast1File = false;
-
-        try {
-            while ( ! empty($csvPatientList)) {
-                $patient = array_shift($csvPatientList);
-
-                if ( ! is_array($patient)) {
-                    continue;
-                }
-
-                $job = $this->createEligibilityJobFromCsvRow($patient, $batch);
-
-                $patient['eligibility_job_id'] = $job->id;
-
-                $processedAtLeast1File = true;
-            }
-        } catch (\Exception $exception) {
-            $options                = $batch->options;
-            $options['patientList'] = $csvPatientList;
-            $batch->options         = $options;
-            $batch->save();
-
-            throw $exception;
-        }
-
-        $options                = $batch->options;
-        $options['patientList'] = $csvPatientList;
-        $batch->options         = $options;
-        $batch->save();
-
-        return $processedAtLeast1File;
     }
 
     /**
@@ -685,11 +519,6 @@ class ProcessEligibilityService
 
             throw $e;
         }
-    }
-
-    public function queueFromGoogleDrive(EligibilityBatch $batch)
-    {
-        ProcessEligibilityFromGoogleDrive::dispatch($batch);
     }
 
     private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)

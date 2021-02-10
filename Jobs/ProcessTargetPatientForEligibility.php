@@ -18,17 +18,6 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypted
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 3;
     /**
      * @var \CircleLinkHealth\SharedModels\Entities\TargetPatient
      */
