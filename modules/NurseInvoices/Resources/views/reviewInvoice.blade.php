@@ -1,4 +1,4 @@
-@extends(auth()->user()->isAdmin() ? 'cpm-admin::partials.adminUI' : 'partials.providerUI')
+@extends(view()->exists('partials.providerUI') ? 'partials.providerUI' : 'cpm-admin::partials.adminUI')
 
 @section('title', 'Review Invoice')
 @section('activity', 'Review Invoice')
