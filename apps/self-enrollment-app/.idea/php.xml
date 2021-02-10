@@ -216,6 +216,24 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
       <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/vendor/wildbit/swiftmailer-postmark" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/synonyms-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/customer-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/core-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/ccm-billing-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/cpm-admin-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/shared-models-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/twofa-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/eligibility-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/raygun-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/cpm-migrations-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/sqlviews-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/revisionable-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/twilio-integration-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/vapor-devops-helpers-module" />
+      <path value="$PROJECT_DIR$/vendor/ohdearapp/ohdear-php-sdk" />
+      <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
+      <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

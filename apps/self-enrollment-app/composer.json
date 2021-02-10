@@ -137,6 +137,8 @@
         "circlelinkhealth/sqlviews-module": "2.0",
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/twilio-integration-module": "1.0.x-dev",
+        "ohdearapp/ohdear-php-sdk": "^3.0",
+        "spatie/laravel-schedule-monitor": "2.2.2",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.4",

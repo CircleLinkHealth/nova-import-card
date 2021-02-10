@@ -13,3 +13,4 @@ yarn-error.log
 CircleLinkHealth/*
 *-deploy-s3.env*
 .vapor
+storage/preload.php
