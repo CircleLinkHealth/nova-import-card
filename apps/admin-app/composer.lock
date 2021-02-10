@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4277f44aa027a55ad5832d2b2b46dfd8",
+    "content-hash": "fedfde92781dc9ac87ef8aea0073a336",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -634,7 +634,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.0.x-dev",
+                    "dev-road_547_ccmBilling": "2.1.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -853,7 +854,6 @@
                 "laravel/legacy-factories": "^1.1",
                 "laravel/passport": "^8.0 || ^7.3.0 || ^10.0",
                 "laravel/tinker": "^2.0",
-                "laravel/vapor-core": "*",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.2",
                 "lcobucci/jwt": "^4.0",
@@ -946,7 +946,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2.x-dev"
+                    "dev-master": "4.2.x-dev",
+                    "dev-road_547_customer": "4.3.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -987,7 +988,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.4.x-dev"
+                    "dev-master": "4.4.x-dev",
+                    "road_547_moving_self_enrollment_eligibility": "4.5.x-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -4950,17 +4952,11 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
-                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/VaporCore",
+                "reference": "d58de86fd836a37cb99cef369e3d83c54692988e"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -4998,7 +4994,16 @@
                     "Laravel\\Vapor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\Vapor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -5014,7 +5019,9 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-29T15:06:52+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "laravel/vapor-ui",

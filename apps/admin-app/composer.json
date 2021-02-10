@@ -143,6 +143,10 @@
         {
             "type": "path",
             "url": "./CircleLinkHealth/VaporCli"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/VaporCore"
         }
     ],
     "require": {
@@ -198,6 +202,7 @@
         "titasgailius/search-relations": "^1.0",
         "vink/nova-cache-card": "^1.0",
         "waynestate/nova-ckeditor4-field": "^0.4.0",
+        "laravel/vapor-core": "*",
         "wildbit/swiftmailer-postmark": "^3.3"
     },
     "require-dev": {

@@ -39,6 +39,7 @@
     "fruitcake/laravel-cors": "^1.0",
     "fzaninotto/faker": "~1.4",
     "laracasts/utilities": "~3.0",
+    "laravel/vapor-core": "*",
     "league/flysystem-aws-s3-v3": "^1.0",
     "macellan/laravel-zip": "^1.0",
     "phaxio/phaxio": "^2.0",
@@ -159,6 +160,10 @@
     {
       "type": "path",
       "url": "./CircleLinkHealth/VaporCli"
+    },
+    {
+      "type": "path",
+      "url": "./CircleLinkHealth/VaporCore"
     }
   ],
   "require-dev": {
