@@ -18,6 +18,25 @@ class ForceAttachInputDTO
     protected bool $isDetaching = false;
     protected ?Carbon $month = null;
     protected int $patientUserId;
+    protected ?string $reason = null;
+
+    /**
+     * @return string|null
+     */
+    public function getReason(): ?string
+    {
+        return $this->reason;
+    }
+
+    /**
+     * @param string|null $reason
+     */
+    public function setReason(?string $reason): self
+    {
+        $this->reason = $reason;
+
+        return $this;
+    }
 
     public function getActionType(): string
     {

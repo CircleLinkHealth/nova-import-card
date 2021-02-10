@@ -48,6 +48,7 @@ class PatientForcedChargeableService extends BaseModel
         'chargeable_month',
         'chargeable_service_id',
         'patient_user_id',
+        'reason'
     ];
     protected $table = 'patient_forced_chargeable_services';
 

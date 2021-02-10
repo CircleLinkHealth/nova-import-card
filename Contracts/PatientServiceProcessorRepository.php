@@ -46,7 +46,7 @@ interface PatientServiceProcessorRepository
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
 
-    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void;
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, ?Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason= null):void;
 
-    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void;
+    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, ?Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void;
 }

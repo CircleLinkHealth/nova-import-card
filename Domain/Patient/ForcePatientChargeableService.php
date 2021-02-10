@@ -16,10 +16,12 @@ use CircleLinkHealth\Customer\Entities\User;
 class ForcePatientChargeableService
 {
     protected ForceAttachInputDTO $input;
+    protected PatientServiceProcessorRepository $repo;
 
     public function __construct(ForceAttachInputDTO $input)
     {
         $this->input = $input;
+        $this->repo = app(PatientServiceProcessorRepository::class);
     }
 
     public static function execute(ForceAttachInputDTO $input): void
@@ -60,23 +62,20 @@ class ForcePatientChargeableService
         return true;
     }
 
-    private function createHistoricalRecords(User $patient, Carbon $startingMonth, Carbon $endingMonth, string $actionType): void
+    private function createHistoricalRecords(Carbon $startingMonth, Carbon $endingMonth, string $actionType): void
     {
         $start    = $startingMonth->copy();
-        $end      = $endingMonth->copy();
-        $toCreate = [];
-        //todo: needs more logic
-        while ($start->lt($end)) {
-            $toCreate[] = [
-                'chargeable_service_id' => $this->input->getChargeableServiceId(),
-                'chargeable_month'      => $start->startOfMonth()->copy(),
-                'action_type'           => $this->input->getActionType(),
-            ];
+
+        while ($start->lt($endingMonth)) {
+            $this->repo->attachForcedChargeableService(
+                $this->input->getPatientUserId(),
+                $this->input->getChargeableServiceId(),
+                $start->startOfMonth()->copy(),
+                $this->input->getActionType(),
+                $this->input->getReason());
 
             $start->addMonth();
         }
-        //create or update?
-        $patient->forcedChargeableServices()->createMany($toCreate);
     }
 
     private function guaranteeHistoricallyAccurateRecords(): self
@@ -92,12 +91,6 @@ class ForcePatientChargeableService
             ])
             ->findOrFail($this->input->getPatientUserId());
 
-        if ($this->input->isDetaching() && $this->input->isPermanent()) {
-            $this->createHistoricalRecords($patient, $this->input->getEntryCreatedAt(), Carbon::now()->startOfMonth(), $this->input->getActionType());
-
-            return $this;
-        }
-
         $opposingActionType      = PatientForcedChargeableService::getOpposingActionType($this->input->getActionType());
         $opposingPermanentAction = $patient->forcedChargeableServices
             ->whereNull('chargeable_month')
@@ -105,8 +98,19 @@ class ForcePatientChargeableService
             ->where('action_type', $opposingActionType)
             ->first();
 
+        if ($this->input->isDetaching() && $this->input->isPermanent()) {
+            $endingMonth = Carbon::now()->startOfMonth();
+            if (! is_null($opposingPermanentAction) && $this->input->getEntryCreatedAt()->lessThan($opposingPermanentAction->created_at)){
+                $endingMonth = $opposingPermanentAction->created_at->startOfMonth();
+            }
+
+            $this->createHistoricalRecords($this->input->getEntryCreatedAt(), $endingMonth, $this->input->getActionType());
+
+            return $this;
+        }
+
         if ($this->input->isPermanent() && ! is_null($opposingPermanentAction)) {
-            (app(PatientServiceProcessorRepository::class))->detachForcedChargeableService(
+            $this->repo->detachForcedChargeableService(
                 $this->input->getPatientUserId(),
                 $this->input->getChargeableServiceId(),
                 null,

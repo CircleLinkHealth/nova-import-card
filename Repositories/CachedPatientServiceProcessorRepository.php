@@ -293,7 +293,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $this->queryPatientData($patientId, $month);
     }
 
-    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason =null):void
     {
         $this->repo->attachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType);
     }
