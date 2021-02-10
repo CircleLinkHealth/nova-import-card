@@ -66,7 +66,7 @@ class DashboardController extends Controller
         $practice = Practice::find($request->input('practice_id'));
         $batchId  = $request->input('batch_id');
 
-        if ($batchId && ! EligibilityBatch::wherePracticeId($practice->id)->exists()) {
+        if ($batchId && ! EligibilityBatch::where('practice_id', $practice->id)->where('id', $batchId)->exists()) {
             return redirect()->back()->with(['pullMsg' => "Batch[$batchId] does not belong to {$practice->display_name}"]);
         }
 
