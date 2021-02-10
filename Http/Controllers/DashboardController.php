@@ -10,6 +10,7 @@ use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
@@ -63,6 +64,11 @@ class DashboardController extends Controller
     public function pullAthenaEnrollees(Request $request)
     {
         $practice = Practice::find($request->input('practice_id'));
+        $batchId  = $request->input('batch_id');
+
+        if ($batchId && ! EligibilityBatch::wherePracticeId($practice->id)->exists()) {
+            return redirect()->back()->with(['pullMsg' => "Batch[$batchId] does not belong to {$practice->display_name}"]);
+        }
 
         $from = Carbon::parse($request->input('from'));
         $to   = Carbon::parse($request->input('to'));
@@ -73,6 +79,8 @@ class DashboardController extends Controller
                 'athenaPracticeId' => $practice->external_id,
                 'from'             => $from->format('y-m-d'),
                 'to'               => $to->format('y-m-d'),
+                'offset'           => false,
+                'batchId'          => $batchId,
             ]
         );
 
