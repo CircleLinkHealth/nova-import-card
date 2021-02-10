@@ -7,9 +7,9 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\Core\Tests\TestCase;
 
 class CsvEligibilityValidationTest extends TestCase

@@ -92,7 +92,7 @@ namespace App;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
  * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                      $disputes
  * @property int|null                                                                                                        $disputes_count
- * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                                            $ehrInfo
+ * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient                                                           $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
  * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings                                                           $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
@@ -212,7 +212,7 @@ namespace App;
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink|null                                    $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink|null                              $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                          $enrollableInfoRequest
  * @property \CircleLinkHealth\SharedModels\Entities\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                                                             $login_events_count

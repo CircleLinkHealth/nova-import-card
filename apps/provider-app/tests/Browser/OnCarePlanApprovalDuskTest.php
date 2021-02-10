@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Laravel\Dusk\Browser;
-use Tests\DuskTestCase;
+use CircleLinkHealth\SelfEnrollment\Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class OnCarePlanApprovalDuskTest extends DuskTestCase

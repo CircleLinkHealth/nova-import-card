@@ -36,3 +36,4 @@ lsp/log/*
 *deploy-s3.env
 CircleLinkHealth/*/vendor
 CircleLinkHealth/*/node_modules
+CircleLinkHealth

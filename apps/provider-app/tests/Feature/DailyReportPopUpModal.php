@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Tests\Helpers\CustomerTestCaseHelper;
+use CircleLinkHealth\Customer\Tests\Helpers\CustomerTestCaseHelper;
 use CircleLinkHealth\Core\Tests\TestCase;
 
 class DailyReportPopUpModal extends TestCase

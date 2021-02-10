@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CarePlanManager | Log In</title>
 
-    @include('modules.raygun.partials.real-user-monitoring')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
     @include('core::partials.new-relic-tracking')
 
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">

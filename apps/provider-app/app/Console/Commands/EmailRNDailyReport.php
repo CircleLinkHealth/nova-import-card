@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class EmailRNDailyReport extends Command
 {
@@ -61,7 +62,7 @@ class EmailRNDailyReport extends Command
         $report = $this->service->showDataFromS3($date);
 
         if ($report->isEmpty()) {
-            \Artisan::call(NursesPerformanceDailyReport::class);
+            Artisan::call(NursesPerformanceDailyReport::class);
             $report = $this->service->showDataFromS3($date);
         }
 
