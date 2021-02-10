@@ -50,10 +50,8 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
      *
      * @return void
      */
-    public function handle(ProcessEligibilityService $processEligibilityService)
+    public function handle()
     {
-        $this->processEligibilityService = $processEligibilityService;
-
         switch ($this->batch->type) {
             case EligibilityBatch::TYPE_ONE_CSV:
                 $this->batch = $this->queueSingleCsvJobs($this->batch);
@@ -70,24 +68,6 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             case EligibilityBatch::RUNNING:
                 $this->batch = $this->queueSingleEligibilityJobs($this->batch);
                 break;
-        }
-
-        if (empty($this->batch)) {
-            return;
-        }
-        $this->afterProcessingHook($this->batch);
-    }
-
-    /**
-     * Run this tasks after processing a batch.
-     *
-     * @param $batch
-     */
-    private function afterProcessingHook(EligibilityBatch $batch)
-    {
-        if ($batch->isCompleted() && $batch->hasJobs()) {
-            $this->processEligibilityService
-                ->notify($batch);
         }
     }
 
@@ -182,5 +162,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ));
+        
+        return $batch;
     }
 }
