@@ -149,7 +149,7 @@ class Ccda extends Resource
             Text::make('Mrn', 'patient_mrn')->sortable(),
             Text::make('Provider', 'provider_name')->sortable(),
             Text::make('Practice', 'practice_display_name')->sortable(),
-            //            Text::make('Nurse', 'nurse_user_name')->sortable(),
+            Text::make('Nurse', 'nurse_user_name')->sortable(),
             Text::make('From (DM)', 'dm_from')->sortable(),
             DateTime::make('Created At', 'created_at')->sortable(),
             Code::make('Errors', 'validation_checks')->json(),
@@ -181,6 +181,8 @@ class Ccda extends Resource
             ->join('users as providers', 'providers.id', '=', 'ccdas.billing_provider_id')
             ->join('practices', 'practices.id', '=', 'ccdas.practice_id')
             ->join('direct_mail_messages', 'direct_mail_messages.id', '=', 'ccdas.direct_mail_message_id')
+            ->join('patients_nurses', 'patients_nurses.patient_user_id', '=', 'ccdas.patient_id')
+            ->join('users as nurses', 'patients_nurses.nurse_user_id', '=', 'nurses.id')
             ->select([
                 'ccdas.patient_first_name',
                 'ccdas.patient_last_name',
@@ -194,6 +196,7 @@ class Ccda extends Resource
                 'providers.display_name as provider_name',
                 'practices.display_name as practice_display_name',
                 'direct_mail_messages.from as dm_from',
+                'nurses.display_name as nurse_user_name',
             ]);
     }
 
