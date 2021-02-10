@@ -148,11 +148,11 @@ class Ccda extends Resource
             Date::make('DOB', 'patient_dob')->sortable(),
             Text::make('Mrn', 'patient_mrn')->sortable(),
             Text::make('Provider', 'provider_name')->sortable(),
-            //            Text::make('Practice', 'practice_display_name')->sortable(),
+            Text::make('Practice', 'practice_display_name')->sortable(),
             //            Text::make('Nurse', 'nurse_user_name')->sortable(),
-            //            Text::make('From (DM)', 'dm_from')->sortable(),
+            Text::make('From (DM)', 'dm_from')->sortable(),
             DateTime::make('Created At', 'created_at')->sortable(),
-            //            Code::make('Errors', 'validation_errors')->json(),
+            Code::make('Errors', 'validation_checks')->json(),
             Text::make('Source', 'source')->sortable(),
             Text::make('patient_id')->sortable(),
             ID::make('id')->sortable(),
@@ -179,6 +179,8 @@ class Ccda extends Resource
     {
         return parent::indexQuery($request, $query)
             ->join('users as providers', 'providers.id', '=', 'ccdas.billing_provider_id')
+            ->join('practices', 'practices.id', '=', 'ccdas.practice_id')
+            ->join('direct_mail_messages', 'direct_mail_messages.id', '=', 'ccdas.direct_mail_message_id')
             ->select([
                 'ccdas.patient_first_name',
                 'ccdas.patient_last_name',
@@ -190,6 +192,8 @@ class Ccda extends Resource
                 'ccdas.billing_provider_id',
                 'ccdas.id',
                 'providers.display_name as provider_name',
+                'practices.display_name as practice_display_name',
+                'direct_mail_messages.from as dm_from',
             ]);
     }
 
