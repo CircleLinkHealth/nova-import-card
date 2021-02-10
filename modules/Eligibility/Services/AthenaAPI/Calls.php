@@ -605,7 +605,7 @@ class Calls implements AthenaApiImplementation
 
         return $this->response(
             array_merge(
-                $response,
+                $response ?? [],
                 [
                     'api_path' => $apiPath,
                 ]
