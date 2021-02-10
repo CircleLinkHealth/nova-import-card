@@ -107,8 +107,12 @@ class GetPatientIdFromLastYearAppointments extends Command
 
                 $currentDate = $chunkEndDate->copy()->addDay();
             } while ($currentDate->lt($endDate));
+            
+            return 0;
         }
 
         $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
+        
+        return 0;
     }
 }
