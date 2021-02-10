@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
@@ -15,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypted
 {
     protected int $targetPatientId;
-    
+
     /**
      * Create a new job instance.
      */
@@ -35,7 +36,7 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
             $tP = TargetPatient::findOrFail($this->targetPatientId);
             $this->processEligibility($tP);
         } catch (\Exception $e) {
-            $tP->status = TargetPatient::STATUS_ERROR;
+            $tP->status      = TargetPatient::STATUS_ERROR;
             $tP->description = $e->getMessage();
             $tP->save();
 
@@ -67,14 +68,17 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
         try {
             return tap(
                 app(AthenaEligibilityCheckableFactory::class)
-                    ->makeAthenaEligibilityCheckable($tP)
-                    ->createAndProcessEligibilityJobFromMedicalRecord(),
+                        ->makeAthenaEligibilityCheckable($tP)
+                        ->createAndProcessEligibilityJobFromMedicalRecord(),
                 function (EligibilityJob $eligibilityJob) use ($tP) {
-                    $tP->setStatusFromEligibilityJob($eligibilityJob);
-                    $tP->eligibility_job_id = $eligibilityJob->id;
-                    $tP->save();
-                }
+                        $tP->setStatusFromEligibilityJob($eligibilityJob);
+                        $tP->eligibility_job_id = $eligibilityJob->id;
+                        $tP->save();
+                    }
             );
+        } catch (CcdaWasNotFetchedFromAthenaApi $e) {
+            $tP->setStatusFromException($e);
+            $tP->save();
         } catch (\Exception $e) {
             throw $e;
         }
