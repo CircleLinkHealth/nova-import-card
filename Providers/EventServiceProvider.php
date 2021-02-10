@@ -24,12 +24,15 @@ class EventServiceProvider extends  ServiceProvider
             LogMailSmtpId::class, //this needs to be first
             CheckBeforeSendMessageListener::class,
         ],
+
         MessageSent::class => [
             LogSentMailNotification::class,
         ],
+
         NotificationSent::class => [
             LogSentNotification::class,
         ],
+
         NotificationFailed::class => [
             LogFailedNotification::class,
         ],

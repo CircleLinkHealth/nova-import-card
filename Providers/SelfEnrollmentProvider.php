@@ -65,8 +65,6 @@ class SelfEnrollmentProvider extends ServiceProvider
             UpdateEnrolmentLettersSignatoryName::class,
             GenerateSelfEnrollmentSurveyCommand::class,
             UpdateCameronEnrolleesMissingUserId::class,
-            TwilioIntegrationServiceProvider::class,
-            CustomMailChannel::class
         ]);
         $this->app->register(RouteServiceProvider::class);
     }
