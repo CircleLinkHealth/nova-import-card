@@ -37,7 +37,8 @@ class AutoPullEnrolleesFromAthena extends Command
     protected $signature = 'athena:autoPullEnrolleesFromAthena {athenaPracticeId? : The Athena EHR practice id. `external_id` on table `practices`}
                                                                         {from? : From date yyyy-mm-dd}
                                                                         {to? : To date yyyy-mm-dd}
-                                                                        {offset? : Offset results from athena api using number of target patients in the table}';
+                                                                        {offset? : Offset results from athena api using number of target patients in the table}
+                                                                        {batchId? : The Eligibility Batch Id}';
 
     /**
      * Create a new command instance.
@@ -107,7 +108,15 @@ class AutoPullEnrolleesFromAthena extends Command
         }
 
         foreach ($practices as $practice) {
-            $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
+            $batch = null;
+
+            if ($batchId = $this->argument('batchId')) {
+                $batch = EligibilityBatch::find($batchId);
+            }
+
+            if ( ! $batch) {
+                $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
+            }
 
             $jobs = array_merge(
                 $this->getAppointmentsJobs(
@@ -119,7 +128,7 @@ class AutoPullEnrolleesFromAthena extends Command
                 ),
                 [new MarkBatchAsReadyToStart($batch->id)],
                 (new ProcessTargetPatientsForEligibilityInBatches($practice->id))
-                    ->splitToBatches(10),
+                    ->splitToBatches(),
             );
 
             Bus::dispatchChain($jobs)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
