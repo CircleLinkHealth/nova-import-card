@@ -78,14 +78,21 @@ class Connection implements AthenaApiConnection
         $this->key        = $key;
         $this->secret     = $secret;
         $this->practiceid = $practiceid;
-        $this->baseurl    = 'https://api.athenahealth.com/'.$this->version;
-
-        $auth_prefixes = [
-            'v1'           => 'oauth/token',
-            'preview1'     => 'oauthpreview/token',
+        
+        $base_prefixes = [
+            'v1'           => "https://api.platform.athenahealth.com/v1/$practiceid",
+            'preview1'     => "https://api.preview.platform.athenahealth.com/v1/$practiceid",
             'openpreview1' => 'ouathopenpreview/token',
         ];
-        $this->authurl = 'https://api.athenahealth.com/'.$auth_prefixes[$this->version];
+        
+        $this->baseurl    = $base_prefixes[$this->version];
+
+        $auth_prefixes = [
+            'v1'           => 'https://api.platform.athenahealth.com/oauth2/v1/token',
+            'preview1'     => 'https://api.preview.platform.athenahealth.com/oauth2/v1/token',
+            'openpreview1' => 'ouathopenpreview/token',
+        ];
+        $this->authurl = $auth_prefixes[$this->version];
     }
 
     /**
