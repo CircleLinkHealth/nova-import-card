@@ -17,7 +17,8 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
 
     private string $invitationLink;
     private string $line1;
-    private $line2;
+    private $line2Sms;
+    private string $line2Email;
 
     /**
      * Create a new notification instance.
@@ -28,7 +29,8 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
     {
         $this->invitationLink = $invitationLink;
         $this->line1 = $this->subjectLine1();
-        $this->line2 = $this->subjectLine2();
+        $this->line2Sms = $this->subjectLine2Sms();
+        $this->line2Email = $this->subjectLine2ForEmail();
     }
 
     /**
@@ -90,7 +92,7 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
             ->from(config('mail.marketing_from.address'), $fromName)
             ->subject('Wellness Program')
             ->line($this->line1)
-            ->line($this->line2)
+            ->line($this->line2Email)
             ->action('Get my Care Coach', $this->invitationLink);
     }
 
@@ -109,7 +111,7 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
 
     private function getSubjectSms()
     {
-        return "$this->line1 $this->line2 $this->invitationLink";
+        return "$this->line1 $this->line2Sms $this->invitationLink";
     }
 
     private function subjectLine1()
@@ -117,8 +119,13 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
         return "Our apologies about the error you experienced earlier when trying to get your care coach.";
     }
 
-    private function subjectLine2()
+    private function subjectLine2Sms()
     {
         return "Our team has fixed this error. Whenever you have a chance, please visit";
+    }
+
+    private function subjectLine2ForEmail()
+    {
+        return "Our team has fixed this error. Whenever you have a chance, please use the button below to get your care coach.";
     }
 }
