@@ -14,6 +14,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -134,11 +135,13 @@ class ProcessPatientSummaries
         }
 
         $this->patientDTO = (new PatientMonthlyBillingDTO())
-            //todo: preload available service processors on repo property? or will hey exist in patientWithBilling Data array
             ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
             ->forPatient($this->patientUser->id)
             ->ofLocation($this->patientUser->patientInfo->location->id)
             ->forMonth($this->month)
+            ->withPatientServices(
+                ...PatientChargeableServicesForProcessing::fromCollection($this->patientUser)
+            )
             ->withForcedPatientServices(
                 ...ForcedPatientChargeableServicesForProcessing::fromCollection($this->patientUser->forcedChargeableServices)
             )

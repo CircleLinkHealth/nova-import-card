@@ -10,28 +10,38 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 
 class MonthlyProcessor implements PatientMonthlyBillingProcessor
 {
     private LocationProcessorRepository $locationRepository;
+    private PatientServiceProcessorRepository $patientServiceRepository;
 
-    public function __construct(LocationProcessorRepository $locationProcessorRepository)
+    public function __construct(LocationProcessorRepository $locationProcessorRepository, PatientServiceProcessorRepository $patientServiceProcessorRepository)
     {
         $this->locationRepository = $locationProcessorRepository;
+        $this->patientServiceRepository = $patientServiceProcessorRepository;
     }
 
     public function process(PatientMonthlyBillingDTO $patient): PatientMonthlyBillingDTO
     {
+        $processorOutputCollection = collect();
         $patient->getAvailableServiceProcessors()
             ->toCollection()
-            ->each(function (PatientServiceProcessor $processor) use ($patient) {
+            ->each(function (PatientServiceProcessor $processor) use ($patient, &$processorOutputCollection) {
                 if ($this->shouldNotTouch($processor->code(), $patient->getLocationId(), $patient->getChargeableMonth())) {
                     return;
                 }
 
-                $processor->processBilling($patient);
+                $output = $processor->processBilling($patient);
+                if ($output->shouldSendToDatabase()){
+                    $processorOutputCollection->push($output);
+                }
             });
+
+        $this->patientServiceRepository->multiAttachServiceSummaries($processorOutputCollection);
 
         return $patient;
     }

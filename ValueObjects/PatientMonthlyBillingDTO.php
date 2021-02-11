@@ -16,6 +16,25 @@ class PatientMonthlyBillingDTO
 
     protected array $forcedPatientServices;
 
+    protected array $patientServices;
+
+    /**
+     * @return array
+     */
+    public function getPatientServices(): array
+    {
+        return $this->patientServices;
+    }
+
+    /**
+     * @param array $patientServices
+     */
+    public function withPatientServices(PatientChargeableServicesForProcessing ...$patientServices): self
+    {
+        $this->patientServices = $patientServices;
+        return $this;
+    }
+
     protected int $locationId;
 
     protected int $patientId;

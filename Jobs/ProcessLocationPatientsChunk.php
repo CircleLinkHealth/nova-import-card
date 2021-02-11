@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -75,6 +76,9 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
                     ->forPatient($patient->id)
                     ->ofLocation($patient->patientInfo->preferred_contact_location)
                     ->forMonth($this->getChargeableMonth())
+                    ->withPatientServices(
+                        ...PatientChargeableServicesForProcessing::fromCollection($patient)
+                    )
                     ->withForcedPatientServices(
                         ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
                     )
