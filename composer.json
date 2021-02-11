@@ -164,7 +164,7 @@
         "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/clh-nova-theme": "*",
-        "circlelinkhealth/core-module": "3.0",
+        "circlelinkhealth/core-module": "3.1",
         "circlelinkhealth/cpm-admin-module": "1.7.1",
         "circlelinkhealth/cpm-migrations-module": "3.0.7",
         "circlelinkhealth/customer-module": "4.3.6",
