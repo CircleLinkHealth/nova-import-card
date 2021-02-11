@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
 class NotifySelfEnrollmentUserErrorIsFixed extends Notification
@@ -15,6 +16,8 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
     use Queueable;
 
     private string $invitationLink;
+    private string $line1;
+    private $line2;
 
     /**
      * Create a new notification instance.
@@ -24,6 +27,8 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
     public function __construct(string $invitationLink)
     {
         $this->invitationLink = $invitationLink;
+        $this->line1 = $this->subjectLine1();
+        $this->line2 = $this->subjectLine2();
     }
 
     /**
@@ -35,7 +40,7 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
             throw new InvalidArgumentException("`invitationLink` cannot be empty. User ID {$notifiable->id}");
         }
 
-        $subject = $this->getSubject();
+        $subject = $this->getSubjectSms();
 
         return (new TwilioSmsMessage())
             ->content($subject);
@@ -59,10 +64,30 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        $fromName = null;
+
+        if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
+            $fromName = $notifiable->primaryPractice->display_name;
+        }
+
+        if (empty($fromName)) {
+            $fromName = config('mail.marketing_from.name');
+        }
+
+        if (empty($this->invitationLink)) {
+            throw new InvalidArgumentException("`invitationLink` cannot be empty. User ID {$notifiable->id}");
+        }
+
+        $mailMessage           = new MailMessage();
+        $mailMessage->viewData = ['excludeLogo' => true, 'practiceName' => $fromName];
+
+        return $mailMessage
+            ->mailer('smtp')
+            ->from(config('mail.marketing_from.address'), $fromName)
+            ->subject('Wellness Program')
+            ->line($this->line1)
+            ->line($this->line2)
+            ->action('Get my Care Coach', $this->invitationLink);
     }
 
     /**
@@ -78,8 +103,18 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
         ];
     }
 
-    private function getSubject()
+    private function getSubjectSms()
     {
-        return "Our apologies about the error you experienced earlier when trying to get your care coach. Our team has fixed this error. Whenever you have a chance, please visit $this->invitationLink";
+        return "$this->line1 $this->line2 $this->invitationLink";
+    }
+
+    private function subjectLine1()
+    {
+        return "Our apologies about the error you experienced earlier when trying to get your care coach. Our team has fixed this error.";
+    }
+
+    private function subjectLine2()
+    {
+        return "Our team has fixed this error. Whenever you have a chance, please visit";
     }
 }
