@@ -11,7 +11,6 @@ use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\EligibilityBatch.
@@ -278,14 +277,14 @@ class EligibilityBatch extends BaseModel
         return route('eligibility.batch.show', [$this->id]);
     }
 
-    public function practice()
-    {
-        return $this->belongsTo(Practice::class);
-    }
-
     public function orchestratePendingJobsProcessing($pageSize = 100, $onQueue = CpmConstants::LOW_QUEUE)
     {
         return (new ProcessPendingEligibilityJobs($this->id))->splitToBatches($pageSize);
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
     }
 
     /**
