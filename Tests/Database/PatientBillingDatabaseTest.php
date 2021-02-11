@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
@@ -126,8 +127,8 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         );
 
         self::assertNotNull(
-            $this->patient()->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', $ccmCode)
+            $this->patient()->chargeableMonthlyTime()
+                ->where('chargeable_service_id', $ccmCodeId)
                 ->where('chargeable_month', $month)
                 ->first()
         );
@@ -168,29 +169,37 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 'patient_id'            => $patientId,
                 'provider_id'           => $careCoachId,
                 'chargeable_service_id' => $ccmCodeId = ChargeableService::getChargeableServiceIdUsingCode($ccmCode),
-                'performed_at'          => Carbon::now()->startOfMonth()->addDay(7),
+                'performed_at'          => Carbon::now()->startOfMonth()->addDays(7),
             ],
             [
                 'duration'              => $duration2 = 100,
                 'patient_id'            => $patientId,
                 'provider_id'           => $careCoachId,
                 'chargeable_service_id' => $ccmCodeId,
-                'performed_at'          => Carbon::now()->startOfMonth()->addDay(14),
+                'performed_at'          => Carbon::now()->startOfMonth()->addDays(14),
             ],
         ]);
 
         self::assertNotNull(
-            $viewSummary = $this->patient()->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', $ccmCode)
+            $this->patient()->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', $ccmCodeId)
                 ->where('chargeable_month', $month)
                 ->first()
         );
+
+        /** @var ChargeablePatientMonthlyTime $monthlyTime */
+        $monthlyTime = $this->patient()->chargeableMonthlyTime()
+            ->where('chargeable_service_id', $ccmCodeId)
+            ->where('chargeable_month', $month)
+            ->first();
+
+        self::assertNotNull($monthlyTime);
 
         //TODO: Refactored away, fix test
 //        self::assertEquals($viewSummary->no_of_calls, 2);
 //        self::assertEquals($viewSummary->no_of_successful_calls, 1);
 
-        self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
+        self::assertEquals($monthlyTime->total_time, $duration1 + $duration2);
     }
 
     public function test_process_single_patient_services_job_attaches_services()

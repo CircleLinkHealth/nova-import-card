@@ -94,7 +94,7 @@ class PatientIsOfServiceCode
         }
 
         return $this->repo()->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
-            ->where('chargeable_service_code', $this->serviceCode)
+            ->where('chargeableService.code', $this->serviceCode)
             ->where('requires_patient_consent', $this->bypassRequiresConsent)
             ->count() > 0;
     }

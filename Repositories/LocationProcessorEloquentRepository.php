@@ -149,10 +149,8 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
                 'actor_id' => $actorId,
             ]);
 
-        ChargeableLocationMonthlySummary::whereHas(
-            'location',
-            fn ($q) => $q->whereIn('location_id', '=', $locationIds)
-        )->where('chargeable_month', '=', $month)
+        ChargeableLocationMonthlySummary::whereIn('location_id', $locationIds)
+            ->where('chargeable_month', '=', $month)
             ->update([
                 'is_locked' => $isLocked,
             ]);

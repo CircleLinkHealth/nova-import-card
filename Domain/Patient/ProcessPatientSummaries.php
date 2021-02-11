@@ -11,7 +11,6 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
@@ -61,19 +60,20 @@ class ProcessPatientSummaries
         BillingCache::clearPatients([$patientUserId]);
         $patient = $static->repo->getPatientWithBillingDataForMonth($patientUserId, $month);
 
-        $locationSummaries = $patient->patientInfo->location->chargeableServiceSummaries;
+        $locationSummaries     = $patient->patientInfo->location->chargeableServiceSummaries;
         $locationMonthIsClosed = $locationSummaries->isNotEmpty() &&
                                  $locationSummaries->every(function (ChargeableLocationMonthlySummary $summary) {
                                      return $summary->is_locked;
                                  });
+
         $patientBillingStatusIsTouched = ! is_null(
             $patient->monthlyBillingStatus
-                ->filter(fn($mbs) => $mbs->chargeable_month->equals($month))
+                ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
                 ->whereNotNull('actor_id')
                 ->first()
         );
 
-        if ($locationMonthIsClosed || $patientBillingStatusIsTouched){
+        if ($locationMonthIsClosed || $patientBillingStatusIsTouched) {
             return;
         }
 
@@ -81,14 +81,17 @@ class ProcessPatientSummaries
             ->subscribe(
                 (app(LocationProcessorRepository::class))
                     ->availableLocationServiceProcessors(
-                        $patient->getPreferredContactLocation(),
+                        [$patient->getPreferredContactLocation()],
                         $thisMonth = Carbon::now()->startOfMonth()
                     )
             )
             ->forPatient($patient->id)
             ->ofLocation(intval($patient->getPreferredContactLocation()))
             ->forMonth($thisMonth)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id));
+            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+            ->withForcedPatientServices(
+                ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
+            );
 
         (app(self::class))->fromDTO($dto);
     }

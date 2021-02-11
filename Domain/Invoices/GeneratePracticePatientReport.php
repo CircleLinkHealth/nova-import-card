@@ -57,30 +57,35 @@ class GeneratePracticePatientReport
 
     private function getAllTimeExceptBhi(): int
     {
-        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', '!=', ChargeableService::BHI)
+        return $this->billingStatus->patientUser->chargeableMonthlyTime
+            ->where('chargeable_service_id', '!=', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)
             ->sum('total_time');
     }
 
     private function getBhiTime(): int
     {
-        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', '=', ChargeableService::BHI)
+        return $this->billingStatus->patientUser->chargeableMonthlyTime
+            ->where('chargeable_service_id', '!=', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)
             ->sum('total_time');
     }
 
     private function getBillingCodes(): string
     {
-        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
+        $csIds = $this->billingStatus->patientUser->chargeableMonthlySummaries
             ->where('is_fulfilled', '=', 1)
-            ->implode('chargeable_service_code', ', ');
+            ->pluck('chargeable_service_id')
+            ->toArray();
+
+        return ChargeableService::cached()
+            ->whereIn('id', $csIds)
+            ->implode('code', ', ');
     }
 
     private function hasServiceCode(string $code): bool
     {
-        return $this->billingStatus->patientUser->chargeableMonthlySummariesView
+        return $this->billingStatus->patientUser->chargeableMonthlySummaries
             ->where('is_fulfilled', '=', 1)
-            ->where('chargeable_service_code', '=', $code)
+            ->where('chargeable_service_id', '=', ChargeableService::cached()->firstWhere('code', $code)->id)
             ->isNotEmpty();
     }
 

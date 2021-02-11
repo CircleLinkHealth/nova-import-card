@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Invoices;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PracticeQuickbooksReportData;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -76,9 +76,9 @@ class GeneratePracticeQuickbooksReportRows
     private function getBillableCount(Practice $practice, ChargeableService $chargeableService): int
     {
         //todo: question - does this logic cover AWV?
-        return app(PracticeProcessorRepository::class)
-            ->approvedBillingStatuses($practice->id, $this->date, false)
-            ->whereHas('chargeableMonthlySummariesView', function ($q) use ($chargeableService) {
+        return app(LocationProcessorRepository::class)
+            ->approvedBillingStatuses($practice->locations->pluck('id')->toArray(), $this->date, false)
+            ->whereHas('chargeableMonthlySummaries', function ($q) use ($chargeableService) {
                 $q->createdOnIfNotNull($this->date, 'chargeable_month')
                     ->where('chargeable_service_id', '=', $chargeableService->id)
                     ->where('is_fulfilled', '=', true);

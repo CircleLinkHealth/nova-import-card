@@ -7,9 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\User;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
@@ -43,21 +41,16 @@ trait ApprovablePatientUsersQuery
                 $q->with(['chargeableService'])
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
+            'chargeableMonthlyTime' => function ($q) use ($monthYear) {
+                $q->with(['chargeableService'])
+                    ->createdOnIfNotNull($monthYear, 'chargeable_month');
+            },
             'forcedChargeableServices' => function ($f) use ($monthYear) {
                 $f->with(['chargeableService'])
                     ->where(fn ($q)   => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
                     ->orWhere(fn ($q) => $q->where('chargeable_month', null));
             },
         ];
-
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
-            $relations['chargeableMonthlySummariesView'] = function ($q) use ($monthYear) {
-                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
-            };
-            $relations['monthlyBillingStatus'] = function ($q) use ($monthYear) {
-                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
-            };
-        }
 
         return User::with($relations)->ofType('participant');
     }

@@ -15,11 +15,11 @@ interface PatientServiceProcessor
 {
     public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
 
+    public function baseCode(): string;
+
     public function clashesWith(): array;
 
     public function code(): string;
-
-    public function codeForProblems(): string;
 
     public function featureIsEnabled(): bool;
 

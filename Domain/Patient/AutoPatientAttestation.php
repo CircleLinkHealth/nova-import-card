@@ -58,7 +58,7 @@ class AutoPatientAttestation
         ];
 
         if ($this->isNewBillingEnabled()) {
-            $relations['chargeableMonthlySummariesView'] = function ($q) {
+            $relations['chargeableMonthlySummaries'] = function ($q) {
                 $q->createdOnIfNotNull($this->month, 'chargeable_month');
             };
         } else {
@@ -246,7 +246,7 @@ class AutoPatientAttestation
             return boolval(optional($pms)->hasServiceCode($code));
         }
 
-        return PatientIsOfServiceCode::execute($this->patient->id, $code);
+        return $this->patient->chargeableMonthlySummaries->where('code', $code)->isNotEmpty();
     }
 
     private function isNewBillingEnabled()

@@ -72,7 +72,7 @@ class Eloquent implements LocationProcessorRepository
 
     public function getLocationSummaries(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection
     {
-        // TODO: Implement getLocationSummaries() method.
+        throw new \Exception('not implemented');
     }
 
     public function hasServicesForMonth(array $locationIds, array $chargeableServiceCodes, Carbon $month): bool

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -23,15 +24,15 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this->repo()->store($patientId, $this->code(), $chargeableMonth, $this->requiresPatientConsent($patientId));
     }
 
+    public function baseCode(): string
+    {
+        return $this->code();
+    }
+
     public function clashesWith(): array
     {
         return [
         ];
-    }
-
-    public function codeForProblems(): string
-    {
-        return $this->code();
     }
 
     public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
@@ -96,7 +97,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return collect($patientProblems)
             ->filter(
                 function (PatientProblemForProcessing $problem) {
-                    return collect($problem->getServiceCodes())->contains($this->codeForProblems());
+                    return collect($problem->getServiceCodes())->contains($this->baseCode());
                 }
             )->count() >= $this->minimumNumberOfProblems();
     }
@@ -115,9 +116,15 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        //todo: change codeForProblems name to 'base code' or something
-        $summary = $this->repo()
-            ->getChargeablePatientSummary($patientId, $this->codeForProblems(), $chargeableMonth);
+        $patient = $this->repo()
+            ->getPatientWithBillingDataForMonth($patientId, $chargeableMonth);
+
+        /** @var ChargeablePatientMonthlySummary $summary */
+        $summary = $patient
+            ->chargeableMonthlySummaries
+            ->where('chargeableService.code', $this->baseCode())
+            ->where('chargeable_month', $chargeableMonth)
+            ->first();
 
         if ( ! $summary) {
             return false;
@@ -127,7 +134,18 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($summary->total_time < $this->minimumTimeInSeconds()) {
+        /** @var ChargeablePatientMonthlyTime $monthlyTime */
+        $monthlyTime = $patient
+            ->chargeableMonthlyTime
+            ->where('chargeableService.code', $this->baseCode())
+            ->where('chargeable_month', $chargeableMonth)
+            ->first();
+
+        if ( ! $monthlyTime) {
+            return false;
+        }
+
+        if ($monthlyTime->total_time < $this->minimumTimeInSeconds()) {
             return false;
         }
 

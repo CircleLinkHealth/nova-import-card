@@ -51,7 +51,7 @@ class LocationSummaryProcessingTest extends TestCase
         $builderMock->makePartial();
 
         $chunkJobPartiallyMocked = Mockery::mock(ProcessLocationPatientsChunk::class, [
-            $locationId = 1,
+            [$locationId = 1],
             AvailableServiceProcessors::push(
                 [
                     new CCM(),
@@ -166,7 +166,7 @@ class LocationSummaryProcessingTest extends TestCase
 
         FakeLocationRepository::setBuilder($builderMock);
 
-        app(Location::class)->processServicesForAllPatients($locationId, $startOfMonth);
+        app(Location::class)->processServicesForAllPatients([$locationId], $startOfMonth);
 
         Bus::assertDispatched(function (ProcessLocationPatientsChunk $job) use ($startOfMonth) {
             $availableProcessors = $job->getAvailableServiceProcessors();

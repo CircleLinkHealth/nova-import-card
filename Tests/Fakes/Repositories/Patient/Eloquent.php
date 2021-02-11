@@ -9,7 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
@@ -52,6 +52,11 @@ class Eloquent implements PatientServiceProcessorRepository
         );
     }
 
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason = null): void
+    {
+        throw new \Exception('not implemented');
+    }
+
     public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity
     {
         $activity = Activity::create(
@@ -75,6 +80,11 @@ class Eloquent implements PatientServiceProcessorRepository
         return $activity;
     }
 
+    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE): void
+    {
+        throw new \Exception('not implemented');
+    }
+
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         $this->summariesCreated->push($array = [
@@ -94,32 +104,23 @@ class Eloquent implements PatientServiceProcessorRepository
         /** @var ChargeableService $cs */
         $cs = $chargebleServices->where('code', '=', ChargeableService::CCM)->first();
 
-        $record1                          = new ChargeablePatientMonthlySummaryView();
-        $record1->patient_user_id         = $patientId;
-        $record1->chargeable_service_id   = $cs->id;
-        $record1->chargeable_service_code = $cs->code;
-        $record1->chargeable_service_name = $cs->display_name;
-        $record1->total_time              = 2564;
+        $record1                        = new ChargeablePatientMonthlySummary();
+        $record1->patient_user_id       = $patientId;
+        $record1->chargeable_service_id = $cs->id;
 
         /** @var ChargeableService $cs */
         $cs = $chargebleServices->where('code', '=', ChargeableService::BHI)->first();
 
-        $record4                          = new ChargeablePatientMonthlySummaryView();
-        $record4->patient_user_id         = $patientId;
-        $record4->chargeable_service_id   = $cs->id;
-        $record4->chargeable_service_code = $cs->code;
-        $record4->chargeable_service_name = $cs->display_name;
-        $record4->total_time              = 124;
+        $record4                        = new ChargeablePatientMonthlySummary();
+        $record4->patient_user_id       = $patientId;
+        $record4->chargeable_service_id = $cs->id;
 
         /** @var ChargeableService $cs */
         $cs = $chargebleServices->where('code', '=', ChargeableService::RPM)->first();
 
-        $record5                          = new ChargeablePatientMonthlySummaryView();
-        $record5->patient_user_id         = $patientId;
-        $record5->chargeable_service_id   = $cs->id;
-        $record5->chargeable_service_code = $cs->code;
-        $record5->chargeable_service_name = $cs->display_name;
-        $record5->total_time              = 0;
+        $record5                        = new ChargeablePatientMonthlySummary();
+        $record5->patient_user_id       = $patientId;
+        $record5->chargeable_service_id = $cs->id;
 
         return EloquentCollection::make([
             $record1,
@@ -128,20 +129,25 @@ class Eloquent implements PatientServiceProcessorRepository
         ]);
     }
 
-    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummary
     {
-        ChargeablePatientMonthlySummaryView::unguard();
+        ChargeablePatientMonthlySummary::unguard();
 
-        return new ChargeablePatientMonthlySummaryView($this->summariesCreated
+        return new ChargeablePatientMonthlySummary($this->summariesCreated
             ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
             ->where('chargeable_month', $month)
             ->where('patient_id', $patientId)
             ->first());
     }
 
+    public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection
+    {
+        // TODO: Implement getChargeablePatientTimesView() method.
+    }
+
     public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
     {
-        // TODO: Implement getPatientWithBillingDataForMonth() method.
+        throw new \Exception('not implemented');
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
@@ -173,19 +179,19 @@ class Eloquent implements PatientServiceProcessorRepository
             ->first();
     }
 
+    public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientChargeableMonthlyTimes() method.
+    }
+
     public function reloadPatientProblems(int $patientId): void
     {
         // TODO: Implement reloadPatientProblems() method.
     }
 
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
-    {
-        // TODO: Implement reloadPatientSummaryViews() method.
-    }
-
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        // TODO: Implement requiresPatientConsent() method.
+        throw new \Exception('not implemented');
     }
 
     /**

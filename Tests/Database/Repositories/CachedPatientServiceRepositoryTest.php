@@ -104,11 +104,14 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
         $patientSummaries = $this->repo->getChargeablePatientSummaries($patient->id, $thisMonth = Carbon::now()->startOfMonth());
 
+        /** @var ChargeableService $cs */
+        $cs = ChargeableService::cached()->firstWhere('id', $patientSummaries->first()->chargeable_service_id);
+
         DB::enableQueryLog();
 
         $this->repo->fulfill(
             $patient->id,
-            $patientSummaries->first()->chargeable_service_code,
+            $cs->code,
             $thisMonth
         );
 

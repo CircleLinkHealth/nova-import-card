@@ -56,7 +56,7 @@ class CcmBillingTest extends TestCase
         $admin = $this->administrator();
         auth()->login($admin);
         $result = $service->closeMonth($admin->id, $this->practice->id, now()->startOfMonth());
-        self::assertTrue(1 === $result);
+        self::assertTrue($result);
 
         $result = $service->getBillablePatientsForMonth($this->practice->id, now()->startOfMonth());
         self::assertTrue($result->isClosed);
@@ -64,7 +64,7 @@ class CcmBillingTest extends TestCase
 
     public function test_it_fetches_approvable_patients_for_practice()
     {
-        $collection = app(PracticeProcessor::class)->fetchApprovablePatients($this->practice->id, now()->startOfMonth());
+        $collection = app(PracticeProcessor::class)->fetchApprovablePatients([$this->practice->id], now()->startOfMonth());
         self::assertEquals(self::NUMBER_OF_PATIENTS, $collection->count());
     }
 

@@ -39,7 +39,12 @@ class GeneratePracticesQuickbooksReport
         $batch       = $batchRepo->get($this->batchId, BatchableStoreRepository::MEDIA_TYPE);
 
         /** @var Collection|Practice[] $practices */
-        $practices = Practice::with(['settings', 'chargeableServices', 'saasAccount'])
+        $practices = Practice::with([
+            'settings',
+            'chargeableServices',
+            'saasAccount',
+            'locations' => fn ($q) => $q->select(['id', 'practice_id']),
+        ])
             ->whereIn('id', $this->practices)
             ->get();
 

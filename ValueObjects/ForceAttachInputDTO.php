@@ -15,28 +15,10 @@ class ForceAttachInputDTO
 
     protected int $chargeableServiceId;
     protected ?Carbon $entryCreatedAt = null;
-    protected bool $isDetaching = false;
-    protected ?Carbon $month = null;
+    protected bool $isDetaching       = false;
+    protected ?Carbon $month          = null;
     protected int $patientUserId;
     protected ?string $reason = null;
-
-    /**
-     * @return string|null
-     */
-    public function getReason(): ?string
-    {
-        return $this->reason;
-    }
-
-    /**
-     * @param string|null $reason
-     */
-    public function setReason(?string $reason): self
-    {
-        $this->reason = $reason;
-
-        return $this;
-    }
 
     public function getActionType(): string
     {
@@ -63,9 +45,19 @@ class ForceAttachInputDTO
         return $this->patientUserId;
     }
 
+    public function getReason(): ?string
+    {
+        return $this->reason;
+    }
+
     public function isDetaching(): bool
     {
         return $this->isDetaching;
+    }
+
+    public function isPermanent(): bool
+    {
+        return is_null($this->month);
     }
 
     public function setActionType(string $actionType): self
@@ -110,8 +102,10 @@ class ForceAttachInputDTO
         return $this;
     }
 
-    public function isPermanent():bool
+    public function setReason(?string $reason): self
     {
-        return is_null($this->month);
+        $this->reason = $reason;
+
+        return $this;
     }
 }

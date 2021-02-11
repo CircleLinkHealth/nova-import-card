@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
@@ -27,6 +26,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function __construct()
     {
         $this->repo = new PatientServiceProcessorRepository();
+    }
+
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason = null): void
+    {
+        $this->repo->attachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType, $reason);
     }
 
     /**
@@ -50,28 +54,26 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ]
         );
 
-        $this->reloadPatientSummaryViews($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
+        $this->reloadPatientChargeableMonthlyTimes($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
 
         return $activity;
+    }
+
+    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE): void
+    {
+        $this->repo->detachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType);
     }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         $summary = $this->repo->fulfill($patientId, $chargeableServiceCode, $month);
 
-        $patient = $this->getPatientFromCache($patientId);
+        $patient = $this->getPatientFromCache($patientId, $month);
 
         $patient
             ->chargeableMonthlySummaries
             ->firstWhere('id', $summary->id)
             ->is_fulfilled = true;
-
-        if ($patient->relationLoaded('chargeableMonthlySummariesView')) {
-            $patient
-                ->chargeableMonthlySummariesView
-                ->firstWhere('id', $summary->id)
-                ->is_fulfilled = true;
-        }
 
         return $summary;
     }
@@ -81,27 +83,38 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
-        $patient = $this->getPatientFromCache($patientId);
+        $patient = $this->getPatientFromCache($patientId, $month);
 
         if (is_null($patient)) {
             return new EloquentCollection();
         }
 
-        return $patient->chargeableMonthlySummariesView
+        return $patient->chargeableMonthlySummaries
             ->where('chargeable_month', $month);
     }
 
     /**
      * @throws \Exception
      */
-    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummary
     {
-        //todo: query for view if you should
-        return $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', $chargeableServiceCode)
+        return $this->getPatientFromCache($patientId, $month)
+            ->chargeableMonthlySummaries
+            ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
             ->first();
+    }
+
+    public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection
+    {
+        $patient = $this->getPatientFromCache($patientId, $month);
+
+        if (is_null($patient)) {
+            return new EloquentCollection();
+        }
+
+        return $patient->chargeableMonthlyTime
+            ->where('chargeable_month', $month);
     }
 
     /**
@@ -132,7 +145,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return $this->getPatientFromCache($patientId)
+        return $this->getPatientFromCache($patientId, $month)
             ->patientInfo
             ->location
             ->chargeableServiceSummaries
@@ -146,12 +159,24 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return $this->getPatientFromCache($patientId)
+        return $this->getPatientFromCache($patientId, $month)
             ->chargeableMonthlySummaries
             ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
             ->where('is_fulfilled', true)
             ->count() > 0;
+    }
+
+    public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
+    {
+        if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) || ! BillingCache::patientExistsInCache($patientId)) {
+            return;
+        }
+
+        $this->getPatientFromCache($patientId, $month)
+            ->load(['chargeableMonthlyTime' => function ($q) use ($month) {
+                $q->createdOnIfNotNull($month, 'chargeable_month');
+            }]);
     }
 
     /**
@@ -170,22 +195,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     /**
      * @throws \Exception
      */
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
-    {
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && BillingCache::patientExistsInCache($patientId)) {
-            $this->getPatientFromCache($patientId)
-                ->load(['chargeableMonthlySummariesView' => function ($q) use ($month) {
-                    $q->createdOnIfNotNull($month, 'chargeable_month');
-                }]);
-        }
-    }
-
-    /**
-     * @throws \Exception
-     */
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return $this->getPatientFromCache($patientId)
+        return $this->getPatientFromCache($patientId, $month)
             ->chargeableMonthlySummaries
             ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
@@ -200,17 +212,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
 
-        $patient = $this->getPatientFromCache($patientId);
+        $patient = $this->getPatientFromCache($patientId, $month);
 
         $patient->chargeableMonthlySummaries
             ->firstWhere('id', $summary->id)
             ->requires_patient_consent = false;
-
-        if ($patient->relationLoaded('chargeableMonthlySummariesView')) {
-            $patient->chargeableMonthlySummariesView
-                ->firstWhere('id', $summary->id)
-                ->requires_patient_consent = false;
-        }
 
         return $summary;
     }
@@ -222,7 +228,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
-        $patient = $this->getPatientFromCache($patientId);
+        $patient = $this->getPatientFromCache($patientId, $month);
 
         //todo: is the possibily of duplicates with different id real?
         if ($patient->chargeableMonthlySummaries->contains('id', $summary->id)) {
@@ -231,16 +237,6 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
         $patient->chargeableMonthlySummaries
             ->push($summary);
-
-        if ($patient->relationLoaded('chargeableMonthlySummariesView')) {
-            if ($patient->chargeableMonthlySummariesView->contains('id', $summary->id)) {
-                $patient->chargeableMonthlySummariesView->forgetUsingModelKey('id', $summary->id);
-            }
-
-            $patient->chargeableMonthlySummariesView->push(
-                ChargeablePatientMonthlySummaryView::firstWhere('id', $summary->id)
-            );
-        }
 
         return $summary;
     }
@@ -291,15 +287,5 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         }
 
         $this->queryPatientData($patientId, $month);
-    }
-
-    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason =null):void
-    {
-        $this->repo->attachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType, $reason);
-    }
-
-    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
-    {
-        $this->repo->detachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType);
     }
 }

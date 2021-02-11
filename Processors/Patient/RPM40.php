@@ -11,6 +11,11 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class RPM40 extends AbstractProcessor
 {
+    public function baseCode(): string
+    {
+        return ChargeableService::RPM;
+    }
+
     public function clashesWith(): array
     {
         return [
@@ -21,11 +26,6 @@ class RPM40 extends AbstractProcessor
     public function code(): string
     {
         return ChargeableService::RPM40;
-    }
-
-    public function codeForProblems(): string
-    {
-        return ChargeableService::RPM;
     }
 
     public function featureIsEnabled(): bool
