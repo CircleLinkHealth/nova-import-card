@@ -53,11 +53,11 @@ class CreateSelfEnrollmentMonitoredScheduledTasks extends Migration
 
     private function getTaskLogItemsTable(): string
     {
-        return config('schedule-monitor.tasks_log_items_db_table', 'monitored_scheduled_task_log_items');
+        return 'self-enrollment_monitored_scheduled_task_log_items';
     }
 
     private function getTasksName(): string
     {
-        return config('schedule-monitor.tasks_db_table', 'monitored_scheduled_tasks');
+        return 'self-enrollment_monitored_scheduled_tasks';
     }
 }
