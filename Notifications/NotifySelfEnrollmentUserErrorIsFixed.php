@@ -53,7 +53,11 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
      */
     public function via($notifiable)
     {
-        return ['twilio'];
+        $channels = ['mail', 'twilio'];
+        if (Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])){
+            unset($channels[array_search('mail', $channels)]);
+        }
+        return $channels;
     }
 
     /**
