@@ -179,7 +179,10 @@
                                     <a href="{{route('revisions.phi.activity')}}">PHI Activity</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes Table</a>
+                                    <a href="{{route('hospitalization-notes.table')}}">Hospitalisation Notes</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('message-dispatch-messages.table')}}">Message Dispatch Messages</a>
                                 </li>
                             </ul>
                         </li>
