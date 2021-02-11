@@ -13,6 +13,7 @@ use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
 use CircleLinkHealth\Core\Listeners\LogSentNotification;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateCameronEnrolleesMissingUserId;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
@@ -65,6 +66,7 @@ class SelfEnrollmentProvider extends ServiceProvider
             UpdateEnrolmentLettersSignatoryName::class,
             GenerateSelfEnrollmentSurveyCommand::class,
             UpdateCameronEnrolleesMissingUserId::class,
+            SelfEnrollmentSendErrorFixedCommand::class,
         ]);
         $this->app->register(RouteServiceProvider::class);
     }
