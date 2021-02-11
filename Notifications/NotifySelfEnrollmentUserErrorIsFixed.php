@@ -114,7 +114,7 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
 
     private function subjectLine1()
     {
-        return "Our apologies about the error you experienced earlier when trying to get your care coach. Our team has fixed this error.";
+        return "Our apologies about the error you experienced earlier when trying to get your care coach.";
     }
 
     private function subjectLine2()
