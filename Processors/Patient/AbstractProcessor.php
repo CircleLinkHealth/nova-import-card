@@ -94,9 +94,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     private function shouldUnfulfill() : bool
     {
-        //todo
-        //has clash/force, block
-        //no longer has enough problems
+        return ! $this->shouldAttach();
     }
 
     private function unfulfill()
