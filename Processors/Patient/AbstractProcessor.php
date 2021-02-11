@@ -152,17 +152,6 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        //make sure to add monthly time to DTO like below:
-//        /** @var ChargeablePatientMonthlyTime $monthlyTime */
-//        $monthlyTime = $patient
-//            ->chargeableMonthlyTime
-//            ->where('chargeableService.code', $this->baseCode())
-//            ->where('chargeable_month', $chargeableMonth)
-//            ->first();
-//
-//        if ( ! $monthlyTime) {
-//            return false;
-//        }
         if ($summary->getMonthlyTime() < $this->minimumTimeInSeconds()) {
             return false;
         }

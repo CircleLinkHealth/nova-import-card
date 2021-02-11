@@ -18,6 +18,7 @@ use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
 {
@@ -287,5 +288,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         }
 
         $this->queryPatientData($patientId, $month);
+    }
+
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection)
+    {
+        //start DB transaction
+        //loop and update or create
     }
 }

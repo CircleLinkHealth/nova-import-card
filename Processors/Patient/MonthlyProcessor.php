@@ -37,7 +37,7 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
 
                 $output = $processor->processBilling($patient);
                 if ($output->shouldSendToDatabase()){
-                    $processorOutputCollection->push($output->toArray());
+                    $processorOutputCollection->push($output);
                 }
             });
 
