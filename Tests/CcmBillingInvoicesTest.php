@@ -7,27 +7,32 @@
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use CircleLinkHealth\CcmBilling\Console\GenerateFakeDataForApproveBillablePatientsPage;
-use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportJob;
 use CircleLinkHealth\CcmBilling\Repositories\BatchableStoreRepository;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
 use CircleLinkHealth\Core\Tests\TestCase;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 class CcmBillingInvoicesTest extends TestCase
 {
-    const NUMBER_OF_PATIENTS = 2;
+    const NUMBER_OF_PATIENTS    = 2;
+    private ?Location $location = null;
 
     private ?Practice $practice = null;
-    private PracticeProcessorRepository $repository;
+    private LocationProcessorRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->practice   = factory(Practice::class)->create();
-        $this->repository = app(PracticeProcessorRepository::class);
+        $this->practice = factory(Practice::class)->create();
+        $this->location = factory(Location::class)->create([
+            'practice_id' => $this->practice->id,
+        ]);
+        $this->repository = app(LocationProcessorRepository::class);
         Artisan::call(GenerateFakeDataForApproveBillablePatientsPage::class, [
             'practiceId'       => $this->practice->id,
             'numberOfPatients' => self::NUMBER_OF_PATIENTS,
@@ -42,8 +47,8 @@ class CcmBillingInvoicesTest extends TestCase
         $batchId                 = 'practices_invoices'.((string) Str::orderedUuid());
         $patientsToProcessPerJob = 1;
         $chunkedJobs             = $this->repository
-            ->approvedBillingStatuses($this->practice->id, $date)
-            ->chunkIntoJobsAndGetArray($patientsToProcessPerJob, new GeneratePracticePatientsReportJob($this->practice->id, $date, $batchId));
+            ->approvedBillingStatuses([$this->location->id], $date)
+            ->chunkIntoJobsAndGetArray($patientsToProcessPerJob, new GeneratePracticePatientsReportJob($this->practice->id, [$this->location->id], $date, $batchId));
 
         self::assertEquals(self::NUMBER_OF_PATIENTS, sizeof($chunkedJobs));
 

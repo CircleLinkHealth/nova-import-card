@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
@@ -32,15 +33,15 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         $this->output->setSendToDatabase(true);
     }
 
+    public function baseCode(): string
+    {
+        return $this->code();
+    }
+
     public function clashesWith(): array
     {
         return [
         ];
-    }
-
-    public function codeForProblems(): string
-    {
-        return $this->code();
     }
 
     public function fulfill(): void
@@ -119,7 +120,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return collect($this->input->getPatientProblems())
             ->filter(
                 function (PatientProblemForProcessing $problem) {
-                    return collect($problem->getServiceCodes())->contains($this->codeForProblems());
+                    return collect($problem->getServiceCodes())->contains($this->baseCode());
                 }
             )->count() >= $this->minimumNumberOfProblems();
     }
@@ -151,6 +152,17 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
+        //make sure to add monthly time to DTO like below:
+//        /** @var ChargeablePatientMonthlyTime $monthlyTime */
+//        $monthlyTime = $patient
+//            ->chargeableMonthlyTime
+//            ->where('chargeableService.code', $this->baseCode())
+//            ->where('chargeable_month', $chargeableMonth)
+//            ->first();
+//
+//        if ( ! $monthlyTime) {
+//            return false;
+//        }
         if ($summary->getMonthlyTime() < $this->minimumTimeInSeconds()) {
             return false;
         }

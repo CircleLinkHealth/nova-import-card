@@ -11,6 +11,11 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class RPM60 extends AbstractProcessor
 {
+    public function baseCode(): string
+    {
+        return ChargeableService::RPM;
+    }
+
     //todo: change fulfillment to happen with base service time
     public function clashesWith(): array
     {
@@ -22,11 +27,6 @@ class RPM60 extends AbstractProcessor
     public function code(): string
     {
         return ChargeableService::RPM60;
-    }
-
-    public function codeForProblems(): string
-    {
-        return ChargeableService::RPM;
     }
 
     public function featureIsEnabled(): bool

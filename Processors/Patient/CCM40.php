@@ -11,6 +11,11 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class CCM40 extends AbstractProcessor
 {
+    public function baseCode(): string
+    {
+        return ChargeableService::CCM;
+    }
+
     public function clashesWith(): array
     {
         return [
@@ -24,11 +29,6 @@ class CCM40 extends AbstractProcessor
     public function code(): string
     {
         return ChargeableService::CCM_PLUS_40;
-    }
-
-    public function codeForProblems(): string
-    {
-        return ChargeableService::CCM;
     }
 
     public function featureIsEnabled(): bool

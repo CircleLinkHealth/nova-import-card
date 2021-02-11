@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -63,21 +63,29 @@ class ApprovablePatient extends JsonResource
 
     private function getAllTimeExceptBhi(): int
     {
-        /** @var User $user */
-        $user = $this->resource;
+        /** @var PatientMonthlyBillingStatus $billingStatus */
+        $billingStatus = $this->resource;
 
-        return $user->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', '!=', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
+        $bhiId = \CircleLinkHealth\Customer\Entities\ChargeableService::cached()
+            ->firstWhere('code', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
+            ->id;
+
+        return $billingStatus->chargeableMonthlyTime
+            ->where('chargeable_service_id', '!=', $bhiId)
             ->sum('total_time');
     }
 
     private function getBhiTime(): int
     {
-        /** @var User $user */
-        $user = $this->resource->patientUser;
+        /** @var PatientMonthlyBillingStatus $billingStatus */
+        $billingStatus = $this->resource;
 
-        return $user->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
+        $bhiId = \CircleLinkHealth\Customer\Entities\ChargeableService::cached()
+            ->firstWhere('code', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
+            ->id;
+
+        return $billingStatus->chargeableMonthlyTime
+            ->where('chargeable_service_id', '=', $bhiId)
             ->sum('total_time');
     }
 
@@ -86,12 +94,11 @@ class ApprovablePatient extends JsonResource
         /** @var User $user */
         $user = $this->resource->patientUser;
 
-        return $user->chargeableMonthlySummariesView
-            ->filter(fn (ChargeablePatientMonthlySummaryView $item) => $item->is_fulfilled)
-            ->map(function (ChargeablePatientMonthlySummaryView $view) {
+        return $user->chargeableMonthlySummaries
+            ->filter(fn (ChargeablePatientMonthlySummary $item) => $item->is_fulfilled)
+            ->map(function (ChargeablePatientMonthlySummary $view) {
                 return [
-                    'id'   => $view->chargeable_service_id,
-                    'code' => $view->chargeable_service_code,
+                    'id' => $view->chargeable_service_id,
                 ];
             });
     }

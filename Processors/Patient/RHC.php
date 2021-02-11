@@ -11,6 +11,11 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class RHC extends AbstractProcessor
 {
+    public function baseCode(): string
+    {
+        return ChargeableService::CCM;
+    }
+
     public function clashesWith(): array
     {
         return [];
@@ -19,11 +24,6 @@ class RHC extends AbstractProcessor
     public function code(): string
     {
         return ChargeableService::GENERAL_CARE_MANAGEMENT;
-    }
-
-    public function codeForProblems(): string
-    {
-        return ChargeableService::CCM;
     }
 
     public function featureIsEnabled(): bool

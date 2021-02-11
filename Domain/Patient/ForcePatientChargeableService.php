@@ -27,10 +27,19 @@ class ForcePatientChargeableService
     {
         $repo = app(PatientServiceProcessorRepository::class);
         $input->isDetaching()
-            ? $repo->detachForcedChargeableService($input->getPatientUserId(), $input->getChargeableServiceId(),
-            $input->getMonth(), $input->getActionType())
-            : $repo->attachForcedChargeableService($input->getPatientUserId(), $input->getChargeableServiceId(),
-            $input->getMonth(), $input->getActionType(), $input->getReason());
+            ? $repo->detachForcedChargeableService(
+                $input->getPatientUserId(),
+                $input->getChargeableServiceId(),
+                $input->getMonth(),
+                $input->getActionType()
+            )
+            : $repo->attachForcedChargeableService(
+                $input->getPatientUserId(),
+                $input->getChargeableServiceId(),
+                $input->getMonth(),
+                $input->getActionType(),
+                $input->getReason()
+            );
     }
 
     public static function handleObserverEvents(ForceAttachInputDTO $input): void
@@ -50,7 +59,8 @@ class ForcePatientChargeableService
                 $this->input->getChargeableServiceId(),
                 $start->startOfMonth()->copy(),
                 $this->input->getActionType(),
-                $this->input->getReason());
+                $this->input->getReason()
+            );
 
             $start->addMonth();
         }
@@ -63,12 +73,12 @@ class ForcePatientChargeableService
         }
 
         $patient = User::ofType('participant')
-                       ->with([
-                           'forcedChargeableServices.chargeableService',
-                       ])
-                       ->findOrFail($this->input->getPatientUserId());
+            ->with([
+                'forcedChargeableServices.chargeableService',
+            ])
+            ->findOrFail($this->input->getPatientUserId());
 
-        $opposingActionType = PatientForcedChargeableService::getOpposingActionType($this->input->getActionType());
+        $opposingActionType      = PatientForcedChargeableService::getOpposingActionType($this->input->getActionType());
         $opposingPermanentAction = $patient->forcedChargeableServices
             ->whereNull('chargeable_month')
             ->where('chargeable_service_id', $this->input->getChargeableServiceId())
@@ -81,8 +91,11 @@ class ForcePatientChargeableService
                 $endingMonth = $opposingPermanentAction->created_at->startOfMonth();
             }
 
-            $this->createHistoricalRecords($this->input->getEntryCreatedAt(), $endingMonth,
-                $this->input->getActionType());
+            $this->createHistoricalRecords(
+                $this->input->getEntryCreatedAt(),
+                $endingMonth,
+                $this->input->getActionType()
+            );
 
             return $this;
         }
@@ -92,7 +105,8 @@ class ForcePatientChargeableService
                 $this->input->getPatientUserId(),
                 $this->input->getChargeableServiceId(),
                 null,
-                $opposingActionType);
+                $opposingActionType
+            );
         }
 
         return $this;

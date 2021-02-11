@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
-use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
-use CircleLinkHealth\CcmBilling\ValueObjects\ForceAttachInputDTO;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
@@ -30,6 +28,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService query()
  * @mixin \Eloquent
+ * @property string|null $reason
  */
 class PatientForcedChargeableService extends BaseModel
 {
@@ -48,7 +47,7 @@ class PatientForcedChargeableService extends BaseModel
         'chargeable_month',
         'chargeable_service_id',
         'patient_user_id',
-        'reason'
+        'reason',
     ];
     protected $table = 'patient_forced_chargeable_services';
 

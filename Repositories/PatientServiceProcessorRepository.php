@@ -12,7 +12,7 @@ use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as Repository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
@@ -27,6 +27,31 @@ class PatientServiceProcessorRepository implements Repository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
+
+    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason = null): void
+    {
+        if (is_null($month)) {
+            PatientForcedChargeableService::create([
+                'patient_user_id'       => $patientId,
+                'chargeable_service_id' => $chargeableServiceId,
+                'action_type'           => $actionType,
+                'reason'                => $reason,
+            ]);
+
+            return;
+        }
+        PatientForcedChargeableService::updateOrCreate(
+            [
+                'patient_user_id'       => $patientId,
+                'chargeable_service_id' => $chargeableServiceId,
+                'chargeable_month'      => $month,
+            ],
+            [
+                'action_type' => $actionType,
+                'reason'      => $reason,
+            ]
+        );
+    }
 
     /**
      * @throws \Exception
@@ -49,9 +74,20 @@ class PatientServiceProcessorRepository implements Repository
             ]
         );
 
-        $this->reloadPatientSummaryViews($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
+        $this->reloadPatientChargeableMonthlyTimes($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
 
         return $activity;
+    }
+
+    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE): void
+    {
+        //We're retrieving because we need model event to be triggered for historical records
+        optional(PatientForcedChargeableService::where('patient_user_id', $patientId)
+            ->where('chargeable_service_id', $chargeableServiceId)
+            ->where('chargeable_month', $month)
+            ->where('action_type', $actionType)
+            ->first())
+            ->delete();
     }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
@@ -67,17 +103,29 @@ class PatientServiceProcessorRepository implements Repository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): Collection
     {
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+        return new Collection(ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
+            ->with('chargeableService')
             ->where('chargeable_month', $month)
-            ->get();
+            ->get());
     }
 
-    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummary
     {
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
+                $q->select('id')
+                    ->from((new ChargeableServiceModel())->getTable())
+                    ->where('code', $chargeableServiceCode);
+            })
             ->first();
+    }
+
+    public function getChargeablePatientTimesView(int $patientId, Carbon $month): Collection
+    {
+        return new Collection(ChargeablePatientMonthlyTime::where('patient_user_id', $patientId)
+            ->where('chargeable_month', $month)
+            ->get());
     }
 
     public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
@@ -89,9 +137,13 @@ class PatientServiceProcessorRepository implements Repository
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+        return ChargeableLocationMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
+                $q->select('id')
+                    ->from((new ChargeableServiceModel())->getTable())
+                    ->where('code', $chargeableServiceCode);
+            })
             ->exists();
     }
 
@@ -112,11 +164,20 @@ class PatientServiceProcessorRepository implements Repository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+        return ChargeableLocationMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
+                $q->select('id')
+                    ->from((new ChargeableServiceModel())->getTable())
+                    ->where('code', $chargeableServiceCode);
+            })
             ->where('is_fulfilled', true)
             ->exists();
+    }
+
+    public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientChargeableMonthlyTimes() method.
     }
 
     public function reloadPatientProblems(int $patientId): void
@@ -124,16 +185,15 @@ class PatientServiceProcessorRepository implements Repository
         // TODO: Implement reloadPatientProblems() method.
     }
 
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
-    {
-        // TODO: Implement reloadPatientSummaryViews() method.
-    }
-
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+        return ChargeableLocationMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
+                $q->select('id')
+                    ->from((new ChargeableServiceModel())->getTable())
+                    ->where('code', $chargeableServiceCode);
+            })
             ->where('requires_patient_consent', true)
             ->exists();
     }
@@ -161,40 +221,5 @@ class PatientServiceProcessorRepository implements Repository
                 'requires_patient_consent' => $requiresPatientConsent,
             ]
         );
-    }
-
-    public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE,  ?string $reason= null):void
-    {
-        if (is_null($month)){
-            PatientForcedChargeableService::create([
-                'patient_user_id' => $patientId,
-                'chargeable_service_id' => $chargeableServiceId,
-                'action_type' => $actionType,
-                'reason' => $reason
-            ]);
-            return;
-        }
-        PatientForcedChargeableService::updateOrCreate(
-            [
-                'patient_user_id' => $patientId,
-                'chargeable_service_id' => $chargeableServiceId,
-                'chargeable_month'  => $month
-            ],
-            [
-                'action_type' => $actionType,
-                'reason' => $reason
-            ]
-        );
-    }
-
-    public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
-    {
-        //We're retrieving because we need model event to be triggered for historical records
-        optional(PatientForcedChargeableService::where('patient_user_id', $patientId)
-            ->where('chargeable_service_id', $chargeableServiceId)
-            ->where('chargeable_month',$month)
-            ->where('action_type', $actionType)
-            ->first())
-            ->delete();
     }
 }

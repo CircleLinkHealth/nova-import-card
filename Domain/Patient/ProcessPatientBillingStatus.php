@@ -51,7 +51,10 @@ class ProcessPatientBillingStatus
                         $q->with('ccdProblem.cpmProblem')
                             ->createdOnIfNotNull($this->month, 'chargeable_month');
                     },
-                    'chargeableMonthlySummariesView' => function ($q) {
+                    'inboundSuccessfulCalls' => function ($q) {
+                        $q->createdInMonth($this->month, 'called_date');
+                    },
+                    'chargeableMonthlySummaries' => function ($q) {
                         $q->createdOnIfNotNull($this->month, 'chargeable_month');
                     },
                 ]);
@@ -80,8 +83,8 @@ class ProcessPatientBillingStatus
         if ($autoAttestation->unAttestedBhi()
             || $autoAttestation->unAttestedCcm()
             || $autoAttestation->unAttestedPcm()
-            || $patient->chargeableMonthlySummariesView->isEmpty()
-            || 0 === $patient->chargeableMonthlySummariesView->sum('no_of_successful_calls')
+            || $patient->chargeableMonthlySummaries->isEmpty()
+            || 0 === $patient->inbound_successful_calls_count
             || ! $patient->billingProviderUser()
             || in_array($patient->getCcmStatusForMonth($this->month), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])) {
             $this->billingStatus->status = 'needs_qa';

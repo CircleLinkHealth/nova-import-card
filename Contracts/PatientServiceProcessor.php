@@ -16,11 +16,11 @@ interface PatientServiceProcessor
 {
     public function attach(): void;
 
+    public function baseCode(): string;
+
     public function clashesWith(): array;
 
     public function code(): string;
-
-    public function codeForProblems(): string;
 
     public function featureIsEnabled(): bool;
 

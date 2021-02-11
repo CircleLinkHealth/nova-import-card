@@ -256,16 +256,12 @@ class CompareAbpV2vsV3 extends Command
 
     private function getData($service, int $practiceId, Carbon $month)
     {
-        $request = new Request();
-        $request->replace(['page' => 1]);
-        app()->bind('request', fn () => $request);
+        $this->setRequest(0);
 
         $results    = $service->getBillablePatientsForMonth($practiceId, $month);
         $allResults = $this->addSuccessfulCallCountsIfV3($service, $month, $results->summaries->items());
         while ($results->summaries->nextPageUrl()) {
-            $request = new Request();
-            $request->replace(['page' => $results->summaries->currentPage() + 1]);
-            app()->bind('request', fn () => $request);
+            $this->setRequest($results->summaries->currentPage() + 1);
             $results    = $service->getBillablePatientsForMonth($practiceId, $month);
             $arr        = $this->addSuccessfulCallCountsIfV3($service, $month, $results->summaries->items());
             $allResults = array_merge($allResults, $arr);
@@ -281,6 +277,17 @@ class CompareAbpV2vsV3 extends Command
         } else {
             $this->error("❌ $desc");
         }
+    }
+
+    private function setRequest(int $page = 1)
+    {
+        /** @var Request $request */
+        $request = app('request');
+        if ( ! $request) {
+            $request = new Request();
+        }
+        $request->replace(['page' => $page]);
+        app()->bind('request', fn () => $request);
     }
 
     private function successLog($log)
