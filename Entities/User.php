@@ -22,6 +22,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
+use CircleLinkHealth\Customer\AppConfig\UsersWhoCanBubbleChat;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
@@ -2228,6 +2229,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('administrator');
     }
 
+    public function isAllowedToBubbleChat()
+    {
+        $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
+        return in_array($this->id, $bubbleChatters);
+    }
+
     /**
      * Determine whether the User is BHI chargeable (ie. eligible and enrolled).
      */
@@ -2373,12 +2380,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('participant');
     }
 
-    public function isAllowedToBubbleChat()
-    {
-        $bubbleChatters = AppConfig::pull('user_ids_to_show_bubble_chat', []);
-        return in_array($this->id, $bubbleChatters);
-    }
-    
     public function isPcm(): bool
     {
         if (is_null($this->id)) {
