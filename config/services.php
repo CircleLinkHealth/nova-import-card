@@ -21,6 +21,7 @@ return [
         'key'     => env('ATHENA_KEY'),
         'secret'  => env('ATHENA_SECRET'),
         'version' => env('ATHENA_VERSION'),
+        'practice_id' => env('ATHENA_CLH_PRACTICE_ID'),
     ],
 
     'mailgun' => [
