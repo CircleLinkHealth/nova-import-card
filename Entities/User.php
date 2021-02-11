@@ -13,7 +13,7 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
@@ -322,8 +322,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $chargeable_monthly_summaries_count
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLog
  * @property int|null                                                                                                $end_of_month_ccm_status_log_count
- * @property ChargeablePatientMonthlySummaryView[]|EloquentCollection                                                $chargeableMonthlySummariesView
- * @property int|null                                                                                                $chargeable_monthly_summaries_view_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
@@ -333,6 +331,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|EloquentCollection                              $forcedChargeableServices
  * @property int|null                                                                                                $forced_chargeable_services_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
+ * @property Call[]|EloquentCollection                                                                               $inboundSuccessfulCalls
+ * @property int|null                                                                                                $inbound_successful_calls_count
+ * @property ChargeablePatientMonthlyTime[]|EloquentCollection                                                       $chargeableMonthlyTime
+ * @property int|null                                                                                                $chargeable_monthly_time_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -889,9 +891,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
     }
 
-    public function chargeableMonthlySummariesView()
+    public function chargeableMonthlyTime()
     {
-        return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id');
+        return $this->hasMany(ChargeablePatientMonthlyTime::class, 'patient_user_id');
     }
 
     public function chargeableServices()
@@ -2245,6 +2247,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             )
             ->where('called_date', '=', null);
+    }
+
+    public function inboundSuccessfulCalls()
+    {
+        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
+            ->where('status', Call::REACHED)
+            ->where(
+                function ($q) {
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call')
+                        ->orWhere('sub_type', '=', 'Call Back');
+                }
+            );
     }
 
     /**

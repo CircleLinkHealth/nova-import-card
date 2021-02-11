@@ -417,7 +417,7 @@ trait UserHelpers
         return $nurse;
     }
 
-    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false, bool $withSuccessfulCall = true, bool $processBilling = true)
+    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false, bool $withSuccessfulCall = true, bool $processBilling = true): User
     {
         $patient = measureTime('createUser', function () use ($practice, $withSuccessfulCall) {
             return $this->createUser($practice->id, 'participant', 'enrolled', $withSuccessfulCall);
