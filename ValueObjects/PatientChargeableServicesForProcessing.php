@@ -1,0 +1,79 @@
+<?php
+/**
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace CircleLinkHealth\CcmBilling\ValueObjects;
+
+
+class PatientChargeableServicesForProcessing
+{
+    protected string $code;
+    protected bool $isFulfilled;
+    protected bool $requiresConsent;
+
+    /**
+     * @return bool
+     */
+    public function requiresConsent(): bool
+    {
+        return $this->requiresConsent;
+    }
+
+    /**
+     * @param bool $requiresConsent
+     */
+    public function setRequiresConsent(bool $requiresConsent): void
+    {
+        $this->requiresConsent = $requiresConsent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     */
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFulfilled(): bool
+    {
+        return $this->isFulfilled;
+    }
+
+    /**
+     * @param bool $isFulfilled
+     */
+    public function setIsFulfilled(bool $isFulfilled): void
+    {
+        $this->isFulfilled = $isFulfilled;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMonthlyTime(): int
+    {
+        return $this->monthlyTime;
+    }
+
+    /**
+     * @param int $monthlyTime
+     */
+    public function setMonthlyTime(int $monthlyTime): void
+    {
+        $this->monthlyTime = $monthlyTime;
+    }
+    protected int $monthlyTime;
+}

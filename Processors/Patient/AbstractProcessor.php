@@ -11,16 +11,25 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 abstract class AbstractProcessor implements PatientServiceProcessor
 {
-    private PatientServiceProcessorRepository $repo;
+    private PatientMonthlyBillingDTO $input;
+    private PatientServiceProcessorOutputDTO $output;
 
-    public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
+    public function __construct()
     {
-        return $this->repo()->store($patientId, $this->code(), $chargeableMonth, $this->requiresPatientConsent($patientId));
+        $this->output = new PatientServiceProcessorOutputDTO();
+    }
+
+    public function attach(): void
+    {
+        $this->output->setSendToDatabase(true);
     }
 
     public function clashesWith(): array
@@ -34,66 +43,80 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this->code();
     }
 
-    public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
+    public function fulfill(): void
     {
-        return $this->repo()->fulfill($patientId, $this->code(), $chargeableMonth);
+        $this->output->setSendToDatabase(true);
+        $this->output->setIsFulfilling(true);
     }
 
-    public function isAttached(int $patientId, Carbon $chargeableMonth): bool
+    public function isAttached(): bool
     {
-        return $this->repo()->isAttached($patientId, $this->code(), $chargeableMonth);
+        return collect($this->input->getPatientServices())
+            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
+            ->isNotEmpty();
     }
 
-    public function isFulfilled(int $patientId, Carbon $chargeableMonth): bool
+    public function isFulfilled(): bool
     {
-        return $this->repo()->isFulfilled($patientId, $this->code(), $chargeableMonth);
+        return collect($this->input->getPatientServices())
+            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code() && $s->isFulfilled())
+            ->isNotEmpty();
     }
 
-    public function processBilling(PatientMonthlyBillingDTO $patientStub): void
+    public function processBilling(PatientMonthlyBillingDTO $patientStub): PatientServiceProcessorOutputDTO
     {
-        if ( ! $this->isAttached($patientStub->getPatientId(), $patientStub->getChargeableMonth())) {
-            if ($this->shouldForceAttach(...$patientStub->getForcedPatientServices()) || $this->shouldAttach(
-                $patientStub->getPatientId(),
-                $patientStub->getChargeableMonth(),
-                ...$patientStub->getPatientProblems()
-            )) {
-                $this->attach($patientStub->getPatientId(), $patientStub->getChargeableMonth());
+        $this->input = $patientStub;
+        return $this->getOutput();
+    }
+
+    private function getOutput(): PatientServiceProcessorOutputDTO
+    {
+        $this->output->setPatientUserId($this->input->getPatientId());
+        $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
+
+        if ( ! $this->isAttached()) {
+            if ($this->shouldForceAttach() || $this->shouldAttach()) {
+                $this->attach();
             }
         }
 
-        if ( ! $this->isFulfilled($patientStub->getPatientId(), $patientStub->getChargeableMonth())) {
-            if ($this->shouldFulfill(
-                $patientStub->getPatientId(),
-                $patientStub->getChargeableMonth(),
-                ...$patientStub->getPatientProblems()
-            )) {
-                $this->fulfill($patientStub->getPatientId(), $patientStub->getChargeableMonth());
+        if ( ! $this->isFulfilled()) {
+            if ($this->shouldFulfill()) {
+                $this->fulfill();
+            }
+        }else{
+            if ($this->shouldUnfulfill()){
+                $this->unfulfill();
             }
         }
     }
 
-    public function repo(): PatientServiceProcessorRepository
+    private function shouldUnfulfill() : bool
     {
-        if ( ! isset($this->repo)) {
-            $this->repo = app(PatientServiceProcessorRepository::class);
-        }
+        //todo
+        //has clash/force, block
+        //no longer has enough problems
+    }
 
-        return $this->repo;
+    private function unfulfill()
+    {
+        $this->output->setSendToDatabase(true);
+        $this->output->setIsFulfilling(false);
     }
 
     abstract public function requiresPatientConsent(int $patientId): bool;
 
-    public function shouldAttach(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
+    public function shouldAttach(): bool
     {
         if ( ! $this->featureIsEnabled()) {
             return false;
         }
 
-        if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth, ...$patientProblems)) {
+        if ($this->clashesWithHigherOrderServices()) {
             return false;
         }
 
-        return collect($patientProblems)
+        return collect($this->input->getPatientProblems())
             ->filter(
                 function (PatientProblemForProcessing $problem) {
                     return collect($problem->getServiceCodes())->contains($this->codeForProblems());
@@ -101,46 +124,47 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             )->count() >= $this->minimumNumberOfProblems();
     }
 
-    public function shouldForceAttach(ForcedPatientChargeableServicesForProcessing ...$services)
+    public function shouldForceAttach()
     {
-        return collect($services)->filter(
+        return collect($this->input->getForcedPatientServices())->filter(
             fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && ! $s->isForced()
         )
             ->isNotEmpty();
     }
 
-    public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
+    public function shouldFulfill(): bool
     {
-        if ( ! $this->shouldAttach($patientId, $chargeableMonth, ...$patientProblems)) {
+        if (! $this->shouldAttach() ) {
             return false;
         }
 
         //todo: change codeForProblems name to 'base code' or something
-        $summary = $this->repo()
-            ->getChargeablePatientSummary($patientId, $this->codeForProblems(), $chargeableMonth);
+        $summary = collect($this->input->getPatientServices())
+            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
+            ->first();
 
         if ( ! $summary) {
             return false;
         }
 
-        if ($summary->requires_patient_consent) {
+        if ($summary->requiresConsent()) {
             return false;
         }
 
-        if ($summary->total_time < $this->minimumTimeInSeconds()) {
+        if ($summary->getMonthlyTime() < $this->minimumTimeInSeconds()) {
             return false;
         }
 
         return true;
     }
 
-    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
+    private function clashesWithHigherOrderServices(): bool
     {
-        //todo: revisit clashes to accomodate forced cs
+        //todo: revisit clashes to accomodate forced cs - if forced === is attached?
         foreach ($this->clashesWith() as $clash) {
-            $clashIsAttached = $this->repo->isAttached($patientId, $clash->code(), $chargeableMonth);
+            $clashIsAttached = collect($this->input->getPatientServices())->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash)->isNotEmpty();
 
-            $hasEnoughProblemsForClash = collect($patientProblems)
+            $hasEnoughProblemsForClash = collect($this->input->getPatientProblems())
                 ->filter(fn (PatientProblemForProcessing $problem) => in_array($clash->code(), $problem->getServiceCodes()))
                 ->count() >= $clash->minimumNumberOfProblems();
 

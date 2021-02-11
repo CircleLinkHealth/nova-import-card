@@ -19,6 +19,7 @@ use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
 {
@@ -301,5 +302,10 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE):void
     {
         $this->repo->detachForcedChargeableService($patientId, $chargeableServiceId, $month, $actionType);
+    }
+
+    public function multiAttachServiceSummaries(Collection $processorOutputCollection)
+    {
+        //update or create multiple
     }
 }
