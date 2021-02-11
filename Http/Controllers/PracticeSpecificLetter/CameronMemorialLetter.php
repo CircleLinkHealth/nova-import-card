@@ -36,7 +36,7 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
         return $this->viewConfigurations($this->practice, $this->enrollee);
     }
 
-    public static function groupSharedSignatoryName($uiRequests, User $userProvider)
+    public static function groupSharedSignatoryName($uiRequests, \CircleLinkHealth\Customer\Entities\User $userProvider)
     {
         if ( ! empty($uiRequests)) {
             $millersTeam = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::MILLER_SIGNATURE);
