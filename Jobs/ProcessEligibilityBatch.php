@@ -82,12 +82,13 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        Bus::dispatchChain([
+       Bus::chain([
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
             (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
                 ->splitToBatches(),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-        ])->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        ])->dispatch()
+          ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return $batch;
     }
@@ -108,12 +109,13 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             $jobs[] = new CreateEligibilityJobsFromCLHMedicalRecordJson($batch->id);
         }
 
-        Bus::dispatchChain(array_merge(
+       Bus::chain(array_merge(
             $jobs,
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-        ));
+        ))->dispatch()
+          ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return $batch;
     }
@@ -126,11 +128,12 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             $jobs[] = new ProcessEligibilityFromGoogleDrive($batch->id);
         }
 
-        Bus::dispatchChain(array_merge(
+       Bus::chain(array_merge(
             $jobs,
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-        ))->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        ))->dispatch()
+          ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return $batch;
     }
@@ -145,23 +148,25 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             $jobs[] = new ProcessGoogleDriveCsv($batch->id);
         }
 
-        Bus::dispatchChain(array_merge(
+       Bus::chain(array_merge(
             $jobs,
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-        ));
+        ))->dispatch()
+          ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return $batch;
     }
 
     private function queueSingleEligibilityJobs(EligibilityBatch $batch)
     {
-        Bus::dispatchChain(array_merge(
+       Bus::chain(array_merge(
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-        ));
+        ))->dispatch()
+          ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         
         return $batch;
     }

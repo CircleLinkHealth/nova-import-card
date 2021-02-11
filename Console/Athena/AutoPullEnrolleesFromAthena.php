@@ -91,7 +91,8 @@ class AutoPullEnrolleesFromAthena extends Command
         }
 
         foreach ($practices as $practice) {
-            Bus::dispatchChain($this->orchestrateEligibilityPull($practice))
+           Bus::chain($this->orchestrateEligibilityPull($practice))
+               ->dispatch()
                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         }
     }
