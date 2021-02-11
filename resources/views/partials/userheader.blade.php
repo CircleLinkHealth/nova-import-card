@@ -141,7 +141,7 @@
                             <b>General comment</b>: {{$patient->patientInfo->general_comment}}
                         </li>
                     @endif
-                    @if (isset($consecutiveUnsuccessfulCallCount) && isset($consecutiveUnsuccessfulCallLimit) && isset($consecutiveUnsuccessfulCallColor))
+                    @if ($shouldShowConsecutiveUnsuccessfulCallCount)
                     <li style="color: {{$consecutiveUnsuccessfulCallColor}};">
                         <b>Consecutive Unsuccessful Calls</b>
                         <div data-tooltip="The patient’s status will turn to unreachable and they will be removed from your list after the {{$consecutiveUnsuccessfulCallLimit}}th consecutive unsuccessful call." style="display: inline;">

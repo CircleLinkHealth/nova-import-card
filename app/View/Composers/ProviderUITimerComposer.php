@@ -7,13 +7,15 @@
 namespace App\View\Composers;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -154,13 +156,16 @@ class ProviderUITimerComposer extends ServiceProvider
                 $consecutiveUnsuccessfulCallCount = $patient->patientInfo->no_call_attempts_since_last_success;
                 $consecutiveUnsuccessfulCallLimit = \CircleLinkHealth\Customer\Repositories\PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS;
 
-                if ($consecutiveUnsuccessfulCallCount < 4) {
-                    $consecutiveUnsuccessfulCallColor = '#008000';
-                } elseif (4 == $consecutiveUnsuccessfulCallCount) {
+                if (4 == $consecutiveUnsuccessfulCallCount) {
                     $consecutiveUnsuccessfulCallColor = '#FFA100';
-                } elseif (5 == $consecutiveUnsuccessfulCallCount) {
+                } elseif (5 <= $consecutiveUnsuccessfulCallCount) {
                     $consecutiveUnsuccessfulCallColor = '#FF0000';
+                } else {
+                    $consecutiveUnsuccessfulCallColor = '#008000';
                 }
+
+                $shouldShowConsecutiveUnsuccessfulCallCount = (auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+                    && isset($consecutiveUnsuccessfulCallCount, $consecutiveUnsuccessfulCallLimit, $consecutiveUnsuccessfulCallColor);
             } else {
                 $ccm_above = false;
                 $location = 'N/A';
@@ -181,6 +186,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'consecutiveUnsuccessfulCallCount',
                 'consecutiveUnsuccessfulCallLimit',
                 'consecutiveUnsuccessfulCallColor',
+                'shouldShowConsecutiveUnsuccessfulCallCount',
             ]));
         });
     }
@@ -197,16 +203,19 @@ class ProviderUITimerComposer extends ServiceProvider
         if ( ! empty($patientId)) {
             $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
         } else {
-            $record1                          = new ChargeablePatientMonthlySummaryView();
-            $record1->patient_user_id         = $patientId;
-            $record1->chargeable_service_id   = -1;
-            $record1->chargeable_service_code = 'NONE';
-            $record1->chargeable_service_name = 'NONE';
+            $record1                        = new ChargeablePatientMonthlyTime();
+            $record1->patient_user_id       = $patientId;
+            $record1->chargeable_service_id = -1;
+            $cs                             = new ChargeableService();
+            $cs->id                         = -1;
+            $cs->code                       = 'NONE';
+            $cs->display_name               = 'NONE';
+            $record1->setRelation('chargeableService', $cs);
 
             if ($isForEnrollment) {
                 /** @var User $user */
                 $user                = auth()->user();
-                $record1->total_time = optional(\CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+                $record1->total_time = optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
             } else {
                 $record1->total_time = 0;
             }
