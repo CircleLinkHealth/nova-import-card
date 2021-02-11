@@ -4,7 +4,9 @@
 @section('content')
     <div class="container">
        <div class="message">
-           <h4>There was an error. A care coach will contact you soon.</h4>
+           <h4>Apologies there was an error. <br>
+               Our team is working to fix this, please try again in a few hours. <br>
+               A care coach will contact you soon if the error still persists.</h4>
        </div>
     </div>
     @endsection
