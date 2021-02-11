@@ -91,9 +91,9 @@ class AutoPullEnrolleesFromAthena extends Command
         }
 
         foreach ($practices as $practice) {
-           Bus::chain($this->orchestrateEligibilityPull($practice))
-               ->dispatch()
-               ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+            Bus::chain($this->orchestrateEligibilityPull($practice))
+                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+                ->dispatch();
         }
     }
 
@@ -125,36 +125,36 @@ class AutoPullEnrolleesFromAthena extends Command
 
         return $service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
     }
-    
+
     private function orchestrateEligibilityPull($practice)
     {
         $to   = Carbon::now()->format('y-m-d');
         $from = Carbon::now()->subMonth()->format('y-m-d');
-    
+
         $offset = true;
-    
+
         if ($this->argument('offset')) {
             $offset = $this->argument('offset');
         }
-    
+
         if ($this->argument('from')) {
             $from = Carbon::createFromFormat('Y-m-d', $this->argument('from'));
         }
-    
+
         if ($this->argument('to')) {
             $to = Carbon::createFromFormat('Y-m-d', $this->argument('to'));
         }
-        
+
         $batch = null;
-    
+
         if ($this->argument('batchId')) {
             $batch = EligibilityBatch::find($this->argument('batchId'));
         }
-    
+
         if ( ! $batch) {
             $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
         }
-    
+
         return array_merge(
             $this->getAppointmentsJobs(
                 $from,
