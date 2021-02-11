@@ -7,10 +7,8 @@
 namespace CircleLinkHealth\Eligibility;
 
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
-use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
@@ -18,7 +16,6 @@ use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
-use Illuminate\Support\Facades\Storage;
 
 class ProcessEligibilityService
 {
@@ -240,7 +237,7 @@ class ProcessEligibilityService
 
         return $batch->fresh();
     }
-    
+
     public function notify(EligibilityBatch $batch)
     {
         if (isProductionEnv()) {

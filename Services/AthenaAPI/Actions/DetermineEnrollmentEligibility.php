@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\CheckCcdaEnrollmentEligibility;
@@ -90,6 +89,7 @@ class DetermineEnrollmentEligibility
                 $jobs[] = new GetAppointmentsForDepartment($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
             }
         }
+
         return $jobs;
     }
 
