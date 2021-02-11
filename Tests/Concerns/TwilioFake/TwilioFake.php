@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Core\Tests\Concerns\TwilioFake;
 
 use CircleLinkHealth\TwilioIntegration\Services\TwilioInterface;
+use NotificationChannels\Twilio\TwilioConfig;
 use NotificationChannels\Twilio\TwilioMessage;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Log\LoggerInterface;
@@ -20,6 +21,7 @@ class TwilioFake implements TwilioInterface
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = new TwilioFakeLogDriver($logger);
+        $this->config = new TwilioConfig(config('twilio-notification-channel'));
     }
 
     /**
