@@ -94,7 +94,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     private function shouldUnfulfill() : bool
     {
-        return ! $this->shouldAttach();
+        return ! $this->shouldFulfill();
     }
 
     private function unfulfill()
