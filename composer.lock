@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "de7ab7e1ff8edaf8a4d288a88ca1bbf4",
+    "content-hash": "94a1a60150367661812d440c8cd990be",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -348,16 +348,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.6",
+            "version": "3.173.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "439a161e46895cd1f7b93b4c0295f95d6a17385e"
+                "reference": "854b9f827438d1d69df6550d9ada40deaa6d44fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/439a161e46895cd1f7b93b4c0295f95d6a17385e",
-                "reference": "439a161e46895cd1f7b93b4c0295f95d6a17385e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/854b9f827438d1d69df6550d9ada40deaa6d44fe",
+                "reference": "854b9f827438d1d69df6550d9ada40deaa6d44fe",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-09T19:14:22+00:00"
+            "time": "2021-02-11T19:13:05+00:00"
         },
         {
             "name": "brick/math",
@@ -1071,11 +1071,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.9.9",
+            "version": "v1.9.92",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "2bea3573fc425aa9a2365eec54f71dd2bb0a177e"
+                "reference": "abd99169ef2bbe506f5d5355c7f386c54fa26525"
             },
             "type": "laravel-module",
             "extra": {
@@ -1098,7 +1098,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-11T16:38:04+00:00"
+            "time": "2021-02-11T20:33:08+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -6372,16 +6372,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.45.0",
+            "version": "2.45.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "e2ba3174ce869da1713c38340dbb36572dfacd5a"
+                "reference": "528783b188bdb853eb21239b1722831e0f000a8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e2ba3174ce869da1713c38340dbb36572dfacd5a",
-                "reference": "e2ba3174ce869da1713c38340dbb36572dfacd5a",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/528783b188bdb853eb21239b1722831e0f000a8d",
+                "reference": "528783b188bdb853eb21239b1722831e0f000a8d",
                 "shasum": ""
             },
             "require": {
@@ -6457,7 +6457,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-07T21:35:59+00:00"
+            "time": "2021-02-11T18:30:17+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -7540,24 +7540,25 @@
         },
         {
             "name": "propaganistas/laravel-phone",
-            "version": "4.2.7",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Propaganistas/Laravel-Phone.git",
-                "reference": "f2765e308977511c7ee42a48d635dca7026fa427"
+                "reference": "6953b54542f530c75ab8eb953b38cca4bfdc5d88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/f2765e308977511c7ee42a48d635dca7026fa427",
-                "reference": "f2765e308977511c7ee42a48d635dca7026fa427",
+                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/6953b54542f530c75ab8eb953b38cca4bfdc5d88",
+                "reference": "6953b54542f530c75ab8eb953b38cca4bfdc5d88",
                 "shasum": ""
             },
             "require": {
                 "giggsey/libphonenumber-for-php": "^7.0|^8.0",
-                "illuminate/support": "^6.0|^7.0|^8.0",
-                "illuminate/validation": "^6.0|^7.0|^8.0",
+                "illuminate/contracts": "^8.9",
+                "illuminate/support": "^8.0",
+                "illuminate/validation": "^8.0",
                 "league/iso3166": "^2.0|^3.0",
-                "php": "^7.1|^8.0"
+                "php": "^7.3|^8.0"
             },
             "require-dev": {
                 "orchestra/testbench": "*",
@@ -7597,7 +7598,7 @@
                 "phone",
                 "validation"
             ],
-            "time": "2020-12-06T10:57:11+00:00"
+            "time": "2021-02-11T17:06:47+00:00"
         },
         {
             "name": "psr/cache",
