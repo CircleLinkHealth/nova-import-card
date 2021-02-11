@@ -84,11 +84,13 @@ class DetermineEnrollmentEligibility
             'departments'     => collect($departments['departments'])->pluck('name', 'departmentid')->all(),
         ]);
 
+        $jobs = [];
         foreach ($departments['departments'] as $department) {
             if ( ! empty($department['departmentid'])) {
-                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+                $jobs[] = new GetAppointmentsForDepartment($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
             }
         }
+        return $jobs;
     }
 
     public function getPatientInsurances($patientId, $practiceId, $departmentId)

@@ -46,6 +46,7 @@ class ProcessNextEligibilityBatchChunk extends Command
     private function getNextBatch(): ?EligibilityBatch
     {
         return EligibilityBatch::where('status', '<', 2)
+            ->orderByDesc('created_at')
             ->with('practice')
             ->first();
     }
