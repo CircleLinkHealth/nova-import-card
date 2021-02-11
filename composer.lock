@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d542d0ffcef9e3ac15ba9e3d7fd2bdad",
+    "content-hash": "de7ab7e1ff8edaf8a4d288a88ca1bbf4",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -732,11 +732,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v3.0",
+            "version": "v3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "782f31191ebedf95b742e08e1f4cbd54e5ee68a2"
+                "reference": "ba4519a54ce17656673eb950524b2fad79ddd43a"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -792,7 +792,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-10T18:22:56+00:00"
+            "time": "2021-02-11T00:06:34+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1071,11 +1071,11 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "v1.9.8",
+            "version": "v1.9.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git",
-                "reference": "9fe2067cbf0a0835e2e325130b3fae509f610c8e"
+                "reference": "2bea3573fc425aa9a2365eec54f71dd2bb0a177e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1098,7 +1098,7 @@
                     "email": "antonis@circlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-10T16:59:19+00:00"
+            "time": "2021-02-11T16:38:04+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -11905,16 +11905,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.16.1",
+            "version": "6.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43"
+                "reference": "b77446cc36b813122ea888d455f015b2f3ff8ba1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/28c5dd21e95a5fe5221965ec89863a485c625d43",
-                "reference": "28c5dd21e95a5fe5221965ec89863a485c625d43",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/b77446cc36b813122ea888d455f015b2f3ff8ba1",
+                "reference": "b77446cc36b813122ea888d455f015b2f3ff8ba1",
                 "shasum": ""
             },
             "require": {
@@ -11951,7 +11951,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2021-01-27T20:57:17+00:00"
+            "time": "2021-02-10T23:29:54+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
