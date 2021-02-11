@@ -39,7 +39,7 @@ class ChargeablePatientMonthlyTime extends SqlViewModel
         'chargeable_month',
     ];
 
-    protected $table = 'patients_monthly_time_view';
+    protected $table = 'chargeable_patient_monthly_times_view';
 
     public function chargeableService()
     {

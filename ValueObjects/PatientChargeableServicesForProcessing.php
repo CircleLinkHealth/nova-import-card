@@ -22,7 +22,7 @@ class PatientChargeableServicesForProcessing
         $monthlyTime = $patient->chargeableMonthlyTime;
 
         return $services->map(function (ChargeablePatientMonthlySummary $summary) use ($monthlyTime) {
-            return (new self())->setCode($code = $summary->chargeableService->code)
+            return (new self())->setCode($summary->chargeableService->code)
                                ->setIsFulfilled($summary->is_fulfilled)
                                ->setRequiresConsent($summary->requires_patient_consent)
                                ->setMonthlyTime(
@@ -30,7 +30,7 @@ class PatientChargeableServicesForProcessing
                                        $summary->chargeable_service_id)
                                                         ->where('chargeable_month', $summary->chargeable_month)
                                                         ->first()
-                                       ->time)
+                                       ->total_time)
                                );
         })
                         ->filter()
