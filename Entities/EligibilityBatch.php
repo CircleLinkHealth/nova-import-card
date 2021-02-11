@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 
 /**
@@ -61,11 +62,12 @@ class EligibilityBatch extends BaseModel
     const RUNNING = 'running';
 
     const STATUSES = [
-        'not_started'     => 0,
-        'processing'      => 1,
-        'error'           => 2,
-        'complete'        => 3,
-        'runs_infinitely' => 4,
+        'not_started'        => 0,
+        'processing'         => 1,
+        'error'              => 2,
+        'complete'           => 3,
+        'runs_infinitely'    => 4,
+        'not_ready_to_start' => 5,
     ];
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_ONE_CSV           = 'one_csv';
@@ -281,21 +283,9 @@ class EligibilityBatch extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
-    public function processPendingJobs($pageSize = 100, $onQueue = CpmConstants::LOW_QUEUE)
+    public function orchestratePendingJobsProcessing($pageSize = 100, $onQueue = CpmConstants::LOW_QUEUE)
     {
-        $this->eligibilityJobs()
-            ->where('status', '=', 0)
-            ->orWhere([
-                ['status', '=', 1],
-                ['updated_at', '<', now()->subMinutes(10)],
-            ])
-            ->chunkById($pageSize, function ($ejs) use ($onQueue) {
-                $ejs->each(function ($job) use ($onQueue) {
-                    ProcessSinglePatientEligibility::dispatch(
-                        $job->id
-                    )->onQueue($onQueue);
-                });
-            });
+        return (new ProcessPendingEligibilityJobs($this->id))->splitToBatches($pageSize);
     }
 
     /**
