@@ -29,7 +29,7 @@ class PatientMonthlyBillingDTO
     /**
      * @param array $patientServices
      */
-    public function setPatientServices(array $patientServices): self
+    public function withPatientServices(PatientChargeableServicesForProcessing ...$patientServices): self
     {
         $this->patientServices = $patientServices;
         return $this;

@@ -6,11 +6,47 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
+
 class PatientChargeableServicesForProcessing
 {
     protected string $code;
     protected bool $isFulfilled;
     protected bool $requiresConsent;
+
+    public static function fromCollection(User $patient): array
+    {
+        $services    = $patient->chargeableMonthlySummaries;
+        $monthlyTime = $patient->chargeableMonthlyTime;
+
+        return $services->map(function (ChargeablePatientMonthlySummary $summary) use ($monthlyTime) {
+            return (new self())->setCode($code = $summary->chargeableService->code)
+                               ->setIsFulfilled($summary->is_fulfilled)
+                               ->setRequiresConsent($summary->requires_patient_consent)
+                               ->setMonthlyTime(
+                                   optional($monthlyTime->where('chargeable_service_id',
+                                       $summary->chargeable_service_id)
+                                                        ->where('chargeable_month', $summary->chargeable_month)
+                                                        ->first()
+                                       ->time)
+                               );
+        })
+                        ->filter()
+                        ->toArray();
+    }
+
+    public static function fromRelationship(PatientForcedChargeableService $s): ?self
+    {
+        if ( ! $s->chargeableService) {
+            return null;
+        }
+
+        return (new static())
+            ->setChargeableServiceCode($s->chargeableService->code)
+            ->setActionType($s->action_type);
+    }
 
     /**
      * @return bool
@@ -23,7 +59,7 @@ class PatientChargeableServicesForProcessing
     /**
      * @param bool $requiresConsent
      */
-    public function setRequiresConsent(bool $requiresConsent): void
+    public function setRequiresConsent(bool $requiresConsent): self
     {
         $this->requiresConsent = $requiresConsent;
     }
@@ -39,7 +75,7 @@ class PatientChargeableServicesForProcessing
     /**
      * @param string $code
      */
-    public function setCode(string $code): void
+    public function setCode(string $code): self
     {
         $this->code = $code;
     }
@@ -55,7 +91,7 @@ class PatientChargeableServicesForProcessing
     /**
      * @param bool $isFulfilled
      */
-    public function setIsFulfilled(bool $isFulfilled): void
+    public function setIsFulfilled(bool $isFulfilled): self
     {
         $this->isFulfilled = $isFulfilled;
     }
@@ -71,9 +107,9 @@ class PatientChargeableServicesForProcessing
     /**
      * @param int $monthlyTime
      */
-    public function setMonthlyTime(int $monthlyTime): void
+    public function setMonthlyTime(?int $monthlyTime = null): self
     {
-        $this->monthlyTime = $monthlyTime;
+        $this->monthlyTime = $monthlyTime ?? 0;
     }
 
 //    Will contain below:

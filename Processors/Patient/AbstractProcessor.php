@@ -139,9 +139,8 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        //todo: change codeForProblems name to 'base code' or something
         $summary = collect($this->input->getPatientServices())
-            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
+            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->baseCode())
             ->first();
 
         if ( ! $summary) {
