@@ -41,7 +41,7 @@ class Calls implements AthenaApiImplementation
         }
 
         $response = $this->api()->POST(
-            "{$practiceId}/chart/{$patientId}/problems",
+            "/chart/{$patientId}/problems",
             [
                 'departmentid' => $problem->getDepartmentId(),
                 'snomedcode'   => $problem->getSnomedCode(),
@@ -158,7 +158,7 @@ class Calls implements AthenaApiImplementation
         }
 
         $response = $this->api()->POST(
-            "{$practiceId}/patients",
+            "/patients",
             [
                 'departmentid' => $patient->getDepartmentId(),
                 'dob'          => $patient->getDob(),
@@ -219,7 +219,7 @@ class Calls implements AthenaApiImplementation
     public function getAvailablePractices($practiceId = 1)
     {
         $response = $this->api()->GET(
-            "${practiceId}/practiceinfo",
+            "practiceinfo",
             [
                 //$practiceId defaults to 1, which will give us all practices we have access to
             ]
@@ -428,7 +428,7 @@ class Calls implements AthenaApiImplementation
         }
 
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/encounters",
+            "/chart/${patientId}/encounters",
             $args
         );
 
@@ -468,7 +468,7 @@ class Calls implements AthenaApiImplementation
     public function getMedications(int $patientId, int $practiceId, int $departmentId)
     {
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/medications",
+            "/chart/${patientId}/medications",
             [
                 'departmentid' => $departmentId,
                 'patientid'    => $patientId,
@@ -646,7 +646,7 @@ class Calls implements AthenaApiImplementation
         $departmentId = null
     ) {
         $response = $this->api()->GET(
-            "${practiceId}/patients",
+            "/patients",
             [
                 'firstname'    => $patientFirstName,
                 'middlename'   => $patientMiddleName,
@@ -683,7 +683,7 @@ class Calls implements AthenaApiImplementation
         $showinactive = false
     ) {
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/problems",
+            "/chart/${patientId}/problems",
             [
                 'departmentid'      => $departmentId,
                 'showdiagnosisinfo' => $showDiagnosisInfo,

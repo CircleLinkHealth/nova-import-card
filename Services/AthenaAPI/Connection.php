@@ -68,7 +68,7 @@ class Connection implements AthenaApiConnection
      * @param string     $secret     the client secret
      * @param int|string $practiceid |null the practice id to be used in requests (optional)
      */
-    public function __construct($version, $key, $secret, $practiceid = null)
+    public function __construct($version, $key, $secret, $practiceid)
     {
         if ( ! $version || ! $key || ! $secret) {
             return 'Required parameters missing.';
@@ -78,14 +78,14 @@ class Connection implements AthenaApiConnection
         $this->key        = $key;
         $this->secret     = $secret;
         $this->practiceid = $practiceid;
-        
+
         $base_prefixes = [
             'v1'           => "https://api.platform.athenahealth.com/v1/$practiceid",
             'preview1'     => "https://api.preview.platform.athenahealth.com/v1/$practiceid",
             'openpreview1' => 'ouathopenpreview/token',
         ];
-        
-        $this->baseurl    = $base_prefixes[$this->version];
+
+        $this->baseurl = $base_prefixes[$this->version];
 
         $auth_prefixes = [
             'v1'           => 'https://api.platform.athenahealth.com/oauth2/v1/token',
@@ -104,7 +104,7 @@ class Connection implements AthenaApiConnection
      */
     public function DELETE($url, $parameters = null, $headers = null)
     {
-        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
+        $new_url = $this->url_join($this->baseurl, $url);
         if ($parameters) {
             $new_url .= '?'.http_build_query($parameters);
         }
@@ -140,7 +140,7 @@ class Connection implements AthenaApiConnection
         }
 
         // Join up a URL and add the parameters, since GET requests require parameters in the URL.
-        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
+        $new_url = $this->url_join($this->baseurl, $url);
         if ($new_parameters) {
             $new_url .= '?'.http_build_query($new_parameters);
         }
@@ -184,7 +184,7 @@ class Connection implements AthenaApiConnection
         }
 
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
+        $new_url = $this->url_join($this->baseurl, $url);
 
         return $this->authorized_call('POST', $new_url, $new_parameters, $new_headers);
     }
@@ -212,7 +212,7 @@ class Connection implements AthenaApiConnection
         }
 
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
+        $new_url = $this->url_join($this->baseurl, $url);
 
         return $this->authorized_call('PUT', $new_url, $new_parameters, $new_headers);
     }
@@ -319,7 +319,7 @@ class Connection implements AthenaApiConnection
                 }
             } else {
                 // Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
-                if (isset($http_response_header) && isset($http_response_header[0]) && Str::contains($http_response_header[0], '401')) {
+                if (isset($http_response_header, $http_response_header[0]) && Str::contains($http_response_header[0], '401')) {
                     return false;
                 }
             }
