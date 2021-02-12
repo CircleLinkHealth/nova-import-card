@@ -8,26 +8,8 @@
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
-        <testsuite name="EligibilityModule">
-            <directory suffix="Test.php">./CircleLinkHealth/Eligibility/Tests</directory>
-        </testsuite>
-        <testsuite name="CustomerModule">
-            <directory suffix="Test.php">./CircleLinkHealth/Customer/Tests</directory>
-        </testsuite>
-        <testsuite name="CcmBillingModule">
-            <directory suffix="Test.php">./CircleLinkHealth/CcmBilling/Tests</directory>
-        </testsuite>
-        <testsuite name="NurseInvoicesModule">
-            <directory suffix="Test.php">./CircleLinkHealth/Nurseinvoices/Tests</directory>
-        </testsuite>
-        <testsuite name="SamlSpModule">
-            <directory suffix="Test.php">./CircleLinkHealth/SamlSp/Tests</directory>
-        </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-        <testsuite name="Deployment">
-            <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
     </testsuites>
     <filter>
