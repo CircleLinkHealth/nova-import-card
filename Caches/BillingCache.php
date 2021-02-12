@@ -11,7 +11,9 @@ use CircleLinkHealth\Customer\Entities\User;
 interface BillingCache
 {
     public function billingRevampIsEnabled(): bool;
-
+    
+    public function setBillingRevampIsEnabled(bool $isEnabled): void;
+    
     public function clearPatients(array $patientIds = []): void;
 
     public function forgetPatient(int $patientId): void;
