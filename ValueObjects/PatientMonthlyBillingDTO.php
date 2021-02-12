@@ -7,10 +7,13 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 
 class PatientMonthlyBillingDTO
 {
     protected AvailableServiceProcessors $availableServiceProcessors;
+
+    protected bool $billingStatusIsTouched = false;
 
     protected Carbon $chargeableMonth;
 
@@ -18,11 +21,18 @@ class PatientMonthlyBillingDTO
 
     protected int $locationId;
 
+    protected array $locationServices = [];
+
     protected int $patientId;
 
     protected array $patientProblems;
 
     protected array $patientServices = [];
+
+    public function billingStatusIsTouched(): bool
+    {
+        return $this->billingStatusIsTouched;
+    }
 
     public function forMonth(Carbon $chargeableMonth): self
     {
@@ -58,6 +68,11 @@ class PatientMonthlyBillingDTO
         return $this->locationId;
     }
 
+    public function getLocationServices(): array
+    {
+        return $this->locationServices;
+    }
+
     public function getPatientId(): int
     {
         return $this->patientId;
@@ -76,6 +91,24 @@ class PatientMonthlyBillingDTO
     public function ofLocation(int $locationId): self
     {
         $this->locationId = $locationId;
+
+        return $this;
+    }
+
+    public function pushServiceFromOutputIfYouShould(PatientServiceProcessorOutputDTO $output): void
+    {
+        $exists = collect($this->getPatientServices())->filter(function (PatientChargeableServicesForProcessing $s) use ($output) {
+            return $s->getCode() === $output->getCode();
+        })->isNotEmpty();
+
+        if ( ! $exists) {
+            $this->patientServices[] = $output->toPatientChargeableServiceForProcessingDTO();
+        }
+    }
+
+    public function setBillingStatusIsTouched(bool $isTouched): self
+    {
+        $this->billingStatusIsTouched = $isTouched;
 
         return $this;
     }
@@ -100,6 +133,15 @@ class PatientMonthlyBillingDTO
     }
 
     /**
+     * @param array $locationServices
+     */
+    public function withLocationServices(LocationChargeableServicesForProcessing ...$locationServices): self
+    {
+        $this->locationServices = $locationServices;
+        return $this;
+    }
+
+    /**
      * @param array $patientServices
      */
     public function withPatientServices(PatientChargeableServicesForProcessing ...$patientServices): self
@@ -114,16 +156,5 @@ class PatientMonthlyBillingDTO
         $this->patientProblems = $patientProblems;
 
         return $this;
-    }
-    
-    public function pushServiceFromOutputIfYouShould(PatientServiceProcessorOutputDTO $output):void
-    {
-        $exists = collect($this->getPatientServices())->filter(function (PatientChargeableServicesForProcessing $s) use ($output){
-            return $s->getCode() === $output->getCode();
-        })->isNotEmpty();
-    
-        if (! $exists){
-            $this->patientServices[] = $output->toPatientChargeableServiceForProcessingDTO();
-        }
     }
 }

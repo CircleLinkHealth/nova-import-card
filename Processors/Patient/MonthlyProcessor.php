@@ -6,22 +6,19 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 class MonthlyProcessor implements PatientMonthlyBillingProcessor
 {
-    private LocationProcessorRepository $locationRepository;
     private PatientServiceProcessorRepository $patientServiceRepository;
 
-    public function __construct(LocationProcessorRepository $locationProcessorRepository, PatientServiceProcessorRepository $patientServiceProcessorRepository)
+    public function __construct(PatientServiceProcessorRepository $patientServiceProcessorRepository)
     {
-        $this->locationRepository       = $locationProcessorRepository;
         $this->patientServiceRepository = $patientServiceProcessorRepository;
     }
 
@@ -31,7 +28,7 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
         $patient->getAvailableServiceProcessors()
             ->toCollection()
             ->each(function (PatientServiceProcessor $processor) use (&$patient, &$processorOutputCollection) {
-                if ($this->shouldNotTouch($processor->code(), $patient->getLocationId(), $patient->getChargeableMonth())) {
+                if ($this->shouldNotTouch($patient, $processor->code())) {
                     return;
                 }
 
@@ -47,8 +44,13 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
         return $patient;
     }
 
-    private function shouldNotTouch(string $csCode, int $locationId, Carbon $month): bool
+    private function shouldNotTouch(PatientMonthlyBillingDTO $patient, string $code): bool
     {
-        return $this->locationRepository->isLockedForMonth([$locationId], $csCode, $month);
+        $locationServiceIsLocked = (bool) optional(collect($patient->getLocationServices())
+            ->filter(fn (LocationChargeableServicesForProcessing $s) => $s->code === $code)
+            ->first())
+            ->isLocked;
+
+        return $locationServiceIsLocked || $patient->billingStatusIsTouched();
     }
 }
