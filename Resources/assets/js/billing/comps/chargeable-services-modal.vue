@@ -7,8 +7,9 @@
                         <div class="col-sm-12 form-control margin-5" v-for="service in patientServices"
                              :key="service.id">
                             <label>
-                                <input :disabled="!service.allowed"
+                                <input :disabled="service.disabled"
                                        type="checkbox"
+                                       @change="onCheck"
                                        v-model="service.selected"
                                        :value="service.id">
                                 <span>{{ service.code }} [{{ service.display_name }}]</span>
@@ -20,6 +21,9 @@
                     <loader></loader>
                 </div>
             </div>
+            <div class="row">
+                <span v-if="validationMessage">{{ validationMessage }}</span>
+            </div>
         </template>
     </modal>
 </template>
@@ -28,6 +32,7 @@
     import {Event} from 'vue-tables-2'
 
     import SERVICES from '../../../../../../Sharedvuecomponents/Resources/assets/js/constants/services.types';
+    import SERVICE_CLASHES from '../../../../../../Sharedvuecomponents/Resources/assets/js/constants/services.clashes';
     import Modal from '../../../../../../Sharedvuecomponents/Resources/assets/js/admin/common/modal'
     import Loader from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/loader'
 
@@ -45,19 +50,13 @@
                     update: null
                 },
                 patientServices: [],
+                changes: [],
                 row: null,
+                validationMessage: null,
                 info: {
                     okHandler() {
-                        if (typeof (this.done) == 'function') {
-                            const services = self.patientServices
-                                .filter(service => service.selected)
-                                .map(service => {
-                                    return {
-                                        id: service.id,
-                                        total_time: service.total_time
-                                    };
-                                });
-                            this.done(services);
+                        if (typeof (self.done) == 'function') {
+                            self.done(self.changes);
                         }
                         Event.$emit("modal-chargeable-services:hide")
                     },
@@ -92,6 +91,53 @@
 
             isPlusCode(serviceCode) {
                 return [SERVICES.CCM40, SERVICES.CCM60, SERVICES.RPM40, SERVICES.RPM60].indexOf(serviceCode) > -1;
+            },
+
+            onCheck(event) {
+                if (!event) {
+                    return;
+                }
+                const service = this.patientServices.find(s => s.id === +event.currentTarget.value);
+                let found = false;
+                for (let i = this.changes.length - 1; i >= 0; i--) {
+                    const changed = this.changes[i];
+                    if (changed.id === service.id) {
+                        found = true;
+                        this.changes.splice(i, 1);
+                    }
+                }
+
+                if (!found) {
+                    this.changes.push({id: service.id, action_type: service.selected ? 'force' : 'block'});
+                }
+
+                this.checkForClashes();
+            },
+
+            checkForClashes() {
+                let clashing = new Set();
+                const selected = this.patientServices.filter(s => s.selected);
+                selected.forEach(service => {
+                    const clashingServices = SERVICE_CLASHES[service.code];
+                    if (!clashingServices) {
+                        return;
+                    }
+
+                    selected.forEach(s2 => {
+                        if (clashingServices.indexOf(s2.code) > -1) {
+                            clashing.add(service.code);
+                            clashing.add(s2.code);
+                        }
+                    })
+                });
+
+                if (!clashing.size) {
+                    this.validationMessage = null;
+                    return;
+                }
+
+                const str = Array.from(clashing).join(', ');
+                this.validationMessage = `Your selection of services is invalid, there are clashing services[${str}]. Please revise.`;
             }
         },
         mounted() {
@@ -102,7 +148,7 @@
                     const pService = this.row.chargeable_services.find((item) => service.id === item.id);
                     service.selected = !!pService;
                     service.total_time = pService ? pService.total_time : 0;
-                    service.allowed = this.isServiceChargeableForPatient(service);
+                    service.disabled = !this.isServiceChargeableForPatient(service);
 
                     return service;
                 })

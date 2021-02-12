@@ -39,22 +39,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity
     {
-        $activity = Activity::create(
-            [
-                'type'                  => $pageTimer->activity_type,
-                'provider_id'           => $pageTimer->provider_id,
-                'is_behavioral'         => $chargeableServiceDuration->isBehavioral,
-                'performed_at'          => $pageTimer->start_time,
-                'duration'              => $chargeableServiceDuration->duration,
-                'duration_unit'         => 'seconds',
-                'patient_id'            => $pageTimer->patient_id,
-                'logged_from'           => $source,
-                'logger_id'             => $pageTimer->provider_id,
-                'page_timer_id'         => $pageTimer->id,
-                'chargeable_service_id' => $chargeableServiceDuration->id,
-            ]
-        );
-
+        $activity = $this->repo->createActivityForChargeableService($source, $pageTimer, $chargeableServiceDuration);
         $this->reloadPatientChargeableMonthlyTimes($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
 
         return $activity;

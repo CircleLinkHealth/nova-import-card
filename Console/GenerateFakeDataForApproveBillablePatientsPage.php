@@ -65,7 +65,7 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
 
         $practice = measureTime('practice', function () use ($practiceId) {
             $practice = Practice::find($practiceId);
-            $this->setupExistingPractice($practice, true, true, true, true, true);
+            $this->setupExistingPractice($practice, true, true, true, true, true, true);
             $practice->locations->each(fn (Location $l) => GenerateLocationSummaries::dispatchNow($l->id));
 
             return $practice;
@@ -125,23 +125,68 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
 
     private function createPatient(Practice $practice, User $nurse)
     {
-        $patient = $this->setupPatient($practice, false, true, false, false, false);
+        $isPcm = (bool) rand(0, 1);
+        $isBhi = $isPcm ? false : (bool) rand(0, 1);
+        $isRpm = $isPcm ? false : (bool) rand(0, 1);
+        $isRhc = $isPcm ? false : (bool) rand(0, 1);
+
+        $patient = $this->setupPatient($practice, $isBhi, $isPcm, $isRpm, false, false);
         measureTime('createNoteAndCall', fn () => $this->createNoteAndCall($nurse, $patient));
 
-        $chargeableServiceId = ChargeableService::cached()
-            ->firstWhere('code', '=', ChargeableService::PCM)->id;
+        $services = [];
+        if ($isPcm) {
+            $services[]          = 'PCM';
+            $chargeableServiceId = ChargeableService::cached()
+                ->firstWhere('code', '=', ChargeableService::PCM)->id;
 
-        measureTime('storeTime', function () use ($nurse, $patient, $chargeableServiceId) {
+            $this->storeAndMeasureTime($nurse, $patient, 33, $chargeableServiceId);
+        } else {
+            $services[]          = 'CCM';
+            $chargeableServiceId = ChargeableService::cached()
+                ->firstWhere('code', '=', ChargeableService::CCM)->id;
+
+            $this->storeAndMeasureTime($nurse, $patient, 45, $chargeableServiceId);
+        }
+
+        if ($isBhi) {
+            $services[]          = 'BHI';
+            $chargeableServiceId = ChargeableService::cached()
+                ->firstWhere('code', '=', ChargeableService::BHI)->id;
+
+            $this->storeAndMeasureTime($nurse, $patient, 23, $chargeableServiceId);
+        }
+
+        if ($isRpm) {
+            $services[]          = 'RPM';
+            $chargeableServiceId = ChargeableService::cached()
+                ->firstWhere('code', '=', ChargeableService::RPM)->id;
+
+            $this->storeAndMeasureTime($nurse, $patient, 24, $chargeableServiceId);
+        }
+
+        if ($isRhc) {
+            $services[]          = 'RHC';
+            $chargeableServiceId = ChargeableService::cached()
+                ->firstWhere('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)->id;
+
+            $this->storeAndMeasureTime($nurse, $patient, 24, $chargeableServiceId);
+        }
+
+        $str = implode(',', $services);
+        $this->info("Created patient[$patient->id] with conditions: $str");
+    }
+
+    private function storeAndMeasureTime(User $nurse, User $patient, int $minutes, int $chargeableServiceId)
+    {
+        measureTime('storeTime', function () use ($nurse, $patient, $minutes, $chargeableServiceId) {
             if (app()->runningUnitTests()) {
-                Event::fakeFor(function () use ($nurse, $patient, $chargeableServiceId) {
-                    $this->storeTime($nurse, $patient, 31, $chargeableServiceId);
+                Event::fakeFor(function () use ($nurse, $patient, $minutes, $chargeableServiceId) {
+                    $this->storeTime($nurse, $patient, $minutes, $chargeableServiceId);
                 });
             } else {
-                $this->storeTime($nurse, $patient, 31, $chargeableServiceId);
+                $this->storeTime($nurse, $patient, $minutes, $chargeableServiceId);
             }
         });
-
-        $this->info("Created patient[$patient->id]");
     }
 
     private function storeTime(User $nurse, User $patient, int $minutes, int $chargeableServiceId = null)

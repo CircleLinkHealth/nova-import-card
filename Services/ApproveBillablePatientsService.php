@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\SetLegacyPmsClosedMonthStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
@@ -186,7 +187,7 @@ class ApproveBillablePatientsService
         ];
     }
 
-    public function setPatientChargeableServices(int $reportId, array $csIds): bool
+    public function setPatientChargeableServices(int $reportId, array $services): bool
     {
         $summary = PatientMonthlySummary::find($reportId);
         if ( ! $summary) {
@@ -197,12 +198,9 @@ class ApproveBillablePatientsService
         $summary->save();
 
         $toSync = [];
-
-        foreach ($csIds as $id) {
-            $toSync[$id] = [
-                'is_fulfilled' => true,
-            ];
-        }
+        collect($services)
+            ->filter(fn ($service) => PatientForcedChargeableService::FORCE_ACTION_TYPE === $service['action_type'])
+            ->each(fn ($service)   => $toSync[$service['id']] = ['is_fulfilled' => true]);
 
         $summary->chargeableServices()->sync($toSync);
 

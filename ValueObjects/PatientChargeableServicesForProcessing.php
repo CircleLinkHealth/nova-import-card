@@ -28,13 +28,10 @@ class PatientChargeableServicesForProcessing
                 ->setRequiresConsent($summary->requires_patient_consent)
                 ->setMonthlyTime(
                     optional(
-                                       $monthlyTime->where(
-                                       'chargeable_service_id',
-                                       $summary->chargeable_service_id
-                                   )
-                                       ->where('chargeable_month', $summary->chargeable_month)
-                                       ->first()
-                                   )->total_time
+                        $monthlyTime->where('chargeable_service_id', $summary->chargeable_service_id)
+                        ->where('chargeable_month', $summary->chargeable_month)
+                        ->first()
+                    )->total_time
                 );
         })
             ->filter()

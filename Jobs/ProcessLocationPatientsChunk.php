@@ -70,20 +70,22 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function handle()
     {
         $this->getBuilder()->get()->each(function (User $patient) {
-            ProcessPatientMonthlyServices::dispatch(
-                (new PatientMonthlyBillingDTO())
-                    ->subscribe($this->getAvailableServiceProcessors())
-                    ->forPatient($patient->id)
-                    ->ofLocation($patient->patientInfo->preferred_contact_location)
-                    ->forMonth($this->getChargeableMonth())
-                    ->withPatientServices(
-                        ...PatientChargeableServicesForProcessing::fromCollection($patient)
-                    )
-                    ->withForcedPatientServices(
-                        ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
-                    )
-                    ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
-            );
+            measureTime("ProcessPatientMonthlyServices:$patient->id", function () use ($patient) {
+                ProcessPatientMonthlyServices::dispatch(
+                    (new PatientMonthlyBillingDTO())
+                        ->subscribe($this->getAvailableServiceProcessors())
+                        ->forPatient($patient->id)
+                        ->ofLocation($patient->patientInfo->preferred_contact_location)
+                        ->forMonth($this->getChargeableMonth())
+                        ->withPatientServices(
+                            ...PatientChargeableServicesForProcessing::fromCollection($patient)
+                        )
+                        ->withForcedPatientServices(
+                            ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
+                        )
+                        ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+                );
+            });
         });
     }
 

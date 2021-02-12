@@ -199,10 +199,11 @@
             </template>
 
             <attest-call-conditions-modal ref="attestCallConditionsModal"
-                                          :cpm-problems="cpmProblems"></attest-call-conditions-modal>
-            <chargeable-services-modal v-if="!isNewVersion()"
-                                       ref="chargeableServicesModal"
-                                       :services="selectedPracticeChargeableServices"></chargeable-services-modal>
+                                          :cpm-problems="cpmProblems">
+            </attest-call-conditions-modal>
+            <chargeable-services-modal ref="chargeableServicesModal"
+                                       :services="selectedPracticeChargeableServices">
+            </chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
             <notifications ref="notifications" name="billing"></notifications>
         </div>
@@ -548,19 +549,23 @@
             buildChargeableServicesForPatient(patient) {
                 return patient.chargeable_services
                     .map(item => {
-                        if (typeof item.total_time !== 'undefined') {
-                            return item;
-                        }
-
                         const cs = this.selectedPracticeChargeableServices.find(cs => cs.id === item.id);
                         if (!cs) {
                             return undefined;
                         }
 
-                        return {
+                        const result = {
                             id: cs.id,
-                            total_time: cs.code === SERVICES.BHI ? patient.bhi_time : patient.ccm_time
+                            code: cs.code,
                         };
+
+                        if (typeof item.total_time !== 'undefined') {
+                            result.total_time = item.total_time;
+                        } else {
+                            result.total_time = cs.code === SERVICES.BHI ? patient.bhi_time : patient.ccm_time;
+                        }
+
+                        return result;
                     })
                     .filter(Boolean);
             },
@@ -606,7 +611,7 @@
                         item.promises.update_chargeables = true
                         return this.axios.post(rootUrl('reports/monthly-billing/set-patient-services'), {
                             report_id: item.reportId,
-                            patient_chargeable_services: services.map(item => item.id),
+                            patient_chargeable_services: services,
                             version: this.version
                         }).then(response => {
                             console.log('billing:chargeable-services:update', response.data)

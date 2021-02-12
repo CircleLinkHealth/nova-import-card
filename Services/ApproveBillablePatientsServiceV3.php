@@ -7,11 +7,13 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForceAttachInputDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -79,6 +81,28 @@ class ApproveBillablePatientsServiceV3
             ],
             'actor_id' => $billingStatus->actor_id,
         ];
+    }
+
+    public function setPatientChargeableServices(int $reportId, array $services): bool
+    {
+        /** @var PatientMonthlyBillingStatus $billingStatus */
+        $billingStatus = PatientMonthlyBillingStatus::find($reportId);
+        if ( ! $billingStatus) {
+            return false;
+        }
+
+        foreach ($services as $service) {
+            $input = (new ForceAttachInputDTO())
+                ->setReason('abp')
+                ->setPatientUserId($billingStatus->patient_user_id)
+                ->setMonth($billingStatus->chargeable_month)
+                ->setChargeableServiceId($service['id'])
+                ->setActionType($service['action_type']);
+
+            ForcePatientChargeableService::execute($input);
+        }
+
+        return true;
     }
 
     public function successfulCallsCount(array $patientIds, Carbon $month): ResourceCollection

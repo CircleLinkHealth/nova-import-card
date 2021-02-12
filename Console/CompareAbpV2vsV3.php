@@ -89,7 +89,11 @@ class CompareAbpV2vsV3 extends Command
             return $this->getData($serviceV3, $practiceId, $month);
         });
 
+        if ( ! $reversed) {
+            $this->info('A is v2, B is v3');
+        }
         if ($reversed) {
+            $this->info('A is v3, B is v2');
             $temp        = $aCollection;
             $aCollection = $bCollection;
             $bCollection = $temp;
@@ -202,7 +206,9 @@ class CompareAbpV2vsV3 extends Command
 
             return $aP['id'] === $bP['id'];
         });
-        $this->printResult('matchingOrderOfPatientIds', $allMatch);
+        $strA = collect($a)->implode('id', ',');
+        $strB = collect($b)->implode('id', ',');
+        $this->printResult("matchingOrderOfPatientIds\na[$strA]\nb[$strB]", $allMatch);
     }
 
     private function checkPatientProperty(array $aP, array $bP, string $prop): string
@@ -241,7 +247,7 @@ class CompareAbpV2vsV3 extends Command
         collect($a)->each(function ($aP, $index) use ($bColl, &$results) {
             $bP = $bColl->get($index);
             if ( ! $bP || $bP['id'] !== $aP['id']) {
-                $bP = $bColl->firstWhere(fn ($p) => $p['id'] === $aP['id']);
+                $bP = $bColl->filter(fn ($p) => $p['id'] === $aP['id'])->values()->first();
             }
 
             $results[] = $this->checkPatient($aP, $bP ?? []);

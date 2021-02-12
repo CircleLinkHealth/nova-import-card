@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
@@ -59,7 +58,7 @@ class PatientServiceProcessorRepository implements Repository
      */
     public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity
     {
-        $activity = Activity::create(
+        return Activity::create(
             [
                 'type'                  => $pageTimer->activity_type,
                 'provider_id'           => $pageTimer->provider_id,
@@ -74,10 +73,6 @@ class PatientServiceProcessorRepository implements Repository
                 'chargeable_service_id' => $chargeableServiceDuration->id,
             ]
         );
-
-        $this->reloadPatientChargeableMonthlyTimes($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
-
-        return $activity;
     }
 
     public function detachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE): void
@@ -104,7 +99,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
-        return new Collection(ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
+        return new EloquentCollection(ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->with('chargeableService')
             ->where('chargeable_month', $month)
             ->get());
@@ -116,7 +111,7 @@ class PatientServiceProcessorRepository implements Repository
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
-                    ->from((new ChargeableServiceModel())->getTable())
+                    ->from((new ChargeableService())->getTable())
                     ->where('code', $chargeableServiceCode);
             })
             ->first();
@@ -124,7 +119,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection
     {
-        return new Collection(ChargeablePatientMonthlyTime::where('patient_user_id', $patientId)
+        return new EloquentCollection(ChargeablePatientMonthlyTime::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->get());
     }
@@ -142,7 +137,7 @@ class PatientServiceProcessorRepository implements Repository
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
-                    ->from((new ChargeableServiceModel())->getTable())
+                    ->from((new ChargeableService())->getTable())
                     ->where('code', $chargeableServiceCode);
             })
             ->exists();
@@ -153,7 +148,7 @@ class PatientServiceProcessorRepository implements Repository
         return ChargeableLocationMonthlySummary::where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
-                    ->from((new ChargeableServiceModel())->getTable())
+                    ->from((new ChargeableService())->getTable())
                     ->where('code', $chargeableServiceCode);
             })
             ->whereIn('location_id', function ($q) use ($patientId) {
@@ -169,7 +164,7 @@ class PatientServiceProcessorRepository implements Repository
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
-                    ->from((new ChargeableServiceModel())->getTable())
+                    ->from((new ChargeableService())->getTable())
                     ->where('code', $chargeableServiceCode);
             })
             ->where('is_fulfilled', true)
@@ -207,7 +202,7 @@ class PatientServiceProcessorRepository implements Repository
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
-                    ->from((new ChargeableServiceModel())->getTable())
+                    ->from((new ChargeableService())->getTable())
                     ->where('code', $chargeableServiceCode);
             })
             ->where('requires_patient_consent', true)
@@ -216,13 +211,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
-        return ChargeablePatientMonthlySummary::updateOrCreate([
-            'patient_user_id'       => $patientId,
-            'chargeable_month'      => $month,
-            'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
-        ], [
-            'requires_patient_consent' => false,
-        ]);
+        return $this->store($patientId, $chargeableServiceCode, $month, false);
     }
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary

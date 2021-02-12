@@ -105,7 +105,8 @@ class ApprovablePatient extends JsonResource
                     'id'         => $view->chargeable_service_id,
                     'total_time' => optional($time)->total_time ?? 0,
                 ];
-            });
+            })
+            ->values();
     }
 
     private function getProblems(): Collection

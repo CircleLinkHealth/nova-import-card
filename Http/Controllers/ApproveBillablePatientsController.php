@@ -139,15 +139,12 @@ class ApproveBillablePatientsController extends Controller
 
     public function setPatientChargeableServices(ApproveBillablePatientsSetPatientChargeableServicesRequest $request)
     {
-        $reportId             = intval($request->input('report_id'));
-        $chargeableServiceIds = $request->input('patient_chargeable_services');
+        $reportId           = intval($request->input('report_id'));
+        $chargeableServices = $request->input('patient_chargeable_services');
 
         /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
         $service = $this->getService($request);
-        if ($service instanceof ApproveBillablePatientsServiceV3) {
-            return $this->badRequest('not supported');
-        }
-        $result = $service->setPatientChargeableServices($reportId, $chargeableServiceIds);
+        $result  = $service->setPatientChargeableServices($reportId, $chargeableServices);
 
         return $result ? $this->ok() : $this->error('there was an error');
     }
