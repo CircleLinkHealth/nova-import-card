@@ -24,12 +24,7 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 3;
+
     /**
      * @var null
      */
