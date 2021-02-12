@@ -95,6 +95,7 @@ class ChargeableService extends BaseModel
             self::CCM_PLUS_60,
             self::RPM,
             self::RPM40,
+            self::RPM60,
         ],
         self::RPM => [
             self::GENERAL_CARE_MANAGEMENT,
