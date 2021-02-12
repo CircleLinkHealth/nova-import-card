@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "64713f5e37cf838011c0f3d18e7b7cdd",
+    "content-hash": "73a3f98350a2767bfe0e34196118451f",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -999,11 +999,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v4.3.7",
+            "version": "v4.3.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fccb86bc586f0b7493ad577650bc4f925b50a5a9"
+                "reference": "5923c137fcb524e8b66a1486aab503cd86e18ef8"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1045,7 +1045,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-11T22:49:22+00:00"
+            "time": "2021-02-12T09:55:13+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1346,11 +1346,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.4.5",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "d9fe6e72eecf599fd3eaaf7e768bb49fd9bfe5f6"
+                "reference": "9e46d82ff4e428eff91c8e27bbec19596644b8b3"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1373,7 +1373,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-10T14:58:03+00:00"
+            "time": "2021-02-12T09:51:17+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
