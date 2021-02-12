@@ -36,10 +36,15 @@
     {
       "type": "git",
       "url": "git@github.com:circlelinkhealth/module-customer.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git"
     }
   ],
   "require": {
     "circlelinkhealth/customer-module": "*",
-    "circlelinkhealth/synonyms-module": "*"
+    "circlelinkhealth/synonyms-module": "*",
+    "circlelinkhealth/condition-code-lookup-module": "^1.1.7"
   }
 }
