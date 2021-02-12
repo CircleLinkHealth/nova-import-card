@@ -26,8 +26,6 @@ class SeedRpm60ChargeableService extends Migration
      */
     public function up()
     {
-        Artisan::call('billing:seed-chargeable-services');
-
         ChargeableService::whereCode('CPT 99458')
             ->update([
                 'code' => ChargeableService::RPM40,
