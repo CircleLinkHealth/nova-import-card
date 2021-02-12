@@ -184,7 +184,7 @@ class ImportEnrollee
             'json'        => $mr->toJson(),
             'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
-            'source'      => Ccda::IMPORTER_AWV,
+            'source'      => Ccda::CLH_GENERATED,
         ];
 
         $enrolleeUser = $enrollee->user;
@@ -213,6 +213,7 @@ class ImportEnrollee
             'json'        => (new PracticePullMedicalRecord($enrollee->mrn, $enrollee->practice_id))->toJson(),
             'mrn'         => $enrollee->mrn,
             'practice_id' => $enrollee->practice_id,
+            'source'      => Ccda::CLH_GENERATED
         ];
 
         $enrolleeUser = $enrollee->user;
