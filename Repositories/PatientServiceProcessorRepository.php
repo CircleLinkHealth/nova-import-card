@@ -222,4 +222,19 @@ class PatientServiceProcessorRepository implements Repository
             ]
         );
     }
+
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection):void
+    {
+        \DB::transaction(function ()use($processingOutputCollection){
+            foreach ($processingOutputCollection as $output){
+                ChargeablePatientMonthlySummary::updateOrCreate([
+                    'patient_user_id' => $output->getPatientUserId(),
+                    'chargeable_service_id' => $output->getChargeableServiceId(),
+                    'chargeable_month' => $output->getChargeableMonth()
+                ],[
+                    'is_fulfilled' => $output->getIsFulfilling()
+                ]);
+            }
+        },1);
+    }
 }

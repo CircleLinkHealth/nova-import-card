@@ -290,9 +290,8 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $this->queryPatientData($patientId, $month);
     }
 
-    public function multiAttachServiceSummaries(Collection $processingOutputCollection)
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection):void
     {
-        //start DB transaction
-        //loop and update or create
+        $this->repo->multiAttachServiceSummaries($processingOutputCollection);
     }
 }
