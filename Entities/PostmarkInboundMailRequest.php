@@ -13,6 +13,7 @@ class PostmarkInboundMailRequest
     // public ?array $BccFull;
     public ?string $Cc;
     // public ?array $CcFull;
+    public ?string $Date;
     public ?string $From;
     // public ?array $FromFull;
     // public ?string $FromName;
@@ -20,14 +21,15 @@ class PostmarkInboundMailRequest
     public ?string $HtmlBody;
     // public ?string $MailboxHash;
     // public ?string $MailboxID;
+    public ?string $MessageID;
     // public ?string $MessageStream;
-    // public ?string $OriginalRecipient;
+    public ?string $OriginalRecipient;
     public ?string $ReplyTo;
     // public ?string $StrippedTextReply;
     public ?string $Subject;
     // public ?string $Tag;
     public ?string $TextBody;
-    public ?string  $To;
+    public ?string $To;
     // public ?array $ToFull;
 
     public function __construct(array $input)
@@ -35,6 +37,9 @@ class PostmarkInboundMailRequest
         $this->setFields($input, [
             'Cc',
             'From',
+            'Date',
+            'MessageID',
+            'OriginalRecipient',
             'ReplyTo',
             'Subject',
             'TextBody',
