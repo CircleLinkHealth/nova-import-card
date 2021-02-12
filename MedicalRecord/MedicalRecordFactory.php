@@ -17,6 +17,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalReco
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Support\Str;
 
 class MedicalRecordFactory
@@ -72,6 +73,14 @@ class MedicalRecordFactory
 
     public function createDefaultMedicalRecord(User $user, Ccda $ccda)
     {
+        if ( ! empty(optional($ccda->bluebuttonJson(true))->problems)) {
+            return new CcdaMedicalRecord($ccda->bluebuttonJson(true));
+        }
+
+        if (Demographics::forPatient($user->program_id, $user->first_name, $user->last_name, $user->patientInfo->birth_date)->exists()) {
+            return new PracticePullMedicalRecord(optional($ccda)->patient_mrn ?? $user->getMRN(), optional($ccda)->practice_id ?? $user->program_id);
+        }
+    
         return new CcdaMedicalRecord($ccda->bluebuttonJson(true));
     }
 

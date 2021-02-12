@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ApproveIfValid;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
@@ -19,6 +20,8 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee
@@ -92,6 +95,9 @@ class ImportEnrollee
 
     private function enrolleeAlreadyImported(Enrollee $enrollee)
     {
+        if($enrollee->medical_record_id && ! Problem::where('patient_id', $enrollee->user_id)->exists() && ! Note::where('patient_id', $enrollee->user_id)->exists()) {
+            optional(Ccda::find($enrollee->medical_record_id))->import();
+        }
         if (Enrollee::ENROLLED !== $enrollee->status) {
             $enrollee->status = Enrollee::ENROLLED;
             $enrollee->save();

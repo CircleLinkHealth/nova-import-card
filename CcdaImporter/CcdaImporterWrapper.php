@@ -257,7 +257,7 @@ class CcdaImporterWrapper
      */
     public function import()
     {
-        $patient = $this->ccda->load('patient')->patient ?? null;
+        $patient = $this->ccda->load('patient.patientInfo')->patient ?? null;
 
         // If this is a survey only patient who has not yet enrolled, we should not enroll them.
         if (self::isUnenrolledSurveyUser($patient, $this->enrollee)) {
