@@ -2275,6 +2275,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isAllowedToBubbleChat()
     {
         $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
+
         return in_array($this->id, $bubbleChatters);
     }
 
