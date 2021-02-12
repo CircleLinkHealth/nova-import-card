@@ -103,34 +103,80 @@ class PatientForcedChargeableServicesTest extends CustomerTestCase
     
         BillingCache::clearPatients();
         BillingCache::clearLocations();
-        $bhiPatient = $this->setupPatient($this->practice, true);
+        $patient = $this->setupPatient($this->practice, true);
     
-        $bhiPatient->notes()->create([
+        $patient->notes()->create([
             'type'      => Patient::BHI_CONSENT_NOTE_TYPE,
             'author_id' => $this->careCoach()->id,
         ]);
     
-        event(new PatientConsentedToService($bhiPatient->id, $bhiCode = ChargeableService::BHI));
+        event(new PatientConsentedToService($patient->id, $bhiCode = ChargeableService::BHI));
         $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode);
     
         BillingCache::clearPatients();
         self::assertTrue(BillingCache::billingRevampIsEnabled());
-        self::assertTrue($bhiPatient->isBhi());
+        self::assertTrue($patient->isBhi());
         self::assertTrue(
-            $bhiPatient->chargeableMonthlySummaries()
+            $patient->chargeableMonthlySummaries()
                 ->where('chargeable_service_id', $bhiCodeId)
                 ->where('chargeable_month', $month = Carbon::now()->startOfMonth())
                 ->exists()
         );
-        Cache::forget("user:$bhiPatient->id:is_bhi");
+        Cache::forget("user:$patient->id:is_bhi");
         ForcePatientChargeableService::execute(
             (new ForceAttachInputDTO())->setChargeableServiceId($bhiCodeId)
-            ->setPatientUserId($bhiPatient->id)
+            ->setPatientUserId($patient->id)
             ->setActionType(PatientForcedChargeableService::BLOCK_ACTION_TYPE)
         );
     
-        self::assertFalse($bhiPatient->isBhi());
-
+        self::assertFalse($patient->isBhi());
+    
+        ForcePatientChargeableService::execute(
+            (new ForceAttachInputDTO())->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM))
+                ->setPatientUserId($patient->id)
+                ->setActionType(PatientForcedChargeableService::FORCE_ACTION_TYPE)
+        );
+        Cache::forget("user:$patient->id:is_pcm");
+        self::assertTrue($patient->isPcm());
+        
         //test with Billing revamp off
+        BillingCache::setBillingRevampIsEnabled(false);
+        BillingCache::clearPatients();
+        BillingCache::clearLocations();
+        $patient2 = $this->setupPatient($this->practice, true);
+    
+        $patient2->notes()->create([
+            'type'      => Patient::BHI_CONSENT_NOTE_TYPE,
+            'author_id' => $this->careCoach()->id,
+        ]);
+    
+        event(new PatientConsentedToService($patient2->id, $bhiCode = ChargeableService::BHI));
+        $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode);
+    
+        BillingCache::clearPatients();
+        self::assertFalse(BillingCache::billingRevampIsEnabled());
+        self::assertTrue($patient2->isBhi());
+        self::assertTrue(
+            $patient2->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', $bhiCodeId)
+                ->where('chargeable_month', $month = Carbon::now()->startOfMonth())
+                ->exists()
+        );
+        Cache::forget("user:$patient2->id:is_bhi");
+        ForcePatientChargeableService::execute(
+            (new ForceAttachInputDTO())->setChargeableServiceId($bhiCodeId)
+                ->setPatientUserId($patient2->id)
+                ->setActionType(PatientForcedChargeableService::BLOCK_ACTION_TYPE)
+        );
+    
+        self::assertFalse($patient2->isBhi());
+    
+        ForcePatientChargeableService::execute(
+            (new ForceAttachInputDTO())->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM))
+                ->setPatientUserId($patient2->id)
+                ->setActionType(PatientForcedChargeableService::FORCE_ACTION_TYPE)
+        );
+        Cache::forget("user:$patient2->id:is_pcm");
+        self::assertTrue($patient2->isPcm());
     }
 }
