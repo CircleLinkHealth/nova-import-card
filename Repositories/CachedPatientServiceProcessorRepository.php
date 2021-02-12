@@ -168,6 +168,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->count() > 0;
     }
 
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection): void
+    {
+        $this->repo->multiAttachServiceSummaries($processingOutputCollection);
+    }
+
     public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
     {
         if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) || ! BillingCache::patientExistsInCache($patientId)) {
@@ -288,10 +293,5 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         }
 
         $this->queryPatientData($patientId, $month);
-    }
-
-    public function multiAttachServiceSummaries(Collection $processingOutputCollection):void
-    {
-        $this->repo->multiAttachServiceSummaries($processingOutputCollection);
     }
 }

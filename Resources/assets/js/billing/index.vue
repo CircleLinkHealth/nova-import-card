@@ -172,7 +172,7 @@
                     <loader v-if="loaders.callsCount"></loader>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue" :class="isSoftwareOnly || isNewVersion() ? '' : 'pointer'"
+                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
                          @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block"
@@ -387,9 +387,9 @@
                 }
                 return this.axios.post(rootUrl('reports/monthly-billing/set-practice-services'), data).then(response => {
                     (response.data || []).forEach(summary => {
-                        const tableItem = this.tableData.find(row => row.id == summary.id)
+                        const tableItem = this.tableData.find(row => row.id === summary.id)
                         if (tableItem) {
-                            tableItem.chargeable_services = (summary.chargeable_services || []).map(item => item.id)
+                            tableItem.chargeable_services = summary.chargeable_services || [];
                         }
                     })
                     this.loaders.chargeableServices = false
@@ -545,6 +545,26 @@
                 return 'ERROR';
             },
 
+            buildChargeableServicesForPatient(patient) {
+                return patient.chargeable_services
+                    .map(item => {
+                        if (typeof item.total_time !== 'undefined') {
+                            return item;
+                        }
+
+                        const cs = this.selectedPracticeChargeableServices.find(cs => cs.id === item.id);
+                        if (!cs) {
+                            return undefined;
+                        }
+
+                        return {
+                            id: cs.id,
+                            total_time: cs.code === SERVICES.BHI ? patient.bhi_time : patient.ccm_time
+                        };
+                    })
+                    .filter(Boolean);
+            },
+
             setupRow(patient) {
                 const item = {
                     id: patient.id,
@@ -566,7 +586,7 @@
                     attested_ccm_problems: patient.attested_ccm_problems,
                     attested_bhi_problems: patient.attested_bhi_problems,
                     '#Successful Calls': patient.no_of_successful_calls,
-                    chargeable_services: (patient.chargeable_services || []).map(item => item.id),
+                    chargeable_services: this.buildChargeableServicesForPatient(patient),
                     promises: {
                         approve_reject: false,
                         update_chargeables: false
@@ -577,16 +597,16 @@
                     chargeables: () => {
                         //we need the chargeableService for the practice (not all chargeableServices)
                         const practiceChargeableServices = this.selectedPracticeChargeableServices;
-                        return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
+                        return item.chargeable_services.map(item => practiceChargeableServices.find(service => service.id === item.id)).filter(Boolean);
                     },
-                    onChargeableServicesUpdate: (serviceIDs) => {
+                    onChargeableServicesUpdate: (services) => {
                         const original = item.chargeable_services;
-                        item.chargeable_services = serviceIDs
-                        console.log('service-ids', serviceIDs, item)
+                        item.chargeable_services = services;
+                        console.log('service-ids', services, item);
                         item.promises.update_chargeables = true
                         return this.axios.post(rootUrl('reports/monthly-billing/set-patient-services'), {
                             report_id: item.reportId,
-                            patient_chargeable_services: serviceIDs,
+                            patient_chargeable_services: services.map(item => item.id),
                             version: this.version
                         }).then(response => {
                             console.log('billing:chargeable-services:update', response.data)
@@ -603,10 +623,10 @@
                         })
                     },
                     isBhiEligible() {
-                        return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484);
+                        return !!this.chargeables().find(service => service.code === SERVICES.BHI);
                     },
                     isCcmEligible() {
-                        return !!this.chargeables().find(service => service.code === SERVICES.CPT_99490);
+                        return !!this.chargeables().find(service => service.code === SERVICES.CCM);
                     },
                     hasOver20MinutesBhiTime() {
                         return patient.bhi_time >= 1200;
@@ -620,7 +640,7 @@
 
             showChargeableServicesModal(row) {
 
-                if (this.isSoftwareOnly || this.isNewVersion()) {
+                if (this.isSoftwareOnly) {
                     return;
                 }
 
@@ -633,7 +653,7 @@
             showBhiModal(patient) {
                 if (!patient.isBhiEligible()) {
                     Event.$emit('notifications-billing:create', {
-                        text: `Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99484}.`,
+                        text: `Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for ${SERVICES.BHI}.`,
                         type: 'warning',
                         interval: 5000
                     });
@@ -706,7 +726,7 @@
                             return a
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
-                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code),
+                            chargeable_services: row.chargeable_services.map(item => (this.chargeableServices.find(service => service.id === item.id) || {}).code),
                             'CCM Problem Code(s)': this.attestedCcmProblemCodes(row),
                             'BHI Problem Code(s)': this.attestedBhiProblemCodes(row)
                         })))

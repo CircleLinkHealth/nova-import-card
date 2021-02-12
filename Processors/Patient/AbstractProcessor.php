@@ -6,11 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
@@ -53,57 +49,22 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function isAttached(): bool
     {
         return collect($this->input->getPatientServices())
-            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
+            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
             ->isNotEmpty();
     }
 
     public function isFulfilled(): bool
     {
         return collect($this->input->getPatientServices())
-            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code() && $s->isFulfilled())
+            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code() && $s->isFulfilled())
             ->isNotEmpty();
     }
 
     public function processBilling(PatientMonthlyBillingDTO $patientStub): PatientServiceProcessorOutputDTO
     {
         $this->input = $patientStub;
+
         return $this->getOutput();
-    }
-
-    private function getOutput(): PatientServiceProcessorOutputDTO
-    {
-        $this->output->setPatientUserId($this->input->getPatientId());
-        $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
-        $this->output->setChargeableMonth($this->input->getChargeableMonth());
-
-        if ( ! $this->isAttached()) {
-            if ($this->shouldForceAttach() || $this->shouldAttach()) {
-                $this->attach();
-            }
-        }
-
-        if ( ! $this->isFulfilled()) {
-            if ($this->shouldFulfill()) {
-                $this->fulfill();
-            }
-        }else{
-            if ($this->shouldUnfulfill()){
-                $this->unfulfill();
-            }
-        }
-
-        return $this->output;
-    }
-
-    public function shouldUnfulfill() : bool
-    {
-        return ! $this->shouldFulfill();
-    }
-
-    public function unfulfill()
-    {
-        $this->output->setSendToDatabase(true);
-        $this->output->setIsFulfilling(false);
     }
 
     abstract public function requiresPatientConsent(int $patientId): bool;
@@ -136,12 +97,12 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function shouldFulfill(): bool
     {
-        if (! $this->shouldAttach() ) {
+        if ( ! $this->shouldAttach()) {
             return false;
         }
 
         $summary = collect($this->input->getPatientServices())
-            ->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->baseCode())
+            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->baseCode())
             ->first();
 
         if ( ! $summary) {
@@ -159,11 +120,22 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return true;
     }
 
+    public function shouldUnfulfill(): bool
+    {
+        return ! $this->shouldFulfill();
+    }
+
+    public function unfulfill()
+    {
+        $this->output->setSendToDatabase(true);
+        $this->output->setIsFulfilling(false);
+    }
+
     private function clashesWithHigherOrderServices(): bool
     {
         //todo: revisit clashes to accomodate forced cs - if forced === is attached?
         foreach ($this->clashesWith() as $clash) {
-            $clashIsAttached = collect($this->input->getPatientServices())->filter(fn(PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash)->isNotEmpty();
+            $clashIsAttached = collect($this->input->getPatientServices())->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash)->isNotEmpty();
 
             $hasEnoughProblemsForClash = collect($this->input->getPatientProblems())
                 ->filter(fn (PatientProblemForProcessing $problem) => in_array($clash->code(), $problem->getServiceCodes()))
@@ -175,5 +147,30 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         }
 
         return false;
+    }
+
+    private function getOutput(): PatientServiceProcessorOutputDTO
+    {
+        $this->output->setPatientUserId($this->input->getPatientId());
+        $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
+        $this->output->setChargeableMonth($this->input->getChargeableMonth());
+
+        if ( ! $this->isAttached()) {
+            if ($this->shouldForceAttach() || $this->shouldAttach()) {
+                $this->attach();
+            }
+        }
+
+        if ( ! $this->isFulfilled()) {
+            if ($this->shouldFulfill()) {
+                $this->fulfill();
+            }
+        } else {
+            if ($this->shouldUnfulfill()) {
+                $this->unfulfill();
+            }
+        }
+
+        return $this->output;
     }
 }

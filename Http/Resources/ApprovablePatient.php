@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -96,9 +97,13 @@ class ApprovablePatient extends JsonResource
 
         return $user->chargeableMonthlySummaries
             ->filter(fn (ChargeablePatientMonthlySummary $item) => $item->is_fulfilled)
-            ->map(function (ChargeablePatientMonthlySummary $view) {
+            ->map(function (ChargeablePatientMonthlySummary $view) use ($user) {
+                /** @var ChargeablePatientMonthlyTime $time */
+                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id', $view->chargeable_service_id);
+
                 return [
-                    'id' => $view->chargeable_service_id,
+                    'id'         => $view->chargeable_service_id,
+                    'total_time' => optional($time)->total_time ?? 0,
                 ];
             });
     }

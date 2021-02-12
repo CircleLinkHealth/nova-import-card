@@ -176,6 +176,21 @@ class PatientServiceProcessorRepository implements Repository
             ->exists();
     }
 
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection): void
+    {
+        \DB::transaction(function () use ($processingOutputCollection) {
+            foreach ($processingOutputCollection as $output) {
+                ChargeablePatientMonthlySummary::updateOrCreate([
+                    'patient_user_id'       => $output->getPatientUserId(),
+                    'chargeable_service_id' => $output->getChargeableServiceId(),
+                    'chargeable_month'      => $output->getChargeableMonth(),
+                ], [
+                    'is_fulfilled' => $output->isFulfilling(),
+                ]);
+            }
+        }, 1);
+    }
+
     public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
     {
         // TODO: Implement reloadPatientChargeableMonthlyTimes() method.
@@ -222,20 +237,5 @@ class PatientServiceProcessorRepository implements Repository
                 'requires_patient_consent' => $requiresPatientConsent,
             ]
         );
-    }
-
-    public function multiAttachServiceSummaries(Collection $processingOutputCollection):void
-    {
-        \DB::transaction(function ()use($processingOutputCollection){
-            foreach ($processingOutputCollection as $output){
-                ChargeablePatientMonthlySummary::updateOrCreate([
-                    'patient_user_id' => $output->getPatientUserId(),
-                    'chargeable_service_id' => $output->getChargeableServiceId(),
-                    'chargeable_month' => $output->getChargeableMonth()
-                ],[
-                    'is_fulfilled' => $output->isFulfilling()
-                ]);
-            }
-        },1);
     }
 }
