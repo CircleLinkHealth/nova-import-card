@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities\PracticePull;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
@@ -83,4 +84,16 @@ class Demographics extends BaseModel
         'eligibility_job_id',
     ];
     protected $table = 'practice_pull_demographics';
+    
+    public static function forPatient(?int $practiceId, ?string $firstName, ?string $lastName, ?Carbon $dob)
+    {
+        if ( ! $dob || ! $practiceId || ! $firstName || ! $lastName) {
+            return null;
+        }
+        
+        return self::whereRaw("MATCH(first_name, last_name) AGAINST('+$firstName +$lastName' IN BOOLEAN MODE)")
+                   ->where('practice_id', $practiceId)
+                   ->where('dob', $dob)
+                   ->orderByDesc('updated_at');
+    }
 }
