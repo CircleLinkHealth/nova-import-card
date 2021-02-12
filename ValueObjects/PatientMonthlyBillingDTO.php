@@ -16,30 +16,13 @@ class PatientMonthlyBillingDTO
 
     protected array $forcedPatientServices;
 
-    protected array $patientServices;
-
-    /**
-     * @return array
-     */
-    public function getPatientServices(): array
-    {
-        return $this->patientServices;
-    }
-
-    /**
-     * @param array $patientServices
-     */
-    public function withPatientServices(PatientChargeableServicesForProcessing ...$patientServices): self
-    {
-        $this->patientServices = $patientServices;
-        return $this;
-    }
-
     protected int $locationId;
 
     protected int $patientId;
 
     protected array $patientProblems;
+
+    protected array $patientServices;
 
     public function forMonth(Carbon $chargeableMonth): self
     {
@@ -85,6 +68,11 @@ class PatientMonthlyBillingDTO
         return $this->patientProblems;
     }
 
+    public function getPatientServices(): array
+    {
+        return $this->patientServices;
+    }
+
     public function ofLocation(int $locationId): self
     {
         $this->locationId = $locationId;
@@ -107,6 +95,16 @@ class PatientMonthlyBillingDTO
     public function withForcedPatientServices(ForcedPatientChargeableServicesForProcessing ...$forcedPatientServices): self
     {
         $this->forcedPatientServices = $forcedPatientServices;
+
+        return $this;
+    }
+
+    /**
+     * @param array $patientServices
+     */
+    public function withPatientServices(PatientChargeableServicesForProcessing ...$patientServices): self
+    {
+        $this->patientServices = $patientServices;
 
         return $this;
     }

@@ -12,7 +12,6 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 
 class MonthlyProcessor implements PatientMonthlyBillingProcessor
 {
@@ -21,7 +20,7 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
 
     public function __construct(LocationProcessorRepository $locationProcessorRepository, PatientServiceProcessorRepository $patientServiceProcessorRepository)
     {
-        $this->locationRepository = $locationProcessorRepository;
+        $this->locationRepository       = $locationProcessorRepository;
         $this->patientServiceRepository = $patientServiceProcessorRepository;
     }
 
@@ -36,7 +35,7 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
                 }
 
                 $output = $processor->processBilling($patient);
-                if ($output->shouldSendToDatabase()){
+                if ($output->shouldSendToDatabase()) {
                     $processorOutputCollection->push($output);
                 }
             });

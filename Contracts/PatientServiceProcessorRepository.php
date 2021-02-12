@@ -40,6 +40,8 @@ interface PatientServiceProcessorRepository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection): void;
+
     public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void;
 
     public function reloadPatientProblems(int $patientId): void;
@@ -49,6 +51,4 @@ interface PatientServiceProcessorRepository
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
-
-    public function multiAttachServiceSummaries(Collection $processingOutputCollection):void;
 }

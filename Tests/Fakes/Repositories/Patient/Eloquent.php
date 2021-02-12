@@ -179,6 +179,11 @@ class Eloquent implements PatientServiceProcessorRepository
             ->first();
     }
 
+    public function multiAttachServiceSummaries(Collection $processingOutputCollection): void
+    {
+        // TODO: Implement multiAttachServiceSummaries() method.
+    }
+
     public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
     {
         // TODO: Implement reloadPatientChargeableMonthlyTimes() method.
