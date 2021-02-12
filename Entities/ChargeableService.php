@@ -204,12 +204,9 @@ class ChargeableService extends BaseModel
             ])->withTimestamps();
     }
 
-    public static function getChargeableServiceIdUsingCode(string $code): int
+    public static function getChargeableServiceIdUsingCode(string $code): ?int
     {
-        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
-            return ChargeableService::where('code', $code)
-                ->value('id');
-        });
+        return optional(self::cached()->where('code', $code)->first())->id;
     }
 
     public static function getClashesWithService(string $service): array
