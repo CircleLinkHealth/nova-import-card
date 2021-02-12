@@ -674,7 +674,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "8f6ea015fcdcd84801ad547ea4422aa7ca0499b1"
+                "reference": "e3f9adda4f0c30c3ef29fe7eed7ab50df15d51ba"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -721,7 +721,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-12T12:54:13+00:00"
+            "time": "2021-02-12T16:42:56+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -995,7 +995,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f2c2da5a45a997e9d682f5ab9d598a3b11e681cc"
+                "reference": "53e07a84fa02ce0dc71756d497d22a8741aeb3da"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1037,7 +1037,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-12T08:57:13+00:00"
+            "time": "2021-02-12T16:42:56+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1373,7 +1373,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "10169b3c351ce9896543d8a6b6c4336c693841eb"
+                "reference": "aae5582a68828901b021055a4851e3c437a41aa2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1393,7 +1393,7 @@
                     "email": ""
                 }
             ],
-            "time": "2021-02-12T08:57:13+00:00"
+            "time": "2021-02-12T15:13:45+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
