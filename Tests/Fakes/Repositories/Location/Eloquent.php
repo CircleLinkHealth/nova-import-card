@@ -22,7 +22,13 @@ class Eloquent implements LocationProcessorRepository
 
     protected Collection $locationAvailableServiceProcessors;
     protected Collection $summaries;
-
+    
+    public function __construct()
+    {
+        $this->locationAvailableServiceProcessors = collect();
+        $this->summaries = collect();
+    }
+    
     public function approvableBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder
     {
         // TODO: Implement approvableBillingStatuses() method.
@@ -72,7 +78,16 @@ class Eloquent implements LocationProcessorRepository
 
     public function getLocationSummaries(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection
     {
-        throw new \Exception('not implemented');
+        return $this->toEloquentCollection(
+            $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s)use ($locationIds, $month, $excludeLocked){
+                $passes = in_array($s->getLocationId(), $locationIds) && $s->getChargeableMonth()->equalTo($month);
+                
+                if ($excludeLocked){
+                    $passes = $s->isLocked() === false;
+                }
+                return $passes;
+            })
+        );
     }
 
     public function hasServicesForMonth(array $locationIds, array $chargeableServiceCodes, Carbon $month): bool
@@ -133,8 +148,9 @@ class Eloquent implements LocationProcessorRepository
     public function servicesExistForMonth(array $locationIds, Carbon $month): bool
     {
         return $this->summaries
-            ->whereIn('location_id', $locationIds)
-            ->where('chargeable_month', $month)
+            ->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationIds, $month) {
+                return in_array($s->getLocationId(), $locationIds) && $month->equalTo($s->getChargeableMonth());
+            })
             ->isNotEmpty();
     }
 
@@ -161,6 +177,28 @@ class Eloquent implements LocationProcessorRepository
         }
 
         $this->locationAvailableServiceProcessors->push($toPush);
+    }
+
+    public function setLockedSummary(int $locationId, int $chargeableServiceId, Carbon $month)
+    {
+        if ( ! isset($this->summaries)) {
+            $this->summaries = collect();
+        }
+
+        $summary = $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationId, $chargeableServiceId, $month){
+            return $locationId === $s->getLocationId() && $s->getChargeableMonth()->equalTo($month) && $s->getChargeableServiceId() === $chargeableServiceId;
+        })
+            ->first();
+
+        if (is_null($summary)) {
+            $summary = (new ChargeableLocationMonthlySummaryStub())
+                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableMonth($month)
+                ->setLocationId($locationId);
+        }
+        $summary->setIsLocked(true);
+
+        $this->summaries->push($summary);
     }
 
     public function store(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary

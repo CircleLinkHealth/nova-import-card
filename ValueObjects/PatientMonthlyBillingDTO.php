@@ -14,7 +14,7 @@ class PatientMonthlyBillingDTO
 
     protected Carbon $chargeableMonth;
 
-    protected array $forcedPatientServices;
+    protected array $forcedPatientServices = [];
 
     protected int $locationId;
 
@@ -22,7 +22,7 @@ class PatientMonthlyBillingDTO
 
     protected array $patientProblems;
 
-    protected array $patientServices;
+    protected array $patientServices = [];
 
     public function forMonth(Carbon $chargeableMonth): self
     {
@@ -114,5 +114,16 @@ class PatientMonthlyBillingDTO
         $this->patientProblems = $patientProblems;
 
         return $this;
+    }
+    
+    public function pushServiceFromOutputIfYouShould(PatientServiceProcessorOutputDTO $output):void
+    {
+        $exists = collect($this->getPatientServices())->filter(function (PatientChargeableServicesForProcessing $s) use ($output){
+            return $s->getCode() === $output->getCode();
+        })->isNotEmpty();
+    
+        if (! $exists){
+            $this->patientServices[] = $output->toPatientChargeableServiceForProcessingDTO();
+        }
     }
 }

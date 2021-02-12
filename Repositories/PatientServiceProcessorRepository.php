@@ -180,7 +180,8 @@ class PatientServiceProcessorRepository implements Repository
                     'chargeable_service_id' => $output->getChargeableServiceId(),
                     'chargeable_month'      => $output->getChargeableMonth(),
                 ], [
-                    'is_fulfilled' => $output->isFulfilling(),
+                    'is_fulfilled'             => $output->isFulfilling(),
+                    'requires_patient_consent' => $output->requiresConsent(),
                 ]);
             }
         }, 1);

@@ -26,7 +26,14 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function attach(): void
     {
-        $this->output->setSendToDatabase(true);
+        $requiresConsent = $this->requiresPatientConsent($this->input->getPatientId());
+
+        if ($existingSummary = $this->getExistingSummary($this->code())) {
+            $existingSummary->setRequiresConsent($requiresConsent);
+        }
+
+        $this->output->setRequiresConsent($requiresConsent)
+            ->setSendToDatabase(true);
     }
 
     public function baseCode(): string
@@ -42,15 +49,13 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function fulfill(): void
     {
-        $this->output->setSendToDatabase(true);
-        $this->output->setIsFulfilling(true);
+        $this->output->setSendToDatabase(true)
+            ->setIsFulfilling(true);
     }
 
     public function isAttached(): bool
     {
-        return collect($this->input->getPatientServices())
-            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
-            ->isNotEmpty();
+        return ! is_null($this->getExistingSummary($this->code()));
     }
 
     public function isFulfilled(): bool
@@ -62,9 +67,9 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function processBilling(PatientMonthlyBillingDTO $patientStub): PatientServiceProcessorOutputDTO
     {
-        $this->input = $patientStub;
-
-        return $this->getOutput();
+        return $this->setInput($patientStub)
+            ->initialiseOutput()
+            ->getOutput();
     }
 
     abstract public function requiresPatientConsent(int $patientId): bool;
@@ -127,15 +132,15 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function unfulfill()
     {
-        $this->output->setSendToDatabase(true);
-        $this->output->setIsFulfilling(false);
+        $this->output->setSendToDatabase(true)
+            ->setIsFulfilling(false);
     }
 
     private function clashesWithHigherOrderServices(): bool
     {
         //todo: revisit clashes to accomodate forced cs - if forced === is attached?
         foreach ($this->clashesWith() as $clash) {
-            $clashIsAttached = collect($this->input->getPatientServices())->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash)->isNotEmpty();
+            $clashIsAttached = collect($this->input->getPatientServices())->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash->code())->isNotEmpty();
 
             $hasEnoughProblemsForClash = collect($this->input->getPatientProblems())
                 ->filter(fn (PatientProblemForProcessing $problem) => in_array($clash->code(), $problem->getServiceCodes()))
@@ -149,12 +154,15 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return false;
     }
 
+    private function getExistingSummary(string $code): ?PatientChargeableServicesForProcessing
+    {
+        return collect($this->input->getPatientServices())
+            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $code)
+            ->first();
+    }
+
     private function getOutput(): PatientServiceProcessorOutputDTO
     {
-        $this->output->setPatientUserId($this->input->getPatientId());
-        $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
-        $this->output->setChargeableMonth($this->input->getChargeableMonth());
-
         if ( ! $this->isAttached()) {
             if ($this->shouldForceAttach() || $this->shouldAttach()) {
                 $this->attach();
@@ -172,5 +180,28 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         }
 
         return $this->output;
+    }
+
+    private function initialiseOutput(): self
+    {
+        $this->output->setPatientUserId($this->input->getPatientId())
+            ->setChargeableMonth($this->input->getChargeableMonth())
+            ->setCode($this->code());
+
+        if ($existingSummary = $this->getExistingSummary($this->code())) {
+            $this->output->setChargeableServiceId($existingSummary->getChargeableServiceId())
+                ->setRequiresConsent($existingSummary->requiresConsent());
+        }else {
+            $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
+        }
+
+        return $this;
+    }
+
+    private function setInput(PatientMonthlyBillingDTO $input): self
+    {
+        $this->input = $input;
+
+        return $this;
     }
 }

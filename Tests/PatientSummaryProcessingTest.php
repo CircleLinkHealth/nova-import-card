@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
@@ -16,13 +15,17 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -30,98 +33,29 @@ use Illuminate\Support\Facades\Bus;
 
 class PatientSummaryProcessingTest extends TestCase
 {
-    public function test_it_does_not_attach_next_service_in_sequence_if_previous_is_not_fulfilled()
-    {
-        //todo: replace with -> assert attachment by deny fulfillment
-//        FakePatientRepository::fake();
-//
-//        $patientId = 1;
-//        $locationId = 1;
-//        $ccm       = new CCM();
-//        $ccm40     = new CCM40();
-//        $month     = now();
-//
-//        FakePatientRepository::setIsAttachedStubs(
-//            new IsAttachedStub($patientId, $ccm->code(), $month, false)
-//        );
-//
-//        FakePatientRepository::setIsFulfilledStubs(
-//            new IsFulfilledStub($patientId, $ccm->code(), $month, false)
-//        );
-//
-//        $stub = (new PatientMonthlyBillingDTO())
-//            ->subscribe(AvailableServiceProcessors::push([$ccm, $ccm40]))
-//            ->forPatient($patientId)
-//            ->ofLocation($locationId)
-//            ->forMonth($month)
-//            ->withProblems(
-//                (new PatientProblemForProcessing())
-//                    ->setId(123)
-//                    ->setCode('1234')
-//                    ->setServiceCodes([
-//                        ChargeableService::CCM,
-//                        ChargeableService::CCM_PLUS_40,
-//                    ]),
-//                (new PatientProblemForProcessing())
-//                    ->setId(1233)
-//                    ->setCode('12344')
-//                    ->setServiceCodes([
-//                        ChargeableService::CCM,
-//                    ]),
-//                (new PatientProblemForProcessing())
-//                    ->setId(1235)
-//                    ->setCode('12345')
-//                    ->setServiceCodes([
-//                        ChargeableService::CCM,
-//                        ChargeableService::CCM_PLUS_40,
-//                    ])
-//            );
-//
-//        $fakeProcessor = new MonthlyProcessor();
-//
-//        $fakeProcessor->process($stub);
-//
-//        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $month);
-//        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $ccm40->code(), $month);
-//
-//        FakePatientRepository::setIsFulfilledStubs(
-//            new IsFulfilledStub($patientId, $ccm->code(), $month, true)
-//        );
-//
-//        $fakeProcessor->process($stub);
-//
-//        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm40->code(), $month);
-    }
-
-    public function test_it_only_attaches_next_service_if_it_is_enabled_for_location_for_month()
-    {
-        //todo: fix for new logic
-//        $patientId = 1;
-//        $month     = now();
-//
-//        FakePatientRepository::fake();
-//
-//        $processor = new CCM();
-//
-//        FakePatientRepository::setIsChargeableServiceEnabledForMonth(false);
-//        $processor->attachNext($patientId, $month);
-//        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $processor->next()->code(), $month);
-//
-//        FakePatientRepository::setIsChargeableServiceEnabledForMonth(true);
-//        $processor->attachNext($patientId, $month);
-//        FakePatientRepository::assertChargeableSummaryCreated($patientId, $processor->next()->code(), $month);
-    }
+    //todo:write plus code tests
 
     public function test_it_processes_patient_chargeable_services_at_the_start_of_month()
     {
         FakePatientRepository::fake();
         FakeLocationRepository::fake();
 
+        $startOfMonth = Carbon::now()->startOfMonth()->startOfDay();
+
+        FakeLocationRepository::setChargeableLocationMonthlySummaryStubs(
+            (new ChargeableLocationMonthlySummaryStub())->setLocationId(1)
+                ->setChargeableMonth($startOfMonth)
+                ->setChargeableServiceId($ccmId = ChargeableService::cached()->where('code', ChargeableService::CCM)->first()->id),
+            (new ChargeableLocationMonthlySummaryStub())->setLocationId(1)
+                ->setChargeableMonth($startOfMonth)
+                ->setChargeableServiceId($ccmId = ChargeableService::cached()->where('code', ChargeableService::BHI)->first()->id),
+        );
+
         $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
             ->ofLocation(1)
-            ->forMonth($startOfMonth = Carbon::now()->startOfMonth()->startOfDay())
+            ->forMonth($startOfMonth)
             ->withProblems(
                 (new PatientProblemForProcessing())
                     ->setId(123)
@@ -145,7 +79,7 @@ class PatientSummaryProcessingTest extends TestCase
                     ])
             );
 
-        $fakeProcessor = new MonthlyProcessor(app(LocationProcessorRepository::class));
+        $fakeProcessor = app(MonthlyProcessor::class);
 
         $fakeProcessor->process($stub);
 
@@ -156,18 +90,28 @@ class PatientSummaryProcessingTest extends TestCase
     public function test_it_respects_clashing_services()
     {
         FakePatientRepository::fake();
+        FakeLocationRepository::fake();
 
-        $patientId  = 1;
-        $locationId = 1;
-        $ccm        = new CCM();
-        $pcm        = new PCM();
-        $month      = now();
+        $patientId    = 1;
+        $locationId   = 1;
+        $ccm          = new CCM();
+        $pcm          = new PCM();
+        $startOfMonth = Carbon::now()->startOfMonth()->startOfDay();
+
+        FakeLocationRepository::setChargeableLocationMonthlySummaryStubs(
+            (new ChargeableLocationMonthlySummaryStub())->setLocationId($locationId)
+                ->setChargeableMonth($startOfMonth)
+                ->setChargeableServiceId($ccmId = ChargeableService::cached()->where('code', ChargeableService::CCM)->first()->id),
+            (new ChargeableLocationMonthlySummaryStub())->setLocationId($locationId)
+                ->setChargeableMonth($startOfMonth)
+                ->setChargeableServiceId($ccmId = ChargeableService::cached()->where('code', ChargeableService::BHI)->first()->id),
+        );
 
         $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([$ccm, $pcm]))
             ->forPatient($patientId)
             ->ofLocation($locationId)
-            ->forMonth($month)
+            ->forMonth($startOfMonth)
             ->withProblems(
                 (new PatientProblemForProcessing())
                     ->setId(123)
@@ -191,11 +135,12 @@ class PatientSummaryProcessingTest extends TestCase
                     ])
             );
 
-        $fakeProcessor = new MonthlyProcessor(app(LocationProcessorRepository::class));
+        $fakeProcessor = app(MonthlyProcessor::class);
+
         $fakeProcessor->process($stub);
 
-        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $month);
-        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $pcm->code(), $month);
+        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $startOfMonth);
+        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $pcm->code(), $startOfMonth);
     }
 
     public function test_it_sets_requires_patient_consent_when_it_should_and_stops_fulfilling()
@@ -210,25 +155,32 @@ class PatientSummaryProcessingTest extends TestCase
             'config_value' => $practice->name,
         ]);
 
-        $month = now();
-        FakePatientRepository::fake();
+        $dto = (new PatientMonthlyBillingDTO())
+            ->forPatient($patient->id)
+            ->forMonth(Carbon::now()->startOfMonth())
+            ->ofLocation(1)
+            ->withPatientServices(
+                (new PatientChargeableServicesForProcessing())
+                    ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
+                    ->setRequiresConsent(1)
+                    ->setMonthlyTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
+                    ->setCode(ChargeableService::BHI)
+                    ->setIsFulfilled(false)
+            )
+            ->withProblems(
+                (new PatientProblemForProcessing())
+                    ->setId(123)
+                    ->setCode('1234')
+                    ->setServiceCodes([
+                        ChargeableService::BHI,
+                    ]),
+            );
 
         $processor = new BHI();
+        /** @var PatientServiceProcessorOutputDTO */
+        $output = $processor->processBilling($dto);
 
-        $summary = $processor->attach($patient->id, $month);
-
-        self::assertTrue($summary->requires_patient_consent);
-
-        self::assertFalse($processor->shouldFulfill(
-            $patient->id,
-            $month,
-            (new PatientProblemForProcessing())
-                ->setId(123)
-                ->setCode('1234')
-                ->setServiceCodes([
-                    ChargeableService::BHI,
-                ]),
-        ));
+        self::assertFalse($output->isFulfilling());
     }
 
     public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes()

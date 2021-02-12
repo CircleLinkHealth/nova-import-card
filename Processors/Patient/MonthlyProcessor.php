@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 class MonthlyProcessor implements PatientMonthlyBillingProcessor
@@ -29,13 +30,14 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
         $processorOutputCollection = collect();
         $patient->getAvailableServiceProcessors()
             ->toCollection()
-            ->each(function (PatientServiceProcessor $processor) use ($patient, &$processorOutputCollection) {
+            ->each(function (PatientServiceProcessor $processor) use (&$patient, &$processorOutputCollection) {
                 if ($this->shouldNotTouch($processor->code(), $patient->getLocationId(), $patient->getChargeableMonth())) {
                     return;
                 }
 
                 $output = $processor->processBilling($patient);
                 if ($output->shouldSendToDatabase()) {
+                    $patient->pushServiceFromOutputIfYouShould($output);
                     $processorOutputCollection->push($output);
                 }
             });

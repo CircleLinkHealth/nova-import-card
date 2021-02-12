@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
@@ -28,6 +29,7 @@ class Eloquent implements PatientServiceProcessorRepository
     private Collection $isAttachedStubs;
     private bool $isChargeableServiceEnabledForMonth = false;
     private Collection $isFulfilledStubs;
+    private array $patientConsentedServices = [];
     private Collection $summariesCreated;
 
     public function __construct()
@@ -99,6 +101,7 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
+        //todo: make dynamic if more tests use
         $chargebleServices = ChargeableService::cached();
 
         /** @var ChargeableService $cs */
@@ -150,6 +153,11 @@ class Eloquent implements PatientServiceProcessorRepository
         throw new \Exception('not implemented');
     }
 
+    public function getSummariesCreated(): Collection
+    {
+        return $this->summariesCreated;
+    }
+
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         if ($this->isAttachedStubs->isEmpty()) {
@@ -181,7 +189,9 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function multiAttachServiceSummaries(Collection $processingOutputCollection): void
     {
-        // TODO: Implement multiAttachServiceSummaries() method.
+        $processingOutputCollection->each(function (PatientServiceProcessorOutputDTO $output) {
+            $this->summariesCreated->push(ChargeablePatientMonthlySummary::make($output->toArray()));
+        });
     }
 
     public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
@@ -196,7 +206,11 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        throw new \Exception('not implemented');
+        $this->summariesCreated->where('patient_user_id', $patientId)
+            ->where('chargeable_month', $month)
+            ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode))
+            ->where('requires_patient_consent', true)
+            ->isNotEmpty();
     }
 
     /**
@@ -256,6 +270,11 @@ class Eloquent implements PatientServiceProcessorRepository
         return new ChargeablePatientMonthlySummary($array);
     }
 
+    public function setPatientConsentedForService(int $patientId, string $chargeableService): void
+    {
+        $this->patientConsentedServices[$patientId][] = $chargeableService;
+    }
+
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, $requiresPatientConsent = false): ChargeablePatientMonthlySummary
     {
         $this->summariesCreated->push($array = [
@@ -267,25 +286,11 @@ class Eloquent implements PatientServiceProcessorRepository
 
         return new ChargeablePatientMonthlySummary($array);
     }
-
-    private function chargeableServiceCodeIds(): array
-    {
-        return [
-            ChargeableService::CCM                     => 1,
-            ChargeableService::BHI                     => 2,
-            ChargeableService::CCM_PLUS_40             => 3,
-            ChargeableService::CCM_PLUS_60             => 4,
-            ChargeableService::PCM                     => 5,
-            ChargeableService::AWV_INITIAL             => 6,
-            ChargeableService::AWV_SUBSEQUENT          => 7,
-            ChargeableService::GENERAL_CARE_MANAGEMENT => 8,
-        ];
-    }
-
+    
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
-        return 1 === $this->summariesCreated->where('patient_id', $patientId)
-            ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode] ?? 0)
+        return 1 === $this->summariesCreated->where('patient_user_id', $patientId)
+            ->where('chargeable_service_id', ChargeableService::cached()->where('code', $chargeableServiceCode)->first()->id)
             ->where('chargeable_month', $month)
             ->count();
     }
