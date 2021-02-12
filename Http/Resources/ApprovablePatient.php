@@ -95,18 +95,31 @@ class ApprovablePatient extends JsonResource
         /** @var User $user */
         $user = $this->resource->patientUser;
 
-        return $user->chargeableMonthlySummaries
-            ->filter(fn (ChargeablePatientMonthlySummary $item) => $item->is_fulfilled)
-            ->map(function (ChargeablePatientMonthlySummary $view) use ($user) {
+        $services = $user->chargeableMonthlySummaries
+            ->map(function (ChargeablePatientMonthlySummary $item) use ($user) {
                 /** @var ChargeablePatientMonthlyTime $time */
-                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id', $view->chargeable_service_id);
+                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id', $item->chargeable_service_id);
 
                 return [
-                    'id'         => $view->chargeable_service_id,
-                    'total_time' => optional($time)->total_time ?? 0,
+                    'id'           => $item->chargeable_service_id,
+                    'is_fulfilled' => $item->is_fulfilled,
+                    'total_time'   => optional($time)->total_time ?? 0,
                 ];
             })
             ->values();
+
+        $user->chargeableMonthlyTime->each(function (ChargeablePatientMonthlyTime $time) use ($services) {
+            $entry = $services->firstWhere('chargeable_service_id', $time->chargeable_service_id);
+            if ( ! $entry) {
+                $services->push([
+                    'id'           => $time->chargeable_service_id,
+                    'is_fulfilled' => false,
+                    'total_time'   => $time->total_time,
+                ]);
+            }
+        });
+
+        return $services;
     }
 
     private function getProblems(): Collection

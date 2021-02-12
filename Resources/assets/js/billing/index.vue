@@ -174,12 +174,12 @@
                 <template slot="chargeable_services" slot-scope="props">
                     <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
                          @click="showChargeableServicesModal(props.row)">
-                        <div v-if="props.row.chargeable_services.length">
+                        <div v-if="props.row.chargeables().length">
                             <label class="label label-info margin-5 inline-block"
                                    v-for="service in props.row.chargeables()"
                                    :key="service.id">{{ service.code }}</label>
                         </div>
-                        <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
+                        <div v-if="!props.row.chargeables().length">&lt;Edit&gt;</div>
                         <loader v-if="props.row.promises['update_chargeables']"></loader>
                     </div>
                 </template>
@@ -562,7 +562,15 @@
                         if (typeof item.total_time !== 'undefined') {
                             result.total_time = item.total_time;
                         } else {
+                            // backwards compatibility
                             result.total_time = cs.code === SERVICES.BHI ? patient.bhi_time : patient.ccm_time;
+                        }
+
+                        if (typeof item.is_fulfilled !== 'undefined') {
+                            result.is_fulfilled = item.is_fulfilled;
+                        } else {
+                            // backwards compatibility
+                            result.is_fulfilled = true;
                         }
 
                         return result;
@@ -600,18 +608,20 @@
                         approve_reject: null
                     },
                     chargeables: () => {
-                        //we need the chargeableService for the practice (not all chargeableServices)
                         const practiceChargeableServices = this.selectedPracticeChargeableServices;
-                        return item.chargeable_services.map(item => practiceChargeableServices.find(service => service.id === item.id)).filter(Boolean);
+                        return item.chargeable_services
+                            .filter(item => item.is_fulfilled)
+                            .map(item => practiceChargeableServices.find(service => service.id === item.id))
+                            .filter(Boolean);
                     },
-                    onChargeableServicesUpdate: (services) => {
+                    onChargeableServicesUpdate: (allPatientServices, changes) => {
                         const original = item.chargeable_services;
-                        item.chargeable_services = services;
-                        console.log('service-ids', services, item);
+                        item.chargeable_services = allPatientServices;
+                        console.log('service-ids', allPatientServices, changes);
                         item.promises.update_chargeables = true
                         return this.axios.post(rootUrl('reports/monthly-billing/set-patient-services'), {
                             report_id: item.reportId,
-                            patient_chargeable_services: services,
+                            patient_chargeable_services: changes,
                             version: this.version
                         }).then(response => {
                             console.log('billing:chargeable-services:update', response.data)
@@ -731,7 +741,9 @@
                             return a
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
-                            chargeable_services: row.chargeable_services.map(item => (this.chargeableServices.find(service => service.id === item.id) || {}).code),
+                            chargeable_services: row.chargeable_services
+                                .filter(item => item.is_fulfilled)
+                                .map(item => (this.chargeableServices.find(service => service.id === item.id) || {}).code),
                             'CCM Problem Code(s)': this.attestedCcmProblemCodes(row),
                             'BHI Problem Code(s)': this.attestedBhiProblemCodes(row)
                         })))

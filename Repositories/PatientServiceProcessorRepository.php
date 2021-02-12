@@ -120,6 +120,7 @@ class PatientServiceProcessorRepository implements Repository
     public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection
     {
         return new EloquentCollection(ChargeablePatientMonthlyTime::where('patient_user_id', $patientId)
+            ->with('chargeableService')
             ->where('chargeable_month', $month)
             ->get());
     }

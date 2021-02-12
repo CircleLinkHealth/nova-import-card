@@ -55,8 +55,8 @@
                 validationMessage: null,
                 info: {
                     okHandler() {
-                        if (typeof (self.done) == 'function') {
-                            self.done(self.changes);
+                        if (typeof (self.done) == 'function' && self.changes.length) {
+                            self.done(self.patientServices, self.changes);
                         }
                         Event.$emit("modal-chargeable-services:hide")
                     },
@@ -98,16 +98,14 @@
                     return;
                 }
                 const service = this.patientServices.find(s => s.id === +event.currentTarget.value);
-                let found = false;
-                for (let i = this.changes.length - 1; i >= 0; i--) {
-                    const changed = this.changes[i];
-                    if (changed.id === service.id) {
-                        found = true;
-                        this.changes.splice(i, 1);
-                    }
+                if (!service) {
+                    return;
                 }
 
-                if (!found) {
+                const changedIndex = this.changes.findIndex(changed => changed.id === service.id);
+                if (changedIndex > -1) {
+                    this.changes.splice(changedIndex, 1);
+                } else {
                     this.changes.push({id: service.id, action_type: service.selected ? 'force' : 'block'});
                 }
 
@@ -146,13 +144,13 @@
                 this.info.done = (this.row || {}).onChargeableServicesUpdate
                 this.patientServices = this.services.map(service => {
                     const pService = this.row.chargeable_services.find((item) => service.id === item.id);
-                    service.selected = !!pService;
+                    service.selected = pService && pService.is_fulfilled;
                     service.total_time = pService ? pService.total_time : 0;
                     service.disabled = !this.isServiceChargeableForPatient(service);
 
                     return service;
-                })
-            })
+                });
+            });
         }
     }
 </script>

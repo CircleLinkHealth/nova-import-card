@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
@@ -28,11 +27,12 @@ class PatientServicesForTimeTracker
 
     protected Carbon $month;
 
+    /** @var ChargeablePatientMonthlyTime[]|Collection|null */
+    protected ?Collection $monthlyTimes;
+
     protected int $patientId;
 
     protected PatientServiceProcessorRepository $repo;
-
-    protected ?Collection $summaries;
 
     public function __construct(int $patientId, Carbon $month)
     {
@@ -42,21 +42,21 @@ class PatientServicesForTimeTracker
 
     public function get(): PatientChargeableSummaryCollection
     {
-        return $this->setSummaries()
+        return $this->setMonthlyTimes()
             ->consolidateSummaryData()
             ->createAndReturnResource();
     }
 
     public function getRaw(): Collection
     {
-        return $this->setSummaries()
+        return $this->setMonthlyTimes()
             ->consolidateSummaryData()
-            ->summaries;
+            ->monthlyTimes;
     }
 
     private function consolidateSummaryData(): self
     {
-        if ($this->summaries->isEmpty()) {
+        if ($this->monthlyTimes->isEmpty()) {
             return $this;
         }
 
@@ -67,13 +67,13 @@ class PatientServicesForTimeTracker
     private function createAndReturnResource(): PatientChargeableSummaryCollection
     {
         return new PatientChargeableSummaryCollection(
-            $this->summaries->transform(
+            $this->monthlyTimes->transform(
                 fn (ChargeablePatientMonthlyTime $summary) => new PatientChargeableSummary($summary)
             )
         );
     }
 
-    private function createFauxSummariesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
+    private function createFauxMonthlyTimesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
     {
         $summaries = new \Illuminate\Database\Eloquent\Collection();
 
@@ -160,8 +160,8 @@ class PatientServicesForTimeTracker
 
     private function filterUsingPatientServiceStatus(): self
     {
-        $this->summaries = $this->summaries
-            ->filter(fn (ChargeablePatientMonthlySummary $summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeableService->code))
+        $this->monthlyTimes = $this->monthlyTimes
+            ->filter(fn (ChargeablePatientMonthlyTime $summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeableService->code))
             ->values();
 
         return $this;
@@ -181,11 +181,10 @@ class PatientServicesForTimeTracker
 
     private function rejectNonTimeTrackerServices(): self
     {
-        $this->summaries = $this->summaries
+        $this->monthlyTimes = $this->monthlyTimes
             ->reject(function (ChargeablePatientMonthlyTime $summary) {
-                return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
-            })
-        ;
+                return in_array($summary->chargeableService->code, self::NON_TIME_TRACKABLE_SERVICES);
+            });
 
         return $this;
     }
@@ -199,13 +198,13 @@ class PatientServicesForTimeTracker
         return $this->repo;
     }
 
-    private function setSummaries(): self
+    private function setMonthlyTimes(): self
     {
-        $this->summaries = $this->newBillingIsEnabled() ?
+        $this->monthlyTimes = $this->newBillingIsEnabled() ?
             $this->repo()
-                ->getChargeablePatientSummaries($this->patientId, $this->month)
+                ->getChargeablePatientTimesView($this->patientId, $this->month)
                 ->transform(fn ($entry) => $entry->replicate()) :
-            $this->createFauxSummariesFromLegacyData();
+            $this->createFauxMonthlyTimesFromLegacyData();
 
         return $this;
     }
