@@ -24,6 +24,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
+use CircleLinkHealth\Customer\AppConfig\UsersWhoCanBubbleChat;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
@@ -75,6 +76,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -2268,6 +2270,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isAdmin(): bool
     {
         return $this->hasRole('administrator');
+    }
+
+    public function isAllowedToBubbleChat()
+    {
+        $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
+        return in_array($this->id, $bubbleChatters);
     }
 
     /**
