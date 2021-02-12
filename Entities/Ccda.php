@@ -114,6 +114,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
+    const CLH_GENERATED = 'clh_generated';
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';
