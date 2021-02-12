@@ -30,22 +30,11 @@ class PatientChargeableServicesForProcessing
                                        $summary->chargeable_service_id)
                                                         ->where('chargeable_month', $summary->chargeable_month)
                                                         ->first()
-                                       ->total_time)
+                                   )->total_time
                                );
         })
                         ->filter()
                         ->toArray();
-    }
-
-    public static function fromRelationship(PatientForcedChargeableService $s): ?self
-    {
-        if ( ! $s->chargeableService) {
-            return null;
-        }
-
-        return (new static())
-            ->setChargeableServiceCode($s->chargeableService->code)
-            ->setActionType($s->action_type);
     }
 
     /**
@@ -62,6 +51,7 @@ class PatientChargeableServicesForProcessing
     public function setRequiresConsent(bool $requiresConsent): self
     {
         $this->requiresConsent = $requiresConsent;
+        return $this;
     }
 
     /**
@@ -78,6 +68,7 @@ class PatientChargeableServicesForProcessing
     public function setCode(string $code): self
     {
         $this->code = $code;
+        return $this;
     }
 
     /**
@@ -94,6 +85,7 @@ class PatientChargeableServicesForProcessing
     public function setIsFulfilled(bool $isFulfilled): self
     {
         $this->isFulfilled = $isFulfilled;
+        return $this;
     }
 
     /**
@@ -110,18 +102,8 @@ class PatientChargeableServicesForProcessing
     public function setMonthlyTime(?int $monthlyTime = null): self
     {
         $this->monthlyTime = $monthlyTime ?? 0;
+        return $this;
     }
 
-//    Will contain below:
-//        /** @var ChargeablePatientMonthlyTime $monthlyTime */
-//        $monthlyTime = $patient
-//            ->chargeableMonthlyTime
-//            ->where('chargeableService.code', $this->baseCode())
-//            ->where('chargeable_month', $chargeableMonth)
-//            ->first();
-//
-//        if ( ! $monthlyTime) {
-//            return false;
-//        }
     protected int $monthlyTime;
 }

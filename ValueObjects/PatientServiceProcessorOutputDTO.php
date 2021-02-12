@@ -14,7 +14,7 @@ class PatientServiceProcessorOutputDTO
     protected int $chargeableServiceId;
     protected int $patientUserId;
     protected bool $sendToDatabase = false;
-    protected bool $isFulfilling;
+    protected bool $isFulfilling = false;
 
     /**
      * @return bool

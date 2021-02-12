@@ -38,9 +38,11 @@ interface PatientServiceProcessor
 
     public function processBilling(PatientMonthlyBillingDTO $billingStub): PatientServiceProcessorOutputDTO;
 
-    public function repo(): PatientServiceProcessorRepository;
-
     public function shouldAttach(): bool;
 
     public function shouldFulfill(): bool;
+
+    public function shouldUnfulfill();
+
+    public function unfulfill();
 }

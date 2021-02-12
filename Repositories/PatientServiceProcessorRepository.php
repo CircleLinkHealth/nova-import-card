@@ -21,7 +21,8 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class PatientServiceProcessorRepository implements Repository
 {
@@ -101,7 +102,7 @@ class PatientServiceProcessorRepository implements Repository
         ]);
     }
 
-    public function getChargeablePatientSummaries(int $patientId, Carbon $month): Collection
+    public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
         return new Collection(ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->with('chargeableService')
@@ -121,7 +122,7 @@ class PatientServiceProcessorRepository implements Repository
             ->first();
     }
 
-    public function getChargeablePatientTimesView(int $patientId, Carbon $month): Collection
+    public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection
     {
         return new Collection(ChargeablePatientMonthlyTime::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
@@ -232,7 +233,7 @@ class PatientServiceProcessorRepository implements Repository
                     'chargeable_service_id' => $output->getChargeableServiceId(),
                     'chargeable_month' => $output->getChargeableMonth()
                 ],[
-                    'is_fulfilled' => $output->getIsFulfilling()
+                    'is_fulfilled' => $output->isFulfilling()
                 ]);
             }
         },1);

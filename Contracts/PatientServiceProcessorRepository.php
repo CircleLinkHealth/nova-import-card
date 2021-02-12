@@ -13,7 +13,8 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 interface PatientServiceProcessorRepository
 {
@@ -25,11 +26,11 @@ interface PatientServiceProcessorRepository
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
-    public function getChargeablePatientSummaries(int $patientId, Carbon $month): Collection;
+    public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection;
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummary;
 
-    public function getChargeablePatientTimesView(int $patientId, Carbon $month): Collection;
+    public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection;
 
     public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User;
 

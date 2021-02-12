@@ -90,6 +90,9 @@ class ProcessPatientSummaries
             ->ofLocation(intval($patient->getPreferredContactLocation()))
             ->forMonth($thisMonth)
             ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+            ->withPatientServices(
+                ...PatientChargeableServicesForProcessing::fromCollection($patient)
+            )
             ->withForcedPatientServices(
                 ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
             );

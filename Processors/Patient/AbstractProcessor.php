@@ -74,6 +74,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     {
         $this->output->setPatientUserId($this->input->getPatientId());
         $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
+        $this->output->setChargeableMonth($this->input->getChargeableMonth());
 
         if ( ! $this->isAttached()) {
             if ($this->shouldForceAttach() || $this->shouldAttach()) {
@@ -90,14 +91,16 @@ abstract class AbstractProcessor implements PatientServiceProcessor
                 $this->unfulfill();
             }
         }
+
+        return $this->output;
     }
 
-    private function shouldUnfulfill() : bool
+    public function shouldUnfulfill() : bool
     {
         return ! $this->shouldFulfill();
     }
 
-    private function unfulfill()
+    public function unfulfill()
     {
         $this->output->setSendToDatabase(true);
         $this->output->setIsFulfilling(false);
