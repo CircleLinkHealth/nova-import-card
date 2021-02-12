@@ -10,10 +10,10 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\DuskTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Laravel\Dusk\Browser;
-use CircleLinkHealth\SelfEnrollment\Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
 class OnCarePlanApprovalDuskTest extends DuskTestCase
