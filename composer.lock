@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e8443024a37dfbd1822fe7a0e84051e",
+    "content-hash": "f8c6a1421ce4f8cf65a79716f6ab04f0",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -377,16 +377,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.7",
+            "version": "3.173.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "854b9f827438d1d69df6550d9ada40deaa6d44fe"
+                "reference": "e6d08cdc8206af55dd7bbb967a0350b41263018c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/854b9f827438d1d69df6550d9ada40deaa6d44fe",
-                "reference": "854b9f827438d1d69df6550d9ada40deaa6d44fe",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e6d08cdc8206af55dd7bbb967a0350b41263018c",
+                "reference": "e6d08cdc8206af55dd7bbb967a0350b41263018c",
                 "shasum": ""
             },
             "require": {
@@ -458,7 +458,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-11T19:13:05+00:00"
+            "time": "2021-02-12T19:15:02+00:00"
         },
         {
             "name": "brick/math",
@@ -872,6 +872,42 @@
             }
         },
         {
+            "name": "circlelinkhealth/condition-code-lookup-module",
+            "version": "v1.12",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
+                "reference": "e173b29fbb58f836d2c8b891be8a7f0fda13d6a3"
+            },
+            "require": {
+                "ext-curl": "*",
+                "laravel/framework": "*",
+                "php": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\ConditionCodeLookup\\": ""
+                },
+                "files": []
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "time": "2021-01-22T22:36:17+00:00"
+        },
+        {
             "name": "circlelinkhealth/core-module",
             "version": "v3.1",
             "source": {
@@ -992,11 +1028,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v3.0.7",
+            "version": "v3.0.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "e2273d68f6a0322cb51d7c84f26bbeecbc67b2f1"
+                "reference": "6fa73afa36c19d02c21bb2cf9591ca91fd41868f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1016,7 +1052,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-05T18:14:01+00:00"
+            "time": "2021-02-12T21:01:16+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1070,13 +1106,14 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.7.4",
+            "version": "v4.7.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6ac92c3e28b4112a62902b86662fb5d2a9eae460"
+                "reference": "6ea29f84e465349a7cdff9c512dd938272093df8"
             },
             "require": {
+                "circlelinkhealth/condition-code-lookup-module": "^1.1.7",
                 "circlelinkhealth/customer-module": "*",
                 "circlelinkhealth/synonyms-module": "*"
             },
@@ -1105,7 +1142,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-12T00:27:57+00:00"
+            "time": "2021-02-12T21:54:55+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1482,11 +1519,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.5.1",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "9e46d82ff4e428eff91c8e27bbec19596644b8b3"
+                "reference": "0ec7f533c72d9a17ee4beaa1c93fa3aa5f6d2ac9"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1509,7 +1546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-12T09:51:17+00:00"
+            "time": "2021-02-12T21:54:55+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
