@@ -27,5 +27,9 @@
         </enrollment-dashboard>
     </div>
 
+    @if($user->isAllowedToBubbleChat())
+        @include('intercom-chat.clh-chat-bubble', compact(['user' => $user]));
+    @endif
+
     <script src="{{asset('compiled/js/app-enrollment-ui.js')}}"></script>
 @stop
