@@ -70,19 +70,7 @@ class AddProviderIdToEnrollee extends Command
 
     private function fromPracticePull(Enrollee &$e)
     {
-        $dem = Demographics::whereNotNull('referring_provider_name')
-            ->where(function ($q) use ($e) {
-                               $q->where(function ($q) use ($e) {
-                                   $q->where('eligibility_job_id', '=', $e->eligibility_job_id)
-                                       ->whereNotNull('eligibility_job_id');
-                               })
-                                   ->orWhere([
-                                       ['mrn', '=', $e->mrn],
-                                       ['first_name', '=', $e->first_name],
-                                       ['last_name', '=', $e->last_name],
-                                       ['dob', '=', $e->dob],
-                                   ]);
-                           })->first();
+        $dem = Demographics::forPatient($e->practice_id, $e->first_name, $e->last_name, $e->dob)->first();
         if ($dem) {
             $e->referring_provider_name = $dem->referring_provider_name;
             if ($dem->billing_provider_user_id) {
