@@ -134,7 +134,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeableLocationMonthlySummary::where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
@@ -161,7 +161,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeableLocationMonthlySummary::where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')
@@ -200,7 +200,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeableLocationMonthlySummary::where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->whereIn('chargeable_service_id', function ($q) use ($chargeableServiceCode) {
                 $q->select('id')

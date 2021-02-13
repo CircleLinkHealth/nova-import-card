@@ -39,10 +39,11 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_if_it_checks_if_service_is_available_for_location()
     {
+        $ccmCode = ChargeableService::CCM;
         ChargeableLocationMonthlySummary::where('location_id', $locationId = $this->patient()->getPreferredContactLocation())->delete();
         (new LocationProcessorEloquentRepository())->store(
             $locationId,
-            $ccmCode = ChargeableService::CCM,
+            ChargeableService::getChargeableServiceIdUsingCode($ccmCode),
             $startOfMonth = Carbon::now()->startOfMonth()
         );
 
@@ -54,10 +55,10 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_it_can_require_and_set_patient_consent()
     {
-        $this->repo->store($patientId = $this->patient()->id, $ccmCode = ChargeableService::CCM, $startOfMonth = Carbon::now()->startOfMonth());
+        $this->repo->store($patientId = $this->patient()->id, ChargeableService::getChargeableServiceIdUsingCode($ccmCode = ChargeableService::CCM), $startOfMonth = Carbon::now()->startOfMonth());
         self::assertFalse($this->repo->requiresPatientConsent($patientId, $ccmCode, $startOfMonth));
 
-        $this->repo->store($patientId, $bhiCode = ChargeableService::BHI, $startOfMonth, true);
+        $this->repo->store($patientId, ChargeableService::getChargeableServiceIdUsingCode($bhiCode = ChargeableService::BHI), $startOfMonth, true);
         self::assertTrue($this->repo->requiresPatientConsent($patientId, $bhiCode, $startOfMonth));
 
         $this->repo->setPatientConsented($patientId, $bhiCode, $startOfMonth);
