@@ -49,4 +49,6 @@ interface LocationProcessorRepository
     public function servicesExistForMonth(array $locationIds, Carbon $month): bool;
 
     public function store(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
+    
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month) : Builder;
 }

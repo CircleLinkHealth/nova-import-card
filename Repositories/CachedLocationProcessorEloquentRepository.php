@@ -184,4 +184,9 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         BillingCache::forgetLocationSummaries([$locationId]);
         BillingCache::setLocationSummariesInCache($summaries);
     }
+    
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
+    {
+        return $this->repo->processableLocationPatientsForMonth($locationIds, $month);
+    }
 }

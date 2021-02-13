@@ -19,12 +19,9 @@ class LocationChargeableServicesForProcessing
     public static function fromCollection(Collection $collection): array
     {
         return $collection->map(function (ChargeableLocationMonthlySummary $summary) {
-            $self = new self();
-            $self->isLocked = $summary->is_locked;
-            $self->code = $summary->chargeableService->code;
-            $self->month = $summary->chargeable_month;
-
-            return $self;
+            return (new self())->setMonth($summary->chargeable_month)
+                ->setIsLocked($summary->is_locked)
+                ->setCode($summary->chargeableService->code);
         })
             ->toArray();
     }

@@ -75,8 +75,7 @@ class Location implements CustomerProcessor
     public function processServicesForAllPatients(array $locationIds, Carbon $chargeableMonth): void
     {
         $this->repo()
-            //todo:estw jie ena non locked service, get
-            ->locationPatients($locationIds, Patient::ENROLLED)
+            ->processableLocationPatientsForMonth($locationIds, $chargeableMonth)
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(

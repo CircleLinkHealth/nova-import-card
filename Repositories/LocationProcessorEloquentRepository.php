@@ -167,4 +167,23 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->values()
             ->toArray();
     }
+    
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
+    {
+        return User::ofType('participant')
+            ->whereHas(
+                'patientInfo',
+                function ($info) use ($locationIds, $month) {
+                    $info->whereIn('preferred_contact_location', $locationIds)
+                        ->enrolled()
+                        ->whereHas('location', function ($location)use($month){
+                            $location->whereHas('chargeableServiceSummaries', function ($summary) use ($month){
+                                $summary->where('chargeable_month', $month)
+                                    ->where('is_locked', false);
+                            });
+                        });
+                }
+            );
+        
+    }
 }
