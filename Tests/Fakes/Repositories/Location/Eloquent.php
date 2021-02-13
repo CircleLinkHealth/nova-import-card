@@ -237,6 +237,19 @@ class Eloquent implements LocationProcessorRepository
     
     public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
     {
-        // TODO: Implement processableLocationPatientsForMonth() method.
+        return $this->builder;
+    }
+    
+    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
+    {
+        $this->summaries->push(
+            $stub = (new ChargeableLocationMonthlySummaryStub())
+                ->setLocationId($locationId)
+                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableMonth($month)
+                ->setAmount($amount)
+        );
+        
+        return $stub->toModel();
     }
 }
