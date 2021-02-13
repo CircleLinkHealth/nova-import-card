@@ -10,7 +10,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
@@ -36,18 +41,39 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
     {
         $patient = $this->setupPatientWithSummaries();
 
+        $month = Carbon::now()->startOfMonth();
+
         $dto = (new PatientMonthlyBillingDTO())
             ->subscribe(
                 (app(LocationProcessorRepository::class))
                     ->availableLocationServiceProcessors(
-                        $patient->getPreferredContactLocation(),
+                        [$patient->getPreferredContactLocation()],
                         $thisMonth = Carbon::now()->startOfMonth()
                     )
             )
             ->forPatient($patient->id)
             ->ofLocation(intval($patient->getPreferredContactLocation()))
+            ->setBillingStatusIsTouched(
+                ! is_null(
+                    optional(
+                        $patient
+                            ->monthlyBillingStatus
+                            ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                            ->first()
+                    )->actor_id
+                )
+            )
+            ->withLocationServices(
+                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+            )
             ->forMonth($thisMonth)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id));
+            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+            ->withPatientServices(
+                ...PatientChargeableServicesForProcessing::fromCollection($patient)
+            )
+            ->withForcedPatientServices(
+                ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
+            );
 
         self::assertFalse(empty($dto->getAvailableServiceProcessors()));
         self::assertFalse(empty($dto->getPatientProblems()));
@@ -67,6 +93,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
     public function test_it_updates_cached_records_on_attach()
     {
+        BillingCache::setBillingRevampIsEnabled(true);
         $patient = $this->setupPatientWithSummaries();
 
         $serviceToAttach = ChargeableService::whereNotIn(
@@ -100,6 +127,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
     public function test_it_updates_cached_records_on_fulfill()
     {
+        BillingCache::setBillingRevampIsEnabled(true);
         $patient = $this->setupPatientWithSummaries();
 
         $patientSummaries = $this->repo->getChargeablePatientSummaries($patient->id, $thisMonth = Carbon::now()->startOfMonth());

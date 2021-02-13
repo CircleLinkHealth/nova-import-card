@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\SharedModels\Entities\Activity;
@@ -156,16 +157,32 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function multiAttachServiceSummaries(Collection $processingOutputCollection): void
     {
         $this->repo->multiAttachServiceSummaries($processingOutputCollection);
+        //todo: deprecate
+        /** @var PatientServiceProcessorOutputDTO */
+        $output = $processingOutputCollection->first();
+        $this->reloadPatientChargeableSummaries($output->getPatientUserId(), $output->getChargeableMonth());
     }
 
     public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
     {
-        if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) || ! BillingCache::patientExistsInCache($patientId)) {
+        if ( ! BillingCache::billingRevampIsEnabled() || ! BillingCache::patientExistsInCache($patientId)) {
             return;
         }
 
         $this->getPatientFromCache($patientId, $month)
             ->load(['chargeableMonthlyTime' => function ($q) use ($month) {
+                $q->createdOnIfNotNull($month, 'chargeable_month');
+            }]);
+    }
+
+    public function reloadPatientChargeableSummaries(int $patientId, Carbon $month): void
+    {
+        if ( ! BillingCache::billingRevampIsEnabled() || ! BillingCache::patientExistsInCache($patientId)) {
+            return;
+        }
+
+        $this->getPatientFromCache($patientId, $month)
+            ->load(['chargeableMonthlySummaries' => function ($q) use ($month) {
                 $q->createdOnIfNotNull($month, 'chargeable_month');
             }]);
     }

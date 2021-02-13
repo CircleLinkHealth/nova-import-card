@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
@@ -39,7 +38,9 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
                 }
             });
 
-        $this->patientServiceRepository->multiAttachServiceSummaries($processorOutputCollection);
+        if ($processorOutputCollection->isNotEmpty()) {
+            $this->patientServiceRepository->multiAttachServiceSummaries($processorOutputCollection);
+        }
 
         return $patient;
     }
