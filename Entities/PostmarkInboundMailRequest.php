@@ -38,6 +38,7 @@ class PostmarkInboundMailRequest
             'Cc',
             'From',
             'Date',
+            'HtmlBody',
             'MessageID',
             'OriginalRecipient',
             'ReplyTo',
@@ -50,9 +51,7 @@ class PostmarkInboundMailRequest
     private function setFields(array $input, array $fields)
     {
         foreach ($fields as $field) {
-            if (isset($input[$field])) {
-                $this->$field = $input[$field];
-            }
+            $this->$field = $input[$field] ?? null;
         }
     }
 }
