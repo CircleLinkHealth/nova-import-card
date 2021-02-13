@@ -120,7 +120,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
          * 4. Revisions insertion after insert query
          * 5. ServiceSummarySQLView select query to update cached data
          */
-        self::assertTrue(5 === count(DB::getQueryLog()));
+        self::assertEquals(5, count(DB::getQueryLog()));
 
         DB::disableQueryLog();
     }

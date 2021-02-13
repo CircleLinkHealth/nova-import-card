@@ -33,7 +33,7 @@ class PatientRepositoryTest extends CustomerTestCase
             ChargeableService::BHI,
             ChargeableService::PCM,
         ] as $code) {
-            (new LocationProcessorEloquentRepository())->store($locationId, $code, $startOfMonth = Carbon::now()->startOfMonth());
+            (new LocationProcessorEloquentRepository())->store($locationId, ChargeableService::getChargeableServiceIdUsingCode($code), $startOfMonth = Carbon::now()->startOfMonth());
         }
 
         LogPatientCcmStatusForEndOfMonth::create($this->patient()->id, $this->patient()->getCcmStatus(), $startOfMonth);
