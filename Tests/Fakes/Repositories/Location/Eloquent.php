@@ -234,4 +234,9 @@ class Eloquent implements LocationProcessorRepository
             ->unique()
             ->count();
     }
+    
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
+    {
+        // TODO: Implement processableLocationPatientsForMonth() method.
+    }
 }

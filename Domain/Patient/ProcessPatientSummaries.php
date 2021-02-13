@@ -71,9 +71,14 @@ class ProcessPatientSummaries
             ->forPatient($patient->id)
             ->ofLocation(intval($patient->getPreferredContactLocation()))
             ->setBillingStatusIsTouched(
-                ! is_null(optional($patient->monthlyBillingStatus
-                    ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($this->month))
-                    ->first())->actor_id)
+                ! is_null(
+                    optional(
+                        $patient
+                            ->monthlyBillingStatus
+                            ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                            ->first()
+                    )->actor_id
+                )
             )
             ->withLocationServices(
                 ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)

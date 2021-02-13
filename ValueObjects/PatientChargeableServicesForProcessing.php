@@ -16,7 +16,7 @@ class PatientChargeableServicesForProcessing
     protected string $code;
     protected bool $isFulfilled;
 
-    protected int $monthlyTime;
+    protected int $monthlyTime = 0;
     protected bool $requiresConsent;
 
     public static function fromCollection(User $patient): array
