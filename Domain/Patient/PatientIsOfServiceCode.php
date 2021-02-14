@@ -180,5 +180,6 @@ class PatientIsOfServiceCode
             $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $month = Carbon::now()->startOfMonth()),
             $month
         );
+        return $this;
     }
 }
