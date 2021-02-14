@@ -42,10 +42,6 @@ interface PatientServiceProcessorRepository
 
     public function multiAttachServiceSummaries(Collection $processingOutputCollection): void;
 
-    public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void;
-
-    public function reloadPatientProblems(int $patientId): void;
-
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;

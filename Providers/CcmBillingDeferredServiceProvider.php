@@ -23,6 +23,7 @@ use CircleLinkHealth\CcmBilling\Repositories\CachedLocationProcessorEloquentRepo
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsServiceV3;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -42,7 +43,6 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             PatientServiceRepositoryInterface::class,
             LocationProcessorRepository::class,
             LocationProblemServiceRepositoryInterface::class,
-            PatientProcessorEloquentRepositoryInterface::class,
             BillingCache::class,
 
             ApproveBillablePatientsService::class,
@@ -62,10 +62,9 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
     public function register()
     {
         $this->app->singleton(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
-        $this->app->singleton(PatientServiceRepositoryInterface::class, CachedPatientServiceProcessorRepository::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceProcessorRepository::class);
         $this->app->singleton(LocationProcessorRepository::class, CachedLocationProcessorEloquentRepository::class);
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
-        $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
         $this->app->singleton(BillingCache::class, BillingDataCache::class);
         $this->app->singleton(ApproveBillablePatientsService::class);
         $this->app->singleton(ApproveBillablePatientsServiceV3::class);
