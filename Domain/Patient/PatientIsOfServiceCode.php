@@ -173,6 +173,7 @@ class PatientIsOfServiceCode
             ->exists();
     }
 
+    //todo: omit patient time from and other needless data from DTO
     private function setDto(?PatientMonthlyBillingDTO $dto = null): self
     {
         $this->dto = $dto ?? PatientMonthlyBillingDTO::generateFromUser(
