@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46ae8696af2035973654ea3d7a4e86aa",
+    "content-hash": "7770af83354cce3532db76811bfdb2fc",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -852,11 +852,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v3.0",
+            "version": "v3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "782f31191ebedf95b742e08e1f4cbd54e5ee68a2"
+                "reference": "ba4519a54ce17656673eb950524b2fad79ddd43a"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -912,15 +912,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-10T18:22:56+00:00"
+            "time": "2021-02-11T00:06:34+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
-            "version": "v1.4",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "da5afc6b1fa307abd8c9f101ef8cda7c3c19853a"
+                "reference": "b0fe68db09e1e33bb8178eb53a6935d106a853c9"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -967,7 +967,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2021-02-06T16:41:23+00:00"
+            "time": "2021-02-10T23:37:28+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1049,13 +1049,14 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.7.4",
+            "version": "v4.7.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6ac92c3e28b4112a62902b86662fb5d2a9eae460"
+                "reference": "707f0b70289ffcf89a18709ffded53b227504b1d"
             },
             "require": {
+                "circlelinkhealth/condition-code-lookup-module": "^1.1.7",
                 "circlelinkhealth/customer-module": "*",
                 "circlelinkhealth/synonyms-module": "*"
             },
@@ -1084,7 +1085,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-12T00:27:57+00:00"
+            "time": "2021-02-14T16:49:54+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -6359,16 +6360,16 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.35",
+            "version": "2.8.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "68a35170fdf36e7b35f9c125e5102338dbc3ff65"
+                "reference": "e55c155f4d1ab299a0cfca8ec29a0154918c9e3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/68a35170fdf36e7b35f9c125e5102338dbc3ff65",
-                "reference": "68a35170fdf36e7b35f9c125e5102338dbc3ff65",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/e55c155f4d1ab299a0cfca8ec29a0154918c9e3d",
+                "reference": "e55c155f4d1ab299a0cfca8ec29a0154918c9e3d",
                 "shasum": ""
             },
             "require": {
@@ -6407,7 +6408,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2021-01-25T19:09:34+00:00"
+            "time": "2021-02-13T14:35:52+00:00"
         },
         {
             "name": "monolog/monolog",
