@@ -164,17 +164,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         if ($consentDate = optional($this->enrollee)->consented_at) {
             $patientInfo->consent_date = $consentDate;
 
-            if (
-            (
-                $this->patient->isSurveyOnly()
-                && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
-            )
-            || (
-                in_array($this->enrollee->status, [Enrollee::ENROLLED, Enrollee::CONSENTED])
-                && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
-                && 1 === Revision::whereRevisionableId($this->patient->patientInfo->id)->whereRevisionableType(Patient::class)->whereNull('old_value')->where('new_value', Patient::UNREACHABLE)->where('key', 'ccm_status')->count()
-            )
-            ) {
+            if ($this->isNewSurveyOnlyUser() || is_null($patientInfo->ccm_status)) {
                 $patientInfo->ccm_status = Patient::ENROLLED;
             }
         }
@@ -282,5 +272,18 @@ class ImportPatientInfo extends BaseCcdaImportTask
     private function transform(object $demographics): array
     {
         return $this->getTransformer()->demographics($demographics);
+    }
+    
+    private function isNewSurveyOnlyUser()
+    {
+        return (
+            $this->patient->isSurveyOnly()
+            && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
+        )
+        || (
+            in_array($this->enrollee->status, [Enrollee::ENROLLED, Enrollee::CONSENTED])
+            && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
+            && 1 === Revision::whereRevisionableId($this->patient->patientInfo->id)->whereRevisionableType(Patient::class)->whereNull('old_value')->where('new_value', Patient::UNREACHABLE)->where('key', 'ccm_status')->count()
+        );
     }
 }
