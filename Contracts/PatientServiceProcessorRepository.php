@@ -47,4 +47,5 @@ interface PatientServiceProcessorRepository
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
+    public function getPatientWithBillingDataForNotesController(int $patientId):? User;
 }

@@ -132,6 +132,12 @@ class PatientServiceProcessorRepository implements Repository
             ->first();
     }
 
+    public function getPatientWithBillingDataForNotesController(int $patientId): ?User
+    {
+        return $this->approvablePatientUserQuery($patientId, Carbon::now()->startOfMonth(), true)
+            ->first();
+    }
+
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
