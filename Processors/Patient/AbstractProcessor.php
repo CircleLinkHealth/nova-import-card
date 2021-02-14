@@ -138,15 +138,13 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     private function clashesWithHigherOrderServices(): bool
     {
-        //todo: revisit clashes to accomodate forced cs - if forced === is attached?
+        //todo: revisit clashes
         foreach ($this->clashesWith() as $clash) {
+            $clashIsEligible = $clash->isEligibleForPatient($this->input);
+            
             $clashIsAttached = collect($this->input->getPatientServices())->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash->code())->isNotEmpty();
 
-            $hasEnoughProblemsForClash = collect($this->input->getPatientProblems())
-                ->filter(fn (PatientProblemForProcessing $problem) => in_array($clash->code(), $problem->getServiceCodes()))
-                ->count() >= $clash->minimumNumberOfProblems();
-
-            if ($clashIsAttached && $hasEnoughProblemsForClash) {
+            if ($clashIsAttached || $clashIsEligible) {
                 return true;
             }
         }
@@ -203,5 +201,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         $this->input = $input;
 
         return $this;
+    }
+    
+    public function isEligibleForPatient(PatientMonthlyBillingDTO $patient):bool
+    {
+        return $this->setInput($patient)->shouldForceAttach() || $this->shouldAttach();
     }
 }
