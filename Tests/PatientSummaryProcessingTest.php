@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
@@ -16,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
@@ -44,21 +42,22 @@ class PatientSummaryProcessingTest extends TestCase
 
         $startOfMonth = Carbon::now()->startOfMonth()->startOfDay();
 
-        FakeLocationRepository::setChargeableLocationMonthlySummaryStubs(
-            (new ChargeableLocationMonthlySummaryStub())->setLocationId(1)
-                ->setChargeableMonth($startOfMonth)
-                ->setChargeableServiceId($ccmId = ChargeableService::cached()->where('code', ChargeableService::CCM)->first()->id),
-            (new ChargeableLocationMonthlySummaryStub())->setLocationId(1)
-                ->setChargeableMonth($startOfMonth)
-                ->setChargeableServiceId($ccmId = ChargeableService::cached()->where('code', ChargeableService::BHI)->first()->id),
-        );
-
         $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
             ->ofLocation(1)
             ->setBillingStatusIsTouched(false)
             ->forMonth($startOfMonth)
+            ->withLocationServices(
+                (new LocationChargeableServicesForProcessing())
+                    ->setCode(ChargeableService::CCM)
+                    ->setIsLocked(false)
+                    ->setMonth($startOfMonth),
+                (new LocationChargeableServicesForProcessing())
+                    ->setCode(ChargeableService::BHI)
+                    ->setIsLocked(false)
+                    ->setMonth($startOfMonth),
+            )
             ->withProblems(
                 (new PatientProblemForProcessing())
                     ->setId(123)

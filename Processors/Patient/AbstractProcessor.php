@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -58,6 +59,11 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return ! is_null($this->getExistingSummary($this->code()));
     }
 
+    public function isEligibleForPatient(PatientMonthlyBillingDTO $patient): bool
+    {
+        return $this->setInput($patient)->shouldForceAttach() || $this->shouldAttach();
+    }
+
     public function isFulfilled(): bool
     {
         return collect($this->input->getPatientServices())
@@ -77,6 +83,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function shouldAttach(): bool
     {
         if ( ! $this->featureIsEnabled()) {
+            return false;
+        }
+
+        if ( ! $this->isEnabledForLocation()) {
             return false;
         }
 
@@ -138,10 +148,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     private function clashesWithHigherOrderServices(): bool
     {
-        //todo: revisit clashes
+        //todo: revisit clashes - change to priority based system
         foreach ($this->clashesWith() as $clash) {
             $clashIsEligible = $clash->isEligibleForPatient($this->input);
-            
+
             $clashIsAttached = collect($this->input->getPatientServices())->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash->code())->isNotEmpty();
 
             if ($clashIsAttached || $clashIsEligible) {
@@ -189,7 +199,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         if ($existingSummary = $this->getExistingSummary($this->code())) {
             $this->output->setChargeableServiceId($existingSummary->getChargeableServiceId())
                 ->setRequiresConsent($existingSummary->requiresConsent());
-        }else {
+        } else {
             $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
         }
 
@@ -203,8 +213,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this;
     }
     
-    public function isEligibleForPatient(PatientMonthlyBillingDTO $patient):bool
+    private function isEnabledForLocation():bool
     {
-        return $this->setInput($patient)->shouldForceAttach() || $this->shouldAttach();
+        return collect($this->input->getLocationServices())
+                ->filter(fn(LocationChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
+                ->isNotEmpty();
     }
 }
