@@ -72,6 +72,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function handle()
     {
         $this->getBuilder()->get()->each(function (User $patient) {
+            //todo: remove processors and just get from user, call generateFromUser static on DTO
             measureTime("ProcessPatientMonthlyServices:$patient->id", function () use ($patient) {
                 ProcessPatientMonthlyServices::dispatch(
                     (new PatientMonthlyBillingDTO())

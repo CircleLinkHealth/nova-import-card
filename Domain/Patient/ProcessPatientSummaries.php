@@ -55,44 +55,12 @@ class ProcessPatientSummaries
 
     public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void
     {
-        $static = app(self::class);
-
-        BillingCache::clearPatients([$patientUserId]);
-        $patient = $static->repo->getPatientWithBillingDataForMonth($patientUserId, $month);
-
-        $dto = (new PatientMonthlyBillingDTO())
-            ->subscribe(
-                (app(LocationProcessorRepository::class))
-                    ->availableLocationServiceProcessors(
-                        [$patient->getPreferredContactLocation()],
-                        $thisMonth = Carbon::now()->startOfMonth()
-                    )
+        app(self::class)->fromDTO(
+            PatientMonthlyBillingDTO::generateFromUser(
+                (app(PatientServiceProcessorRepository::class))->getPatientWithBillingDataForMonth($patientUserId, $month),
+                $month
             )
-            ->forPatient($patient->id)
-            ->ofLocation(intval($patient->getPreferredContactLocation()))
-            ->setBillingStatusIsTouched(
-                ! is_null(
-                    optional(
-                        $patient
-                            ->monthlyBillingStatus
-                            ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
-                            ->first()
-                    )->actor_id
-                )
-            )
-            ->withLocationServices(
-                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
-            )
-            ->forMonth($thisMonth)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
-            ->withPatientServices(
-                ...PatientChargeableServicesForProcessing::fromCollection($patient)
-            )
-            ->withForcedPatientServices(
-                ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
-            );
-
-        (app(self::class))->fromDTO($dto);
+        );
     }
 
     private function process()
@@ -132,26 +100,7 @@ class ProcessPatientSummaries
             return $this;
         }
 
-        $this->patientDTO = (new PatientMonthlyBillingDTO())
-            ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
-            ->forPatient($this->patientUser->id)
-            ->ofLocation($this->patientUser->patientInfo->location->id)
-            ->forMonth($this->month)
-            ->setBillingStatusIsTouched(
-                ! is_null(optional($this->patientUser->monthlyBillingStatus
-                    ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($this->month))
-                    ->first())->actor_id)
-            )
-            ->withLocationServices(
-                ...LocationChargeableServicesForProcessing::fromCollection($this->patientUser->patientInfo->location->chargeableServiceSummaries)
-            )
-            ->withPatientServices(
-                ...PatientChargeableServicesForProcessing::fromCollection($this->patientUser)
-            )
-            ->withForcedPatientServices(
-                ...ForcedPatientChargeableServicesForProcessing::fromCollection($this->patientUser->forcedChargeableServices)
-            )
-            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($this->patientUser));
+        $this->patientDTO = PatientMonthlyBillingDTO::generateFromUser($this->patientUser, $this->month);
 
         return $this;
     }

@@ -8,8 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -19,24 +23,32 @@ class PatientIsOfServiceCode
 
     protected bool $bypassLocationCheck;
 
-    protected bool $bypassRequiresConsent;
+    protected PatientMonthlyBillingDTO $dto;
     protected int $patientId;
 
     protected PatientServiceProcessorRepository $repo;
 
     protected string $serviceCode;
 
-    public function __construct(int $patientId, string $serviceCode, bool $bypassRequiresConsent = false, bool $bypassLocationCheck = false)
+    public function __construct(int $patientId, string $serviceCode, bool $bypassLocationCheck = false)
     {
-        $this->patientId             = $patientId;
-        $this->serviceCode           = $serviceCode;
-        $this->bypassRequiresConsent = $bypassRequiresConsent;
-        $this->bypassLocationCheck   = $bypassLocationCheck;
+        $this->patientId           = $patientId;
+        $this->serviceCode         = $serviceCode;
+        $this->bypassLocationCheck = $bypassLocationCheck;
     }
 
-    public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false, $bypassLocationCheck = false): bool
+    public static function execute(int $patientId, string $serviceCode, $bypassLocationCheck = false): bool
     {
-        return (new static($patientId, $serviceCode, $bypassRequiresConsent, $bypassLocationCheck))->isOfServiceCode();
+        return (new static($patientId, $serviceCode, $bypassLocationCheck))
+            ->setDto()
+            ->isOfServiceCode();
+    }
+
+    public static function fromDTO(PatientMonthlyBillingDTO $dto, string $serviceCode, $bypassLocationCheck = false): bool
+    {
+        return (new static($dto->getPatientId(), $serviceCode, $bypassLocationCheck))
+            ->setDto($dto)
+            ->isOfServiceCode();
     }
 
     public function isOfServiceCode(): bool
@@ -69,8 +81,7 @@ class PatientIsOfServiceCode
         }
 
         foreach ($clashes as $clashingService) {
-            //todo-investigate: turn into patient has enough problems only check for performance?
-            if (PatientIsOfServiceCode::execute($this->patientId, $clashingService)) {
+            if (PatientIsOfServiceCode::fromDTO($this->dto, $clashingService)) {
                 return true;
             }
         }
@@ -86,26 +97,23 @@ class PatientIsOfServiceCode
     private function hasSummary(): bool
     {
         if ( ! $this->billingRevampIsEnabled()) {
-            if ( ! $this->bypassRequiresConsent && ChargeableService::BHI === $this->serviceCode) {
+            if (ChargeableService::BHI === $this->serviceCode) {
                 return ! $this->requiresPatientBhiConsent();
             }
 
             return true;
         }
 
-        return $this->repo()->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
-            ->where('chargeableService.code', $this->serviceCode)
-            ->where('requires_patient_consent', $this->bypassRequiresConsent)
-            ->count() > 0;
+        return collect($this->dto->getPatientServices())
+            ->filter(fn (PatientChargeableServicesForProcessing $service) => $service->getCode() === $this->serviceCode)
+            ->isNotEmpty();
     }
 
     private function isAClashForForcedService(): bool
     {
-        return $this->repo()
-            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
-            ->forcedChargeableServices
-            ->filter(function (PatientForcedChargeableService $fcs) {
-                $clashes = ClashingChargeableServices::getClashesOfService($fcs->chargeableService->code);
+        return collect($this->dto->getForcedPatientServices())
+            ->filter(function (ForcedPatientChargeableServicesForProcessing $fcs) {
+                $clashes = ClashingChargeableServices::getClashesOfService($fcs->getChargeableServiceCode());
 
                 return in_array($this->serviceCode, $clashes);
             })
@@ -119,21 +127,15 @@ class PatientIsOfServiceCode
 
     private function patientHasBlockedService(): bool
     {
-        return $this->repo()
-            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
-            ->forcedChargeableServices
-            ->where('action_type', PatientForcedChargeableService::BLOCK_ACTION_TYPE)
-            ->where('chargeableService.code', $this->serviceCode)
+        return collect($this->dto->getForcedPatientServices())
+            ->filter(fn (ForcedPatientChargeableServicesForProcessing $service) => $service->getChargeableServiceCode() === $this->serviceCode && $service->isBlocked())
             ->isNotEmpty();
     }
 
     private function patientHasForcedService(): bool
     {
-        return $this->repo()
-            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
-            ->forcedChargeableServices
-            ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
-            ->where('chargeableService.code', $this->serviceCode)
+        return collect($this->dto->getForcedPatientServices())
+            ->filter(fn (ForcedPatientChargeableServicesForProcessing $service) => $service->getChargeableServiceCode() === $this->serviceCode && $service->isForced())
             ->isNotEmpty();
     }
 
@@ -143,21 +145,16 @@ class PatientIsOfServiceCode
             return true;
         }
 
-        $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $thisMonth = Carbon::now()->startOfMonth());
-
-        if ( ! $this->billingRevampIsEnabled()) {
-            return $patient->primaryPractice->hasServiceCode($this->serviceCode);
-        }
-
-        return $patient->patientInfo->location->chargeableServiceSummaries
-            ->where('chargeableService.code', $this->serviceCode)
-            ->where('chargeable_month', $thisMonth)
+        return collect($this->dto->getLocationServices())
+            ->filter(fn (LocationChargeableServicesForProcessing $service) => $service->getCode() === $this->serviceCode)
             ->isNotEmpty();
     }
 
     private function problemsOfServiceCount(): int
     {
-        return PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::getCodeForPatientProblems($this->serviceCode)])->count();
+        return collect($this->dto->getPatientProblems())
+            ->filter(fn (PatientProblemForProcessing $p) => in_array($this->serviceCode, $p->getServiceCodes()))
+            ->count();
     }
 
     private function repo(): PatientServiceProcessorRepository
@@ -174,5 +171,13 @@ class PatientIsOfServiceCode
         return ! User::hasBhiConsent()
             ->whereId($this->patientId)
             ->exists();
+    }
+
+    private function setDto(?PatientMonthlyBillingDTO $dto = null): self
+    {
+        $this->dto = $dto ?? PatientMonthlyBillingDTO::generateFromUser(
+            $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $month = Carbon::now()->startOfMonth()),
+            $month
+        );
     }
 }

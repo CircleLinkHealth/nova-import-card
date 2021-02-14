@@ -7,7 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PatientMonthlyBillingDTO
 {
@@ -156,5 +159,29 @@ class PatientMonthlyBillingDTO
         $this->patientProblems = $patientProblems;
 
         return $this;
+    }
+    
+    public static function generateFromUser(User $patient, Carbon $month):self
+    {
+        return (new self())
+            ->subscribe($patient->patientInfo->location->availableServiceProcessors($month))
+            ->forPatient($patient->id)
+            ->ofLocation($patient->patientInfo->location->id)
+            ->forMonth($month)
+            ->setBillingStatusIsTouched(
+                ! is_null(optional($patient->monthlyBillingStatus
+                    ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                    ->first())->actor_id)
+            )
+            ->withLocationServices(
+                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+            )
+            ->withPatientServices(
+                ...PatientChargeableServicesForProcessing::fromCollection($patient)
+            )
+            ->withForcedPatientServices(
+                ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
+            )
+            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient));
     }
 }
