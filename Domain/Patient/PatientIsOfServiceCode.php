@@ -62,7 +62,7 @@ class PatientIsOfServiceCode
         if ($this->isAClashForForcedService()) {
             return true;
         }
-        $clashes = ChargeableService::getClashesWithService($this->serviceCode);
+        $clashes = ClashingChargeableServices::getClashesOfService($this->serviceCode);
 
         if (empty($clashes)) {
             return false;
@@ -105,7 +105,7 @@ class PatientIsOfServiceCode
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth())
             ->forcedChargeableServices
             ->filter(function (PatientForcedChargeableService $fcs) {
-                $clashes = ChargeableService::getClashesWithService($fcs->chargeableService->code);
+                $clashes = ClashingChargeableServices::getClashesOfService($fcs->chargeableService->code);
 
                 return in_array($this->serviceCode, $clashes);
             })

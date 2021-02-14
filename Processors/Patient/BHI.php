@@ -6,21 +6,13 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 
 class BHI extends AbstractProcessor
 {
-    public function clashesWith(): array
-    {
-        return [
-            new RHC(),
-            new RPM(),
-            new RPM40(),
-        ];
-    }
-
     public function code(): string
     {
         return ChargeableService::BHI;

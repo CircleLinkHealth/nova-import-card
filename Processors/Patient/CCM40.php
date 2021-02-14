@@ -15,17 +15,7 @@ class CCM40 extends AbstractProcessor
     {
         return ChargeableService::CCM;
     }
-
-    public function clashesWith(): array
-    {
-        return [
-            new RHC(),
-            new RPM(),
-            new RPM40(),
-            new RPM60(),
-        ];
-    }
-
+    
     public function code(): string
     {
         return ChargeableService::CCM_PLUS_40;

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
@@ -44,14 +45,23 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function clashesWith(): array
     {
-        return [
-        ];
+        return ClashingChargeableServices::getProcessorsForClashesOfService($this->code());
     }
 
     public function fulfill(): void
     {
         $this->output->setSendToDatabase(true)
             ->setIsFulfilling(true);
+    }
+
+    public function hasEnoughProblems(): bool
+    {
+        return collect($this->input->getPatientProblems())
+            ->filter(
+                function (PatientProblemForProcessing $problem) {
+                        return collect($problem->getServiceCodes())->contains($this->baseCode());
+                    }
+            )->count() >= $this->minimumNumberOfProblems();
     }
 
     public function isAttached(): bool
@@ -69,7 +79,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function isEligibleForPatient(PatientMonthlyBillingDTO $patient): bool
     {
-        return $this->setInput($patient)->shouldForceAttach() || $this->shouldAttach();
+        return $this->shouldForceAttach() || $this->shouldAttach();
     }
 
     public function isFulfilled(): bool
@@ -105,23 +115,26 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         if ($this->isBlocked()) {
             return false;
         }
+    
+        if ( ! $this->hasEnoughProblems()) {
+            return false;
+        }
+
+        if ($this->isClashForForcedService()) {
+            return false;
+        }
 
         if ($this->clashesWithHigherOrderServices()) {
             return false;
         }
 
-        return collect($this->input->getPatientProblems())
-            ->filter(
-                function (PatientProblemForProcessing $problem) {
-                    return collect($problem->getServiceCodes())->contains($this->baseCode());
-                }
-            )->count() >= $this->minimumNumberOfProblems();
+        return true;
     }
 
-    public function shouldForceAttach()
+    public function shouldForceAttach(): bool
     {
         return collect($this->input->getForcedPatientServices())->filter(
-            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && ! $s->isForced()
+            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && $s->isForced()
         )
             ->isNotEmpty();
     }
@@ -164,13 +177,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     private function clashesWithHigherOrderServices(): bool
     {
-        //todo: revisit clashes - change to priority based system
         foreach ($this->clashesWith() as $clash) {
-            $clashIsEligible = $clash->isEligibleForPatient($this->input);
+            $clash->setInput($this->input);
 
-            $clashIsAttached = collect($this->input->getPatientServices())->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $clash->code())->isNotEmpty();
-
-            if ($clashIsAttached || $clashIsEligible) {
+            if ($clash->isAttached() || $clash->isEligibleForPatient($this->input)) {
                 return true;
             }
         }
@@ -220,6 +230,22 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         }
 
         return $this;
+    }
+
+    private function isClashFor(): array
+    {
+        return ClashingChargeableServices::getProcessorsServiceIsClashFor($this->code());
+    }
+
+    private function isClashForForcedService(): bool
+    {
+        foreach ($this->isClashFor() as $processor) {
+            if ($processor->setInput($this->input)->shouldForceAttach()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function isEnabledForLocation(): bool

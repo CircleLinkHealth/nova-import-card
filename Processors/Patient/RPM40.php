@@ -15,14 +15,7 @@ class RPM40 extends AbstractProcessor
     {
         return ChargeableService::RPM;
     }
-
-    public function clashesWith(): array
-    {
-        return [
-            new RHC(),
-        ];
-    }
-
+    
     public function code(): string
     {
         return ChargeableService::RPM40;

@@ -15,15 +15,7 @@ class RPM60 extends AbstractProcessor
     {
         return ChargeableService::RPM;
     }
-
-    //todo: change fulfillment to happen with base service time
-    public function clashesWith(): array
-    {
-        return [
-            new RHC(),
-        ];
-    }
-
+    
     public function code(): string
     {
         return ChargeableService::RPM60;
