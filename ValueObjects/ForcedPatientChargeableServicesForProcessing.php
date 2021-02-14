@@ -14,6 +14,7 @@ class ForcedPatientChargeableServicesForProcessing
     protected string $actionType;
     protected string $chargeableServiceCode;
 
+    //this assumes correct dates have been accounted for
     public static function fromCollection(EloquentCollection $collection): array
     {
         return $collection->map(
@@ -39,6 +40,11 @@ class ForcedPatientChargeableServicesForProcessing
         return $this->chargeableServiceCode;
     }
 
+    public function isBlocked(): bool
+    {
+        return PatientForcedChargeableService::FORCE_ACTION_TYPE === $this->actionType;
+    }
+
     public function isForced(): bool
     {
         return PatientForcedChargeableService::FORCE_ACTION_TYPE === $this->actionType;
@@ -57,6 +63,4 @@ class ForcedPatientChargeableServicesForProcessing
 
         return $this;
     }
-
-    //todo: should we have date here?
 }

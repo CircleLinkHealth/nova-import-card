@@ -59,6 +59,14 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return ! is_null($this->getExistingSummary($this->code()));
     }
 
+    public function isBlocked(): bool
+    {
+        return collect($this->input->getForcedPatientServices())->filter(
+            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && $s->isBlocked()
+        )
+            ->isNotEmpty();
+    }
+
     public function isEligibleForPatient(PatientMonthlyBillingDTO $patient): bool
     {
         return $this->setInput($patient)->shouldForceAttach() || $this->shouldAttach();
@@ -87,6 +95,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         }
 
         if ( ! $this->isEnabledForLocation()) {
+            return false;
+        }
+
+        if ($this->isBlocked()) {
             return false;
         }
 
@@ -206,17 +218,17 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this;
     }
 
+    private function isEnabledForLocation(): bool
+    {
+        return collect($this->input->getLocationServices())
+            ->filter(fn (LocationChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
+            ->isNotEmpty();
+    }
+
     private function setInput(PatientMonthlyBillingDTO $input): self
     {
         $this->input = $input;
 
         return $this;
-    }
-    
-    private function isEnabledForLocation():bool
-    {
-        return collect($this->input->getLocationServices())
-                ->filter(fn(LocationChargeableServicesForProcessing $s) => $s->getCode() === $this->code())
-                ->isNotEmpty();
     }
 }
