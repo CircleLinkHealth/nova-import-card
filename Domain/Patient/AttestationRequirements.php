@@ -79,6 +79,7 @@ class AttestationRequirements
 
     private function getLegacyAttestationRequirements()
     {
+        $this->setPatientDto();
         $this->isEnabled();
 
         if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($this->patient)) {
@@ -160,5 +161,6 @@ class AttestationRequirements
     private function setPatientDto(): self
     {
         $this->patientDto = PatientMonthlyBillingDTO::generateFromUser($this->patient, Carbon::now()->startOfMonth());
+        return $this;
     }
 }
