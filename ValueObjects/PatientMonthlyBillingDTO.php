@@ -29,6 +29,8 @@ class PatientMonthlyBillingDTO
     protected int $patientId;
 
     protected array $patientProblems;
+    
+    protected array $practiceServiceCodes = [];
 
     protected array $patientServices = [];
 
@@ -74,6 +76,17 @@ class PatientMonthlyBillingDTO
     public function getLocationServices(): array
     {
         return $this->locationServices;
+    }
+    
+    public function withPracticeServiceCodes(array $serviceCodes):self
+    {
+        $this->practiceServiceCodes = $serviceCodes;
+        return $this;
+    }
+    
+    public function getPracticeCodes():array
+    {
+        return $this->practiceServiceCodes;
     }
 
     public function getPatientId(): int
@@ -176,6 +189,7 @@ class PatientMonthlyBillingDTO
             ->withLocationServices(
                 ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
             )
+            ->withPracticeServiceCodes($patient->primaryPractice->chargeableServices->pluck('code')->toArray())
             ->withPatientServices(
                 ...PatientChargeableServicesForProcessing::fromCollection($patient)
             )

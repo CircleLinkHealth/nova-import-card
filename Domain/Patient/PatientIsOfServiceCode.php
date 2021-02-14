@@ -145,6 +145,10 @@ class PatientIsOfServiceCode
             return true;
         }
 
+        if ( ! $this->billingRevampIsEnabled()) {
+            return in_array($this->serviceCode, $this->dto->getPracticeCodes());
+        }
+
         return collect($this->dto->getLocationServices())
             ->filter(fn (LocationChargeableServicesForProcessing $service) => $service->getCode() === $this->serviceCode)
             ->isNotEmpty();
@@ -180,6 +184,7 @@ class PatientIsOfServiceCode
             $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $month = Carbon::now()->startOfMonth()),
             $month
         );
+
         return $this;
     }
 }
