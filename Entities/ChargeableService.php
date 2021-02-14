@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
-use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV1;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV2;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -21,7 +20,6 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM60;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Traits\Cacheable;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * CircleLinkHealth\Customer\Entities\ChargeableService.
@@ -85,27 +83,6 @@ class ChargeableService extends BaseModel
     const CCM_PLUS_CODES = [
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
-    ];
-
-    const CLASHES = [
-        self::PCM => [
-            self::GENERAL_CARE_MANAGEMENT,
-            self::CCM,
-            self::CCM_PLUS_40,
-            self::CCM_PLUS_60,
-            self::RPM,
-            self::RPM40,
-            self::RPM60,
-        ],
-        self::RPM => [
-            self::GENERAL_CARE_MANAGEMENT,
-        ],
-        self::RPM40 => [
-            self::GENERAL_CARE_MANAGEMENT,
-        ],
-        self::RPM60 => [
-            self::GENERAL_CARE_MANAGEMENT,
-        ],
     ];
 
     const CODES_THAT_CAN_HAVE_PROBLEMS = [
@@ -193,34 +170,9 @@ class ChargeableService extends BaseModel
         return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
-    public function forcedForPatients()
-    {
-        return $this->belongsToMany(User::class, 'patient_forced_chargeable_services', 'chargeable_service_id', 'patient_user_id')
-            ->using(PatientForcedChargeableService::class)
-            ->using('forcedDetails')
-            ->withPivot([
-                'action_type',
-                'chargeable_month',
-            ])->withTimestamps();
-    }
-
     public static function getChargeableServiceIdUsingCode(string $code): ?int
     {
         return optional(self::cached()->where('code', $code)->first())->id;
-    }
-
-    public static function getClashesWithService(string $service): array
-    {
-        if (self::GENERAL_CARE_MANAGEMENT === $service) {
-            return [];
-        }
-
-        return self::CLASHES[$service] ?? [
-            self::GENERAL_CARE_MANAGEMENT,
-            self::RPM,
-            self::RPM40,
-            self::RPM60,
-        ];
     }
 
     public static function getCodeForPatientProblems(string $code): string
@@ -246,6 +198,11 @@ class ChargeableService extends BaseModel
         return self::FRIENDLY_NAMES[$code] ?? $code;
     }
 
+    public static function getProcessorForCode(string $code): ?PatientServiceProcessor
+    {
+        return self::processorClassMap()[$code] ?? null;
+    }
+
     public function patientSummaries()
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
@@ -260,10 +217,10 @@ class ChargeableService extends BaseModel
 
     public function processor(): ?PatientServiceProcessor
     {
-        return $this->processorClassMap()[$this->code] ?? null;
+        return self::processorClassMap()[$this->code] ?? null;
     }
 
-    public function processorClassMap(): array
+    public static function processorClassMap(): array
     {
         return [
             self::CCM                     => new CCM(),
