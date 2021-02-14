@@ -6,6 +6,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCalvaryClinicLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCameronLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCommonwealthPainAssociatesPllcLetter;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateContinuumFamilyCareLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDavisCountyLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateMarillacHealthLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateNbiLetter;
@@ -128,6 +129,11 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
 
         if ($practiceName === GenerateDemoLetter::DEMO_PRACTICE_NAME){
             Artisan::call('db:seed', ['--class' => GenerateDemoLetter::class]);
+            return;
+        }
+
+        if ($practiceName === GenerateContinuumFamilyCareLetter::CONTINUUM_FAMILY_PRACTICE_NAME){
+            Artisan::call('db:seed', ['--class' => GenerateContinuumFamilyCareLetter::class]);
             return;
         }
     }
