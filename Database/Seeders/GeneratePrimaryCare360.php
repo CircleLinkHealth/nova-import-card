@@ -8,10 +8,10 @@ use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
 
-class GenerateContinuumFamilyCareLetter extends Seeder
+class GeneratePrimaryCare360 extends Seeder
 {
     const PRACTICE_SIGNATORY_NAME = 'not provided yet';
-    const CONTINUUM_FAMILY_PRACTICE_NAME = 'continuum-family-care-llc';
+    const PRIMARY_CARE_360_PRACTICE_NAME = 'primary-care-360';
     /**
      * Run the database seeds.
      *
@@ -24,7 +24,7 @@ class GenerateContinuumFamilyCareLetter extends Seeder
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $continuumFamilyPractice = $this->getPractice();
+        $primaryCare360Practice = $this->getPractice();
 
         $bodyPageOne = "
 
@@ -50,7 +50,7 @@ class GenerateContinuumFamilyCareLetter extends Seeder
 
         EnrollmentInvitationLetter::updateOrCreate(
             [
-                'practice_id' => $continuumFamilyPractice->id,
+                'practice_id' => $primaryCare360Practice->id,
             ],
             [
                 'practice_logo_src'      => '/img/logos/ContinuumFamily/continuum_logo.png',
@@ -68,7 +68,7 @@ class GenerateContinuumFamilyCareLetter extends Seeder
                 'ui_requests' => json_encode([
                     'logo_position'        => 'text-align:left',
                     'extra_address_header' => [
-                        $continuumFamilyPractice->name => [
+                        $primaryCare360Practice->name => [
                             'address_line_1',
                             'city',
                             'state',
@@ -82,12 +82,12 @@ class GenerateContinuumFamilyCareLetter extends Seeder
 
     private function getPractice()
     {
-        $continuumFamilyPractice = Practice::where('name', '=', self::CONTINUUM_FAMILY_PRACTICE_NAME)->first();
+        $primaryCare360Practice = Practice::where('name', '=', self::PRIMARY_CARE_360_PRACTICE_NAME)->first();
 
         if ( ! App::environment(['production'])) {
-            $continuumFamilyPractice = Practice::firstOrCreate(
+            $primaryCare360Practice = Practice::firstOrCreate(
                 [
-                    'name' => self::CONTINUUM_FAMILY_PRACTICE_NAME,
+                    'name' => self::PRIMARY_CARE_360_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,
@@ -95,14 +95,14 @@ class GenerateContinuumFamilyCareLetter extends Seeder
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
-                    'outgoing_phone_number' => +18886958537,
+                    'outgoing_phone_number' => +15013864463,
                 ]
             );
         }
-        if ( ! $continuumFamilyPractice) {
-            throw new Exception('Continuum Family Care LLC Practice not found in Practices');
+        if ( ! $primaryCare360Practice) {
+            throw new Exception('Primary Care 360 Practice not found in Practices');
         }
 
-        return $continuumFamilyPractice;
+        return $primaryCare360Practice;
     }
 }
