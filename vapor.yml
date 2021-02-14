@@ -29,6 +29,32 @@ environments:
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'
       - 'php artisan schedule-monitor:sync'
+
+  review-continuum-and-360-letters:
+      domain: self-enrollment.clh-staging.com
+      storage: self-enrollment-staging-vapor-storage
+      memory: 512
+      cli-memory: 512
+      queue-memory: 512
+      timeout: 45
+      cli-timeout: 600
+      queue-timeout: 600
+      concurrency: 5
+      mail: false
+      runtime: php-7.4
+      queues:
+        - self-enrollment-low-staging
+        - self-enrollment-high-staging
+        - self-enrollment-revisionable-staging
+      build:
+        - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+        - 'php artisan event:cache'
+        - 'npm ci && npm run prod && rm -rf node_modules'
+        - 'php artisan route:cache'
+      deploy:
+        - 'php artisan migrate --force'
+        - 'php artisan migrate:views'
+
   staging:
     domain: self-enrollment.clh-staging.com
     storage: self-enrollment-staging-vapor-storage
