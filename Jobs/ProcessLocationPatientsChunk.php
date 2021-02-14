@@ -93,7 +93,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
                         ->withForcedPatientServices(
                             ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
                         )
-                        ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+                        ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
                 );
             });
         });

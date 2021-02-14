@@ -248,7 +248,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 ->forPatient($patient->id)
                 ->ofLocation($patient->patientInfo->location->id)
                 ->forMonth($startOfMonth)
-                ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+                ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
         );
 
         self::assertTrue(

@@ -67,7 +67,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
                 ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
             )
             ->forMonth($thisMonth)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
             ->withPatientServices(
                 ...PatientChargeableServicesForProcessing::fromCollection($patient)
             )

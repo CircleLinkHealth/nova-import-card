@@ -84,7 +84,7 @@ class ProcessPatientSummaries
                 ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
             )
             ->forMonth($thisMonth)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
+            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
             ->withPatientServices(
                 ...PatientChargeableServicesForProcessing::fromCollection($patient)
             )
@@ -151,7 +151,7 @@ class ProcessPatientSummaries
             ->withForcedPatientServices(
                 ...ForcedPatientChargeableServicesForProcessing::fromCollection($this->patientUser->forcedChargeableServices)
             )
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($this->patientId));
+            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($this->patientUser));
 
         return $this;
     }

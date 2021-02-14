@@ -44,10 +44,22 @@ class PatientProblemsForBillingProcessing
             ->toArray();
     }
 
+    public static function getArrayFromPatient(User $patient): array
+    {
+        return self::getCollectionFromPatient($patient)
+            ->toArray();
+    }
+
     public static function getCollection(int $patientId): Collection
     {
         return (new static($patientId))
             ->setPatient()
+            ->getProblems();
+    }
+
+    public static function getCollectionFromPatient(User $patient): Collection
+    {
+        return (new static($patient->id))->setPatient($patient)
             ->getProblems();
     }
 
@@ -168,9 +180,9 @@ class PatientProblemsForBillingProcessing
         return trim(strtolower($string));
     }
 
-    private function setPatient(): self
+    private function setPatient(?User $patient = null): self
     {
-        $this->patient = $this->repo()
+        $this->patient = $patient ?? $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth());
 
         return $this;
