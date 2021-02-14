@@ -18,3 +18,4 @@ CircleLinkHealth/*
 /.vapor/
 lsp/
 *-deploy-s3.env*
+.env.review-new-letters
