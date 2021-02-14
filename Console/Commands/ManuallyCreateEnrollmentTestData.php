@@ -75,7 +75,7 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         if ( ! $letter && ! App::environment('production')) {
             $this->info("$practiceName practice letter not found. Generating Letter for $practiceName now...");
-            Artisan::call(RegenerateMissingSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
+            Artisan::call(RegenerateSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
         }
 
         $uiRequestsForThisPractice = '';

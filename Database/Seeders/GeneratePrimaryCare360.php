@@ -12,6 +12,9 @@ class GeneratePrimaryCare360 extends Seeder
 {
     const PRACTICE_SIGNATORY_NAME = 'not provided yet';
     const PRIMARY_CARE_360_PRACTICE_NAME = 'primary-care-360';
+    const LOGO_SOURCE = '/img/logos/PrimaryCare360/primary_care_360_logo.png';
+    const DISPLAY_NAME = 'Continuum Family Care LLC';
+
     /**
      * Run the database seeds.
      *
@@ -23,6 +26,7 @@ class GeneratePrimaryCare360 extends Seeder
         $signatoryName        = EnrollmentInvitationLetter::SIGNATORY_NAME;
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
+        $logoBelow = $this->logoBelow();
 
         $primaryCare360Practice = $this->getPractice();
 
@@ -46,6 +50,7 @@ class GeneratePrimaryCare360 extends Seeder
 <p>In a few days, you'll get a call from one of our care coordinators from $practiceNumber. They'll be happy to answer your questions, and help you get started if you decide to join during that call.</p>
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
+$logoBelow
 <p>$customerSignaturePic<br />$signatoryName<br/></p>";
 
         EnrollmentInvitationLetter::updateOrCreate(
@@ -53,8 +58,8 @@ class GeneratePrimaryCare360 extends Seeder
                 'practice_id' => $primaryCare360Practice->id,
             ],
             [
-                'practice_logo_src'      => '/img/logos/ContinuumFamily/continuum_logo.png',
-                'customer_signature_src' => '/img/signatures/continuum-family/continuum_signature.png',
+                'practice_logo_src'      => self::LOGO_SOURCE,
+                'customer_signature_src' => '',
                 'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
@@ -91,7 +96,7 @@ class GeneratePrimaryCare360 extends Seeder
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => 'Continuum Family Care LLC',
+                    'display_name'          => self::DISPLAY_NAME,
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
@@ -104,5 +109,12 @@ class GeneratePrimaryCare360 extends Seeder
         }
 
         return $primaryCare360Practice;
+    }
+
+    private function logoBelow()
+    {
+        $logoSrc = asset(self::LOGO_SOURCE);
+        $displayName = self::DISPLAY_NAME;
+        return "<img src=$logoSrc  alt='$displayName' style='width: 220px;'/>";
     }
 }

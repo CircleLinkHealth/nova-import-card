@@ -10,6 +10,7 @@ use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateContinuumFamilyCare
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDavisCountyLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateMarillacHealthLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateNbiLetter;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GeneratePrimaryCare360;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoClinicLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateWoodlandInternistsClinicLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoSignatures;
@@ -17,25 +18,24 @@ use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDemoLetter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class RegenerateMissingSelfEnrollmentLetters extends Command
+class RegenerateSelfEnrollmentLetters extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'generate:missingLetters {--forPractice=} {--forceUpdateAll}';
+    protected $signature = 'generate:selfEnrollmentLetter {--forPractice=} {--forceUpdateAll}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Some Letters are missing from enrollment_invitation_letters.
-    This command will look for them and then ran the appropriate seeder.
+    protected $description = 'Update OR Create Self Enrollment Letters
       {--forPractice} option = practice->name. If is set it will updateOrCreate the letter for given practice.
       {--forceUpdateAll} = UpdateOrCreate on ALL Letters
-      --If options are left empty = Update or Create all Practices ONLY if their letter is missing.';
+      --If options are left empty = Update or Create all Practices ONLY IF their letter is missing.';
 
     /**
      * Create a new command instance.
@@ -136,6 +136,11 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
             Artisan::call('db:seed', ['--class' => GenerateContinuumFamilyCareLetter::class]);
             return;
         }
+
+        if ($practiceName === GeneratePrimaryCare360::PRIMARY_CARE_360_PRACTICE_NAME){
+            Artisan::call('db:seed', ['--class' => GeneratePrimaryCare360::class]);
+            return;
+        }
     }
 
     private function checkAllPracticesLetters()
@@ -169,6 +174,8 @@ class RegenerateMissingSelfEnrollmentLetters extends Command
             GenerateCameronLetter::CAMERON_PRACTICE_NAME,
             GenerateNbiLetter::NBI_PRACTICE_NAME,
             GenerateDemoLetter::DEMO_PRACTICE_NAME,
+            GeneratePrimaryCare360::class,
+            GenerateContinuumFamilyCareLetter::class
         ];
     }
 

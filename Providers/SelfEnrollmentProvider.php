@@ -14,7 +14,7 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSigna
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\RegenerateMissingSelfEnrollmentLetters;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\RegenerateSelfEnrollmentLetters;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -52,12 +52,11 @@ class SelfEnrollmentProvider extends ServiceProvider
             ManuallyCreateEnrollmentTestData::class,
             EnrollmentFinalAction::class,
             GenerateNbiLetterCommand::class,
-            RegenerateMissingSelfEnrollmentLetters::class,
+            RegenerateSelfEnrollmentLetters::class,
             UpdateEnrolmentLettersSignatoryName::class,
             GenerateSelfEnrollmentSurveyCommand::class,
             UpdateCameronEnrolleesMissingUserId::class,
             SelfEnrollmentSendErrorFixedCommand::class,
-            GenerateContinuumFamilyLetterCommand::class
         ]);
         $this->app->register(RouteServiceProvider::class);
     }
