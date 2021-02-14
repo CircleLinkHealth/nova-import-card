@@ -98,6 +98,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
+        if ($this->shouldForceAttach()) {
+            return true;
+        }
+
         if ($this->isBlocked()) {
             return false;
         }
@@ -184,7 +188,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     private function getOutput(): PatientServiceProcessorOutputDTO
     {
         if ( ! $this->isAttached()) {
-            if ($this->shouldForceAttach() || $this->shouldAttach()) {
+            if ($this->shouldAttach()) {
                 $this->attach();
             }
         }
