@@ -41,7 +41,7 @@
 
                         <a href="{{ route('eligibility.batch.show', [$batch->id, 'reprocess']) }}"
                            class="btn btn-default btn-xs tooltip-bottom"
-                           onclick="return confirm('This will resume processing of records in case it got stuck. Would you like to proceed?')"
+                           onclick="return confirm('This will reprocess the batch. Do not run this more than once every 30 minutes!')"
                            data-tooltip="Reimport (beta)"
                         >
                             <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
@@ -84,7 +84,6 @@
                         @if ($batch->type == CircleLinkHealth\SharedModels\Entities\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
-                                   onclick="var result = confirm('This will reprocess the batch. Do not run this more than once every 30 minutes!!');if (!result) {event.preventDefault();}"
                                    class="btn btn-danger">Reprocess</a>
                             </div>
 
