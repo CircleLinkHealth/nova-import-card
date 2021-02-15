@@ -153,6 +153,11 @@ class Eloquent implements PatientServiceProcessorRepository
         throw new \Exception('not implemented');
     }
 
+    public function getPatientWithBillingDataForNotesController(int $patientId): ?User
+    {
+        throw new \Exception('not implemented');
+    }
+
     public function getSummariesCreated(): Collection
     {
         return $this->summariesCreated;
@@ -286,7 +291,7 @@ class Eloquent implements PatientServiceProcessorRepository
 
         return new ChargeablePatientMonthlySummary($array);
     }
-    
+
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
         return 1 === $this->summariesCreated->where('patient_user_id', $patientId)

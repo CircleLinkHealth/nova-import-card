@@ -15,7 +15,7 @@ class RHC extends AbstractProcessor
     {
         return ChargeableService::CCM;
     }
-    
+
     public function code(): string
     {
         return ChargeableService::GENERAL_CARE_MANAGEMENT;

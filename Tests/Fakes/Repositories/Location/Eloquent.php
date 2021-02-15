@@ -22,13 +22,13 @@ class Eloquent implements LocationProcessorRepository
 
     protected Collection $locationAvailableServiceProcessors;
     protected Collection $summaries;
-    
+
     public function __construct()
     {
         $this->locationAvailableServiceProcessors = collect();
-        $this->summaries = collect();
+        $this->summaries                          = collect();
     }
-    
+
     public function approvableBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder
     {
         // TODO: Implement approvableBillingStatuses() method.
@@ -79,12 +79,13 @@ class Eloquent implements LocationProcessorRepository
     public function getLocationSummaries(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection
     {
         return $this->toEloquentCollection(
-            $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s)use ($locationIds, $month, $excludeLocked){
+            $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationIds, $month, $excludeLocked) {
                 $passes = in_array($s->getLocationId(), $locationIds) && $s->getChargeableMonth()->equalTo($month);
-                
-                if ($excludeLocked){
-                    $passes = $s->isLocked() === false;
+
+                if ($excludeLocked) {
+                    $passes = false === $s->isLocked();
                 }
+
                 return $passes;
             })
         );
@@ -145,6 +146,11 @@ class Eloquent implements LocationProcessorRepository
         return $this->builder;
     }
 
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
+    {
+        return $this->builder;
+    }
+
     public function servicesExistForMonth(array $locationIds, Carbon $month): bool
     {
         return $this->summaries
@@ -185,7 +191,7 @@ class Eloquent implements LocationProcessorRepository
             $this->summaries = collect();
         }
 
-        $summary = $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationId, $chargeableServiceId, $month){
+        $summary = $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationId, $chargeableServiceId, $month) {
             return $locationId === $s->getLocationId() && $s->getChargeableMonth()->equalTo($month) && $s->getChargeableServiceId() === $chargeableServiceId;
         })
             ->first();
@@ -202,6 +208,19 @@ class Eloquent implements LocationProcessorRepository
     }
 
     public function store(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
+    {
+        $this->summaries->push(
+            $stub = (new ChargeableLocationMonthlySummaryStub())
+                ->setLocationId($locationId)
+                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableMonth($month)
+                ->setAmount($amount)
+        );
+
+        return $stub->toModel();
+    }
+
+    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
     {
         $this->summaries->push(
             $stub = (new ChargeableLocationMonthlySummaryStub())
@@ -233,23 +252,5 @@ class Eloquent implements LocationProcessorRepository
             })
             ->unique()
             ->count();
-    }
-    
-    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
-    {
-        return $this->builder;
-    }
-    
-    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
-    {
-        $this->summaries->push(
-            $stub = (new ChargeableLocationMonthlySummaryStub())
-                ->setLocationId($locationId)
-                ->setChargeableServiceId($chargeableServiceId)
-                ->setChargeableMonth($month)
-                ->setAmount($amount)
-        );
-        
-        return $stub->toModel();
     }
 }

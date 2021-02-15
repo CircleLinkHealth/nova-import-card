@@ -46,9 +46,9 @@ interface LocationProcessorRepository
 
     public function patientsQuery(array $locationIds, Carbon $monthYear, ?string $ccmStatus = null): Builder;
 
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder;
+
     public function servicesExistForMonth(array $locationIds, Carbon $month): bool;
 
     public function store(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
-    
-    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month) : Builder;
 }

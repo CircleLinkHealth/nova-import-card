@@ -59,8 +59,8 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return collect($this->input->getPatientProblems())
             ->filter(
                 function (PatientProblemForProcessing $problem) {
-                        return collect($problem->getServiceCodes())->contains($this->baseCode());
-                    }
+                    return collect($problem->getServiceCodes())->contains($this->baseCode());
+                }
             )->count() >= $this->minimumNumberOfProblems();
     }
 
@@ -115,7 +115,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         if ($this->isBlocked()) {
             return false;
         }
-    
+
         if ( ! $this->hasEnoughProblems()) {
             return false;
         }

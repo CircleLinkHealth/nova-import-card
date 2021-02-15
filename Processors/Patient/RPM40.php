@@ -15,7 +15,7 @@ class RPM40 extends AbstractProcessor
     {
         return ChargeableService::RPM;
     }
-    
+
     public function code(): string
     {
         return ChargeableService::RPM40;

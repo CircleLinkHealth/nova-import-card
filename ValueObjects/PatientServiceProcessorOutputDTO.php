@@ -17,7 +17,7 @@ class PatientServiceProcessorOutputDTO
     protected int $patientUserId;
     protected bool $requiresConsent = false;
     protected bool $sendToDatabase  = false;
-    protected int $totalTime = 0;
+    protected int $totalTime        = 0;
 
     public function getChargeableMonth(): Carbon
     {

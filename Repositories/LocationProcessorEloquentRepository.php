@@ -118,6 +118,24 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->patientInLocations($locationIds, $ccmStatus);
     }
 
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
+    {
+        return User::ofType('participant')
+            ->whereHas(
+                'patientInfo',
+                function ($info) use ($locationIds, $month) {
+                    $info->whereIn('preferred_contact_location', $locationIds)
+                        ->enrolled()
+                        ->whereHas('location', function ($location) use ($month) {
+                            $location->whereHas('chargeableServiceSummaries', function ($summary) use ($month) {
+                                $summary->where('chargeable_month', $month)
+                                    ->where('is_locked', false);
+                            });
+                        });
+                }
+            );
+    }
+
     public function servicesExistForMonth(array $locationIds, Carbon $month): bool
     {
         return $this->servicesForLocations($locationIds)
@@ -166,24 +184,5 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->filter()
             ->values()
             ->toArray();
-    }
-    
-    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
-    {
-        return User::ofType('participant')
-            ->whereHas(
-                'patientInfo',
-                function ($info) use ($locationIds, $month) {
-                    $info->whereIn('preferred_contact_location', $locationIds)
-                        ->enrolled()
-                        ->whereHas('location', function ($location)use($month){
-                            $location->whereHas('chargeableServiceSummaries', function ($summary) use ($month){
-                                $summary->where('chargeable_month', $month)
-                                    ->where('is_locked', false);
-                            });
-                        });
-                }
-            );
-        
     }
 }

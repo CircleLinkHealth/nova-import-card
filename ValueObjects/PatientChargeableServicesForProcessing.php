@@ -32,11 +32,11 @@ class PatientChargeableServicesForProcessing
                 ->setMonthlyTime(
                     optional(
                         $monthlyTime->where(
-                                           'chargeable_service_id',
-                                           $summary->chargeable_service_id
-                                       )
-                                           ->where('chargeable_month', $summary->chargeable_month)
-                                           ->first()
+                            'chargeable_service_id',
+                            $summary->chargeable_service_id
+                        )
+                            ->where('chargeable_month', $summary->chargeable_month)
+                            ->first()
                     )->total_time
                 );
         })

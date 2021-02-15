@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;

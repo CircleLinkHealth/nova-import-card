@@ -14,7 +14,6 @@ use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
-use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

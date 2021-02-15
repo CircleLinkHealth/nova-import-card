@@ -15,7 +15,7 @@ class CCM40 extends AbstractProcessor
     {
         return ChargeableService::CCM;
     }
-    
+
     public function code(): string
     {
         return ChargeableService::CCM_PLUS_40;

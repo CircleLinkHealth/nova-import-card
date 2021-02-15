@@ -7,14 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
-use CircleLinkHealth\CcmBilling\Facades\BillingCache;
-use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 
