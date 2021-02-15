@@ -1080,6 +1080,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(Enrollee::class, 'user_id');
     }
 
+    public function enrolleeMany()
+    {
+        return $this->hasMany(Enrollee::class, 'user_id');
+    }
+
     public function firstOrNewProviderInfo()
     {
         if ( ! $this->isProvider()) {
