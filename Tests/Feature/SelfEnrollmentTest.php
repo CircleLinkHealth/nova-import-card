@@ -912,10 +912,10 @@ class SelfEnrollmentTest extends TestCase
 
     public function test_duplicated_enrolles_on_random_invitations()
     {
-        $toInvite = collect();
         $enrollee1 = $this->createEnrollees(1);
         DB::commit();
         $enrollee1User = $enrollee1->user;
+        $constPracticeId = $enrollee1->practice_id;
         self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
         self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
         self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
@@ -924,7 +924,7 @@ class SelfEnrollmentTest extends TestCase
             'first_name' => $enrollee1->first_name,
             'last_name' => $enrollee1->last_name,
             'dob' => $enrollee1->dob,
-            'practice_id'=> $enrollee1->practice_id,
+            'practice_id'=> $constPracticeId,
         ];
 
         $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
@@ -934,11 +934,16 @@ class SelfEnrollmentTest extends TestCase
         self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
         self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
         self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
-
-        $toInvite->push($enrollee1, $enrollee2);
+        self::assertTrue( $enrollee1->practice_id === $enrollee2->practice_id);
 
         Mail::fake();
         Twilio::fake();
+
+        $this->expectException(\Exception::class);
+        InvitePracticeEnrollees::dispatchNow(
+            2,
+            $constPracticeId,
+        );
     }
 
     public function test_that_already_invited_duplicated_enrollees_will_not_receive_any_reminders()
