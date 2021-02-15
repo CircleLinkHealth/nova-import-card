@@ -386,7 +386,7 @@ class CcdaImporterWrapper
     {
         $term = self::prepareForMysqlMatch($term);
 
-        return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
+        return Location::whereRaw("MATCH(name) AGAINST(\"$term\")")->where('practice_id', $practiceId)->first();
     }
 
     private static function prepareForMysqlMatch(string $term)
