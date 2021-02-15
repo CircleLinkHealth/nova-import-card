@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
 class ApprovableBillablePatient extends JsonResource
 {
@@ -74,8 +75,25 @@ class ApprovableBillablePatient extends JsonResource
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa && ! $this->approved && ! $this->rejected,
             'attested_ccm_problems'  => $this->hasServiceCode(ChargeableServiceModel::RPM) ? $problems->pluck('id')->toArray() : $this->ccmAttestedProblems()->unique()->pluck('id')->toArray(),
-            'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
+            'chargeable_services'    => $this->getChargeableServices(),
             'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id')->toArray(),
         ];
+    }
+
+    private function getChargeableServices(): array
+    {
+        /** @var ChargeableServiceModel[]|Collection $cs */
+        $cs = $this->chargeableServices;
+
+        return $cs
+            ->map(function (ChargeableServiceModel $cs) {
+                return [
+                    'id'           => $cs->id,
+                    'is_fulfilled' => true,
+                    'total_time'   => ChargeableServiceModel::BHI === $cs->code ? $this->bhi_time : $this->getBillableCcmCs(),
+                ];
+            })
+            ->values()
+            ->toArray();
     }
 }

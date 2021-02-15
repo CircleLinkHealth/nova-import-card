@@ -554,26 +554,12 @@
                             return undefined;
                         }
 
-                        const result = {
+                        return {
                             id: cs.id,
                             code: cs.code,
+                            total_time: item.total_time,
+                            is_fulfilled: item.is_fulfilled
                         };
-
-                        if (typeof item.total_time !== 'undefined') {
-                            result.total_time = item.total_time;
-                        } else {
-                            // backwards compatibility
-                            result.total_time = cs.code === SERVICES.BHI ? patient.bhi_time : patient.ccm_time;
-                        }
-
-                        if (typeof item.is_fulfilled !== 'undefined') {
-                            result.is_fulfilled = item.is_fulfilled;
-                        } else {
-                            // backwards compatibility
-                            result.is_fulfilled = true;
-                        }
-
-                        return result;
                     })
                     .filter(Boolean);
             },
