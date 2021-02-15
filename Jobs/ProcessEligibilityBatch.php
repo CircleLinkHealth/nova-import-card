@@ -84,7 +84,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
         Bus::chain(array_merge(
                        [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
                        (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
-                           ->splitToBatches(),
+                           ->splitToBatches(3000),
                        [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
                    ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
