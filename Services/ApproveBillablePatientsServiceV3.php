@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
@@ -84,6 +85,9 @@ class ApproveBillablePatientsServiceV3
         ];
     }
 
+    /**
+     * todo: return a subset of {@link ApprovablePatient}.
+     */
     public function setPatientChargeableServices(int $reportId, array $services): bool
     {
         /** @var PatientMonthlyBillingStatus $billingStatus */
