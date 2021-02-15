@@ -9,6 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Services;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\Http\Resources\ChargeableServiceForAbp;
+use CircleLinkHealth\CcmBilling\Http\Resources\SetPatientChargeableServicesResponse;
 use CircleLinkHealth\CcmBilling\Jobs\SetLegacyPmsClosedMonthStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
@@ -187,11 +189,11 @@ class ApproveBillablePatientsService
         ];
     }
 
-    public function setPatientChargeableServices(int $reportId, array $services): bool
+    public function setPatientChargeableServices(int $reportId, array $services): SetPatientChargeableServicesResponse
     {
         $summary = PatientMonthlySummary::find($reportId);
         if ( ! $summary) {
-            return false;
+            return SetPatientChargeableServicesResponse::make([]);
         }
 
         $summary->actor_id = auth()->id();
@@ -203,8 +205,16 @@ class ApproveBillablePatientsService
             ->each(fn ($service)   => $toSync[$service['id']] = ['is_fulfilled' => true]);
 
         $summary->chargeableServices()->sync($toSync);
+        $summary->load('chargeableServices');
 
-        return true;
+        $result = [
+            'approved'            => (bool) $summary->approved,
+            'rejected'            => (bool) $summary->rejected,
+            'qa'                  => $summary->needs_qa && ! $summary->approved && ! $summary->rejected,
+            'chargeable_services' => ChargeableServiceForAbp::collectionFromPms($summary),
+        ];
+
+        return SetPatientChargeableServicesResponse::make($result);
     }
 
     public function setPracticeChargeableServices(int $practiceId, Carbon $month, int $defaultCodeId, bool $isDetach)

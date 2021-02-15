@@ -172,10 +172,12 @@
                     <loader v-if="loaders.callsCount"></loader>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
+                    <div class="blue"
+                         :class="isSoftwareOnly || props.row.approved || props.row.rejected ? '' : 'pointer'"
                          @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeables().length">
-                            <label class="label label-info margin-5 inline-block"
+                            <label class="label margin-5 inline-block"
+                                   :class="props.row.approved || props.row.rejected ? 'label-default' : 'label-info'"
                                    v-for="service in props.row.chargeables()"
                                    :key="service.id">{{ service.code }}</label>
                         </div>
@@ -546,8 +548,8 @@
                 return 'ERROR';
             },
 
-            buildChargeableServicesForPatient(patient) {
-                return patient.chargeable_services
+            buildChargeableServicesForPatient(patientChargeableServices) {
+                return patientChargeableServices
                     .map(item => {
                         const cs = this.selectedPracticeChargeableServices.find(cs => cs.id === item.id);
                         if (!cs) {
@@ -585,7 +587,7 @@
                     attested_ccm_problems: patient.attested_ccm_problems,
                     attested_bhi_problems: patient.attested_bhi_problems,
                     '#Successful Calls': patient.no_of_successful_calls,
-                    chargeable_services: this.buildChargeableServicesForPatient(patient),
+                    chargeable_services: this.buildChargeableServicesForPatient(patient.chargeable_services),
                     promises: {
                         approve_reject: false,
                         update_chargeables: false
@@ -604,24 +606,33 @@
                         const original = item.chargeable_services;
                         item.chargeable_services = allPatientServices;
                         console.log('service-ids', allPatientServices, changes);
-                        item.promises.update_chargeables = true
-                        return this.axios.post(rootUrl('reports/monthly-billing/set-patient-services'), {
-                            report_id: item.reportId,
-                            patient_chargeable_services: changes,
-                            version: this.version
-                        }).then(response => {
-                            console.log('billing:chargeable-services:update', response.data)
-                            item.promises.update_chargeables = false
-                        }).catch(err => {
-                            Event.$emit('notifications-billing:create', {
-                                text: this.parseError(err),
-                                type: 'error',
-                                interval: 5000
+                        item.promises.update_chargeables = true;
+                        return this.axios
+                            .post(rootUrl('reports/monthly-billing/set-patient-services'), {
+                                report_id: item.reportId,
+                                patient_chargeable_services: changes,
+                                version: this.version
+                            })
+                            .then(response => {
+                                console.log('billing:chargeable-services:update', response.data)
+                                if (typeof response.data.approved !== "undefined") {
+                                    item.approved = response.data.approved;
+                                    item.rejected = response.data.rejected;
+                                    item.qa = response.data.qa;
+                                    item.chargeable_services = this.buildChargeableServicesForPatient(response.data.chargeable_services);
+                                }
+                                item.promises.update_chargeables = false;
+                            })
+                            .catch(err => {
+                                Event.$emit('notifications-billing:create', {
+                                    text: this.parseError(err),
+                                    type: 'error',
+                                    interval: 5000
+                                });
+                                console.error('billing:chargeable-services:update', err);
+                                item.promises.update_chargeables = false;
+                                item.chargeable_services = original;
                             });
-                            console.error('billing:chargeable-services:update', err)
-                            item.promises.update_chargeables = false
-                            item.chargeable_services = original;
-                        })
                     },
                     isBhiEligible() {
                         return !!this.chargeables().find(service => service.code === SERVICES.BHI);
@@ -642,6 +653,15 @@
             showChargeableServicesModal(row) {
 
                 if (this.isSoftwareOnly) {
+                    return;
+                }
+
+                if (row.approved || row.rejected) {
+                    Event.$emit('notifications-billing:create', {
+                        text: `Cannot edit chargeable services when patient is approved or rejected.`,
+                        type: 'warning',
+                        interval: 5000
+                    });
                     return;
                 }
 
@@ -950,7 +970,7 @@ div.blue input, textarea {
     width: 100%;
 }
 
-.pointer {
+.pointer * {
     cursor: pointer;
 }
 

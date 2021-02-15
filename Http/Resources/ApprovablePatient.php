@@ -7,10 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
@@ -56,7 +55,7 @@ class ApprovablePatient extends JsonResource
             'report_id'              => $billingStatus->id,
             'actor_id'               => $billingStatus->actor_id,
             'qa'                     => 'needs_qa' === $billingStatus->status,
-            'chargeable_services'    => $this->getChargeableServices()->toArray(),
+            'chargeable_services'    => $this->getChargeableServices()->toArray($request),
             'attested_ccm_problems'  => $autoAttestation->getCcmAttestedProblems()->toArray(),
             'attested_bhi_problems'  => $autoAttestation->getBhiAttestedProblems()->toArray(),
         ];
@@ -90,36 +89,12 @@ class ApprovablePatient extends JsonResource
             ->sum('total_time');
     }
 
-    private function getChargeableServices(): Collection
+    private function getChargeableServices(): AnonymousResourceCollection
     {
         /** @var User $user */
         $user = $this->resource->patientUser;
 
-        $services = $user->chargeableMonthlySummaries
-            ->map(function (ChargeablePatientMonthlySummary $item) use ($user) {
-                /** @var ChargeablePatientMonthlyTime $time */
-                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id', $item->chargeable_service_id);
-
-                return [
-                    'id'           => $item->chargeable_service_id,
-                    'is_fulfilled' => $item->is_fulfilled,
-                    'total_time'   => optional($time)->total_time ?? 0,
-                ];
-            })
-            ->values();
-
-        $user->chargeableMonthlyTime->each(function (ChargeablePatientMonthlyTime $time) use ($services) {
-            $entry = $services->firstWhere('chargeable_service_id', $time->chargeable_service_id);
-            if ( ! $entry) {
-                $services->push([
-                    'id'           => $time->chargeable_service_id,
-                    'is_fulfilled' => false,
-                    'total_time'   => $time->total_time,
-                ]);
-            }
-        });
-
-        return $services;
+        return ChargeableServiceForAbp::collectionFromChargeableMonthlySummaries($user);
     }
 
     private function getProblems(): Collection

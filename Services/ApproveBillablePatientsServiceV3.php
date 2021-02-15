@@ -10,8 +10,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
+use CircleLinkHealth\CcmBilling\Http\Resources\SetPatientChargeableServicesResponse;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
@@ -85,17 +85,14 @@ class ApproveBillablePatientsServiceV3
         ];
     }
 
-    /**
-     * todo: return a subset of {@link ApprovablePatient}.
-     */
-    public function setPatientChargeableServices(int $reportId, array $services): bool
+    public function setPatientChargeableServices(int $reportId, array $services): SetPatientChargeableServicesResponse
     {
         /** @var PatientMonthlyBillingStatus $billingStatus */
         $billingStatus = PatientMonthlyBillingStatus::with([
             'patientUser' => fn ($p) => $p->with('patientInfo')->select(['id', 'program_id']),
         ])->find($reportId);
         if ( ! $billingStatus || ! is_null($billingStatus->actor_id)) {
-            return false;
+            return SetPatientChargeableServicesResponse::make([]);
         }
 
         $locationId = $billingStatus->patientUser->getPreferredContactLocation();
@@ -103,7 +100,7 @@ class ApproveBillablePatientsServiceV3
             ->where('chargeable_month', '=', $billingStatus->chargeable_month)
             ->where('is_locked', '=', true)
             ->exists()) {
-            return false;
+            return SetPatientChargeableServicesResponse::make([]);
         }
 
         foreach ($services as $service) {
@@ -117,7 +114,8 @@ class ApproveBillablePatientsServiceV3
             ForcePatientChargeableService::execute($input);
         }
 
-        return true;
+        // todo: fill this with the result
+        return SetPatientChargeableServicesResponse::make([]);
     }
 
     public function successfulCallsCount(array $patientIds, Carbon $month): ResourceCollection
