@@ -41,10 +41,6 @@ class ProcessPendingEligibilityJobs extends ChunksEloquentBuilderJobV2
     public function query(): Builder
     {
         return EligibilityJob::whereBatchId($this->batchId)
-            ->where('status', '=', 0)
-            ->orWhere([
-                ['status', '=', 1],
-                ['updated_at', '<', now()->subMinutes(10)],
-            ]);
+            ->pendingProcessing();
     }
 }

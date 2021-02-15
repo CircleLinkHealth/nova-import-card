@@ -391,7 +391,7 @@ class EligibilityBatchController extends Controller
      */
     public function getReprocess(EligibilityBatch $batch)
     {
-        ProcessEligibilityBatch::dispatch($batch);
+        ProcessEligibilityBatch::dispatch($batch->id);
     }
 
     public function googleDriveCreate()
@@ -446,7 +446,7 @@ class EligibilityBatchController extends Controller
     public function show(Request $request, EligibilityBatch $batch)
     {
         if ($request->has('reprocess')) {
-            ProcessEligibilityBatch::dispatch($batch);
+            ProcessEligibilityBatch::dispatch($batch->id);
             \Session::put('message', 'The batch will resume processing. If there are more patients to process the counts will update. Otherwise, nothing will happen.');
         }
 

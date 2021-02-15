@@ -28,6 +28,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
      * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
     protected $batch;
+    protected int $batchId;
 
     /**
      * @var \CircleLinkHealth\Eligibility\ProcessEligibilityService
@@ -37,9 +38,9 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     /**
      * Create a new job instance.
      */
-    public function __construct(EligibilityBatch $batch)
+    public function __construct(int $batchId)
     {
-        $this->batch = $batch;
+        $this->batchId = $batchId;
     }
 
     /**
@@ -51,6 +52,12 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
+        $this->batch = EligibilityBatch::find($this->batchId);
+
+        if ( ! $this->batch) {
+            return;
+        }
+
         switch ($this->batch->type) {
             case EligibilityBatch::TYPE_ONE_CSV:
                 $this->batch = $this->queueSingleCsvJobs($this->batch);
@@ -82,11 +89,11 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
         Bus::chain(array_merge(
-                       [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
-                       (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
-                           ->splitToBatches(3000),
-                       [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-                   ))
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
+            (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
+                           ->splitToBatches(1000),
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+        ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
             ->dispatch();
 
@@ -111,7 +118,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
         Bus::chain(array_merge(
             $jobs,
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
@@ -123,7 +130,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $jobs = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])];
+        $jobs = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])];
 
         if ( ! $batch->isFinishedFetchingFiles()) {
             $jobs[] = new ProcessEligibilityFromGoogleDrive($batch->id);
@@ -152,7 +159,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
         Bus::chain(array_merge(
             $jobs,
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
@@ -165,7 +172,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     private function queueSingleEligibilityJobs(EligibilityBatch $batch)
     {
         Bus::chain(array_merge(
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
             $batch->orchestratePendingJobsProcessing(50),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
