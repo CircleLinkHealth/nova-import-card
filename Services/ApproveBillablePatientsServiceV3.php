@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
@@ -86,8 +87,18 @@ class ApproveBillablePatientsServiceV3
     public function setPatientChargeableServices(int $reportId, array $services): bool
     {
         /** @var PatientMonthlyBillingStatus $billingStatus */
-        $billingStatus = PatientMonthlyBillingStatus::find($reportId);
-        if ( ! $billingStatus) {
+        $billingStatus = PatientMonthlyBillingStatus::with([
+            'patientUser' => fn ($p) => $p->with('patientInfo')->select(['id', 'program_id']),
+        ])->find($reportId);
+        if ( ! $billingStatus || ! is_null($billingStatus->actor_id)) {
+            return false;
+        }
+
+        $locationId = $billingStatus->patientUser->getPreferredContactLocation();
+        if (empty($locationId) || ChargeableLocationMonthlySummary::where('location_id', '=', $locationId)
+            ->where('chargeable_month', '=', $billingStatus->chargeable_month)
+            ->where('is_locked', '=', true)
+            ->exists()) {
             return false;
         }
 
