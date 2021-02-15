@@ -43,7 +43,7 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
             return;
         }
 
-        if ($this->status === EligibilityBatch::STATUSES['complete'] && $this->stillHasPendingElibilityPatients($this->batchId)) {
+        if ((int) $this->status === EligibilityBatch::STATUSES['complete'] && $this->stillHasPendingElibilityPatients($this->batchId)) {
              ProcessEligibilityBatch::dispatch($this->batchId);
              return;
         }
