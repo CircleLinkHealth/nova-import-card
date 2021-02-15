@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a177933eabec0bbd76215714daf6ecae",
+    "content-hash": "0c6dcda70ffc03013557b2e0349bfbb9",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -909,11 +909,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v3.1",
+            "version": "v3.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "ba4519a54ce17656673eb950524b2fad79ddd43a"
+                "reference": "37b02cfae50d71422bcbf8cf827e74308cde2800"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -969,7 +969,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-11T00:06:34+00:00"
+            "time": "2021-02-15T18:37:55+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1106,11 +1106,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.7.8",
+            "version": "v4.7.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4c0da0ae1da56f43cf3b03867441606af74fcf9b"
+                "reference": "93e186ce4774493a86b45381047eae53a6348829"
             },
             "require": {
                 "circlelinkhealth/condition-code-lookup-module": "^1.1.7",
@@ -1142,7 +1142,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-15T16:49:45+00:00"
+            "time": "2021-02-15T18:37:55+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
