@@ -91,7 +91,7 @@ class Demographics extends BaseModel
             return null;
         }
         
-        return self::whereRaw("MATCH(first_name, last_name) AGAINST('+$firstName +$lastName' IN BOOLEAN MODE)")
+        return self::whereRaw("MATCH(first_name, last_name) AGAINST(\"+$firstName +$lastName\" IN BOOLEAN MODE)")
                    ->where('practice_id', $practiceId)
                    ->where('dob', $dob)
                    ->orderByDesc('updated_at');
