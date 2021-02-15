@@ -3097,6 +3097,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function scopeUniquePatients($builder) {
+        return $builder
+            ->join('patient_info', 'patient_info.user_id', '=', 'users.id')
+            ->groupBy(['users.display_name', 'patient_info.birth_date']);
+    }
     /**
      * Scope for Enrollable Users we need to send a reminder Self Enrollment Notification to.
      *
