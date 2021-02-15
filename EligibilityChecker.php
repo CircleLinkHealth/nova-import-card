@@ -525,7 +525,7 @@ class EligibilityChecker
                     }
 
                     foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
-                        foreach ($problem->searchKeywords as $keyword) {
+                        foreach ($problem->searchKeywords ?? [] as $keyword) {
                             if (empty($keyword)) {
                                 continue;
                             }
