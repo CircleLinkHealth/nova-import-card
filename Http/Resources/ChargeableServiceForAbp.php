@@ -52,11 +52,11 @@ class ChargeableServiceForAbp extends JsonResource
         $cs = $pms->chargeableServices;
 
         $arr = $cs
-            ->map(function (ChargeableServiceModel $cs) {
+            ->map(function (ChargeableServiceModel $cs) use ($pms) {
                 return [
                     'id'           => $cs->id,
                     'is_fulfilled' => true,
-                    'total_time'   => ChargeableServiceModel::BHI === $cs->code ? $this->bhi_time : $this->getBillableCcmCs(),
+                    'total_time'   => ChargeableServiceModel::BHI === $cs->code ? $pms->bhi_time : $pms->getBillableCcmCs(),
                 ];
             })
             ->values()
@@ -75,9 +75,9 @@ class ChargeableServiceForAbp extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'           => $this->id,
-            'total_time'   => $this->total_time,
-            'is_fulfilled' => $this->is_fulfilled,
+            'id'           => $this['id'],
+            'total_time'   => $this['total_time'],
+            'is_fulfilled' => $this['is_fulfilled'],
         ];
     }
 }

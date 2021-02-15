@@ -20,10 +20,10 @@ class SetPatientChargeableServicesResponse extends JsonResource
     public function toArray($request)
     {
         return [
-            'approved'            => $this->approved,
-            'rejected'            => $this->rejected,
-            'qa'                  => $this->qa,
-            'chargeable_services' => $this->chargeable_services,
+            'approved'            => $this['approved'],
+            'rejected'            => $this['rejected'],
+            'qa'                  => $this['qa'],
+            'chargeable_services' => $this['chargeable_services'],
         ];
     }
 }
