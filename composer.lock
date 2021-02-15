@@ -768,11 +768,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
