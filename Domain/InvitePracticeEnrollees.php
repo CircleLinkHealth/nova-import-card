@@ -56,7 +56,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($q) {
                 $q->canSendSelfEnrollmentInvitation(true);
-            });
+            })->uniquePatients();
     }
 
     private function getBatch(): EnrollmentInvitationsBatch

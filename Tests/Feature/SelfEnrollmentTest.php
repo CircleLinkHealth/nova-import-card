@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
 use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SelfEnrollment\Constants;
 use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
@@ -302,7 +303,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $this->createEnrollees($number = 2);
         Notification::fake();
-        InvitePracticeEnrollees::dispatch(
+        InvitePracticeEnrollees::dispatchNow(
             $number,
             $this->practice()->id,
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
@@ -310,6 +311,51 @@ class SelfEnrollmentTest extends TestCase
         );
 
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
+    }
+
+    public function test_scope_unique_patients()
+    {
+        $count = 3;
+        $users = $this->patient($count);
+        $userIds = collect($users)->pluck('id')->toArray();
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $displayName = "$firstName $lastName";
+        $birthDate = now()->subYears(60);
+
+
+
+       $usersUpdated = User::whereIn('id', $userIds)
+            ->update([
+                'display_name' => $displayName,
+                'first_name' => $firstName,
+                'last_name' => $lastName
+            ]);
+
+
+       $patientsUpdated = Patient::whereIn('user_id', $userIds)
+            ->update([
+                'birth_date'=> $birthDate
+            ]);
+
+
+
+        $usersWithSameName = User::whereIn('id', $userIds)->pluck("display_name");
+        $usersWithSameName->each(function (string $name) use ($displayName){
+            self::assertTrue($name === $displayName);
+        });
+
+        $usersWithSameDob = Patient::whereIn('user_id', $userIds)->pluck("birth_date");
+        $usersWithSameDob->each(function (Carbon $dob) use ($birthDate){
+            self::assertTrue($dob->isSameDay($birthDate));
+        });
+
+
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count();
+//        $unique = User::where('display_name', $displayName)->uniquePatients()->count();
+
+        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
+        self::assertTrue($countUnique === 1, "$countUnique patients found instead of 1");
     }
 
     public function test_it_sends_enrollment_notifications_limited()

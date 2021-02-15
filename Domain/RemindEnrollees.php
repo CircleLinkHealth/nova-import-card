@@ -63,6 +63,7 @@ class RemindEnrollees extends AbstractSelfEnrollableUserIterator
             ])
             ->when($this->practiceId, function ($q) {
                 return $q->where('program_id', $this->practiceId);
-            });
+            })
+            ->uniquePatients();
     }
 }

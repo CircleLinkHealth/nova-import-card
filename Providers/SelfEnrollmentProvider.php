@@ -25,6 +25,8 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Observers\EnrolleeObserver;
 use CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Notifications\Events\NotificationFailed;
