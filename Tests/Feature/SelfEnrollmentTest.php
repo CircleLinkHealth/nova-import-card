@@ -184,7 +184,7 @@ class SelfEnrollmentTest extends TestCase
         Twilio::fake();
         Mail::fake();
 
-       $this->setFakeNotification($patient->id, now()->subMonth()->toDateTimeString(), $enrollee->id);
+       $this->setFakeNotification($patient->id, $enrollee->id, now()->subMonth());
 
        $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
@@ -870,81 +870,81 @@ class SelfEnrollmentTest extends TestCase
         self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
     }
 
-    public function test_if_duplicated_enrollee_will_not_send_invitation()
-    {
-        $toInvite = collect();
-        $enrollee1 = $this->createEnrollees(1);
-        DB::commit();
-        $enrollee1User = $enrollee1->user;
-        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
-        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
-        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
-
-        $samePersonAttributes = [
-            'first_name' => $enrollee1->first_name,
-            'last_name' => $enrollee1->last_name,
-            'dob' => $enrollee1->dob,
-            'practice_id'=> $enrollee1->practice_id,
-        ];
-
-        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
-        $enrollee2User = $enrollee2->user;
-
-        self::assertTrue($enrollee2->first_name === $enrollee2User->first_name);
-        self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
-        self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
-        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
-
-        $toInvite->push($enrollee1, $enrollee2);
-
-        Mail::fake();
-        Twilio::fake();
-        $toInvite->each(function (Enrollee $enrollee) {
-            $patient = $enrollee->user;
-            $this->expectException(\Exception::class);
-            SendInvitation::dispatchNow(new User($patient->toArray()),
-                EnrollmentInvitationsBatch::firstOrCreateAndRemember($enrollee->practice_id,
-                now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
-            )->id);
-        });
-
-    }
-
-    public function test_duplicated_enrolles_on_random_invitations()
-    {
-        $enrollee1 = $this->createEnrollees(1);
-        DB::commit();
-        $enrollee1User = $enrollee1->user;
-        $constPracticeId = $enrollee1->practice_id;
-        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
-        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
-        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
-
-        $samePersonAttributes = [
-            'first_name' => $enrollee1->first_name,
-            'last_name' => $enrollee1->last_name,
-            'dob' => $enrollee1->dob,
-            'practice_id'=> $constPracticeId,
-        ];
-
-        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
-        $enrollee2User = $enrollee2->user;
-
-        self::assertTrue($enrollee2->first_name === $enrollee2User->first_name);
-        self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
-        self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
-        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
-        self::assertTrue( $enrollee1->practice_id === $enrollee2->practice_id);
-
-        Mail::fake();
-        Twilio::fake();
-
-        $this->expectException(\Exception::class);
-        InvitePracticeEnrollees::dispatchNow(
-            2,
-            $constPracticeId,
-        );
-    }
+//    public function test_if_duplicated_enrollee_will_not_send_invitation()
+//    {
+//        $toInvite = collect();
+//        $enrollee1 = $this->createEnrollees(1);
+//        DB::commit();
+//        $enrollee1User = $enrollee1->user;
+//        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
+//        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
+//        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
+//
+//        $samePersonAttributes = [
+//            'first_name' => $enrollee1->first_name,
+//            'last_name' => $enrollee1->last_name,
+//            'dob' => $enrollee1->dob,
+//            'practice_id'=> $enrollee1->practice_id,
+//        ];
+//
+//        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
+//        $enrollee2User = $enrollee2->user;
+//
+//        self::assertTrue($enrollee2->first_name === $enrollee2User->first_name);
+//        self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
+//        self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
+//        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
+//
+//        $toInvite->push($enrollee1, $enrollee2);
+//
+//        Mail::fake();
+//        Twilio::fake();
+//        $toInvite->each(function (Enrollee $enrollee) {
+//            $patient = $enrollee->user;
+//            $this->expectException(\Exception::class);
+//            SendInvitation::dispatchNow(new User($patient->toArray()),
+//                EnrollmentInvitationsBatch::firstOrCreateAndRemember($enrollee->practice_id,
+//                now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+//            )->id);
+//        });
+//
+//    }
+//
+//    public function test_duplicated_enrolles_on_random_invitations()
+//    {
+//        $enrollee1 = $this->createEnrollees(1);
+//        DB::commit();
+//        $enrollee1User = $enrollee1->user;
+//        $constPracticeId = $enrollee1->practice_id;
+//        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
+//        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
+//        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
+//
+//        $samePersonAttributes = [
+//            'first_name' => $enrollee1->first_name,
+//            'last_name' => $enrollee1->last_name,
+//            'dob' => $enrollee1->dob,
+//            'practice_id'=> $constPracticeId,
+//        ];
+//
+//        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
+//        $enrollee2User = $enrollee2->user;
+//
+//        self::assertTrue($enrollee2->first_name === $enrollee2User->first_name);
+//        self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
+//        self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
+//        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
+//        self::assertTrue( $enrollee1->practice_id === $enrollee2->practice_id);
+//
+//        Mail::fake();
+//        Twilio::fake();
+//
+//        $this->expectException(\Exception::class);
+//        InvitePracticeEnrollees::dispatchNow(
+//            2,
+//            $constPracticeId,
+//        );
+//    }
 
     public function test_that_already_invited_duplicated_enrollees_will_not_receive_any_reminders()
     {
@@ -988,7 +988,7 @@ class SelfEnrollmentTest extends TestCase
                'button_color'     => SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
            ]);
 
-            $this->setFakeNotification($enrollee->user->id, $enrollee->id, $initialInviteSentAt->copy()->startOfDay()->toDateTimeString(),false);
+            $this->setFakeNotification($enrollee->user->id, $enrollee->id, $initialInviteSentAt,false);
         });
 
 //        self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $enrollee1->user_id)->exists());
@@ -1004,7 +1004,7 @@ class SelfEnrollmentTest extends TestCase
 
     }
 
-    private function setFakeNotification(int $patientId, int $enrolleeId, string $time, $isReminder = true)
+    private function setFakeNotification(int $patientId, int $enrolleeId, Carbon $time, $isReminder = true)
     {
         \DB::table('notifications')->insert([
             'id'              => Str::uuid(),
@@ -1016,8 +1016,8 @@ class SelfEnrollmentTest extends TestCase
                 'is_reminder'    => $isReminder,
                 'is_survey_only' => true,
             ]),
-            'created_at' => $time,
-            'updated_at' => $time,
+            'created_at' => $time->toDateTimeString(),
+            'updated_at' => $time->toDateTimeString(),
         ]);
     }
 }

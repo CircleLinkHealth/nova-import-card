@@ -157,10 +157,10 @@ class Helpers
     {
         return $enrollee->status === Enrollee::QUEUE_AUTO_ENROLLMENT
             && empty($enrollee->source)
-            && (! $isReminder && self::canSendFreshInvitation($enrollee));
+            && (! $isReminder && self::canSendOriginalInvitation($enrollee));
     }
 
-    private static function canSendFreshInvitation(Enrollee $enrollee)
+    private static function canSendOriginalInvitation(Enrollee $enrollee)
     {
         return $enrollee->enrollmentInvitationLinks()
             ->where('created_at', '>', now()->subMonths(Enrollee::INVITE_ONCE_EVERY_N_MONTHS));

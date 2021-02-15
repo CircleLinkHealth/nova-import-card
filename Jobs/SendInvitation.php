@@ -20,6 +20,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
+use function PHPUnit\Framework\isEmpty;
 
 class SendInvitation implements ShouldQueue
 {
@@ -113,7 +114,7 @@ class SendInvitation implements ShouldQueue
         $notifiable = $this->getEnrolleeToNotify($this->user, $this->isReminder);
 
         if (! $notifiable){
-            return;
+            return '';
         }
 
         $notifiable->enrollmentInvitationLinks()->create([
@@ -139,6 +140,9 @@ class SendInvitation implements ShouldQueue
 
     private function sendInvite(string $link)
     {
+        if (empty($link)){
+            return;
+        }
         $this->user->notify(new SelfEnrollmentInviteNotification($link, $this->isReminder, $this->channels));
     }
 
@@ -163,7 +167,7 @@ class SendInvitation implements ShouldQueue
 
         $user->load([
             'enrollee' => function($enrollee) use ($isReminder){
-                $enrollee->canSendSelfEnrollmentInvitation($isReminder);
+                $enrollee->canSendSelfEnrollmentInvitation(!$isReminder);
             },
         ]);
 
