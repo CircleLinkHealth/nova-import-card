@@ -81,12 +81,12 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        Bus::chain([
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
-            (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
-                ->splitToBatches(),
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
-        ])
+        Bus::chain(array_merge(
+                       [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+                       (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
+                           ->splitToBatches(),
+                       [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+                   ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
             ->dispatch();
 
