@@ -84,6 +84,7 @@
                         @if ($batch->type == CircleLinkHealth\SharedModels\Entities\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
+                                   onclick="var result = confirm('This will reprocess the batch. Do not run this more than once every 30 minutes!!');if (!result) {event.preventDefault();}"
                                    class="btn btn-danger">Reprocess</a>
                             </div>
 
