@@ -8,8 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovableBillingStatusesQuery
@@ -19,24 +17,7 @@ trait ApprovableBillingStatusesQuery
         return PatientMonthlyBillingStatus::orderByRaw('FIELD(status, "needs_qa", "rejected", "approved")')
             ->where('chargeable_month', '=', $monthYear)
             ->whereHas('patientUser', fn ($q) => $q->patientInLocations($locationIds))
-            ->whereHas('chargeableMonthlyTime', function ($q) use ($monthYear) {
-                $q->createdOnIfNotNull($monthYear, 'chargeable_month')
-                    ->where(function ($q) {
-                        $q
-                            ->where(function ($q) {
-                                $time = CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
-                                $codes = [ChargeableService::CCM, ChargeableService::BHI, ChargeableService::RPM, ChargeableService::GENERAL_CARE_MANAGEMENT];
-
-                                return $this->hasEnoughTimeForCodes($q, $time, $codes);
-                            })
-                            ->orWhere(function ($q) {
-                                $time = CpmConstants::MONTHLY_BILLABLE_PCM_TIME_TARGET_IN_SECONDS;
-                                $codes = [ChargeableService::PCM];
-
-                                return $this->hasEnoughTimeForCodes($q, $time, $codes);
-                            });
-                    });
-            })
+            ->whereHas('patientUser.chargeableMonthlySummaries', fn ($q) => $q->where('is_fulfilled', '=', true))
             ->when($withRelations, function ($q) use ($monthYear) {
                 return $q->with([
                     'patientUser' => fn ($q) => $q->with(array_merge($this->sharedUserRelations($monthYear), [
@@ -61,15 +42,6 @@ trait ApprovableBillingStatusesQuery
                     'patientUser' => fn ($q) => $q->with($this->sharedUserRelations($monthYear)),
                 ]);
             });
-    }
-
-    private function hasEnoughTimeForCodes(Builder $query, int $timeInSeconds, array $codes): Builder
-    {
-        return $query->whereIn('chargeable_service_id', function ($q) use ($codes) {
-            $q->select('id')
-                ->from((new ChargeableService())->getTable())
-                ->whereIn('code', $codes);
-        })->where('total_time', '>=', $timeInSeconds);
     }
 
     private function sharedUserRelations(Carbon $monthYear): array

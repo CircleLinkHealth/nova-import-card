@@ -65,7 +65,7 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
 
         $practice = measureTime('practice', function () use ($practiceId) {
             $practice = Practice::find($practiceId);
-            $this->setupExistingPractice($practice, true, true, true, true, true, true);
+            $this->setupExistingPractice($practice, true, true, true, true, true, false);
             $practice->locations->each(fn (Location $l) => GenerateLocationSummaries::dispatchNow($l->id));
 
             return $practice;
@@ -128,7 +128,7 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
         $isPcm = (bool) rand(0, 1);
         $isBhi = $isPcm ? false : (bool) rand(0, 1);
         $isRpm = $isPcm ? false : (bool) rand(0, 1);
-        $isRhc = $isPcm ? false : (bool) rand(0, 1);
+        $isRhc = false;
 
         $patient = $this->setupPatient($practice, $isBhi, $isPcm, $isRpm, false, false);
         measureTime('createNoteAndCall', fn () => $this->createNoteAndCall($nurse, $patient));

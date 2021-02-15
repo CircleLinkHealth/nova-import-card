@@ -164,8 +164,18 @@ class CompareAbpV2vsV3 extends Command
 
     private function checkChargeableServices(array $oldP, array $newP): string
     {
-        $oldCs = collect($oldP['chargeable_services'])->map(fn ($item) => $item['id'])->toArray();
-        $newCs = collect($newP['chargeable_services'])->map(fn ($item) => $item['id'])->toArray();
+        $oldCs = collect($oldP['chargeable_services'])
+            ->filter(fn ($item) => $item['is_fulfilled'] ?? true)
+            ->map(fn ($item)    => $item['id'])
+            ->sort()
+            ->values()
+            ->toArray();
+        $newCs = collect($newP['chargeable_services'])
+            ->filter(fn ($item) => $item['is_fulfilled'] ?? true)
+            ->map(fn ($item)    => $item['id'])
+            ->sort()
+            ->values()
+            ->toArray();
 
         if ($oldCs != $newCs) {
             $strA = implode(',', $oldCs);
@@ -213,11 +223,11 @@ class CompareAbpV2vsV3 extends Command
 
     private function checkPatientProperty(array $aP, array $bP, string $prop): string
     {
-        if (isset($aP[$prop]) && ! isset($bP[$prop])) {
+        if (array_key_exists($prop, $aP) && ! array_key_exists($prop, $bP)) {
             return $this->errorLog('b not set');
         }
 
-        if ( ! isset($aP[$prop]) && isset($bP[$prop])) {
+        if ( ! array_key_exists($prop, $aP) && array_key_exists($prop, $bP)) {
             return $this->errorLog('a not set');
         }
 
