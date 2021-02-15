@@ -76,6 +76,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
@@ -3100,8 +3101,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeUniquePatients($builder) {
 
         return $builder
-            ->join('patient_info', 'patient_info.user_id', '=', 'users.id')
-            ->groupBy(['users.display_name', 'patient_info.birth_date']);
+            ->whereIn('users.id', function ($q){
+                $q->join('patient_info', 'patient_info.user_id', '=', 'users.id')
+                    ->select('users.id')
+                    ->from('users')
+                    ->groupBy(['display_name', 'birth_date']);
+            })
+            ->join('patient_info', 'patient_info.user_id', '=', 'users.id');
     }
 
     /**
