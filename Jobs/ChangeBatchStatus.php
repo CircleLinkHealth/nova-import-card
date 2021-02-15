@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 
 class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
 {
@@ -22,6 +23,7 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const CACHE_KEY_PREFIX = 'reprocess_dispatched:';
 
     protected int    $batchId;
     protected string $status;
@@ -44,8 +46,16 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
         }
 
         if ((int) $this->status === EligibilityBatch::STATUSES['complete'] && $this->stillHasPendingElibilityPatients($this->batchId)) {
-             ProcessEligibilityBatch::dispatch($this->batchId);
-             return;
+            $cacheKey = self::CACHE_KEY_PREFIX.$this->batchId;
+            $cache = Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
+            if ( ! $cache->has($cacheKey)) {
+                ProcessEligibilityBatch::dispatch($this->batchId);
+                ProcessEligibilityBatch::dispatch($this->batchId)->delay(now()->addMinutes(3));
+                ProcessEligibilityBatch::dispatch($this->batchId)->delay(now()->addMinutes(7));
+                $cache->put($cacheKey, now()->timestamp, now()->addMinutes(10));
+            }
+
+            return;
         }
 
         EligibilityBatch::whereId($this->batchId)
