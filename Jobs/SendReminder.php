@@ -57,6 +57,12 @@ class SendReminder implements ShouldQueue
 
     public function shouldRun(): bool
     {
+        $this->patient->loadMissing( 'enrolleeMany');
+
+        if($this->patient->enrolleeMany > 1){
+            throw new \Exception("`Duplicated Enrollee {$this->patient->enrollee->id}. User ID {$this->patient->id}");
+        }
+
         if ( ! Reminders::areEnabledFor($this->patient->primaryPractice->name)) {
             return false;
         }

@@ -144,6 +144,12 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
+        $this->user->loadMissing('enrolleeMany');
+
+        if ($this->user->enrolleeMany->count() > 1){
+            throw new \Exception("`Duplicated Enrollee {$this->user->enrollee->id}. User ID {$this->user->id}");
+        }
+
         if (Patient::UNREACHABLE !== $this->user->getCcmStatus()) {
             return false;
         }
