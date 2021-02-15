@@ -105,6 +105,7 @@ class ApproveBillablePatientsServiceV3
             return SetPatientChargeableServicesResponse::make([]);
         }
 
+        //todo: optimise at some point - not uber high priority
         foreach ($services as $service) {
             $input = (new ForceAttachInputDTO())
                 ->setReason('abp')
