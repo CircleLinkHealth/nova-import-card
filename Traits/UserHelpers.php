@@ -450,11 +450,11 @@ trait UserHelpers
             if ($addRpm) {
                 $cpmProb = $cpmProblems->get(1);
 
-                RpmProblem::create([
+                RpmProblem::updateOrCreate([
                     'practice_id' => $practice->id,
                     'code'        => $icd10 = 'rpm_test',
                     'description' => $cpmProb->name,
-                ]);
+                ], []);
 
                 (app(CcdProblemService::class))->addPatientCcdProblem(
                     (new CcdProblemInput())
@@ -469,11 +469,11 @@ trait UserHelpers
             $ccdProblems = collect();
             if ($pcmOnly) {
                 $cpmProb = $cpmProblems->get(2);
-                PcmProblem::create([
+                PcmProblem::updateOrCreate([
                     'practice_id' => $practice->id,
                     'code'        => $icd10 = 'pcm_test',
                     'description' => $cpmProb->name,
-                ]);
+                ], []);
 
                 (app(CcdProblemService::class))->addPatientCcdProblem(
                     (new CcdProblemInput())
