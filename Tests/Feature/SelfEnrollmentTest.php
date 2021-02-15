@@ -313,7 +313,7 @@ class SelfEnrollmentTest extends TestCase
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
 
-    public function test_scope_unique_patients()
+    public function test_scope_unique_patients_same_name_same_dob()
     {
         $count = 3;
         $users = $this->patient($count);
@@ -333,7 +333,7 @@ class SelfEnrollmentTest extends TestCase
             ]);
 
 
-       $patientsUpdated = Patient::whereIn('user_id', $userIds)
+       Patient::whereIn('user_id', $userIds)
             ->update([
                 'birth_date'=> $birthDate
             ]);
@@ -351,11 +351,39 @@ class SelfEnrollmentTest extends TestCase
         });
 
 
-        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count();
-//        $unique = User::where('display_name', $displayName)->uniquePatients()->count();
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
 
         self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
         self::assertTrue($countUnique === 1, "$countUnique patients found instead of 1");
+    }
+
+    public function test_scope_unique_patients_same_name_different_dob()
+    {
+        $count = 3;
+        $users = $this->patient($count);
+        $userIds = collect($users)->pluck('id')->toArray();
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $displayName = "$firstName $lastName";
+
+
+        User::whereIn('id', $userIds)
+            ->update([
+                'display_name' => $displayName,
+                'first_name' => $firstName,
+                'last_name' => $lastName
+            ]);
+
+        $usersWithSameName = User::whereIn('id', $userIds)->pluck("display_name");
+        $usersWithSameName->each(function (string $name) use ($displayName){
+            self::assertTrue($name === $displayName);
+        });
+
+
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
+
+        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
+        self::assertTrue($countUnique === $count, "$countUnique patients found instead of $count");
     }
 
     public function test_it_sends_enrollment_notifications_limited()
