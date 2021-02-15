@@ -11,6 +11,7 @@ use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -109,11 +110,10 @@ class SendInvitation implements ShouldQueue
             throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");
         }
 
-        $notifiable = $this->user;
+        $notifiable = $this->getEnrolleeToNotify($this->user, $this->isReminder);
 
-        if ($this->user->isSurveyOnly()) {
-            $this->user->loadMissing('enrollee');
-            $notifiable = $this->user->enrollee;
+        if (! $notifiable){
+            return;
         }
 
         $notifiable->enrollmentInvitationLinks()->create([
@@ -144,12 +144,6 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
-        $this->user->loadMissing('enrolleeMany');
-
-        if ($this->user->enrolleeMany->count() > 1){
-            throw new \Exception("`Duplicated Enrollee {$this->user->enrollee->id}. User ID {$this->user->id}");
-        }
-
         if (Patient::UNREACHABLE !== $this->user->getCcmStatus()) {
             return false;
         }
@@ -159,5 +153,20 @@ class SendInvitation implements ShouldQueue
         }
 
         return true;
+    }
+
+    private function getEnrolleeToNotify(User $user, bool $isReminder)
+    {
+        if ($user->enrollee && Helpers::canSendSelfEnrollmentInvitation($user->enrollee, $isReminder)){
+            return $user->enrollee;
+        }
+
+        $user->load([
+            'enrollee' => function($enrollee) use ($isReminder){
+                $enrollee->canSendSelfEnrollmentInvitation($isReminder);
+            },
+        ]);
+
+        return $user->enrollee ?? null;
     }
 }
