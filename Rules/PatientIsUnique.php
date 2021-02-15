@@ -64,13 +64,13 @@ class PatientIsUnique implements Rule
     {
         return $this->duplicatePatientUserIds->first();
     }
-    
+
     public function getPatientUserIds(): ?Collection
     {
         return $this->duplicatePatientUserIds;
     }
-    
-    
+
+
     /**
      * Get the validation error message.
      *
@@ -119,7 +119,7 @@ class PatientIsUnique implements Rule
 
     private function mysqlMatchPatient(): ?Collection
     {
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('+$this->firstName +$this->lastName' IN BOOLEAN MODE)")
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"+$this->firstName +$this->lastName\" IN BOOLEAN MODE)")
             ->ofPractice($this->practiceId)
             ->whereHas(
                 'patientInfo',
