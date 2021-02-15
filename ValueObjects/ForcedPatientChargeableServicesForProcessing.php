@@ -42,7 +42,7 @@ class ForcedPatientChargeableServicesForProcessing
 
     public function isBlocked(): bool
     {
-        return PatientForcedChargeableService::FORCE_ACTION_TYPE === $this->actionType;
+        return PatientForcedChargeableService::BLOCK_ACTION_TYPE === $this->actionType;
     }
 
     public function isForced(): bool
@@ -50,7 +50,7 @@ class ForcedPatientChargeableServicesForProcessing
         return PatientForcedChargeableService::FORCE_ACTION_TYPE === $this->actionType;
     }
 
-    public function setActionType(bool $actionType): self
+    public function setActionType(string $actionType): self
     {
         $this->actionType = $actionType;
 
