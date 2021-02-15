@@ -120,5 +120,9 @@ class ForcePatientChargeableService
                 ? Carbon::now()->startOfMonth()
                 : $this->input->getMonth()
         );
+        (app(ProcessPatientBillingStatus::class))
+            ->setPatientId($this->input->getPatientUserId())
+            ->setMonth($this->input->getMonth())
+            ->execute();
     }
 }

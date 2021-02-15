@@ -40,6 +40,10 @@ class PatientMonthlyBillingStatus extends BaseModel
 {
     use DateScopesTrait;
 
+    const APPROVED = 'approved';
+    const NEEDS_QA = 'needs_qa';
+    const REJECTED = 'rejected';
+
     protected $dates = [
         'chargeable_month',
     ];
@@ -52,10 +56,25 @@ class PatientMonthlyBillingStatus extends BaseModel
     ];
 
     protected $table = 'patient_monthly_billing_statuses';
-    
+
     public function chargeableMonthlyTime()
     {
         return $this->hasMany(ChargeablePatientMonthlyTime::class, 'patient_user_id', 'patient_user_id');
+    }
+
+    public function isApproved(): bool
+    {
+        return self::APPROVED === $this->status;
+    }
+
+    public function isRejected(): bool
+    {
+        return self::REJECTED === $this->status;
+    }
+
+    public function needsQA(): bool
+    {
+        return self::NEEDS_QA === $this->status;
     }
 
     public function patientUser()

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Http\Resources\ChargeableServiceForAbp;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
 use CircleLinkHealth\CcmBilling\Http\Resources\SetPatientChargeableServicesResponse;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice as PracticeProcessor;
@@ -91,6 +92,7 @@ class ApproveBillablePatientsServiceV3
         $billingStatus = PatientMonthlyBillingStatus::with([
             'patientUser' => fn ($p) => $p->with('patientInfo')->select(['id', 'program_id']),
         ])->find($reportId);
+        
         if ( ! $billingStatus || ! is_null($billingStatus->actor_id)) {
             return SetPatientChargeableServicesResponse::make([]);
         }
@@ -114,8 +116,16 @@ class ApproveBillablePatientsServiceV3
             ForcePatientChargeableService::execute($input);
         }
 
-        // todo: fill this with the result
-        return SetPatientChargeableServicesResponse::make([]);
+        $billingStatus = PatientMonthlyBillingStatus::with([
+            'patientUser' => fn ($p) => $p->with(['chargeableMonthlySummaries', 'chargeableMonthlyTime']),
+        ])->find($reportId);
+
+        return SetPatientChargeableServicesResponse::make([
+            'approved'            => $billingStatus->isApproved(),
+            'rejected'            => $billingStatus->isRejected(),
+            'needs_qa'            => $billingStatus->needsQA(),
+            'chargeable_services' => ChargeableServiceForAbp::collectionFromChargeableMonthlySummaries($billingStatus->patientUser),
+        ]);
     }
 
     public function successfulCallsCount(array $patientIds, Carbon $month): ResourceCollection
