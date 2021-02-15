@@ -391,17 +391,7 @@ class EligibilityBatchController extends Controller
      */
     public function getReprocess(EligibilityBatch $batch)
     {
-        if (in_array(
-            $batch->type,
-            [EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS]
-        )) {
-            return view('eligibility::batch.methods.google-drive')
-                ->with('batch', $batch)
-                ->with('action', 'edit');
-        }
-        if (EligibilityBatch::TYPE_ONE_CSV == $batch->type) {
-            return view('eligibility::batch.methods.single-csv');
-        }
+        ProcessEligibilityBatch::dispatch($batch);
     }
 
     public function googleDriveCreate()
