@@ -12,16 +12,19 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
 {
-    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear = null): Builder
+    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear = null, bool $includeNotesControllerRalationships = false): Builder
     {
-        return $this->approvablePatientUsersQuery($monthYear)
+        return $this->approvablePatientUsersQuery($monthYear, $includeNotesControllerRalationships)
             ->where('id', $patientId);
     }
 
-    public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
+    public function approvablePatientUsersQuery(Carbon $monthYear = null, bool $includeNotesControllerRalationships = false): Builder
     {
         $relations = [
-            'primaryPractice'         => fn ($p)         => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
+            'primaryPractice' => function ($p) use ($includeNotesControllerRalationships) {
+                $p->when($includeNotesControllerRalationships, fn ($pr) => $pr->with(['settings']))
+                    ->with(['chargeableServices', 'pcmProblems', 'rpmProblems']);
+            },
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
@@ -52,6 +55,26 @@ trait ApprovablePatientUsersQuery
             },
         ];
 
-        return User::with($relations)->ofType('participant');
+        $notesControllerRelationships = [
+            'carePlan' => function ($q) {
+                return $q->select(['id', 'user_id', 'status', 'created_at']);
+            },
+            'patientSummaries' => function ($q) {
+                return $q->where('month_year', Carbon::now()->startOfMonth());
+            },
+            'patientInfo' => function ($q) {
+                return $q->with(['contactWindows']);
+            },
+            'careTeamMembers' => function ($q) {
+                return $q->with([
+                    'user' => function ($q) {
+                        return $q->select(['id', 'first_name', 'last_name', 'suffix']);
+                    },
+                ])->has('user');
+            }, ];
+
+        return User::with($relations)
+            ->when($includeNotesControllerRalationships, fn ($user) => $user->with($notesControllerRelationships))
+            ->ofType('participant');
     }
 }

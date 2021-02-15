@@ -18,8 +18,6 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\Core\Tests\TestCase;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +27,7 @@ use Mockery;
 class LocationSummaryProcessingTest extends CustomerTestCase
 {
     use UserHelpers;
-    
+
     public function test_chunk_job_dispatches_job_to_process_patient_summaries()
     {
         Bus::fake(ProcessPatientMonthlyServices::class);

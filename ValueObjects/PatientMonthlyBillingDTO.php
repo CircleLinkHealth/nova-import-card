@@ -7,7 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PatientMonthlyBillingDTO
 {
@@ -26,6 +29,8 @@ class PatientMonthlyBillingDTO
     protected int $patientId;
 
     protected array $patientProblems;
+    
+    protected array $practiceServiceCodes = [];
 
     protected array $patientServices = [];
 
@@ -71,6 +76,17 @@ class PatientMonthlyBillingDTO
     public function getLocationServices(): array
     {
         return $this->locationServices;
+    }
+    
+    public function withPracticeServiceCodes(array $serviceCodes):self
+    {
+        $this->practiceServiceCodes = $serviceCodes;
+        return $this;
+    }
+    
+    public function getPracticeCodes():array
+    {
+        return $this->practiceServiceCodes;
     }
 
     public function getPatientId(): int
@@ -156,5 +172,30 @@ class PatientMonthlyBillingDTO
         $this->patientProblems = $patientProblems;
 
         return $this;
+    }
+    
+    public static function generateFromUser(User $patient, Carbon $month):self
+    {
+        return (new self())
+            ->subscribe($patient->patientInfo->location->availableServiceProcessors($month))
+            ->forPatient($patient->id)
+            ->ofLocation($patient->patientInfo->location->id)
+            ->forMonth($month)
+            ->setBillingStatusIsTouched(
+                ! is_null(optional($patient->monthlyBillingStatus
+                    ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                    ->first())->actor_id)
+            )
+            ->withLocationServices(
+                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+            )
+            ->withPracticeServiceCodes($patient->primaryPractice->chargeableServices->pluck('code')->toArray())
+            ->withPatientServices(
+                ...PatientChargeableServicesForProcessing::fromCollection($patient)
+            )
+            ->withForcedPatientServices(
+                ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
+            )
+            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient));
     }
 }

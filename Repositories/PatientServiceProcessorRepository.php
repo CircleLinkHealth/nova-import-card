@@ -132,6 +132,12 @@ class PatientServiceProcessorRepository implements Repository
             ->first();
     }
 
+    public function getPatientWithBillingDataForNotesController(int $patientId): ?User
+    {
+        return $this->approvablePatientUserQuery($patientId, Carbon::now()->startOfMonth(), true)
+            ->first();
+    }
+
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
@@ -186,16 +192,6 @@ class PatientServiceProcessorRepository implements Repository
                 ]);
             }
         }, 1);
-    }
-
-    public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
-    {
-        // TODO: Implement reloadPatientChargeableMonthlyTimes() method.
-    }
-
-    public function reloadPatientProblems(int $patientId): void
-    {
-        // TODO: Implement reloadPatientProblems() method.
     }
 
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool

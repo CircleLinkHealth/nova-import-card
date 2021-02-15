@@ -13,8 +13,10 @@ use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
 
@@ -25,10 +27,15 @@ class PatientServicesForTimeTracker
         'AWV2+',
     ];
 
+    protected PatientMonthlyBillingDTO $dto;
+
     protected Carbon $month;
 
     /** @var ChargeablePatientMonthlyTime[]|Collection|null */
     protected ?Collection $monthlyTimes;
+
+    //todo:deperacte when we switch over to new billing entirely
+    protected User $patient;
 
     protected int $patientId;
 
@@ -42,14 +49,14 @@ class PatientServicesForTimeTracker
 
     public function get(): PatientChargeableSummaryCollection
     {
-        return $this->setMonthlyTimes()
+        return $this->setPatientData()
             ->consolidateSummaryData()
             ->createAndReturnResource();
     }
 
     public function getRaw(): Collection
     {
-        return $this->setMonthlyTimes()
+        return $this->setPatientData()
             ->consolidateSummaryData()
             ->monthlyTimes;
     }
@@ -97,12 +104,11 @@ class PatientServicesForTimeTracker
             return $summaries;
         }
 
-        $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
+        $servicesDerivedFromPatientProblems = collect($this->dto->getPatientProblems())
             ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
             ->flatten();
 
-        $this->repo()
-            ->getPatientWithBillingDataForMonth($this->patientId)
+        $this->patient
             ->forcedChargeableServices
             ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
             ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->chargeableService->code));
@@ -161,7 +167,7 @@ class PatientServicesForTimeTracker
     private function filterUsingPatientServiceStatus(): self
     {
         $this->monthlyTimes = $this->monthlyTimes
-            ->filter(fn (ChargeablePatientMonthlyTime $summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeableService->code))
+            ->filter(fn (ChargeablePatientMonthlyTime $summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::fromDTO($this->dto, $summary->chargeableService->code))
             ->values();
 
         return $this;
@@ -174,9 +180,7 @@ class PatientServicesForTimeTracker
 
     private function patientEligibleForRHC(): bool
     {
-        $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
-
-        return $patient->primaryPractice->chargeableServices->where('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
+        return $this->patient->primaryPractice->chargeableServices->where('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
     }
 
     private function rejectNonTimeTrackerServices(): self
@@ -198,11 +202,12 @@ class PatientServicesForTimeTracker
         return $this->repo;
     }
 
-    private function setMonthlyTimes(): self
+    private function setPatientData(): self
     {
+        $this->patient      = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $this->month);
+        $this->dto          = PatientMonthlyBillingDTO::generateFromUser($this->patient, $this->month);
         $this->monthlyTimes = $this->newBillingIsEnabled() ?
-            $this->repo()
-                ->getChargeablePatientTimesView($this->patientId, $this->month)
+            $this->patient->chargeableMonthlyTime
                 ->transform(fn ($entry) => $entry->replicate()) :
             $this->createFauxMonthlyTimesFromLegacyData();
 
