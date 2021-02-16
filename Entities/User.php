@@ -2239,11 +2239,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return false;
         }
 
-        foreach ($userRoles as $roleName) {
-            return Cache::remember("{$this->id}_user_is_allowed_to_bubble_chat", 30, function () use ($roleName, $rolesAllowedToChat) {
-                return in_array($roleName, $rolesAllowedToChat);
-            });
-        }
+        return Cache::remember("{$this->id}_user_is_allowed_to_bubble_chat", 30, function () use ($userRoles, $rolesAllowedToChat) {
+            foreach ($userRoles as $roleName) {
+                if (in_array($roleName, $rolesAllowedToChat)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     /**
