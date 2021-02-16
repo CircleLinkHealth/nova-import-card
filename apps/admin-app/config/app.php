@@ -15,7 +15,6 @@ use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CommandsServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
-use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 use CircleLinkHealth\TwilioIntegration\Providers\TwilioIntegrationServiceProvider;
@@ -204,9 +203,9 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
         LaravelJobServiceProvider::class,
         CcmBillingServiceProvider::class,
+        \CircleLinkHealth\CcmBilling\Providers\CcmBillingDeferredServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
-        BillingServiceProvider::class,
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
         DirectMailServiceProvider::class,
         GoogleDriveServiceProvider::class,

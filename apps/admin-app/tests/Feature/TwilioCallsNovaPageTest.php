@@ -12,7 +12,7 @@ use App\Nova\Metrics\TwilioCallDuration;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\ValueResult;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class TwilioCallsNovaPageTest extends CustomerTestCase
 {
