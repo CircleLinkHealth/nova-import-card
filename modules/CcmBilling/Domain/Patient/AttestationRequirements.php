@@ -7,26 +7,24 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\AttestationRequirementsDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class AttestationRequirements
 {
     protected AttestationRequirementsDTO $dto;
     protected User $patient;
-    protected int $patientId;
-    protected PatientServiceProcessorRepository $repo;
+    protected PatientMonthlyBillingDTO $patientDto;
 
-    public function __construct(int $patientId)
+    public function __construct(User $patient)
     {
-        $this->patientId = $patientId;
-        $this->dto       = new AttestationRequirementsDTO();
+        $this->patient = $patient;
+        $this->dto     = new AttestationRequirementsDTO();
     }
 
     public function execute(): AttestationRequirementsDTO
@@ -34,14 +32,14 @@ class AttestationRequirements
         return $this->billingRevampIsEnabled() ? $this->getRequirements() : $this->getLegacyAttestationRequirements();
     }
 
-    public static function get(int $patientId): AttestationRequirementsDTO
+    public static function get(User $patient): AttestationRequirementsDTO
     {
-        return (new static($patientId))->execute();
+        return (new static($patient))->execute();
     }
 
     private function attestedBhiProblemsCount(): self
     {
-        $bhiProblems = PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::BHI]);
+        $bhiProblems = collect($this->patientDto->getPatientProblems())->filter(fn (PatientProblemForProcessing $p) => ChargeableService::BHI === $p->getCode());
         $attested    = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
 
         $this->dto->setAttestedBhiProblemsCount(
@@ -56,7 +54,7 @@ class AttestationRequirements
 
     private function attestedCcmProblemsCount(): self
     {
-        $ccmProblems = PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::CCM]);
+        $ccmProblems = collect($this->patientDto->getPatientProblems())->filter(fn (PatientProblemForProcessing $p) => ChargeableService::CCM === $p->getCode());
         $attested    = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
 
         $this->dto->setAttestedCcmProblemsCount(
@@ -71,7 +69,7 @@ class AttestationRequirements
 
     private function billingRevampIsEnabled(): bool
     {
-        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        return BillingCache::billingRevampIsEnabled();
     }
 
     private function getDto(): AttestationRequirementsDTO
@@ -81,7 +79,7 @@ class AttestationRequirements
 
     private function getLegacyAttestationRequirements()
     {
-        $this->setPatient();
+        $this->setPatientDto();
         $this->isEnabled();
 
         if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($this->patient)) {
@@ -113,7 +111,7 @@ class AttestationRequirements
 
     private function getRequirements(): AttestationRequirementsDTO
     {
-        return $this->setPatient()
+        return $this->setPatientDto()
             ->isEnabled()
             ->setHasCcm()
             ->setHasPcm()
@@ -132,20 +130,11 @@ class AttestationRequirements
         return $this;
     }
 
-    private function repo(): PatientServiceProcessorRepository
-    {
-        if ( ! isset($this->repo)) {
-            $this->repo = app(PatientServiceProcessorRepository::class);
-        }
-
-        return $this->repo;
-    }
-
     private function setHasCcm(): self
     {
         $this->dto->setHasCcm(
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::CCM) ||
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::GENERAL_CARE_MANAGEMENT)
+            PatientIsOfServiceCode::fromDTO($this->patientDto, ChargeableService::CCM) ||
+            PatientIsOfServiceCode::fromDTO($this->patientDto, ChargeableService::GENERAL_CARE_MANAGEMENT)
         );
 
         return $this;
@@ -154,7 +143,7 @@ class AttestationRequirements
     private function setHasPcm(): self
     {
         $this->dto->setHasPcm(
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::PCM)
+            PatientIsOfServiceCode::fromDTO($this->patientDto, ChargeableService::PCM)
         );
 
         return $this;
@@ -163,19 +152,15 @@ class AttestationRequirements
     private function setHasRpm(): self
     {
         $this->dto->setHasRpm(
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::RPM)
+            PatientIsOfServiceCode::fromDTO($this->patientDto, ChargeableService::RPM)
         );
 
         return $this;
     }
 
-    private function setPatient(): self
+    private function setPatientDto(): self
     {
-        $this->patient = $this->repo()
-            ->getPatientWithBillingDataForMonth(
-                $this->patientId,
-                Carbon::now()->startOfMonth()
-            );
+        $this->patientDto = PatientMonthlyBillingDTO::generateFromUser($this->patient, Carbon::now()->startOfMonth());
 
         return $this;
     }

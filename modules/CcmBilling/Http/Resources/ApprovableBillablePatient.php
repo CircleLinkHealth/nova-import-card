@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ApprovableBillablePatient extends JsonResource
@@ -58,14 +59,14 @@ class ApprovableBillablePatient extends JsonResource
             'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
-            'practice'    => $this->patient->primaryPractice->display_name,
-            'practice_id' => $this->patient->primaryPractice->id,
-            'dob'         => $this->patient->getBirthDate(),
-            'ccm'         => round($this->getBillableCcmCs() / 60, 2),
-            'total_time'  => $this->total_time,
-            'bhi_time'    => $this->bhi_time,
-            'ccm_time'    => $this->getBillableCcmCs(),
-            'problems'    => $problems,
+            'practice'               => $this->patient->primaryPractice->display_name,
+            'practice_id'            => $this->patient->primaryPractice->id,
+            'dob'                    => $this->patient->getBirthDate(),
+            'ccm'                    => round($this->getBillableCcmCs() / 60, 2),
+            'total_time'             => $this->total_time,
+            'bhi_time'               => $this->bhi_time,
+            'ccm_time'               => $this->getBillableCcmCs(),
+            'problems'               => $problems,
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $status,
             'approve'                => (bool) $this->approved,
@@ -74,8 +75,13 @@ class ApprovableBillablePatient extends JsonResource
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa && ! $this->approved && ! $this->rejected,
             'attested_ccm_problems'  => $this->hasServiceCode(ChargeableServiceModel::RPM) ? $problems->pluck('id')->toArray() : $this->ccmAttestedProblems()->unique()->pluck('id')->toArray(),
-            'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
+            'chargeable_services'    => $this->getChargeableServices()->toArray($request),
             'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id')->toArray(),
         ];
+    }
+
+    private function getChargeableServices(): AnonymousResourceCollection
+    {
+        return ChargeableServiceForAbp::collectionFromPms($this->resource);
     }
 }

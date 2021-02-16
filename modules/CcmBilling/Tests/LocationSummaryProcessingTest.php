@@ -18,20 +18,23 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 use CircleLinkHealth\Core\Tests\TestCase;
 
-class LocationSummaryProcessingTest extends TestCase
+class LocationSummaryProcessingTest extends CustomerTestCase
 {
+    use UserHelpers;
+
     public function test_chunk_job_dispatches_job_to_process_patient_summaries()
     {
         Bus::fake(ProcessPatientMonthlyServices::class);
         Bus::partialMock();
 
-        $fakePatients = factory(User::class, 5)->create();
+        $fakePatients = collect($this->patient(5));
 
         $builderMock = Mockery::mock(Builder::class);
 
@@ -51,7 +54,7 @@ class LocationSummaryProcessingTest extends TestCase
         $builderMock->makePartial();
 
         $chunkJobPartiallyMocked = Mockery::mock(ProcessLocationPatientsChunk::class, [
-            $locationId = 1,
+            [$locationId = 1],
             AvailableServiceProcessors::push(
                 [
                     new CCM(),
@@ -119,7 +122,7 @@ class LocationSummaryProcessingTest extends TestCase
         );
 
         $processor = app(Location::class);
-        $processor->processServicesForLocation($locationId, $startOfMonth = Carbon::now()->startOfMonth());
+        $processor->processServicesForLocations([$locationId], $startOfMonth = Carbon::now()->startOfMonth());
 
         FakeLocationRepository::assertChargeableSummaryCreated($locationId, $cs1, $startOfMonth, $amount1);
         FakeLocationRepository::assertChargeableSummaryCreated($locationId, $cs2, $startOfMonth, $amount2);
@@ -128,7 +131,7 @@ class LocationSummaryProcessingTest extends TestCase
 
         FakeLocationRepository::storeUsingServiceId($locationId, $cs4, $pastMonth);
 
-        $processor->processServicesForLocation($locationId, $startOfMonth);
+        $processor->processServicesForLocations([$locationId], $startOfMonth);
 
         FakeLocationRepository::assertChargeableSummaryNotCreated($locationId, $cs4, $startOfMonth);
     }
@@ -166,7 +169,7 @@ class LocationSummaryProcessingTest extends TestCase
 
         FakeLocationRepository::setBuilder($builderMock);
 
-        app(Location::class)->processServicesForAllPatients($locationId, $startOfMonth);
+        app(Location::class)->processServicesForAllPatients([$locationId], $startOfMonth);
 
         Bus::assertDispatched(function (ProcessLocationPatientsChunk $job) use ($startOfMonth) {
             $availableProcessors = $job->getAvailableServiceProcessors();

@@ -9,7 +9,11 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,16 +32,16 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
 
     protected AvailableServiceProcessors $availableServiceProcessors;
 
-    protected int $locationId;
+    protected array $locationIds;
 
     protected Carbon $month;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $locationId, AvailableServiceProcessors $availableServiceProcessors, Carbon $month)
+    public function __construct(array $locationIds, AvailableServiceProcessors $availableServiceProcessors, Carbon $month)
     {
-        $this->locationId                 = $locationId;
+        $this->locationIds                = $locationIds;
         $this->availableServiceProcessors = $availableServiceProcessors;
         $this->month                      = $month;
     }
@@ -50,7 +54,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function getBuilder(): Builder
     {
         return $this->repo()
-            ->patientsQuery($this->locationId, $this->month, Patient::ENROLLED)
+            ->patientsQuery($this->locationIds, $this->month, Patient::ENROLLED)
             ->offset($this->getOffset())
             ->limit($this->getLimit());
     }
@@ -58,11 +62,6 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function getChargeableMonth()
     {
         return $this->month;
-    }
-
-    public function getLocationId(): int
-    {
-        return $this->locationId;
     }
 
     /**
@@ -73,13 +72,31 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function handle()
     {
         $this->getBuilder()->get()->each(function (User $patient) {
-            ProcessPatientMonthlyServices::dispatch(
-                (new PatientMonthlyBillingDTO())
-                    ->subscribe($this->getAvailableServiceProcessors())
-                    ->forPatient($patient->id)
-                    ->forMonth($this->getChargeableMonth())
-                    ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
-            );
+            //todo: remove processors and just get from user, call generateFromUser static on DTO
+            measureTime("ProcessPatientMonthlyServices:$patient->id", function () use ($patient) {
+                ProcessPatientMonthlyServices::dispatch(
+                    (new PatientMonthlyBillingDTO())
+                        ->subscribe($this->getAvailableServiceProcessors())
+                        ->forPatient($patient->id)
+                        ->ofLocation($patient->patientInfo->preferred_contact_location)
+                        ->setBillingStatusIsTouched(
+                            ! is_null(optional($patient->monthlyBillingStatus
+                                ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($this->getChargeableMonth()))
+                                ->first())->actor_id)
+                        )
+                        ->forMonth($this->getChargeableMonth())
+                        ->withLocationServices(
+                            ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+                        )
+                        ->withPatientServices(
+                            ...PatientChargeableServicesForProcessing::fromCollection($patient)
+                        )
+                        ->withForcedPatientServices(
+                            ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
+                        )
+                        ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
+                );
+            });
         });
     }
 

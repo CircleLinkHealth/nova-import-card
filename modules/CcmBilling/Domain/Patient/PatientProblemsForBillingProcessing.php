@@ -40,9 +40,13 @@ class PatientProblemsForBillingProcessing
 
     public static function getArray(int $patientId): array
     {
-        return (new static($patientId))
-            ->setPatient()
-            ->getProblems()
+        return self::getCollection($patientId)
+            ->toArray();
+    }
+
+    public static function getArrayFromPatient(User $patient): array
+    {
+        return self::getCollectionFromPatient($patient)
             ->toArray();
     }
 
@@ -50,6 +54,12 @@ class PatientProblemsForBillingProcessing
     {
         return (new static($patientId))
             ->setPatient()
+            ->getProblems();
+    }
+
+    public static function getCollectionFromPatient(User $patient): Collection
+    {
+        return (new static($patient->id))->setPatient($patient)
             ->getProblems();
     }
 
@@ -94,18 +104,16 @@ class PatientProblemsForBillingProcessing
 
         $services = [];
 
-        $practiceHasBhi    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::BHI));
-        $practiceHasRhc    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
-        $bhiProblemsAreCcm = ! $practiceHasBhi || $practiceHasRhc;
+        $practiceHasRhc = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
 
         if ($cpmProblem = $problem->cpmProblem) {
             $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
 
-            if ( ! $bhiProblemsAreCcm && ($cpmProblem->is_behavioral || $isDual)) {
+            if ($cpmProblem->is_behavioral || $isDual) {
                 $services[] = ChargeableService::BHI;
             }
 
-            if ($bhiProblemsAreCcm || ! $cpmProblem->is_behavioral || $isDual) {
+            if ($practiceHasRhc || ! $cpmProblem->is_behavioral || $isDual) {
                 $services[] = ChargeableService::CCM;
             }
         }
@@ -170,9 +178,9 @@ class PatientProblemsForBillingProcessing
         return trim(strtolower($string));
     }
 
-    private function setPatient(): self
+    private function setPatient(?User $patient = null): self
     {
-        $this->patient = $this->repo()
+        $this->patient = $patient ?? $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth());
 
         return $this;

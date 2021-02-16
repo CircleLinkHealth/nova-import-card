@@ -47,6 +47,16 @@ class ProcessPatientSummaries
             ->process();
     }
 
+    public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void
+    {
+        app(self::class)->fromDTO(
+            PatientMonthlyBillingDTO::generateFromUser(
+                (app(PatientServiceProcessorRepository::class))->getPatientWithBillingDataForMonth($patientUserId, $month),
+                $month
+            )
+        );
+    }
+
     private function process()
     {
         if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
@@ -84,12 +94,7 @@ class ProcessPatientSummaries
             return $this;
         }
 
-        $this->patientDTO = (new PatientMonthlyBillingDTO())
-            //todo: preload available service processors on repo property? or will hey exist in patientWithBilling Data array
-            ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
-            ->forPatient($this->patientUser->id)
-            ->forMonth($this->month)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($this->patientId));
+        $this->patientDTO = PatientMonthlyBillingDTO::generateFromUser($this->patientUser, $this->month);
 
         return $this;
     }

@@ -59,6 +59,7 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
             return [
                 'chargeable_service_id' => $cs->id,
                 'chargeable_month'      => $this->month,
+                'amount'                => $cs->pivot->amount,
             ];
         })
             ->filter()

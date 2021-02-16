@@ -18,7 +18,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int                                                                                         $patient_user_id
  * @property int|null                                                                                    $chargeable_service_id
  * @property \Illuminate\Support\Carbon                                                                  $chargeable_month
- * @property int|null                                                                                    $actor_id
  * @property bool                                                                                        $is_fulfilled
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at

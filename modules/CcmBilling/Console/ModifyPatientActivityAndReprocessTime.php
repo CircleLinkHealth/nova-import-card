@@ -75,7 +75,7 @@ class ModifyPatientActivityAndReprocessTime extends Command
         $this->filterAndSetPatientIds();
 
         if (empty($this->patientIds)) {
-            $this->warn("Aborting Time Processing, no valid patient IDs left");
+            $this->warn('Aborting Time Processing, no valid patient IDs left');
 
             return;
         }
@@ -89,29 +89,13 @@ class ModifyPatientActivityAndReprocessTime extends Command
         )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
-    private function getChargeableService($input): ChargeableService
-    {
-        if (is_numeric($input)) {
-            return ChargeableService::findOrFail($input);
-        }
-
-        return ChargeableService::where('code', $input)
-                                ->orWhere('display_name', strtoupper($input))
-                                ->firstOrFail();
-    }
-
-    private function setMonth(): void
-    {
-        $this->month = Carbon::createFromFormat('Y-m-d', $this->argument('month'))->startOfMonth();
-    }
-
     private function filterAndSetPatientIds(): void
     {
         $this->patientIds = collect(explode(',', $this->argument('patientIds')))
             ->map(function ($id) {
-                $numId = (int)$id;
+                $numId = (int) $id;
 
-                if ((string)$numId !== $id) {
+                if ((string) $numId !== $id) {
                     $this->info("Invalid ID: '$id'. Will not process patient");
 
                     return null;
@@ -120,6 +104,22 @@ class ModifyPatientActivityAndReprocessTime extends Command
                 return $numId;
             })->filter()
             ->toArray();
+    }
+
+    private function getChargeableService($input): ChargeableService
+    {
+        if (is_numeric($input)) {
+            return ChargeableService::findOrFail($input);
+        }
+
+        return ChargeableService::where('code', $input)
+            ->orWhere('display_name', strtoupper($input))
+            ->firstOrFail();
+    }
+
+    private function setMonth(): void
+    {
+        $this->month = Carbon::createFromFormat('Y-m-d', $this->argument('month'))->startOfMonth();
     }
 
     private function setServices(): void

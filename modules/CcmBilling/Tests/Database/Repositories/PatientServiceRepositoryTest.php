@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceProcessorRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
@@ -40,10 +39,11 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_if_it_checks_if_service_is_available_for_location()
     {
+        $ccmCode = ChargeableService::CCM;
         ChargeableLocationMonthlySummary::where('location_id', $locationId = $this->patient()->getPreferredContactLocation())->delete();
         (new LocationProcessorEloquentRepository())->store(
             $locationId,
-            $ccmCode = ChargeableService::CCM,
+            ChargeableService::getChargeableServiceIdUsingCode($ccmCode),
             $startOfMonth = Carbon::now()->startOfMonth()
         );
 
@@ -55,10 +55,10 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_it_can_require_and_set_patient_consent()
     {
-        $this->repo->store($patientId = $this->patient()->id, $ccmCode = ChargeableService::CCM, $startOfMonth = Carbon::now()->startOfMonth());
+        $this->repo->store($patientId = $this->patient()->id, ChargeableService::getChargeableServiceIdUsingCode($ccmCode = ChargeableService::CCM), $startOfMonth = Carbon::now()->startOfMonth());
         self::assertFalse($this->repo->requiresPatientConsent($patientId, $ccmCode, $startOfMonth));
 
-        $this->repo->store($patientId, $bhiCode = ChargeableService::BHI, $startOfMonth, true);
+        $this->repo->store($patientId, ChargeableService::getChargeableServiceIdUsingCode($bhiCode = ChargeableService::BHI), $startOfMonth, true);
         self::assertTrue($this->repo->requiresPatientConsent($patientId, $bhiCode, $startOfMonth));
 
         $this->repo->setPatientConsented($patientId, $bhiCode, $startOfMonth);
@@ -71,28 +71,6 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
         self::assertTrue($this->repo->isAttached($patientId, $ccmCode, $startOfMonth));
         self::assertFalse($this->repo->isAttached($patientId, ChargeableService::BHI, $startOfMonth));
-    }
-
-    public function test_it_fetches_patient_summaries_sql_view()
-    {
-        $startOfMonth = Carbon::now()->startOfMonth();
-        foreach ([
-            $ccmCode = ChargeableService::CCM,
-            $bhiCode = ChargeableService::BHI,
-        ] as $code) {
-            $this->repo->store($this->patient()->id, $code, $startOfMonth);
-        }
-
-        self::assertTrue(($summaries = $this->repo->getChargeablePatientSummaries($this->patient()->id, $startOfMonth))->isNotEmpty());
-        self::assertTrue(2 === $summaries->count());
-
-        self::assertNotNull($ccmSummary = $summaries->where('chargeable_service_code', $ccmCode)->where('chargeable_month', $startOfMonth)->first());
-        self::assertNotNull($bhiSummary = $summaries->where('chargeable_service_code', $bhiCode)->where('chargeable_month', $startOfMonth)->first());
-        self::assertTrue(is_a($ccmSummary, ChargeablePatientMonthlySummaryView::class));
-        self::assertTrue(is_a($bhiSummary, ChargeablePatientMonthlySummaryView::class));
-
-        self::assertNotNull($summary = $this->repo->getChargeablePatientSummary($this->patient()->id, $ccmCode, $startOfMonth));
-        self::assertTrue(is_a($summary, ChargeablePatientMonthlySummaryView::class));
     }
 
     public function test_it_fulfills_summary()

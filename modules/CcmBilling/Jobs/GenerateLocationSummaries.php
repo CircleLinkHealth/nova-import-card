@@ -54,6 +54,6 @@ class GenerateLocationSummaries implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
-        app(Location::class)->processServicesForLocation($this->getLocationId(), $this->getMonth());
+        app(Location::class)->processServicesForLocations([$this->getLocationId()], $this->getMonth());
     }
 }

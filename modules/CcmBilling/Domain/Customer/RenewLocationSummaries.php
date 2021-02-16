@@ -15,13 +15,6 @@ class RenewLocationSummaries
 {
     protected LocationProcessorRepository $repo;
 
-    public static function execute(int $locationId, Carbon $renewForMonth)
-    {
-        $self = new static();
-
-        $self->renew($self->repo()->pastLocationSummaries($locationId, $renewForMonth), $renewForMonth);
-    }
-
     public static function fromSummariesCollection(Collection $pastSummaries, Carbon $renewForMonth)
     {
         (new static())->renew($pastSummaries, $renewForMonth);
@@ -30,7 +23,7 @@ class RenewLocationSummaries
     public function renew(Collection $pastSummaries, Carbon $renewForMonth)
     {
         $pastSummaries->each(function (ChargeableLocationMonthlySummary $clms) use ($renewForMonth) {
-            $this->repo()->storeUsingServiceId($clms->location_id, $clms->chargeable_service_id, $renewForMonth, $clms->amount);
+            $this->repo()->store($clms->location_id, $clms->chargeable_service_id, $renewForMonth, $clms->amount);
         });
     }
 

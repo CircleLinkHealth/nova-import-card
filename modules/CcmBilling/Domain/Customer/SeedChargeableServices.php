@@ -12,6 +12,11 @@ class SeedChargeableServices
 {
     public static function execute()
     {
+        ChargeableService::whereNotNull('order')
+            ->update([
+                'order' => null,
+            ]);
+
         ChargeableService::updateOrCreate([
             'code' => 'CPT 99490',
         ], [

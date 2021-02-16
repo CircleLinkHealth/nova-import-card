@@ -6,28 +6,26 @@
 
 namespace CircleLinkHealth\CcmBilling\Contracts;
 
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 
 interface PatientServiceProcessor
 {
-    public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
+    public function attach(): void;
+
+    public function baseCode(): string;
 
     public function clashesWith(): array;
 
     public function code(): string;
 
-    public function codeForProblems(): string;
-
     public function featureIsEnabled(): bool;
 
-    public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
+    public function fulfill(): void;
 
-    public function isAttached(int $patientId, Carbon $chargeableMonth): bool;
+    public function isAttached(): bool;
 
-    public function isFulfilled(int $patientId, Carbon $chargeableMonth): bool;
+    public function isFulfilled(): bool;
 
     public function minimumNumberOfCalls(): int;
 
@@ -35,11 +33,13 @@ interface PatientServiceProcessor
 
     public function minimumTimeInSeconds(): int;
 
-    public function processBilling(PatientMonthlyBillingDTO $billingStub): void;
+    public function processBilling(PatientMonthlyBillingDTO $billingStub): PatientServiceProcessorOutputDTO;
 
-    public function repo(): PatientServiceProcessorRepository;
+    public function shouldAttach(): bool;
 
-    public function shouldAttach(int $patientId, Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool;
+    public function shouldFulfill(): bool;
 
-    public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool;
+    public function shouldUnfulfill();
+
+    public function unfulfill();
 }

@@ -180,21 +180,13 @@ class PatientServicesToAttachForLegacyABP
 
     private function timeForService(ChargeableService $service): int
     {
-        if (ChargeableService::CCM === $service->code) {
-            return $this->activities->whereIn(
-                'chargeable_service_id',
-                ChargeableService::cached()
-                    ->whereIn('code', ChargeableService::CCM_CODES)
-                    ->pluck('id')
-                    ->toArray()
-            )->sum('duration') ?? 0;
-        }
+        if (in_array($service->code, [ChargeableService::CCM, ChargeableService::RPM])) {
+            $serviceCodes = ChargeableService::CCM === $service->code ? ChargeableService::CCM_CODES : ChargeableService::RPM_CODES;
 
-        if (ChargeableService::RPM === $service->code) {
             return $this->activities->whereIn(
                 'chargeable_service_id',
                 ChargeableService::cached()
-                    ->whereIn('code', ChargeableService::RPM_CODES)
+                    ->whereIn('code', $serviceCodes)
                     ->pluck('id')
                     ->toArray()
             )->sum('duration') ?? 0;

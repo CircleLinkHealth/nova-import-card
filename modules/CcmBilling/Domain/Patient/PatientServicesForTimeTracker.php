@@ -8,12 +8,15 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
 
@@ -24,13 +27,19 @@ class PatientServicesForTimeTracker
         'AWV2+',
     ];
 
+    protected PatientMonthlyBillingDTO $dto;
+
     protected Carbon $month;
+
+    /** @var ChargeablePatientMonthlyTime[]|Collection|null */
+    protected ?Collection $monthlyTimes;
+
+    //todo:deperacte when we switch over to new billing entirely
+    protected User $patient;
 
     protected int $patientId;
 
     protected PatientServiceProcessorRepository $repo;
-
-    protected ?Collection $summaries;
 
     public function __construct(int $patientId, Carbon $month)
     {
@@ -40,36 +49,43 @@ class PatientServicesForTimeTracker
 
     public function get(): PatientChargeableSummaryCollection
     {
-        return $this->setSummaries()
+        return $this->setPatientData()
             ->consolidateSummaryData()
             ->createAndReturnResource();
     }
 
+    public function getRaw(): Collection
+    {
+        return $this->setPatientData()
+            ->consolidateSummaryData()
+            ->monthlyTimes;
+    }
+
     private function consolidateSummaryData(): self
     {
-        if ($this->summaries->isEmpty()) {
+        if ($this->monthlyTimes->isEmpty()) {
             return $this;
         }
 
-        return $this->groupSimilarCodes()
-            ->filterUsingPatientServiceStatus()
+        return $this->filterUsingPatientServiceStatus()
             ->rejectNonTimeTrackerServices();
     }
 
     private function createAndReturnResource(): PatientChargeableSummaryCollection
     {
         return new PatientChargeableSummaryCollection(
-            $this->summaries->transform(
-                fn (ChargeablePatientMonthlySummaryView $summary) => new PatientChargeableSummary($summary)
+            $this->monthlyTimes->transform(
+                fn (ChargeablePatientMonthlyTime $summary) => new PatientChargeableSummary($summary)
             )
         );
     }
 
-    private function createFauxSummariesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
+    private function createFauxMonthlyTimesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
     {
         $summaries = new \Illuminate\Database\Eloquent\Collection();
 
         if ($this->patientEligibleForRHC()) {
+            /** @var ChargeableService $rhc */
             $rhc = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
 
             $duration = Activity::wherePatientId($this->patientId)
@@ -77,23 +93,27 @@ class PatientServicesForTimeTracker
                 ->where('chargeable_service_id', $rhc->id)
                 ->sum('duration');
 
-            $newSummary                          = new ChargeablePatientMonthlySummaryView();
-            $newSummary->patient_user_id         = $this->patientId;
-            $newSummary->chargeable_service_id   = $rhc->id;
-            $newSummary->chargeable_service_code = $rhc->code;
-            $newSummary->chargeable_service_name = $rhc->display_name;
-            $newSummary->total_time              = $duration;
+            $newSummary                        = new ChargeablePatientMonthlyTime();
+            $newSummary->patient_user_id       = $this->patientId;
+            $newSummary->chargeable_service_id = $rhc->id;
+            $newSummary->total_time            = $duration;
+            $newSummary->setRelation('chargeableService', $rhc);
 
             $summaries->push($newSummary);
 
             return $summaries;
         }
 
-        $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
+        $servicesDerivedFromPatientProblems = collect($this->dto->getPatientProblems())
             ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
-            ->flatten()
-            ->filter()
-            ->unique();
+            ->flatten();
+
+        $this->patient
+            ->forcedChargeableServices
+            ->where('action_type', PatientForcedChargeableService::FORCE_ACTION_TYPE)
+            ->each(fn ($s) => $servicesDerivedFromPatientProblems->push($s->chargeableService->code));
+
+        $servicesDerivedFromPatientProblems->filter()->unique();
 
         if ($servicesDerivedFromPatientProblems->contains(ChargeableService::CCM)) {
             $servicesDerivedFromPatientProblems->push(...ChargeableService::CCM_PLUS_CODES);
@@ -113,12 +133,15 @@ class PatientServicesForTimeTracker
                 ->whereNull('chargeable_service_id')
                 ->sum('duration');
 
-            $newSummary                          = new ChargeablePatientMonthlySummaryView();
-            $newSummary->patient_user_id         = $this->patientId;
-            $newSummary->chargeable_service_id   = -1;
-            $newSummary->chargeable_service_code = 'NONE';
-            $newSummary->chargeable_service_name = 'NONE';
-            $newSummary->total_time              = $duration;
+            $newSummary                        = new ChargeablePatientMonthlyTime();
+            $newSummary->patient_user_id       = $this->patientId;
+            $newSummary->chargeable_service_id = -1;
+            $newSummary->total_time            = $duration;
+            $cs                                = new ChargeableService();
+            $cs->id                            = -1;
+            $cs->code                          = 'NONE';
+            $cs->display_name                  = 'NONE';
+            $newSummary->setRelation('chargeableService', $cs);
 
             $summaries->push($newSummary);
 
@@ -130,12 +153,11 @@ class PatientServicesForTimeTracker
             ->get();
 
         foreach ($chargeableServices as $service) {
-            $newSummary                          = new ChargeablePatientMonthlySummaryView();
-            $newSummary->patient_user_id         = $this->patientId;
-            $newSummary->chargeable_service_id   = $service->id;
-            $newSummary->chargeable_service_code = $service->code;
-            $newSummary->chargeable_service_name = $service->display_name;
-            $newSummary->total_time              = $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration');
+            $newSummary                        = new ChargeablePatientMonthlyTime();
+            $newSummary->patient_user_id       = $this->patientId;
+            $newSummary->chargeable_service_id = $service->id;
+            $newSummary->total_time            = $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration');
+            $newSummary->setRelation('chargeableService', $service);
             $summaries->push($newSummary);
         }
 
@@ -144,47 +166,9 @@ class PatientServicesForTimeTracker
 
     private function filterUsingPatientServiceStatus(): self
     {
-        $this->summaries = $this->summaries
-            ->filter(fn ($summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code))
+        $this->monthlyTimes = $this->monthlyTimes
+            ->filter(fn (ChargeablePatientMonthlyTime $summary) => -1 === $summary->chargeable_service_id ? true : PatientIsOfServiceCode::fromDTO($this->dto, $summary->chargeableService->code))
             ->values();
-
-        return $this;
-    }
-
-    private function groupSimilarCodes(): self
-    {
-        /** @var ChargeablePatientMonthlySummaryView $ccmChargeableService */
-        $ccmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::CCM === $entry->chargeable_service_code)
-            ->first();
-
-        /** @var ChargeablePatientMonthlySummaryView $rpmChargeableService */
-        $rpmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::RPM === $entry->chargeable_service_code)
-            ->first();
-
-        $patientChargeableSummaries = collect();
-        $this->summaries
-            ->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
-                $code = $entry->chargeable_service_code;
-                if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
-                    return;
-                }
-                if ($ccmChargeableService && in_array($code, ChargeableService::CCM_PLUS_CODES)) {
-                    $ccmChargeableService->total_time += $entry->total_time;
-                } elseif ($rpmChargeableService && in_array($code, ChargeableService::RPM_PLUS_CODES)) {
-                    $rpmChargeableService->total_time += $entry->total_time;
-                } else {
-                    $patientChargeableSummaries->push($entry);
-                }
-            });
-
-        if ($ccmChargeableService) {
-            $patientChargeableSummaries->push($ccmChargeableService);
-        }
-        if ($rpmChargeableService) {
-            $patientChargeableSummaries->push($rpmChargeableService);
-        }
-
-        $this->summaries = $patientChargeableSummaries;
 
         return $this;
     }
@@ -196,18 +180,15 @@ class PatientServicesForTimeTracker
 
     private function patientEligibleForRHC(): bool
     {
-        $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
-
-        return $patient->primaryPractice->chargeableServices->where('code', $rhc = ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
+        return $this->patient->primaryPractice->chargeableServices->where('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
     }
 
     private function rejectNonTimeTrackerServices(): self
     {
-        $this->summaries = $this->summaries
-            ->reject(function (ChargeablePatientMonthlySummaryView $summary) {
-                return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
-            })
-        ;
+        $this->monthlyTimes = $this->monthlyTimes
+            ->reject(function (ChargeablePatientMonthlyTime $summary) {
+                return in_array($summary->chargeableService->code, self::NON_TIME_TRACKABLE_SERVICES);
+            });
 
         return $this;
     }
@@ -221,14 +202,14 @@ class PatientServicesForTimeTracker
         return $this->repo;
     }
 
-    private function setSummaries(): self
+    private function setPatientData(): self
     {
-        $this->summaries = $this->newBillingIsEnabled() ?
-            $this->repo()
-                ->getChargeablePatientSummaries($this->patientId, $this->month)
-                //create copies of the models because we are modifying them in groupSimilarCodes()
+        $this->patient      = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $this->month);
+        $this->dto          = PatientMonthlyBillingDTO::generateFromUser($this->patient, $this->month);
+        $this->monthlyTimes = $this->newBillingIsEnabled() ?
+            $this->patient->chargeableMonthlyTime
                 ->transform(fn ($entry) => $entry->replicate()) :
-            $this->createFauxSummariesFromLegacyData();
+            $this->createFauxMonthlyTimesFromLegacyData();
 
         return $this;
     }

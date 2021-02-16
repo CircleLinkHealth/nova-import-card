@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use function Composer\Autoload\includeFile;
 
 class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncrypted
 {
@@ -26,10 +25,10 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
     use SerializesModels;
 
     private int $fromCsId;
+    private bool $legacy;
     private Carbon $month;
     private array $patientIds;
     private string $toCsCode;
-    private bool $legacy;
 
     /**
      * Create a new job instance.
@@ -59,7 +58,7 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
 
         (new ModifyPatientActivity($this->toCsCode, $activityIds->toArray()))->execute();
 
-        if ($this->legacy){
+        if ($this->legacy) {
             (app(ActivityService::class))->processMonthlyActivityTime($this->patientIds, $this->month);
         }
     }
