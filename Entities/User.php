@@ -2229,14 +2229,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('administrator');
     }
 
-    public function isAllowedToBubbleChat()
+    public function isAllowedToBubbleChat(): bool
     {
         $rolesAllowedToChat = WhoCanBubbleChat::rolesAllowedBubbleChat();
-        $this->cachedRoles()
-            ->pluck('name')
-            ->each(function ($roleName) use ($rolesAllowedToChat) {
+        $userRoles          = $this->cachedRoles()
+            ->pluck('name');
+
+        if ($userRoles->isEmpty()) {
+            return false;
+        }
+
+        foreach ($userRoles as $roleName) {
+            return Cache::remember("{$this->id}_user_is_allowed_to_bubble_chat", 2, function () use ($roleName, $rolesAllowedToChat) {
                 return in_array($roleName, $rolesAllowedToChat);
             });
+        }
     }
 
     /**
