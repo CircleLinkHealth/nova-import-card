@@ -3107,7 +3107,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->from('users')
                     ->groupBy(['display_name', 'birth_date']);
             })->join('patient_info', 'patient_info.user_id', '=', 'users.id')
-            ->select('users.*', 'patient_info.birth_date');
+            ->select('users.*', 'patient_info.birth_date')
+            ->ofTypePatients()
+            ->whereHas('patientInfo');
     }
 
     /**
