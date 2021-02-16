@@ -11,6 +11,7 @@ use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,6 +20,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
+use function PHPUnit\Framework\isEmpty;
 
 class SendInvitation implements ShouldQueue
 {
@@ -109,11 +111,10 @@ class SendInvitation implements ShouldQueue
             throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");
         }
 
-        $notifiable = $this->user;
+        $notifiable = $this->getEnrolleeToNotify($this->user, $this->isReminder);
 
-        if ($this->user->isSurveyOnly()) {
-            $this->user->loadMissing('enrollee');
-            $notifiable = $this->user->enrollee;
+        if (! $notifiable){
+            return '';
         }
 
         $notifiable->enrollmentInvitationLinks()->create([
@@ -139,6 +140,9 @@ class SendInvitation implements ShouldQueue
 
     private function sendInvite(string $link)
     {
+        if (empty($link)){
+            return;
+        }
         $this->user->notify(new SelfEnrollmentInviteNotification($link, $this->isReminder, $this->channels));
     }
 
@@ -153,5 +157,20 @@ class SendInvitation implements ShouldQueue
         }
 
         return true;
+    }
+
+    private function getEnrolleeToNotify(User $user, bool $isReminder)
+    {
+        if ($user->enrollee && Helpers::canSendSelfEnrollmentInvitation($user->enrollee, $isReminder)){
+            return $user->enrollee;
+        }
+
+        $user->load([
+            'enrollee' => function($enrollee) use ($isReminder){
+                $enrollee->canSendSelfEnrollmentInvitation(!$isReminder);
+            },
+        ]);
+
+        return $user->enrollee ?? null;
     }
 }

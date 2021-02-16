@@ -83,9 +83,10 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
             })->when($this->practiceId, function ($q) {
                 return $q->where('program_id', $this->practiceId);
             })->whereHas('enrollee', function ($q) {
-                $q->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
-                    ->whereNull('source');
-            })->with('enrollee');
+               $q->canSendSelfEnrollmentInvitation(false);
+            })
+            ->uniquePatients()
+            ->with('enrollee');
     }
 
     private function patientHasLoggedIn(User $patient): bool

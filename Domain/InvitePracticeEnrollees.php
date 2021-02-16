@@ -55,16 +55,8 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
         return User::ofPractice($this->practiceId)
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($q) {
-                $q->whereNull('source')
-                    // If an enrollmentInvitationLink generated in the last 5 months exists, it means we have already invited the patient,
-                    // and we do not want to send them another invitation.
-                    ->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
-                        $q->where('created_at', '>', now()->subMonths(5));
-                    })
-                    ->whereIn('status', [
-                        Enrollee::QUEUE_AUTO_ENROLLMENT,
-                    ]);
-            });
+                $q->canSendSelfEnrollmentInvitation(true);
+            })->uniquePatients();
     }
 
     private function getBatch(): EnrollmentInvitationsBatch
