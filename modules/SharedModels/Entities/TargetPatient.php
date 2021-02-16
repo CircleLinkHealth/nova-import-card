@@ -49,16 +49,16 @@ use CircleLinkHealth\SharedModels\Traits\BelongsToCcda;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
- * @property int                                                          $practice_id
+ * @property int                                                           $practice_id
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null $batch
- * @property \CircleLinkHealth\Customer\Entities\Practice                 $practice
- * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
- * @property int|null                                                     $ccda_id
- * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null            $ccda
- * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
- * @property int|null                                                     $revision_history_count
- * @property int                                                          $department_id
- * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
+ * @property \CircleLinkHealth\Customer\Entities\Practice                  $practice
+ * @method   static                                                        \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ * @property int|null                                                      $ccda_id
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null             $ccda
+ * @method   static                                                        \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ * @property int|null                                                      $revision_history_count
+ * @property int                                                           $department_id
+ * @method   static                                                        \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null   $eligibilityJob
  */
 class TargetPatient extends BaseModel

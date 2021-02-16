@@ -7,6 +7,8 @@
 namespace CircleLinkHealth\SharedModels\DTO;
 
 /**
+ * @deprecated See {@link \CircleLinkHealth\CcmBilling\ValueObjects\PracticePatientReportData}
+ *
  * Class PatientReportData.
  * This class describes the patient data on the patient report created along with Practice Invoices.
  */

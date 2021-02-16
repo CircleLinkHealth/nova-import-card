@@ -105,6 +105,8 @@ use Validator;
  * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
  * @property \Illuminate\Support\Carbon|null $rn_date
  * @property int|null                        $rn_approver_id
+ * @property \Illuminate\Support\Carbon|null $last_auto_qa_attempt_at
+ * @property \Illuminate\Support\Carbon|null $drafted_at
  */
 class CarePlan extends BaseModel implements PdfReport
 {
