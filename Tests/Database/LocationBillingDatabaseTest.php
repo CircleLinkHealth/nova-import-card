@@ -28,7 +28,7 @@ class LocationBillingDatabaseTest extends CustomerTestCase
         self::assertNotNull(
             $summary = $this->repo->store(
                 $locationId = $this->location()->id,
-                $ccmCode = ChargeableService::CCM,
+                ChargeableService::getChargeableServiceIdUsingCode($ccmCode = ChargeableService::CCM),
                 $month = Carbon::now()->startOfMonth()
             )
         );
@@ -36,7 +36,7 @@ class LocationBillingDatabaseTest extends CustomerTestCase
 
         //todo: add bool method to repository
         self::assertTrue(
-            $this->repo->servicesForMonth($locationId, $month)
+            $this->repo->servicesForMonth([$locationId], $month)
                 ->whereHas('chargeableService', function ($cs) use ($ccmCode) {
                     $cs->where('code', $ccmCode);
                 })
