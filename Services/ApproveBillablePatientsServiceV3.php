@@ -92,7 +92,7 @@ class ApproveBillablePatientsServiceV3
         $billingStatus = PatientMonthlyBillingStatus::with([
             'patientUser' => fn ($p) => $p->with('patientInfo')->select(['id', 'program_id']),
         ])->find($reportId);
-        
+
         if ( ! $billingStatus || ! is_null($billingStatus->actor_id)) {
             return SetPatientChargeableServicesResponse::make([]);
         }

@@ -244,7 +244,14 @@ class CompareAbpV2vsV3 extends Command
         }
 
         if (is_array($aP[$prop])) {
-            return $this->checkArrayProps($aP[$prop], $bP[$prop]) ? $this->successLog('ok') : $this->errorLog('x');
+            if ( ! $this->checkArrayProps($aP[$prop], $bP[$prop])) {
+                $aStr = json_encode($aP[$prop]);
+                $bStr = json_encode($bP[$prop]);
+
+                return $this->errorLog("a[$aStr]|b[$bStr]");
+            }
+
+            return $this->successLog('ok');
         }
 
         return $aP[$prop] === $bP[$prop] ? $this->successLog('ok') : $this->errorLog("a[$aP[$prop]]|b[$bP[$prop]]");
