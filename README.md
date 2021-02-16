@@ -49,7 +49,7 @@ TwoFA
 2. Any work done should be committed to the monorepo **only**.
 3. Create a PR as soon as possible to get the code reviewed.
 
-### Deployments
+## Deployments
 We use a modified version of vapor cli that lives in the monorepo. Use the commands below to setup an alias for easy use.
 ```bash
 # Run these commands in the monorepo root directory
@@ -62,10 +62,35 @@ cd apps/provider-app
 monovapor deploy staging staging
 ```
 
+### Making a Release
+To make a release, we will need to run the split command, followed by the release command. Both should run on the smae branch. The branch has to start with `release-`. For example `release-new-billing`, `release-v2.5-dev`
 
+#### Split Command
+Splitting the monorepo means writing to branches in the original single repos. 
+1. Create a new branch in the monorepo and push it to git remote (or start with a branch already pushed to remote)
+```bash
+git checkout -b feature_abp_add_force_cs
+git push --set-upstream origin feature_abp_add_force_cs
+git push
+```
+2. Run split command. This will push changes to each individual repo on branch `feature_abp_add_force_cs`.
+```bash
+sh bin/split.sh feature_abp_add_force_cs
+```
+From here we have the option to deploy `feature_abp_add_force_cs` form any of the single repos using GitHub Actions, or a manual vapor command, etc. For example I could deploy only Provider App, and Admin App.
 
-### Splitting the monorepo 
-Splitting the monorepo means writing to branches in the original single repos. Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provider App, and Admin App.
+#### Release Command
+1. Create a new branch in the monorepo that starts with `release-` and push it to git remote (or start with a branch already pushed to remote)
+```bash
+git checkout -b release-feature_abp_add_force_cs
+git push --set-upstream origin release-feature_abp_add_force_cs
+git push
+sh bin/release.sh release-feature_abp_add_force_cs my_version_tag
+```
+2. Run the release command. 
+```bash
+sh bin/release.sh release-release_feature_billing-revamp_mono billing_monorepo_test_v4
+```
 
 ### Available Scripts
 #### Run a shell command in an app
