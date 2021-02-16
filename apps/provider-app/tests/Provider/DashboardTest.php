@@ -8,10 +8,10 @@ namespace Tests\Provider;
 
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SelfEnrollment\Tests\DuskTestCase;
 use Faker\Factory;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
+use CircleLinkHealth\Customer\Tests\DuskTestCase;
 
 class DashboardTest extends DuskTestCase
 {
