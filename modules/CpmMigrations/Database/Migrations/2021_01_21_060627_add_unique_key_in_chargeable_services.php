@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLastAutoApproveAttemptAtToCarePlan extends Migration
+class AddUniqueKeyInChargeableServices extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,9 +17,8 @@ class AddLastAutoApproveAttemptAtToCarePlan extends Migration
      */
     public function down()
     {
-        Schema::table('care_plan', function (Blueprint $table) {
-            $table->dropColumn('last_auto_qa_attempt_at');
-            $table->dropColumn('drafted_at');
+        Schema::table('chargeable_services', function (Blueprint $table) {
+            $table->dropUnique(['code']);
         });
     }
 
@@ -30,9 +29,8 @@ class AddLastAutoApproveAttemptAtToCarePlan extends Migration
      */
     public function up()
     {
-        Schema::table('care_plans', function (Blueprint $table) {
-            $table->timestamp('last_auto_qa_attempt_at')->nullable();
-            $table->timestamp('drafted_at')->nullable();
+        Schema::table('chargeable_services', function (Blueprint $table) {
+            $table->unique('code');
         });
     }
 }

@@ -30,5 +30,7 @@ class SeedRpm60ChargeableService extends Migration
             ->update([
                 'code' => ChargeableService::RPM40,
             ]);
+
+        Artisan::call('billing:seed-chargeable-services');
     }
 }

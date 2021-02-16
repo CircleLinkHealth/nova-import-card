@@ -5,9 +5,10 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateDavisCountyLetter extends Migration
+class MakeChargeableMonthNullableOnPatientForcedChargeableServicesTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,8 +26,8 @@ class CreateDavisCountyLetter extends Migration
      */
     public function up()
     {
-        if (class_exists($class = 'CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDavisCountyLetter')) {
-            Artisan::call('db:seed', ['--class' => $class]);
-        }
+        Schema::table('patient_forced_chargeable_services', function (Blueprint $table) {
+            $table->date('chargeable_month')->nullable()->change();
+        });
     }
 }

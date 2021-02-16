@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLastAutoApproveAttemptAtToCarePlan extends Migration
+class AddReasonFieldInPatientForcedChargeableServicesTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,9 +17,8 @@ class AddLastAutoApproveAttemptAtToCarePlan extends Migration
      */
     public function down()
     {
-        Schema::table('care_plan', function (Blueprint $table) {
-            $table->dropColumn('last_auto_qa_attempt_at');
-            $table->dropColumn('drafted_at');
+        Schema::table('patient_forced_chargeable_services', function (Blueprint $table) {
+            $table->dropColumn('reason');
         });
     }
 
@@ -30,9 +29,8 @@ class AddLastAutoApproveAttemptAtToCarePlan extends Migration
      */
     public function up()
     {
-        Schema::table('care_plans', function (Blueprint $table) {
-            $table->timestamp('last_auto_qa_attempt_at')->nullable();
-            $table->timestamp('drafted_at')->nullable();
+        Schema::table('patient_forced_chargeable_services', function (Blueprint $table) {
+            $table->string('reason')->nullable()->after('action_type');
         });
     }
 }

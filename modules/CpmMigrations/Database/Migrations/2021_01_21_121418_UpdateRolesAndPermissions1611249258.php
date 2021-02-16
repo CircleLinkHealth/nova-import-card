@@ -5,9 +5,8 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Artisan;
 
-class CreateDavisCountyLetter extends Migration
+class UpdateRolesAndPermissions1611249258 extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,8 +24,10 @@ class CreateDavisCountyLetter extends Migration
      */
     public function up()
     {
-        if (class_exists($class = 'CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDavisCountyLetter')) {
-            Artisan::call('db:seed', ['--class' => $class]);
+        if ( ! isUnitTestingEnv()) {
+            Artisan::call('db:seed', [
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
+            ]);
         }
     }
 }
