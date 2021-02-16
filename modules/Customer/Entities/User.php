@@ -13,8 +13,10 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -144,7 +146,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $ccd_problems_count
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection                         $ccdas
  * @property int|null                                                                                                        $ccdas_count
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $chargeableServices
+ * @property ChargeableService[]|\Illuminate\Database\Eloquent\Collection                                                    $chargeableServices
  * @property int|null                                                                                                        $chargeable_services_count
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[]                                             $clients
  * @property int|null                                                                                                        $clients_count
@@ -201,6 +203,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $locations_count
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
  * @property int|null                                                                                                        $media_count
+ * @property EloquentCollection|PatientMonthlyBillingStatus[]                                                                $monthlyBillingStatus
+ * @property int|null                                                                                                        $monthly_billing_status_count
  * @property \CircleLinkHealth\SharedModels\Entities\Note[]|\Illuminate\Database\Eloquent\Collection                         $notes
  * @property int|null                                                                                                        $notes_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
@@ -320,14 +324,19 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $chargeable_monthly_summaries_count
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLog
  * @property int|null                                                                                                $end_of_month_ccm_status_log_count
- * @property ChargeablePatientMonthlySummaryView[]|EloquentCollection                                                $chargeableMonthlySummariesView
- * @property int|null                                                                                                $chargeable_monthly_summaries_view_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|EloquentCollection                              $forcedChargeableServices
+ * @property int|null                                                                                                $forced_chargeable_services_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
+ * @property Call[]|EloquentCollection                                                                               $inboundSuccessfulCalls
+ * @property int|null                                                                                                $inbound_successful_calls_count
+ * @property ChargeablePatientMonthlyTime[]|EloquentCollection                                                       $chargeableMonthlyTime
+ * @property int|null                                                                                                $chargeable_monthly_time_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -665,9 +674,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where('is_monitored', true);
     }
 
+    /**
+     * @deprecated
+     * @return string
+     */
     public function billingCodes(Carbon $monthYear)
     {
-        //todo: replace with revamped code
+        //update: do not use this method to get billing codes. no need to have this logic in this file
         $summary = $this->patientSummaries()
             ->where('month_year', $monthYear->toDateString())
             ->with('chargeableServices')
@@ -879,9 +892,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
     }
 
-    public function chargeableMonthlySummariesView()
+    public function chargeableMonthlyTime()
     {
-        return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id');
+        return $this->hasMany(ChargeablePatientMonthlyTime::class, 'patient_user_id');
     }
 
     public function chargeableServices()
@@ -1090,6 +1103,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 'user_id' => $this->id,
             ]
         );
+    }
+
+    public function forcedChargeableServices()
+    {
+        return $this->hasMany(PatientForcedChargeableService::class, 'patient_user_id');
     }
 
     public function foreignId()
@@ -1470,6 +1488,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         return $this->patientInfo->ccm_status;
+    }
+
+    public function getCcmStatusForMonth(Carbon $month): ?string
+    {
+        /** @var EndOfMonthCcmStatusLog $ccmStatusForMonth */
+        $ccmStatusForMonth = $this->endOfMonthCcmStatusLogs->firstWhere('chargeable_month', $month);
+        if ($ccmStatusForMonth && ! is_null($ccmStatusForMonth->closed_ccm_status)) {
+            return $ccmStatusForMonth->closed_ccm_status;
+        }
+
+        // todo: not sure about this
+        return $this->patientInfo->getCcmStatusForMonth($month);
     }
 
     public function getCcmTime(): int
@@ -2210,6 +2240,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where('called_date', '=', null);
     }
 
+    public function inboundSuccessfulCalls()
+    {
+        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
+            ->where('status', Call::REACHED)
+            ->where(
+                function ($q) {
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call')
+                        ->orWhere('sub_type', '=', 'Call Back');
+                }
+            );
+    }
+
     /**
      * Returns whether the user is an administrator.
      */
@@ -2221,6 +2264,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isAllowedToBubbleChat()
     {
         $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
+
         return in_array($this->id, $bubbleChatters);
     }
 
@@ -2489,6 +2533,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function loginEvents()
     {
         return $this->hasMany(LoginLogout::class, 'user_id', 'id');
+    }
+
+    public function monthlyBillingStatus()
+    {
+        return $this->hasMany(PatientMonthlyBillingStatus::class, 'patient_user_id');
     }
 
     public function name()
@@ -3408,6 +3457,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeOfTypePatients($query)
     {
         return $query->ofType(CpmConstants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
+    }
+
+    public function scopePatientInLocations($query, array $locationIds, ?string $ccmStatus = null)
+    {
+        return $query->whereHas(
+            'patientInfo',
+            function ($info) use ($locationIds, $ccmStatus) {
+                $info->whereIn('preferred_contact_location', $locationIds)
+                    ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
+                        $query->ccmStatus($ccmStatus);
+                    });
+            }
+        );
     }
 
     /**

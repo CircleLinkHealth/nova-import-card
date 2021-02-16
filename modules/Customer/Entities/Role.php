@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use CircleLinkHealth\Core\Traits\Cacheable;
 use Michalisantoniou6\Cerberus\CerberusRole;
 
 /**
@@ -34,6 +35,8 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  */
 class Role extends CerberusRole
 {
+    use Cacheable;
+    
     const ALL_CPM_ROLES_CACHE_KEY = 'all_cpm_roles';
 
     const CCM_TIME_ROLES = [

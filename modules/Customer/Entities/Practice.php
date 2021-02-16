@@ -145,6 +145,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice hasImportingHookEnabled($hook, $listener)
  * @property \Illuminate\Database\Eloquent\Collection|RpmProblem[]                                                                    $rpmProblems
  * @property int|null                                                                                                                 $rpm_problems_count
+ * @property EnrollmentInvitationLetter|null                                                                                          $enrollmentLetter
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -269,8 +270,6 @@ class Practice extends BaseModel implements HasMedia
     }
 
     /**
-     * @throws \Exception
-     *
      * @return array
      */
     public function getAddress()
@@ -520,7 +519,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function pcmProblems()
     {
-        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\PcmProblem::class, 'practice_id');
+        return $this->hasMany(PcmProblem::class, 'practice_id');
     }
 
     public function pcp()
@@ -540,7 +539,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function rpmProblems()
     {
-        return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\RpmProblem::class, 'practice_id');
+        return $this->hasMany(RpmProblem::class, 'practice_id');
     }
 
     public function scopeActive($q)
@@ -609,7 +608,8 @@ class Practice extends BaseModel implements HasMedia
             'patients' => function ($p) use ($startOfMonth) {
                 $p->with([
                     'patientSummaries'                      => fn ($pms)                      => $pms->createdOn($startOfMonth, 'month_year'),
-                    'chargeableMonthlySummariesView'        => fn ($s)        => $s->createdOn($startOfMonth, 'chargeable_month'),
+                    'chargeableMonthlySummaries'            => fn ($s)            => $s->createdOn($startOfMonth, 'chargeable_month'),
+                    'chargeableMonthlyTime'                 => fn ($s)                 => $s->createdOn($startOfMonth, 'chargeable_month'),
                     'patientInfo.patientCcmStatusRevisions' => fn ($r) => $r->ofDate($startOfMonth, Carbon::now()),
                 ])
                     ->isNotDemo();
