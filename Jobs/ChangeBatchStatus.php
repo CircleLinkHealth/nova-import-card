@@ -23,9 +23,9 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    const CACHE_KEY_PREFIX     = 'reprocess_dispatched:';
+    const CACHE_KEY_PREFIX              = 'reprocess_dispatched:';
     const MAX_DAILY_REDISPATCH_ATTEMPTS = 10;
-    
+
     protected int    $batchId;
     protected string $status;
 
@@ -48,15 +48,20 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
 
         if ((int) $this->status === EligibilityBatch::STATUSES['complete'] && $this->stillHasPendingElibilityPatients($this->batchId)) {
             $cacheKey = self::CACHE_KEY_PREFIX.$this->batchId;
-            $cache = Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
-            if ( ! $cache->has($cacheKey)) {
-                $count = 0;
-                $cache->put($cacheKey, $count, now()->endOfDay());
+            $cache    = Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
+
+            if ($cache->has($cacheKey)) {
+                $attemptCount = (int) $cache->get($cacheKey);
+                if ($attemptCount <= self::MAX_DAILY_REDISPATCH_ATTEMPTS) {
+                    ProcessEligibilityBatch::dispatch($this->batchId);
+                    $cache->put($cacheKey, ++$attemptCount, now()->endOfDay());
+                }
+                return;
             }
-            
-            if ((int) $cache->get($cacheKey) <= self::MAX_DAILY_REDISPATCH_ATTEMPTS) {
-                ProcessEligibilityBatch::dispatch($this->batchId);
-            }
+
+            $attemptCount = 0;
+            $cache->put($cacheKey, $attemptCount, now()->endOfDay());
+            ProcessEligibilityBatch::dispatch($this->batchId);
 
             return;
         }
