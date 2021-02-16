@@ -177,14 +177,14 @@ class CompareAbpV2vsV3 extends Command
             ->values()
             ->toArray();
 
+        $strA = implode(',', $oldCs);
         if ($oldCs != $newCs) {
-            $strA = implode(',', $oldCs);
             $strB = implode(',', $newCs);
 
             return $this->errorLog("$strA|$strB");
         }
 
-        return $this->successLog('ok');
+        return $this->successLog("ok[$strA]");
     }
 
     private function checkDataCount(?array $a, ?array $b): bool
