@@ -62,8 +62,12 @@ cd apps/provider-app
 monovapor deploy staging staging
 ```
 
-### Making a Release
-To make a release, we will need to run the split command, followed by the release command. Both should run on the smae branch. The branch has to start with `release-`. For example `release-new-billing`, `release-v2.5-dev`
+### Creating a Release
+Creating a release creates branches and tags in all single repos. There's 2 steps into creating a release:
+1. Run the split command to create our release branch on all repos.
+2. Run the release command to create tags on all repos. 
+
+Both should run on the same branch. The branch has to start with `release-`. For example `release-new-billing`, `release-v2.5-dev`
 
 #### Split Command
 Splitting the monorepo means writing to branches in the original single repos. 
