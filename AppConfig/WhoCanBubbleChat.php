@@ -10,18 +10,16 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 
 class WhoCanBubbleChat
 {
-    const CARE_AMBASSADOR             = 'care-ambassadors';
-    const CARE_COACHES                = 'care-coaches';
-    const ROLE_ALLOWED_TO_BUBBLE_CHAT = 'role_allowed_bubble_chat';
+    const ROLES_ALLOWED_TO_BUBBLE_CHAT = 'roles_allowed_bubble_chat';
 
-    public static function rolesAllowedBubbleChat()
+    public static function rolesAllowedBubbleChat(): ?array
     {
-        $rolesAllowedBubbleChat = AppConfig::pull(self::ROLE_ALLOWED_TO_BUBBLE_CHAT, []);
+        $rolesAllowedBubbleChat = AppConfig::pull(self::ROLES_ALLOWED_TO_BUBBLE_CHAT, null);
 
-        if (is_string($rolesAllowedBubbleChat)) {
-            return [$rolesAllowedBubbleChat];
+        if (!empty($rolesAllowedBubbleChat) && is_string($rolesAllowedBubbleChat)) {
+            return explode(',', collect($rolesAllowedBubbleChat)->first());
         }
-
-        return $rolesAllowedBubbleChat;
+        
+        return [];
     }
 }
