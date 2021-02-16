@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e62ac691c468d98eef4b4ddffd2768e",
+    "content-hash": "17a8bba6bd65b8a26669057793213494",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1102,11 +1102,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-self_enrollment_multi_user_enrollees_bug",
+            "version": "v2.5.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "3a3a630670ed9a28c0aec4720c85d6f83ceb0572"
+                "reference": "d07870c3a7b796b1416657ddb34941b6a51f4ca4"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1129,7 +1129,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-15T23:15:48+00:00"
+            "time": "2021-02-16T17:03:29+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -14741,7 +14741,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20,
         "nwidart/laravel-modules": 20
     },
