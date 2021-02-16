@@ -8,7 +8,6 @@ namespace Tests\Feature;
 
 use App\Console\Commands\ReArrangeActivityChargeableServices;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -308,28 +307,24 @@ class ReArrangeChargeableServicesTest extends TestCase
     private function validateSummariesData(int $patientId, int $timeCcm, int $timeCcm40, int $timeCcm60 = 0)
     {
         $service = app(PatientServiceProcessorRepository::class);
-        $service->reloadPatientSummaryViews($patientId, now()->startOfMonth());
 
         $csId      = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id;
         $ccm40CsId = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM_PLUS_40)->id;
         $ccm60CsId = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM_PLUS_60)->id;
 
-        $summaries = $service->getChargeablePatientSummaries($patientId, now()->startOfMonth());
+        $patientBillingData    = $service->getPatientWithBillingDataForMonth($patientId, now()->startOfMonth());
+        $summaries             = $patientBillingData->chargeableMonthlySummaries;
+        $chargeableMonthlyTime = $patientBillingData->chargeableMonthlyTime;
+
         self::assertEquals(3, $summaries->count());
 
-        /** @var ChargeablePatientMonthlySummaryView $ccmSummary */
-        $ccmSummary = $summaries->firstWhere('chargeable_service_code', '=', ChargeableService::CCM);
-        self::assertEquals($timeCcm, $ccmSummary->total_time);
-        self::assertEquals($csId, $ccmSummary->chargeable_service_id);
+        self::assertEquals($timeCcm, optional($chargeableMonthlyTime->firstWhere('chargeable_service_id', '=', $csId))->total_time ?? 0);
+        self::assertEquals($csId, $summaries->firstWhere('chargeable_service_id', '=', $csId)->chargeable_service_id);
 
-        /** @var ChargeablePatientMonthlySummaryView $ccm40Summary */
-        $ccm40Summary = $summaries->firstWhere('chargeable_service_code', '=', ChargeableService::CCM_PLUS_40);
-        self::assertEquals($timeCcm40, $ccm40Summary->total_time);
-        self::assertEquals($ccm40CsId, $ccm40Summary->chargeable_service_id);
+        self::assertEquals($timeCcm40, optional($chargeableMonthlyTime->firstWhere('chargeable_service_id', '=', $ccm40CsId))->total_time ?? 0);
+        self::assertEquals($ccm40CsId, $summaries->firstWhere('chargeable_service_id', '=', $ccm40CsId)->chargeable_service_id);
 
-        /** @var ChargeablePatientMonthlySummaryView $ccm40Summary */
-        $ccm60Summary = $summaries->firstWhere('chargeable_service_code', '=', ChargeableService::CCM_PLUS_60);
-        self::assertEquals($timeCcm60, $ccm60Summary->total_time);
-        self::assertEquals($ccm60CsId, $ccm60Summary->chargeable_service_id);
+        self::assertEquals($timeCcm60, optional($chargeableMonthlyTime->firstWhere('chargeable_service_id', '=', $ccm60CsId))->total_time ?? 0);
+        self::assertEquals($ccm60CsId, $summaries->firstWhere('chargeable_service_id', '=', $ccm60CsId)->chargeable_service_id);
     }
 }
