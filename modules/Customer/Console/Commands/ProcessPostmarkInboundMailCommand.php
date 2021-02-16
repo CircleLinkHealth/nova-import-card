@@ -4,8 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Customer\Jobs;
+namespace CircleLinkHealth\Customer\Console\Commands;
 
+use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use Illuminate\Console\Command;

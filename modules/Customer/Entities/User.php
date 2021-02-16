@@ -22,6 +22,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
+use CircleLinkHealth\Customer\AppConfig\UsersWhoCanBubbleChat;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
@@ -73,7 +74,9 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
@@ -2215,6 +2218,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('administrator');
     }
 
+    public function isAllowedToBubbleChat()
+    {
+        $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
+        return in_array($this->id, $bubbleChatters);
+    }
+
     /**
      * Determine whether the User is BHI chargeable (ie. eligible and enrolled).
      */
@@ -3075,6 +3084,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ]);
             });
         });
+    }
+
+    public function scopeUniquePatients($builder) {
+
+        return $builder
+            ->whereIn('users.id', function ($q){
+                $q->join('patient_info', 'patient_info.user_id', '=', 'users.id')
+                    ->select('users.id')
+                    ->from('users')
+                    ->groupBy(['display_name', 'birth_date']);
+            })->join('patient_info', 'patient_info.user_id', '=', 'users.id')
+            ->select('users.*', 'patient_info.birth_date')
+            ->ofTypePatients()
+            ->whereHas('patientInfo');
     }
 
     /**
