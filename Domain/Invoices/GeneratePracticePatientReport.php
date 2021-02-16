@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Invoices;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PracticePatientReportData;
@@ -21,7 +22,7 @@ class GeneratePracticePatientReport
     {
         $patient              = $this->billingStatus->patientUser;
         $result               = new PracticePatientReportData();
-        $result->ccmTime      = $this->roundToMinutes($this->getAllTimeExceptBhi());
+        $result->ccmTime      = $this->roundToMinutes($this->getBillableCcmCs());
         $result->bhiTime      = $this->roundToMinutes($this->getBhiTime());
         $result->name         = $patient->getFullName();
         $result->dob          = $patient->getBirthDate();
@@ -67,6 +68,27 @@ class GeneratePracticePatientReport
         return $this->billingStatus->patientUser->chargeableMonthlyTime
             ->where('chargeable_service_id', '!=', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
             ->sum('total_time');
+    }
+
+    /**
+     * This is replicating the behavior of {@link ApprovableBillablePatient}, i.e. the result of $pms->getBillableCcmCs.
+     */
+    private function getBillableCcmCs(): int
+    {
+        $rpmId   = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::RPM);
+        $rpm40Id = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::RPM40);
+
+        $hasRpmOnly = $this->billingStatus->patientUser->chargeableMonthlySummaries
+            ->where('is_fulfilled', '=', true)
+            ->every(fn (ChargeablePatientMonthlySummary $item) => in_array($item->chargeable_service_id, [$rpmId, $rpm40Id]));
+
+        if ($hasRpmOnly) {
+            return $this->billingStatus->patientUser->chargeableMonthlyTime
+                ->where('chargeable_service_id', '=', $rpmId)
+                ->sum('total_time');
+        }
+
+        return $this->getAllTimeExceptBhi();
     }
 
     private function getBillingCodes(): string
