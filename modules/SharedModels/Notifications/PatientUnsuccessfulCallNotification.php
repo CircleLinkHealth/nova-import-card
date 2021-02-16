@@ -19,7 +19,7 @@ use NotificationChannels\Twilio\TwilioMessage;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 use Propaganistas\LaravelPhone\Exceptions\NumberFormatException;
 
-class PatientUnsuccessfulCallNotification extends Notification implements ShouldQueue
+class PatientUnsuccessfulCallNotification extends Notification
 {
     use Queueable;
 

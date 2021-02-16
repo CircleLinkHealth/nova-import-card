@@ -12,7 +12,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
-class PatientUnsuccessfulCallReplyNotification extends Notification implements ShouldQueue
+class PatientUnsuccessfulCallReplyNotification extends Notification
 {
     use Queueable;
 

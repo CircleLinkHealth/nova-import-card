@@ -24,6 +24,7 @@ use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use function Clue\StreamFilter\fun;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\Enrollee.
@@ -285,6 +286,7 @@ class Enrollee extends BaseModel
      * Csv with enrollees uploaded through Superadmin page
      */
     const UPLOADED_CSV = 'uploaded-csv';
+    const INVITE_ONCE_EVERY_N_MONTHS = 5;
 
     /**
      * For mySql full-text search.
@@ -494,6 +496,18 @@ class Enrollee extends BaseModel
         return collect($addresses)->filter()->implode(', ');
     }
 
+    public function scopeCanSendSelfEnrollmentInvitation($query, bool $initialInvite)
+    {
+        return $query->whereNull('source')
+            ->when($initialInvite, function ($q){
+                $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
+                    $q->where('users.created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
+                });
+            })
+            ->whereIn('status', [
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
+            ]);
+    }
     /**
      * @param mixed $key
      */

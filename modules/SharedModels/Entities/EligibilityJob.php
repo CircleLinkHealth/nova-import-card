@@ -285,4 +285,14 @@ class EligibilityJob extends BaseModel
     {
         return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->outcome;
     }
+    
+    public function scopePendingProcessing($q) {
+        return $q->where(function($q) {
+            $q->where('status', '=', EligibilityJob::STATUSES['not_started'])
+              ->orWhere([
+                            ['status', '=', EligibilityJob::STATUSES['processing']],
+                            ['updated_at', '<', now()->subMinutes(10)],
+                        ]);
+        });
+    }
 }
