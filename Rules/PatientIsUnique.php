@@ -64,13 +64,13 @@ class PatientIsUnique implements Rule
     {
         return $this->duplicatePatientUserIds->first();
     }
-    
+
     public function getPatientUserIds(): ?Collection
     {
         return $this->duplicatePatientUserIds;
     }
-    
-    
+
+
     /**
      * Get the validation error message.
      *
