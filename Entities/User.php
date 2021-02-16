@@ -22,7 +22,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
-use CircleLinkHealth\Customer\AppConfig\UsersWhoCanBubbleChat;
+use CircleLinkHealth\Customer\AppConfig\WhoCanBubbleChat;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
@@ -2231,8 +2231,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isAllowedToBubbleChat()
     {
-        $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
-        return in_array($this->id, $bubbleChatters);
+        $rolesAllowedToChat = WhoCanBubbleChat::rolesAllowedBubbleChat();
+        $this->cachedRoles()
+            ->pluck('name')
+            ->each(function ($roleName) use ($rolesAllowedToChat) {
+                return in_array($roleName, $rolesAllowedToChat);
+            });
     }
 
     /**
