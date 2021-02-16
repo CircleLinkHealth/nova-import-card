@@ -26,16 +26,16 @@ class MessageDispatchMessagesReport extends LivewireDatatable
             Column::checkbox(),
 
             Column::name('body')
-                  ->label('Message')
-                  ->searchable(),
+                ->label('Message')
+                ->searchable(),
 
             DateColumn::name('created_at')
                 ->label('Date Received')
                 ->filterable(),
 
             Column::name('id')
-                  ->label('ID')
-                  ->searchable(),
+                ->label('ID')
+                ->searchable(),
         ];
     }
 }
