@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "780552aeb13295c4d4f792fb07749a75",
+    "content-hash": "9a60ef6b05ab35288a4b4d7338ffb499",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1106,11 +1106,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.8.5",
+            "version": "v4.8.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "7994f8a443a952228db7798239cefc14a5e9765a"
+                "reference": "428abdee660ca5a6e16e4e4a87f06592241d613c"
             },
             "require": {
                 "circlelinkhealth/condition-code-lookup-module": "^1.1.7",
@@ -1142,7 +1142,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-16T00:18:22+00:00"
+            "time": "2021-02-16T00:34:54+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
