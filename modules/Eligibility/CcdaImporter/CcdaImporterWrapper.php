@@ -257,7 +257,7 @@ class CcdaImporterWrapper
      */
     public function import()
     {
-        $patient = $this->ccda->load('patient')->patient ?? null;
+        $patient = $this->ccda->load('patient.patientInfo')->patient ?? null;
 
         // If this is a survey only patient who has not yet enrolled, we should not enroll them.
         if (self::isUnenrolledSurveyUser($patient, $this->enrollee)) {
@@ -315,7 +315,7 @@ class CcdaImporterWrapper
     {
         $term = self::prepareForMysqlMatch($term);
 
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\")")->ofPractice($practiceId)->ofType('provider')->first();
     }
 
     /**
@@ -386,7 +386,7 @@ class CcdaImporterWrapper
     {
         $term = self::prepareForMysqlMatch($term);
 
-        return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
+        return Location::whereRaw("MATCH(name) AGAINST(\"$term\")")->where('practice_id', $practiceId)->first();
     }
 
     private static function prepareForMysqlMatch(string $term)

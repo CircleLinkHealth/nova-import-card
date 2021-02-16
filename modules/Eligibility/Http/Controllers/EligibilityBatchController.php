@@ -391,17 +391,7 @@ class EligibilityBatchController extends Controller
      */
     public function getReprocess(EligibilityBatch $batch)
     {
-        if (in_array(
-            $batch->type,
-            [EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS]
-        )) {
-            return view('eligibility::batch.methods.google-drive')
-                ->with('batch', $batch)
-                ->with('action', 'edit');
-        }
-        if (EligibilityBatch::TYPE_ONE_CSV == $batch->type) {
-            return view('eligibility::batch.methods.single-csv');
-        }
+        ProcessEligibilityBatch::dispatch($batch->id);
     }
 
     public function googleDriveCreate()
@@ -456,7 +446,7 @@ class EligibilityBatchController extends Controller
     public function show(Request $request, EligibilityBatch $batch)
     {
         if ($request->has('reprocess')) {
-            ProcessEligibilityBatch::dispatch($batch);
+            ProcessEligibilityBatch::dispatch($batch->id);
             \Session::put('message', 'The batch will resume processing. If there are more patients to process the counts will update. Otherwise, nothing will happen.');
         }
 

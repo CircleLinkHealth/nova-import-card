@@ -34,7 +34,7 @@ class ProcessNextEligibilityBatchChunk extends Command
     public function handle()
     {
         if ($batch = $this->getNextBatch()) {
-            ProcessEligibilityBatch::dispatch($batch);
+            ProcessEligibilityBatch::dispatch($batch->id);
             $this->line("Scheduled command to process batch:$batch->id");
 
             return;

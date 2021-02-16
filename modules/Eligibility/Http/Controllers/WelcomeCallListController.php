@@ -27,20 +27,6 @@ class WelcomeCallListController extends Controller
     }
 
     /**
-     * Create Phoenix Heart Call List from phoenix_heart_* tables.
-     */
-    public function makePhoenixHeartCallList()
-    {
-        $batch = $this->processEligibilityService->createPhoenixHeartBatch();
-
-        return link_to_route(
-            'eligibility.batch.show',
-            'Job Scheduled. Click here to view progress. Make sure you bookmark the link.',
-            [$batch->id]
-        );
-    }
-
-    /**
      * @param Request $request
      *
      * @throws \Exception

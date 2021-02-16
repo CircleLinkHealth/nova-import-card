@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
@@ -22,24 +23,15 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 3;
-    /**
-     * @var \CircleLinkHealth\SharedModels\Entities\TargetPatient
-     */
-    protected $targetPatient;
+    
+    protected int $targetPatientId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(TargetPatient $targetPatient)
+    public function __construct(int $targetPatientId)
     {
-        $this->targetPatient = $targetPatient;
+        $this->targetPatientId = $targetPatientId;
     }
 
     /**
@@ -50,12 +42,14 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
     public function handle()
     {
         try {
-            $this->processEligibility();
-        } catch (\Exception $exception) {
-            $this->targetPatient->status = TargetPatient::STATUS_ERROR;
-            $this->targetPatient->save();
+            $tP = TargetPatient::findOrFail($this->targetPatientId);
+            $this->processEligibility($tP);
+        } catch (\Exception $e) {
+            $tP->status      = TargetPatient::STATUS_ERROR;
+            $tP->description = $e->getMessage();
+            $tP->save();
 
-            throw $exception;
+            throw $e;
         }
     }
 
@@ -68,30 +62,32 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
     {
         return [
             'athena',
-            'targetpatientid:'.$this->targetPatient->id,
-            'batchid:'.$this->targetPatient->batch_id,
+            'targetpatientid:'.$this->targetPatientId,
         ];
     }
 
-    private function processEligibility()
+    private function processEligibility(TargetPatient &$tP)
     {
-        $this->targetPatient->loadMissing('batch');
+        $tP->loadMissing('batch');
 
-        if ( ! $this->targetPatient->batch) {
+        if ( ! $tP->batch) {
             throw new \Exception('A batch is necessary to process a target patient.');
         }
 
         try {
             return tap(
                 app(AthenaEligibilityCheckableFactory::class)
-                    ->makeAthenaEligibilityCheckable($this->targetPatient)
-                    ->createAndProcessEligibilityJobFromMedicalRecord(),
-                function (EligibilityJob $eligibilityJob) {
-                    $this->targetPatient->setStatusFromEligibilityJob($eligibilityJob);
-                    $this->targetPatient->eligibility_job_id = $eligibilityJob->id;
-                    $this->targetPatient->save();
-                }
+                        ->makeAthenaEligibilityCheckable($tP)
+                        ->createAndProcessEligibilityJobFromMedicalRecord(),
+                function (EligibilityJob $eligibilityJob) use ($tP) {
+                        $tP->setStatusFromEligibilityJob($eligibilityJob);
+                        $tP->eligibility_job_id = $eligibilityJob->id;
+                        $tP->save();
+                    }
             );
+        } catch (CcdaWasNotFetchedFromAthenaApi $e) {
+            $tP->setStatusFromException($e);
+            $tP->save();
         } catch (\Exception $e) {
             throw $e;
         }

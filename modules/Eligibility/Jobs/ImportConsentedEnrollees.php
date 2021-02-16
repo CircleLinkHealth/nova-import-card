@@ -10,7 +10,9 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use Illuminate\Bus\Queueable;
@@ -26,17 +28,7 @@ class ImportConsentedEnrollees implements ShouldQueue, ShouldBeEncrypted
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 2;
-    /**
-     * @var \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
-     */
-    private $batch;
+    
     /**
      * @var array
      */
@@ -45,10 +37,9 @@ class ImportConsentedEnrollees implements ShouldQueue, ShouldBeEncrypted
     /**
      * Create a new job instance.
      */
-    public function __construct(array $enrolleeIds, EligibilityBatch $batch = null)
+    public function __construct(array $enrolleeIds)
     {
         $this->enrolleeIds = $enrolleeIds;
-        $this->batch       = $batch;
     }
 
     /**
