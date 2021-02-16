@@ -315,7 +315,7 @@ class CcdaImporterWrapper
     {
         $term = self::prepareForMysqlMatch($term);
 
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\")")->ofPractice($practiceId)->ofType('provider')->first();
     }
 
     /**
