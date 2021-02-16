@@ -103,7 +103,7 @@
                             {{ csrf_field() }}
 
                             <div class="form-group">
-                                <article>Select Practice</article>
+                                <article>Select Practice *</article>
                                 <select name="practice_id" class="col-sm-12 form-control">
                                     @foreach(CircleLinkHealth\Customer\Entities\Practice::whereEhrId(2)->get() as $practice)
                                         <option value="{{$practice->id}}">{{$practice->display_name}}</option>
@@ -111,14 +111,21 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <article>From:</article>
+                                <article>From *</article>
                                 <input id="from" type="date" name="from"
                                        value="{{Carbon\Carbon::today()->subDay()->toDateString()}}"
                                        max="{{Carbon\Carbon::today()->subDay()->toDateString()}}" required
                                        class="form-control">
-                                <article>To:</article>
+                                <article>To *</article>
                                 <input id="to" type="date" name="to" value="{{Carbon\Carbon::today()->toDateString()}}"
                                        max="{{Carbon\Carbon::today()->toDateString()}}" required class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <article>Add to existing batch</article>
+                                <input id="batch_id" type="number" name="batch_id"
+                                       placeholder="Enter existing batch ID of selected practice"
+                                       class="form-control">
                             </div>
 
                             <input type="submit" class="btn btn-primary" value="Pull" name="submit">
