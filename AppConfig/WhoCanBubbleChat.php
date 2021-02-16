@@ -16,10 +16,10 @@ class WhoCanBubbleChat
     {
         $rolesAllowedBubbleChat = AppConfig::pull(self::ROLES_ALLOWED_TO_BUBBLE_CHAT, null);
 
-        if (!empty($rolesAllowedBubbleChat) && is_string($rolesAllowedBubbleChat)) {
+        if ( ! empty($rolesAllowedBubbleChat) && is_string($rolesAllowedBubbleChat)) {
             return explode(',', collect($rolesAllowedBubbleChat)->first());
         }
-        
+
         return [];
     }
 }
