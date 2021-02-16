@@ -34,17 +34,21 @@ class ProcessPatientSummaries
 
     public function execute(int $patientId, Carbon $month): void
     {
-        $this->setPatientId($patientId)
-            ->setMonth($month)
-            ->setPatientUser()
-            ->setPatientDto()
-            ->process();
+        measureTime("ProcessPatientSummaries::execute:$patientId", function () use ($patientId, $month) {
+            $this->setPatientId($patientId)
+                ->setMonth($month)
+                ->setPatientUser()
+                ->setPatientDto()
+                ->process();
+        });
     }
 
     public function fromDTO(PatientMonthlyBillingDTO $dto): void
     {
-        $this->setPatientDto($dto)
-            ->process();
+        measureTime("ProcessPatientSummaries::fromDTO:{$dto->getPatientId()}", function () use ($dto) {
+            $this->setPatientDto($dto)
+                ->process();
+        });
     }
 
     public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void

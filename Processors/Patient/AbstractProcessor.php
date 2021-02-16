@@ -226,7 +226,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             $this->output->setChargeableServiceId($existingSummary->getChargeableServiceId())
                 ->setRequiresConsent($existingSummary->requiresConsent());
         } else {
-            $this->output->setChargeableServiceId(ChargeableService::cached()->where('code', $this->code())->first()->id);
+            $this->output->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode($this->code()));
         }
 
         return $this;
