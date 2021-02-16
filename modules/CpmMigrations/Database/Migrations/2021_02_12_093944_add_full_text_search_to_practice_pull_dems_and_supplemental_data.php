@@ -4,11 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
-class SeedRpm60ChargeableService extends Migration
+class AddFullTextSearchToPracticePullDemsAndSupplementalData extends Migration
 {
     /**
      * Reverse the migrations.
@@ -26,9 +25,7 @@ class SeedRpm60ChargeableService extends Migration
      */
     public function up()
     {
-        ChargeableService::whereCode('CPT 99458')
-            ->update([
-                'code' => ChargeableService::RPM40,
-            ]);
+        DB::statement('ALTER TABLE supplemental_patient_data ADD FULLTEXT full(first_name, last_name)');
+        DB::statement('ALTER TABLE practice_pull_demographics ADD FULLTEXT full(first_name, last_name)');
     }
 }
