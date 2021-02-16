@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\Eligibility;
 
 use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Rules\EligibilityPhones;
 use CircleLinkHealth\Eligibility\Rules\EligibilityProblems;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Support\Collection;
 use Validator;
 

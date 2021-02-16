@@ -13,14 +13,14 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\DTO\Problem;
 use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Validator;
@@ -780,7 +780,7 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
-        if ((! isset($args['provider_id']) || empty($args['provider_id'])) && (isset($args['referring_provider_name']) && !empty($args['referring_provider_name']))) {
+        if (( ! isset($args['provider_id']) || empty($args['provider_id'])) && (isset($args['referring_provider_name']) && ! empty($args['referring_provider_name']))) {
             $args['provider_id'] = optional(CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id))->id;
         }
 
@@ -903,8 +903,8 @@ class EligibilityChecker
                         )->whereHas(
                             'patientInfo',
                             function ($q) use ($args) {
-                            $q->withTrashed()->whereBirthDate($args['dob']);
-                        }
+                                $q->withTrashed()->whereBirthDate($args['dob']);
+                            }
                         );
                 }
             )->first();

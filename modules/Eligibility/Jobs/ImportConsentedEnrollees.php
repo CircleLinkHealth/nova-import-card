@@ -28,7 +28,7 @@ class ImportConsentedEnrollees implements ShouldQueue, ShouldBeEncrypted
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     /**
      * @var array
      */

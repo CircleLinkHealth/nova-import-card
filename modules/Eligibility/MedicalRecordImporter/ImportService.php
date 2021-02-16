@@ -38,9 +38,13 @@ class ImportService
                     $enrollee->setRelation('user', $ccda->patient);
                     $enrollee->status = Enrollee::ENROLLED;
                 }
-                
-                if ($enrollee->isDirty()) $enrollee->save();
-                if ($ccda->isDirty()) $ccda->save();
+
+                if ($enrollee->isDirty()) {
+                    $enrollee->save();
+                }
+                if ($ccda->isDirty()) {
+                    $ccda->save();
+                }
 
                 return $ccda->patient;
             }

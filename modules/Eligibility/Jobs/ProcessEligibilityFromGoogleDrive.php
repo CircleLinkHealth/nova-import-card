@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
