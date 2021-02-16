@@ -1,0 +1,23 @@
+const SERVICES = require('./services.types');
+
+const clashes = {};
+clashes[SERVICES.PCM] = [
+    SERVICES.GENERAL_CARE_MANAGEMENT,
+    SERVICES.CCM,
+    SERVICES.CCM40,
+    SERVICES.CCM60,
+    SERVICES.RPM,
+    SERVICES.RPM40,
+    SERVICES.RPM60,
+];
+clashes[SERVICES.RPM] = [
+    SERVICES.GENERAL_CARE_MANAGEMENT
+];
+clashes[SERVICES.RPM40] = [
+    SERVICES.GENERAL_CARE_MANAGEMENT
+];
+clashes[SERVICES.RPM60] = [
+    SERVICES.GENERAL_CARE_MANAGEMENT
+];
+
+export default clashes;
