@@ -65,7 +65,20 @@ monovapor deploy staging staging
 
 
 ### Splitting the monorepo 
-Splitting the monorepo means writing to branches in the original single repos. Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provider App, and Admin App.
+Splitting the monorepo means writing to branches in the original single repos. 
+
+#### Steps to split the monorepo
+1. Create a new branch in the monorepo and push it to git remote (or start with a branch already pushed to remote)
+```bash
+git checkout -b feature_abp_add_force_cs
+git push --set-upstream origin feature_abp_add_force_cs
+git push
+```
+2. Run split command. This will push changes to each individual repo on branch `feature_abp_add_force_cs`.
+```bash
+sh bin/split.sh feature_abp_add_force_cs
+```
+From here we have the option to deploy `feature_abp_add_force_cs` form any of the single repos using GitHub Actions, or a manual vapor command, etc. For example I could deploy only Provider App, and Admin App.
 
 ### Available Scripts
 #### Run a shell command in an app
