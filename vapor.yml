@@ -29,7 +29,7 @@ environments:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
             - 'php artisan schedule-monitor:sync'
-    review-continuum-and-360-letters2:
+    review-continuum-360-letters2:
         domain: selfenrollment.clh-staging.com
         storage: selfenrollment-staging-vapor-storage
         memory: 512
