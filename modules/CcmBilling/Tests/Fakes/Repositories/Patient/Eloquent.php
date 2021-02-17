@@ -295,7 +295,7 @@ class Eloquent implements PatientServiceProcessorRepository
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
         return 1 === $this->summariesCreated->where('patient_user_id', $patientId)
-            ->where('chargeable_service_id', ChargeableService::cached()->where('code', $chargeableServiceCode)->first()->id)
+            ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode))
             ->where('chargeable_month', $month)
             ->count();
     }

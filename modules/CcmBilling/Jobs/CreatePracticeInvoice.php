@@ -17,6 +17,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @deprecated To be replaced by {@link CreatePracticesInvoices}
+ * Class CreatePracticeInvoice
+ */
 class CreatePracticeInvoice implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;

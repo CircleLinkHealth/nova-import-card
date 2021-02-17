@@ -82,9 +82,7 @@ class ApprovablePatient extends JsonResource
         /** @var User $user */
         $user = $this->resource->patientUser;
 
-        $bhiId = \CircleLinkHealth\Customer\Entities\ChargeableService::cached()
-            ->firstWhere('code', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
-            ->id;
+        $bhiId = \CircleLinkHealth\Customer\Entities\ChargeableService::getChargeableServiceIdUsingCode(\CircleLinkHealth\Customer\Entities\ChargeableService::BHI);
 
         return $user->chargeableMonthlyTime
             ->where('chargeable_service_id', '=', $bhiId)

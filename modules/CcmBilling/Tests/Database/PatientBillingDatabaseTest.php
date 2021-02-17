@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -125,13 +124,6 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 ->where('chargeable_month', $month)
                 ->first()
         );
-
-        self::assertNotNull(
-            $this->patient()->chargeableMonthlyTime()
-                ->where('chargeable_service_id', $ccmCodeId)
-                ->where('chargeable_month', $month)
-                ->first()
-        );
     }
 
     public function test_patient_summary_sql_view_has_correct_auxiliary_metrics()
@@ -206,7 +198,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         //todo: change test once we have decided how to go about adding locations to new service
         $locationRepo               = new LocationProcessorEloquentRepository();
         $locationProblemServiceRepo = new LocationProblemServiceRepository();
-        $patientRepo                = new PatientProcessorEloquentRepository();
+        $patientRepo                = new PatientServiceProcessorRepository();
 
         $patient = $this->patient();
 
@@ -216,7 +208,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
             ChargeableService::CCM_PLUS_40,
             ChargeableService::CCM_PLUS_60,
         ] as $code) {
-            $locationRepo->store($locationId = $patient->getPreferredContactLocation(), $code, $startOfMonth = Carbon::now()->startOfMonth());
+            $locationRepo->store($locationId = $patient->getPreferredContactLocation(), ChargeableService::getChargeableServiceIdUsingCode($code), $startOfMonth = Carbon::now()->startOfMonth());
         }
 
         $cpmProblems = CpmProblem::take(5)->get()->values()->toArray();
@@ -238,7 +230,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
             ->exists());
 
         /** @var User $patient */
-        $patient = $patientRepo->patientWithBillingDataForMonth($patient->id, $startOfMonth)
+        $patient = $patientRepo->getPatientWithBillingDataForMonth($patient->id, $startOfMonth)
             ->first();
 
         (app(MonthlyProcessor::class))->process(

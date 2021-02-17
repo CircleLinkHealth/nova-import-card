@@ -136,38 +136,33 @@ class GenerateFakeDataForApproveBillablePatientsPage extends Command
         $services = [];
         if ($isPcm) {
             $services[]          = 'PCM';
-            $chargeableServiceId = ChargeableService::cached()
-                ->firstWhere('code', '=', ChargeableService::PCM)->id;
+            $chargeableServiceId = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM);
 
             $this->storeAndMeasureTime($nurse, $patient, 33, $chargeableServiceId);
         } else {
             $services[]          = 'CCM';
-            $chargeableServiceId = ChargeableService::cached()
-                ->firstWhere('code', '=', ChargeableService::CCM)->id;
+            $chargeableServiceId = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM);
 
             $this->storeAndMeasureTime($nurse, $patient, 45, $chargeableServiceId);
         }
 
         if ($isBhi) {
             $services[]          = 'BHI';
-            $chargeableServiceId = ChargeableService::cached()
-                ->firstWhere('code', '=', ChargeableService::BHI)->id;
+            $chargeableServiceId = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI);
 
             $this->storeAndMeasureTime($nurse, $patient, 23, $chargeableServiceId);
         }
 
         if ($isRpm) {
             $services[]          = 'RPM';
-            $chargeableServiceId = ChargeableService::cached()
-                ->firstWhere('code', '=', ChargeableService::RPM)->id;
+            $chargeableServiceId = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::RPM);
 
             $this->storeAndMeasureTime($nurse, $patient, 24, $chargeableServiceId);
         }
 
         if ($isRhc) {
             $services[]          = 'RHC';
-            $chargeableServiceId = ChargeableService::cached()
-                ->firstWhere('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)->id;
+            $chargeableServiceId = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::GENERAL_CARE_MANAGEMENT);
 
             $this->storeAndMeasureTime($nurse, $patient, 24, $chargeableServiceId);
         }
