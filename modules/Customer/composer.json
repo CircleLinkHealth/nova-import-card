@@ -9,10 +9,6 @@
         }
     ],
     "extra": {
-        "branch-alias": {
-            "dev-master": "4.2.x-dev",
-            "dev-road_547_customer": "4.3.x-dev"
-        },
         "laravel": {
             "providers": [
 
