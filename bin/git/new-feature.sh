@@ -7,7 +7,7 @@ FEATURE=$1
 
 if [[ ! -z "$(git status --porcelain)" ]]
 then
-    echo "Your working directory is dirty. Did you forget to commit your changes?"
+    echo "Your working directory is dirty. Please commit your changes before starting a new feature."
 
     exit 1
 fi
