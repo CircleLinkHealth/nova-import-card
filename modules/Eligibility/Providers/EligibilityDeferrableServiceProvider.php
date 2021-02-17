@@ -82,8 +82,10 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             $key = config('services.athena.key');
             $secret = config('services.athena.secret');
             $version = config('services.athena.version');
+            $practiceId = config('services.athena.practice_id');
+            
 
-            return new Connection($version, $key, $secret);
+            return new Connection($version, $key, $secret, $practiceId);
         });
     }
 }
