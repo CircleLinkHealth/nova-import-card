@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Core\TwilioClientable;
+use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use Log;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Twilio\Exceptions\TwilioException;
