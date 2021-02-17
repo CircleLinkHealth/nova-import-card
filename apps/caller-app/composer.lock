@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "10121830ad088a9c474db946e6ad5e27",
+    "content-hash": "fb13615d94d6c4ec093d19e9414371e7",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -725,6 +725,39 @@
                 "laravel",
                 "model",
                 "revision"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "circlelinkhealth/self-enrollment-module",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/SelfEnrollment",
+                "reference": "faaefd5a49dfc0a95ecb30b1e1076b4d6f01046a"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SelfEnrollment\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@circlelinkhealth.com"
+                }
             ],
             "transport-options": {
                 "relative": true
