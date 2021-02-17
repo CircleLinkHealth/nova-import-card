@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
 
 class GenerateContinuumFamilyCareLetter extends Seeder
 {
-    const PRACTICE_SIGNATORY_NAME = 'not provided yet';
+    const PRACTICE_SIGNATORY_NAME = 'Chip Fillingane <br> DO';
     const CONTINUUM_FAMILY_PRACTICE_NAME = 'continuum-family-care-llc';
     /**
      * Run the database seeds.
