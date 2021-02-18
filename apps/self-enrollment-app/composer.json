@@ -9,100 +9,28 @@
     "license": "MIT",
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/vapor-cli.git"
-        },
-        {
             "type": "composer",
             "url": "https://nova.laravel.com"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcmBilling"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmMigrations"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Customer"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/short-url.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/synonyms.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/vapor-devops-helpers.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/vapor-core.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/self-enrollment-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
         },
         {
             "type": "path",
@@ -110,52 +38,90 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/Raygun"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SamlSp"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SelfEnrollment"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedModels"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/Synonyms"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwilioIntegration"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwoFA"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/VaporCli"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/VaporCore"
+            "url": "./CircleLinkHealth/VaporDevopsHelpers"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git"
         }
     ],
     "require": {
         "php": "^7.4",
         "ext-bcmath": "*",
         "ext-json": "*",
-        "ashallendesign/short-url": "^4.1",
-        "circlelinkhealth/ccm-billing-module": "2.1.x-dev",
-        "circlelinkhealth/cerberus-gatekeeper-module": "3.2.0",
-        "circlelinkhealth/core-module": "2.3.x-dev",
-        "circlelinkhealth/cpm-migrations-module": "3.0",
-        "circlelinkhealth/customer-module": "4.3.x-dev",
-        "circlelinkhealth/eligibility-module": "4.4.1",
-        "circlelinkhealth/enrollment-invites": "*",
-        "circlelinkhealth/raygun-module": "2.0",
-        "circlelinkhealth/revisionable-module": "7.0.x-dev",
-        "circlelinkhealth/saml-sp-module": "2.0",
-        "circlelinkhealth/self-enrollment-module": "*",
-        "circlelinkhealth/shared-models-module": "dev-road_547_sharedModels",
-        "circlelinkhealth/sqlviews-module": "2.0",
-        "circlelinkhealth/synonyms-module": "*",
-        "circlelinkhealth/twilio-integration-module": "1.0.x-dev",
         "ohdearapp/ohdear-php-sdk": "^3.0",
         "spatie/laravel-schedule-monitor": "2.2.2",
+        "ashallendesign/short-url":"*",
+        "circlelinkhealth/ccm-billing-module":"*",
+        "circlelinkhealth/cerberus-gatekeeper-module":"*",
+        "circlelinkhealth/core-module":"*",
+        "circlelinkhealth/cpm-migrations-module":"*",
+        "circlelinkhealth/customer-module":"*",
+        "circlelinkhealth/eligibility-module":"*",
+        "circlelinkhealth/enrollment-invites": "*",
+        "circlelinkhealth/raygun-module":"*",
+        "circlelinkhealth/revisionable-module":"*",
+        "circlelinkhealth/saml-sp-module":"*",
+        "circlelinkhealth/self-enrollment-module": "*",
+        "circlelinkhealth/shared-models-module":"*",
+        "circlelinkhealth/sqlviews-module":"*",
+        "circlelinkhealth/synonyms-module": "*",
+        "circlelinkhealth/twilio-integration-module":"*",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.4",
         "guzzlehttp/guzzle": "^7.2",
         "lab404/laravel-impersonate": "^1.7",
         "laravel/nova": "~3.0",
-        "laravel/vapor-core": "*",
         "sentry/sentry-laravel": "^2.3",
         "ext-pdo": "*"
     },
     "require-dev": {
-        "circlelinkhealth/vapor-devops-helpers-module": "dev-master",
+        "circlelinkhealth/vapor-devops-helpers-module": "*",
         "facade/ignition": "^2.0",
         "laravel/vapor-cli": "*",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^4.3",
-        "nwidart/laravel-modules": "dev-master",
         "phpunit/phpunit": "^8.5.8|^9.3.3"
     },
     "config": {

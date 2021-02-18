@@ -45,7 +45,10 @@ TwoFA
 5. Run `sh bin/local-dev/install.sh`
 
 ### Starting work on a new feature
-1. Create a new branch in the monorepo with a descriptive name. It has to start with `feature_`. Example `feature_abp_add_force_cs`.
+1. Create a new branch in the monorepo with a descriptive name, using command below.
+```bash
+sh bin/git/new-feature.sh abp_add_force_cs
+```
 2. Any work done should be committed to the monorepo **only**.
 3. Create a PR as soon as possible to get the code reviewed.
 
