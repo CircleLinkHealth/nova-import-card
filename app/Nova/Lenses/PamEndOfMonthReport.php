@@ -136,7 +136,8 @@ class PamEndOfMonthReport extends Lens
         $patientModelClass = Patient::class;
 
         return "
-        called_date is not null
+        patient_practices.is_demo = 0
+        and called_date is not null
         and calls.called_date BETWEEN '$startTime' and '$endTime'
         and calls.called_date in (
             select max(called_date) 
