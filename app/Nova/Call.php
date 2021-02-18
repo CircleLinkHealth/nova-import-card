@@ -61,7 +61,7 @@ class Call extends Resource
         return false;
     }
 
-    public function authorizeToDelete(Request $request)
+    public function authorizedToDelete(Request $request)
     {
         return false;
     }
