@@ -14,7 +14,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\CachedLocationProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -60,7 +60,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function register()
     {
         $this->app->singleton(BillingCache::class, BillingDataCache::class);
-        $this->app->singleton(PatientServiceRepositoryInterface::class, CachedPatientServiceProcessorRepository::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceProcessorRepository::class);
         $this->app->singleton(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
         $this->app->singleton(LocationProcessorRepository::class, CachedLocationProcessorEloquentRepository::class);
     }
