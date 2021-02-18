@@ -117,7 +117,7 @@ class ForcePatientChargeableService
         $month = is_null($this->input->getMonth())
             ? Carbon::now()->startOfMonth()
             : $this->input->getMonth();
-        
+
         ProcessPatientSummaries::wipeAndReprocessForMonth(
             $this->input->getPatientUserId(),
             $month

@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Invoices;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PracticePatientReportData;
@@ -56,13 +56,6 @@ class GeneratePracticePatientReport
             ->implode(', ');
     }
 
-    private function getAllTimeExceptBhi(): int
-    {
-        return $this->billingStatus->patientUser->chargeableMonthlyTime
-            ->where('chargeable_service_id', '!=', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
-            ->sum('total_time');
-    }
-
     private function getBhiTime(): int
     {
         return $this->billingStatus->patientUser->chargeableMonthlyTime
@@ -70,25 +63,9 @@ class GeneratePracticePatientReport
             ->sum('total_time');
     }
 
-    /**
-     * This is replicating the behavior of {@link ApprovableBillablePatient}, i.e. the result of $pms->getBillableCcmCs.
-     */
     private function getBillableCcmCs(): int
     {
-        $rpmId   = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::RPM);
-        $rpm40Id = ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::RPM40);
-
-        $hasRpmOnly = $this->billingStatus->patientUser->chargeableMonthlySummaries
-            ->where('is_fulfilled', '=', true)
-            ->every(fn (ChargeablePatientMonthlySummary $item) => in_array($item->chargeable_service_id, [$rpmId, $rpm40Id]));
-
-        if ($hasRpmOnly) {
-            return $this->billingStatus->patientUser->chargeableMonthlyTime
-                ->where('chargeable_service_id', '=', $rpmId)
-                ->sum('total_time');
-        }
-
-        return $this->getAllTimeExceptBhi();
+        return ClashingChargeableServices::getCcmTimeForLegacyReportsInPriority($this->billingStatus->patientUser);
     }
 
     private function getBillingCodes(): string
