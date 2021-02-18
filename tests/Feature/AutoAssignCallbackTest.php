@@ -97,28 +97,6 @@ class AutoAssignCallbackTest extends TestCase
         }
     }
 
-    /*
-     * Does not work because it uses Enrollees::searchPhones() and this requires a search in DB. However our tests don't actually save in DB.
-    public function test_enrollee_requests_callback_without_user_model()
-    {
-        $faker                     = Factory::create();
-        $fakePatient               = new User();
-        $fakePatient->id           = null;
-        $fakePatient->first_name   = $faker->firstName;
-        $fakePatient->last_name    = $faker->lastName;
-        $fakePatient->display_name = $fakePatient->first_name.' '.$fakePatient->last_name;
-        $phone                     = new PhoneNumber();
-        $phone->number             = (new StringManipulation())->formatPhoneNumberE164($faker->phoneNumber);
-        $fakePatient->setRelation('phoneNumbers', collect([$phone]));
-        $this->createEnrolleeWithStatus($fakePatient, $this->careAmbassador->id, Enrollee::CONSENTED, $this->practice->id);
-        $postmarkRecord = $this->createPostmarkCallbackData(false, true, $fakePatient);
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
-        $this->assertDatabaseHas('unresolved_postmark_callbacks', [
-            'postmark_id' => $postmarkRecord->id,
-        ]);
-    }
-    */
-
     public function test_if_existing_callback_exists_it_will_upate_it_and_mark_as_asap()
     {
         $patient = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED, 'participant');
@@ -162,7 +140,7 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_saves_as_unresolved_callback_if_patient_consented_but_not_enrolled()
     {
         $patient = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id, Enrollee::CONSENTED, 'participant');
-        $this->createEnrolleeWithStatus($patient, $this->careAmbassador->id, $this->practice->id, Enrollee::CONSENTED);
+        $this->createEnrolleeWithStatus($patient, $this->careAmbassador->id, Enrollee::CONSENTED, $this->practice->id);
         $postmarkRecord = $this->createPostmarkCallbackData(false, true, $patient);
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
         $this->assertMissingCallBack($patient->id);
