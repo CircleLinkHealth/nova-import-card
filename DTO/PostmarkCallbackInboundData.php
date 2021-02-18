@@ -12,43 +12,17 @@ class PostmarkCallbackInboundData implements Arrayable
 {
     const CANCELLATION_FORMATTED_KEY = 'cancelReason';
     const CANCELLATION_REASON_KEY    = 'Cancel/Withdraw Reason';
-    /**
-     * @var mixed
-     */
-    private $callerId;
-    /**
-     * @var mixed
-     */
-    private $from;
-    /**
-     * @var mixed
-     */
-    private $isRecId;
-    /**
-     * @var mixed
-     */
-    private $message;
-    /**
-     * @var mixed
-     */
-    private $messageId;
-    /**
-     * @var mixed
-     */
-    private $phone;
-    /**
-     * @var mixed
-     */
-    private $primary;
-    /**
-     * @var mixed
-     */
-    private $ptn;
+
+    private string $callerId;
+    private string $from;
+    private string $isRecId;
+    private string $message;
+    private string $messageId;
+    private string $phone;
+    private string $primary;
+    private string $ptn;
     private array $rawInboundDataArray;
-    /**
-     * @var mixed
-     */
-    private $taken;
+    private string $taken;
 
     /**
      * PostmarkCallbackInboundData constructor.
@@ -72,11 +46,7 @@ class PostmarkCallbackInboundData implements Arrayable
      */
     public function callbackCancellationMessage()
     {
-        if ( ! isset($this->rawInboundDataArray[self::CANCELLATION_REASON_KEY])) {
-            return null;
-        }
-
-        return $this->rawInboundDataArray[self::CANCELLATION_REASON_KEY];
+        return $this->rawInboundDataArray[self::CANCELLATION_REASON_KEY] ?? null;
     }
 
     /**
@@ -88,10 +58,7 @@ class PostmarkCallbackInboundData implements Arrayable
         return $this->$key ?? null;
     }
 
-    /**
-     * @return array
-     */
-    public function rawInboundCallbackData()
+    public function rawInboundCallbackData(): array
     {
         return $this->rawInboundDataArray;
     }
