@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
+use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Exceptions\CannotParseCallbackException;
 use CircleLinkHealth\SharedModels\Exceptions\DailyCallbackReportException;
 use Illuminate\Support\Str;

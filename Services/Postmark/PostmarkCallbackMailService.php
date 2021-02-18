@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Services\Postmark;
 
-use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
+use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundCallbackRequest;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use CircleLinkHealth\SharedModels\Exceptions\CannotParseCallbackException;

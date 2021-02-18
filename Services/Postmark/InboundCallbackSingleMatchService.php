@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\SharedModels\Services\Postmark;
 
-use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PostmarkMatchedData;
 use Illuminate\Support\Str;
