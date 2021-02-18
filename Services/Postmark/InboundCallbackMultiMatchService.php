@@ -41,7 +41,7 @@ class InboundCallbackMultiMatchService
             ? PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF
             : PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES;
 
-        return new PostmarkMatchedData($matchedWithPhone->toArray(), $reasoning);
+        return new PostmarkMatchedData($matchedWithPhone->all(), $reasoning);
     }
 
     private function getMatchedPatientsUsingName(Collection $matchedWithPhone, InboundCallbackNameFields $namesToCompare): Collection
