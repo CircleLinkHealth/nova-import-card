@@ -55,7 +55,7 @@ trait PostmarkCallbackHelpers
         return $callbackMailData;
     }
 
-    public function practiceForSeeding()
+    public function practiceForSeeding(): Practice
     {
         if (isProductionEnv()) {
             throw new \Exception('Should not have reached here. You cannot run this seeder in Production.');
@@ -72,11 +72,6 @@ trait PostmarkCallbackHelpers
         }
 
         return $practice;
-    }
-
-    private function createEnrolleeData(string $status, User $patient, int $practiceId, int $careAmbassadorId)
-    {
-        return $this->createEnrolleeWithStatus($patient, $careAmbassadorId, $status, $practiceId);
     }
 
     private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status, int $practiceId)
@@ -101,12 +96,12 @@ trait PostmarkCallbackHelpers
     private function createPatientData(string $patientStatus, int $practiceId, string $enrolleeStatus, string $role = 'participant')
     {
         $patient = $this->createUserWithPatientCcmStatus($practiceId, $patientStatus, $role);
-        $this->createEnrolleeData($enrolleeStatus, $patient, $this->practice->id, $this->careAmbassador->id);
+        $this->createEnrolleeWithStatus($patient, $this->careAmbassador->id, $enrolleeStatus, $this->practice->id);
 
         return $patient;
     }
 
-    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, ?string $forcePhone = '', bool $testForUnsanitisedInputCases = false)
+    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, string $forcePhone = '', bool $testForUnsanitisedInputCases = false)
     {
         $this->phone = $forcePhone;
         $number      = $this->phone;

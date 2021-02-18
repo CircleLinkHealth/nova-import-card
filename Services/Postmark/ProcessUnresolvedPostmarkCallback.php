@@ -7,67 +7,22 @@
 namespace CircleLinkHealth\SharedModels\Services\Postmark;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\PostmarkMatchedData;
 use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class ProcessUnresolvedPostmarkCallback
 {
-    private array $matchedUsersFromDatabase;
+    private PostmarkMatchedData $matchedUsersFromDatabase;
     private int $recordId;
 
-    /**
-     * ManageUnresolvedPostmarkCallback constructor.
-     *
-     * @param $matchedUsersDataFromDb
-     */
-    public function __construct(array $matchedUsersDataFromDb, int $recordId)
+    public function __construct(PostmarkMatchedData $matchedUsersDataFromDb, int $recordId)
     {
         $this->matchedUsersFromDatabase = $matchedUsersDataFromDb;
         $this->recordId                 = $recordId;
     }
 
-    /**
-     * @return \Collection|\Illuminate\Support\Collection
-     */
-    public function getSuggestedPatientUserIds()
-    {
-        $suggestions = collect();
-
-        if ($this->matchedWithMultipleUsers()) {
-            $suggestions->push(...$this->matchedUsersFromDatabase['matchedData']->pluck('id'));
-        }
-
-        if ($this->matchedWithUniqueUser()) {
-            $suggestions->push($this->matchedUsersFromDatabase['matchedData']->id);
-        }
-
-        return $suggestions;
-    }
-
-    /**
-     * @return |null
-     */
-    public function getUserIdIfMatched()
-    {
-        if ($this->matchedWithUniqueUser()) {
-            return $this->matchedUsersFromDatabase['matchedData']->id;
-        }
-
-        return null;
-    }
-
-    public function handleUnresolved()
-    {
-        $suggestedPatientUsersIds = $this->getSuggestedPatientUserIds();
-
-        return $this->saveAsUnresolved($suggestedPatientUsersIds->toArray());
-    }
-
-    /**
-     * @return \CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback|\Illuminate\Database\Eloquent\Model|void
-     */
-    public function saveAsUnresolved(array $suggestedUsersIds)
+    public function process(): ?UnresolvedPostmarkCallback
     {
         try {
             return UnresolvedPostmarkCallback::firstOrCreate(
@@ -75,34 +30,41 @@ class ProcessUnresolvedPostmarkCallback
                     'postmark_id' => $this->recordId,
                 ],
                 [
-                    'user_id'           => $this->getUserIdIfMatched(),
-                    'unresolved_reason' => $this->matchedUsersFromDatabase['reasoning'],
-                    'suggestions'       => $suggestedUsersIds,
+                    'user_id'           => $this->getUserIdIfPossible(),
+                    'unresolved_reason' => $this->matchedUsersFromDatabase->reasoning,
+                    'suggestions'       => $this->getSuggestions(),
                 ]
             );
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
             Log::error("Attempt to save $this->recordId as unresolved has failed. ERROR:$message");
             sendSlackMessage('#carecoach_ops_alerts', "Attempt to save inbound callback request $this->recordId as unresolved has failed.");
-
-            return;
         }
+
+        return null;
     }
 
-    /**
-     * @return bool
-     */
-    private function matchedWithMultipleUsers()
+    private function getSuggestions(): array
     {
-        return $this->matchedUsersFromDatabase['matchedData'] instanceof Collection
-            || $this->matchedUsersFromDatabase['matchedData'] instanceof \Illuminate\Support\Collection;
+        return collect($this->matchedUsersFromDatabase->matched)
+            ->map(function (User $user) {
+                return [
+                    'type' => 0 === $user->id ? 'enrollee' : 'user',
+                    'id'   => 0 === $user->id ? $user->enrollee->id : $user->id,
+                ];
+            })
+            ->toArray();
     }
 
-    /**
-     * @return bool
-     */
-    private function matchedWithUniqueUser()
+    private function getUserIdIfPossible(): ?int
     {
-        return $this->matchedUsersFromDatabase['matchedData'] instanceof User;
+        if ( ! $this->matchedUsersFromDatabase->isMultiMatch()) {
+            $patient = $this->matchedUsersFromDatabase->matched[0];
+            if (0 !== $patient->id) {
+                return $patient->id;
+            }
+        }
+
+        return null;
     }
 }
