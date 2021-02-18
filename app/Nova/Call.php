@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Lenses\PamEndOfMonthReport;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -15,6 +16,8 @@ use Laravel\Nova\Fields\Text;
 
 class Call extends Resource
 {
+    public static $group = CpmConstants::NOVA_GROUP_CARE_COACHES;
+
     /**
      * The model the resource corresponds to.
      *
