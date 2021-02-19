@@ -47,8 +47,6 @@ class PatientServiceRepositoryTest extends CustomerTestCase
             $startOfMonth = Carbon::now()->startOfMonth()
         );
 
-        BillingCache::clearPatients();
-
         self::assertTrue($this->repo->isChargeableServiceEnabledForLocationForMonth($this->patient()->id, $ccmCode, $startOfMonth));
         self::assertFalse($this->repo->isChargeableServiceEnabledForLocationForMonth($this->patient()->id, ChargeableService::BHI, $startOfMonth));
     }
