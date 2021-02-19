@@ -202,7 +202,6 @@ class PatientBillingDatabaseTest extends CustomerTestCase
 
         $patient = $this->patient();
 
-//        dd($patient->toArray());
         foreach ([
             ChargeableService::CCM,
             ChargeableService::BHI,
