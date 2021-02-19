@@ -14,9 +14,9 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
-use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundCallbackRequest;
@@ -24,9 +24,9 @@ use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMailRequest;
 use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
 use CircleLinkHealth\SharedModels\Notifications\CallCreated;
+use CircleLinkHealth\SharedModels\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\SharedModels\Traits\Tests\PostmarkCallbackHelpers;
-use CirleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
 use Notification;
 
 class AutoAssignCallbackTest extends TestCase
@@ -35,31 +35,12 @@ class AutoAssignCallbackTest extends TestCase
     use PracticeHelpers;
     use UserHelpers;
 
-    /**
-     * @var User
-     */
-    private $careAmbassador;
-    /**
-     * @var User
-     */
-    private $patient;
-    /**
-     * @var Enrollee|\Illuminate\Database\Eloquent\Model
-     */
-    private $patientEnrollee;
-    /**
-     * @var string
-     */
+    private User $careAmbassador;
+    private User $patient;
+    private Enrollee $patientEnrollee;
     private $phone;
-    /**
-     * @var \Illuminate\Database\Eloquent\Model|PostmarkInboundMail
-     */
-    private $postmarkRecord;
-    /**
-     * @var \CircleLinkHealth\Customer\Entities\Practice
-     */
-    private $practice;
-
+    private PostmarkInboundMail $postmarkRecord;
+    private Practice $practice;
     private User $standByNurse;
 
     public function setUp(): void
@@ -78,7 +59,7 @@ class AutoAssignCallbackTest extends TestCase
         assert(isset($inboundTextBody['TextBody']));
 
         $textBodyData     = $inboundTextBody['TextBody'];
-        $inboundData      = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+        $inboundData      = (new PostmarkInboundCallbackRequest())->process($textBodyData, $postmarkRecord->id);
         $inboundDataArray = $inboundData->toArray();
 
         assert( ! empty($inboundDataArray));
@@ -102,11 +83,12 @@ class AutoAssignCallbackTest extends TestCase
         assert(isset($inboundTextBody['TextBody']));
 
         $textBodyData     = $inboundTextBody['TextBody'];
-        $inboundData      = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+        $inboundData      = (new PostmarkInboundCallbackRequest())->process($textBodyData, $postmarkRecord->id);
         $inboundDataArray = $inboundData->toArray();
         $rawInboundData   = $inboundData->rawInboundCallbackData();
 
-        assert(isset($inboundDataArray[PostmarkCallbackInboundData::CANCELLATION_REASON_NEW_KEY]));
+        assert(isset($inboundDataArray[PostmarkCallbackInboundData::CANCELLATION_FORMATTED_KEY]));
+        assert(isset($rawInboundData[PostmarkCallbackInboundData::CANCELLATION_REASON_KEY]));
 
         $keys = (new PostmarkInboundCallbackRequest())->getKeys();
 
@@ -158,7 +140,7 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_saves_as_unresolved_callback_if_patient_consented_but_not_enrolled()
     {
         $patient = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id, Enrollee::CONSENTED, 'participant');
-        $this->createEnrolleeData(Enrollee::CONSENTED, $patient, $this->practice->id, $this->careAmbassador->id);
+        $this->createEnrolleeWithStatus($patient, $this->careAmbassador->id, Enrollee::CONSENTED, $this->practice->id);
         $postmarkRecord = $this->createPostmarkCallbackData(false, true, $patient);
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
         $this->assertMissingCallBack($patient->id);

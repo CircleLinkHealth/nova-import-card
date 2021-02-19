@@ -10,6 +10,7 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\DuskTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SelfEnrollment\Tests\DuskTestCase;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
