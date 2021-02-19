@@ -202,6 +202,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
 
         $patient = $this->patient();
 
+//        dd($patient->toArray());
         foreach ([
             ChargeableService::CCM,
             ChargeableService::BHI,
@@ -230,16 +231,10 @@ class PatientBillingDatabaseTest extends CustomerTestCase
             ->exists());
 
         /** @var User $patient */
-        $patient = $patientRepo->getPatientWithBillingDataForMonth($patient->id, $startOfMonth)
-            ->first();
+        $patient = $patientRepo->getPatientWithBillingDataForMonth($patient->id, $startOfMonth);
 
         (app(MonthlyProcessor::class))->process(
-            (new PatientMonthlyBillingDTO())
-                ->subscribe($patient->patientInfo->location->availableServiceProcessors($startOfMonth))
-                ->forPatient($patient->id)
-                ->ofLocation($patient->patientInfo->location->id)
-                ->forMonth($startOfMonth)
-                ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
+            PatientMonthlyBillingDTO::generateFromUser($patient, $startOfMonth)
         );
 
         self::assertTrue(
