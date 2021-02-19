@@ -234,6 +234,7 @@
       <path value="$PROJECT_DIR$/vendor/ohdearapp/ohdear-php-sdk" />
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
