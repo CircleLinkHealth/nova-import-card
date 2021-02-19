@@ -17,7 +17,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ImportAllItems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidEndDate;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStartDateNoEndDate;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus;
-use CircleLinkHealth\SamlSp\Tests\CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
+use CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
 
 return [
     'validators' => [
