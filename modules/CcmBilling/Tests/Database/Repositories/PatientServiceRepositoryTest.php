@@ -118,10 +118,9 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_it_creates_patient_chargeable_activity(){
         $patient = $this->patient();
-        $nurse = $this->setupNurse($this->setupUser($patient->program_id, [Role::where('name', 'care-center')->first()->id]));
 
         $pageTimer = PageTimer::create([
-            'provider_id' => $nurse->id,
+            'provider_id' => $this->careCoach()->id,
             'start_time' => Carbon::now(),
             'patient_id' => $patient->id,
 
