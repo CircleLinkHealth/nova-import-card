@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0dc1b13c03210f3bc1d55b306c341566",
+    "content-hash": "3fc8b3a850c0149831f18d80c80a0d89",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -14866,17 +14866,11 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12.1",
+            "version": "v1.12.11",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/vapor-cli.git",
-                "reference": "892eef2af4f214a4ab92d05461163498adc202d7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-cli/zipball/892eef2af4f214a4ab92d05461163498adc202d7",
-                "reference": "892eef2af4f214a4ab92d05461163498adc202d7",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
+                "reference": "1ba3d1c459f632c002d3ff51cab416bd877faccc"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -14932,7 +14926,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-02-02T23:38:10+00:00"
+            "time": "2021-02-19T09:18:17+00:00"
         },
         {
             "name": "maximebf/debugbar",
