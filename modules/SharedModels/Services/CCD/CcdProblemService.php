@@ -44,8 +44,6 @@ class CcdProblemService
                 return $this->problem($problem['id']);
             }
 
-            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
-
             return $problem;
         }
         throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
@@ -57,8 +55,6 @@ class CcdProblemService
             'patient_id' => $ccdProblem->getUserId(),
             'id'         => $ccdProblem->getCcdProblemId(),
         ])->delete();
-
-        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
 
         return $success;
     }
@@ -108,8 +104,6 @@ class CcdProblemService
 
             return $this->problem($problem['id']);
         }
-
-        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
 
         return $problem;
     }
