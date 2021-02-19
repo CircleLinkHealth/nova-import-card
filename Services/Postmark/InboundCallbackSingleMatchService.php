@@ -20,9 +20,6 @@ class InboundCallbackSingleMatchService
      */
     public function callbackEligibilityReasoning(PostmarkCallbackInboundData $inboundPostmarkData, User $patientUser)
     {
-        /** @var Enrollee $enrollee */
-        $enrollee = $patientUser->enrollee;
-
         if ($this->isQueuedForEnrollmentAndCAUnassigned($patientUser)) {
             return PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
         }
@@ -32,7 +29,10 @@ class InboundCallbackSingleMatchService
         }
 
         if (0 === $patientUser->id || Patient::ENROLLED !== $patientUser->patientInfo->ccm_status) {
-            if (Enrollee::CONSENTED === $enrollee->status) {
+            /** @var Enrollee $enrollee */
+            $enrollee = $patientUser->enrollee;
+
+            if ( ! $enrollee || Enrollee::CONSENTED === $enrollee->status) {
                 return PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
             }
 
