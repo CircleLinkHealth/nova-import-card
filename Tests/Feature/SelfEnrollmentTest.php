@@ -7,7 +7,9 @@
 namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
 use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SelfEnrollment\Constants;
+use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -183,20 +185,9 @@ class SelfEnrollmentTest extends TestCase
         Twilio::fake();
         Mail::fake();
 
-        \DB::table('notifications')->insert([
-            'id'              => Str::uuid(),
-            'notifiable_type' => User::class,
-            'notifiable_id'   => $patient->id,
-            'type'            => SelfEnrollmentInviteNotification::class,
-            'data'            => json_encode([
-                'enrollee_id'    => $enrollee->id,
-                'is_reminder'    => true,
-                'is_survey_only' => true,
-            ]),
-            'created_at' => now()->subMonth()->toDateTimeString(),
-            'updated_at' => now()->subMonth()->toDateTimeString(),
-        ]);
-        $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+       $this->setFakeNotification($patient->id, $enrollee->id, now()->subMonth());
+
+       $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         );
@@ -312,7 +303,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $this->createEnrollees($number = 2);
         Notification::fake();
-        InvitePracticeEnrollees::dispatch(
+        InvitePracticeEnrollees::dispatchNow(
             $number,
             $this->practice()->id,
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
@@ -320,6 +311,79 @@ class SelfEnrollmentTest extends TestCase
         );
 
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
+    }
+
+    public function test_scope_unique_patients_same_name_same_dob()
+    {
+        $count = 3;
+        $users = $this->patient($count);
+        $userIds = collect($users)->pluck('id')->toArray();
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $displayName = "$firstName $lastName";
+        $birthDate = now()->subYears(60);
+
+
+
+       $usersUpdated = User::whereIn('id', $userIds)
+            ->update([
+                'display_name' => $displayName,
+                'first_name' => $firstName,
+                'last_name' => $lastName
+            ]);
+
+
+       Patient::whereIn('user_id', $userIds)
+            ->update([
+                'birth_date'=> $birthDate
+            ]);
+
+
+
+        $usersWithSameName = User::whereIn('id', $userIds)->pluck("display_name");
+        $usersWithSameName->each(function (string $name) use ($displayName){
+            self::assertTrue($name === $displayName);
+        });
+
+        $usersWithSameDob = Patient::whereIn('user_id', $userIds)->pluck("birth_date");
+        $usersWithSameDob->each(function (Carbon $dob) use ($birthDate){
+            self::assertTrue($dob->isSameDay($birthDate));
+        });
+
+
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
+
+        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
+        self::assertTrue($countUnique === 1, "$countUnique patients found instead of 1");
+    }
+
+    public function test_scope_unique_patients_same_name_different_dob()
+    {
+        $count = 3;
+        $users = $this->patient($count);
+        $userIds = collect($users)->pluck('id')->toArray();
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $displayName = "$firstName $lastName";
+
+
+        User::whereIn('id', $userIds)
+            ->update([
+                'display_name' => $displayName,
+                'first_name' => $firstName,
+                'last_name' => $lastName
+            ]);
+
+        $usersWithSameName = User::whereIn('id', $userIds)->pluck("display_name");
+        $usersWithSameName->each(function (string $name) use ($displayName){
+            self::assertTrue($name === $displayName);
+        });
+
+
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
+
+        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
+        self::assertTrue($countUnique === $count, "$countUnique patients found instead of $count");
     }
 
     public function test_it_sends_enrollment_notifications_limited()
@@ -878,5 +942,22 @@ class SelfEnrollmentTest extends TestCase
         self::assertFalse( $enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
         self::assertTrue( $enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
         self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
+    }
+
+    private function setFakeNotification(int $patientId, int $enrolleeId, Carbon $time, $isReminder = true)
+    {
+        \DB::table('notifications')->insert([
+            'id'              => Str::uuid(),
+            'notifiable_type' => User::class,
+            'notifiable_id'   => $patientId,
+            'type'            => SelfEnrollmentInviteNotification::class,
+            'data'            => json_encode([
+                'enrollee_id'    => $enrolleeId,
+                'is_reminder'    => $isReminder,
+                'is_survey_only' => true,
+            ]),
+            'created_at' => $time->toDateTimeString(),
+            'updated_at' => $time->toDateTimeString(),
+        ]);
     }
 }

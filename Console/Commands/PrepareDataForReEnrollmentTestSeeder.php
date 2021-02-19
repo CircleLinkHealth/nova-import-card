@@ -75,6 +75,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $enrolleeForTesting->update([
             'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
+
         $enrolleeForTesting->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 
         return $enrolleeForTesting->fresh('user.billingProvider');
