@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9e1678d2ff93ceb76d053afa8a5a058",
+    "content-hash": "4449090b0b9044df660a5008831de5e5",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -776,6 +776,42 @@
             "time": "2020-12-28T01:46:18+00:00"
         },
         {
+            "name": "circlelinkhealth/condition-code-lookup-module",
+            "version": "v1.12",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
+                "reference": "e173b29fbb58f836d2c8b891be8a7f0fda13d6a3"
+            },
+            "require": {
+                "ext-curl": "*",
+                "laravel/framework": "*",
+                "php": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\ConditionCodeLookup\\": ""
+                },
+                "files": []
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "time": "2021-01-22T22:36:17+00:00"
+        },
+        {
             "name": "circlelinkhealth/core-module",
             "version": "v2.9",
             "source": {
@@ -974,13 +1010,14 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v4.6.4",
+            "version": "v4.7.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6fcf34278e5b30da8d87906411654e842b629104"
+                "reference": "707f0b70289ffcf89a18709ffded53b227504b1d"
             },
             "require": {
+                "circlelinkhealth/condition-code-lookup-module": "^1.1.7",
                 "circlelinkhealth/customer-module": "*",
                 "circlelinkhealth/synonyms-module": "*"
             },
@@ -1009,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-06T00:13:51+00:00"
+            "time": "2021-02-14T16:49:54+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
