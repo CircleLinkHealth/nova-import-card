@@ -18,7 +18,7 @@ use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDemoLetter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class RegenerateSelfEnrollmentLetters extends Command
+class GenerateSelfEnrollmentLetters extends Command
 {
     /**
      * The name and signature of the console command.
@@ -174,8 +174,8 @@ class RegenerateSelfEnrollmentLetters extends Command
             GenerateCameronLetter::CAMERON_PRACTICE_NAME,
             GenerateNbiLetter::NBI_PRACTICE_NAME,
             GenerateDemoLetter::DEMO_PRACTICE_NAME,
-            GeneratePrimaryCare360::class,
-            GenerateContinuumFamilyCareLetter::class
+            GeneratePrimaryCare360::PRIMARY_CARE_360_PRACTICE_NAME,
+            GenerateContinuumFamilyCareLetter::CONTINUUM_FAMILY_PRACTICE_NAME
         ];
     }
 
