@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4449090b0b9044df660a5008831de5e5",
+    "content-hash": "23d44670168de0558682b6f26e9b15dc",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1786,16 +1786,16 @@
         },
         {
             "name": "doctrine/annotations",
-            "version": "1.11.1",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "ce77a7ba1770462cd705a91a151b6c3746f9c6ad"
+                "reference": "ebec9b1708c95d7602245c8172773f6b4e0c3be1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/ce77a7ba1770462cd705a91a151b6c3746f9c6ad",
-                "reference": "ce77a7ba1770462cd705a91a151b6c3746f9c6ad",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/ebec9b1708c95d7602245c8172773f6b4e0c3be1",
+                "reference": "ebec9b1708c95d7602245c8172773f6b4e0c3be1",
                 "shasum": ""
             },
             "require": {
@@ -1810,11 +1810,6 @@
                 "phpunit/phpunit": "^7.5 || ^9.1.5"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.11.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Doctrine\\Common\\Annotations\\": "lib/Doctrine/Common/Annotations"
@@ -1853,7 +1848,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2020-10-26T10:28:16+00:00"
+            "time": "2021-02-14T13:22:18+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -6280,16 +6275,16 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.36",
+            "version": "2.8.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "e55c155f4d1ab299a0cfca8ec29a0154918c9e3d"
+                "reference": "9841e3c46f5bd0739b53aed8ac677fa712943df7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/e55c155f4d1ab299a0cfca8ec29a0154918c9e3d",
-                "reference": "e55c155f4d1ab299a0cfca8ec29a0154918c9e3d",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/9841e3c46f5bd0739b53aed8ac677fa712943df7",
+                "reference": "9841e3c46f5bd0739b53aed8ac677fa712943df7",
                 "shasum": ""
             },
             "require": {
@@ -6328,7 +6323,13 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2021-02-13T14:35:52+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/serbanghita",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-02-19T21:22:57+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6474,21 +6475,21 @@
         },
         {
             "name": "mpbarlow/laravel-queue-debouncer",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpbarlow/laravel-queue-debouncer.git",
-                "reference": "be9da0171d528fea50d8496fa948a9c618698823"
+                "reference": "72ed04a32ba34b6f62b63d3a94ab3cdd134cf240"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/be9da0171d528fea50d8496fa948a9c618698823",
-                "reference": "be9da0171d528fea50d8496fa948a9c618698823",
+                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/72ed04a32ba34b6f62b63d3a94ab3cdd134cf240",
+                "reference": "72ed04a32ba34b6f62b63d3a94ab3cdd134cf240",
                 "shasum": ""
             },
             "require": {
                 "laravel/framework": "^6.0|^7.0|^8.0",
-                "php": "^7.2"
+                "php": "^7.2|^8.0"
             },
             "require-dev": {
                 "orchestra/testbench": "^4.0|^5.0|^6.0",
@@ -6530,7 +6531,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2020-10-03T19:31:30+00:00"
+            "time": "2021-02-20T13:05:17+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -13828,19 +13829,14 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12.1",
+            "version": "v1.12.11",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/vapor-cli.git",
-                "reference": "892eef2af4f214a4ab92d05461163498adc202d7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-cli/zipball/892eef2af4f214a4ab92d05461163498adc202d7",
-                "reference": "892eef2af4f214a4ab92d05461163498adc202d7",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/vapor-cli.git",
+                "reference": "1ba3d1c459f632c002d3ff51cab416bd877faccc"
             },
             "require": {
+                "aws/aws-sdk-php": "^3.80",
                 "ext-zip": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "illuminate/container": "^6.0|^7.0|^8.0",
@@ -13873,7 +13869,11 @@
                     "Laravel\\VaporCli\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -13889,7 +13889,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-02-18T09:34:54+00:00"
+            "time": "2021-02-19T09:18:17+00:00"
         },
         {
             "name": "mockery/mockery",
