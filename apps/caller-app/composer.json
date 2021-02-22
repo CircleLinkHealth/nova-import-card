@@ -58,6 +58,10 @@
         {
             "type": "path",
             "url": "./CircleLinkHealth/VaporDevopsHelpers"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/LaravelScheduleMonitor"
         }
     ],
     "license": "MIT",
@@ -66,6 +70,7 @@
         "ext-json": "*",
         "ext-redis": "*",
         "ext-simplexml": "*",
+        "spatie/laravel-schedule-monitor": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",

@@ -4,6 +4,7 @@ CpmMigrations
 Customer
 Eligibility
 Revisionable
+LaravelScheduleMonitor
 SelfEnrollment
 SharedModels
 Synonyms

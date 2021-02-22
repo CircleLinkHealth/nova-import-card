@@ -4,6 +4,7 @@ Core
 CpmMigrations
 Customer
 Eligibility
+LaravelScheduleMonitor
 Raygun
 Revisionable
 SamlSp
