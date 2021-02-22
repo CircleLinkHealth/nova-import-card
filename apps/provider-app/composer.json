@@ -25,6 +25,7 @@
     "circlelinkhealth/cpm-migrations-module": "*",
     "circlelinkhealth/customer-module": "*",
     "circlelinkhealth/eligibility-module": "*",
+    "circlelinkhealth/patientapi-module": "*",
     "circlelinkhealth/raygun-module": "*",
     "circlelinkhealth/revisionable-module": "*",
     "circlelinkhealth/saml-sp-module": "*",
