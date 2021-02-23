@@ -25,6 +25,7 @@
     "circlelinkhealth/cpm-migrations-module": "*",
     "circlelinkhealth/customer-module": "*",
     "circlelinkhealth/eligibility-module": "*",
+    "circlelinkhealth/patientapi-module": "*",
     "circlelinkhealth/raygun-module": "*",
     "circlelinkhealth/revisionable-module": "*",
     "circlelinkhealth/saml-sp-module": "*",
@@ -50,7 +51,7 @@
     "seld/jsonlint": "^1.8",
     "setasign/fpdi-fpdf": "^2.2",
     "spatie/laravel-medialibrary": "^7.19",
-    "spatie/laravel-schedule-monitor": "2.2.2",
+    "spatie/laravel-schedule-monitor": "*",
     "spatie/laravel-slack-slash-command": "^1.10",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
@@ -166,6 +167,10 @@
     {
       "type": "path",
       "url": "./CircleLinkHealth/VaporCore"
+    },
+    {
+      "type": "path",
+      "url": "./CircleLinkHealth/LaravelScheduleMonitor"
     }
   ],
   "require-dev": {

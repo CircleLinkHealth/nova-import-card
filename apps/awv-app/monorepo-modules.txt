@@ -6,6 +6,7 @@ CpmAdmin
 CpmMigrations
 Customer
 Eligibility
+LaravelScheduleMonitor
 Raygun
 Revisionable
 SelfEnrollment

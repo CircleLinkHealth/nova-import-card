@@ -8,6 +8,7 @@ CpmMigrations
 Customer
 Eligibility
 LaravelModuleInstaller
+LaravelScheduleMonitor
 NurseInvoices
 OpcacheGui
 PatientApi

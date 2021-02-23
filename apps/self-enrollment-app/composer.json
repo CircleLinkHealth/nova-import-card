@@ -81,8 +81,8 @@
             "url": "./CircleLinkHealth/VaporDevopsHelpers"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/LaravelScheduleMonitor"
         }
     ],
     "require": {
@@ -90,7 +90,7 @@
         "ext-bcmath": "*",
         "ext-json": "*",
         "ohdearapp/ohdear-php-sdk": "^3.0",
-        "spatie/laravel-schedule-monitor": "2.2.2",
+        "spatie/laravel-schedule-monitor": "*",
         "ashallendesign/short-url":"*",
         "circlelinkhealth/ccm-billing-module":"*",
         "circlelinkhealth/cerberus-gatekeeper-module":"*",
