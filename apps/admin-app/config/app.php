@@ -209,6 +209,7 @@ return [
         CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider::class,
         DirectMailServiceProvider::class,
         GoogleDriveServiceProvider::class,
+        \CircleLinkHealth\CcmBilling\Providers\CcmBillingEventServiceProvider::class,
 
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
         TwilioIntegrationServiceProvider::class,

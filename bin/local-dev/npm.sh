@@ -11,7 +11,7 @@ do
     if [ -f "$APP_PATH/$NPM_FILE" ]; then
         echo "$APP_PATH: NPM_FILE found!"
         echo "$APP_PATH: running npm install"
-        (cd $APP_PATH && npm install)
+        (cd $APP_PATH && npm install && npm run dev)
     fi
 
 done

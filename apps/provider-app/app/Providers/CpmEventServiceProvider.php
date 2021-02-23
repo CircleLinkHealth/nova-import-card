@@ -144,22 +144,6 @@ class CpmEventServiceProvider extends ServiceProvider
         MigrationsEnded::class => [
             RunComposerIde::class,
         ],
-        LocationServicesAttached::class => [
-            ProcessLocationPatientServices::class,
-            ProcessLocationProblemServices::class,
-        ],
-        PatientProblemsChanged::class => [
-            ProcessPatientServices::class,
-        ],
-        PatientActivityCreated::class => [
-            ProcessPatientServices::class,
-        ],
-        PatientSuccessfulCallCreated::class => [
-            ProcessPatientServices::class,
-        ],
-        PatientConsentedToService::class => [
-            SetPatientConsented::class,
-        ],
     ];
 
     /**
