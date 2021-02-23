@@ -152,10 +152,11 @@ use function Clue\StreamFilter\fun;
  * @property mixed                           $other_phone_npa_parenthesized
  * @property mixed                           $primary_phone_npa_parenthesized
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollee canSendSelfEnrollmentInvitation(bool $initialInvite)
  */
 class Enrollee extends BaseModel
 {

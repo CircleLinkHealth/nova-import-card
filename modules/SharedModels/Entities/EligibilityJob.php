@@ -89,6 +89,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null                                           $patient_mrn
  * @property string|null                                           $patient_dob
  * @property string|null                                           $patient_email
+ * @method static \Illuminate\Database\Eloquent\Builder|EligibilityJob pendingProcessing()
  */
 class EligibilityJob extends BaseModel
 {

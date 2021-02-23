@@ -24,9 +24,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property User                                                                                        $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|PatientForcedChargeableService query()
  * @mixin \Eloquent
  * @property string|null $reason
  */

@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string                          $description
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method   static                          \Illuminate\Database\Eloquent\Builder|RpmProblem newModelQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|RpmProblem newQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|RpmProblem query()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|RpmProblem newModelQuery()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|RpmProblem newQuery()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|RpmProblem query()
  * @mixin \Eloquent
  * @property Practice $practice
  */

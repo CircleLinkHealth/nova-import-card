@@ -158,8 +158,8 @@ class CpmEventServiceProvider extends ServiceProvider
             ProcessPatientServices::class,
         ],
         PatientConsentedToService::class => [
-            SetPatientConsented::class
-        ]
+            SetPatientConsented::class,
+        ],
     ];
 
     /**

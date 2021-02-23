@@ -44,44 +44,44 @@ use Illuminate\Support\Facades\Route;
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $program
  * @property string                                                                                      $status
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereAuthorId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereBody($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereDidMedicationRecon($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereIsTCM($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereLoggerId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note wherePatientId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note wherePerformedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereType($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereUpdatedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereAuthorId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereBody($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereCreatedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereDidMedicationRecon($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereIsTCM($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereLoggerId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note wherePatientId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note wherePerformedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereType($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                                   $logger
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note emergency($yes = true)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note forwardedTo($notifiableType, $notifiableId, \Carbon\Carbon $from = null, \Carbon\Carbon $to = null)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note newModelQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note newQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note patientPractice($practiceId)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note query()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note emergency($yes = true)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note forwardedTo($notifiableType, $notifiableId, \Carbon\Carbon $from = null, \Carbon\Carbon $to = null)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note newModelQuery()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note newQuery()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note patientPractice($practiceId)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note query()
  * @property string|null                                                                                                     $summary_type
  * @property string|null                                                                                                     $deleted_at
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @method   static                                                                                                          bool|null forceDelete()
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Note onlyTrashed()
- * @method   static                                                                                                          bool|null restore()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereDeletedAt($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereStatus($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereSummary($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereSummaryType($value)
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Note withTrashed()
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Note withoutTrashed()
+ * @method static                                                                                                          bool|null forceDelete()
+ * @method static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Note onlyTrashed()
+ * @method static                                                                                                          bool|null restore()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereDeletedAt($value)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereStatus($value)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereSummary($value)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereSummaryType($value)
+ * @method static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Note withTrashed()
+ * @method static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Note withoutTrashed()
  * @property int|null                                                                                                        $addendums_count
  * @property int|null                                                                                                        $notifications_count
  * @property int|null                                                                                                        $revision_history_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereSuccessStory($value)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Note whereSuccessStory($value)
  * @property int                                                                                                             $success_story
  * @property int                                                                                                             $successful_clinical_call
  */

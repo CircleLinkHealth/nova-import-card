@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\SharedModels\Entities\Activity|null $activity
  * @property \CircleLinkHealth\Customer\Entities\User              $patient
  * @property \CircleLinkHealth\Customer\Entities\User              $requester
- * @method   static                                                bool|null forceDelete()
+ * @method static                                                bool|null forceDelete()
  * @method static
  *     \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest
  *     newModelQuery()

@@ -6,11 +6,11 @@
 
 namespace Tests\Feature\UserScope;
 
+use CircleLinkHealth\Core\Tests\TestCase as BaseTestCase;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Tests\Feature\UserScope\Assertions\Assertion;
-use CircleLinkHealth\Core\Tests\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {

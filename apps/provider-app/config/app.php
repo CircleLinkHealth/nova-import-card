@@ -242,6 +242,7 @@ return [
         CpmArtisanServiceProvider::class,
         CcmBillingServiceProvider::class,
         CcmBillingDeferredServiceProvider::class,
+        \CircleLinkHealth\TimeTracking\Providers\RouteServiceProvider::class,
 
         SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,

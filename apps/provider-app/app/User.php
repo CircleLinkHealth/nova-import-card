@@ -250,6 +250,7 @@ namespace App;
  * @property int|null                                                                                                         $inbound_successful_calls_count
  * @property \CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime[]|\Illuminate\Database\Eloquent\Collection    $chargeableMonthlyTime
  * @property int|null                                                                                                         $chargeable_monthly_time_count
+ * @method   static                                                                                                           \Illuminate\Database\Eloquent\Builder|User uniquePatients()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

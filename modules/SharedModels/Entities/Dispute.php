@@ -26,20 +26,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $disputable
  * @property \CircleLinkHealth\Customer\Entities\User|null $resolver
  * @property \CircleLinkHealth\Customer\Entities\User      $user
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute newModelQuery()
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute newQuery()
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute query()
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereCreatedAt($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereDisputableId($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereDisputableType($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereId($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereIsResolved($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereReason($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereResolutionNote($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereResolvedAt($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereResolvedBy($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereUpdatedAt($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereUserId($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute newModelQuery()
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute newQuery()
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute query()
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereCreatedAt($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereDisputableId($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereDisputableType($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereId($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereIsResolved($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereReason($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereResolutionNote($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereResolvedAt($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereResolvedBy($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereUpdatedAt($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute whereUserId($value)
  * @mixin \Eloquent
  */
 class Dispute extends Model
