@@ -23,6 +23,11 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/self-enrollment-app/CircleLinkHealth" />
       <excludeFolder url="file://$MODULE_DIR$/apps/self-enrollment-app/vendor" />
       <excludeFolder url="file://$MODULE_DIR$/apps/self-enrollment-app/storage/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/admin-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/awv/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/caller/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/provider/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/self-enrollment-app/.vapor" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
