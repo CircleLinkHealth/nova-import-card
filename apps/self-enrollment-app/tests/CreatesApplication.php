@@ -13,7 +13,8 @@ trait CreatesApplication
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
+        $basePath = $_SERVER['OLDPWD'];
+        $app = require "$basePath/bootstrap/app.php";
 
         $app->make(Kernel::class)->bootstrap();
 
