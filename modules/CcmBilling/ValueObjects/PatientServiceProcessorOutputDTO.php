@@ -114,9 +114,9 @@ class PatientServiceProcessorOutputDTO
         ];
     }
 
-    public function toPatientChargeableServiceForProcessingDTO(): PatientChargeableServicesForProcessing
+    public function toPatientChargeableServiceForProcessingDTO(): PatientSummaryForProcessing
     {
-        return (new PatientChargeableServicesForProcessing())
+        return (new PatientSummaryForProcessing())
             ->setChargeableServiceId($this->getChargeableServiceId())
             ->setIsFulfilled($this->isFulfilling())
             ->setCode($this->getCode())

@@ -18,7 +18,7 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLo
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
@@ -174,7 +174,7 @@ class PatientSummaryProcessingTest extends TestCase
                     ->setMonth($startOfMonth),
             )
             ->withPatientServices(
-                (new PatientChargeableServicesForProcessing())
+                (new PatientSummaryForProcessing())
                     ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
                     ->setRequiresConsent(1)
                     ->setMonthlyTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)

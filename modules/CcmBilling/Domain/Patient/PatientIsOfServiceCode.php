@@ -11,7 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -105,7 +105,7 @@ class PatientIsOfServiceCode
         }
 
         return collect($this->dto->getPatientServices())
-            ->filter(fn (PatientChargeableServicesForProcessing $service) => $service->getCode() === $this->serviceCode)
+            ->filter(fn (PatientSummaryForProcessing $service) => $service->getCode() === $this->serviceCode)
             ->isNotEmpty();
     }
 

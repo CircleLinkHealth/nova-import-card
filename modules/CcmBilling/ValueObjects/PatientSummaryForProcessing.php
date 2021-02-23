@@ -7,38 +7,22 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
-//todo: make name singular
-class PatientChargeableServicesForProcessing
+class PatientSummaryForProcessing
 {
     protected int $chargeableServiceId;
     protected string $code;
     protected bool $isFulfilled;
-
-    protected int $monthlyTime = 0;
     protected bool $requiresConsent;
 
-    public static function fromCollection(User $patient): array
+    public static function fromCollection(EloquentCollection $summaries): array
     {
-        $services    = $patient->chargeableMonthlySummaries;
-        $monthlyTime = $patient->chargeableMonthlyTime;
-
-        return $services->map(function (ChargeablePatientMonthlySummary $summary) use ($monthlyTime) {
+        return $summaries->map(function (ChargeablePatientMonthlySummary $summary) {
             return (new self())->setCode($summary->chargeableService->code)
                 ->setChargeableServiceId($summary->chargeable_service_id)
                 ->setIsFulfilled($summary->is_fulfilled)
-                ->setRequiresConsent($summary->requires_patient_consent)
-                ->setMonthlyTime(
-                    optional(
-                        $monthlyTime->where(
-                            'chargeable_service_id',
-                            $summary->chargeable_service_id
-                        )
-                            ->where('chargeable_month', $summary->chargeable_month)
-                            ->first()
-                    )->total_time
-                );
+                ->setRequiresConsent($summary->requires_patient_consent);
         })
             ->filter()
             ->toArray();
@@ -52,11 +36,6 @@ class PatientChargeableServicesForProcessing
     public function getCode(): string
     {
         return $this->code;
-    }
-
-    public function getMonthlyTime(): int
-    {
-        return $this->monthlyTime;
     }
 
     public function isFulfilled(): bool
@@ -86,16 +65,6 @@ class PatientChargeableServicesForProcessing
     public function setIsFulfilled(bool $isFulfilled): self
     {
         $this->isFulfilled = $isFulfilled;
-
-        return $this;
-    }
-
-    /**
-     * @param int $monthlyTime
-     */
-    public function setMonthlyTime(?int $monthlyTime = null): self
-    {
-        $this->monthlyTime = $monthlyTime ?? 0;
 
         return $this;
     }

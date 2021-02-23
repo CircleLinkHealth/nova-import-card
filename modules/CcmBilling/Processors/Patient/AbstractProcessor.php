@@ -6,14 +6,17 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 abstract class AbstractProcessor implements PatientServiceProcessor
@@ -85,7 +88,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function isFulfilled(): bool
     {
         return collect($this->input->getPatientServices())
-            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->code() && $s->isFulfilled())
+            ->filter(fn (PatientSummaryForProcessing $s) => $s->getCode() === $this->code() && $s->isFulfilled())
             ->isNotEmpty();
     }
 
@@ -145,19 +148,11 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        $summary = collect($this->input->getPatientServices())
-            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $this->baseCode())
-            ->first();
-
-        if ( ! $summary) {
+        if ($this->requiresPatientConsent($this->input->getPatientId())) {
             return false;
         }
 
-        if ($summary->requiresConsent()) {
-            return false;
-        }
-
-        if ($summary->getMonthlyTime() < $this->minimumTimeInSeconds()) {
+        if ($this->timeForService() < $this->minimumTimeInSeconds()) {
             return false;
         }
 
@@ -188,10 +183,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return false;
     }
 
-    private function getExistingSummary(string $code): ?PatientChargeableServicesForProcessing
+    private function getExistingSummary(string $code): ?PatientSummaryForProcessing
     {
         return collect($this->input->getPatientServices())
-            ->filter(fn (PatientChargeableServicesForProcessing $s) => $s->getCode() === $code)
+            ->filter(fn (PatientSummaryForProcessing $s) => $s->getCode() === $code)
             ->first();
     }
 
@@ -260,5 +255,12 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         $this->input = $input;
 
         return $this;
+    }
+
+    private function timeForService():int
+    {
+        return optional(collect($this->input->getPatientTimes())
+            ->filter(fn(PatientTimeForProcessing $time) => $time->getCode() === $this->baseCode())
+            ->first())->getTime() ?? 0;
     }
 }

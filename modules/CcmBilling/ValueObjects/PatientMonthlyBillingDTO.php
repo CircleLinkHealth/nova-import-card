@@ -31,6 +31,8 @@ class PatientMonthlyBillingDTO
 
     protected array $patientServices = [];
 
+    protected array $patientTimes = [];
+
     protected array $practiceServiceCodes = [];
 
     public function billingStatusIsTouched(): bool
@@ -52,6 +54,16 @@ class PatientMonthlyBillingDTO
         return $this;
     }
 
+    public function withPatientMonthlyTimes(PatientTimeForProcessing... $times) : self
+    {
+        $this->patientTimes = $times;
+        return $this;
+    }
+
+    public function getPatientTimes():array{
+        return $this->patientTimes;
+    }
+
     public static function generateFromUser(User $patient, Carbon $month): self
     {
         return (new self())
@@ -61,16 +73,18 @@ class PatientMonthlyBillingDTO
             ->forMonth($month)
             ->setBillingStatusIsTouched(
                 ! is_null(optional($patient->monthlyBillingStatus
-                    ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                    ->filter(fn(PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
                     ->first())->actor_id)
             )
             ->withLocationServices(
-                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+                ...
+                LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
             )
             ->withPracticeServiceCodes($patient->primaryPractice->chargeableServices->pluck('code')->toArray())
             ->withPatientServices(
-                ...PatientChargeableServicesForProcessing::fromCollection($patient)
+                ...PatientSummaryForProcessing::fromCollection($patient->chargeableMonthlySummaries)
             )
+            ->withPatientMonthlyTimes(...PatientTimeForProcessing::fromCollection($patient->chargeableMonthlyTime))
             ->withForcedPatientServices(
                 ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
             )
@@ -131,7 +145,7 @@ class PatientMonthlyBillingDTO
 
     public function pushServiceFromOutputIfYouShould(PatientServiceProcessorOutputDTO $output): void
     {
-        $exists = collect($this->getPatientServices())->filter(function (PatientChargeableServicesForProcessing $s) use ($output) {
+        $exists = collect($this->getPatientServices())->filter(function (PatientSummaryForProcessing $s) use ($output) {
             return $s->getCode() === $output->getCode();
         })->isNotEmpty();
 
@@ -159,8 +173,8 @@ class PatientMonthlyBillingDTO
      *
      * @return PatientMonthlyBillingDTO
      */
-    public function withForcedPatientServices(ForcedPatientChargeableServicesForProcessing ...$forcedPatientServices): self
-    {
+    public function withForcedPatientServices(ForcedPatientChargeableServicesForProcessing ...$forcedPatientServices
+    ): self {
         $this->forcedPatientServices = $forcedPatientServices;
 
         return $this;
@@ -179,7 +193,7 @@ class PatientMonthlyBillingDTO
     /**
      * @param array $patientServices
      */
-    public function withPatientServices(PatientChargeableServicesForProcessing ...$patientServices): self
+    public function withPatientServices(PatientSummaryForProcessing ...$patientServices): self
     {
         $this->patientServices = $patientServices;
 
