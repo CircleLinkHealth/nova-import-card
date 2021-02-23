@@ -74,7 +74,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
         $this->getBuilder()->get()->each(function (User $patient) {
             measureTime("ProcessPatientMonthlyServices:$patient->id", function () use ($patient) {
                 ProcessPatientMonthlyServices::dispatch(
-                    PatientMonthlyBillingDTO::generateFromUser($patient, $this->getChargeableMonth())
+                    $this->getDtoFromPatient($patient)
                 );
             });
         });
@@ -83,5 +83,9 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function repo(): LocationProcessorRepository
     {
         return app(LocationProcessorRepository::class);
+    }
+
+    public function getDtoFromPatient(User $patient){
+        return PatientMonthlyBillingDTO::generateFromUser($patient, $this->getChargeableMonth());
     }
 }

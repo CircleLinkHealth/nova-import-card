@@ -18,6 +18,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,6 +67,14 @@ class LocationSummaryProcessingTest extends CustomerTestCase
         ]);
         $chunkJobPartiallyMocked->shouldReceive('getBuilder')
             ->andReturn($builderMock);
+
+        $chunkJobPartiallyMocked->shouldReceive('getDtoFromPatient')
+            ->andReturn((new PatientMonthlyBillingDTO())->subscribe(AvailableServiceProcessors::push([
+                new CCM(),
+                new BHI(),
+                new PCM()
+            ]))->forMonth($startOfMonth)
+            );
 
         $chunkJobPartiallyMocked->makePartial();
         $chunkJobPartiallyMocked->handle();
