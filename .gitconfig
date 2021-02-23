@@ -59,6 +59,9 @@
 [remote "LaravelModuleInstaller"]
 	url = git@github.com:CircleLinkHealth/laravel-module-installer.git
 	fetch = +refs/heads/*:refs/remotes/LaravelModuleInstaller/*
+[remote "LaravelScheduleMonitor"]
+	url = git@github.com:CircleLinkHealth/laravel-schedule-monitor.git
+	fetch = +refs/heads/*:refs/remotes/LaravelScheduleMonitor/*
 [remote "NurseInvoices"]
 	url = git@github.com:CircleLinkHealth/nurse-invoices-module.git
 	fetch = +refs/heads/*:refs/remotes/NurseInvoices/*
