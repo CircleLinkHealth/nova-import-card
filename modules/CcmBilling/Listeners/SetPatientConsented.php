@@ -30,9 +30,9 @@ class SetPatientConsented
                 $month = Carbon::now()->startOfMonth()
         );
 
-        (new ProcessPatientSummaries())->fromDTO(
+        (app(ProcessPatientSummaries::class))->fromDTO(
             PatientMonthlyBillingDTO::generateFromUser(
-                $repo->getPatientWithBillingDataForMonth(),
+                $repo->getPatientWithBillingDataForMonth($patientId, $month),
                 $month
             )
         );

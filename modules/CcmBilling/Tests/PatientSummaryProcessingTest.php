@@ -22,6 +22,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
@@ -177,9 +178,13 @@ class PatientSummaryProcessingTest extends TestCase
                 (new PatientSummaryForProcessing())
                     ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
                     ->setRequiresConsent(1)
-                    ->setMonthlyTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
                     ->setCode(ChargeableService::BHI)
                     ->setIsFulfilled(false)
+            )
+            ->withPatientMonthlyTimes((new PatientTimeForProcessing())
+                ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
+                ->setChargeableMonth($startOfMonth)
+                ->setTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
             )
             ->withProblems(
                 (new PatientProblemForProcessing())
