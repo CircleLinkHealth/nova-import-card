@@ -52,6 +52,26 @@ sh bin/git/new-feature.sh abp_add_force_cs
 2. Any work done should be committed to the monorepo **only**.
 3. Create a PR as soon as possible to get the code reviewed.
 
+### Adding an existing module
+The instructions below assume we want to add module LaravelScheduleMonitor.
+1. Manually copy/paste the module in `modules/LaravelScheduleMonitor`. One way is to download the master branch from github and add that.
+2. Add the remote refs to .gitconfig
+    ```bash
+    [remote "LaravelScheduleMonitor"]
+        url = git@github.com:CircleLinkHealth/laravel-schedule-monitor.git
+        fetch = +refs/heads/*:refs/remotes/LaravelScheduleMonitor/*
+    ```
+3. Add update helpers to merge-from-indifidual-repos.txt
+   ```bash
+    git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/master
+    git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/development
+    ```
+4. `sh bin/local-dev/setup-gitconfig.sh`
+4. Fetch all the latest changes. `git fetch --all --no-tags`
+5. The first time we need to merge using `--allow-unrelated-histories`. See command `git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/master --allow-unrelated-histories`
+
+
+
 ## Deployments
 We use a modified version of vapor cli that lives in the monorepo. Use the commands below to setup an alias for easy use.
 ```bash
