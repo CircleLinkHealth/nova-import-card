@@ -7582,10 +7582,16 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8"
+            },
             "dist": {
-                "type": "path",
-                "url": "./CircleLinkHealth/LaravelScheduleMonitor",
-                "reference": "097c83a41fa73e1142b0b1f129dd26f749c15318"
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "shasum": ""
             },
             "require": {
                 "illuminate/bus": "^8.0",
@@ -7619,25 +7625,7 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "psalm": [
-                    "vendor/bin/psalm"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ],
-                "format": [
-                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7655,9 +7643,13 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-15T12:05:52+00:00"
         },
         {
             "name": "spatie/laravel-view-models",

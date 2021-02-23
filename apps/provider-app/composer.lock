@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "328077ef4687867e3eabc406e82deaff",
+    "content-hash": "d23e1d6c85f41afc6e75f34852897c22",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -179,10 +179,16 @@
         {
             "name": "ashallendesign/short-url",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ash-jc-allen/short-url.git",
+                "reference": "1b0631f5d505f73d0b77f2b8de9e1232e4d9ae1c"
+            },
             "dist": {
-                "type": "path",
-                "url": "./CircleLinkHealth/ShortUrl",
-                "reference": "c04d19a49bdfed7ef05b6ee64792f6a54237e761"
+                "type": "zip",
+                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/1b0631f5d505f73d0b77f2b8de9e1232e4d9ae1c",
+                "reference": "1b0631f5d505f73d0b77f2b8de9e1232e4d9ae1c",
+                "shasum": ""
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -190,7 +196,7 @@
                 "illuminate/database": "^6.0|^7.0|^8.0",
                 "jenssegers/agent": "^2.6",
                 "nesbot/carbon": "~2.0",
-                "php": "^7.2"
+                "php": "^7.2|^8.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
@@ -213,11 +219,7 @@
                     "AshAllenDesign\\ShortURL\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "AshAllenDesign\\ShortURL\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -230,15 +232,13 @@
             "description": "A Laravel package for creating shortened URLs for your web apps.",
             "homepage": "https://github.com/ash-jc-allen/short-url",
             "keywords": [
+                "URL-Shortener",
                 "ashallendesign",
                 "laravel",
                 "laravel-package",
-                "short-urls",
-                "url-shortener"
+                "short-urls"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2021-01-26T22:50:36+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -484,6 +484,48 @@
             "time": "2021-01-20T22:51:39+00:00"
         },
         {
+            "name": "circlelinkhealth/ccda-parser-processor-php-module",
+            "version": "dev-feature_#cgzq53_allow_calling_911",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/CcdaParser",
+                "reference": "7f49d4cd417a709bcaba73a5756f6429d03136ca"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CcdaParser\\Providers\\CcdaParserProcessorProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CcdaParserProcessorPhp\\": ""
+                },
+                "files": []
+            },
+            "scripts": {
+                "post-install-cmd": [
+                    "npm install"
+                ],
+                "post-update-cmd": [
+                    "npm install"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "description": "PHP wrapper for bluebutton nodejs",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "circlelinkhealth/ccm-billing-module",
             "version": "dev-master",
             "dist": {
@@ -631,6 +673,44 @@
             ]
         },
         {
+            "name": "circlelinkhealth/condition-code-lookup-module",
+            "version": "dev-feature_#cgzq53_allow_calling_911",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/ConditionCodeLookup",
+                "reference": "c85c8c870376cb7f6328d0d1a6421c40bd67a17a"
+            },
+            "require": {
+                "ext-curl": "*",
+                "laravel/framework": "*",
+                "php": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\ConditionCodeLookup\\": ""
+                },
+                "files": []
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "circlelinkhealth/core-module",
             "version": "dev-master",
             "dist": {
@@ -681,6 +761,63 @@
                 {
                     "name": "Michalis Antoniou",
                     "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "circlelinkhealth/cpm-admin-module",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/CpmAdmin",
+                "reference": "290f9de6b6492d4a0a12d82a36e78a8a913f8a0c"
+            },
+            "require": {
+                "circlelinkhealth/ccda-parser-processor-php-module": "*",
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/raygun-module": "*",
+                "circlelinkhealth/shared-models-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev",
+                    "dev-road_547_cpmAdmin": "1.2.x-dev"
+                },
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmAdmin\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Constantinos Kakoushias",
+                    "email": "constantinos@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com",
+                    "role": "Lead Developer"
                 }
             ],
             "transport-options": {
@@ -803,6 +940,41 @@
             }
         },
         {
+            "name": "circlelinkhealth/nurseinvoices-module",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/NurseInvoices",
+                "reference": "1f476e2943f6c346974c7bc9ea98543c63fc5400"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\NurseInvoices\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "circlelinkhealth/patientapi-module",
             "version": "dev-master",
             "dist": {
@@ -828,6 +1000,50 @@
                 {
                     "name": "Michalis Antoniou",
                     "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "circlelinkhealth/pdf-service-module",
+            "version": "dev-feature_#cgzq53_allow_calling_911",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/PdfService",
+                "reference": "d4040100cd1789091abdfe3c5e749919c9b1f8d2"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "daltcore/lara-pdf-merger": "2.0.6"
+            },
+            "suggest": {
+                "api2pdf/api2pdf.php": "Required to use Api2Pdf",
+                "barryvdh/laravel-snappy": "Required to use SnappyPdf (wkhtmltopdf)"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceProvider",
+                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceDeferrableProvider"
+                    ],
+                    "aliases": [],
+                    "dont-discover": [
+                        "barryvdh/laravel-snappy"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\PdfService\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
             "transport-options": {
@@ -1029,6 +1245,36 @@
             }
         },
         {
+            "name": "circlelinkhealth/sharedvuecomponents-module",
+            "version": "dev-feature_#cgzq53_allow_calling_911",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/SharedVueComponents",
+                "reference": "b005e544fe7c656de87b482778b6a04ff3fdab05"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SharedVueComponents\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "",
+                    "email": ""
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "circlelinkhealth/sqlviews-module",
             "version": "v2.0",
             "dist": {
@@ -1093,6 +1339,44 @@
                 }
             ],
             "description": "Add synonyms for a specific Model and Field.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "circlelinkhealth/time-tracking-module",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/TimeTracking",
+                "reference": "51981c868062dc2ccd0ba17eec53381a360189cc"
+            },
+            "require": {
+                "circlelinkhealth/customer-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\TimeTracking\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
             "transport-options": {
                 "relative": true
             }
@@ -1303,6 +1587,72 @@
                 }
             ],
             "time": "2020-11-11T10:22:58+00:00"
+        },
+        {
+            "name": "daltcore/lara-pdf-merger",
+            "version": "2.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DALTCORE/lara-pdf-merger.git",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DALTCORE/lara-pdf-merger/zipball/f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LynX39\\LaraPdfMerger\\PdfMergerServiceProvider"
+                    ],
+                    "aliases": {
+                        "PdfMerger": "LynX39\\LaraPdfMerger\\Facades\\PdfMerger"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "LynX39\\LaraPdfMerger": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Musso",
+                    "email": "lynx@deltaaskii.com",
+                    "homepage": "https://github.com/LynX39"
+                },
+                {
+                    "name": "Ramon Smit",
+                    "email": "rsmit@daltcore.com",
+                    "homepage": "https://github.com/daltcore"
+                },
+                {
+                    "name": "Marouan Sami",
+                    "email": "sami.marwen.isetcom@gmail.com",
+                    "homepage": "https://github.com/MarwenSami"
+                }
+            ],
+            "homepage": "https://github.com/MarwenSami/lara-pdf-merger",
+            "keywords": [
+                "duplex merge",
+                "laravel",
+                "manage",
+                "merge",
+                "merger",
+                "paginate",
+                "pdf"
+            ],
+            "time": "2020-05-06T07:49:12+00:00"
         },
         {
             "name": "danielme85/laravel-log-to-db",
