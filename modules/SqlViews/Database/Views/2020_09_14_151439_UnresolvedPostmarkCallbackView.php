@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class UnresolvedPostmarkCallbackView extends BaseSqlView

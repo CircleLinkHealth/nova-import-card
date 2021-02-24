@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
-use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
+use CircleLinkHealth\SharedModels\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Call;
