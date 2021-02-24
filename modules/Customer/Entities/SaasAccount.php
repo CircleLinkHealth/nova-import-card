@@ -25,21 +25,21 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection     $practices
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection         $users
- * @method   static                                                                                      bool|null forceDelete()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newQuery()
- * @method   static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount onlyTrashed()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount query()
- * @method   static                                                                                      bool|null restore()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereDeletedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereLogoPath($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereName($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereSlug($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereUpdatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withTrashed()
- * @method   static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withoutTrashed()
+ * @method static                                                                                      bool|null forceDelete()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newQuery()
+ * @method static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount onlyTrashed()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount query()
+ * @method static                                                                                      bool|null restore()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereCreatedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereDeletedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereLogoPath($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereName($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereSlug($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount whereUpdatedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withTrashed()
+ * @method static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withoutTrashed()
  * @mixin \Eloquent
  * @property int|null $media_count
  * @property int|null $practices_count

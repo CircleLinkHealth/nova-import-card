@@ -243,6 +243,7 @@ namespace App;
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User activeNurses()
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User uniquePatients()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

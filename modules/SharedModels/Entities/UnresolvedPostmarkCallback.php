@@ -20,16 +20,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null                             $created_at
  * @property \Illuminate\Support\Carbon|null                             $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail $inboundPostmark
- * @method   static                                                      \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback newModelQuery()
- * @method   static                                                      \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback newQuery()
- * @method   static                                                      \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback query()
+ * @method static                                                      \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback newModelQuery()
+ * @method static                                                      \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback newQuery()
+ * @method static                                                      \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback query()
  * @mixin \Eloquent
  * @property mixed      $unresolved_reasons
  * @property mixed|null $unresolved_reason
  * @property int        $manually_resolved
- * @method   static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback onlyTrashed()
- * @method   static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback withTrashed()
- * @method   static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback withoutTrashed()
+ * @method static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback onlyTrashed()
+ * @method static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback withTrashed()
+ * @method static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback withoutTrashed()
  */
 class UnresolvedPostmarkCallback extends Model
 {

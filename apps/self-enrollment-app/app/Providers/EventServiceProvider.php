@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use CircleLinkHealth\Core\Listeners\UpdateUserLoginInfo;
@@ -22,7 +26,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         Login::class => [
-          UpdateUserLoginInfo::class,
+            UpdateUserLoginInfo::class,
         ],
     ];
 
@@ -34,7 +38,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

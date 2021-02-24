@@ -14,6 +14,31 @@ use OhDear\PhpSdk\Resources\CronCheck;
 use Spatie\ScheduleMonitor\Jobs\PingOhDearJob;
 use Spatie\ScheduleMonitor\Support\ScheduledTasks\ScheduledTaskFactory;
 
+/**
+ * Spatie\ScheduleMonitor\Models\MonitoredScheduledTask
+ *
+ * @property int $id
+ * @property string $name
+ * @property string|null $type
+ * @property string $cron_expression
+ * @property string|null $timezone
+ * @property string|null $ping_url
+ * @property \Illuminate\Support\Carbon|null $last_started_at
+ * @property \Illuminate\Support\Carbon|null $last_finished_at
+ * @property \Illuminate\Support\Carbon|null $last_failed_at
+ * @property \Illuminate\Support\Carbon|null $last_skipped_at
+ * @property \Illuminate\Support\Carbon|null $registered_on_oh_dear_at
+ * @property \Illuminate\Support\Carbon|null $last_pinged_at
+ * @property int $grace_time_in_minutes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\ScheduleMonitor\Models\MonitoredScheduledTaskLogItem[] $logItems
+ * @property-read int|null $log_items_count
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTask newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTask newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTask query()
+ * @mixin \Eloquent
+ */
 class MonitoredScheduledTask extends Model
 {
     public function __construct(array $attributes = [])

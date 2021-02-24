@@ -58,7 +58,7 @@ return [
         'ccd_importer_url'  => env('CPM_CCD_IMPORTER_URL', null),
     ],
 
-    'selfEnrollment'=>[
-        'url'               => env('SELF_ENROLLMENT_URL', null),
+    'selfEnrollment' => [
+        'url' => env('SELF_ENROLLMENT_URL', null),
     ],
 ];
