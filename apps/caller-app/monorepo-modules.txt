@@ -3,9 +3,9 @@ Core
 CpmMigrations
 Customer
 Eligibility
-Revisionable
 LaravelScheduleMonitor
 PdfService
+Revisionable
 SelfEnrollment
 SharedModels
 Synonyms
