@@ -27,6 +27,8 @@ class DeployCpmCommand extends Command
      * @var Process[]
      */
     private $allProcesses = [];
+    private $startTimes = [];
+    private $endTimes = [];
 
     /**
      * Configure the command options.
@@ -58,6 +60,7 @@ class DeployCpmCommand extends Command
      */
     public function handle()
     {
+        $start = microtime(true);
         foreach ($this->argument('apps') as $app) {
             Helpers::line("Preparing $app");
             $process = $this->createDeployProcess(
@@ -68,42 +71,53 @@ class DeployCpmCommand extends Command
             Helpers::line('Running: '.$process->getCommandLine());
             $process->start();
 
-            $this->allProcesses[] = $process;
-            $this->activeProcesses[] = $process;
+            $this->allProcesses[$app] = $process;
+            $this->activeProcesses[$app] = $process;
+            $this->startTimes[$app] = microtime(true);
         }
 
-        Helpers::line(sprintf('Deploying %d apps asynchronously', count($this->activeProcesses)));
+        Helpers::line(sprintf('Running %d processes in parallel', count($this->activeProcesses)));
 
         while (count($this->activeProcesses)) {
-            foreach ($this->activeProcesses as $i => $runningProcess) {
+            foreach ($this->activeProcesses as $appName => $runningProcess) {
                 if ( ! $runningProcess->isRunning()) {
+                    $this->endTimes[$app] = microtime(true);
                     Helpers::line(
-                        'Finished: '.$runningProcess->getWorkingDirectory().$runningProcess->getCommandLine()
+                        'Finished: '.$appName.$runningProcess->getCommandLine()
                     );
                     Helpers::danger($runningProcess->getErrorOutput());
-                    unset($this->activeProcesses[$i]);
+                    unset($this->activeProcesses[$appName]);
                     continue;
                 }
 
                 if ($incrOutput = $runningProcess->getIncrementalOutput()) {
-                    Helpers::line($runningProcess->getWorkingDirectory().$incrOutput);
+                    Helpers::line($appName.$incrOutput);
                 }
             }
             sleep(5);
         }
 
         $this->reportFinishedProcesses();
+
+        $end = microtime(true);
+
+        $totalTimeInSeconds = $end-$start;
+
+        Helpers::line("It took $totalTimeInSeconds seconds for all processes to finish.");
     }
 
     private function reportFinishedProcesses(): void
     {
-        foreach ($this->allProcesses as $process) {
+        foreach ($this->allProcesses as $appName => $process) {
+            $totalTimeInSeconds = $this->endTimes[$appName] - $this->startTimes[$appName];
+            Helpers::line("Process[$appName] duration: $totalTimeInSeconds seconds.");
+
             if ( ! $process->isSuccessful()) {
-                Helpers::danger('Failed: '.$process->getWorkingDirectory(). $process->getErrorOutput());
+                Helpers::danger('Failed: '.$appName. $process->getErrorOutput());
                 continue;
             }
 
-            Helpers::line('Successful: '.$process->getWorkingDirectory(). $process->getCommandLine());
+            Helpers::line('Successful: '.$appName. $process->getCommandLine());
         }
     }
 
