@@ -78,11 +78,19 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/VaporCore"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/VaporDevopsHelpers"
         },
         {
             "type": "path",
             "url": "./CircleLinkHealth/LaravelScheduleMonitor"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
         }
     ],
     "require": {
@@ -107,6 +115,8 @@
         "circlelinkhealth/sqlviews-module":"*",
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/twilio-integration-module":"*",
+        "circlelinkhealth/pdf-service-module": "*",
+        "laravel/vapor-core": "*",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.4",
