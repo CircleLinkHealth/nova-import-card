@@ -19,17 +19,17 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $patient
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereCreatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking wherePatientId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereStarting($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereTarget($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereUpdatedAt($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereCreatedAt($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereId($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking wherePatientId($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereStarting($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereTarget($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking query()
  * @property int|null                                                                                    $revision_history_count
  */
 class CpmSmoking extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric

@@ -21,6 +21,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon referer_url
  * @property Carbon created_at
  * @property Carbon updated_at
+ * @property int $id
+ * @property int $short_url_id
+ * @property string|null $ip_address
+ * @property string|null $operating_system
+ * @property string|null $operating_system_version
+ * @property string|null $browser
+ * @property string|null $browser_version
+ * @property string|null $referer_url
+ * @property string|null $device_type
+ * @property \Illuminate\Support\Carbon $visited_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AshAllenDesign\ShortURL\Models\ShortURL $shortURL
+ * @method static \Illuminate\Database\Eloquent\Builder|ShortURLVisit newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShortURLVisit newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShortURLVisit query()
+ * @mixin \Eloquent
  */
 class ShortURLVisit extends Model
 {

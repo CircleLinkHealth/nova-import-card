@@ -24,19 +24,19 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar    $bloodSugar
  * @property \App\Models\CPM\Biometrics\CpmBloodSmoking               $smoking
  * @property \App\Models\CPM\Biometrics\CpmBloodWeight                $weight
- * @method   static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereCreatedAt($value)
- * @method   static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereId($value)
- * @method   static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereName($value)
- * @method   static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereType($value)
- * @method   static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereUpdatedAt($value)
+ * @method static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereCreatedAt($value)
+ * @method static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereId($value)
+ * @method static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereName($value)
+ * @method static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereType($value)
+ * @method static                                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser query()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmBiometricId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmInstructionId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser wherePatientId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmBiometricId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmInstructionId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser wherePatientId($value)
  * @property int|null                                                                                    $revision_history_count
  */
 class CpmBiometricUser extends \CircleLinkHealth\Core\Entities\BaseModel

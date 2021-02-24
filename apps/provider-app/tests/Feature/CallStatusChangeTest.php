@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
@@ -14,7 +15,6 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class CallStatusChangeTest extends TestCase
 {

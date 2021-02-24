@@ -7,11 +7,11 @@
 namespace Tests\ExternalApi;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Problem;
 use Illuminate\Foundation\Testing\WithFaker;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class AthenaApiCallsTest extends TestCase
 {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,10 +26,3 @@ Route::group([
 ], function () {
     Route::get('/home', 'HomeController@showHomepage');
 });
-
-
-
-
-
-
-

@@ -27,17 +27,17 @@ use CircleLinkHealth\Customer\Entities\Location;
  * @property Location                                                                                    $location
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary query()
  * @mixin \Eloquent
- * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdThisMonth($field = 'created_at')
- * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdToday($field = 'created_at')
- * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdYesterday($field = 'created_at')
+ * @method static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdThisMonth($field = 'created_at')
+ * @method static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdToday($field = 'created_at')
+ * @method static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdYesterday($field = 'created_at')
  * @property string|null $status
- * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class ChargeableLocationMonthlySummary extends BaseModel
 {
