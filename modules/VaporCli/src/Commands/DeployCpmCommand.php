@@ -70,6 +70,7 @@ class DeployCpmCommand extends Command
                     continue;
                 }
 
+                Helpers::line($runningProcess->getWorkingDirectory().$runningProcess->getIncrementalOutput());
             }
 
             // check every second

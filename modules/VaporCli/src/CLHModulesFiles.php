@@ -20,7 +20,6 @@ class CLHModulesFiles
 
         foreach (array_filter(explode("\n", file_get_contents('monorepo-modules.txt'))) as $dir) {
             $dir = '/'.preg_quote($dir, '/').'/';
-            echo "Module to copy: $dir \n";
             $finder->path($dir);
         }
 

@@ -37,6 +37,8 @@ class CopyApplicationToBuildPath
                 continue;
             }
 
+            echo "Copying file: $file \n";
+
             $file->isDir()
                 ? $this->createDirectoryForCLHModulesCopy($file)
                 : $this->createFileForCLHModulesCopy($file);
