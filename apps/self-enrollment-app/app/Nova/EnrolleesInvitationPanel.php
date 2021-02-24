@@ -256,6 +256,8 @@ class EnrolleesInvitationPanel extends Resource
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
             });
+
+//        We need a way to not render only of the duplicated enrollees. distinct('user_id') would do, but which enrollee should we pick??
     }
 
     /**

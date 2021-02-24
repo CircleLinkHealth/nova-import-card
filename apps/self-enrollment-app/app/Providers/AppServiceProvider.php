@@ -9,6 +9,7 @@ namespace App\Providers;
 use CircleLinkHealth\Core\ChunksEloquentBuilder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +38,33 @@ class AppServiceProvider extends ServiceProvider
                     );
                     $offset = $offset + $limit;
                 }
+            }
+        );
+
+        QueryBuilder::macro(
+            'toRawSql',
+            function () {
+                return array_reduce(
+                    $this->getBindings(),
+                    function ($sql, $binding) {
+                        return preg_replace(
+                            '/\?/',
+                            is_numeric($binding)
+                                ? $binding
+                                : "'".$binding."'",
+                            $sql,
+                            1
+                        );
+                    },
+                    $this->toSql()
+                );
+            }
+        );
+
+        EloquentBuilder::macro(
+            'toRawSql',
+            function () {
+                return $this->getQuery()->toRawSql();
             }
         );
     }
