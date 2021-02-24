@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Observers;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\SharedModels\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\UnresolvedPostmarkCallback;
 

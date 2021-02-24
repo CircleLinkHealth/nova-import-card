@@ -10,7 +10,8 @@
     ],
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2.x-dev"
+            "dev-master": "2.2.x-dev",
+            "dev-road_547_sharedModels": "3.0.x-dev"
         }
     },
     "autoload": {
