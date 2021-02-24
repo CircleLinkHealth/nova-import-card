@@ -888,6 +888,11 @@ class Enrollee extends BaseModel
         });
     }
 
+    public function scopeOfActivePractice($query)
+    {
+        return $query->whereHas('practice', fn ($p) => $p->active());
+    }
+
     public function scopeOfStatus($query, $status)
     {
         if ( ! is_array($status)) {
