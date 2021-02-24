@@ -40,9 +40,9 @@ abstract class InParallelCommand extends Command
     {
         $start = microtime(true);
         foreach ($this->argument('apps') as $app) {
-            Helpers::line("Preparing $app");
+            Helpers::line("Preparing[$app]");
             $process = $this->createProcess($app);
-            Helpers::line('Running: '.$process->getCommandLine());
+            Helpers::line("Running[$app] ".$process->getCommandLine());
             $process->start();
 
             $this->allProcesses[$app]    = $process;

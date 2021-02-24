@@ -137,6 +137,7 @@
         "moontoast/math": "1.1.2 as 1.999.999",
         "nvanheuverzwijn/monolog-logdna": "^2.1",
         "propaganistas/laravel-phone": "^4.2",
+        "laravel/vapor-core": "*",
         "sentry/sentry-laravel": "2.x-dev",
         "squizlabs/php_codesniffer": "^3.5",
         "twilio/sdk": "6.0.0"
