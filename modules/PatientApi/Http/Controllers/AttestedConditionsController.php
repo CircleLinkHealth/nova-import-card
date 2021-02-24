@@ -7,11 +7,13 @@
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AttestedConditionsController extends Controller
 {
@@ -84,7 +86,12 @@ class AttestedConditionsController extends Controller
             );
         }
 
-        $summary->syncAttestedProblems($attestedProblems);
+        (new AttestPatientProblems())->forPms($summary->id)
+            ->forMonth($date)
+            ->fromAttestor(Auth::id())
+            ->problemsToAttest($attestedProblems)
+            ->createRecords();
+
 
         return response()->json([
             'status'            => 200,
