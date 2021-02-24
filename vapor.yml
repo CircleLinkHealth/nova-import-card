@@ -27,6 +27,7 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
     staging:
         domain: cpm-admin.clh-staging.com
         storage: cpm-staging-vapor-storage
@@ -46,8 +47,9 @@ environments:
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
             - 'php artisan event:cache'
-            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'npm ci && npm run prod'
             - 'php artisan route:cache'
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'

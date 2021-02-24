@@ -9,10 +9,10 @@ namespace App\Console\Commands;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Adapters\CreatesEligibilityJobFromObject;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Console\Command;
 
@@ -89,7 +89,7 @@ class DispatchPracticePullEligibilityBatch extends Command
         }
 
         if ( ! $this->option('create-only')) {
-            ProcessSinglePatientEligibility::dispatch($ej, $batch, $this->practice);
+            ProcessSinglePatientEligibility::dispatch($ej->id);
         }
 
         return $ej;
