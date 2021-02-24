@@ -13,9 +13,6 @@ class AutomatedCallbackMessageValueObject
     public string $message;
     public string $phone;
 
-    /**
-     * AutomatedCallbackMessageValueObject constructor.
-     */
     public function __construct(string $phone, string $message, string $firstName, string $lastName)
     {
         $this->phone     = $phone;
@@ -24,12 +21,7 @@ class AutomatedCallbackMessageValueObject
         $this->lastName  = $lastName;
     }
 
-    /**
-     * @param $callbackMessage
-     *
-     * @return string
-     */
-    public function constructCallbackMessage()
+    public function toCallbackMessage(): string
     {
         $phoneFormatted = formatPhoneNumberE164($this->phone);
 

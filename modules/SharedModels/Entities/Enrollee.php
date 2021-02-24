@@ -502,7 +502,7 @@ class Enrollee extends BaseModel
         return $query->whereNull('source')
             ->when($initialInvite, function ($q){
                 $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
-                    $q->where('users.created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
+                    $q->where('created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
                 });
             })
             ->whereIn('status', [
@@ -887,6 +887,11 @@ class Enrollee extends BaseModel
                     (int) AppConfig::pull(self::MAX_CALL_ATTEMPTS_KEY, self::DEFAULT_MAX_CALL_ATTEMPTS)
                 );
         });
+    }
+
+    public function scopeOfActivePractice($query)
+    {
+        return $query->whereHas('practice', fn ($p) => $p->active());
     }
 
     public function scopeOfStatus($query, $status)
