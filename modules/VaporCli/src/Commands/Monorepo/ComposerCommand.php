@@ -27,10 +27,12 @@ class ComposerCommand extends InParallelCommand
     public function createProcess(string $app): Process
     {
         return new Process(
-            [
-                'composer',
-                $this->argument('directive'),
-            ], $this->appPath($app), null, null, null
+            array_merge(
+                [
+                    'composer',
+                ],
+                explode(' ', $this->argument('directive'))
+            ), $this->appPath($app), null, null, null
         );
     }
 }
