@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ac5adba1039e7a529070acf368f9241a",
+    "content-hash": "ca7ee46f69b43327a397a1f835877347",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -652,10 +652,6 @@
             },
             "type": "laravel-module",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "4.4.x-dev",
-                    "road_547_moving_self_enrollment_eligibility": "4.5.x-dev"
-                },
                 "laravel": {
                     "providers": [
                         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
@@ -2664,6 +2660,72 @@
             "time": "2020-09-30T07:37:11+00:00"
         },
         {
+            "name": "hollodotme/fast-cgi-client",
+            "version": "v3.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hollodotme/fast-cgi-client.git",
+                "reference": "8a9b2bd38ccfd8fc6905a6b1acfbb9f84ed700dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hollodotme/fast-cgi-client/zipball/8a9b2bd38ccfd8fc6905a6b1acfbb9f84ed700dd",
+                "reference": "8a9b2bd38ccfd8fc6905a6b1acfbb9f84ed700dd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "ext-xdebug": ">=2.6.0",
+                "tm/tooly-composer-script": "^1.4.1"
+            },
+            "type": "library",
+            "extra": {
+                "tools": {
+                    "phpunit7": {
+                        "url": "https://phar.phpunit.de/phpunit-7.phar",
+                        "replace": true,
+                        "only-dev": true
+                    },
+                    "phpunit8": {
+                        "url": "https://phar.phpunit.de/phpunit-8.phar",
+                        "replace": true,
+                        "only-dev": true
+                    },
+                    "phpunit9": {
+                        "url": "https://phar.phpunit.de/phpunit-9.phar",
+                        "replace": true,
+                        "only-dev": true
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "hollodotme\\FastCGI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Holger Woltersdorf",
+                    "email": "hw@hollo.me"
+                }
+            ],
+            "description": "A PHP fast CGI client to send requests (a)synchronously to PHP-FPM.",
+            "keywords": [
+                "Socket",
+                "async",
+                "fastcgi",
+                "php-fpm"
+            ],
+            "time": "2020-12-10T10:15:06+00:00"
+        },
+        {
             "name": "http-interop/http-factory-guzzle",
             "version": "1.0.0",
             "source": {
@@ -3732,51 +3794,58 @@
             "time": "2021-01-06T19:20:22+00:00"
         },
         {
-            "name": "laravel/vapor-cli",
+            "name": "laravel/vapor-core",
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./CircleLinkHealth/VaporCli",
-                "reference": "711d390811987b29dd283f6d596718a2dece8ea4"
+                "url": "./CircleLinkHealth/VaporCore",
+                "reference": "d58de86fd836a37cb99cef369e3d83c54692988e"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
-                "ext-zip": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
+                "hollodotme/fast-cgi-client": "^3.0",
                 "illuminate/container": "^6.0|^7.0|^8.0",
-                "illuminate/filesystem": "^6.0|^7.0|^8.0",
+                "illuminate/http": "^6.0|^7.0|^8.0",
+                "illuminate/queue": "^6.0|^7.0|^8.0",
                 "illuminate/support": "^6.0|^7.0|^8.0",
-                "league/flysystem": "^1.0",
-                "league/flysystem-aws-s3-v3": "^1.0",
+                "monolog/monolog": "^1.12|^2.0",
+                "nyholm/psr7": "^1.0",
                 "php": "^7.2|^8.0",
-                "ramsey/uuid": "^3.8|^4.0",
-                "symfony/console": "^4.2|^5.0",
-                "symfony/process": "^4.2|^5.0",
-                "symfony/var-dumper": "^4.2|^5.0",
-                "symfony/yaml": "^4.2|^5.0",
-                "vlucas/phpdotenv": "^3.0|^4.0|^5.0"
+                "riverline/multipart-parser": "^2.0",
+                "symfony/process": "^4.3|^5.0",
+                "symfony/psr-http-message-bridge": "^1.0|^2.0"
             },
             "require-dev": {
+                "mockery/mockery": "^1.2",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
-            "bin": [
-                "vapor"
-            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Vapor\\VaporServiceProvider"
+                    ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Laravel\\VaporCli\\": "src/"
+                    "Laravel\\Vapor\\": "src"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Laravel\\VaporCli\\Tests\\": "tests"
+                    "Laravel\\Vapor\\Tests\\": "tests"
                 }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
             },
             "license": [
                 "MIT"
@@ -3787,8 +3856,8 @@
                     "email": "taylor@laravel.com"
                 }
             ],
-            "description": "The Laravel Vapor CLI",
-            "homepage": "https://github.com/laravel/vapor-cli",
+            "description": "The kernel and invokation handlers for Laravel Vapor",
+            "homepage": "https://github.com/laravel/vapor-core",
             "keywords": [
                 "laravel",
                 "vapor"
@@ -7190,6 +7259,58 @@
             "time": "2020-08-18T17:17:46+00:00"
         },
         {
+            "name": "riverline/multipart-parser",
+            "version": "2.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Riverline/multipart-parser.git",
+                "reference": "2fe9026789754c1ff07c06047f0acc113e90933a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Riverline/multipart-parser/zipball/2fe9026789754c1ff07c06047f0acc113e90933a",
+                "reference": "2fe9026789754c1ff07c06047f0acc113e90933a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "laminas/laminas-diactoros": "^1.8.7",
+                "phpunit/phpunit": "^5.2 || ^6.0 || ^7.0",
+                "psr/http-message": "^1.0",
+                "symfony/psr-http-message-bridge": "^1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Riverline\\MultiPartParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Romain Cambien",
+                    "email": "romain@cambien.net"
+                },
+                {
+                    "name": "Riverline",
+                    "homepage": "http://www.riverline.fr"
+                }
+            ],
+            "description": "One class library to parse multipart content with encoding and charset support.",
+            "keywords": [
+                "http",
+                "multipart",
+                "parser"
+            ],
+            "time": "2020-01-24T09:39:24+00:00"
+        },
+        {
             "name": "scoutapp/scout-apm-laravel",
             "version": "v1.8.0",
             "source": {
@@ -10477,78 +10598,6 @@
             "time": "2021-01-27T10:15:41+00:00"
         },
         {
-            "name": "symfony/yaml",
-            "version": "v5.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/yaml.git",
-                "reference": "338cddc6d74929f6adf19ca5682ac4b8e109cdb0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/338cddc6d74929f6adf19ca5682ac4b8e109cdb0",
-                "reference": "338cddc6d74929f6adf19ca5682ac4b8e109cdb0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2.5",
-                "symfony/deprecation-contracts": "^2.1",
-                "symfony/polyfill-ctype": "~1.8"
-            },
-            "conflict": {
-                "symfony/console": "<4.4"
-            },
-            "require-dev": {
-                "symfony/console": "^4.4|^5.0"
-            },
-            "suggest": {
-                "symfony/console": "For validating YAML files using the lint command"
-            },
-            "bin": [
-                "Resources/bin/yaml-lint"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Yaml\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Loads and dumps YAML files",
-            "homepage": "https://symfony.com",
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2021-02-03T04:42:09+00:00"
-        },
-        {
             "name": "tijsverkoyen/css-to-inline-styles",
             "version": "2.2.3",
             "source": {
@@ -12427,6 +12476,72 @@
                 "schema"
             ],
             "time": "2020-05-27T16:41:55+00:00"
+        },
+        {
+            "name": "laravel/vapor-cli",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/VaporCli",
+                "reference": "711d390811987b29dd283f6d596718a2dece8ea4"
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.80",
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "illuminate/container": "^6.0|^7.0|^8.0",
+                "illuminate/filesystem": "^6.0|^7.0|^8.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "league/flysystem": "^1.0",
+                "league/flysystem-aws-s3-v3": "^1.0",
+                "php": "^7.2|^8.0",
+                "ramsey/uuid": "^3.8|^4.0",
+                "symfony/console": "^4.2|^5.0",
+                "symfony/process": "^4.2|^5.0",
+                "symfony/var-dumper": "^4.2|^5.0",
+                "symfony/yaml": "^4.2|^5.0",
+                "vlucas/phpdotenv": "^3.0|^4.0|^5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "bin": [
+                "vapor"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Laravel Vapor CLI",
+            "homepage": "https://github.com/laravel/vapor-cli",
+            "keywords": [
+                "laravel",
+                "vapor"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "maximebf/debugbar",
@@ -14752,6 +14867,78 @@
                 }
             ],
             "time": "2021-01-27T10:15:41+00:00"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "v5.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "338cddc6d74929f6adf19ca5682ac4b8e109cdb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/338cddc6d74929f6adf19ca5682ac4b8e109cdb0",
+                "reference": "338cddc6d74929f6adf19ca5682ac4b8e109cdb0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/deprecation-contracts": "^2.1",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<4.4"
+            },
+            "require-dev": {
+                "symfony/console": "^4.4|^5.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "bin": [
+                "Resources/bin/yaml-lint"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Loads and dumps YAML files",
+            "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-02-03T04:42:09+00:00"
         },
         {
             "name": "theseer/tokenizer",

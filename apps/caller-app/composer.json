@@ -57,6 +57,10 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/VaporCore"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/VaporDevopsHelpers"
         },
         {
@@ -86,10 +90,11 @@
         "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "laravel/vapor-cli": "*",
+        "laravel/vapor-core": "*",
         "propaganistas/laravel-phone": "^4.1"
     },
     "require-dev": {
+        "laravel/vapor-cli": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-ide-helper": "^2.6",
         "friendsofphp/php-cs-fixer": "^2.16.3",
