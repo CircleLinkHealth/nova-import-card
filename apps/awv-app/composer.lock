@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cec0f7538515f5ea3d328eddde8a4093",
+    "content-hash": "ced2a1fa8aa0f07f755a0e22ad07a563",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -117,17 +117,11 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "v4.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ash-jc-allen/short-url.git",
-                "reference": "1b0631f5d505f73d0b77f2b8de9e1232e4d9ae1c"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/1b0631f5d505f73d0b77f2b8de9e1232e4d9ae1c",
-                "reference": "1b0631f5d505f73d0b77f2b8de9e1232e4d9ae1c",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/ShortUrl",
+                "reference": "c04d19a49bdfed7ef05b6ee64792f6a54237e761"
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -135,7 +129,7 @@
                 "illuminate/database": "^6.0|^7.0|^8.0",
                 "jenssegers/agent": "^2.6",
                 "nesbot/carbon": "~2.0",
-                "php": "^7.2|^8.0"
+                "php": "^7.2"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
@@ -158,7 +152,11 @@
                     "AshAllenDesign\\ShortURL\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "AshAllenDesign\\ShortURL\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -171,13 +169,15 @@
             "description": "A Laravel package for creating shortened URLs for your web apps.",
             "homepage": "https://github.com/ash-jc-allen/short-url",
             "keywords": [
-                "URL-Shortener",
                 "ashallendesign",
                 "laravel",
                 "laravel-package",
-                "short-urls"
+                "short-urls",
+                "url-shortener"
             ],
-            "time": "2021-01-26T22:50:36+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "asm89/stack-cors",
@@ -587,7 +587,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.0.x-dev",
+                    "dev-road_547_ccmBilling": "2.1.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -634,16 +635,10 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "v3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
-                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/CerberusGatekeeper",
+                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
             },
             "require": {
                 "illuminate/cache": "*",
@@ -676,7 +671,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -712,7 +711,9 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-12-28T01:46:18+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -789,7 +790,8 @@
             "type": "laravel-module",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.1.x-dev",
+                    "dev-road_547_cpmAdmin": "1.2.x-dev"
                 },
                 "laravel": {
                     "providers": [],
@@ -882,9 +884,6 @@
             },
             "type": "laravel-module",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "4.2.x-dev"
-                },
                 "laravel": {
                     "providers": [],
                     "aliases": []
@@ -923,9 +922,6 @@
             },
             "type": "laravel-module",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "4.4.x-dev"
-                },
                 "laravel": {
                     "providers": [
                         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
@@ -1126,12 +1122,6 @@
                 "circlelinkhealth/eligibility-module": "*"
             },
             "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2.x-dev",
-                    "dev-road_547_sharedModels": "3.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\SharedModels\\": ""
@@ -4566,17 +4556,11 @@
         },
         {
             "name": "laravel/vapor-core",
-            "version": "v2.10.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/vapor-core.git",
-                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
-                "reference": "8ac2da4eea1f1c2db83fa629b46d4311458b3f29",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/VaporCore",
+                "reference": "d58de86fd836a37cb99cef369e3d83c54692988e"
             },
             "require": {
                 "aws/aws-sdk-php": "^3.80",
@@ -4614,7 +4598,16 @@
                     "Laravel\\Vapor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\Vapor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -4630,7 +4623,9 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-12-29T15:06:52+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "laravel/vapor-ui",
@@ -8854,11 +8849,11 @@
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "v2.2.2",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git",
-                "reference": "b4a0a18a7d281362eb0cd71daf4e8df798c36e75"
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/LaravelScheduleMonitor",
+                "reference": "097c83a41fa73e1142b0b1f129dd26f749c15318"
             },
             "require": {
                 "illuminate/bus": "^8.0",
@@ -8928,7 +8923,9 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "time": "2021-02-04T20:41:22+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "spatie/laravel-view-models",
@@ -13142,19 +13139,14 @@
         },
         {
             "name": "laravel/vapor-cli",
-            "version": "v1.12.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/vapor-cli.git",
-                "reference": "892eef2af4f214a4ab92d05461163498adc202d7"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-cli/zipball/892eef2af4f214a4ab92d05461163498adc202d7",
-                "reference": "892eef2af4f214a4ab92d05461163498adc202d7",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/VaporCli",
+                "reference": "711d390811987b29dd283f6d596718a2dece8ea4"
             },
             "require": {
+                "aws/aws-sdk-php": "^3.80",
                 "ext-zip": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "illuminate/container": "^6.0|^7.0|^8.0",
@@ -13187,7 +13179,11 @@
                     "Laravel\\VaporCli\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -13203,7 +13199,9 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2021-02-18T09:34:54+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "mockery/mockery",

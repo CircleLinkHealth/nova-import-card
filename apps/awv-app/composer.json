@@ -13,13 +13,6 @@
             "url": "https://nova.laravel.com"
         },
         {
-            "type": "composer",
-            "url": "https://packagist.org"
-        },
-        {
-            "packagist": false
-        },
-        {
             "type": "path",
             "url": "./CircleLinkHealth/CcdaParser"
         },
@@ -148,14 +141,17 @@
         "fzaninotto/faker": "^1.9.1"
     },
     "config": {
-        "optimize-autoloader": true,
+        "discard-changes": true,
         "preferred-install": "dist",
         "sort-packages": true,
+        "optimize-autoloader": true,
         "github-oauth": {
             "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
-        }
+        },
+        "process-timeout": 3000
     },
     "extra": {
+        "module-dir": "CircleLinkHealth",
         "laravel": {
             "dont-discover": [
                 "circlelinkhealth/eligibility-module"
