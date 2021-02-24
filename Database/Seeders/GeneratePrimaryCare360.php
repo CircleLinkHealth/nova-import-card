@@ -10,10 +10,14 @@ use Illuminate\Support\Facades\App;
 
 class GeneratePrimaryCare360 extends Seeder
 {
-    const PRACTICE_SIGNATORY_NAME = 'not provided yet';
+    const PRACTICE_SIGNATORY_NAME = 'two_names';
     const PRIMARY_CARE_360_PRACTICE_NAME = 'primary-care-360';
     const LOGO_SOURCE = '/img/logos/PrimaryCare360/primary_care_360_logo.png';
-    const DISPLAY_NAME = 'Continuum Family Care LLC';
+    const ANITA_ARAB_SIGNATURE        = '/img/signatures/primary-care-360/anita_arab_signature.png';
+    const ADEEB_KHALIL_SIGNATURE      = '/img/signatures/primary-care-360/adeeb_khalil_signature.png';
+    const SIGNATORY_NAME_ANITA_ARAB   = 'Anita Arab, Administrator';
+    const SIGNATORY_NAME_ADEEB_KHALIL = 'Adeeb Khalil, Administrator';
+    const DISPLAY_NAME = 'Primary Care 360';
 
     /**
      * Run the database seeds.
@@ -59,8 +63,8 @@ $logoBelow
             ],
             [
                 'practice_logo_src'      => self::LOGO_SOURCE,
-                'customer_signature_src' => '',
-                'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
+                'customer_signature_src' => self::ANITA_ARAB_SIGNATURE,
+                'signatory_name'         => self::SIGNATORY_NAME_ANITA_ARAB,
                 'letter'                 => json_encode(
                     [
                         'page_1' => [

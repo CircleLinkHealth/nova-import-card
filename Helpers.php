@@ -163,6 +163,7 @@ class Helpers
     private static function canSendOriginalInvitation(Enrollee $enrollee)
     {
         return $enrollee->enrollmentInvitationLinks()
-            ->where('created_at', '>', now()->subMonths(Enrollee::INVITE_ONCE_EVERY_N_MONTHS));
+            ->where('created_at', '>', now()->subMonths(Enrollee::INVITE_ONCE_EVERY_N_MONTHS))
+            ->exists();
     }
 }

@@ -1,9 +1,3 @@
-@php
-$phone = '501-833-4001';
-$fax = '1-888-213-5007';
-@endphp
-
-
 <div class="flow-text" style="max-height: 590px;">
     <div class="header col">
         <div class="logo">
@@ -15,9 +9,11 @@ $fax = '1-888-213-5007';
                 <br>
                 {{$extraAddressValues[0]['address_line_1']}}
             <br>
-            Phone: {{$phone}}
-            Fax: {{$fax}}
             @endif
+            @if($extraContactDetails)
+                    Phone: {{$extraContactDetails['phone']}}
+                    Fax: {{$extraContactDetails['fax']}}
+                @endif
         </div>
     </div>
 </div>
