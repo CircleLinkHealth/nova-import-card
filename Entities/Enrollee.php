@@ -501,7 +501,7 @@ class Enrollee extends BaseModel
         return $query->whereNull('source')
             ->when($initialInvite, function ($q){
                 $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
-                    $q->where('users.created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
+                    $q->where('created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
                 });
             })
             ->whereIn('status', [
