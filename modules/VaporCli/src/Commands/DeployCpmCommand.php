@@ -23,7 +23,10 @@ class DeployCpmCommand extends Command
     /**
      * @var Process[]
      */
-    private $activeProcesses = [];
+    private $activeProcesses = []; /**
+     * @var Process[]
+     */
+    private $allProcesses = [];
 
     /**
      * Configure the command options.
@@ -65,6 +68,7 @@ class DeployCpmCommand extends Command
             Helpers::line('Running: '.$process->getCommandLine());
             $process->start();
 
+            $this->allProcesses[] = $process;
             $this->activeProcesses[] = $process;
         }
 
@@ -93,13 +97,13 @@ class DeployCpmCommand extends Command
 
     private function reportFinishedProcesses(): void
     {
-        foreach ($this->activeProcesses as $process) {
+        foreach ($this->allProcesses as $process) {
             if ( ! $process->isSuccessful()) {
-                Helpers::danger('Failed: '.$runningProcess->getWorkingDirectory(). $process->getErrorOutput());
+                Helpers::danger('Failed: '.$process->getWorkingDirectory(). $process->getErrorOutput());
                 continue;
             }
 
-            Helpers::line('Successful: '.$runningProcess->getWorkingDirectory(). $process->getCommandLine());
+            Helpers::line('Successful: '.$process->getWorkingDirectory(). $process->getCommandLine());
         }
     }
 
