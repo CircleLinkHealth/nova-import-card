@@ -15,8 +15,8 @@ class GeneratePrimaryCare360 extends Seeder
     const LOGO_SOURCE = '/img/logos/PrimaryCare360/primary_care_360_logo.png';
     const ANITA_ARAB_SIGNATURE        = '/img/signatures/primary-care-360/anita_arab_signature.png';
     const ADEEB_KHALIL_SIGNATURE      = '/img/signatures/primary-care-360/adeeb_khalil_signature.png';
-    const SIGNATORY_NAME_ANITA_ARAB   = 'Anita Arab/ Administrator';
-    const SIGNATORY_NAME_ADEEB_KHALIL = 'Adeeb Khalil/ Administrator';
+    const SIGNATORY_NAME_ANITA_ARAB   = 'Anita Arab, Administrator';
+    const SIGNATORY_NAME_ADEEB_KHALIL = 'Adeeb Khalil, Administrator';
     const DISPLAY_NAME = 'Primary Care 360';
 
     /**
