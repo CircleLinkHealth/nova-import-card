@@ -59,6 +59,10 @@ class AttestedProblem extends Pivot
         'addendum_id',
     ];
 
+    protected $dates = [
+        'chargeable_month'
+    ];
+
     protected $table = 'call_problems';
 
     public function call()
@@ -74,6 +78,11 @@ class AttestedProblem extends Pivot
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
+    }
+
+    public function attestor()
+    {
+        return $this->belongsTo(User::class, 'attestor_id');
     }
 
     /**
