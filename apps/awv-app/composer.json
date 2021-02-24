@@ -105,6 +105,10 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/LaravelScheduleMonitor"
         }
     ],
@@ -129,6 +133,7 @@
         "circlelinkhealth/synonyms-module": "*",
         "ohdearapp/ohdear-php-sdk": "^3.0",
         "spatie/laravel-schedule-monitor": "*",
+        "circlelinkhealth/pdf-service-module": "*",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",

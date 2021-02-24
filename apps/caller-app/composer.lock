@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2820b4f72fe43b6cd2152576282b0d09",
+    "content-hash": "ac5adba1039e7a529070acf368f9241a",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -223,16 +223,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.14",
+            "version": "3.173.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ff2b3623adc6781da48ee017e7042a363cd65955"
+                "reference": "8d9fd59b9a25fe5b615bd94ced9c1539340452f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ff2b3623adc6781da48ee017e7042a363cd65955",
-                "reference": "ff2b3623adc6781da48ee017e7042a363cd65955",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8d9fd59b9a25fe5b615bd94ced9c1539340452f6",
+                "reference": "8d9fd59b9a25fe5b615bd94ced9c1539340452f6",
                 "shasum": ""
             },
             "require": {
@@ -304,7 +304,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-22T19:22:33+00:00"
+            "time": "2021-02-23T19:13:28+00:00"
         },
         {
             "name": "brick/math",
@@ -364,7 +364,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/CcmBilling",
-                "reference": "038aee540af1af45a9edb88df938d500bcccc219"
+                "reference": "48da3a0eb31840388f5e5259ef4da52f1e71bf30"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -508,7 +508,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Core",
-                "reference": "2d51957e183198f7c8eb9cb4d648eaa55085206b"
+                "reference": "664de263aef56a886531a9f34c69be922494dccd"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -595,12 +595,13 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Customer",
-                "reference": "3ec8d0d8ab8e50d9469ee705fdcbad1fe104893a"
+                "reference": "5c8e288daefad0444933dd443ee4b110c381e53e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
                 "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/pdf-service-module": "*",
                 "circlelinkhealth/twofa-module": "*",
                 "fico7489/laravel-pivot": "^3.0",
                 "jenssegers/agent": "^2.5",
@@ -639,11 +640,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "4.5.x-dev",
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Eligibility",
-                "reference": "f2efbbe29700934f0bcf18d77c603159faf593eb"
+                "reference": "ecdc8f2e462fed8805349a46585995f0e7adec6e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -651,6 +652,10 @@
             },
             "type": "laravel-module",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4.x-dev",
+                    "road_547_moving_self_enrollment_eligibility": "4.5.x-dev"
+                },
                 "laravel": {
                     "providers": [
                         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
@@ -675,12 +680,56 @@
             }
         },
         {
+            "name": "circlelinkhealth/pdf-service-module",
+            "version": "v1.0",
+            "dist": {
+                "type": "path",
+                "url": "./CircleLinkHealth/PdfService",
+                "reference": "bb78555bec140e02e16cbfbee72b1f5bc072d119"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "daltcore/lara-pdf-merger": "2.0.6"
+            },
+            "suggest": {
+                "api2pdf/api2pdf.php": "Required to use Api2Pdf",
+                "barryvdh/laravel-snappy": "Required to use SnappyPdf (wkhtmltopdf)"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceProvider",
+                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceDeferrableProvider"
+                    ],
+                    "aliases": [],
+                    "dont-discover": [
+                        "barryvdh/laravel-snappy"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\PdfService\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "circlelinkhealth/revisionable-module",
             "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Revisionable",
-                "reference": "1ecfba60f93558e4577f89fd6f2d47ab8ff36baa"
+                "reference": "d711ccea87ad5dc02a8d5be8939e8c895d458d69"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0|^8.0",
@@ -823,7 +872,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/TwilioIntegration",
-                "reference": "5bbc7674301b42927afd91d208555a48a353eb40"
+                "reference": "8090487f425fc60db15283ed20f8954407c303a2"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1023,6 +1072,72 @@
                 }
             ],
             "time": "2020-11-11T10:22:58+00:00"
+        },
+        {
+            "name": "daltcore/lara-pdf-merger",
+            "version": "2.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DALTCORE/lara-pdf-merger.git",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DALTCORE/lara-pdf-merger/zipball/f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "reference": "f794509b12fe61c9d6a6af9d3af52ffecddc90cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LynX39\\LaraPdfMerger\\PdfMergerServiceProvider"
+                    ],
+                    "aliases": {
+                        "PdfMerger": "LynX39\\LaraPdfMerger\\Facades\\PdfMerger"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "LynX39\\LaraPdfMerger": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Musso",
+                    "email": "lynx@deltaaskii.com",
+                    "homepage": "https://github.com/LynX39"
+                },
+                {
+                    "name": "Ramon Smit",
+                    "email": "rsmit@daltcore.com",
+                    "homepage": "https://github.com/daltcore"
+                },
+                {
+                    "name": "Marouan Sami",
+                    "email": "sami.marwen.isetcom@gmail.com",
+                    "homepage": "https://github.com/MarwenSami"
+                }
+            ],
+            "homepage": "https://github.com/MarwenSami/lara-pdf-merger",
+            "keywords": [
+                "duplex merge",
+                "laravel",
+                "manage",
+                "merge",
+                "merger",
+                "paginate",
+                "pdf"
+            ],
+            "time": "2020-05-06T07:49:12+00:00"
         },
         {
             "name": "darkghosthunter/laraload",
@@ -3146,16 +3261,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.28.1",
+            "version": "v8.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "73dd43d92fcde6c6abc00658ae33391397ca119d"
+                "reference": "d2eba352b3b3a3c515b18c5726b373fe5026733e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/73dd43d92fcde6c6abc00658ae33391397ca119d",
-                "reference": "73dd43d92fcde6c6abc00658ae33391397ca119d",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/d2eba352b3b3a3c515b18c5726b373fe5026733e",
+                "reference": "d2eba352b3b3a3c515b18c5726b373fe5026733e",
                 "shasum": ""
             },
             "require": {
@@ -3263,7 +3378,7 @@
                 "phpunit/phpunit": "Required to use assertions and run tests (^8.5.8|^9.3.3).",
                 "predis/predis": "Required to use the predis connector (^1.1.2).",
                 "psr/http-message": "Required to allow Storage::put to accept a StreamInterface (^1.0).",
-                "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (^4.0).",
+                "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (^4.0|^5.0).",
                 "symfony/cache": "Required to PSR-6 cache bridge (^5.1.4).",
                 "symfony/filesystem": "Required to enable support for relative symbolic links (^5.1.4).",
                 "symfony/psr-http-message-bridge": "Required to use PSR-7 bridging features (^2.0).",
@@ -3306,7 +3421,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-02-16T18:07:44+00:00"
+            "time": "2021-02-23T14:27:41+00:00"
         },
         {
             "name": "laravel/legacy-factories",
@@ -3362,16 +3477,16 @@
         },
         {
             "name": "laravel/passport",
-            "version": "v10.1.0",
+            "version": "v10.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "c2b93a7d8d93cf303bb1eefbfa5610f084f9bdd4"
+                "reference": "2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/c2b93a7d8d93cf303bb1eefbfa5610f084f9bdd4",
-                "reference": "c2b93a7d8d93cf303bb1eefbfa5610f084f9bdd4",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3",
+                "reference": "2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3",
                 "shasum": ""
             },
             "require": {
@@ -3390,7 +3505,7 @@
                 "league/oauth2-server": "^8.2",
                 "nyholm/psr7": "^1.3",
                 "php": "^7.3|^8.0",
-                "phpseclib/phpseclib": "^2.0",
+                "phpseclib/phpseclib": "^3.0",
                 "symfony/psr-http-message-bridge": "^2.0"
             },
             "require-dev": {
@@ -3431,7 +3546,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2020-11-26T07:57:30+00:00"
+            "time": "2021-02-23T20:45:29+00:00"
         },
         {
             "name": "laravel/scout",
@@ -5611,6 +5726,68 @@
             "time": "2020-11-07T02:01:34+00:00"
         },
         {
+            "name": "paragonie/constant_time_encoding",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/constant_time_encoding.git",
+                "reference": "f34c2b11eb9d2c9318e13540a1dbc2a3afbd939c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/f34c2b11eb9d2c9318e13540a1dbc2a3afbd939c",
+                "reference": "f34c2b11eb9d2c9318e13540a1dbc2a3afbd939c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7|^8"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6|^7|^8|^9",
+                "vimeo/psalm": "^1|^2|^3|^4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ParagonIE\\ConstantTime\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Steve 'Sc00bz' Thomas",
+                    "email": "steve@tobtu.com",
+                    "homepage": "https://www.tobtu.com",
+                    "role": "Original Developer"
+                }
+            ],
+            "description": "Constant-time Implementations of RFC 4648 Encoding (Base-64, Base-32, Base-16)",
+            "keywords": [
+                "base16",
+                "base32",
+                "base32_decode",
+                "base32_encode",
+                "base64",
+                "base64_decode",
+                "base64_encode",
+                "bin2hex",
+                "encoding",
+                "hex",
+                "hex2bin",
+                "rfc4648"
+            ],
+            "time": "2020-12-06T15:14:20+00:00"
+        },
+        {
             "name": "paragonie/random_compat",
             "version": "v9.99.100",
             "source": {
@@ -6186,24 +6363,26 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.30",
+            "version": "3.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "136b9ca7eebef78be14abf90d65c5e57b6bc5d36"
+                "reference": "7c751ea006577e4c2e83326d90c8b1e8c11b8ede"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/136b9ca7eebef78be14abf90d65c5e57b6bc5d36",
-                "reference": "136b9ca7eebef78be14abf90d65c5e57b6bc5d36",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/7c751ea006577e4c2e83326d90c8b1e8c11b8ede",
+                "reference": "7c751ea006577e4c2e83326d90c8b1e8c11b8ede",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "paragonie/constant_time_encoding": "^1|^2",
+                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
+                "php": ">=5.6.1"
             },
             "require-dev": {
                 "phing/phing": "~2.7",
-                "phpunit/phpunit": "^4.8.35|^5.7|^6.0|^9.4",
+                "phpunit/phpunit": "^5.7|^6.0|^9.4",
                 "squizlabs/php_codesniffer": "~2.0"
             },
             "suggest": {
@@ -6218,7 +6397,7 @@
                     "phpseclib/bootstrap.php"
                 ],
                 "psr-4": {
-                    "phpseclib\\": "phpseclib/"
+                    "phpseclib3\\": "phpseclib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -6287,7 +6466,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-17T05:42:04+00:00"
+            "time": "2021-02-12T16:18:16+00:00"
         },
         {
             "name": "propaganistas/laravel-phone",
@@ -7582,16 +7761,10 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
-                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/677a8aaeec625ff1d64f1133be81f653841ebbd8",
-                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/LaravelScheduleMonitor",
+                "reference": "097c83a41fa73e1142b0b1f129dd26f749c15318"
             },
             "require": {
                 "illuminate/bus": "^8.0",
@@ -7625,7 +7798,25 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "psalm": [
+                    "vendor/bin/psalm"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ],
+                "format": [
+                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -7643,13 +7834,9 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-01-15T12:05:52+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "spatie/laravel-view-models",
@@ -11059,16 +11246,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.0.9",
+            "version": "2.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "591c2c155cac0d2d7f34af41d3b1e29bcbfc685e"
+                "reference": "a5a5632da0b1c2d6fa9a3b65f1f4e90d1f04abb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/591c2c155cac0d2d7f34af41d3b1e29bcbfc685e",
-                "reference": "591c2c155cac0d2d7f34af41d3b1e29bcbfc685e",
+                "url": "https://api.github.com/repos/composer/composer/zipball/a5a5632da0b1c2d6fa9a3b65f1f4e90d1f04abb9",
+                "reference": "a5a5632da0b1c2d6fa9a3b65f1f4e90d1f04abb9",
                 "shasum": ""
             },
             "require": {
@@ -11147,7 +11334,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-27T15:09:27+00:00"
+            "time": "2021-02-24T13:57:23+00:00"
         },
         {
             "name": "composer/semver",
@@ -12304,16 +12491,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.4.2",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "20cab678faed06fac225193be281ea0fddb43b93"
+                "reference": "d1339f64479af1bee0e82a0413813fe5345a54ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/20cab678faed06fac225193be281ea0fddb43b93",
-                "reference": "20cab678faed06fac225193be281ea0fddb43b93",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/d1339f64479af1bee0e82a0413813fe5345a54ea",
+                "reference": "d1339f64479af1bee0e82a0413813fe5345a54ea",
                 "shasum": ""
             },
             "require": {
@@ -12368,7 +12555,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2020-08-11T18:10:13+00:00"
+            "time": "2021-02-24T09:51:49+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -12566,16 +12753,16 @@
         },
         {
             "name": "phar-io/version",
-            "version": "3.0.4",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/version.git",
-                "reference": "e4782611070e50613683d2b9a57730e9a3ba5451"
+                "reference": "bae7c545bef187884426f042434e561ab1ddb182"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/version/zipball/e4782611070e50613683d2b9a57730e9a3ba5451",
-                "reference": "e4782611070e50613683d2b9a57730e9a3ba5451",
+                "url": "https://api.github.com/repos/phar-io/version/zipball/bae7c545bef187884426f042434e561ab1ddb182",
+                "reference": "bae7c545bef187884426f042434e561ab1ddb182",
                 "shasum": ""
             },
             "require": {
@@ -12609,7 +12796,7 @@
                 }
             ],
             "description": "Library for handling version information and constraints",
-            "time": "2020-12-13T23:18:30+00:00"
+            "time": "2021-02-23T14:00:09+00:00"
         },
         {
             "name": "php-cs-fixer/diff",

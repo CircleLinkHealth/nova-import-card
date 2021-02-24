@@ -5,6 +5,7 @@ Customer
 Eligibility
 Revisionable
 LaravelScheduleMonitor
+PdfService
 SelfEnrollment
 SharedModels
 Synonyms

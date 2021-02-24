@@ -9,6 +9,7 @@ Eligibility
 LaravelScheduleMonitor
 Raygun
 Revisionable
+PdfService
 SelfEnrollment
 SharedModels
 ShortUrl

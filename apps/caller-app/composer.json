@@ -62,6 +62,10 @@
         {
             "type": "path",
             "url": "./CircleLinkHealth/LaravelScheduleMonitor"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
         }
     ],
     "license": "MIT",
@@ -78,6 +82,7 @@
         "circlelinkhealth/self-enrollment-module": "*",
         "circlelinkhealth/shared-models-module": "*",
         "circlelinkhealth/twilio-integration-module":"*",
+        "circlelinkhealth/pdf-service-module": "*",
         "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
