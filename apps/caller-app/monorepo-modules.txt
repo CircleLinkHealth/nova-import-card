@@ -8,6 +8,7 @@ PdfService
 Revisionable
 SelfEnrollment
 SharedModels
+SqlViews
 Synonyms
 TwilioIntegration
 TwoFA

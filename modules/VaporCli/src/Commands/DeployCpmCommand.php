@@ -17,7 +17,7 @@ class DeployCpmCommand extends Command
         'awv',
         'caller',
         'provider',
-        'self-enrollment'
+        'self-enrollment',
     ];
 
     /**
@@ -38,7 +38,12 @@ class DeployCpmCommand extends Command
             ->addArgument('environment_type', InputArgument::REQUIRED, 'The environment type')
             ->addArgument('apps', InputArgument::IS_ARRAY, 'The environment type', self::CPM_APPS)
             ->addOption('commit', null, InputOption::VALUE_OPTIONAL, 'The commit hash that is being deployed')
-            ->addOption('message', null, InputOption::VALUE_OPTIONAL, 'The message for the commit that is being deployed')
+            ->addOption(
+                'message',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The message for the commit that is being deployed'
+            )
             ->addOption('without-waiting', null, InputOption::VALUE_NONE, 'Deploy without waiting for progress')
             ->setDescription('Deploy all CPM apps');
     }
@@ -52,8 +57,12 @@ class DeployCpmCommand extends Command
     {
         foreach ($this->argument('apps') as $app) {
             Helpers::line("Preparing $app");
-            $process = $this->createDeployProcess($app, $this->argument('environment'), $this->argument('environment_type'));
-            Helpers::line('Running: ' . $process->getCommandLine());
+            $process = $this->createDeployProcess(
+                $app,
+                $this->argument('environment'),
+                $this->argument('environment_type')
+            );
+            Helpers::line('Running: '.$process->getCommandLine());
             $process->start();
 
             $this->activeProcesses[] = $process;
@@ -63,18 +72,20 @@ class DeployCpmCommand extends Command
 
         while (count($this->activeProcesses)) {
             foreach ($this->activeProcesses as $i => $runningProcess) {
-                if (! $runningProcess->isRunning()) {
-                    Helpers::line('Finished: '.$runningProcess->getWorkingDirectory().$runningProcess->getCommandLine());
+                if ( ! $runningProcess->isRunning()) {
+                    Helpers::line(
+                        'Finished: '.$runningProcess->getWorkingDirectory().$runningProcess->getCommandLine()
+                    );
                     Helpers::danger($runningProcess->getErrorOutput());
                     unset($this->activeProcesses[$i]);
                     continue;
                 }
 
-                Helpers::line($runningProcess->getWorkingDirectory().$runningProcess->getIncrementalOutput());
+                if ($incrOutput = $runningProcess->getIncrementalOutput()) {
+                    Helpers::line($runningProcess->getWorkingDirectory().$incrOutput);
+                }
             }
-
-            // check every second
-            sleep(1);
+            sleep(5);
         }
 
         $this->reportFinishedProcesses();
@@ -83,12 +94,12 @@ class DeployCpmCommand extends Command
     private function reportFinishedProcesses(): void
     {
         foreach ($this->activeProcesses as $process) {
-            if (! $process->isSuccessful()) {
-                Helpers::danger($process->getErrorOutput());
+            if ( ! $process->isSuccessful()) {
+                Helpers::danger('Failed: '.$runningProcess->getWorkingDirectory(). $process->getErrorOutput());
                 continue;
             }
 
-            Helpers::line($process->getCommandLine());
+            Helpers::line('Successful: '.$runningProcess->getWorkingDirectory(). $process->getCommandLine());
         }
     }
 
@@ -97,11 +108,13 @@ class DeployCpmCommand extends Command
         string $envName,
         string $envType
     ): Process {
-        return new Process([
-            Path::current().'/modules/VaporCli/vapor',
-            'deploy',
-            $envName,
-            $envType
-                           ], Path::current()."/apps/$app-app", null, null, null);
+        return new Process(
+            [
+                Path::current().'/modules/VaporCli/vapor',
+                'deploy',
+                $envName,
+                $envType,
+            ], Path::current()."/apps/$app-app", null, null, null
+        );
     }
 }

@@ -32,12 +32,12 @@ class CopyApplicationToBuildPath
                 : $this->createFileForCopy($file);
         }
 
+        Helpers::step('<options=bold>Copying Modules</>');
+
         foreach (CLHModulesFiles::get("$this->path/../../modules") as $file) {
             if ($file->isLink()) {
                 continue;
             }
-
-            echo "Copying file: $file \n";
 
             $file->isDir()
                 ? $this->createDirectoryForCLHModulesCopy($file)

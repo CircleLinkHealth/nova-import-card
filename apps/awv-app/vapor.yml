@@ -1,6 +1,5 @@
 id: 16392
 name: app-awv
-separate-vendor: true
 environments:
   production:
     domain:
@@ -21,7 +20,7 @@ environments:
       - awv-high-production
       - awv-revisionable-production
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
       - 'php artisan route:cache'
@@ -43,7 +42,7 @@ environments:
       - awv-high-staging
       - awv-revisionable-staging
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
       - 'php artisan route:cache'

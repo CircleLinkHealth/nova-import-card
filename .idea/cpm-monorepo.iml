@@ -28,6 +28,10 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/caller/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/apps/provider/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/apps/self-enrollment-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/awv-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/caller-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/provider-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/provider-app/bower_components" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

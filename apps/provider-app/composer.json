@@ -254,6 +254,7 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
+            "composer ide",
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "@php artisan vapor-ui:publish --ansi"
         ],

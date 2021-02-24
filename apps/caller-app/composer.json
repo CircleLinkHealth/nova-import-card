@@ -41,6 +41,10 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/Synonyms"
         },
         {
@@ -59,6 +63,7 @@
             "type": "path",
             "url": "./CircleLinkHealth/VaporCore"
         },
+
         {
             "type": "path",
             "url": "./CircleLinkHealth/VaporDevopsHelpers"
@@ -85,6 +90,7 @@
         "circlelinkhealth/revisionable-module": "*",
         "circlelinkhealth/self-enrollment-module": "*",
         "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/sqlviews-module":"*",
         "circlelinkhealth/twilio-integration-module":"*",
         "circlelinkhealth/pdf-service-module": "*",
         "fakerphp/faker": "^1.9.1",
@@ -156,10 +162,8 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models -W --dir=\"app\""
+            "composer ide",
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate"
         ],
         "ide": [
             "@php artisan ide-helper:generate",
