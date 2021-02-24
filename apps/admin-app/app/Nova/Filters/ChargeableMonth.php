@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Filters;
 
 use Illuminate\Http\Request;
@@ -18,9 +22,8 @@ class ChargeableMonth extends Filter
     /**
      * Apply the filter to the given query.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  mixed                                 $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(Request $request, $query, $value)
@@ -31,12 +34,11 @@ class ChargeableMonth extends Filter
     /**
      * Get the filter's available options.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function options(Request $request)
     {
-        $result         = [];
+        $result = [];
         for ($i = 0; $i < self::DEFAULT_MONTHS_TO_GO_BACK_T0; ++$i) {
             $month        = now()->subMonths($i);
             $key          = $month->monthName.' '.$month->year;

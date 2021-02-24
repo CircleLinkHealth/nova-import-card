@@ -56,12 +56,12 @@ class Call extends Resource
         return false;
     }
 
-    public function authorizedToUpdate(Request $request)
+    public function authorizedToDelete(Request $request)
     {
         return false;
     }
 
-    public function authorizedToDelete(Request $request)
+    public function authorizedToUpdate(Request $request)
     {
         return false;
     }

@@ -647,7 +647,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/CcmBilling",
-                "reference": "038aee540af1af45a9edb88df938d500bcccc219"
+                "reference": "48da3a0eb31840388f5e5259ef4da52f1e71bf30"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -705,16 +705,10 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "v3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
-                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/CerberusGatekeeper",
+                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
             },
             "require": {
                 "illuminate/cache": "*",
@@ -747,7 +741,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -783,7 +781,9 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-12-28T01:46:18+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -791,7 +791,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Core",
-                "reference": "2d51957e183198f7c8eb9cb4d648eaa55085206b"
+                "reference": "664de263aef56a886531a9f34c69be922494dccd"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -848,7 +848,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/CpmAdmin",
-                "reference": "290f9de6b6492d4a0a12d82a36e78a8a913f8a0c"
+                "reference": "859b7dbf22b1f883b217ad0facbc7f7679a99ff6"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -935,7 +935,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Customer",
-                "reference": "36a09f5f1571bd7ce599a075cc167ad44409e614"
+                "reference": "5c8e288daefad0444933dd443ee4b110c381e53e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -980,11 +980,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "4.5.x-dev",
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Eligibility",
-                "reference": "f2efbbe29700934f0bcf18d77c603159faf593eb"
+                "reference": "ecdc8f2e462fed8805349a46585995f0e7adec6e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1101,7 +1101,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Revisionable",
-                "reference": "1ecfba60f93558e4577f89fd6f2d47ab8ff36baa"
+                "reference": "d711ccea87ad5dc02a8d5be8939e8c895d458d69"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0|^8.0",
@@ -1153,18 +1153,9 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/SelfEnrollment",
-                "reference": "faaefd5a49dfc0a95ecb30b1e1076b4d6f01046a"
+                "reference": "1382614b9b0dec9850b885537665fc611b9d307c"
             },
             "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.0.x-dev"
-                },
-                "laravel": {
-                    "providers": [],
-                    "aliases": []
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\SelfEnrollment\\": ""
@@ -1192,12 +1183,6 @@
                 "circlelinkhealth/eligibility-module": "*"
             },
             "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2.x-dev",
-                    "dev-road_547_sharedModels": "3.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\SharedModels\\": ""
