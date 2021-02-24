@@ -88,10 +88,6 @@
             "url": "./CircleLinkHealth/TwoFA"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/vapor-cli.git"
-        },
-        {
             "type": "path",
             "url": "./CircleLinkHealth/VaporCli"
         },
