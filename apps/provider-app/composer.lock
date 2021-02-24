@@ -876,10 +876,6 @@
             },
             "type": "laravel-module",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "4.2.x-dev",
-                    "dev-road_547_customer": "4.3.x-dev"
-                },
                 "laravel": {
                     "providers": [],
                     "aliases": []
@@ -918,10 +914,6 @@
             },
             "type": "laravel-module",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "4.4.x-dev",
-                    "road_547_moving_self_enrollment_eligibility": "4.5.x-dev"
-                },
                 "laravel": {
                     "providers": [
                         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
@@ -1229,12 +1221,6 @@
                 "circlelinkhealth/eligibility-module": "*"
             },
             "type": "laravel-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2.x-dev",
-                    "dev-road_547_sharedModels": "3.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\SharedModels\\": ""
@@ -9658,32 +9644,27 @@
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
-                "reference": "d4245bb9767071c50ea452261e4bb0bb0843c126"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/d4245bb9767071c50ea452261e4bb0bb0843c126",
-                "reference": "d4245bb9767071c50ea452261e4bb0bb0843c126",
-                "shasum": ""
+                "type": "path",
+                "url": "./CircleLinkHealth/LaravelScheduleMonitor",
+                "reference": "097c83a41fa73e1142b0b1f129dd26f749c15318"
             },
             "require": {
-                "illuminate/bus": "^7.19|^8.0",
+                "illuminate/bus": "^8.0",
                 "lorisleiva/cron-translator": "^0.1.1",
-                "php": "^7.4"
+                "nesbot/carbon": "^2.41.3",
+                "php": "^7.4|^8.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
-                "laravel/legacy-factories": "^1.0",
+                "laravel/legacy-factories": "^1.0.4",
+                "mockery/mockery": "^1.4",
                 "ohdearapp/ohdear-php-sdk": "^3.0",
-                "orchestra/testbench": "^5.0|^6.0",
-                "phpunit/phpunit": "^9.0",
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.3",
                 "spatie/phpunit-snapshot-assertions": "^4.2",
                 "spatie/test-time": "^1.2",
-                "vimeo/psalm": "^3.11"
+                "vimeo/psalm": "^4.0"
             },
             "suggest": {
                 "ohdearapp/ohdear-php-sdk": "Needed to sync your schedule with Oh Dear"
@@ -9701,7 +9682,25 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "psalm": [
+                    "vendor/bin/psalm"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ],
+                "format": [
+                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -9719,13 +9718,9 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-09-08T20:04:19+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "spatie/laravel-slack-slash-command",

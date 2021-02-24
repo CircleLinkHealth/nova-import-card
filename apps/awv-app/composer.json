@@ -100,10 +100,6 @@
             "url": "./CircleLinkHealth/VaporCore"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git"
-        },
-        {
             "type": "path",
             "url": "./CircleLinkHealth/PdfService"
         },
