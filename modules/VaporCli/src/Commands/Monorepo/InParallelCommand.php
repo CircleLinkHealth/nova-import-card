@@ -66,6 +66,7 @@ abstract class InParallelCommand extends Command
 
                 if ($incrOutput = $runningProcess->getIncrementalOutput()) {
                     Helpers::line("Status[$appName] $incrOutput");
+                    continue;
                 }
             }
             sleep(1);

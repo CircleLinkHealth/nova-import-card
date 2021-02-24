@@ -14,10 +14,10 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem\ArrayProblemLogger
 use CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem\CommaDelimitedListProblemLogger;
 use CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem\JsonListProblemLogger;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ImportAllItems;
+use CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidEndDate;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStartDateNoEndDate;
 use CircleLinkHealth\Eligibility\CcdaImporter\Validators\ValidStatus;
-use CircleLinkHealth\Eligibility\CcdaImporter\Validators\NameNotNull;
 
 return [
     'validators' => [

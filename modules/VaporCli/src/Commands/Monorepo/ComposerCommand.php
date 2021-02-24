@@ -32,7 +32,9 @@ class ComposerCommand extends InParallelCommand
                     'composer',
                 ],
                 explode(' ', $this->argument('directive'))
-            ), $this->appPath($app), null, null, null
+            ), $this->appPath($app), [
+                'COMPOSER_MEMORY_LIMIT' => -1,
+            ], null, null
         );
     }
 }

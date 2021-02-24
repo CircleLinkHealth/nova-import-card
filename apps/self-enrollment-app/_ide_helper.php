@@ -18747,6 +18747,27 @@
      
 }
 
+    namespace Illuminate\Database\Query { 
+            /**
+     * 
+     *
+     */ 
+        class Builder {
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @static 
+         */ 
+        public static function toRawSql()
+        {
+                        return \Illuminate\Database\Query\Builder::toRawSql();
+        }
+         
+    }
+     
+}
+
     namespace Laravel\Nova\Fields { 
             /**
      * 
@@ -20009,6 +20030,17 @@ namespace  {
             public static function chunkIntoJobs($limit, $job)
             {
                                 return \Illuminate\Database\Eloquent\Builder::chunkIntoJobs($limit, $job);
+            }
+             
+                /**
+             * 
+             *
+             * @see \App\Providers\AppServiceProvider::boot()
+             * @static 
+             */ 
+            public static function toRawSql()
+            {
+                                return \Illuminate\Database\Eloquent\Builder::toRawSql();
             }
              
                 /**
