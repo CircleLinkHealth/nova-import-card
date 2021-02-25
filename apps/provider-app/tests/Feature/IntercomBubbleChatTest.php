@@ -16,14 +16,14 @@ class IntercomBubbleChatTest extends CustomerTestCase
     use UserHelpers;
 
     const CONFIG_KEY = 'roles_allowed_bubble_chat';
-    
+
     protected function setUp(): void
     {
         parent::setUp();
         AppConfig::remove(self::CONFIG_KEY);
         AppConfig::clearCache();
     }
-    
+
     public function test_if_app_config_is_empty_no_user_can_see_bubble_chat()
     {
         self::assertTrue(empty(AppConfig::pull(self::CONFIG_KEY)));

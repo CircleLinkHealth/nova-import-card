@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property int|null                   $attestor_id
  * @property PatientMonthlySummary|null $pms
  * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @property-read User|null $attestor
  */
 class AttestedProblem extends Pivot
 {

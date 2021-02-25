@@ -160,6 +160,7 @@ use function Clue\StreamFilter\fun;
  * @method static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
  * @method static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollee canSendSelfEnrollmentInvitation(bool $initialInvite)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollee ofActivePractice()
  */
 class Enrollee extends BaseModel
 {
