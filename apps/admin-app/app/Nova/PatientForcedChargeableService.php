@@ -7,12 +7,14 @@
 namespace App\Nova;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService as PatientForcedChargeableServiceModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class PatientForcedChargeableService extends Resource
 {
@@ -115,5 +117,19 @@ class PatientForcedChargeableService extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    /**
+     * Build a "relatable" query for the given resource.
+     *
+     * This query determines which instances of the model may be attached to other resources.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function relatableChargeableServices(NovaRequest $request, $query)
+    {
+        return $query->whereNotNull('display_name');
     }
 }

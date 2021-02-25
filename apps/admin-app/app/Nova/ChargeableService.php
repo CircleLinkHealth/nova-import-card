@@ -119,18 +119,4 @@ class ChargeableService extends Resource
     {
         return [];
     }
-
-    /**
-     * Build a "relatable" query for the given resource.
-     *
-     * This query determines which instances of the model may be attached to other resources.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function relatableQuery(NovaRequest $request, $query)
-    {
-        return $query->whereNotNull('display_name');
-    }
 }
