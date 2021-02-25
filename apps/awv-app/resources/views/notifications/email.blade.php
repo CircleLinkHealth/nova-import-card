@@ -18,12 +18,12 @@
 <?php
 
 $style = [
-    /* Layout ------------------------------ */
+    // Layout ------------------------------
 
     'body'          => 'margin: 0; padding: 0; width: 100%; background-color: #F2F4F6;',
     'email-wrapper' => 'width: 100%; margin: 0; padding: 0; background-color: #F2F4F6;',
 
-    /* Masthead ----------------------- */
+    // Masthead -----------------------
 
     'email-masthead'      => 'padding: 25px 0; text-align: center;',
     'email-masthead_name' => 'font-size: 16px; font-weight: bold; color: #2F3133; text-decoration: none; text-shadow: 0 1px 0 white;',
@@ -35,12 +35,12 @@ $style = [
     'email-footer'      => 'width: auto; max-width: 570px; margin: 0 auto; padding: 0; text-align: center;',
     'email-footer_cell' => 'color: #AEAEAE; padding: 35px; text-align: center;',
 
-    /* Body ------------------------------ */
+    // Body ------------------------------
 
     'body_action' => 'width: 100%; margin: 30px auto; padding: 0; text-align: center;',
     'body_sub'    => 'margin-top: 25px; padding-top: 25px; border-top: 1px solid #EDEFF2;',
 
-    /* Type ------------------------------ */
+    // Type ------------------------------
 
     'anchor'           => 'color: #3869D4;',
     'header-1'         => 'margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold; text-align: left;',
@@ -48,7 +48,7 @@ $style = [
     'paragraph-sub'    => 'margin-top: 0; color: #74787E; font-size: 12px; line-height: 1.5em;',
     'paragraph-center' => 'text-align: center;',
 
-    /* Buttons ------------------------------ */
+    // Buttons ------------------------------
 
     'button' => 'display: block; display: inline-block; width: 200px; min-height: 20px; padding: 10px;
                  background-color: #3869D4; border-radius: 3px; color: #ffffff; font-size: 15px; line-height: 25px;

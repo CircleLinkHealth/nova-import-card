@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
@@ -30,5 +33,4 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => false,
-
 ];

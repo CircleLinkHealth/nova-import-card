@@ -16,7 +16,7 @@ environments:
     concurrency: 50
     capacity: 5
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
   staging:
     domain: cpm-caller-laravel.clh-staging.com
     memory: 512
@@ -31,4 +31,4 @@ environments:
     concurrency: 5
     mail: false
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'

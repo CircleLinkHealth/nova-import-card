@@ -22,13 +22,13 @@ use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Services\NoteService;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Exceptions\NurseNotFoundException;
 use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
     const CALL_BACK_TYPE                              = 'Call Back';
     const CALL_TYPE                                   = 'call';
-    const NURSE_NOT_FOUND                             = 'could not find nurse for patient';
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
     const TASK_TYPE                                   = 'task';
@@ -384,7 +384,7 @@ class SchedulerService
      * @param $scheduler
      * @param null $phoneNumber
      *
-     * @throws \Exception
+     * @throws NurseNotFoundException
      */
     public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
     {
@@ -423,8 +423,7 @@ class SchedulerService
         if ( ! $assignedNurse) {
             $standByNurseId = StandByNurseUser::id();
             if ( ! $standByNurseId) {
-                $message = self::NURSE_NOT_FOUND;
-                throw new \Exception("$message [$patient->id]");
+                throw new NurseNotFoundException($patient->id);
             }
             $nurseId = $standByNurseId;
             if ($schedulerIsInboundCallback) {

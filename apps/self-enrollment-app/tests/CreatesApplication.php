@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
@@ -13,7 +17,8 @@ trait CreatesApplication
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
+        $basePath = $_SERVER['OLDPWD'];
+        $app      = require "$basePath/bootstrap/app.php";
 
         $app->make(Kernel::class)->bootstrap();
 

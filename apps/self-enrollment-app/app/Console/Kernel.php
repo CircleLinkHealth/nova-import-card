@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console;
 
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
@@ -15,13 +19,23 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
     ];
+
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
+    }
 
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -39,17 +53,5 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(EnrollmentFinalAction::class)
             ->dailyAt('08:27');
-    }
-
-    /**
-     * Register the commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
-
-        require base_path('routes/console.php');
     }
 }

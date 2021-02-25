@@ -8,8 +8,8 @@ namespace App\Filters;
 
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use CircleLinkHealth\Core\Filters\QueryFilters;
+use Illuminate\Http\Request;
 
 class PatientListFilters extends QueryFilters
 {

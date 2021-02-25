@@ -18,8 +18,9 @@ class CLHModulesFiles
         $finder = (new Finder())
             ->in($path);
 
-        foreach (explode("\n", file_get_contents('monorepo-modules.txt')) as $dir) {
-            $finder->path('/'.preg_quote($dir, '/').'/');
+        foreach (array_filter(explode("\n", file_get_contents('monorepo-modules.txt'))) as $dir) {
+            $dir = '/'.preg_quote($dir, '/').'/';
+            $finder->path($dir);
         }
 
         return  $finder

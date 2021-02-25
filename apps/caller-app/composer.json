@@ -41,6 +41,10 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
+        },
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/Synonyms"
         },
         {
@@ -57,7 +61,20 @@
         },
         {
             "type": "path",
+            "url": "./CircleLinkHealth/VaporCore"
+        },
+
+        {
+            "type": "path",
             "url": "./CircleLinkHealth/VaporDevopsHelpers"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/LaravelScheduleMonitor"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
         }
     ],
     "license": "MIT",
@@ -66,20 +83,24 @@
         "ext-json": "*",
         "ext-redis": "*",
         "ext-simplexml": "*",
+        "spatie/laravel-schedule-monitor": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/revisionable-module": "*",
         "circlelinkhealth/self-enrollment-module": "*",
         "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/sqlviews-module":"*",
         "circlelinkhealth/twilio-integration-module":"*",
+        "circlelinkhealth/pdf-service-module": "*",
         "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "laravel/vapor-cli": "*",
+        "laravel/vapor-core": "*",
         "propaganistas/laravel-phone": "^4.1"
     },
     "require-dev": {
+        "laravel/vapor-cli": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-ide-helper": "^2.6",
         "friendsofphp/php-cs-fixer": "^2.16.3",
@@ -141,10 +162,8 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models -W --dir=\"app\""
+            "composer ide",
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate"
         ],
         "ide": [
             "@php artisan ide-helper:generate",

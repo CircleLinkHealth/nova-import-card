@@ -27,6 +27,7 @@ git@github.com:CircleLinkHealth/cpm-migrations-module.git CpmMigrations modules/
 git@github.com:CircleLinkHealth/module-customer.git Customer modules/Customer
 git@github.com:CircleLinkHealth/eligibility-module.git Eligibility modules/Eligibility
 git@github.com:CircleLinkHealth/laravel-module-installer.git LaravelModuleInstaller modules/LaravelModuleInstaller
+git@github.com:CircleLinkHealth/laravel-schedule-monitor.git LaravelScheduleMonitor modules/LaravelScheduleMonitor
 git@github.com:CircleLinkHealth/nurse-invoices-module.git NurseInvoices modules/NurseInvoices
 git@github.com:CircleLinkHealth/opcache-gui.git OpcacheGui modules/OpcacheGui
 git@github.com:CircleLinkHealth/patient-api-module.git PatientApi modules/PatientApi

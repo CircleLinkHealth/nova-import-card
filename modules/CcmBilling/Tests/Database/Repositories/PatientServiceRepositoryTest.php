@@ -25,10 +25,6 @@ class PatientServiceRepositoryTest extends CustomerTestCase
     use PracticeHelpers;
     use UserHelpers;
 
-    protected $location;
-
-    protected User $patient;
-
     protected PatientServiceProcessorRepositoryInterface $repo;
 
     public function setUp(): void

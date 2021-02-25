@@ -6,8 +6,10 @@ CpmAdmin
 CpmMigrations
 Customer
 Eligibility
+LaravelScheduleMonitor
 Raygun
 Revisionable
+PdfService
 SelfEnrollment
 SharedModels
 ShortUrl

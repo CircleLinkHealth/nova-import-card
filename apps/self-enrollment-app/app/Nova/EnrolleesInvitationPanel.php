@@ -9,8 +9,8 @@ namespace App\Nova;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
-use CircleLinkHealth\SelfEnrollment\Helpers;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
+use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -61,7 +61,6 @@ class EnrolleesInvitationPanel extends Resource
                 return true;
             })->canRun(function () {
                 return true;
-
             }),
         ];
     }
@@ -128,7 +127,7 @@ class EnrolleesInvitationPanel extends Resource
     {
         $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
 
-        $awvUserSurvey = null;
+        $awvUserSurvey      = null;
         $enroleeHasLoggedIn = false;
         if ( ! is_null($this->resource->user)) {
             $awvUserSurvey      = Helpers::awvUserSurveyQuery(new \CircleLinkHealth\SelfEnrollment\Entities\User($this->resource->user->toArray()), $surveyInstance)->first();
@@ -220,8 +219,7 @@ class EnrolleesInvitationPanel extends Resource
                 return self::COMPLETED === $awvUserSurvey->status;
             }),
 
-
-            Boolean::make('Enrolled/Imported', function () use($awvUserSurvey) {
+            Boolean::make('Enrolled/Imported', function () use ($awvUserSurvey) {
                 if ( ! $awvUserSurvey) {
                     return false;
                 }
@@ -230,6 +228,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
         ];
     }
+
     /**
      * Get the filters available for the resource.
      *
@@ -243,13 +242,13 @@ class EnrolleesInvitationPanel extends Resource
 
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->where(function ($q){
+        return $query->where(function ($q) {
             $q->whereIn('status', [
                 Enrollee::QUEUE_AUTO_ENROLLMENT,
                 Enrollee::UNREACHABLE,
                 Enrollee::ENROLLED,
                 Enrollee::TO_CALL,
-            ])->orWhere('status', Enrollee::CONSENTED, function ($q){
+            ])->orWhere('status', Enrollee::CONSENTED, function ($q) {
                 $q->where('auto_enrollment_triggered', true);
             });
         })->where('practice_id', self::getPracticeId())
@@ -257,6 +256,8 @@ class EnrolleesInvitationPanel extends Resource
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
             });
+
+//        We need a way to not render only of the duplicated enrollees. distinct('user_id') would do, but which enrollee should we pick??
     }
 
     /**

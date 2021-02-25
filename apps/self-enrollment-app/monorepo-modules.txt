@@ -4,9 +4,11 @@ Core
 CpmMigrations
 Customer
 Eligibility
+LaravelScheduleMonitor
 Raygun
 Revisionable
 SamlSp
+PdfService
 SelfEnrollment
 ShortUrl
 SharedModels
@@ -14,3 +16,4 @@ SqlViews
 Synonyms
 TwilioIntegration
 VaporCore
+TwoFA

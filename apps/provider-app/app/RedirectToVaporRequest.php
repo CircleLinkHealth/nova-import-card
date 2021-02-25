@@ -19,6 +19,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|RedirectToVaporRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|RedirectToVaporRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property int                             $id
+ * @property string                          $token
+ * @property int                             $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  */
 class RedirectToVaporRequest extends Model
 {
