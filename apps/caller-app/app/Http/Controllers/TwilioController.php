@@ -469,12 +469,14 @@ class TwilioController extends Controller
             $input['IsCallToPatient'] = boolValue($input['IsCallToPatient']);
         }
 
+        $is911 = '911' === ($input['To'] ?? '');
+
         $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
             'From' => 'required|phone:AUTO,US',
             'To'   => [
                 'required',
-                $isProduction
+                $isProduction && ! $is911
                     ? Rule::phone()->detect()->country('US')
                     : '',
             ],

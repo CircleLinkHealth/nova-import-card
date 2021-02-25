@@ -11,14 +11,14 @@
         </div>
         <div class="window-close-banner">
             <strong>
-                When the call is ended, this window will close after {{endCallWindowCloseDelay}} seconds.
+                When the call is ended, this window will close after {{ endCallWindowCloseDelay }} seconds.
             </strong>
             <br/>
             <strong>
                 If you would like to make another call, please click on 'Make Call' again.
             </strong>
         </div>
-        <div :class="hasError ? 'error-logs' : ''">{{log}}</div>
+        <div :class="hasError ? 'error-logs' : ''">{{ log }}</div>
         <div v-if="hasError" style="display: none">
             <button class="btn btn-circle btn-warning" @click="initTwilio">
                 Retry
@@ -28,7 +28,7 @@
             We have detected poor call quality conditions. You may experience degraded call quality.
         </div>
         <div v-show="closeCountdown > 0">This window will close in <span
-                class="countdown-seconds">{{closeCountdown}}</span> seconds.
+                class="countdown-seconds">{{ closeCountdown }}</span> seconds.
         </div>
         <template v-if="!(waiting && device === null)">
             <div class="row">
@@ -61,7 +61,8 @@
                                 </button>
 
                                 <loader v-if="saving"></loader>
-                                <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[patientNumberToCall]"
+                                <button id="callButton" class="btn btn-circle btn-default"
+                                        v-if="onPhone[patientNumberToCall]"
                                         @click="toggleMuteMessage(patientNumberToCall)">
                                     <i class="fa fa-fw"
                                        :class="muted[patientNumberToCall] ? 'fa-microphone-slash': 'fa-microphone'"></i>
@@ -87,14 +88,16 @@
                                         <input name="patient-unlisted-number"
                                                class="form-control" type="tel"
                                                title="10-digit US Phone Number" placeholder="1234567890"
-                                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                                               v-model="patientUnlistedNumber"
+                                               :disabled="onPhone[patientUnlistedNumber]"/>
                                     </template>
                                     <template v-else>
                                         <input name="patient-unlisted-number"
                                                maxlength="10" minlength="10"
                                                class="form-control" type="tel"
                                                title="10-digit US Phone Number" placeholder="1234567890"
-                                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                                               v-model="patientUnlistedNumber"
+                                               :disabled="onPhone[patientUnlistedNumber]"/>
                                     </template>
                                 </div>
                             </div>
@@ -150,7 +153,8 @@
 
                                 </div>
                             </div>
-                            <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                            <div class="col-xs-3 no-padding"
+                                 style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
                                 <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
                                         :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference) || closeCountdown > 0"
                                         :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
@@ -190,7 +194,25 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <br>
+            <div class="row" style="margin-top: 5px">
 
+                <div class="col-xs-12">
+                    <label>Emergency Assistance Service</label>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="col-xs-3 no-padding">
+                        <button class="btn btn-circle" @click="toggleCall911Message()"
+                                :disabled="!ready || isCurrentlyOnPhone || closeCountdown > 0"
+                                :class="onPhone[EMERGENCY_ASSISTANCE_CALL_NUMBER] ? 'btn-danger': 'btn-warning'">
+                            Call 911
+                            <i class="fa fa-fw fa-phone"
+                               :class="onPhone[EMERGENCY_ASSISTANCE_CALL_NUMBER] ? 'fa-close': 'fa-phone'"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <br>
             <call-numpad v-if="isCurrentlyOnPhone" :on-input="numpadInput"></call-numpad>
@@ -200,13 +222,20 @@
 </template>
 <script>
     import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
-    import EventBus from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
-    import {registerHandler, sendRequest} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/bc-job-manager";
+    import EventBus
+        from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent
+        from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
+    import {
+        registerHandler,
+        sendRequest
+    } from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/bc-job-manager";
     import {Logger} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import Notifications from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import Notifications
+        from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import EditPatientNumber from './edit-patient-number';
 
     let self;
 
@@ -218,6 +247,7 @@
             'notifications': Notifications,
             loader: LoaderComponent,
             'call-numpad': CallNumpad,
+            'edit-patient-number': EditPatientNumber
         },
         props: {
             cpmToken: {
@@ -247,6 +277,7 @@
         },
         data() {
             return {
+                EMERGENCY_ASSISTANCE_CALL_NUMBER: 911,
                 ready: false,
                 waiting: false,
                 waitingForConference: false,
@@ -265,9 +296,9 @@
                 device: null,
                 radioSelectedNumber: '',
                 callSids: {},
-                saving:false,
+                saving: false,
                 patientUnlistedNumber: '',
-                otherUnlistedNumber:'',
+                otherUnlistedNumber: '',
             }
         },
         computed: {
@@ -307,7 +338,7 @@
 
             patientNumberToCall() {
                 if (this.radioSelectedNumber.length !== 0) {
-                    if (this.debug){
+                    if (this.debug) {
                         return "+" + this.radioSelectedNumber;
                     }
                     return "+1" + this.radioSelectedNumber;
@@ -376,6 +407,13 @@
                 if (makeTheCall) {
                     this.toggleCallMessage(number, isUnlisted, false);
                 }
+            },
+
+            toggleCall911Message: function () {
+                if (!confirm('Are you sure you want to call the Emergency Assistance Service?')) {
+                    return;
+                }
+                this.toggleCallMessage(this.EMERGENCY_ASSISTANCE_CALL_NUMBER, true, false);
             },
 
             toggleCallMessage: function (number, isUnlisted, isCallToPatient, isDebug) {
@@ -953,10 +991,12 @@
     .error-logs {
         color: red;
     }
-    .call-button{
+
+    .call-button {
         float: right;
     }
-    .selected-number{
+
+    .selected-number {
         font-weight: bolder;
         font-size: 18px;
         padding: 10px;
