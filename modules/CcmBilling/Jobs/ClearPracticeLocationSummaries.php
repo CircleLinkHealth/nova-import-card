@@ -47,6 +47,7 @@ class ClearPracticeLocationSummaries extends Job
 
         ChargeableLocationMonthlySummary::whereIn('location_id', $locations->pluck('id')->toArray())
             ->where('chargeable_month', $this->month)
+            ->where('is_locked', 0)
             ->delete();
     }
 }
