@@ -12,6 +12,11 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        'enrollment/sms/reply',
+        '/sendgrid/status',
+        '/postmark/status',
+        '/postmark/inbound',
+        '/twilio/sms/status',
+        '/twilio/sms/inbound',
     ];
 }
