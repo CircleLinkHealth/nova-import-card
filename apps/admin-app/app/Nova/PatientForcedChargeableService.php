@@ -83,7 +83,7 @@ class PatientForcedChargeableService extends Resource
             Select::make('Action Type', 'action_type')->options([
                 PatientForcedChargeableServiceModel::FORCE_ACTION_TYPE => 'Force Service',
                 PatientForcedChargeableServiceModel::BLOCK_ACTION_TYPE => 'Block Service',
-            ])->onlyOnDetail(),
+            ]),
             Text::make('For Month')->displayUsing(function () {
                 return isset($this->chargeable_month) && ! is_null($this->chargeable_month)
                     ? Carbon::parse($this->chargeable_month)->toDateString()
@@ -93,7 +93,7 @@ class PatientForcedChargeableService extends Resource
                 null                                                      => 'Permanently',
                 Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
                 Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
-            ])->onlyOnDetail(),
+            ]),
         ];
     }
 

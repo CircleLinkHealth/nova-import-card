@@ -61,10 +61,18 @@ class PatientForcedChargeableServicePolicy
 
     public function store(User $user, PatientForcedChargeableService $service)
     {
-        return $user->isAdmin() && ! $service->patient->forcedChargeableServices()
-            ->where('chargeable_service_id', $service->id)
-            ->where('chargeable_month', $service->chargeable_month)
-            ->exists();
+        $monthOfEffect = $service->chargeable_month ?? Carbon::now()->startOfMonth();
+
+        $serviceIsOrWasAvailableForLocation = ChargeableLocationMonthlySummary::where('location_id', $service->patient->getPreferredContactLocation())
+                                                                              ->where('chargeable_month', $monthOfEffect)
+                                                                              ->exists();
+
+        $patientAlreadyHasForcedCS = $service->patient->forcedChargeableServices()
+                                                      ->where('chargeable_service_id', $service->id)
+                                                      ->where('chargeable_month', $service->chargeable_month)
+                                                      ->exists();
+
+        return $user->isAdmin() && $serviceIsOrWasAvailableForLocation && ! $patientAlreadyHasForcedCS;
     }
 
     public function update(User $user, PatientForcedChargeableService $service)
