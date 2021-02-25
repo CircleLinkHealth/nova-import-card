@@ -32,7 +32,9 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/caller-app/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/apps/provider-app/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/apps/provider-app/bower_components" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
     </content>
+    <content url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
