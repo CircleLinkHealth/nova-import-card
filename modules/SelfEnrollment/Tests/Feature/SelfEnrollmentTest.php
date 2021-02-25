@@ -9,7 +9,7 @@ namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SelfEnrollment\Constants;
-use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\SelfEnrollment\Services\NotifyEnrollableSurveyCompletedService;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -942,6 +942,23 @@ class SelfEnrollmentTest extends TestCase
         self::assertFalse( $enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
         self::assertTrue( $enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
         self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
+    }
+
+    public function test_enrollee_will_imported_by_making_http_request_to_provider_app()
+    {
+        $enrollee = $this->createEnrollees();
+
+        $enrollee->update([
+           'status'=> Enrollee::CONSENTED
+        ]);
+
+        self::assertTrue($enrollee->status === Enrollee::CONSENTED);
+        $response =  app(NotifyEnrollableSurveyCompletedService::class)
+            ->makeRequestToProviderApp('import-enrollees-self-enrollment', $enrollee->id);
+
+        self::assertTrue($response->sucessful());
+
+        self::assertTrue($enrollee->status === Enrollee::ENROLLED);
     }
 
     private function setFakeNotification(int $patientId, int $enrolleeId, Carbon $time, $isReminder = true)
