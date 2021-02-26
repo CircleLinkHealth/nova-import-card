@@ -21,8 +21,15 @@ class ChargeableServiceForAbp extends JsonResource
     {
         $services = $user->chargeableMonthlySummaries
             ->map(function (ChargeablePatientMonthlySummary $item) use ($user) {
+
                 /** @var ChargeablePatientMonthlyTime $time */
-                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id', $item->chargeable_service_id);
+                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id',
+                    ChargeableServiceModel::getChargeableServiceIdUsingCode(
+                        ChargeableServiceModel::getBaseCode(
+                            $item->chargeableService->code
+                        )
+                    )
+                );
 
                 return [
                     'id'           => $item->chargeable_service_id,

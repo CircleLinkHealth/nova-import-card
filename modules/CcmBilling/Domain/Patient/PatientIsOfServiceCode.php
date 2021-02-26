@@ -122,7 +122,7 @@ class PatientIsOfServiceCode
 
     private function minimumProblemCountForService(): int
     {
-        return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
+        return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getBaseCode($this->serviceCode)] ?? 0;
     }
 
     private function patientHasBlockedService(): bool

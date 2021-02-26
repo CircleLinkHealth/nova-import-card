@@ -124,7 +124,7 @@ class ApproveBillablePatientsServiceV3
         return SetPatientChargeableServicesResponse::make([
             'approved'            => $billingStatus->isApproved(),
             'rejected'            => $billingStatus->isRejected(),
-            'needs_qa'            => $billingStatus->needsQA(),
+            'qa'            => $billingStatus->needsQA(),
             'chargeable_services' => ChargeableServiceForAbp::collectionFromChargeableMonthlySummaries($billingStatus->patientUser),
         ]);
     }

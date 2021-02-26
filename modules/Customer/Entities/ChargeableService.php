@@ -175,7 +175,7 @@ class ChargeableService extends BaseModel
         return optional(self::cached()->where('code', $code)->first())->id;
     }
 
-    public static function getCodeForPatientProblems(string $code): string
+    public static function getBaseCode(string $code): string
     {
         //todo: cleaner mapping
         if (in_array($code, self::CCM_PLUS_CODES)) {

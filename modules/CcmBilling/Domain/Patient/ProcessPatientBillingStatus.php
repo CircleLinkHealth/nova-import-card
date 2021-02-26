@@ -84,7 +84,7 @@ class ProcessPatientBillingStatus
             || $autoAttestation->unAttestedCcm()
             || $autoAttestation->unAttestedPcm()
             || $patient->chargeableMonthlySummaries->isEmpty()
-            || 0 === $patient->inbound_successful_calls_count
+            || empty($patient->inbound_successful_calls_count)
             || ! $patient->billingProviderUser()
             || in_array($patient->getCcmStatusForMonth($this->month), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])) {
             $this->billingStatus->status = 'needs_qa';
