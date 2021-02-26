@@ -944,23 +944,6 @@ class SelfEnrollmentTest extends TestCase
         self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
     }
 
-    public function test_enrollee_will_imported_by_making_http_request_to_provider_app()
-    {
-        $enrollee = $this->createEnrollees();
-
-        $enrollee->update([
-           'status'=> Enrollee::CONSENTED
-        ]);
-
-        self::assertTrue($enrollee->status === Enrollee::CONSENTED);
-        $response =  app(NotifyEnrollableSurveyCompletedService::class)
-            ->makeRequestToProviderApp('import-enrollees-self-enrollment', $enrollee->id);
-
-        self::assertTrue($response->sucessful());
-
-        self::assertTrue($enrollee->status === Enrollee::ENROLLED);
-    }
-
     private function setFakeNotification(int $patientId, int $enrolleeId, Carbon $time, $isReminder = true)
     {
         \DB::table('notifications')->insert([
