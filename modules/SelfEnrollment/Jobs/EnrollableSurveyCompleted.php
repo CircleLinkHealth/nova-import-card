@@ -9,8 +9,8 @@ namespace CircleLinkHealth\SelfEnrollment\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Services\NotifyEnrollableSurveyCompletedService;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -217,7 +217,14 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-            ImportConsentedEnrollees::dispatch([$enrollee->id]);
+         $response =  app(NotifyEnrollableSurveyCompletedService::class)
+                ->makeRequestToProviderApp('import-enrollees-self-enrollment', $enrollee->id);
+
+         if (!$response->successful()) {
+             Log::error("Enrollee:[$enrollee->id] failed during redirect to provider app. [Status: {$response->status()}],
+             [Body: {$response->body()}]");
+             return;
+         }
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
@@ -233,7 +240,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $id          = $user->id;
         }
 
-        return info("$patientType patient $id has been enrolled");
+        return info("$patientType patient $id has self enrollment survey done and marked as CONSENTED");
     }
 
     public function reEnrollUnreachablePatient(User $user)

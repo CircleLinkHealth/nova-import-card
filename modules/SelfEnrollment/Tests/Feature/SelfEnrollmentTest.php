@@ -9,7 +9,7 @@ namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SelfEnrollment\Constants;
-use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\SelfEnrollment\Services\NotifyEnrollableSurveyCompletedService;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;

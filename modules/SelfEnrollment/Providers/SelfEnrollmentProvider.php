@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
+use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateContinuumFamilyLetterCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
@@ -59,6 +60,7 @@ class SelfEnrollmentProvider extends ServiceProvider
             SelfEnrollmentSendErrorFixedCommand::class,
         ]);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(CoreServiceProvider::class);
     }
 
     private function publishConfigurations()
