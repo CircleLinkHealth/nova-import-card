@@ -9,12 +9,14 @@ namespace App\Nova;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService as PatientForcedChargeableServiceModel;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class PatientForcedChargeableService extends Resource
 {
@@ -130,6 +132,49 @@ class PatientForcedChargeableService extends Resource
      */
     public static function relatableChargeableServices(NovaRequest $request, $query)
     {
-        return $query->whereNotNull('display_name');
+        $query->whereNotNull('display_name');
+
+        $patientId = $request->get('viaResourceId');
+
+        if (is_null($patientId)){
+            $patientId = self::parsePreviousUrl()['viaResourceId'] ?? null;
+        }
+
+        if (!$patientId ){
+            return $query;
+        }
+
+        $patientInfo = Patient::where('user_id', $patientId)
+            ->with(['location.chargeableServiceSummaries' => fn($summary) => $summary->where('chargeable_month', Carbon::now()->startOfMonth())])
+        ->first();
+
+        if (is_null($patientInfo)){
+            return $query;
+        }
+
+        if (is_null($location = $patientInfo->location)){
+            return $query;
+        }
+
+        if ($location->chargeableServiceSummaries->isEmpty()){
+            return $query;
+        }
+
+
+        return $query->whereIn('id', $location->chargeableServiceSummaries->pluck('chargeable_service_id')->toArray());
+
+    }
+
+    /**
+     * @param $url
+     *
+     * @return mixed
+     */
+    public static function parsePreviousUrl()
+    {
+        $parsedUrl = parse_url(url()->previous());
+        parse_str($parsedUrl['query'], $output);
+
+        return $output;
     }
 }
