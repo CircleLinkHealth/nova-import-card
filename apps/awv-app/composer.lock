@@ -357,16 +357,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.16",
+            "version": "3.173.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e401bcb34e4ae88586a1f63bec6c0ddd12591e7a"
+                "reference": "d3657af3d93285f4cb0f59dd94d065f59cf89cf5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e401bcb34e4ae88586a1f63bec6c0ddd12591e7a",
-                "reference": "e401bcb34e4ae88586a1f63bec6c0ddd12591e7a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d3657af3d93285f4cb0f59dd94d065f59cf89cf5",
+                "reference": "d3657af3d93285f4cb0f59dd94d065f59cf89cf5",
                 "shasum": ""
             },
             "require": {
@@ -438,7 +438,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-02-24T19:43:19+00:00"
+            "time": "2021-02-25T19:13:34+00:00"
         },
         {
             "name": "brick/math",
@@ -647,7 +647,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/CcmBilling",
-                "reference": "48da3a0eb31840388f5e5259ef4da52f1e71bf30"
+                "reference": "038aee540af1af45a9edb88df938d500bcccc219"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -705,10 +705,16 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "v3.2.0",
-            "dist": {
-                "type": "path",
-                "url": "./CircleLinkHealth/CerberusGatekeeper",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
+                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "*",
@@ -780,10 +786,7 @@
                 "multi-tenant",
                 "permission",
                 "roles"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -848,7 +851,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/CpmAdmin",
-                "reference": "859b7dbf22b1f883b217ad0facbc7f7679a99ff6"
+                "reference": "290f9de6b6492d4a0a12d82a36e78a8a913f8a0c"
             },
             "require": {
                 "circlelinkhealth/ccda-parser-processor-php-module": "*",
@@ -1101,7 +1104,7 @@
             "dist": {
                 "type": "path",
                 "url": "./CircleLinkHealth/Revisionable",
-                "reference": "d711ccea87ad5dc02a8d5be8939e8c895d458d69"
+                "reference": "1ecfba60f93558e4577f89fd6f2d47ab8ff36baa"
             },
             "require": {
                 "laravel/framework": "^6.18|^7.0|^8.0",
@@ -9544,10 +9547,16 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8"
+            },
             "dist": {
-                "type": "path",
-                "url": "./CircleLinkHealth/LaravelScheduleMonitor",
-                "reference": "097c83a41fa73e1142b0b1f129dd26f749c15318"
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "shasum": ""
             },
             "require": {
                 "illuminate/bus": "^8.0",
@@ -9581,25 +9590,7 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "psalm": [
-                    "vendor/bin/psalm"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ],
-                "format": [
-                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -9617,9 +9608,13 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-15T12:05:52+00:00"
         },
         {
             "name": "spatie/laravel-view-models",
