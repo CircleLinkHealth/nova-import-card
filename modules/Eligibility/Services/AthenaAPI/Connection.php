@@ -60,7 +60,8 @@ class Connection implements AthenaApiConnection
     private $secret;
     private $token;
     
-    private $version;
+    private        $version;
+    private string $authurl;
     
     /**
      * Connects to the host, authenticates to the specified API version using key and secret.
@@ -70,12 +71,8 @@ class Connection implements AthenaApiConnection
      * @param string $secret the client secret
      * @param int|string $practiceid |null the practice id to be used in requests (optional)
      */
-    public function __construct($version, $key, $secret, $practiceid)
+    public function __construct(string $version, string $key, string $secret, int $practiceid)
     {
-        if ( ! $version || ! $key || ! $secret) {
-            return 'Required parameters missing.';
-        }
-        
         $this->version    = $version;
         $this->key        = $key;
         $this->secret     = $secret;
