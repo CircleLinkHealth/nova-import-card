@@ -244,8 +244,6 @@ class Connection implements AthenaApiConnection
         $auth_header = ['Authorization' => 'Bearer '.$this->token];
         $response    = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
     
-    
-    
         return $response;
     }
     
