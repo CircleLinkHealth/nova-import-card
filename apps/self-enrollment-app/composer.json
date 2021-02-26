@@ -89,6 +89,10 @@
             "url": "./CircleLinkHealth/LaravelScheduleMonitor"
         },
         {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/livewire.git"
+        },
+        {
             "type": "path",
             "url": "./CircleLinkHealth/PdfService"
         }
@@ -106,6 +110,7 @@
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/eligibility-module": "*",
         "circlelinkhealth/enrollment-invites": "*",
+        "livewire/livewire": "2.3.119",
         "circlelinkhealth/pdf-service-module": "*",
         "circlelinkhealth/raygun-module": "*",
         "circlelinkhealth/revisionable-module": "*",
