@@ -95,9 +95,9 @@ class PatientForcedChargeableService extends Resource
             })->readonly()->onlyOnIndex(),
             Select::make('Chargeable Month', 'chargeable_month')->options([
                 null                                                      => 'Permanently',
-                Carbon::now()->startOfMonth()->toDateString()             => 'Current month only',
-                Carbon::now()->subMonth()->startOfMonth()->toDateString() => 'Past month only',
-            ]),
+                Carbon::now()->startOfMonth()->toDateString()             => 'Current month only'
+            ])->hideFromIndex(),
+            Text::make('reason')
         ];
     }
 

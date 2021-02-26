@@ -143,7 +143,6 @@ class ManagePatientForcedChargeableServices extends Resource
                 ->readonly()
                 ->asHtml(),
 
-            Text::make('Reason', 'reason')->nullable(),
         ];
     }
 
