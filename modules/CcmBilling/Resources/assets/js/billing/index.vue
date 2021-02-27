@@ -610,14 +610,13 @@
                         return this.axios
                             .post(rootUrl('reports/monthly-billing/set-patient-services'), {
                                 report_id: item.reportId,
-                                patient_chargeable_services: changes,
-                                // patient_chargeable_services: this.isNewVersion() ? changes : allPatientServices,
+                                patient_chargeable_services: this.isNewVersion() ? changes : allPatientServices,
                                 version: this.version
                             })
                             .then(response => {
                                 console.log('billing:chargeable-services:update', response.data)
                                 let data = response.data.data;
-                                if (typeof data !== "undefined") {
+                                if (typeof data === "undefined") {
                                     data = response.data;
                                 }
                                 if (typeof data.approved !== "undefined") {
@@ -673,7 +672,7 @@
                 Event.$emit('modal-chargeable-services:show', {
                     title: 'Select Chargeable Services for ' + row.Patient,
                     row,
-                    billing_revamp_enabled: this.version === '3'
+                    billing_revamp_enabled: this.isNewVersion()
                 });
             },
 
