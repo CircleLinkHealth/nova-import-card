@@ -137,7 +137,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function shouldForceAttach(): bool
     {
         return collect($this->input->getForcedPatientServices())->filter(
-            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && $s->isForced()
+            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->baseCode() && $s->isForced()
         )
             ->isNotEmpty();
     }
