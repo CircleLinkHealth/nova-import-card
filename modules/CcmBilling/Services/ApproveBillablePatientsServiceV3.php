@@ -118,7 +118,11 @@ class ApproveBillablePatientsServiceV3
         }
 
         $billingStatus = PatientMonthlyBillingStatus::with([
-            'patientUser' => fn ($p) => $p->with(['chargeableMonthlySummaries', 'chargeableMonthlyTime']),
+            'patientUser' => function ($p)  use ($billingStatus) {
+            $p->with(['chargeableMonthlySummaries' => fn($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month)
+                      , 'chargeableMonthlyTime' => fn($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month)
+            ]);
+        }
         ])->find($reportId);
 
         return SetPatientChargeableServicesResponse::make([

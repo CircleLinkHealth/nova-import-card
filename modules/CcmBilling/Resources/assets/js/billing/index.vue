@@ -617,6 +617,9 @@
                             .then(response => {
                                 console.log('billing:chargeable-services:update', response.data)
                                 let data = response.data.data;
+                                if (typeof data !== "undefined") {
+                                    data = response.data;
+                                }
                                 if (typeof data.approved !== "undefined") {
                                     item.approved = data.approved;
                                     item.rejected = data.rejected;
