@@ -1,6 +1,5 @@
 id: 17428
 name: app-self-enrollment
-separate-vendor: true
 environments:
   production:
     domain: self-enrollment.careplanmanager.com
@@ -21,7 +20,7 @@ environments:
       - self-enrollment-high-production
       - self-enrollment-revisionable-production
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
       - 'php artisan route:cache'
@@ -40,16 +39,16 @@ environments:
     queue-timeout: 600
     concurrency: 5
     mail: false
-    runtime: php-7.4
+    runtime: docker
     queues:
       - self-enrollment-low-staging
       - self-enrollment-high-staging
       - self-enrollment-revisionable-staging
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
-      - 'php artisan route:cache'
+#      - 'php artisan route:cache'
     deploy:
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'

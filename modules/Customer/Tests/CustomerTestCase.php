@@ -25,12 +25,12 @@ class CustomerTestCase extends TestCase
     /**
      * @var array|User
      */
-    private $careAmbassador;
+    protected $careAmbassador;
 
     /**
      * @var array|User
      */
-    private $careCoach;
+    protected $careCoach;
 
     /**
      * @var Enrollee
@@ -45,7 +45,7 @@ class CustomerTestCase extends TestCase
     /**
      * @var array|User
      */
-    private $patient;
+    protected $patient;
     /**
      * @var Practice
      */
@@ -53,7 +53,7 @@ class CustomerTestCase extends TestCase
     /**
      * @var array|User
      */
-    private $provider;
+    protected $provider;
     /**
      * @var array|User
      */

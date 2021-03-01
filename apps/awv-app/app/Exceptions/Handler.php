@@ -6,7 +6,6 @@
 
 namespace App\Exceptions;
 
-use Throwable;
 use CircleLinkHealth\Core\Exceptions\Handler as CoreHandler;
 
 class Handler extends CoreHandler

@@ -90,8 +90,6 @@ use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
  * @property-read mixed $timezone_offset_hours
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Call[] $inboundCalls
  * @property-read int|null $inbound_calls_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Call[] $inboundSuccessfulCalls
- * @property-read int|null $inbound_successful_calls_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\CircleLinkHealth\Core\Entities\DatabaseNotification[] $notifications
@@ -133,7 +131,6 @@ use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|User ofPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|User ofType($type, $excludeAwv = true)
  * @method static \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
- * @method static \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
  * @method static \Illuminate\Database\Eloquent\Builder|User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
  * @method static \Illuminate\Database\Eloquent\Builder|User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
  * @method static \Illuminate\Database\Eloquent\Builder|User practiceStaff()
@@ -163,8 +160,8 @@ use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
  * @property-read int|null $ccdas_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary[] $chargeableMonthlySummaries
  * @property-read int|null $chargeable_monthly_summaries_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime[] $chargeableMonthlyTime
- * @property-read int|null $chargeable_monthly_time_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView[] $chargeableMonthlySummariesView
+ * @property-read int|null $chargeable_monthly_summaries_view_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\ChargeableService[] $chargeableServices
  * @property-read int|null $chargeable_services_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Location[] $clinicalEmergencyContactLocations
@@ -176,8 +173,6 @@ use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog[] $endOfMonthCcmStatusLogs
  * @property-read int|null $end_of_month_ccm_status_logs_count
  * @property-read \CircleLinkHealth\SharedModels\Entities\Enrollee|null $enrollee
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService[] $forcedChargeableServices
- * @property-read int|null $forced_chargeable_services_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\ForeignId[] $foreignId
  * @property-read int|null $foreign_id_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Call[] $inboundActivities
@@ -188,8 +183,6 @@ use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
  * @property-read int|null $locations_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\LoginLogout[] $loginEvents
  * @property-read int|null $login_events_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[] $monthlyBillingStatus
- * @property-read int|null $monthly_billing_status_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Note[] $notes
  * @property-read int|null $notes_count
  * @property-read \CircleLinkHealth\Customer\Entities\Nurse|null $nurseInfo

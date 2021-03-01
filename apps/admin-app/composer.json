@@ -149,10 +149,6 @@
             "url": "./CircleLinkHealth/VaporCore"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/laravel-schedule-monitor.git"
-        },
-        {
             "type": "path",
             "url": "./CircleLinkHealth/LaravelScheduleMonitor"
         }
@@ -232,7 +228,6 @@
         "joshgaber/novaunit": "^2.0",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^5.0",
-        "nwidart/laravel-modules": "^8.2",
         "phpunit/phpunit": "^9.0",
         "psalm/plugin-laravel": "^1.4",
         "vimeo/psalm": "^4.3"
@@ -284,6 +279,7 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
+            "composer ide",
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "@php artisan nova:publish",
             "@php artisan vapor-ui:publish --ansi"

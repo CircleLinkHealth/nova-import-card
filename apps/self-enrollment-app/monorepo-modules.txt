@@ -8,6 +8,7 @@ LaravelScheduleMonitor
 Raygun
 Revisionable
 SamlSp
+PdfService
 SelfEnrollment
 ShortUrl
 SharedModels

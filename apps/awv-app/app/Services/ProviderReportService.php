@@ -135,7 +135,7 @@ class ProviderReportService
      */
     public static function filterAnswer($var)
     {
-        return '' === $var || $var === [] || null === $var;
+        return '' === $var || [] === $var || null === $var;
     }
 
     /**

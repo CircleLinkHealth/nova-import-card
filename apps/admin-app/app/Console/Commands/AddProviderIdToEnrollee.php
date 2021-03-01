@@ -10,7 +10,6 @@ use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
-use CircleLinkHealth\SharedModels\Search\Patients\SupplementalPatientDataUser;
 use Illuminate\Console\Command;
 
 class AddProviderIdToEnrollee extends Command
@@ -86,7 +85,7 @@ class AddProviderIdToEnrollee extends Command
             }
         }
     }
-    
+
     private function fromSupplementalData(Enrollee $e)
     {
         $sup = SupplementalPatientData::forPatient($e->practice_id, $e->first_name, $e->last_name, $e->dob);
@@ -96,7 +95,7 @@ class AddProviderIdToEnrollee extends Command
                 $e->provider_id = $sup->billing_provider_user_id;
                 if ( ! empty($e->provider_id)) {
                     $e->save();
-                
+
                     return;
                 }
             }

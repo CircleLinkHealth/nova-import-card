@@ -8,33 +8,9 @@
             "email": "antonis@circlelinkhealth.com"
         }
     ],
-
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://nova.laravel.com"
-        }
-    ],
-
-    "extra": {
-        "branch-alias": {
-            "dev-main": "0.0.x-dev"
-        },
-
-        "laravel": {
-            "providers": [],
-            "aliases": {
-
-            }
-        }
-    },
     "autoload": {
         "psr-4": {
             "CircleLinkHealth\\SelfEnrollment\\": ""
         }
-    },
-
-    "scripts": {
-
     }
 }

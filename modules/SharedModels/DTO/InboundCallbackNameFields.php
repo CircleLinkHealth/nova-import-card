@@ -12,9 +12,6 @@ class InboundCallbackNameFields
     private string $fromNameField;
     private string $ptnNameField;
 
-    /**
-     * InboundCallbackNameFields constructor.
-     */
     public function __construct(string $callerNameField, string $fromNameField, string $ptnNameField)
     {
         $this->callerNameField = $callerNameField;
@@ -22,10 +19,7 @@ class InboundCallbackNameFields
         $this->ptnNameField    = $ptnNameField;
     }
 
-    /**
-     * @return array
-     */
-    public function allNameFields()
+    public function allNameFields(): array
     {
         return [
             $this->callerNameField,
@@ -34,26 +28,17 @@ class InboundCallbackNameFields
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function callerNameField()
+    public function callerNameField(): string
     {
         return $this->callerNameField;
     }
 
-    /**
-     * @return string
-     */
-    public function fromNameField()
+    public function fromNameField(): string
     {
         return $this->fromNameField;
     }
 
-    /**
-     * @return string
-     */
-    public function ptnNameField()
+    public function ptnNameField(): string
     {
         return $this->ptnNameField;
     }

@@ -3,10 +3,12 @@ Core
 CpmMigrations
 Customer
 Eligibility
-Revisionable
 LaravelScheduleMonitor
+PdfService
+Revisionable
 SelfEnrollment
 SharedModels
+SqlViews
 Synonyms
 TwilioIntegration
 TwoFA

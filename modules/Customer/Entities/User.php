@@ -24,7 +24,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Actions\DoctorOrEmptyStringPrefix;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
-use CircleLinkHealth\Customer\AppConfig\UsersWhoCanBubbleChat;
+use CircleLinkHealth\Customer\AppConfig\WhoCanBubbleChat;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Notifications\ResetPassword;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
@@ -330,13 +330,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  * @method static                                                                                                  \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  * @method static                                                                                                  \Illuminate\Database\Eloquent\Builder|User activeNurses()
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|EloquentCollection                              $forcedChargeableServices
- * @property int|null                                                                                                $forced_chargeable_services_count
- * @method static                                                                                                  \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
- * @property Call[]|EloquentCollection                                                                               $inboundSuccessfulCalls
- * @property int|null                                                                                                $inbound_successful_calls_count
- * @property ChargeablePatientMonthlyTime[]|EloquentCollection                                                       $chargeableMonthlyTime
- * @property int|null                                                                                                $chargeable_monthly_time_count
  * @method static \Illuminate\Database\Eloquent\Builder|User uniquePatients()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
@@ -2262,11 +2255,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('administrator');
     }
 
-    public function isAllowedToBubbleChat()
+    public function isAllowedToBubbleChat(): bool
     {
-        $bubbleChatters = UsersWhoCanBubbleChat::usersToShowBubbleChat();
+        $rolesAllowedToChat = WhoCanBubbleChat::rolesAllowedBubbleChat();
+        $userRoles          = $this->cachedRoles()
+            ->pluck('name');
 
-        return in_array($this->id, $bubbleChatters);
+        if ($userRoles->isEmpty()) {
+
+        return false;
+        }
+
+        return Cache::remember("{$this->id}_user_is_allowed_to_bubble_chat", 30, function () use ($userRoles, $rolesAllowedToChat) {
+            foreach ($userRoles as $roleName) {
+                if (in_array($roleName, $rolesAllowedToChat)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     /**

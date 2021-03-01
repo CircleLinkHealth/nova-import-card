@@ -1,6 +1,5 @@
 id: 13702
 name: cpm-admin
-separate-vendor: true
 environments:
     production:
         domain: superadmin.careplanmanager.com
@@ -20,7 +19,7 @@ environments:
             - cpm-admin-high-production
             - cpm-admin-revisionable-production
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod'
             - 'php artisan route:cache'
@@ -45,7 +44,7 @@ environments:
             - cpm-admin-high-staging
             - cpm-admin-revisionable-staging
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod'
             - 'php artisan route:cache'

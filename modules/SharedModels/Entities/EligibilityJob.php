@@ -8,40 +8,43 @@ namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\EligibilityJob.
  *
- * @property int                                                      $id
- * @property int                                                      $batch_id
- * @property string|null                                              $hash
- * @property int|null                                                 $status
- * @property array                                                    $data
- * @property string|null                                              $outcome
- * @property string|null                                              $reason
- * @property array                                                    $messages
- * @property array|null                                               $errors
- * @property \Illuminate\Support\Carbon|null                          $last_encounter
- * @property string|null                                              $primary_insurance
- * @property string|null                                              $secondary_insurance
- * @property string|null                                              $tertiary_insurance
- * @property int|null                                                 $ccm_problem_1_id
- * @property int|null                                                 $ccm_problem_2_id
- * @property int|null                                                 $bhi_problem_id
- * @property \Illuminate\Support\Carbon|null                          $created_at
- * @property \Illuminate\Support\Carbon|null                          $updated_at
- * @property string|null                                              $deleted_at
- * @property int                                                      $invalid_data
- * @property int                                                      $invalid_structure
- * @property int                                                      $invalid_mrn
- * @property int                                                      $invalid_first_name
- * @property int                                                      $invalid_last_name
- * @property int                                                      $invalid_dob
- * @property int                                                      $invalid_problems
- * @property int                                                      $invalid_phones
+ * @property int                                                     $id
+ * @property int                                                     $batch_id
+ * @property string|null                                             $hash
+ * @property int|null                                                $status
+ * @property array                                                   $data
+ * @property string|null                                             $outcome
+ * @property string|null                                             $reason
+ * @property array                                                   $messages
+ * @property array|null                                              $errors
+ * @property \Illuminate\Support\Carbon|null                         $last_encounter
+ * @property string|null                                             $primary_insurance
+ * @property string|null                                             $secondary_insurance
+ * @property string|null                                             $tertiary_insurance
+ * @property int|null                                                $ccm_problem_1_id
+ * @property int|null                                                $ccm_problem_2_id
+ * @property int|null                                                $bhi_problem_id
+ * @property \Illuminate\Support\Carbon|null                         $created_at
+ * @property \Illuminate\Support\Carbon|null                         $updated_at
+ * @property string|null                                             $deleted_at
+ * @property int                                                     $invalid_data
+ * @property int                                                     $invalid_structure
+ * @property int                                                     $invalid_mrn
+ * @property int                                                     $invalid_first_name
+ * @property int                                                     $invalid_last_name
+ * @property int                                                     $invalid_dob
+ * @property int                                                     $invalid_problems
+ * @property int                                                     $invalid_phones
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch $batch
- * @property \CircleLinkHealth\SharedModels\Entities\Enrollee         $enrollee
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee        $enrollee
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()
@@ -81,14 +84,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
- * @property \App\EligibilityJob                                   $eligibilityJob
- * @property int|null                                              $revision_history_count
+ * @property \App\EligibilityJob                                  $eligibilityJob
+ * @property int|null                                             $revision_history_count
  * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient $targetPatient
- * @property string|null                                           $patient_first_name
- * @property string|null                                           $patient_last_name
- * @property string|null                                           $patient_mrn
- * @property string|null                                           $patient_dob
- * @property string|null                                           $patient_email
+ * @property string|null                                          $patient_first_name
+ * @property string|null                                          $patient_last_name
+ * @property string|null                                          $patient_mrn
+ * @property string|null                                          $patient_dob
+ * @property string|null                                          $patient_email
  * @method static \Illuminate\Database\Eloquent\Builder|EligibilityJob pendingProcessing()
  */
 class EligibilityJob extends BaseModel
