@@ -10,6 +10,7 @@ use App\Console\Commands\CheckVoiceCalls;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\SharedModels\Entities\Call;
@@ -17,7 +18,6 @@ use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
 use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class VoiceCallsTest extends CustomerTestCase
 {

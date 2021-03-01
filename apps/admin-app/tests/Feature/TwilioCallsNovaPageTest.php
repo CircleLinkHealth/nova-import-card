@@ -9,10 +9,10 @@ namespace Tests\Feature;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use App\Nova\Metrics\TwilioCallCosts;
 use App\Nova\Metrics\TwilioCallDuration;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\ValueResult;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class TwilioCallsNovaPageTest extends CustomerTestCase
 {

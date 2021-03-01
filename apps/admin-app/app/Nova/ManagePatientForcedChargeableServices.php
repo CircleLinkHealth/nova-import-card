@@ -10,13 +10,10 @@ use App\Nova\Filters\UserPracticeFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
-use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -142,7 +139,6 @@ class ManagePatientForcedChargeableServices extends Resource
             })->onlyOnDetail()
                 ->readonly()
                 ->asHtml(),
-
         ];
     }
 
