@@ -127,7 +127,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "^1.4",
         "grofgraf/laravel-pdf-merger": "^1.0",
-        "guzzlehttp/guzzle": "7.1.x-dev",
+        "guzzlehttp/guzzle": "7.2",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "lab404/laravel-impersonate": "^1.2",
         "laravel-notification-channels/twilio": "3.1.2",
