@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "circlelinkhealth/app-caller",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Twilio integration app for making calls",
     "keywords": [
         "framework",
         "laravel"
