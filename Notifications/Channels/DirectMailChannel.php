@@ -9,7 +9,9 @@ namespace CircleLinkHealth\Core\Notifications\Channels;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
+use CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
 use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
+use CircleLinkHealth\Core\Notifications\DuplicateNotificationChecker;
 use CircleLinkHealth\Core\Services\PhiMail\SendResult;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 
@@ -28,12 +30,16 @@ class DirectMailChannel
      * @param mixed                                  $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      *
-     * @throws InvalidTypeException
+     * @throws CannotSendNotificationException|InvalidTypeException
      */
     public function send($notifiable, DirectMailableNotification $notification)
     {
         if ($notifiable->emr_direct_address) {
             $message = $notification->toDirectMail($notifiable);
+
+            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification)) {
+                throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
+            }
 
             $this->throwExceptionIfWrongType($message, $notification);
 
