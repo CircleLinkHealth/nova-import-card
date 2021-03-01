@@ -1,4 +1,4 @@
-const SERVICES = require('./services.types');
+import SERVICES from './services.types';
 
 const clashes = {};
 clashes[SERVICES.PCM] = [

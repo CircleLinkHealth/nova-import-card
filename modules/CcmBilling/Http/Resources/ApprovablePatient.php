@@ -51,7 +51,7 @@ class ApprovablePatient extends JsonResource
             'bhi_time'   => $bhiTime,
             'ccm_time'   => $ccmTime,
 
-            'problems'               => $this->getProblems()->toArray(),
+            'problems'               => $this->getProblems()->values()->toArray(),
             'no_of_successful_calls' => 0,
             'status'                 => $user->getCcmStatusForMonth($billingStatus->chargeable_month),
             'approve'                => 'approved' === $billingStatus->status,
@@ -59,9 +59,9 @@ class ApprovablePatient extends JsonResource
             'report_id'              => $billingStatus->id,
             'actor_id'               => $billingStatus->actor_id,
             'qa'                     => 'needs_qa' === $billingStatus->status,
-            'chargeable_services'    => $this->getChargeableServices()->toArray($request),
-            'attested_ccm_problems'  => $autoAttestation->getCcmAttestedProblems()->toArray(),
-            'attested_bhi_problems'  => $autoAttestation->getBhiAttestedProblems()->toArray(),
+            'chargeable_services'    => $this->getChargeableServices()->values()->toArray($request),
+            'attested_ccm_problems'  => $autoAttestation->getCcmAttestedProblems()->values()->toArray(),
+            'attested_bhi_problems'  => $autoAttestation->getBhiAttestedProblems()->values()->toArray(),
         ];
     }
 

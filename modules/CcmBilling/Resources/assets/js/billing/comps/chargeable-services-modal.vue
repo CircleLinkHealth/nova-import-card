@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="row">
-                <span v-if="validationMessage">{{ validationMessage }}</span>
+                <span v-if="validationMessage"><span style="font-weight: 700; color: red">&#33;</span> {{ validationMessage }}</span>
             </div>
         </template>
     </modal>
@@ -114,7 +114,7 @@
             },
 
             checkForClashes() {
-                let clashing = new Set();
+                const clashing = new Set();
                 const selected = this.patientServices.filter(s => s.selected);
                 selected.forEach(service => {
                     const clashingServices = SERVICE_CLASHES[service.code];
