@@ -1,0 +1,201 @@
+{
+  "name": "circlelinkhealth/monorepo",
+  "type": "project",
+  "description": "AWV App",
+  "keywords": [
+    "framework",
+    "laravel"
+  ],
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://nova.laravel.com"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app/nova-components/ClhImportCardExtended"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app/nova-components/GenerateSuccessStoriesReport"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app/nova-components/ClhNovaTheme"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app/nova-components/InvoicesDownload"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app/nova-components/ImportPracticeStaffCsv"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app/nova-components/GeneratePatientCallDataCsv"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
+    },
+    {
+      "type": "path",
+      "url": "./apps/admin-app"
+    },
+    {
+      "type": "path",
+      "url": "./apps/provider-app"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Core"
+    },
+    {
+      "type": "path",
+      "url": "./modules/CcdaParser"
+    },
+    {
+      "type": "path",
+      "url": "./modules/CcmBilling"
+    },
+    {
+      "type": "path",
+      "url": "./modules/CerberusGatekeeper"
+    },
+    {
+      "type": "path",
+      "url": "./modules/ConditionCodeLookup"
+    },
+    {
+      "type": "path",
+      "url": "./modules/CpmAdmin"
+    },
+    {
+      "type": "path",
+      "url": "./modules/CpmMigrations"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Customer"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Eligibility"
+    },
+    {
+      "type": "path",
+      "url": "./modules/NurseInvoices"
+    },
+    {
+      "type": "path",
+      "url": "./modules/PatientApi"
+    },
+    {
+      "type": "path",
+      "url": "./modules/PdfService"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Raygun"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Revisionable"
+    },
+    {
+      "type": "path",
+      "url": "./modules/SamlSp"
+    },
+    {
+      "type": "path",
+      "url": "./modules/SelfEnrollment"
+    },
+    {
+      "type": "path",
+      "url": "./modules/SharedModels"
+    },
+    {
+      "type": "path",
+      "url": "./modules/SharedVueComponents"
+    },
+    {
+      "type": "path",
+      "url": "./modules/SqlViews"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Synonyms"
+    },
+    {
+      "type": "path",
+      "url": "./modules/Revisionable"
+    },
+    {
+      "type": "path",
+      "url": "./modules/TimeTracking"
+    },
+    {
+      "type": "path",
+      "url": "./modules/TwilioIntegration"
+    },
+    {
+      "type": "path",
+      "url": "./modules/TwoFA"
+    },
+    {
+      "type": "path",
+      "url": "./modules/VaporCli"
+    },
+    {
+      "type": "path",
+      "url": "./modules/VaporCore"
+    },
+    {
+      "type": "path",
+      "url": "./modules/LaravelScheduleMonitor"
+    }
+  ],
+  "require": {
+  },
+  "require-dev": {
+    "circlelinkhealth/app-cpm-admin": "*",
+    "circlelinkhealth/app-cpm-provider": "*"
+  },
+  "config": {
+    "discard-changes": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "github-oauth": {
+      "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
+    },
+    "process-timeout": 3000
+  },
+  "autoload": {
+    "psr-4": {
+
+    },
+    "classmap": [
+
+    ],
+    "files": [
+
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+
+    },
+    "files": [
+
+    ]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
