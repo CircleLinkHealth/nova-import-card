@@ -41,6 +41,10 @@
       "url": "./apps/admin-app/nova-components/GeneratePatientCallDataCsv"
     },
     {
+      "type": "path",
+      "url": "./apps/self-enrollment-app/nova-components/EnrollmentInvites"
+    },
+    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
     },
@@ -50,7 +54,19 @@
     },
     {
       "type": "path",
+      "url": "./apps/awv-app"
+    },
+    {
+      "type": "path",
+      "url": "./apps/caller-app"
+    },
+    {
+      "type": "path",
       "url": "./apps/provider-app"
+    },
+    {
+      "type": "path",
+      "url": "./apps/self-enrollment-app"
     },
     {
       "type": "path",
@@ -165,7 +181,10 @@
   },
   "require-dev": {
     "circlelinkhealth/app-cpm-admin": "*",
-    "circlelinkhealth/app-cpm-provider": "*"
+    "circlelinkhealth/app-awv": "*",
+    "circlelinkhealth/app-cpm-provider": "*",
+    "circlelinkhealth/app-caller": "*",
+    "circlelinkhealth/app-self-enrollment": "*"
   },
   "config": {
     "discard-changes": true,

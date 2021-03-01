@@ -225,6 +225,22 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-view-models" />
       <path value="$PROJECT_DIR$/vendor/spatie/pdf-to-image" />
       <path value="$PROJECT_DIR$/vendor/spatie/image" />
+      <path value="$PROJECT_DIR$/vendor/nvanheuverzwijn/monolog-logdna" />
+      <path value="$PROJECT_DIR$/vendor/spatie/pdf-to-text" />
+      <path value="$PROJECT_DIR$/vendor/spatie/laravel-slack-slash-command" />
+      <path value="$PROJECT_DIR$/vendor/hashids/hashids" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/app-cpm-provider" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/condition-code-lookup-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/patientapi-module" />
+      <path value="$PROJECT_DIR$/vendor/seld/jsonlint" />
+      <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
+      <path value="$PROJECT_DIR$/vendor/laravel/helpers" />
+      <path value="$PROJECT_DIR$/vendor/willdurand/email-reply-parser" />
+      <path value="$PROJECT_DIR$/vendor/setasign/fpdf" />
+      <path value="$PROJECT_DIR$/vendor/setasign/fpdi" />
+      <path value="$PROJECT_DIR$/vendor/setasign/fpdi-fpdf" />
+      <path value="$PROJECT_DIR$/vendor/ashallendesign/short-url" />
+      <path value="$PROJECT_DIR$/vendor/laracasts/utilities" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
