@@ -6,11 +6,6 @@
                     Approve Billable Patients
                 </div>
                 <div class="col-sm-5 text-right">
-                    <button v-if="isNewVersion() && typeof practice !== 'undefined'">
-                        <a style="text-decoration: none" target="_blank" :href="this.practiceChargeableServicesUrl()">
-                            Enable/Disable Practice Chargeable Services
-                        </a>
-                    </button>
                 </div>
                 <div class="col-sm-1 text-right">
                     <button title="Generate an Excel Sheet" @click="exportExcel">Export</button>
