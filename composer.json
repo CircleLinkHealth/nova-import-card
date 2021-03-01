@@ -46,6 +46,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/livewire.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
     },
     {
