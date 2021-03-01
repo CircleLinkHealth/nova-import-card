@@ -61,7 +61,7 @@ The instructions below assume we want to add module LaravelScheduleMonitor.
         url = git@github.com:CircleLinkHealth/laravel-schedule-monitor.git
         fetch = +refs/heads/*:refs/remotes/LaravelScheduleMonitor/*
     ```
-3. Add update helpers to merge-from-indifidual-repos.txt
+3. Add update helpers to merge-from-individual-repos.txt
    ```bash
     git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/master
     git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/development
