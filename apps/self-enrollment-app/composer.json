@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "circlelinkhealth/app-self-enrollment",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Self Enrollment App",
     "keywords": [
         "framework",
         "laravel"

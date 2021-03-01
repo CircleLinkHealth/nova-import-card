@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "circlelinkhealth/app-cpm-admin",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Cpm SuperAdmin App",
     "keywords": [
         "framework",
         "laravel"
