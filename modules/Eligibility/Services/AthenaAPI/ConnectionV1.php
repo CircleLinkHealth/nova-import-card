@@ -23,7 +23,6 @@ namespace CircleLinkHealth\Eligibility\Services\AthenaAPI;
 */
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -49,10 +48,9 @@ use Illuminate\Support\Str;
  * If an API response returns 401 Not Authorized, a new access token is obtained and the request is
  * retried.
  */
-class Connection implements AthenaApiConnection
+class ConnectionV1 implements AthenaApiConnection
 {
-    const ATHENA_CACHE_KEY = 'athena_api_token';
-    public  $practiceid;
+    public $practiceid;
     private $auth_url;
     private $baseurl;
     private $key;
@@ -60,49 +58,46 @@ class Connection implements AthenaApiConnection
     private $secret;
     private $token;
     
-    private        $version;
-    private string $authurl;
+    private $version;
     
     /**
      * Connects to the host, authenticates to the specified API version using key and secret.
      *
-     * @param string $version the specified API version to access
-     * @param string $key the client key (also known as id)
-     * @param string $secret the client secret
+     * @param string     $version    the specified API version to access
+     * @param string     $key        the client key (also known as id)
+     * @param string     $secret     the client secret
      * @param int|string $practiceid |null the practice id to be used in requests (optional)
      */
-    public function __construct(string $version, string $key, string $secret, int $practiceid)
+    public function __construct($version, $key, $secret, $practiceid = null)
     {
+        if ( ! $version || ! $key || ! $secret) {
+            return 'Required parameters missing.';
+        }
+        
         $this->version    = $version;
         $this->key        = $key;
         $this->secret     = $secret;
         $this->practiceid = $practiceid;
-        
-        $base_prefixes = [
-            'v1'           => "https://api.platform.athenahealth.com/v1/$practiceid",
-            'preview1'     => "https://api.preview.platform.athenahealth.com/v1/$practiceid",
-            'openpreview1' => 'ouathopenpreview/token',
-        ];
-        
-        $this->baseurl = $base_prefixes[$this->version];
+        $this->baseurl    = 'https://api.athenahealth.com/'.$this->version;
         
         $auth_prefixes = [
-            'v1'           => 'https://api.platform.athenahealth.com/oauth2/v1/token',
-            'preview1'     => 'https://api.preview.platform.athenahealth.com/oauth2/v1/token',
+            'v1'           => 'oauth/token',
+            'preview1'     => 'oauthpreview/token',
+            'openpreview1' => 'ouathopenpreview/token',
         ];
-        $this->authurl = $auth_prefixes[$this->version];
+        $this->authurl = 'https://api.athenahealth.com/'.$auth_prefixes[$this->version];
     }
     
     /**
      * Perform at HTTP DELETE request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
     public function DELETE($url, $parameters = null, $headers = null)
     {
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
         if ($parameters) {
             $new_url .= '?'.http_build_query($parameters);
         }
@@ -118,7 +113,7 @@ class Connection implements AthenaApiConnection
     /**
      * Perform at HTTP GET request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
@@ -138,7 +133,7 @@ class Connection implements AthenaApiConnection
         }
         
         // Join up a URL and add the parameters, since GET requests require parameters in the URL.
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
         if ($new_parameters) {
             $new_url .= '?'.http_build_query($new_parameters);
         }
@@ -162,7 +157,7 @@ class Connection implements AthenaApiConnection
     /**
      * Perform at HTTP POST request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
@@ -182,7 +177,7 @@ class Connection implements AthenaApiConnection
         }
         
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
         
         return $this->authorized_call('POST', $new_url, $new_parameters, $new_headers);
     }
@@ -190,7 +185,7 @@ class Connection implements AthenaApiConnection
     /**
      * Perform at HTTP PUT request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
@@ -210,7 +205,7 @@ class Connection implements AthenaApiConnection
         }
         
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
         
         return $this->authorized_call('PUT', $new_url, $new_parameters, $new_headers);
     }
@@ -218,6 +213,28 @@ class Connection implements AthenaApiConnection
     public function setPracticeId($practiceId)
     {
         $this->practiceid = $practiceId;
+    }
+    
+    private function authenticate()
+    {
+        // This method is for internal use.  It performs the authentication process by following the
+        // steps of basic authentication.  The URL to authenticate to is determined by the version of
+        // the API specified at construction.
+        $url        = $this->authurl;
+        $parameters = ['grant_type' => 'client_credentials'];
+        $headers    = [
+            'Content-type'  => 'application/x-www-form-urlencoded',
+            'Authorization' => 'Basic '.base64_encode($this->key.':'.$this->secret),
+        ];
+        
+        $authorization = $this->call('POST', $url, $parameters, $headers);
+        
+        if ( ! is_array($authorization) || ! array_key_exists('access_token', $authorization)) {
+            return false;
+        }
+        
+        $this->token         = $authorization['access_token'];
+        $this->refresh_token = $authorization['refresh_token'];
     }
     
     /**
@@ -236,11 +253,16 @@ class Connection implements AthenaApiConnection
         $headers,
         $secondcall = false
     ) {
-        $response = $this->authenticate();
-    
         $auth_header = ['Authorization' => 'Bearer '.$this->token];
         $response    = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
-    
+        
+        // $response is false if we had a 401 Not Authorized, so re-authenticate and try again.
+        if (false === $response && ! $secondcall) {
+            $this->authenticate();
+            
+            return $this->authorized_call($verb, $url, $body, $headers, $secondcall = true);
+        }
+        
         return $response;
     }
     
@@ -266,16 +288,14 @@ class Connection implements AthenaApiConnection
         // We shouldn't always be ignoring errors, but if we're calling this a second time, it's
         // because we found errors we want to ignore.  So we set ignore_errors to be the same as
         // $secondcall.
-        $context = stream_context_create(
-            [
-                'http' => [
-                    'method'        => $verb,
-                    'header'        => $formatted_headers,
-                    'content'       => http_build_query($body),
-                    'ignore_errors' => $secondcall,
-                ],
-            ]
-        );
+        $context = stream_context_create([
+                                             'http' => [
+                                                 'method'        => $verb,
+                                                 'header'        => $formatted_headers,
+                                                 'content'       => http_build_query($body),
+                                                 'ignore_errors' => $secondcall,
+                                             ],
+                                         ]);
         // NOTE: The warnings in file_get_contents are suppressed because the MDP API returns HTTP
         // status codes other than 200 (like 401 and 400) with information in the body that provides
         // a much better explanation than the code itself.
@@ -292,10 +312,7 @@ class Connection implements AthenaApiConnection
                 }
             } else {
                 // Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
-                if (isset($http_response_header, $http_response_header[0]) && Str::contains(
-                        $http_response_header[0],
-                        '401'
-                    )) {
+                if (isset($http_response_header) && isset($http_response_header[0]) && Str::contains($http_response_header[0], '401')) {
                     return false;
                 }
             }
@@ -317,57 +334,10 @@ class Connection implements AthenaApiConnection
      */
     private function url_join()
     {
-        return join(
-            '/',
-            array_map(
-                function ($p) {
-                    return trim($p, '/');
-                },
-                array_filter(
-                    func_get_args(),
-                    function ($value) {
-                        return ! (is_null($value) || '' == $value);
-                    }
-                )
-            )
-        );
-    }
-    
-    private function authenticate()
-    {
-        if ($this->cache()->has(self::ATHENA_CACHE_KEY)) {
-            return $this->cache()->get(self::ATHENA_CACHE_KEY);
-        }
-        $ch = curl_init();
-    
-        curl_setopt($ch, CURLOPT_URL, $this->authurl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&scope=athena/service/Athenanet.MDP.*");
-        curl_setopt($ch, CURLOPT_USERPWD, "$this->key:$this->secret");
-    
-        $headers = array();
-        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
-        $result = curl_exec($ch);
-        if (curl_errno($ch)) {
-            throw new \Exception(curl_error($ch));
-        }
-        curl_close($ch);
-        
-        $result = json_decode($result, true);
-    
-        $this->token         = $result['access_token'];
-        $this->expires_in = $result['expires_in'];
-        
-        $this->cache()->put(self::ATHENA_CACHE_KEY, $this->token, $this->expires_in);
-        
-        return $this->token;
-    }
-    
-    private function cache()
-    {
-        return Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
+        return join('/', array_map(function ($p) {
+            return trim($p, '/');
+        }, array_filter(func_get_args(), function ($value) {
+            return ! (is_null($value) || '' == $value);
+        })));
     }
 }

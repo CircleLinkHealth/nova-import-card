@@ -31,8 +31,12 @@ class AthenaApiCallsTest extends TestCase
         parent::setUp();
 
         $this->api = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
-
-        $this->athenaPracticeId   = config('services.athena.practice_id');
+    
+        $activeVersion = config('services.athena.active_version');
+    
+        $prefix = "services.athena.$activeVersion";
+        
+        $this->athenaPracticeId   = config("$prefix.practice_id");
         $this->athenaDepartmentId = 1;
         $this->fakePatient        = $this->fakePatient();
         $this->athenaPatientId    = $this->createAthenaApiPatient($this->fakePatient);

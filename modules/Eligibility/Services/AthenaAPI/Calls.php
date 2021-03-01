@@ -17,7 +17,7 @@ class Calls implements AthenaApiImplementation
     use ValidatesDates;
 
     /**
-     * @var Connection
+     * @var ConnectionV2
      */
     private $connection;
 
@@ -53,15 +53,15 @@ class Calls implements AthenaApiImplementation
     }
 
     /**
-     * @return Connection
+     * @return ConnectionV2
      */
     public function api()
     {
-        if ( ! $this->connection instanceof Connection) {
+        if ( ! $this->connection instanceof AthenaApiConnection) {
             $this->connection = app(AthenaApiConnection::class);
         }
 
-        if ( ! $this->connection instanceof Connection) {
+        if ( ! $this->connection instanceof AthenaApiConnection) {
             throw new \Exception('AthenaAPI Connection not initialized');
         }
 
@@ -208,6 +208,25 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
+    
+    public function getAppointmentReasons(
+        int $practiceId,
+        int $departmentId,
+        int $providerId
+    ) {
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET(
+            "/patientappointmentreasons",
+            [
+                'practiceid' => $practiceId,
+                'departmentid' => $departmentId,
+                'providerid' => $providerId,
+            ]
+        );
+
+        return $this->response($response);
+    }
 
     /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
@@ -221,7 +240,7 @@ class Calls implements AthenaApiImplementation
         $response = $this->api()->GET(
             "practiceinfo",
             [
-                //$practiceId defaults to 1, which will give us all practices we have access to
+                'practiceid' => $practiceId,
             ]
         );
 

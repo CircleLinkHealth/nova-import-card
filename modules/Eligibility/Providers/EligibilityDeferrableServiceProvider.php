@@ -21,7 +21,8 @@ use CircleLinkHealth\Eligibility\Console\RestoreEnrolleeProvidersFromRevisions;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV1;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV2;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -79,13 +80,23 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
         });
 
         $this->app->singleton(AthenaApiConnection::class, function () {
-            $key = config('services.athena.key');
-            $secret = config('services.athena.secret');
-            $version = config('services.athena.version');
-            $practiceId = config('services.athena.practice_id');
+            $activeVersion = config('services.athena.active_version');
             
-
-            return new Connection($version, $key, $secret, $practiceId);
+            $prefix = "services.athena.$activeVersion";
+            
+            $key = config("$prefix.key");
+            $secret = config("$prefix.secret");
+            $version = config("$prefix.version");
+            $practiceId = config("$prefix.practice_id");
+            
+            switch ($activeVersion) {
+                case 'v2':
+                    return new ConnectionV2($version, $key, $secret, $practiceId);
+                case 'v1':
+                    return new ConnectionV1($version, $key, $secret, $practiceId);
+                default:
+                    return new ConnectionV1($version, $key, $secret, $practiceId);
+            }
         });
     }
 }
