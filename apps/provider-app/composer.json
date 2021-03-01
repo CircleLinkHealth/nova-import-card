@@ -1,5 +1,5 @@
 {
-    "name": "laravel/laravel",
+    "name": "circlelinkhealth/app-cpm-provider",
     "type": "project",
     "description": "CarePlan Manager - Provider App",
     "keywords": [
@@ -45,7 +45,7 @@
         "danielme85/laravel-log-to-db": "^2.3",
         "doctrine/dbal": "2.9.2",
         "fideloper/proxy": "^4.2",
-        "fruitcake/laravel-cors": "^1.0",
+        "fruitcake/laravel-cors": "^2.0",
         "fzaninotto/faker": "~1.4",
         "laracasts/utilities": "~3.0",
         "laravel/vapor-core": "*",
