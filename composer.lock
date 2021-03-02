@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f33afe567c5dc759c99996ac411560e5",
+    "content-hash": "cac6ac922c5f83b5e3c25783ec6e10fa",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1347,11 +1347,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v2.5.8",
+            "version": "dev-#ex6ngn_prevent_duplicate_notifications",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "4ba0cdb800ca1bf95fed7d1f02587677113f7247"
+                "reference": "b32f35cb7ffe4194195dc4bfbc7f0dfa7efa8060"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1374,7 +1374,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-02-19T10:24:42+00:00"
+            "time": "2021-03-02T16:25:23+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -18019,6 +18019,7 @@
     "stability-flags": {
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/twilio-integration-module": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20,
         "heroku/heroku-buildpack-php": 20,
