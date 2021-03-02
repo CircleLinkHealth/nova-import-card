@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cac6ac922c5f83b5e3c25783ec6e10fa",
+    "content-hash": "f1a01b49ed3cf132290690dea3ec1bcd",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -852,11 +852,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-#ex6ngn_prevent_duplicate_notifications",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "b1b079fa8d40debf7a37478d89ec44e47677e4f8"
+                "reference": "f5e2db3dae704f33dd00dc750483804c66c83c9f"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -912,7 +912,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-03-02T13:36:28+00:00"
+            "time": "2021-03-02T17:19:58+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -999,11 +999,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-#ex6ngn_prevent_duplicate_notifications",
+            "version": "v4.3.94",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "69101dcc178f32502f85c589ba85fe5bcaac7ca0"
+                "reference": "9e8e95063bd7d51aaccdfe607d6489135f3a5663"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "^2.0",
@@ -1045,7 +1045,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-03-02T15:18:52+00:00"
+            "time": "2021-03-02T17:19:52+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1347,11 +1347,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-#ex6ngn_prevent_duplicate_notifications",
+            "version": "v2.5.92",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b32f35cb7ffe4194195dc4bfbc7f0dfa7efa8060"
+                "reference": "9b563e7010345a8593c3b31c2f70df8eb7c75c9b"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "^4.1"
@@ -1374,7 +1374,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-03-02T16:25:23+00:00"
+            "time": "2021-03-02T17:22:28+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1507,11 +1507,11 @@
         },
         {
             "name": "circlelinkhealth/twilio-integration-module",
-            "version": "dev-#ex6ngn_prevent_duplicate_notifications",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git",
-                "reference": "e0482abd11505281512c5b9232343d7eff3ffc03"
+                "reference": "6e03e04b29d2aa9bac3b698c917149b330d0047a"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1540,7 +1540,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2021-03-02T13:36:28+00:00"
+            "time": "2021-03-02T17:21:20+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -4728,16 +4728,16 @@
         },
         {
             "name": "laravel/passport",
-            "version": "v10.1.1",
+            "version": "v10.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3"
+                "reference": "9f1a5d56eb609250104afc38cf407f7c2520cda3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3",
-                "reference": "2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/9f1a5d56eb609250104afc38cf407f7c2520cda3",
+                "reference": "9f1a5d56eb609250104afc38cf407f7c2520cda3",
                 "shasum": ""
             },
             "require": {
@@ -4756,7 +4756,7 @@
                 "league/oauth2-server": "^8.2",
                 "nyholm/psr7": "^1.3",
                 "php": "^7.3|^8.0",
-                "phpseclib/phpseclib": "^3.0",
+                "phpseclib/phpseclib": "^2.0|^3.0",
                 "symfony/psr-http-message-bridge": "^2.0"
             },
             "require-dev": {
@@ -4797,7 +4797,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2021-02-23T20:45:29+00:00"
+            "time": "2021-03-02T16:40:00+00:00"
         },
         {
             "name": "laravel/scout",
@@ -4866,16 +4866,16 @@
         },
         {
             "name": "laravel/tinker",
-            "version": "v2.6.0",
+            "version": "v2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/tinker.git",
-                "reference": "daae1c43f1300fe88c05d83db6f3d8f76677ad88"
+                "reference": "04ad32c1a3328081097a181875733fa51f402083"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/tinker/zipball/daae1c43f1300fe88c05d83db6f3d8f76677ad88",
-                "reference": "daae1c43f1300fe88c05d83db6f3d8f76677ad88",
+                "url": "https://api.github.com/repos/laravel/tinker/zipball/04ad32c1a3328081097a181875733fa51f402083",
+                "reference": "04ad32c1a3328081097a181875733fa51f402083",
                 "shasum": ""
             },
             "require": {
@@ -4926,7 +4926,7 @@
                 "laravel",
                 "psysh"
             ],
-            "time": "2021-01-26T20:35:18+00:00"
+            "time": "2021-03-02T16:53:12+00:00"
         },
         {
             "name": "laravel/ui",
@@ -18017,10 +18017,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "circlelinkhealth/core-module": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
-        "circlelinkhealth/twilio-integration-module": 20,
         "circlelinkhealth/vapor-devops-helpers-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
