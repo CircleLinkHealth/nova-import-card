@@ -6,3 +6,5 @@ apps/*/production-deploy-s3.env
 apps/admin-app/staging-deploy-s3.env
 apps/admin-app/production-deploy-s3.env
 /vendor/
+staging-deploy-s3.env
+production-deploy-s3.env

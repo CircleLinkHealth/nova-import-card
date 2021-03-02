@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -56,7 +57,25 @@ class CheckForNullPatientActivities extends Command
             ->pluck('patient_id')
             ->toArray();
 
-        $patientsStr = implode(', ', $patientIds);
+        $message = collect();
+        User::ofType('participant')
+            ->ofActiveBillablePractice(false)
+            ->whereHas('patientInfo', fn ($pi) => $pi->enrolled())
+            ->whereIn('id', $patientIds)
+            ->with([
+                'ccdProblems' => fn ($q) => $q->where('is_monitored', '=', 1),
+            ])
+            ->each(function (User $user) use ($message) {
+                $conditions = $user->ccdProblems->count();
+                $str = "$user->id: $conditions monitored problem(s)";
+                $message->push($str);
+            });
+
+        if (empty($message)) {
+            return 0;
+        }
+
+        $patientsStr = implode("\n", $message->toArray());
         $msg         = "The following patients have null activities. Please check.\n$patientsStr";
 
         sendSlackMessage('#time-tracking-issues', $msg);
