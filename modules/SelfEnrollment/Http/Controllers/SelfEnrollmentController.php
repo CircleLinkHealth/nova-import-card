@@ -244,7 +244,7 @@ class SelfEnrollmentController extends Controller
             /** @var User $user */
             $user = Auth::loginUsingId((int) $userId, true);
             return $this->enrollableInvitationManager(
-                new User($user->toArray())
+                $user
             );
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
