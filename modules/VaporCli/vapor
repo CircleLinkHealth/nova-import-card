@@ -15,15 +15,14 @@ use Symfony\Component\Console\Application;
 /**
  * Require the autoloader.
  */
-if (file_exists(__DIR__.'/../../autoload.php')) {
-    echo 'Using (1) '.__DIR__.'/../../autoload.php'.PHP_EOL;
-    require __DIR__.'/../../autoload.php';
-} elseif (file_exists(getcwd().'/vendor/autoload.php')) {
-    echo 'Using (2) '.getcwd().'/vendor/autoload.php'.PHP_EOL;
-    require getcwd().'/vendor/autoload.php';
+if (file_exists($path = "{$_SERVER['PWD']}/vendor/autoload.php")) {
+    echo 'Using (1) '.$path.PHP_EOL;
+    require $path;
+} elseif (file_exists($path = __DIR__.'/vendor/autoload.php')) {
+    echo 'Using (2) '.$path.PHP_EOL;
+    require $path;
 } else {
-    echo 'Using (3) '.__DIR__.'/vendor/autoload.php'.PHP_EOL;
-    require __DIR__.'/vendor/autoload.php';
+    throw new \Exception("Could not find autoload.php file to load");
 }
 
 /**
