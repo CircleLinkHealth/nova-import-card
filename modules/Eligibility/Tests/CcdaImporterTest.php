@@ -43,7 +43,7 @@ class CcdaImporterTest extends CustomerTestCase
     {
         Notification::fake();
         $enrollee = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice(), $this->provider());
-        SendInvitation::dispatch(new \CircleLinkHealth\SelfEnrollment\Entities\User($enrollee->user->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        SendInvitation::dispatch(new \CircleLinkHealth\Customer\Entities\User($enrollee->user->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         )->id);

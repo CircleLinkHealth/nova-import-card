@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Jobs;
 
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;

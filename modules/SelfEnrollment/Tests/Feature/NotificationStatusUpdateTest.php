@@ -10,7 +10,7 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
 use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
