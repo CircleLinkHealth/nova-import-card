@@ -120,6 +120,6 @@ trait MakesOrReceivesCalls
     public function unsuccessfulCallsFor(Carbon $date)
     {
         return $this->callsWithCallbacks($date)
-            ->where('calls.status', '=', 'not reached');
+            ->whereIn('calls.status', [Call::NOT_REACHED, Call::IGNORED]);
     }
 }
