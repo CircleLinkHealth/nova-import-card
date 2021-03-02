@@ -200,10 +200,12 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         }
 
         // Notify Users
-        $recipients->unique()
+        $recipients
+            ->pluck('id')
+            ->unique()
             ->values()
-            ->map(function ($carePersonUser) use ($channelsForUsers) {
-                optional($carePersonUser)->notify(new NoteForwarded($this, $channelsForUsers));
+            ->map(function ($userId, $index) use ($recipients, $channelsForUsers) {
+                optional($recipients->get($index))->notify(new NoteForwarded($this, $channelsForUsers));
             });
 
         if ($force && empty($channelsForLocation)) {
