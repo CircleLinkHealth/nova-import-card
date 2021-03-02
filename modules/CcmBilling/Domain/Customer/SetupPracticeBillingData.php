@@ -26,7 +26,7 @@ class SetupPracticeBillingData
             new MigrateChargeableServicesFromChargeablesToLocationSummariesTable(),
         ];
 
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
             $jobs = new SeedCpmProblemChargeableServicesFromLegacyTables();
         }
 
@@ -43,8 +43,8 @@ class SetupPracticeBillingData
             new MigratePracticeServicesFromChargeablesToLocationSummariesTable($practiceId),
         ];
 
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
-            $jobs = new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId);
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+            $jobs[] = new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId);
         }
 
         $jobs[] = new ProcessPracticePatientMonthlyServices($practiceId);
@@ -60,8 +60,8 @@ class SetupPracticeBillingData
             new MigratePracticeServicesFromChargeablesToLocationSummariesTable($practiceId),
         ];
 
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
-            $jobs = new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId);
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+            $jobs[] = new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId);
         }
 
         $jobs[] = new ProcessPracticePatientMonthlyServices($practiceId);
