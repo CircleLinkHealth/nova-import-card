@@ -265,7 +265,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
             return null;
         }
 
-        if (DuplicateNotificationChecker::hasAlreadySentNotification($user, $notification)) {
+        if (DuplicateNotificationChecker::hasAlreadySentNotification($user, $notification, 'mail')) {
             return null;
         }
 

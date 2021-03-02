@@ -31,6 +31,10 @@ class CreateNoteForPatient
 
     public function can(int $nurseUserId, int $patientId)
     {
+        if (app()->environment('local')) {
+            return true;
+        }
+
         return \Cache::tags(self::cacheTags($patientId))->remember(self::cacheKey($nurseUserId, $patientId), 2, function () use ($patientId, $nurseUserId) {
             return optional($this->repo->assignedNurse($patientId))->nurse_user_id === $nurseUserId;
         });
