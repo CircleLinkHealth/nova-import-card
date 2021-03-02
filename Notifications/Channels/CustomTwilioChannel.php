@@ -52,7 +52,7 @@ class CustomTwilioChannel extends TwilioChannel
                 throw new CannotSendNotificationException("User[$notifiable->id] is in sms exclusions list. Will not send sms.");
             }
 
-            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification)) {
+            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, 'twilio')) {
                 throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
             }
 
