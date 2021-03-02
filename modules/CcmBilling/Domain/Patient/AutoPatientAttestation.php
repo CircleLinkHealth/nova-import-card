@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -251,7 +252,7 @@ class AutoPatientAttestation
 
     private function isNewBillingEnabled()
     {
-        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        return BillingCache::billingRevampIsEnabled();
     }
 
     private function patientProblemsSortedByWeight(): Collection
