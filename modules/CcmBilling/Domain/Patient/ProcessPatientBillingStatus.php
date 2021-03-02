@@ -72,6 +72,7 @@ class ProcessPatientBillingStatus
         if ( ! $this->setup()) {
             return;
         }
+        //todo: exit if patient does not have fulfilled CS?
 
         /** @var User $patient */
         $patient         = $this->billingStatus->patientUser;

@@ -17,7 +17,7 @@ trait ApprovableBillingStatusesQuery
         return PatientMonthlyBillingStatus::orderByRaw('FIELD(status, "needs_qa", "rejected", "approved")')
             ->where('chargeable_month', '=', $monthYear)
             ->whereHas('patientUser', fn ($q) => $q->patientInLocations($locationIds))
-            ->whereHas('patientUser.chargeableMonthlySummaries', fn ($q) => $q->where('is_fulfilled', '=', true))
+            ->whereHas('patientUser.chargeableMonthlySummaries', fn ($q) => $q->createdOnIfNotNull($monthYear, 'chargeable_month')->where('is_fulfilled', '=', true))
             ->when($withRelations, function ($q) use ($monthYear) {
                 return $q->with([
                     'patientUser' => fn ($q) => $q->with(array_merge($this->sharedUserRelations($monthYear), [
