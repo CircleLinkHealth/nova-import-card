@@ -121,12 +121,12 @@
 </template>
 
 <script>
-    import {rootUrl} from "../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config";
+    import {rootUrl} from "../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
     import {Event} from 'vue-tables-2'
     import {CancelToken} from 'axios'
     import moment from 'moment'
-    import loader from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
-    import UserRolesHelperMixin from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/mixins/user-roles-helpers.mixin'
+    import loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import UserRolesHelperMixin from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/mixins/user-roles-helpers.mixin'
 
     /**
      * Determines whether to show patient name format as

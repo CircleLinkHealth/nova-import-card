@@ -11,10 +11,6 @@ use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Traits\BelongsToCcda;
-use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\TargetPatient.
@@ -36,33 +32,33 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                       $enrollee
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User|null                                               $user
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient query()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereBatchId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDescription($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrDepartmentId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrPatientId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrPracticeId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEligibilityJobId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEnrolleeId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereStatus($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereBatchId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCreatedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDescription($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrDepartmentId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrPatientId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEhrPracticeId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEligibilityJobId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereEnrolleeId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereId($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereStatus($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
  * @property int                                                          $practice_id
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice                 $practice
- * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ * @method static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
  * @property int|null                                                     $ccda_id
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null            $ccda
- * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ * @method static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
  * @property int|null                                                     $revision_history_count
  * @property int                                                          $department_id
- * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
+ * @method static                                                       \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null   $eligibilityJob
  */
 class TargetPatient extends BaseModel

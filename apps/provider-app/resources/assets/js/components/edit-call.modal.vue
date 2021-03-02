@@ -99,13 +99,13 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 
 <script>
     import {Event} from 'vue-tables-2'
-    import Modal from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/common/modal'
-    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
-    import {rootUrl} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
-    import {today} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/today'
-    import Notifications from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
+    import Modal from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
+    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import {today} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/today'
+    import Notifications from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import VueSelect from 'vue-select'
-    import VueCache from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/vue-cache'
+    import VueCache from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
 
     const defaultFormData = {
         id: null,

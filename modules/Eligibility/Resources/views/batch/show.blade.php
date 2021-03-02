@@ -41,7 +41,7 @@
 
                         <a href="{{ route('eligibility.batch.show', [$batch->id, 'reprocess']) }}"
                            class="btn btn-default btn-xs tooltip-bottom"
-                           onclick="return confirm('This will resume processing of records in case it got stuck. Would you like to proceed?')"
+                           onclick="return confirm('This will reprocess the batch. Do not run this more than once every 30 minutes!')"
                            data-tooltip="Reimport (beta)"
                         >
                             <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>

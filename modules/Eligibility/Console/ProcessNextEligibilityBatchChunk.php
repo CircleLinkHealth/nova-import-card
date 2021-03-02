@@ -34,7 +34,7 @@ class ProcessNextEligibilityBatchChunk extends Command
     public function handle()
     {
         if ($batch = $this->getNextBatch()) {
-            ProcessEligibilityBatch::dispatch($batch);
+            ProcessEligibilityBatch::dispatch($batch->id);
             $this->line("Scheduled command to process batch:$batch->id");
 
             return;
@@ -46,6 +46,7 @@ class ProcessNextEligibilityBatchChunk extends Command
     private function getNextBatch(): ?EligibilityBatch
     {
         return EligibilityBatch::where('status', '<', 2)
+            ->orderByDesc('created_at')
             ->with('practice')
             ->first();
     }

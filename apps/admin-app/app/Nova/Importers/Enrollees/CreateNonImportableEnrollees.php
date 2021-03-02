@@ -10,8 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Validator;
 

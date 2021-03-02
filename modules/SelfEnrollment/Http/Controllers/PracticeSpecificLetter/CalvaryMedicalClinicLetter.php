@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
@@ -90,9 +90,10 @@ class CalvaryMedicalClinicLetter extends EnrollmentLetterDefaultConfigs implemen
         return $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
+    public static function signatures(Model $practiceLetter, Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider): string
     {
-        return "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+        $signature = asset($practiceLetter->customer_signature_src);
+        return "<img src=$signature  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
     }
 
     /**

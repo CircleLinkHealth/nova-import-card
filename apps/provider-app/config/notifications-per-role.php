@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Notifications\AddendumCreated;
+use CircleLinkHealth\Core\Notifications\AddendumCreated;
 use CircleLinkHealth\Customer\Notifications\CarePlanApprovalReminder;
 use CircleLinkHealth\NurseInvoices\Notifications\DisputeResolved;
 use CircleLinkHealth\NurseInvoices\Notifications\InvoiceBeforePayment;

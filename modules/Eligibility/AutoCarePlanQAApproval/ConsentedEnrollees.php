@@ -27,17 +27,23 @@ class ConsentedEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        $this->consentedEnrollees()->orderBy('consented_at')
+        $this->consentedEnrollees()
+             ->orderByDesc('consented_at')
+             ->orderBy('source')
             ->each(function (Enrollee $enrollee) {
-                ImportAndApproveEnrollee::dispatch($enrollee);
+                ImportAndApproveEnrollee::dispatch($enrollee->id);
             });
     }
 
     private function consentedEnrollees()
     {
-        return Enrollee::where('status', Enrollee::CONSENTED)
+        return Enrollee::where('status', '=', Enrollee::CONSENTED)
+            ->where(function ($q){
+                $q->where('source', '<>', Enrollee::UPLOADED_CSV)
+                    ->orWhereNull('source');
+            })
             ->whereHas('practice', function ($q) {
                 $q->activeBillable()->whereIsDemo(0);
-            })->with('user.patientInfo');
+            });
     }
 }

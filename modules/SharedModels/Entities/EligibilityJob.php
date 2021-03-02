@@ -92,6 +92,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null                                          $patient_mrn
  * @property string|null                                          $patient_dob
  * @property string|null                                          $patient_email
+ * @method static \Illuminate\Database\Eloquent\Builder|EligibilityJob pendingProcessing()
  */
 class EligibilityJob extends BaseModel
 {
@@ -284,5 +285,15 @@ class EligibilityJob extends BaseModel
     public function wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()
     {
         return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->outcome;
+    }
+    
+    public function scopePendingProcessing($q) {
+        return $q->where(function($q) {
+            $q->where('status', '=', EligibilityJob::STATUSES['not_started'])
+              ->orWhere([
+                            ['status', '=', EligibilityJob::STATUSES['processing']],
+                            ['updated_at', '<', now()->subMinutes(10)],
+                        ]);
+        });
     }
 }

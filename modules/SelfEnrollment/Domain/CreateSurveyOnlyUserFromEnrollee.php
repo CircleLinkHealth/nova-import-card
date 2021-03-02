@@ -10,7 +10,7 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
@@ -74,6 +74,7 @@ class CreateSurveyOnlyUserFromEnrollee
         }
 
         try {
+            $this->enrollee->fresh();
             UserRepository::validatePatientDoesNotAlreadyExist(
                 $this->enrollee->practice_id,
                 $this->enrollee->first_name,
@@ -84,7 +85,6 @@ class CreateSurveyOnlyUserFromEnrollee
         } catch (PatientAlreadyExistsException $e) {
             $this->enrollee->user_id = $e->getPatientUserId();
             $this->enrollee->save();
-
             return;
         }
 
@@ -140,6 +140,8 @@ class CreateSurveyOnlyUserFromEnrollee
                 ]
             )
         );
+
+        $userCreatedFromEnrollee = new User($userCreatedFromEnrollee->toArray());
 
         if ($ccda) {
             $ccda->patient_id = $userCreatedFromEnrollee->id;

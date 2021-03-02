@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SelfEnrollment\DTO\CameronLetterProductionValueObject;
 use CircleLinkHealth\SelfEnrollment\DTO\CameronLetterTestValueObject;
@@ -91,6 +91,7 @@ class GenerateCameronLetter extends Seeder
                 'practice_logo_src'      => self::CAMERON_LOGO,
                 'customer_signature_src' => EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP,
                 'ui_requests'            => json_encode($customUiRequest),
+                'signatory_name'         => '',
                 'letter'                 => json_encode(
                     [
                         'page_1' => [

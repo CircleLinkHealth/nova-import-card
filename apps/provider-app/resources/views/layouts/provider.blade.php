@@ -1,5 +1,6 @@
 @php
     $url = rtrim(url('/'),'/').'/';
+    $user = auth()->user();
 @endphp
 <!DOCTYPE html>
 <head>
@@ -69,12 +70,12 @@
         }
     </style>
     @stack('styles')
-    @include('modules.raygun.partials.real-user-monitoring')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
     @include('core::partials.new-relic-tracking')
 </head>
 <body>
 
-<div id="app" @if(auth()->guest() || ! auth()->user()->isCallbacksAdmin()) class="provider-app" @endif>
+<div id="app" @if(auth()->guest() || ! $user->isCallbacksAdmin()) class="provider-app" @endif>
     <!--[if lt IE 8]>
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
             href="http://browsehappy.com/">upgrade
@@ -166,6 +167,9 @@
         setupTooltips(1);
     })(jQuery);
 </script>
+    @if($user->isAllowedToBubbleChat())
+        @include('intercom-chat.clh-chat-bubble', compact(['user' => $user]));
+    @endif
 @endif
 
 @include('core::partials.clickup-bug-collector')

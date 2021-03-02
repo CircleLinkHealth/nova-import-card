@@ -278,6 +278,10 @@ class CcdToLogTranformer
      */
     public function provider($provider)
     {
+        if (is_array($provider)) {
+            $provider = (object) $provider;
+        }
+
         $phones = $this->getAllPhoneNumbers($provider->phones);
 
         return [
@@ -296,12 +300,12 @@ class CcdToLogTranformer
             'organization' => isset($provider->organization)
                 ? $provider->organization
                 : null,
-            'street' => array_key_exists(0, $provider->address->street)
+            'street' => isset($provider->address) && array_key_exists(0, optional($provider->address)->street ?? [])
                 ? $provider->address->street[0]
                 : null,
-            'city'       => $provider->address->city,
-            'state'      => $provider->address->state,
-            'zip'        => $provider->address->zip,
+            'city'       => isset($provider->address) ? optional($provider->address)->city : '',
+            'state'      => isset($provider->address) ? optional($provider->address)->state : '',
+            'zip'        => isset($provider->address) ? optional($provider->address)->zip : '',
             'cell_phone' => $phones['mobile'][0],
             'home_phone' => $phones['home'][0],
             'work_phone' => $phones['alternate'][0],

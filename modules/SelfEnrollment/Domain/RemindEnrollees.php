@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\SelfEnrollment\Domain;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AbstractSelfEnrollableUserIterator;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,9 +52,7 @@ class RemindEnrollees extends AbstractSelfEnrollableUserIterator
         })
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($enrollee) {
-                $enrollee
-                    ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
-                    ->whereNull('source'); //Eliminates unreachable patients, and only fetches enrollees who have not yet enrolled.
+                $enrollee->canSendSelfEnrollmentInvitation(false);
             })->doesntHave('enrollableInfoRequest')->orderBy('created_at', 'asc')
             ->with([
                 'enrollee.enrollmentInvitationLinks' => function ($q) {
@@ -65,6 +63,7 @@ class RemindEnrollees extends AbstractSelfEnrollableUserIterator
             ])
             ->when($this->practiceId, function ($q) {
                 return $q->where('program_id', $this->practiceId);
-            });
+            })
+            ->uniquePatients();
     }
 }

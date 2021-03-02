@@ -54,7 +54,7 @@ class ScheduleCallbackAndNotifyService
             $service = app(SchedulerService::class);
             $task    = $service->scheduleAsapCallbackTask(
                 $user,
-                $this->filterEmailBody($input->TextBody),
+                $this->filterEmailBody($input->TextBody ?? $input->HtmlBody),
                 CpmConstants::SCHEDULER_POSTMARK_INBOUND_MAIL,
                 null,
                 SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS

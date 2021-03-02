@@ -6,4 +6,4 @@ set -x
 APP=$1
 COMMAND=$2
 
-(cd "$PWD/apps/$APP" && $COMMAND)
+(cd "$PWD/apps/$APP-app" && $COMMAND)

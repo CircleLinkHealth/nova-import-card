@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Constants\ProviderClinicalTypes;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
@@ -151,5 +151,19 @@ class Helpers
     public static function selfEnrollmentSlackLogChannel()
     {
         return AppConfig::pull('self-enrolment-log-slack-channel', '');
+    }
+
+    public static function canSendSelfEnrollmentInvitation(Enrollee $enrollee, bool $isReminder)
+    {
+        return $enrollee->status === Enrollee::QUEUE_AUTO_ENROLLMENT
+            && empty($enrollee->source)
+            && (! $isReminder && self::canSendOriginalInvitation($enrollee));
+    }
+
+    private static function canSendOriginalInvitation(Enrollee $enrollee)
+    {
+        return $enrollee->enrollmentInvitationLinks()
+            ->where('created_at', '>', now()->subMonths(Enrollee::INVITE_ONCE_EVERY_N_MONTHS))
+            ->exists();
     }
 }

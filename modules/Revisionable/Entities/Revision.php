@@ -12,10 +12,10 @@ use Illuminate\Support\Str;
 
 /**
  * Revision.
- *
+ * 
  * Base model to allow for revision history on
  * any model that extends this model
- *
+ * 
  * (c) Venture Craft <http://www.venturecraft.com.au>
  *
  * @property int                                           $id
@@ -30,20 +30,20 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null               $created_at
  * @property \Illuminate\Support\Carbon|null               $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $revisionable
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision newModelQuery()
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision newQuery()
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision query()
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereCreatedAt($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereId($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereIp($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereIsPhi($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereKey($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereNewValue($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereOldValue($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereRevisionableId($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereRevisionableType($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereUpdatedAt($value)
- * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereUserId($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision newModelQuery()
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision newQuery()
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision query()
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereCreatedAt($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereId($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereIp($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereIsPhi($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereKey($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereNewValue($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereOldValue($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereRevisionableId($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereRevisionableType($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereUpdatedAt($value)
+ * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision whereUserId($value)
  * @mixin \Eloquent
  */
 class Revision extends Eloquent

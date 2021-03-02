@@ -3,6 +3,7 @@
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\ApplicationFiles;
+use Laravel\VaporCli\CLHModulesFiles;
 use Laravel\VaporCli\Helpers;
 use SplFileInfo;
 
@@ -31,6 +32,17 @@ class CopyApplicationToBuildPath
                 : $this->createFileForCopy($file);
         }
 
+        Helpers::step('<options=bold>Copying Modules</>');
+
+        foreach (CLHModulesFiles::get("$this->path/../../modules") as $file) {
+            if ($file->isLink()) {
+                continue;
+            }
+
+            $file->isDir()
+                ? $this->createDirectoryForCLHModulesCopy($file)
+                : $this->createFileForCLHModulesCopy($file);
+        }
         $this->flushCacheFiles();
         $this->flushStorageDirectories();
     }
@@ -63,6 +75,36 @@ class CopyApplicationToBuildPath
 
         $this->files->chmod(
             $this->appPath.'/'.$file->getRelativePathname(),
+            fileperms($file->getRealPath())
+        );
+    } /**
+     * Create a directory for the application copy operation.
+     *
+     * @param \SplFileInfo $file
+     *
+     * @return void
+     */
+    protected function createDirectoryForCLHModulesCopy(SplFileInfo $file)
+    {
+        $this->files->makeDirectory($this->appPath.'/CircleLinkHealth/'.$file->getRelativePathname());
+    }
+
+    /**
+     * Create a file for the application copy operation.
+     *
+     * @param \SplFileInfo $file
+     *
+     * @return void
+     */
+    protected function createFileForCLHModulesCopy(SplFileInfo $file)
+    {
+        $this->files->copy(
+            $file->getRealPath(),
+            $this->appPath.'/CircleLinkHealth/'.$file->getRelativePathname()
+        );
+
+        $this->files->chmod(
+            $this->appPath.'/CircleLinkHealth/'.$file->getRelativePathname(),
             fileperms($file->getRealPath())
         );
     }

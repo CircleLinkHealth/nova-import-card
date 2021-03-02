@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Eloquent|Model                 $synonymable
- * @method   static                          \Illuminate\Database\Eloquent\Builder|Synonym newModelQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|Synonym newQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|Synonym query()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|Synonym newModelQuery()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|Synonym newQuery()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|Synonym query()
  * @mixin \Eloquent
  */
 class Synonym extends Model

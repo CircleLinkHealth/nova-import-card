@@ -1,18 +1,34 @@
-id: 15907
-name: cpm-caller
+id: 16123
+name: app-cpm-caller-laravel
 environments:
   production:
-    memory: 1024
+    domain: caller.careplanmanager.com
+    memory: 512
     cli-memory: 512
-    runtime: 'php-7.4'
+    queue-memory: 512
+    runtime: docker
+    queues:
+    - cpm-caller-low-production
+    - cpm-caller-high-production
+    - cpm-caller-revisionable-production
+    scheduler: false
+    mail: false
+    concurrency: 50
+    capacity: 5
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative --prefer-dist'
-    deploy:
-      - 'php artisan migrate --force'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
   staging:
-    domain: cpm-caller.clh-staging.com
-    memory: 1024
+    domain: cpm-caller-laravel.clh-staging.com
+    memory: 512
     cli-memory: 512
-    runtime: 'php-7.4'
+    queue-memory: 512
+    runtime: docker
+    queues:
+    - cpm-caller-low-staging
+    - cpm-caller-high-staging
+    - cpm-caller-revisionable-staging
+    scheduler: false
+    concurrency: 5
+    mail: false
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative --prefer-dist'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'

@@ -21,11 +21,11 @@ class SendCareDocument extends Notification implements FaxableNotification
 {
     use Queueable;
 
+    public $filePath;
+
     private $channels = [
         'database',
     ];
-
-    private $filePath;
     private $media;
     private $patient;
     private $reportType;

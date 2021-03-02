@@ -96,4 +96,8 @@ return [
         'phone_two' => '+35799952761',
         'email_two' => 'kountouris7@gmail.com',
     ],
+
+    'intercom' => [
+        'intercom_app_id' => env('INTERCOM_APP_ID', ''),
+    ],
 ];

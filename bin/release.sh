@@ -3,16 +3,24 @@
 set -e
 
 # Make sure the release tag is provided.
-if (( "$#" != 1 ))
+if (( "$#" != 2 ))
 then
-    echo "Tag has to be provided."
+    echo "Release Branch and Tag have to be provided."
 
     exit 1
 fi
 
 RELEASE_BRANCH=$1
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-VERSION=$1
+VERSION=$2
+
+# Always prepend with "release-"
+if [[ $RELEASE_BRANCH != release-*  ]]
+then
+    echo "Release branches must begin with `release-`."
+
+    exit 1
+fi
 
 # Make sure current branch and release branch match.
 if [[ "$RELEASE_BRANCH" != "$CURRENT_BRANCH" ]]
@@ -47,19 +55,29 @@ then
     VERSION="v$VERSION"
 fi
 
+# Removes lines containing CircleLinkHealth from git .gitignore
+# so we can copy modules and have them committed
+sed -i '' '/CircleLinkHealth/d' $PWD/.gitignore
+
+if [[ ! -z "$(git status --porcelain)" ]]
+then
+    git add .
+    git commit -m "Enable copying modules"
+    git push
+fi
+
 # Tag Framework
 git tag $VERSION
 git push origin --tags
 
 # Tag Components
-for REMOTE in $(ls ../apps ../modules)
+for REMOTE_URL in $(awk '{print $1}' $PWD/repos.txt | grep -v app | grep git@)
 do
     echo ""
     echo ""
     echo "Releasing $REMOTE";
 
-    TMP_DIR="/tmp/laravel-split"
-    REMOTE_URL="git@github.com:illuminate/$REMOTE.git"
+    TMP_DIR="/tmp/cpm-monorepo-split"
 
     rm -rf $TMP_DIR;
     mkdir $TMP_DIR;

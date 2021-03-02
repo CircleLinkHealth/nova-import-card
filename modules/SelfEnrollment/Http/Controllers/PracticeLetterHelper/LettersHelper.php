@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper;
 
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;

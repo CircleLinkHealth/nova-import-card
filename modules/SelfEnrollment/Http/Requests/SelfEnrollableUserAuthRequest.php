@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Requests;
 
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -17,6 +17,10 @@ use Illuminate\Validation\Validator;
 class SelfEnrollableUserAuthRequest extends FormRequest
 {
     const DATE_LAST_DUPLICATE_SHORT_LINKS_EXPIRE = '2020-06-05';
+    /**
+     * @var mixed
+     */
+    private $user;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -47,10 +51,11 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     //once we phase out problematic links batch, also check that user has survey only, or patient role
-                    $exists = User::where('id', $value)->exists();
-                    if ( ! $exists) {
+                    $user = User::find($value);
+                    if ( ! $user) {
                         $fail('Invalid User.');
                     }
+                    $this->user = $user;
                 },
             ],
         ];
@@ -59,14 +64,17 @@ class SelfEnrollableUserAuthRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function (Validator $validator) {
+            $input = $validator->getData();
+            $dob = Carbon::create((int) $input['birth_date_year'], (int) $input['birth_date_month'], (int) $input['birth_date_day']);
+            $enrolleeQuery = $this->enrolleeQuery($dob, $userId = (int) $input['user_id'], $isSurveyOnly = (bool) $input['is_survey_only']);
+            $helpLoginMessage = $this->helpLoginMessage();
+
             if ($validator->failed()) {
+                $validator->errors()->add('help_login', $helpLoginMessage);
                 return;
             }
 
-            $input = $validator->getData();
-            $dob = Carbon::create((int) $input['birth_date_year'], (int) $input['birth_date_month'], (int) $input['birth_date_day']);
-
-            if ($this->enrolleeQuery($dob, $userId = (int) $input['user_id'], $isSurveyOnly = (bool) $input['is_survey_only'])->exists()) {
+            if ($enrolleeQuery->exists()) {
                 $this->request->add([
                     'userId'=>$userId
                 ]);
@@ -74,8 +82,8 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             }
 
             Log::channel('database')->error('Failed to login patient with DOB['.$dob->toDateString()."] and UserId[$userId] and isSurveyOnly[$isSurveyOnly]");
-
-            $validator->errors()->add('field', 'Your credentials do not match our records');
+            $validator->errors()->add('field', 'Your credentials do not match our records.');
+            $validator->errors()->add('help_login', $helpLoginMessage);
 
             $this->request->add([
                 'userId'=>$userId
@@ -88,9 +96,8 @@ class SelfEnrollableUserAuthRequest extends FormRequest
         return User::where('id', $userId)
             ->whereHas('patientInfo', function ($q) use ($dob) {
                 $q->where('birth_date', $dob);
-            })->whereHas('enrollee', function ($q) use ($dob) {
-                $q->where('dob', $dob)
-                    ->whereIn('status', [
+            })->whereHas('enrollee', function ($q) {
+                $q->whereIn('status', [
                         Enrollee::QUEUE_AUTO_ENROLLMENT,
                         Enrollee::TO_CALL,
                         Enrollee::SOFT_REJECTED,
@@ -102,4 +109,17 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             })
             ->ofType($IsSurveyOnly ? 'survey-only' : 'participant');
     }
+
+    private function helpLoginMessage()
+    {
+        $practiceNumber =  $this->user->primaryProgramPhoneE164();
+        $mainMessageBody = "If you are having trouble to log in, please contact your practice";
+        if ($practiceNumber){
+            return "$mainMessageBody at $practiceNumber.";
+        }
+
+        return "$mainMessageBody.";
+
+    }
+
 }

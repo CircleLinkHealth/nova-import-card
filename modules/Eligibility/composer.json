@@ -9,15 +9,13 @@
     }
   ],
   "extra": {
-    "branch-alias": {
-      "dev-master": "4.4.x-dev"
-    },
     "laravel": {
       "providers": [
         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
       ],
       "aliases": {
+
       }
     }
   },
@@ -29,11 +27,11 @@
   "repositories": [
     {
       "type": "path",
-      "url": "./CircleLinkHealth/Customer"
+      "url": "../Customer"
     },
     {
       "type": "path",
-      "url": "./CircleLinkHealth/Synonyms"
+      "url": "../Synonyms"
     }
   ],
   "require": {

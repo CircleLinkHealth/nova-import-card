@@ -1,47 +1,49 @@
 # This file is read when we build the repo from scratch. List all apps and modules we need to pull below.
-# Important!! Remotes can only be added once! To avoid errors, comment out all modules after building.
+# Important!!! Building the monorepo from scratch is a one-time operation.
 
 
 # Apps
 # Naming conventions
 #   - Add suffix "-app" to remote
 #   - Use kebab-case for dir name
-# git@github.com:CircleLinkHealth/app-awv.git awv-app apps/awv-app
-# git@github.com:CircleLinkHealth/app-cpm-admin.git admin-app apps/admin-app
-# git@github.com:CircleLinkHealth/app-cpm-web.git provider-app apps/provider-app
-# git@github.com:CircleLinkHealth/app-cpm-caller.git caller-app apps/caller-app
-# git@github.com:CircleLinkHealth/app-time-tracker.git time-tracker-app apps/time-tracker-app
+git@github.com:CircleLinkHealth/app-awv.git awv-app apps/awv-app
+git@github.com:CircleLinkHealth/app-cpm-admin.git admin-app apps/admin-app
+git@github.com:CircleLinkHealth/app-cpm-web.git provider-app apps/provider-app
+git@github.com:CircleLinkHealth/app-cpm-caller-laravel.git caller-app apps/caller-app
+git@github.com:CircleLinkHealth/cpm-app-blueprint.git self-enrollment-app apps/self-enrollment-app
+git@github.com:CircleLinkHealth/app-time-tracker.git time-tracker-app apps/time-tracker-app
 
 # Modules
 # Naming conventions
 #   - Do not use any suffix.
 #   - Use PascalCase to fascilitate autoloading when we copy them into apps
-# git@github.com:CircleLinkHealth/ccda-parser-module.git CcdaParser modules/CcdaParser
-# git@github.com:CircleLinkHealth/ccm-billing-module.git CcmBilling modules/CcmBilling
-# git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git CerberusGatekeeper modules/CerberusGatekeeper
-# git@github.com:CircleLinkHealth/condition-code-lookup-module.git ConditionCodeLookup modules/ConditionCodeLookup
-# git@github.com:CircleLinkHealth/module-core.git Core modules/Core
-# git@github.com:CircleLinkHealth/cpm-admin-module.git CpmAdmin modules/CpmAdmin
-# git@github.com:CircleLinkHealth/cpm-migrations-module.git CpmMigrations modules/CpmMigrations
-# git@github.com:CircleLinkHealth/module-customer.git Customer modules/Customer
-# git@github.com:CircleLinkHealth/eligibility-module.git Eligibility modules/Eligibility
-# git@github.com:CircleLinkHealth/laravel-module-installer.git LaravelModuleInstaller modules/LaravelModuleInstaller
-# git@github.com:CircleLinkHealth/nurse-invoices-module.git NurseInvoices modules/NurseInvoices
-# git@github.com:CircleLinkHealth/opcache-gui.git OpcacheGui modules/OpcacheGui
-# git@github.com:CircleLinkHealth/patient-api-module.git PatientApi modules/PatientApi
-# git@github.com:CircleLinkHealth/pdf-service-module.git PdfService modules/PdfService
-# git@github.com:CircleLinkHealth/module-raygun.git Raygun modules/Raygun
-# git@github.com:CircleLinkhealth/revisionable-module.git Revisionable modules/Revisionable
-# git@github.com:CircleLinkHealth/saml-sp-module.git SamlSp modules/SamlSp
-# git@github.com:CircleLinkHealth/module-self-enrollment.git SelfEnrollment modules/SelfEnrollment
-# git@github.com:CircleLinkHealth/shared-models-module.git SharedModels modules/SharedModels
-# git@github.com:CircleLinkHealth/shared-vue-components-module.git SharedVueComponents modules/SharedVueComponents
-# git@github.com:CircleLinkHealth/short-url.git ShortUrl modules/ShortUrl
-# git@github.com:CircleLinkHealth/sqlviews-module.git SqlViews modules/SqlViews
-# git@github.com:CircleLinkHealth/synonyms.git Synonyms modules/Synonyms
-# git@github.com:CircleLinkHealth/module-time-tracking.git TimeTracking modules/TimeTracking
-# git@github.com:CircleLinkHealth/module-two-fa.git TwoFA modules/TwoFA
-# git@github.com:CircleLinkHealth/twilio-integration-module.git TwilioIntegration modules/TwilioIntegration
-# git@github.com:CircleLinkHealth/vapor-cli.git VaporCli modules/VaporCli
-# git@github.com:CircleLinkHealth/vapor-core.git VaporCore modules/VaporCore
-# git@github.com:CircleLinkHealth/vapor-devops-helpers.git VaporDevopsHelpers modules/VaporDevopsHelpers
+git@github.com:CircleLinkHealth/ccda-parser-module.git CcdaParser modules/CcdaParser
+git@github.com:CircleLinkHealth/ccm-billing-module.git CcmBilling modules/CcmBilling
+git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git CerberusGatekeeper modules/CerberusGatekeeper
+git@github.com:CircleLinkHealth/condition-code-lookup-module.git ConditionCodeLookup modules/ConditionCodeLookup
+git@github.com:CircleLinkHealth/module-core.git Core modules/Core
+git@github.com:CircleLinkHealth/cpm-admin-module.git CpmAdmin modules/CpmAdmin
+git@github.com:CircleLinkHealth/cpm-migrations-module.git CpmMigrations modules/CpmMigrations
+git@github.com:CircleLinkHealth/module-customer.git Customer modules/Customer
+git@github.com:CircleLinkHealth/eligibility-module.git Eligibility modules/Eligibility
+git@github.com:CircleLinkHealth/laravel-module-installer.git LaravelModuleInstaller modules/LaravelModuleInstaller
+git@github.com:CircleLinkHealth/laravel-schedule-monitor.git LaravelScheduleMonitor modules/LaravelScheduleMonitor
+git@github.com:CircleLinkHealth/nurse-invoices-module.git NurseInvoices modules/NurseInvoices
+git@github.com:CircleLinkHealth/opcache-gui.git OpcacheGui modules/OpcacheGui
+git@github.com:CircleLinkHealth/patient-api-module.git PatientApi modules/PatientApi
+git@github.com:CircleLinkHealth/pdf-service-module.git PdfService modules/PdfService
+git@github.com:CircleLinkHealth/module-raygun.git Raygun modules/Raygun
+git@github.com:CircleLinkhealth/revisionable-module.git Revisionable modules/Revisionable
+git@github.com:CircleLinkHealth/saml-sp-module.git SamlSp modules/SamlSp
+git@github.com:CircleLinkHealth/self-enrollment-module.git SelfEnrollment modules/SelfEnrollment
+git@github.com:CircleLinkHealth/shared-models-module.git SharedModels modules/SharedModels
+git@github.com:CircleLinkHealth/shared-vue-components-module.git SharedVueComponents modules/SharedVueComponents
+git@github.com:CircleLinkHealth/short-url.git ShortUrl modules/ShortUrl
+git@github.com:CircleLinkHealth/sqlviews-module.git SqlViews modules/SqlViews
+git@github.com:CircleLinkHealth/synonyms.git Synonyms modules/Synonyms
+git@github.com:CircleLinkHealth/module-time-tracking.git TimeTracking modules/TimeTracking
+git@github.com:CircleLinkHealth/module-two-fa.git TwoFA modules/TwoFA
+git@github.com:CircleLinkHealth/twilio-integration-module.git TwilioIntegration modules/TwilioIntegration
+git@github.com:CircleLinkHealth/vapor-cli.git VaporCli modules/VaporCli
+git@github.com:CircleLinkHealth/vapor-core.git VaporCore modules/VaporCore
+git@github.com:CircleLinkHealth/vapor-devops-helpers.git VaporDevopsHelpers modules/VaporDevopsHelpers

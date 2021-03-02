@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\SelfEnrollment\Services;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\RegenerateMissingSelfEnrollmentLetters;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentLetters;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCommonwealthPainAssociatesPllcLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -92,6 +92,7 @@ class EnrollmentBaseLetter
         }
 
         if (null === $provider) {
+            /** @var \CircleLinkHealth\Customer\Entities\User $provider */
             $provider = $userForEnrollment->billingProviderUser();
         }
 
@@ -116,7 +117,7 @@ class EnrollmentBaseLetter
         if (empty($this->letter)) {
             try {
                 $className = ucfirst(Str::camel('generate'.'-'.$this->practice->name.'-letter'));
-                Artisan::call(RegenerateMissingSelfEnrollmentLetters::class, ['--forPractice' => $this->practice->name]);
+                Artisan::call(GenerateSelfEnrollmentLetters::class, ['--forPractice' => $this->practice->name]);
             } catch (\Exception $exception) {
                 throw $exception;
             }
@@ -141,13 +142,15 @@ class EnrollmentBaseLetter
     }
 
     /**
-     * @param $practice
+     * @param Practice $practice
+     * @param Model $practiceLetter
      * @param $practiceNumber
+     * @param \CircleLinkHealth\Customer\Entities\User $provider
      * @param bool $hideButtons
      *
      * @return array
      */
-    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
+    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, \CircleLinkHealth\Customer\Entities\User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -179,11 +182,25 @@ class EnrollmentBaseLetter
 
         $practiceSigSrc = $this->getPracticeSignatures($practiceLetter);
 
+
+        $signatoryName = $provider->display_name;
+
+        if (isset($practiceLetter->signatory_name)) {
+            if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER !== $practiceLetter->customer_signature_src) {
+                $signatoryName = $practiceLetter->signatory_name;
+            }
+        }
+
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $practiceLetter->customer_signature_src) {
+            $uiRequests    = json_decode($practiceLetter->ui_requests);
+            $signatoryName = $this->getSpecificGroupSignatoryName($uiRequests);
+        }
+
         // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
             $practiceNumber,
-            $provider->display_name,
+            $signatoryName,
             $practice->display_name,
             $buttonsLocation,
             $practiceSigSrc,
@@ -216,5 +233,14 @@ class EnrollmentBaseLetter
         }
 
         return $letterPages;
+    }
+
+    /**
+     * @param $uiRequests
+     * @return mixed
+     */
+    private function getSpecificGroupSignatoryName($uiRequests)
+    {
+        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
     }
 }

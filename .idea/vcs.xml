@@ -4,7 +4,7 @@
     <option name="branchProtectionPatterns">
       <list>
         <option value="master" />
-        <option value="dev" />
+        <option value="development" />
       </list>
     </option>
   </component>

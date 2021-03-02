@@ -24,13 +24,13 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
-use CircleLinkHealth\SharedModels\Entities\PcmProblem;
-use CircleLinkHealth\SharedModels\Entities\RpmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Faker\Factory;
@@ -214,6 +214,41 @@ trait UserHelpers
     public function makePatientMonthlyRecord(Patient $patient)
     {
         return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
+    }
+
+    public function selfEnrollmentTestLocation(int $practiceId, string $practiceName)
+    {
+        return Location::firstOrCreate(
+            [
+                'practice_id' => $practiceId,
+            ],
+            [
+                'is_primary'     => 1,
+                'name'           => $practiceName,
+                'address_line_1' => '84982 This is demo Address, AZ 58735-9955',
+                'city'           => 'West Guantanamo Demo World',
+                'state'          => 'MD',
+                'postal_code'    => '21335 - 9764',
+            ]
+        );
+    }
+
+    public function selfEnrollmentTestPractice(string $practiceName)
+    {
+        return Practice::firstOrCreate(
+            [
+                'name' => $practiceName,
+            ],
+            [
+                'active'                => 1,
+                'display_name'          => ucfirst(str_replace('-', ' ', $practiceName)),
+                'is_demo'               => 1,
+                'clh_pppm'              => 0,
+                'term_days'             => 30,
+                'outgoing_phone_number' => 2025550196,
+                'saas_account_id'       => SaasAccount::whereName('CircleLink Health')->first()->id,
+            ]
+        );
     }
 
     public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')

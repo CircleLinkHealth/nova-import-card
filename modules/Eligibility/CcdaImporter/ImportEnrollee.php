@@ -7,15 +7,21 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use CircleLinkHealth\Core\Helpers\StringHelpers;
+use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ApproveIfValid;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Jobs\ImportCcda;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee
@@ -28,7 +34,7 @@ class ImportEnrollee
             /** @var User|null $patientUser */
             $patientUserImported = $static->handleExistingUser($enrollee);
 
-            if ( ! is_null($patientUserImported)) {
+            if ( ! is_null($patientUserImported) && ! is_null($patientUserImported->patientInfo)) {
                 return $patientUserImported;
             }
         }
@@ -89,6 +95,16 @@ class ImportEnrollee
 
     private function enrolleeAlreadyImported(Enrollee $enrollee)
     {
+        if($enrollee->medical_record_id && ! Problem::where('patient_id', $enrollee->user_id)->exists() && ! Note::where('patient_id', $enrollee->user_id)->exists()) {
+            optional(Ccda::find($enrollee->medical_record_id))->import();
+        }
+        if (Enrollee::ENROLLED !== $enrollee->status) {
+            $enrollee->status = Enrollee::ENROLLED;
+            $enrollee->save();
+        }
+        if (CarePlan::where('user_id', $enrollee->user_id)->where('status', CarePlan::DRAFT)->exists()) {
+            ApproveIfValid::dispatch($enrollee->user, CarePlanAutoApprover::user());
+        }
         $link = route('patient.careplan.print', [$enrollee->user_id]);
         $this->log("Eligible patient with ID {$enrollee->id} has already been imported. See $link");
     }
@@ -113,7 +129,7 @@ class ImportEnrollee
             return null;
         }
 
-        $user = User::withTrashed()->find($enrollee->user_id);
+        $user = User::withTrashed()->with('patientInfo')->find($enrollee->user_id);
 
         if ( ! $user) {
             $enrollee->user_id = null;
@@ -174,7 +190,7 @@ class ImportEnrollee
             'json'        => $mr->toJson(),
             'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
-            'source'      => Ccda::IMPORTER_AWV,
+            'source'      => Ccda::CLH_GENERATED,
         ];
 
         $enrolleeUser = $enrollee->user;
@@ -191,7 +207,7 @@ class ImportEnrollee
         $enrollee->save();
 
         //We need to refresh the model before we perform the import, to make sure virtual columns contain the proper data
-        //since the model that gets returned from Ccda::create method contains null values fro virtual columns
+        //since the model that gets returned from Ccda::create method contains null values from virtual columns
         $ccda->fresh()->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
@@ -203,6 +219,7 @@ class ImportEnrollee
             'json'        => (new PracticePullMedicalRecord($enrollee->mrn, $enrollee->practice_id))->toJson(),
             'mrn'         => $enrollee->mrn,
             'practice_id' => $enrollee->practice_id,
+            'source'      => Ccda::CLH_GENERATED
         ];
 
         $enrolleeUser = $enrollee->user;

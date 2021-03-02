@@ -76,6 +76,7 @@ $style = [
                                    {!! $content !!}
                                 </td>
                             </tr>
+                            <tr><em>Please do not reply to this email. @if(!empty($practicePhone))For any questions or concerns, please call your care coach at <span style="white-space: nowrap">{{$practicePhone}}</span>.@endif</em></tr>
                         </table>
                         @if(! $attachments->isEmpty())
                         <hr>
@@ -93,6 +94,7 @@ $style = [
                                 </td>
                             </tr>
                             @endforeach
+
                         </table>
                         @endif
                     </td>

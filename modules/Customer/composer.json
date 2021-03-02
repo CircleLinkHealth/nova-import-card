@@ -9,15 +9,10 @@
         }
     ],
     "extra": {
-        "branch-alias": {
-            "dev-master": "4.2.x-dev"
-        },
         "laravel": {
             "providers": [
-
             ],
             "aliases": {
-
             }
         }
     },
@@ -40,8 +35,9 @@
         "laravel/ui": "^3.0",
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
+        "circlelinkhealth/pdf-service-module": "*",
         "fico7489/laravel-pivot": "^3.0",
-        "circlelinkhealth/twofa-module":"*",
+        "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
         "propaganistas/laravel-phone": "^4.2.2",
         "spatie/laravel-medialibrary": "^7.0.0",
@@ -51,19 +47,23 @@
     "repositories": [
         {
             "type": "path",
-            "url": "./CircleLinkHealth/TwoFA"
+            "url": "../TwoFA"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Core"
+            "url": "../Core"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CerberusGatekeeper"
+            "url": "../CerberusGatekeeper"
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CcmBilling"
+            "url": "../CcmBilling"
+        },
+        {
+            "type": "path",
+            "url": "../PdfService"
         }
     ]
 }

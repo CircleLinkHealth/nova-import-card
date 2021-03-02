@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CpmAdmin\Providers;
 
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class CpmAdminServiceProvider extends ServiceProvider
@@ -36,11 +35,6 @@ class CpmAdminServiceProvider extends ServiceProvider
     {
         $this->registerTranslations();
         $this->registerViews();
-        if (class_exists(\App\User::class)) {
-            Relation::morphMap([
-                \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
-            ]);
-        }
     }
 
     /**

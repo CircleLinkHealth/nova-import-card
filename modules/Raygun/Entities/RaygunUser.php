@@ -22,9 +22,6 @@ class RaygunUser
             [
                 'identifier'  => $user->id,
                 'isAnonymous' => false,
-                'email'       => $user->email,
-                'firstName'   => $user->first_name,
-                'fullName'    => $user->display_name,
             ]
         ;
     }

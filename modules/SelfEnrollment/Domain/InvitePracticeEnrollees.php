@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Domain;
 
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
@@ -32,10 +32,6 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
 
     /**
      * InvitePracticeEnrollees constructor.
-     * @param int $limit
-     * @param int $practiceId
-     * @param string $color
-     * @param array $channels
      */
     public function __construct(
         int $limit,
@@ -59,16 +55,8 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
         return User::ofPractice($this->practiceId)
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($q) {
-                $q->whereNull('source')
-                    // If an enrollmentInvitationLink generated in the last 5 months exists, it means we have already invited the patient,
-                    // and we do not want to send them another invitation.
-                    ->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
-                        $q->where('created_at', '>', now()->subMonths(5));
-                    })
-                    ->whereIn('status', [
-                        Enrollee::QUEUE_AUTO_ENROLLMENT,
-                    ]);
-            });
+                $q->canSendSelfEnrollmentInvitation(true);
+            })->uniquePatients();
     }
 
     private function getBatch(): EnrollmentInvitationsBatch

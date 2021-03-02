@@ -141,6 +141,14 @@
                             <b>General comment</b>: {{$patient->patientInfo->general_comment}}
                         </li>
                     @endif
+                    @if ($shouldShowConsecutiveUnsuccessfulCallCount)
+                    <li style="color: {{$consecutiveUnsuccessfulCallColor}};">
+                        <b>Consecutive Unsuccessful Calls</b>
+                        <div data-tooltip="The patient’s status will turn to unreachable and they will be removed from your list after the {{$consecutiveUnsuccessfulCallLimit}}th consecutive unsuccessful call." style="display: inline;">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                        </div>: {{$consecutiveUnsuccessfulCallCount}}/{{$consecutiveUnsuccessfulCallLimit}}
+                    </li>
+                    @endif
                     <li>
                         @if($isAdminOrPatientsAssignedNurse)
                             <patient-next-call

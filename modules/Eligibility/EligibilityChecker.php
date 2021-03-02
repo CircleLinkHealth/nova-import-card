@@ -525,7 +525,7 @@ class EligibilityChecker
                     }
 
                     foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
-                        foreach ($problem->searchKeywords as $keyword) {
+                        foreach ($problem->searchKeywords ?? [] as $keyword) {
                             if (empty($keyword)) {
                                 continue;
                             }
@@ -780,7 +780,7 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
-        if (empty($args['provider_id'])) {
+        if ((! isset($args['provider_id']) || empty($args['provider_id'])) && (isset($args['referring_provider_name']) && !empty($args['referring_provider_name']))) {
             $args['provider_id'] = optional(CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id))->id;
         }
 

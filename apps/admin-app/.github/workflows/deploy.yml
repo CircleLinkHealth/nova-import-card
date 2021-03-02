@@ -1,12 +1,12 @@
-name: Vaporize
+name: Deploy
 on:
   push:
 jobs:
   deploy:
-    name: Vaporize
+    name: Deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/development'
+    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master'
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -68,7 +68,7 @@ jobs:
         shell: bash
         env:
           ENV_TYPE: production
-          APP_NAME: provider
+          APP_NAME: superadmin
           S3_SECRETS_BUCKET: ${{ secrets.PRODUCTION_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.PRODUCTION_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
@@ -86,7 +86,7 @@ jobs:
         shell: bash
         env:
           ENV_TYPE: staging
-          APP_NAME: provider
+          APP_NAME: superadmin
           S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}

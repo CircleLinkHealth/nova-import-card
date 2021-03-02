@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
-use App;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class GenerateCalvaryClinicLetter extends Seeder
 {

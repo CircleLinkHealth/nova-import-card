@@ -199,14 +199,14 @@
     </div>
 </template>
 <script>
-    import {rootUrl} from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config";
-    import EventBus from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
-    import {registerHandler, sendRequest} from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/bc-job-manager";
-    import {Logger} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/logger-logdna';
+    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
+    import EventBus from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
+    import {registerHandler, sendRequest} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/bc-job-manager";
+    import {Logger} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import Notifications from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import Notifications from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
 
     let self;
 

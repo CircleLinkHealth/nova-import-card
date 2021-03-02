@@ -7,7 +7,7 @@ CpmAdmin
 CpmMigrations
 Customer
 Eligibility
-LaravelModuleInstaller
+LaravelScheduleMonitor
 NurseInvoices
 OpcacheGui
 PatientApi
@@ -21,7 +21,6 @@ SharedVueComponents
 ShortUrl
 SqlViews
 Synonyms
-Revisionable
 TimeTracking
 TwilioIntegration
 TwoFA

@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
@@ -21,6 +20,7 @@ use CircleLinkHealth\Customer\Http\Requests\DownloadZippedMediaWithSignedRequest
 use CircleLinkHealth\Customer\Jobs\CreateAuditReportForPatientForMonth;
 use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaStream;
 

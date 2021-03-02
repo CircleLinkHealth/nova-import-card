@@ -13,17 +13,18 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
-use CircleLinkHealth\Core\TwilioClientable;
+use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
+use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use function Clue\StreamFilter\fun;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\Enrollee.
@@ -91,8 +92,8 @@ use Illuminate\Support\Str;
  *     $confirmedFamilyMembers
  * @property int|null                                                                    $confirmed_family_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null                  $eligibilityJob
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
+ * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
  *     $enrollmentInvitationLinks
  * @property int|null                                          $enrollment_invitation_links_count
  * @property mixed                                             $agent
@@ -114,39 +115,39 @@ use Illuminate\Support\Str;
  * @property mixed                                                     $primary_phone_number
  * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient|null $targetPatient
  * @property \CircleLinkHealth\Customer\Entities\User|null             $user
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda
  *     $ccda)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     hasPhone($phone)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     lessThanThreeAttempts()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true,
  *     $shouldIncludeRelevanceScore = false)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee query()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     searchAddresses($term)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     searchPhones($term)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     shouldBeCalled()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee(\CircleLinkHealth\SharedModels\Entities\Enrollee $enrollee)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee toSMS()
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     withCaPanelRelationships()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\SharedModels\Entities\EligibilityBatch|null $batch
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     lastCalledBetween(\Carbon\Carbon $start, \Carbon\Carbon $end)
- * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     ofStatus($status)
  * @property string|null                     $facility_name
  * @property mixed                           $cell_phone_npa_parenthesized
@@ -154,10 +155,12 @@ use Illuminate\Support\Str;
  * @property mixed                           $other_phone_npa_parenthesized
  * @property mixed                           $primary_phone_npa_parenthesized
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollee canSendSelfEnrollmentInvitation(bool $initialInvite)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollee ofActivePractice()
  */
 class Enrollee extends BaseModel
 {
@@ -285,6 +288,7 @@ class Enrollee extends BaseModel
      * Csv with enrollees uploaded through Superadmin page
      */
     const UPLOADED_CSV = 'uploaded-csv';
+    const INVITE_ONCE_EVERY_N_MONTHS = 5;
 
     /**
      * For mySql full-text search.
@@ -494,6 +498,18 @@ class Enrollee extends BaseModel
         return collect($addresses)->filter()->implode(', ');
     }
 
+    public function scopeCanSendSelfEnrollmentInvitation($query, bool $initialInvite)
+    {
+        return $query->whereNull('source')
+            ->when($initialInvite, function ($q){
+                $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
+                    $q->where('created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
+                });
+            })
+            ->whereIn('status', [
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
+            ]);
+    }
     /**
      * @param mixed $key
      */
@@ -872,6 +888,11 @@ class Enrollee extends BaseModel
                     (int) AppConfig::pull(self::MAX_CALL_ATTEMPTS_KEY, self::DEFAULT_MAX_CALL_ATTEMPTS)
                 );
         });
+    }
+
+    public function scopeOfActivePractice($query)
+    {
+        return $query->whereHas('practice', fn ($p) => $p->active());
     }
 
     public function scopeOfStatus($query, $status)

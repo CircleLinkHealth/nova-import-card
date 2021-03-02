@@ -9,9 +9,9 @@ namespace CircleLinkHealth\Customer\Providers;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
+use CircleLinkHealth\Customer\Console\Commands\ProcessPostmarkInboundMailCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
@@ -43,12 +43,6 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
     {
         $this->registerFactories();
 
-        if (class_exists(\App\User::class)) {
-            Relation::morphMap([
-                \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
-            ]);
-        }
-
         $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Core\Entities\DatabaseNotification::class);
         $this->app->bind(
             HasDatabaseNotifications::class,
@@ -60,6 +54,7 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             CreateRolesPermissionsMigration::class,
             CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
             CreateLocationsFromAthenaApi::class,
+            ProcessPostmarkInboundMailCommand::class,
         ]);
     }
 

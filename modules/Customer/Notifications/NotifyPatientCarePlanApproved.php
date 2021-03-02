@@ -43,7 +43,7 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function __construct(CarePlan $carePlan, array $channels = ['mail'])
     {
-        $this->channels = array_merge($channels, $this->channels);
+        $this->channels = array_merge($this->channels, $channels);
         $this->carePlan = $carePlan;
     }
 

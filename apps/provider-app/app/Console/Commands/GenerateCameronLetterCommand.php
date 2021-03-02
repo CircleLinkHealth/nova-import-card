@@ -36,6 +36,8 @@ class GenerateCameronLetterCommand extends Command
 
     public function handle()
     {
-        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter']);
+        if (class_exists('CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter')) {
+            Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter']);
+        }
     }
 }

@@ -28,6 +28,30 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon deactivated_at
  * @property Carbon created_at
  * @property Carbon updated_at
+ * @property int $id
+ * @property string $destination_url
+ * @property string $url_key
+ * @property string $default_short_url
+ * @property bool $single_use
+ * @property bool $track_visits
+ * @property int $redirect_status_code
+ * @property bool $track_ip_address
+ * @property bool $track_operating_system
+ * @property bool $track_operating_system_version
+ * @property bool $track_browser
+ * @property bool $track_browser_version
+ * @property bool $track_referer_url
+ * @property bool $track_device_type
+ * @property \Illuminate\Support\Carbon|null $activated_at
+ * @property \Illuminate\Support\Carbon|null $deactivated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read Collection|\AshAllenDesign\ShortURL\Models\ShortURLVisit[] $visits
+ * @property-read int|null $visits_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ShortURL newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShortURL newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShortURL query()
+ * @mixin \Eloquent
  */
 class ShortURL extends Model
 {

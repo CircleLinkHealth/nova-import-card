@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDemoLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
@@ -51,7 +52,7 @@ class ManuallyCreateEnrollmentTestData extends Command
     {
         $practiceName = $this->argument('practiceName') ?? null;
 
-        if (isProductionEnv()) {
+        if (isProductionEnv() && $practiceName !== GenerateDemoLetter::DEMO_PRACTICE_NAME) {
             $this->warn('You cannot execute this action in production environment');
 
             return 'You cannot execute this action in production environment';
@@ -74,7 +75,7 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         if ( ! $letter && ! App::environment('production')) {
             $this->info("$practiceName practice letter not found. Generating Letter for $practiceName now...");
-            Artisan::call(RegenerateMissingSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
+            Artisan::call(GenerateSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
         }
 
         $uiRequestsForThisPractice = '';

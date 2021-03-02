@@ -6,7 +6,7 @@ namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\SharedModels\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use Illuminate\Database\Seeder;
 
 class GenerateToledoSignatures extends Seeder

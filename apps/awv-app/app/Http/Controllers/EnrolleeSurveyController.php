@@ -12,7 +12,7 @@ use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Survey;
 use App\User;
-use CircleLinkHealth\SharedModels\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,8 +44,6 @@ class EnrolleeSurveyController extends Controller
      */
     public function createEnrolleesSurveyUrl($userId, $surveyId)
     {
-//        $user = User::whereId($userId)->firstOrFail();
-//        $survey = Survey::whereId($surveyId)->firstOrFail();
         $user   = User::findOrFail($userId);
         $survey = Survey::findOrFail($surveyId);
         $url    = $this->surveyInvitationLinksService->createAndSaveUrl($user, $survey->name, false);

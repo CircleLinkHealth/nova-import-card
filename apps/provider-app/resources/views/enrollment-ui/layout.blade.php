@@ -29,7 +29,7 @@
             position: absolute !important;
         }
     </style>
-    @include('modules.raygun.partials.real-user-monitoring')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
     @include('core::partials.new-relic-tracking')
 </head>
 <body>

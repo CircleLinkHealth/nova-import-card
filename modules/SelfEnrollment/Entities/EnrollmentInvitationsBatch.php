@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Entities;
 
-use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,9 +20,9 @@ use Illuminate\Support\Facades\Cache;
  * @property \Illuminate\Support\Carbon|null                                     $updated_at
  * @property EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection $invitationLinks
  * @property int|null                                                            $invitation_links_count
- * @method   static                                                              \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationsBatch newModelQuery()
- * @method   static                                                              \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationsBatch newQuery()
- * @method   static                                                              \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationsBatch query()
+ * @method static                                                              \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationsBatch newModelQuery()
+ * @method static                                                              \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationsBatch newQuery()
+ * @method static                                                              \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationsBatch query()
  * @mixin \Eloquent
  */
 class EnrollmentInvitationsBatch extends Model

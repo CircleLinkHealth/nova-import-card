@@ -1,23 +1,26 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * The policy mappings for the application.
      *
-     * @return void
+     * @var array
      */
-    public function register()
-    {
-        //
-    }
+    protected $policies = [
+        // 'App\Model' => 'App\Policies\ModelPolicy',
+    ];
 
     /**
      * Boot the authentication services for the application.
@@ -26,10 +29,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Here you may define how you wish users to be authenticated for your Lumen
-        // application. The callback which receives the incoming request instance
-        // should return either a User instance or null. You're free to obtain
-        // the User instance via an API token or any other method necessary.
+        $this->registerPolicies();
 
         //registering the 'api' auth driver
         //not really needed anywhere, except RaygunServiceProvider
@@ -40,17 +40,18 @@ class AuthServiceProvider extends ServiceProvider
             if (empty($token) || ! Hash::check($this->getTokenString(), $token)) {
                 return null;
             }
-            $user               = new User();
-            $user->id           = $token;
-            $user->first_name   = 'unknown';
+            $user = new User();
+            $user->id = $token;
+            $user->first_name = 'unknown';
             $user->display_name = 'unknown';
-            $user->email        = 'unknown@circlelinkhealth.com';
+            $user->email = 'unknown@circlelinkhealth.com';
 
             return $user;
         });
     }
 
-    private function getTokenString() {
-        return config('app.key') . Carbon::today()->toDateString();
+    private function getTokenString()
+    {
+        return config('app.key').Carbon::today()->toDateString();
     }
 }

@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Notifications;
 
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -147,7 +147,6 @@ class SelfEnrollmentInviteNotification extends Notification
     public function via($notifiable)
     {
         if (in_array('mail', $this->channels)
-            && ! App::environment(['local', 'staging', 'review'])
             && (
                 Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])
             || empty($notifiable->email)

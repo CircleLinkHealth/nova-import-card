@@ -18,6 +18,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class ImportAndApproveEnrollee implements ShouldQueue
 {
@@ -26,11 +27,11 @@ class ImportAndApproveEnrollee implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public Enrollee $enrollee;
+    protected int   $enrolleeId;
 
-    public function __construct(Enrollee $enrollee)
+    public function __construct(int $enrolleeId)
     {
-        $this->enrollee = $enrollee;
+        $this->enrolleeId = $enrolleeId;
     }
 
     /**
@@ -40,15 +41,30 @@ class ImportAndApproveEnrollee implements ShouldQueue
      */
     public function handle()
     {
-        $enrollee = $this->enrollee;
-
-        if ( ! $enrollee->user) {
-            $this->searchForExistingUser($enrollee);
+        if ( ! isset($this->enrolleeId) || empty($this->enrolleeId)) {
+            return;
         }
-        if ( ! $enrollee->user || ! $enrollee->user->isParticipant()) {
+        $enrollee = Enrollee::with([
+            'user.patientInfo',
+            'user.ccdProblems',
+        ])->find($this->enrolleeId);
+
+        if ( ! $enrollee) {
+            return;
+        }
+        $resolver = new DuplicatePatientResolver($enrollee);
+        if ($resolver->hasDuplicateUsers()) {
+            $resolver->resoveDuplicatePatients($enrollee->user_id, ...$resolver->duplicateUserIds());
+        }
+        if ($shouldImport = $this->shouldImport($enrollee)) {
             ImportEnrollee::import($enrollee);
         }
-        if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED, CarePlan::RN_APPROVED])) {
+        if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [
+            CarePlan::PROVIDER_APPROVED,
+            CarePlan::QA_APPROVED,
+            CarePlan::RN_APPROVED,
+            CarePlan::DRAFT,
+        ])) {
             $enrollee->status = Enrollee::ENROLLED;
             $enrollee->save();
 
@@ -68,6 +84,18 @@ class ImportAndApproveEnrollee implements ShouldQueue
 
         ApproveIfValid::dispatch($enrollee->user, CarePlanAutoApprover::user());
 
+        //If enrollee is from uploaded CSV from Nova Page,
+        //Where we create Enrollees without any other data,
+        //so we can consent them and then ask the practice to send us the CCDs
+        //It is expected to reach this point, do not throw error
+        if (Enrollee::UPLOADED_CSV === $enrollee->source && ! $enrollee->user->patientInfo) {
+            return;
+        }
+
+        if ( ! $enrollee->user->patientInfo) {
+            return;
+        }
+
         $enrollee->user->patientInfo->ccm_status = Patient::ENROLLED;
         $enrollee->status                        = Enrollee::ENROLLED;
 
@@ -79,14 +107,9 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
     }
 
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
-    }
-
     private function searchByFakeClhEmail(Enrollee $enrollee)
     {
-        if (starts_with($enrollee->email, 'eJ_') && ends_with($enrollee->email, '@cpm.com')) {
+        if (Str::startsWith($enrollee->email, 'eJ_') && Str::endsWith($enrollee->email, '@cpm.com')) {
             $user = User::ofType(['participant', 'survey-only'])
                 ->where('first_name', $enrollee->first_name)
                 ->where('last_name', $enrollee->last_name)
@@ -120,6 +143,19 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ( ! is_null($this->searchByFakeClhEmail($enrollee))) {
             return;
         }
+    }
+
+    private function shouldImport(Enrollee $enrollee)
+    {
+        return ! $enrollee->user
+               || ! (
+                   $enrollee->user
+                    && $enrollee->user->isParticipant()
+                    && $enrollee->user->patientInfo
+                    && Patient::ENROLLED === $enrollee->user->patientInfo->ccm_status
+                    && $enrollee->user->carePlan
+                    && $enrollee->user->ccdProblems->isNotEmpty()
+               );
     }
 
     private function validateMatchAndAttachToEnrollee(Enrollee &$enrollee, ?User $user): ?User

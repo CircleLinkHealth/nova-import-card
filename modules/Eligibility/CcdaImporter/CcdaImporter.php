@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Events\PatientUserCreated;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
+use CircleLinkHealth\Customer\Exceptions\ValidationException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
@@ -29,12 +30,11 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\DTO\Address;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter

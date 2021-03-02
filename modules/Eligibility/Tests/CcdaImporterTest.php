@@ -29,9 +29,9 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
+use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -43,7 +43,7 @@ class CcdaImporterTest extends CustomerTestCase
     {
         Notification::fake();
         $enrollee = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice(), $this->provider());
-        SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        SendInvitation::dispatch(new \CircleLinkHealth\SelfEnrollment\Entities\User($enrollee->user->toArray()), EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         )->id);

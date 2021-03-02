@@ -10,10 +10,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\Core\Notifications\DuplicateNotificationChecker;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Synonyms\Traits\Synonymable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notification;
 
 /**
  * CircleLinkHealth\Customer\Entities\Location.
@@ -47,36 +49,36 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\Practice                                                    $program
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $providers
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $user
- * @method   static                                                                                          bool|null forceDelete()
- * @method   static                                                                                          \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
- * @method   static                                                                                          bool|null restore()
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereAddressLine1($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereAddressLine2($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereCity($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereCreatedAt($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereDeletedAt($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereEhrLogin($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereEhrPassword($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereExternalDepartmentId($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereFax($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereId($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereIsPrimary($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereName($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location wherePhone($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location wherePostalCode($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location wherePracticeId($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereState($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereTimezone($value)
- * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereUpdatedAt($value)
- * @method   static                                                                                          \Illuminate\Database\Query\Builder|\App\Location withTrashed()
- * @method   static                                                                                          \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
+ * @method static                                                                                          bool|null forceDelete()
+ * @method static                                                                                          \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
+ * @method static                                                                                          bool|null restore()
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereAddressLine1($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereAddressLine2($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereCity($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereCreatedAt($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereDeletedAt($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereEhrLogin($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereEhrPassword($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereExternalDepartmentId($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereFax($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereId($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereIsPrimary($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereName($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location wherePhone($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location wherePostalCode($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location wherePracticeId($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereState($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereTimezone($value)
+ * @method static                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Location whereUpdatedAt($value)
+ * @method static                                                                                          \Illuminate\Database\Query\Builder|\App\Location withTrashed()
+ * @method static                                                                                          \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newModelQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location whereClinicalEscalationPhone($value)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newModelQuery()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location whereClinicalEscalationPhone($value)
  * @property int|null                                                                                                        $clinical_emergency_contact_count
  * @property int|null                                                                                                        $emr_direct_count
  * @property int|null                                                                                                        $notifications_count
@@ -89,7 +91,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null                                                                                                        $cpm_problem_services_count
  * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection                          $synonyms
  * @property int|null                                                                                                        $synonyms_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Location whereColumnOrSynonym($column, $synonym)
+ * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Location whereColumnOrSynonym($column, $synonym)
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -244,9 +246,19 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
             ->ofType('provider');
     }
 
-    public function routeNotificationForMail()
+    public function routeNotificationForMail(Notification $notification)
     {
-        return optional($this->user()->first())->email;
+        /** @var User $user */
+        $user = $this->users()->first();
+        if ( ! $user || ! $user->email) {
+            return null;
+        }
+
+        if (DuplicateNotificationChecker::hasAlreadySentNotification($user, $notification, 'mail')) {
+            return null;
+        }
+
+        return $user->email;
     }
 
     public function saasAccount()
@@ -282,6 +294,11 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     }
 
     public function user()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function users()
     {
         return $this->belongsToMany(User::class);
     }

@@ -34,3 +34,7 @@ CLHPackages/
 .env.test
 lsp/log/*
 *deploy-s3.env
+CircleLinkHealth/*/vendor
+CircleLinkHealth/*/node_modules
+CircleLinkHealth.env.review-clh-messenger
+CircleLinkHealth/

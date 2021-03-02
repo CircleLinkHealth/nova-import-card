@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Services;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\Customer\Traits\UnreachablePatientsToCaPanel;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
