@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
 use CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
+use CircleLinkHealth\Core\Notifications\DuplicateNotificationChecker;
 use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Notifications\Channels\MailChannel;
@@ -28,6 +29,10 @@ class CustomMailChannel extends MailChannel
         try {
             if (isset($notifiable->id) && $this->isUserBlackListed($notifiable->id)) {
                 throw new CannotSendNotificationException("User[$notifiable->id] is in mail exclusions list. Will not send mail.");
+            }
+
+            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, 'mail')) {
+                throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
             }
 
             $message = $notification->toMail($notifiable);
