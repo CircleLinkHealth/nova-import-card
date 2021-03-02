@@ -285,6 +285,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/app-caller" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/stopwatch" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/yaml" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/vapor-cli" />
     </content>
     <content url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
     <orderEntry type="inheritedJdk" />

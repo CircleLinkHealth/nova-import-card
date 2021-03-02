@@ -188,7 +188,8 @@
     "circlelinkhealth/app-awv": "*",
     "circlelinkhealth/app-cpm-provider": "*",
     "circlelinkhealth/app-caller": "*",
-    "circlelinkhealth/app-self-enrollment": "*"
+    "circlelinkhealth/app-self-enrollment": "*",
+    "laravel/vapor-cli": "*"
   },
   "config": {
     "discard-changes": true,

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "303a35dd18c551a9ad8fbccc6f02d30b",
+    "content-hash": "8b7ae4626cc83d5bb7b88f8e743c275b",
     "packages": [],
     "packages-dev": [
         {
@@ -6100,16 +6100,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.29.0",
+            "version": "v8.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "d2eba352b3b3a3c515b18c5726b373fe5026733e"
+                "reference": "81ef9850cc388f2f92b868fb35ffb76f0c9a0f46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/d2eba352b3b3a3c515b18c5726b373fe5026733e",
-                "reference": "d2eba352b3b3a3c515b18c5726b373fe5026733e",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/81ef9850cc388f2f92b868fb35ffb76f0c9a0f46",
+                "reference": "81ef9850cc388f2f92b868fb35ffb76f0c9a0f46",
                 "shasum": ""
             },
             "require": {
@@ -6260,7 +6260,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-02-23T14:27:41+00:00"
+            "time": "2021-03-02T14:28:44+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -6463,16 +6463,16 @@
         },
         {
             "name": "laravel/passport",
-            "version": "v10.1.1",
+            "version": "v10.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3"
+                "reference": "9f1a5d56eb609250104afc38cf407f7c2520cda3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3",
-                "reference": "2ed01909228b049f6ea0aa2d4b0ae78d3b27bee3",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/9f1a5d56eb609250104afc38cf407f7c2520cda3",
+                "reference": "9f1a5d56eb609250104afc38cf407f7c2520cda3",
                 "shasum": ""
             },
             "require": {
@@ -6491,7 +6491,7 @@
                 "league/oauth2-server": "^8.2",
                 "nyholm/psr7": "^1.3",
                 "php": "^7.3|^8.0",
-                "phpseclib/phpseclib": "^3.0",
+                "phpseclib/phpseclib": "^2.0|^3.0",
                 "symfony/psr-http-message-bridge": "^2.0"
             },
             "require-dev": {
@@ -6532,7 +6532,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2021-02-23T20:45:29+00:00"
+            "time": "2021-03-02T16:40:00+00:00"
         },
         {
             "name": "laravel/scout",
@@ -6601,16 +6601,16 @@
         },
         {
             "name": "laravel/tinker",
-            "version": "v2.6.0",
+            "version": "v2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/tinker.git",
-                "reference": "daae1c43f1300fe88c05d83db6f3d8f76677ad88"
+                "reference": "04ad32c1a3328081097a181875733fa51f402083"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/tinker/zipball/daae1c43f1300fe88c05d83db6f3d8f76677ad88",
-                "reference": "daae1c43f1300fe88c05d83db6f3d8f76677ad88",
+                "url": "https://api.github.com/repos/laravel/tinker/zipball/04ad32c1a3328081097a181875733fa51f402083",
+                "reference": "04ad32c1a3328081097a181875733fa51f402083",
                 "shasum": ""
             },
             "require": {
@@ -6661,7 +6661,7 @@
                 "laravel",
                 "psysh"
             ],
-            "time": "2021-01-26T20:35:18+00:00"
+            "time": "2021-03-02T16:53:12+00:00"
         },
         {
             "name": "laravel/ui",
@@ -6716,6 +6716,72 @@
                 "ui"
             ],
             "time": "2021-01-06T19:20:22+00:00"
+        },
+        {
+            "name": "laravel/vapor-cli",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./modules/VaporCli",
+                "reference": "711d390811987b29dd283f6d596718a2dece8ea4"
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.80",
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "illuminate/container": "^6.0|^7.0|^8.0",
+                "illuminate/filesystem": "^6.0|^7.0|^8.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "league/flysystem": "^1.0",
+                "league/flysystem-aws-s3-v3": "^1.0",
+                "php": "^7.2|^8.0",
+                "ramsey/uuid": "^3.8|^4.0",
+                "symfony/console": "^4.2|^5.0",
+                "symfony/process": "^4.2|^5.0",
+                "symfony/var-dumper": "^4.2|^5.0",
+                "symfony/yaml": "^4.2|^5.0",
+                "vlucas/phpdotenv": "^3.0|^4.0|^5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "bin": [
+                "vapor"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\VaporCli\\Tests\\": "tests"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Laravel Vapor CLI",
+            "homepage": "https://github.com/laravel/vapor-cli",
+            "keywords": [
+                "laravel",
+                "vapor"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "laravel/vapor-core",
@@ -9107,16 +9173,16 @@
         },
         {
             "name": "ohdearapp/ohdear-php-sdk",
-            "version": "3.1.0",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ohdearapp/ohdear-php-sdk.git",
-                "reference": "a707adbfa2272e3a7b12bab5eb419dd326b47397"
+                "reference": "b5e7561947e04428e022c3d9271a0859a6d9c930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ohdearapp/ohdear-php-sdk/zipball/a707adbfa2272e3a7b12bab5eb419dd326b47397",
-                "reference": "a707adbfa2272e3a7b12bab5eb419dd326b47397",
+                "url": "https://api.github.com/repos/ohdearapp/ohdear-php-sdk/zipball/b5e7561947e04428e022c3d9271a0859a6d9c930",
+                "reference": "b5e7561947e04428e022c3d9271a0859a6d9c930",
                 "shasum": ""
             },
             "require": {
@@ -9155,20 +9221,20 @@
                 "oh dear",
                 "sdk"
             ],
-            "time": "2021-02-09T16:04:50+00:00"
+            "time": "2021-03-02T13:05:05+00:00"
         },
         {
             "name": "onelogin/php-saml",
-            "version": "3.6.0",
+            "version": "3.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "888e33356d0d7b529991a431fce3ee20c0307988"
+                "reference": "a7328b11887660ad248ea10952dd67a5aa73ba3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/888e33356d0d7b529991a431fce3ee20c0307988",
-                "reference": "888e33356d0d7b529991a431fce3ee20c0307988",
+                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/a7328b11887660ad248ea10952dd67a5aa73ba3b",
+                "reference": "a7328b11887660ad248ea10952dd67a5aa73ba3b",
                 "shasum": ""
             },
             "require": {
@@ -9205,7 +9271,7 @@
                 "onelogin",
                 "saml"
             ],
-            "time": "2021-02-19T00:40:47+00:00"
+            "time": "2021-03-02T10:13:07+00:00"
         },
         {
             "name": "opis/closure",
@@ -15304,6 +15370,78 @@
                 }
             ],
             "time": "2021-01-27T10:15:41+00:00"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "v5.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "338cddc6d74929f6adf19ca5682ac4b8e109cdb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/338cddc6d74929f6adf19ca5682ac4b8e109cdb0",
+                "reference": "338cddc6d74929f6adf19ca5682ac4b8e109cdb0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/deprecation-contracts": "^2.1",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<4.4"
+            },
+            "require-dev": {
+                "symfony/console": "^4.4|^5.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "bin": [
+                "Resources/bin/yaml-lint"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Loads and dumps YAML files",
+            "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-02-03T04:42:09+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
