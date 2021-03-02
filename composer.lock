@@ -1554,10 +1554,16 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d"
+            },
             "dist": {
-                "type": "path",
-                "url": "./modules/CerberusGatekeeper",
-                "reference": "c611ad0cc3e76f82f1813de949d11d46fe70b4ae"
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/e3c52367160b364b74fdd285b082bfd96acc6f7d",
+                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "*",
@@ -1590,11 +1596,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1630,9 +1632,7 @@
                 "permission",
                 "roles"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2021-01-04T23:50:45+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -2550,7 +2550,7 @@
             "dist": {
                 "type": "path",
                 "url": "./modules/TimeTracking",
-                "reference": "51981c868062dc2ccd0ba17eec53381a360189cc"
+                "reference": "eee7beacabb146dc94cf02ee1a7826e985c48566"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -2561,9 +2561,7 @@
                     "dev-master": "2.0.x-dev"
                 },
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -10034,16 +10032,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.16.0",
+            "version": "1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "76d4323b85129d0c368149c831a07a3e258b2b50"
+                "reference": "c55269cb06911575a126dc225a05c0e4626e5fb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/76d4323b85129d0c368149c831a07a3e258b2b50",
-                "reference": "76d4323b85129d0c368149c831a07a3e258b2b50",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/c55269cb06911575a126dc225a05c0e4626e5fb4",
+                "reference": "c55269cb06911575a126dc225a05c0e4626e5fb4",
                 "shasum": ""
             },
             "require": {
@@ -10071,7 +10069,7 @@
             },
             "require-dev": {
                 "dompdf/dompdf": "^0.8.5",
-                "friendsofphp/php-cs-fixer": "^2.16",
+                "friendsofphp/php-cs-fixer": "^2.18",
                 "jpgraph/jpgraph": "^4.0",
                 "mpdf/mpdf": "^8.0",
                 "phpcompatibility/php-compatibility": "^9.3",
@@ -10127,7 +10125,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2020-12-31T18:03:49+00:00"
+            "time": "2021-03-02T17:54:11+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -12038,10 +12036,16 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8"
+            },
             "dist": {
-                "type": "path",
-                "url": "./modules/LaravelScheduleMonitor",
-                "reference": "097c83a41fa73e1142b0b1f129dd26f749c15318"
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "shasum": ""
             },
             "require": {
                 "illuminate/bus": "^8.0",
@@ -12075,25 +12079,7 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "psalm": [
-                    "vendor/bin/psalm"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ],
-                "format": [
-                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -12111,9 +12097,13 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-15T12:05:52+00:00"
         },
         {
             "name": "spatie/laravel-slack-slash-command",
