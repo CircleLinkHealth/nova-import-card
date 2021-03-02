@@ -10,10 +10,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\Core\Notifications\DuplicateNotificationChecker;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Synonyms\Traits\Synonymable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notification;
 use Laravel\Scout\Searchable;
 
 /**
@@ -255,9 +257,19 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
             ->ofType('provider');
     }
 
-    public function routeNotificationForMail()
+    public function routeNotificationForMail(Notification $notification)
     {
-        return optional($this->user()->first())->email;
+        /** @var User $user */
+        $user = $this->users()->first();
+        if ( ! $user || ! $user->email) {
+            return null;
+        }
+
+        if (DuplicateNotificationChecker::hasAlreadySentNotification($user, $notification, 'mail')) {
+            return null;
+        }
+
+        return $user->email;
     }
 
     public function saasAccount()
@@ -314,7 +326,16 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         ];
     }
 
+    /**
+     * @deprecated This is a many to many relations, it should not have a singular name
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function user()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function users()
     {
         return $this->belongsToMany(User::class);
     }
