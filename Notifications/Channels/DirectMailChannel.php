@@ -37,7 +37,7 @@ class DirectMailChannel
         if ($notifiable->emr_direct_address) {
             $message = $notification->toDirectMail($notifiable);
 
-            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification)) {
+            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, DirectMailChannel::class)) {
                 throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
             }
 

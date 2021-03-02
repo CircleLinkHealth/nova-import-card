@@ -31,7 +31,7 @@ class CustomMailChannel extends MailChannel
                 throw new CannotSendNotificationException("User[$notifiable->id] is in mail exclusions list. Will not send mail.");
             }
 
-            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification)) {
+            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, 'mail')) {
                 throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
             }
 

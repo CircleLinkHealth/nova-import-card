@@ -15,20 +15,27 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\NoteForwarded;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notification;
 
 class DuplicateNotificationChecker
 {
-    const CONFIG_KEY                         = 'types_to_check_for_duplicate_notifications';
     const DEFAULT_NOTIFICATIONS_TO_CHECK_FOR = [
         NoteForwarded::class,
         PatientUnsuccessfulCallNotification::class,
     ];
+    const MINUTES_CHECK_CONFIG_KEY = 'minutes_to_check_for_duplicate_notifications';
+    const TYPES_CONFIG_KEY         = 'types_to_check_for_duplicate_notifications';
 
-    public static function getTypesToCheckFor()
+    public static function getMinutesToCheckSince(): int
     {
-        $config = AppConfig::pull(self::CONFIG_KEY, null);
+        $config = AppConfig::pull(self::MINUTES_CHECK_CONFIG_KEY, 10);
+
+        return intval($config);
+    }
+
+    public static function getTypesToCheckFor(): array
+    {
+        $config = AppConfig::pull(self::TYPES_CONFIG_KEY, null);
         if ( ! $config) {
             return self::DEFAULT_NOTIFICATIONS_TO_CHECK_FOR;
         }
@@ -36,7 +43,7 @@ class DuplicateNotificationChecker
         return explode(',', $config);
     }
 
-    public static function hasAlreadySentNotification($notifiable, Notification $notification): bool
+    public static function hasAlreadySentNotification($notifiable, Notification $notification, string $channel): bool
     {
         if ( ! isset($notifiable->id)) {
             return false;
@@ -49,12 +56,8 @@ class DuplicateNotificationChecker
         }
 
         $notifiableType = get_class($notifiable);
-        $hasAlreadySent = self::queryExistingNotifications($notification)
-            ->where('notifiable_id', '=', $notifiable->id)
-            ->where('notifiable_type', '=', $notifiableType)
-            ->exists();
-
-        if ($hasAlreadySent) {
+        $hasAlreadySent = self::getExistingNotificationsCount([$notifiable->id], $notifiableType, $notification, $channel);
+        if ($hasAlreadySent > 0) {
             return true;
         }
 
@@ -68,11 +71,7 @@ class DuplicateNotificationChecker
         }
 
         if ($userIds->isNotEmpty()) {
-            $alreadySentCount = self::queryExistingNotifications($notification)
-                ->where('notifiable_id', 'in', $userIds)
-                ->where('notifiable_type', '=', User::class)
-                ->count();
-
+            $alreadySentCount = self::getExistingNotificationsCount($userIds->toArray(), User::class, $notification, $channel);
             if ($alreadySentCount >= $userIds->count()) {
                 return true;
             }
@@ -81,13 +80,15 @@ class DuplicateNotificationChecker
         return false;
     }
 
-    private static function queryExistingNotifications(Notification $notification): Builder
+    private static function getExistingNotificationsCount(array $notifiableIds, string $notifiableType, Notification $notification, string $channel): int
     {
-        $tenMinutesAgo    = now()->subMinutes(10);
+        $tenMinutesAgo    = now()->subMinutes(self::getMinutesToCheckSince());
         $notificationType = get_class($notification);
 
-        return DatabaseNotification::where('created_at', '>', $tenMinutesAgo)
+        $notifications = DatabaseNotification::where('created_at', '>', $tenMinutesAgo)
             ->where('type', '=', $notificationType)
+            // couldn't get this to work with $.status.CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel
+            // ->whereRaw("JSON_EXTRACT(`data`, '$.status.$channel') is not null")
             ->when($notification instanceof HasAttachment, function ($q) use ($notification) {
                 $attachment = $notification->getAttachment();
                 if ( ! $attachment) {
@@ -104,6 +105,19 @@ class DuplicateNotificationChecker
                 }
 
                 return $q->where('patient_id', $patientId);
-            });
+            })
+            ->whereIn('notifiable_id', $notifiableIds)
+            ->where('notifiable_type', '=', $notifiableType)
+            ->get();
+
+        $count = 0;
+        foreach ($notifications as $notification) {
+            if ( ! $notification->data || ! isset($notification->data['status']) || ! isset($notification->data['status'][$channel])) {
+                continue;
+            }
+            ++$count;
+        }
+
+        return $count;
     }
 }
