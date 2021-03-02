@@ -37,5 +37,4 @@ lsp/log/*
 CircleLinkHealth/*/vendor
 CircleLinkHealth/*/node_modules
 CircleLinkHealth.env.review-clh-messenger
-.env.review-clh-messenger-chat
 CircleLinkHealth/
