@@ -53,11 +53,6 @@ class ProcessPatientMonthlyServices implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
-        BillingCache::clearPatients([$this->patient->getPatientId()]);
-
-        (app(ProcessPatientBillingStatus::class))
-            ->setPatientId($this->patient->getPatientId())
-            ->execute();
         (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
 }

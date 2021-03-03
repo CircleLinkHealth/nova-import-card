@@ -47,10 +47,6 @@ class AutoPatientAttestation
             return;
         }
 
-        if ( ! $this->pmsId) {
-            throw new Exception('need to supply pmsId when supplying only patientId');
-        }
-
         $relations = [
             'attestedProblems' => function ($q) {
                 $q->with('ccdProblem.cpmProblem')
@@ -204,7 +200,6 @@ class AutoPatientAttestation
         (new AttestPatientProblems())
             ->problemsToAttest($problems)
             ->forMonth($this->month)
-            ->forPms($this->pmsId)
             ->createRecords();
     }
 

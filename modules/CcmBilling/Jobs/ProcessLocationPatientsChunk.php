@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientBillingStatus;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;

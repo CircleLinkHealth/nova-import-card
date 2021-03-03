@@ -39,7 +39,8 @@ class ProcessPatientSummaries
                 ->setMonth($month)
                 ->setPatientUser()
                 ->setPatientDto()
-                ->process();
+                ->process()
+                ->processPatientBillingStatus();
         });
     }
 
@@ -51,6 +52,7 @@ class ProcessPatientSummaries
         });
     }
 
+    //todo: change name - remove wipe
     public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void
     {
         app(self::class)->fromDTO(
@@ -61,14 +63,24 @@ class ProcessPatientSummaries
         );
     }
 
-    private function process()
+    private function process():self
     {
         if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             sendSlackMessage('#billing_alerts', "Warning! (ProcessPatientSummaries:) Patient({$this->patientId}) Billing Data are invalid. (DTO is null)");
 
+            return $this;
+        }
+        $this->patientDTO = $this->processor->process($this->patientDTO);
+        return $this;
+    }
+
+    private function processPatientBillingStatus():void
+    {
+        if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             return;
         }
-        $this->processor->process($this->patientDTO);
+
+        ProcessPatientBillingStatus::fromDto($this->patientDTO);
     }
 
     private function setMonth(Carbon $month): self

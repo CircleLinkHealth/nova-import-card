@@ -79,7 +79,15 @@ class PatientProblemsForBillingProcessing
             return (new PatientProblemForProcessing())
                 ->setId($p->id)
                 ->setCode($p->icd10Code())
-                ->setServiceCodes($this->getServicesForProblem($p));
+                ->setServiceCodes($this->getServicesForProblem($p))
+                ->setIsAttestedForMonth(
+                    ! is_null(
+                        $this->patient
+                            ->attestedProblems
+                            ->where('ccd_problem_id', $p->id)
+                            ->where('chargeable_month', Carbon::now()->startOfMonth())
+                        ->first()
+                    ));
         })
             ->filter();
     }

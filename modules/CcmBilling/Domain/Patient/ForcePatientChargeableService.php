@@ -122,9 +122,5 @@ class ForcePatientChargeableService
             $this->input->getPatientUserId(),
             $month
         );
-        (app(ProcessPatientBillingStatus::class))
-            ->setPatientId($this->input->getPatientUserId())
-            ->setMonth($month)
-            ->execute();
     }
 }

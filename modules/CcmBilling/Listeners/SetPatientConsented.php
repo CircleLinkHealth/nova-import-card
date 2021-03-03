@@ -36,6 +36,5 @@ class SetPatientConsented
                 $month
             )
         );
-        (new ProcessPatientBillingStatus())->setPatientId($patientId)->setMonth($month)->execute();
     }
 }

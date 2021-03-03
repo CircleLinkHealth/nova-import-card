@@ -15,7 +15,81 @@ class PatientMonthlyBillingDTO
 {
     protected AvailableServiceProcessors $availableServiceProcessors;
 
-    protected bool $billingStatusIsTouched = false;
+    protected PatientMonthlyBillingStatusDTO $billingStatus;
+
+    protected int $successfulCalls = 0;
+
+    protected ?string $ccmStatusForMonth = null;
+
+    /**
+     * @return string|null
+     */
+    public function getCcmStatusForMonth(): ?string
+    {
+        return $this->ccmStatusForMonth;
+    }
+
+    /**
+     * @param string|null $ccmStatusForMonth
+     */
+    public function setCcmStatusForMonth(?string $ccmStatusForMonth): self
+    {
+        $this->ccmStatusForMonth = $ccmStatusForMonth;
+        return $this;
+    }
+
+    protected bool $billingProviderExists = false;
+
+    /**
+     * @return bool
+     */
+    public function billingProviderExists(): bool
+    {
+        return $this->billingProviderExists;
+    }
+
+    /**
+     * @param bool $billingProviderExists
+     */
+    public function setBillingProviderExists(bool $billingProviderExists): self
+    {
+        $this->billingProviderExists = $billingProviderExists;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSuccessfulCallsCount(): int
+    {
+        return $this->successfulCalls;
+    }
+
+    /**
+     * @param int $successfulCalls
+     */
+    public function setSuccessfulCalls(int $successfulCalls): self
+    {
+        $this->successfulCalls = $successfulCalls;
+        return $this;
+    }
+
+    /**
+     * @return PatientMonthlyBillingStatusDTO
+     */
+    public function getBillingStatus(): PatientMonthlyBillingStatusDTO
+    {
+        return $this->billingStatus;
+    }
+
+    /**
+     * @param PatientMonthlyBillingStatusDTO $billingStatus
+     */
+    public function setBillingStatus(PatientMonthlyBillingStatusDTO $billingStatus): self
+    {
+        $this->billingStatus = $billingStatus;
+        return $this;
+    }
 
     protected Carbon $chargeableMonth;
 
@@ -37,7 +111,7 @@ class PatientMonthlyBillingDTO
 
     public function billingStatusIsTouched(): bool
     {
-        return $this->billingStatusIsTouched;
+        return $this->billingStatus->isTouched();
     }
 
     public function forMonth(Carbon $chargeableMonth): self
@@ -70,12 +144,17 @@ class PatientMonthlyBillingDTO
             ->subscribe($patient->patientInfo->location->availableServiceProcessors($month))
             ->forPatient($patient->id)
             ->ofLocation($patient->patientInfo->location->id)
-            ->forMonth($month)
-            ->setBillingStatusIsTouched(
-                ! is_null(optional($patient->monthlyBillingStatus
-                    ->filter(fn(PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
-                    ->first())->actor_id)
+            ->forMonth($month->copy()->startOfMonth())
+            ->setBillingStatus(
+                PatientMonthlyBillingStatusDTO::fromModel(
+                    $patient->monthlyBillingStatus
+                ->filter(fn(PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                ->first()
+                )
             )
+            ->setBillingProviderExists(! is_null($patient->billingProviderUser()))
+            ->setCcmStatusForMonth($patient->getCcmStatusForMonth($month->copy()))
+            ->setSuccessfulCalls($patient->inboundSuccessfulCalls->count())
             ->withLocationServices(
                 ...
                 LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
@@ -143,22 +222,11 @@ class PatientMonthlyBillingDTO
         return $this;
     }
 
-    public function pushServiceFromOutputIfYouShould(PatientServiceProcessorOutputDTO $output): void
+    public function updateOrPushServiceFromOutput(PatientServiceProcessorOutputDTO $output): void
     {
-        $exists = collect($this->getPatientServices())->filter(function (PatientSummaryForProcessing $s) use ($output) {
-            return $s->getCode() === $output->getCode();
-        })->isNotEmpty();
-
-        if ( ! $exists) {
-            $this->patientServices[] = $output->toPatientChargeableServiceForProcessingDTO();
-        }
-    }
-
-    public function setBillingStatusIsTouched(bool $isTouched): self
-    {
-        $this->billingStatusIsTouched = $isTouched;
-
-        return $this;
+        $this->patientServices = $this->getPatientServices()->filter(function (PatientSummaryForProcessing $s) use ($output) {
+                return $s->getCode() === $output->getCode();
+            })->push($output->toPatientChargeableServiceForProcessingDTO())->toArray();
     }
 
     public function subscribe(AvailableServiceProcessors $availableServiceProcessors): self
@@ -173,8 +241,8 @@ class PatientMonthlyBillingDTO
      *
      * @return PatientMonthlyBillingDTO
      */
-    public function withForcedPatientServices(ForcedPatientChargeableServicesForProcessing ...$forcedPatientServices
-    ): self {
+    public function withForcedPatientServices(ForcedPatientChargeableServicesForProcessing ...$forcedPatientServices): self
+    {
         $this->forcedPatientServices = $forcedPatientServices;
 
         return $this;
