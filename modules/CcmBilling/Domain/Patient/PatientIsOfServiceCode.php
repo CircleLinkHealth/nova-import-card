@@ -157,7 +157,7 @@ class PatientIsOfServiceCode
     private function problemsOfServiceCount(): int
     {
         return collect($this->dto->getPatientProblems())
-            ->filter(fn (PatientProblemForProcessing $p) => in_array($this->serviceCode, $p->getServiceCodes()))
+            ->filter(fn (PatientProblemForProcessing $p) => in_array(ChargeableService::getBaseCode($this->serviceCode), $p->getServiceCodes()))
             ->count();
     }
 
