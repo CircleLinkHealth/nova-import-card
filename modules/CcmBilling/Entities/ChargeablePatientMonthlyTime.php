@@ -18,15 +18,15 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int|null                        $chargeable_service_id
  * @property \Illuminate\Support\Carbon|null $chargeable_month
  * @property string|null                     $total_time
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdInMonth(\Carbon\Carbon $date, string $field = 'created_at')
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdOn(\Carbon\Carbon $date, string $field = 'created_at')
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdOnIfNotNull(?\Carbon\Carbon $date = null, $field = 'created_at')
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdThisMonth(string $field = 'created_at')
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdToday(string $field = 'created_at')
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdYesterday(string $field = 'created_at')
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime newModelQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime newQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime query()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdInMonth(\Carbon\Carbon $date, string $field = 'created_at')
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdOn(\Carbon\Carbon $date, string $field = 'created_at')
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdOnIfNotNull(?\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdThisMonth(string $field = 'created_at')
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdToday(string $field = 'created_at')
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime createdYesterday(string $field = 'created_at')
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime newModelQuery()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime newQuery()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlyTime query()
  * @mixin \Eloquent
  * @property ChargeableService|null $chargeableService
  * @property User                   $patient

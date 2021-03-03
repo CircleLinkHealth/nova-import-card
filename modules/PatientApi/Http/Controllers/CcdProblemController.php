@@ -127,10 +127,6 @@ class CcdProblemController extends Controller
     {
         $month = now()->startOfMonth();
         (app(ProcessPatientSummaries::class))->execute($userId, $month);
-        (app(ProcessPatientBillingStatus::class))
-            ->setPatientId($userId)
-            ->setMonth($month)
-            ->execute();
     }
 
     private function getChargeableServices($patientId)

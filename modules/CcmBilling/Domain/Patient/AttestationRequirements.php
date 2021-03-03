@@ -39,13 +39,9 @@ class AttestationRequirements
 
     private function attestedBhiProblemsCount(): self
     {
-        $bhiProblems = collect($this->patientDto->getPatientProblems())->filter(fn (PatientProblemForProcessing $p) => ChargeableService::BHI === $p->getCode());
-        $attested    = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
-
         $this->dto->setAttestedBhiProblemsCount(
-            $bhiProblems->filter(
-                fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
-            )
+            collect($this->patientDto->getPatientProblems())
+                ->filter(fn (PatientProblemForProcessing $p) => in_array(ChargeableService::BHI, $p->getServiceCodes()) && $p->isAttestedForMonth())
                 ->count()
         );
 
@@ -54,13 +50,9 @@ class AttestationRequirements
 
     private function attestedCcmProblemsCount(): self
     {
-        $ccmProblems = collect($this->patientDto->getPatientProblems())->filter(fn (PatientProblemForProcessing $p) => ChargeableService::CCM === $p->getCode());
-        $attested    = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
-
-        $this->dto->setAttestedCcmProblemsCount(
-            $ccmProblems->filter(
-                fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
-            )
+        $this->dto->setAttestedBhiProblemsCount(
+            collect($this->patientDto->getPatientProblems())
+                ->filter(fn (PatientProblemForProcessing $p) => in_array(ChargeableService::CCM, $p->getServiceCodes()) && $p->isAttestedForMonth())
                 ->count()
         );
 

@@ -6,11 +6,6 @@
                     Approve Billable Patients
                 </div>
                 <div class="col-sm-5 text-right">
-                    <button v-if="isNewVersion() && typeof practice !== 'undefined'">
-                        <a style="text-decoration: none" target="_blank" :href="this.practiceChargeableServicesUrl()">
-                            Enable/Disable Practice Chargeable Services
-                        </a>
-                    </button>
                 </div>
                 <div class="col-sm-1 text-right">
                     <button title="Generate an Excel Sheet" @click="exportExcel">Export</button>
@@ -610,16 +605,20 @@
                         return this.axios
                             .post(rootUrl('reports/monthly-billing/set-patient-services'), {
                                 report_id: item.reportId,
-                                patient_chargeable_services: changes,
+                                patient_chargeable_services: this.isNewVersion() ? changes : allPatientServices,
                                 version: this.version
                             })
                             .then(response => {
                                 console.log('billing:chargeable-services:update', response.data)
-                                if (typeof response.data.approved !== "undefined") {
-                                    item.approved = response.data.approved;
-                                    item.rejected = response.data.rejected;
-                                    item.qa = response.data.qa;
-                                    item.chargeable_services = this.buildChargeableServicesForPatient(response.data.chargeable_services);
+                                let data = response.data.data;
+                                if (typeof data === "undefined") {
+                                    data = response.data;
+                                }
+                                if (typeof data.approved !== "undefined") {
+                                    item.approved = data.approved;
+                                    item.rejected = data.rejected;
+                                    item.qa = data.qa;
+                                    item.chargeable_services = this.buildChargeableServicesForPatient(data.chargeable_services);
                                 }
                                 item.promises.update_chargeables = false;
                             })
@@ -667,7 +666,8 @@
 
                 Event.$emit('modal-chargeable-services:show', {
                     title: 'Select Chargeable Services for ' + row.Patient,
-                    row
+                    row,
+                    billing_revamp_enabled: this.isNewVersion()
                 });
             },
 

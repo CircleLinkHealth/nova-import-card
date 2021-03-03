@@ -45,11 +45,34 @@ TwoFA
 5. Run `sh bin/local-dev/install.sh`
 
 ### Starting work on a new feature
-1. Create a new branch in the monorepo with a descriptive name. It has to start with `feature_`. Example `feature_abp_add_force_cs`.
+1. Create a new branch in the monorepo with a descriptive name, using command below.
+```bash
+sh bin/git/new-feature.sh abp_add_force_cs
+```
 2. Any work done should be committed to the monorepo **only**.
 3. Create a PR as soon as possible to get the code reviewed.
 
-### Deployments
+### Adding an existing module
+The instructions below assume we want to add module LaravelScheduleMonitor.
+1. Manually copy/paste the module in `modules/LaravelScheduleMonitor`. One way is to download the master branch from github and add that.
+2. Add the remote refs to .gitconfig
+    ```bash
+    [remote "LaravelScheduleMonitor"]
+        url = git@github.com:CircleLinkHealth/laravel-schedule-monitor.git
+        fetch = +refs/heads/*:refs/remotes/LaravelScheduleMonitor/*
+    ```
+3. Add update helpers to merge-from-individual-repos.txt
+   ```bash
+    git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/master
+    git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/development
+    ```
+4. `sh bin/local-dev/setup-gitconfig.sh`
+4. Fetch all the latest changes. `git fetch --all --no-tags`
+5. The first time we need to merge using `--allow-unrelated-histories`. See command `git merge --strategy recursive --strategy-option subtree=modules/LaravelScheduleMonitor LaravelScheduleMonitor/master --allow-unrelated-histories`
+
+
+
+## Deployments
 We use a modified version of vapor cli that lives in the monorepo. Use the commands below to setup an alias for easy use.
 ```bash
 # Run these commands in the monorepo root directory
@@ -62,10 +85,39 @@ cd apps/provider-app
 monovapor deploy staging staging
 ```
 
+### Creating a Release
+Creating a release creates branches and tags in all single repos. There's 2 steps into creating a release:
+1. Run the split command to create our release branch on all repos.
+2. Run the release command to create tags on all repos. 
 
+Both should run on the same branch. The branch has to start with `release-`. For example `release-new-billing`, `release-v2.5-dev`
 
-### Splitting the monorepo 
-Splitting the monorepo means writing to branches in the original single repos. Assuming have `feature_abp_add_force_cs` branch checked out in the monorepo, we'd need to run `sh bin/split.sh feature_abp_add_force_cs`. This will push changes to each individual repo on branch `feature_abp_add_force_cs`. Then we can go on and deploy `feature_abp_add_force_cs` on any repos we want. For example I could deploy only Provider App, and Admin App.
+#### Split Command
+Splitting the monorepo means writing to branches in the original single repos. 
+1. Create a new branch in the monorepo and push it to git remote (or start with a branch already pushed to remote)
+```bash
+git checkout -b feature_abp_add_force_cs
+git push --set-upstream origin feature_abp_add_force_cs
+git push
+```
+2. Run split command. This will push changes to each individual repo on branch `feature_abp_add_force_cs`.
+```bash
+sh bin/split.sh feature_abp_add_force_cs
+```
+From here we have the option to deploy `feature_abp_add_force_cs` form any of the single repos using GitHub Actions, or a manual vapor command, etc. For example I could deploy only Provider App, and Admin App.
+
+#### Release Command
+1. Create a new branch in the monorepo that starts with `release-` and push it to git remote (or start with a branch already pushed to remote)
+```bash
+git checkout -b release-feature_abp_add_force_cs
+git push --set-upstream origin release-feature_abp_add_force_cs
+git push
+sh bin/release.sh release-feature_abp_add_force_cs my_version_tag
+```
+2. Run the release command. 
+```bash
+sh bin/release.sh release-release_feature_billing-revamp_mono billing_monorepo_test_v4
+```
 
 ### Available Scripts
 #### Run a shell command in an app

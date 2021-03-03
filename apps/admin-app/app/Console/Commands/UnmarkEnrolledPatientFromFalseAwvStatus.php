@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -9,18 +13,17 @@ use Illuminate\Console\Command;
 class UnmarkEnrolledPatientFromFalseAwvStatus extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'patients:unmark-awv';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Some patients were wrongly marked as AWV during enrollment';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'patients:unmark-awv';
 
     /**
      * Create a new command instance.
@@ -40,19 +43,19 @@ class UnmarkEnrolledPatientFromFalseAwvStatus extends Command
     public function handle()
     {
         User::with(['primaryPractice.chargeableServices'])
-            ->whereHas('primaryPractice', function ($p){
+            ->whereHas('primaryPractice', function ($p) {
                 //exclude test awv patients
                 $p->where('is_demo', false);
             })
-            ->whereHas('patientInfo', function ($pi){
+            ->whereHas('patientInfo', function ($pi) {
                 $pi->where('is_awv', 1);
             })
-            ->each(function (User $user){
+            ->each(function (User $user) {
                 if ($user
                     ->primaryPractice
                     ->chargeableServices
                     ->whereIn('code', [ChargeableService::AWV_SUBSEQUENT, ChargeableService::AWV_INITIAL])
-                    ->isNotEmpty()){
+                    ->isNotEmpty()) {
                     return;
                 }
 
@@ -62,6 +65,5 @@ class UnmarkEnrolledPatientFromFalseAwvStatus extends Command
 
                 $this->info("Unmarking awv for Patient: {$user->id}");
             });
-
     }
 }

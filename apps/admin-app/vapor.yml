@@ -1,7 +1,31 @@
 id: 13702
 name: cpm-admin
-separate-vendor: true
 environments:
+    feature-billing-revamp:
+        domain: cpm-admin-feature-billing-revamp.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        concurrency: 5
+        scheduler: false
+        mail: false
+        timeout: 60
+        cli-timeout: 600
+        queues:
+            - cpm-admin-low-staging
+            - cpm-admin-high-staging
+            - cpm-admin-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
     production:
         domain: superadmin.careplanmanager.com
         storage: cpm-production-vapor-storage
@@ -20,7 +44,7 @@ environments:
             - cpm-admin-high-production
             - cpm-admin-revisionable-production
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod'
             - 'php artisan route:cache'
@@ -45,7 +69,7 @@ environments:
             - cpm-admin-high-staging
             - cpm-admin-revisionable-staging
         build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative -vvv'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
             - 'npm ci && npm run prod'
             - 'php artisan route:cache'

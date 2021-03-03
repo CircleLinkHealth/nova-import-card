@@ -11,7 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -105,7 +105,7 @@ class PatientIsOfServiceCode
         }
 
         return collect($this->dto->getPatientServices())
-            ->filter(fn (PatientChargeableServicesForProcessing $service) => $service->getCode() === $this->serviceCode)
+            ->filter(fn (PatientSummaryForProcessing $service) => $service->getCode() === $this->serviceCode)
             ->isNotEmpty();
     }
 
@@ -122,7 +122,7 @@ class PatientIsOfServiceCode
 
     private function minimumProblemCountForService(): int
     {
-        return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
+        return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getBaseCode($this->serviceCode)] ?? 0;
     }
 
     private function patientHasBlockedService(): bool
@@ -157,7 +157,7 @@ class PatientIsOfServiceCode
     private function problemsOfServiceCount(): int
     {
         return collect($this->dto->getPatientProblems())
-            ->filter(fn (PatientProblemForProcessing $p) => in_array($this->serviceCode, $p->getServiceCodes()))
+            ->filter(fn (PatientProblemForProcessing $p) => in_array(ChargeableService::getBaseCode($this->serviceCode), $p->getServiceCodes()))
             ->count();
     }
 

@@ -1,59 +1,80 @@
 {
-    "name": "laravel/laravel",
+    "name": "circlelinkhealth/app-caller",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Twilio integration app for making calls",
     "keywords": [
         "framework",
         "laravel"
     ],
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CcmBilling"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Core"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/CpmMigrations"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/twilio-integration-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Customer"
         },
         {
-            "type": "git",
-            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Eligibility"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Revisionable"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/SelfEnrollment"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/SharedModels"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/SqlViews"
         },
         {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/synonyms.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/Synonyms"
         },
         {
-            "type": "git",
-            "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+            "type": "path",
+            "url": "./CircleLinkHealth/TwilioIntegration"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/TwoFA"
         },
         {
             "type": "path",
             "url": "./CircleLinkHealth/VaporCli"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/VaporCore"
+        },
+
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/VaporDevopsHelpers"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/LaravelScheduleMonitor"
+        },
+        {
+            "type": "path",
+            "url": "./CircleLinkHealth/PdfService"
         }
     ],
     "license": "MIT",
@@ -62,24 +83,28 @@
         "ext-json": "*",
         "ext-redis": "*",
         "ext-simplexml": "*",
-        "circlelinkhealth/core-module": "dev-laravel-8.0",
-        "circlelinkhealth/cpm-migrations-module": "dev-laravel-8",
-        "circlelinkhealth/customer-module": "dev-laravel-8",
-        "circlelinkhealth/revisionable-module": "dev-vaporizing-admin",
-        "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
-        "circlelinkhealth/twilio-integration-module": "dev-master",
+        "spatie/laravel-schedule-monitor": "*",
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/cpm-migrations-module": "*",
+        "circlelinkhealth/customer-module": "*",
+        "circlelinkhealth/revisionable-module": "*",
+        "circlelinkhealth/self-enrollment-module": "*",
+        "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/sqlviews-module":"*",
+        "circlelinkhealth/twilio-integration-module":"*",
+        "circlelinkhealth/pdf-service-module": "*",
         "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "laravel/vapor-cli": "*",
+        "laravel/vapor-core": "*",
         "propaganistas/laravel-phone": "^4.1"
     },
     "require-dev": {
+        "laravel/vapor-cli": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-ide-helper": "^2.6",
         "friendsofphp/php-cs-fixer": "^2.16.3",
         "facade/ignition": "^2.3.6",
-        "nwidart/laravel-modules": "dev-master",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.0"
@@ -137,10 +162,8 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models -W --dir=\"app\""
+            "composer ide",
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate"
         ],
         "ide": [
             "@php artisan ide-helper:generate",

@@ -11,8 +11,8 @@ use App\Jobs\GeneratePatientReportsJob as GenerateReports;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
-use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 
 class GeneratePatientReports
 {

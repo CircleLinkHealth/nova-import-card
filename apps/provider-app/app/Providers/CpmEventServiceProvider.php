@@ -26,15 +26,8 @@ use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
-use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
-use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
-use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
-use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\CcmBilling\Listeners\CreateAttestationRecords;
-use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
-use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationProblemServices;
-use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\Core\Listeners\CheckBeforeSendMessageListener;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
@@ -141,19 +134,6 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         MigrationsEnded::class => [
             RunComposerIde::class,
-        ],
-        LocationServicesAttached::class => [
-            ProcessLocationPatientServices::class,
-            ProcessLocationProblemServices::class,
-        ],
-        PatientProblemsChanged::class => [
-            ProcessPatientServices::class,
-        ],
-        PatientActivityCreated::class => [
-            ProcessPatientServices::class,
-        ],
-        PatientSuccessfulCallCreated::class => [
-            ProcessPatientServices::class,
         ],
     ];
 

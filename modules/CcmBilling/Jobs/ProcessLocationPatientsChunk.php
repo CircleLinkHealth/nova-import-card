@@ -9,11 +9,12 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientBillingStatus;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -72,29 +73,9 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function handle()
     {
         $this->getBuilder()->get()->each(function (User $patient) {
-            //todo: remove processors and just get from user, call generateFromUser static on DTO
             measureTime("ProcessPatientMonthlyServices:$patient->id", function () use ($patient) {
                 ProcessPatientMonthlyServices::dispatch(
-                    (new PatientMonthlyBillingDTO())
-                        ->subscribe($this->getAvailableServiceProcessors())
-                        ->forPatient($patient->id)
-                        ->ofLocation($patient->patientInfo->preferred_contact_location)
-                        ->setBillingStatusIsTouched(
-                            ! is_null(optional($patient->monthlyBillingStatus
-                                ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($this->getChargeableMonth()))
-                                ->first())->actor_id)
-                        )
-                        ->forMonth($this->getChargeableMonth())
-                        ->withLocationServices(
-                            ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
-                        )
-                        ->withPatientServices(
-                            ...PatientChargeableServicesForProcessing::fromCollection($patient)
-                        )
-                        ->withForcedPatientServices(
-                            ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
-                        )
-                        ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient))
+                    $this->getDtoFromPatient($patient)
                 );
             });
         });
@@ -103,5 +84,9 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function repo(): LocationProcessorRepository
     {
         return app(LocationProcessorRepository::class);
+    }
+
+    public function getDtoFromPatient(User $patient){
+        return PatientMonthlyBillingDTO::generateFromUser($patient, $this->getChargeableMonth());
     }
 }

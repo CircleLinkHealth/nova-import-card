@@ -13,7 +13,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
-use CircleLinkHealth\Core\TwilioClientable;
+use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -152,10 +152,12 @@ use function Clue\StreamFilter\fun;
  * @property mixed                           $other_phone_npa_parenthesized
  * @property mixed                           $primary_phone_npa_parenthesized
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
+ * @method static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
+ * @method static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollee canSendSelfEnrollmentInvitation(bool $initialInvite)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollee ofActivePractice()
  */
 class Enrollee extends BaseModel
 {
@@ -498,7 +500,7 @@ class Enrollee extends BaseModel
         return $query->whereNull('source')
             ->when($initialInvite, function ($q){
                 $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
-                    $q->where('users.created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
+                    $q->where('created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
                 });
             })
             ->whereIn('status', [
@@ -883,6 +885,11 @@ class Enrollee extends BaseModel
                     (int) AppConfig::pull(self::MAX_CALL_ATTEMPTS_KEY, self::DEFAULT_MAX_CALL_ATTEMPTS)
                 );
         });
+    }
+
+    public function scopeOfActivePractice($query)
+    {
+        return $query->whereHas('practice', fn ($p) => $p->active());
     }
 
     public function scopeOfStatus($query, $status)

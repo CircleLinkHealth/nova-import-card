@@ -18,10 +18,12 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLo
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStatusDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
@@ -46,7 +48,7 @@ class PatientSummaryProcessingTest extends TestCase
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
             ->ofLocation(1)
-            ->setBillingStatusIsTouched(false)
+            ->setBillingStatus((new PatientMonthlyBillingStatusDTO())->setMonth($startOfMonth)->setActorId(null))
             ->forMonth($startOfMonth)
             ->withLocationServices(
                 (new LocationChargeableServicesForProcessing())
@@ -104,7 +106,7 @@ class PatientSummaryProcessingTest extends TestCase
             ->forPatient($patientId)
             ->ofLocation($locationId)
             ->forMonth($startOfMonth)
-            ->setBillingStatusIsTouched(false)
+            ->setBillingStatus((new PatientMonthlyBillingStatusDTO())->setMonth($startOfMonth)->setActorId(null))
             ->withLocationServices(
                 (new LocationChargeableServicesForProcessing())
                     ->setCode(ChargeableService::CCM)
@@ -162,7 +164,7 @@ class PatientSummaryProcessingTest extends TestCase
             ->forPatient($patient->id)
             ->forMonth($startOfMonth = Carbon::now()->startOfMonth())
             ->ofLocation(1)
-            ->setBillingStatusIsTouched(false)
+            ->setBillingStatus((new PatientMonthlyBillingStatusDTO())->setMonth($startOfMonth)->setActorId(5))
             ->withLocationServices(
                 (new LocationChargeableServicesForProcessing())
                     ->setCode(ChargeableService::CCM)
@@ -174,12 +176,16 @@ class PatientSummaryProcessingTest extends TestCase
                     ->setMonth($startOfMonth),
             )
             ->withPatientServices(
-                (new PatientChargeableServicesForProcessing())
+                (new PatientSummaryForProcessing())
                     ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
                     ->setRequiresConsent(1)
-                    ->setMonthlyTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
                     ->setCode(ChargeableService::BHI)
                     ->setIsFulfilled(false)
+            )
+            ->withPatientMonthlyTimes((new PatientTimeForProcessing())
+                ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
+                ->setChargeableMonth($startOfMonth)
+                ->setTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
             )
             ->withProblems(
                 (new PatientProblemForProcessing())

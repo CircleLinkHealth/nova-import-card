@@ -9,16 +9,10 @@
         }
     ],
     "extra": {
-        "branch-alias": {
-            "dev-master": "4.2.x-dev",
-            "dev-road_547_customer": "4.3.x-dev"
-        },
         "laravel": {
             "providers": [
-
             ],
             "aliases": {
-
             }
         }
     },
@@ -41,8 +35,9 @@
         "laravel/ui": "^3.0",
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
+        "circlelinkhealth/pdf-service-module": "*",
         "fico7489/laravel-pivot": "^3.0",
-        "circlelinkhealth/twofa-module":"*",
+        "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
         "propaganistas/laravel-phone": "^4.2.2",
         "spatie/laravel-medialibrary": "^7.0.0",
@@ -65,6 +60,10 @@
         {
             "type": "path",
             "url": "../CcmBilling"
+        },
+        {
+            "type": "path",
+            "url": "../PdfService"
         }
     ]
 }

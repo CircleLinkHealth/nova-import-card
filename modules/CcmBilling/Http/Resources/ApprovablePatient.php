@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -51,7 +51,7 @@ class ApprovablePatient extends JsonResource
             'bhi_time'   => $bhiTime,
             'ccm_time'   => $ccmTime,
 
-            'problems'               => $this->getProblems()->toArray(),
+            'problems'               => $this->getProblems()->values()->toArray(),
             'no_of_successful_calls' => 0,
             'status'                 => $user->getCcmStatusForMonth($billingStatus->chargeable_month),
             'approve'                => 'approved' === $billingStatus->status,
@@ -59,9 +59,9 @@ class ApprovablePatient extends JsonResource
             'report_id'              => $billingStatus->id,
             'actor_id'               => $billingStatus->actor_id,
             'qa'                     => 'needs_qa' === $billingStatus->status,
-            'chargeable_services'    => $this->getChargeableServices()->toArray($request),
-            'attested_ccm_problems'  => $autoAttestation->getCcmAttestedProblems()->toArray(),
-            'attested_bhi_problems'  => $autoAttestation->getBhiAttestedProblems()->toArray(),
+            'chargeable_services'    => $this->getChargeableServices()->values()->toArray($request),
+            'attested_ccm_problems'  => $autoAttestation->getCcmAttestedProblems()->values()->toArray(),
+            'attested_bhi_problems'  => $autoAttestation->getBhiAttestedProblems()->values()->toArray(),
         ];
     }
 
@@ -82,37 +82,19 @@ class ApprovablePatient extends JsonResource
         /** @var User $user */
         $user = $this->resource->patientUser;
 
-        $bhiId = \CircleLinkHealth\Customer\Entities\ChargeableService::cached()
-            ->firstWhere('code', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI)
-            ->id;
+        $bhiId = \CircleLinkHealth\Customer\Entities\ChargeableService::getChargeableServiceIdUsingCode(\CircleLinkHealth\Customer\Entities\ChargeableService::BHI);
 
         return $user->chargeableMonthlyTime
             ->where('chargeable_service_id', '=', $bhiId)
             ->sum('total_time');
     }
 
-    /**
-     * This is replicating the behavior of {@link ApprovableBillablePatient}, i.e. the result of $pms->getBillableCcmCs.
-     */
     private function getBillableCcmCs(): int
     {
-        /** @var User $user */
-        $user = $this->resource->patientUser;
+        /** @var PatientMonthlyBillingStatus $billingStatus */
+        $billingStatus = $this->resource;
 
-        $rpmId   = \CircleLinkHealth\Customer\Entities\ChargeableService::getChargeableServiceIdUsingCode(\CircleLinkHealth\Customer\Entities\ChargeableService::RPM);
-        $rpm40Id = \CircleLinkHealth\Customer\Entities\ChargeableService::getChargeableServiceIdUsingCode(\CircleLinkHealth\Customer\Entities\ChargeableService::RPM40);
-
-        $hasRpmOnly = $user->chargeableMonthlySummaries
-            ->where('is_fulfilled', '=', true)
-            ->every(fn (ChargeablePatientMonthlySummary $item) => in_array($item->chargeable_service_id, [$rpmId, $rpm40Id]));
-
-        if ($hasRpmOnly) {
-            return $user->chargeableMonthlyTime
-                ->where('chargeable_service_id', '=', $rpmId)
-                ->sum('total_time');
-        }
-
-        return $this->getAllTimeExceptBhi();
+        return ClashingChargeableServices::getCcmTimeForLegacyReportsInPriority($billingStatus->patientUser);
     }
 
     private function getChargeableServices(): AnonymousResourceCollection

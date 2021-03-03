@@ -1,4 +1,4 @@
-const SERVICES = require('./services.types');
+import SERVICES from './services.types';
 
 const clashes = {};
 clashes[SERVICES.PCM] = [
@@ -10,6 +10,12 @@ clashes[SERVICES.PCM] = [
     SERVICES.RPM40,
     SERVICES.RPM60,
 ];
+clashes[SERVICES.CCM] = [
+    SERVICES.GENERAL_CARE_MANAGEMENT,
+    SERVICES.RPM,
+    SERVICES.RPM40,
+    SERVICES.RPM60
+]
 clashes[SERVICES.RPM] = [
     SERVICES.GENERAL_CARE_MANAGEMENT
 ];

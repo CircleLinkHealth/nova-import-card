@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -44,10 +45,6 @@ class AutoPatientAttestation
 
         if ($this->patient) {
             return;
-        }
-
-        if ( ! $this->pmsId) {
-            throw new Exception('need to supply pmsId when supplying only patientId');
         }
 
         $relations = [
@@ -203,7 +200,6 @@ class AutoPatientAttestation
         (new AttestPatientProblems())
             ->problemsToAttest($problems)
             ->forMonth($this->month)
-            ->forPms($this->pmsId)
             ->createRecords();
     }
 
@@ -246,12 +242,12 @@ class AutoPatientAttestation
             return boolval(optional($pms)->hasServiceCode($code));
         }
 
-        return $this->patient->chargeableMonthlySummaries->where('code', $code)->isNotEmpty();
+        return $this->patient->chargeableMonthlySummaries->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($code))->isNotEmpty();
     }
 
     private function isNewBillingEnabled()
     {
-        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        return BillingCache::billingRevampIsEnabled();
     }
 
     private function patientProblemsSortedByWeight(): Collection

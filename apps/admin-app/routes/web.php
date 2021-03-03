@@ -58,15 +58,15 @@ Route::group([
         'permission:admin-access',
     ],
 ], function () {
-                 Route::get('home', 'HomeController@index');
+    Route::get('home', 'HomeController@index');
 
-                 Route::get('hospitalisation-notes-dashboard', [
-                     'uses' => 'HospitalisationNotesController@index',
-                     'as'   => 'hospitalization-notes.table',
-                 ]);
+    Route::get('hospitalisation-notes-dashboard', [
+        'uses' => 'HospitalisationNotesController@index',
+        'as'   => 'hospitalization-notes.table',
+    ]);
 
-                 Route::get('message-dispatch-messages-dashboard', [
-                     'uses' => 'MessageDispatchMessagesController@index',
-                     'as'   => 'message-dispatch-messages.table',
-                 ]);
-             });
+    Route::get('message-dispatch-messages-dashboard', [
+        'uses' => 'MessageDispatchMessagesController@index',
+        'as'   => 'message-dispatch-messages.table',
+    ]);
+});

@@ -54,14 +54,14 @@ class ApproveBillablePatientsService
         $updated = PatientMonthlySummary::whereHas('patient', function ($q) use ($practiceId) {
             $q->ofPractice($practiceId);
         })
-            ->where('month_year', $month)
-            ->update([
-                'actor_id' => $actorId,
-                'needs_qa' => false,
-            ]);
+                                        ->where('month_year', $month)
+                                        ->update([
+                                            'actor_id' => $actorId,
+                                            'needs_qa' => false,
+                                        ]);
 
         SetLegacyPmsClosedMonthStatus::dispatch($practiceId, $month)
-            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
+                                     ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE));
 
         return $updated;
     }
@@ -74,13 +74,19 @@ class ApproveBillablePatientsService
         $approved = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', true)
-            ->where('rejected', '=', false)
+            ->where(function ($sq){
+                $sq ->where('rejected', '=', false)
+                    ->orWhereNull('rejected');
+            })
             ->count();
 
         $toQA = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', false)
-            ->where('rejected', '=', false)
+            ->where(function ($sq){
+                $sq ->where('rejected', '=', false)
+                    ->orWhereNull('rejected');
+            })
             ->where('needs_qa', '=', true)
             ->count();
 
@@ -94,9 +100,15 @@ class ApproveBillablePatientsService
         // 2. or we have an actor_id but none of these is true
         $other = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
-            ->where('rejected', '=', false)
+            ->where(function ($sq){
+                $sq ->where('rejected', '=', false)
+                    ->orWhereNull('rejected');
+            })
             ->where('approved', '=', false)
-            ->where('needs_qa', '=', false)
+            ->where(function ($sq){
+                $sq ->where('needs_qa', '=', false)
+                    ->orWhereNull('needs_qa');
+            })
             ->count();
 
         return new BillablePatientsCountForMonthDTO($approved, $toQA, $rejected, $other);
@@ -120,23 +132,24 @@ class ApproveBillablePatientsService
     {
         // 1. this will fetch billable patients that have
         //    ccm > 1200 and/or bhi > 1200
-        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(AppConfig::pull('abp-pagination-size', 20));
+        $summaries = $this->billablePatientSummaries($practiceId,
+            $date)->paginate(AppConfig::pull('abp-pagination-size', 20));
 
         //note: this only applies to the paginated results, not the whole collection. not sure if intended
         $summaries->getCollection()->transform(
             function ($summary) {
                 if ( ! $summary->actor_id) {
                     $aSummary = $this->patientSummaryRepo->attachChargeableServices($summary);
-                    $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
+                    $summary  = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
                 }
 
                 return ApprovableBillablePatient::make($summary);
             }
         );
 
-        $isClosed = (bool) $summaries->getCollection()->every(
+        $isClosed = (bool)$summaries->getCollection()->every(
             function ($summary) {
-                return (bool) $summary->actor_id;
+                return (bool)$summary->actor_id;
             }
         );
 
@@ -148,18 +161,18 @@ class ApproveBillablePatientsService
         return PatientMonthlySummary::whereHas('patient', function ($q) use ($practiceId) {
             $q->ofPractice($practiceId);
         })
-            ->where('month_year', $month)
-            ->update([
-                'actor_id'          => null,
-                'closed_ccm_status' => null,
-            ]);
+                                    ->where('month_year', $month)
+                                    ->update([
+                                        'actor_id'          => null,
+                                        'closed_ccm_status' => null,
+                                    ]);
     }
 
     public function setPatientBillingStatus(int $reportId, string $newStatus): ?array
     {
         /** @var PatientMonthlySummary $summary */
         $summary = PatientMonthlySummary::with([
-            'patient' => fn ($q) => $q->select(['id', 'program_id']),
+            'patient' => fn($q) => $q->select(['id', 'program_id']),
         ])->find($reportId);
         if ( ! $summary) {
             return null;
@@ -185,7 +198,7 @@ class ApproveBillablePatientsService
                 'approved' => $summary->approved,
                 'rejected' => $summary->rejected,
             ],
-            'actor_id' => $summary->actor_id,
+            'actor_id'  => $summary->actor_id,
         ];
     }
 
@@ -200,16 +213,19 @@ class ApproveBillablePatientsService
         $summary->save();
 
         $toSync = [];
+
         collect($services)
-            ->filter(fn ($service) => PatientForcedChargeableService::FORCE_ACTION_TYPE === $service['action_type'])
-            ->each(fn ($service)   => $toSync[$service['id']] = ['is_fulfilled' => true]);
+            ->filter(fn($service) => ($service['selected']??false )=== true)
+            ->each(function ($service) use (&$toSync) {
+                $toSync[$service['id']] = ['is_fulfilled' => true];
+            });
 
         $summary->chargeableServices()->sync($toSync);
         $summary->load('chargeableServices');
 
         $result = [
-            'approved'            => (bool) $summary->approved,
-            'rejected'            => (bool) $summary->rejected,
+            'approved'            => (bool)$summary->approved,
+            'rejected'            => (bool)$summary->rejected,
             'qa'                  => $summary->needs_qa && ! $summary->approved && ! $summary->rejected,
             'chargeable_services' => ChargeableServiceForAbp::collectionFromPms($summary),
         ];

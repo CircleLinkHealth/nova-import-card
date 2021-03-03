@@ -45,8 +45,10 @@ class ClearPracticeLocationSummaries extends Job
         $locations = Location::where('practice_id', $this->practiceId)
             ->get();
 
+        //todo: also check location patients where they have actor_id for that billing status?
         ChargeableLocationMonthlySummary::whereIn('location_id', $locations->pluck('id')->toArray())
             ->where('chargeable_month', $this->month)
+            ->where('is_locked', 0)
             ->delete();
     }
 }

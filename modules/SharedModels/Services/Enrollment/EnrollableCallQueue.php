@@ -55,16 +55,15 @@ class EnrollableCallQueue
         $patientsPending = Enrollee::whereCareAmbassadorUserId($careAmbassadorUserId)
             ->lessThanMaxAllowedAttempts()
             ->where(function ($e) {
-                $e->where(function ($subQ) {
-                    $subQ->where('status', Enrollee::UNREACHABLE)
-                        ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT));
-                })
-                    //include those that CA-Director assigned callback for
-                    ->orWhere(function ($subQ) {
-                        $subQ->where('status', Enrollee::TO_CALL)
-                            ->where('requested_callback', '>', Carbon::now()->startOfDay());
-                    });
-            })
+                                       $e->where(function ($subQ) {
+                                           $subQ->where('status', Enrollee::UNREACHABLE)
+                                               ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT));
+                                       })
+                                           ->orWhere(function ($subQ) {
+                                             $subQ->where('status', Enrollee::TO_CALL)
+                                                 ->where('requested_callback', '>', Carbon::now()->startOfDay());
+                                         });
+                                   })
             ->get();
 
         $patientsPendingCount = $patientsPending->count();
@@ -137,18 +136,23 @@ class EnrollableCallQueue
         \Cache::put("care_ambassador_{$careAmbassador->id}_queue", $queue, 600);
     }
 
+    private function clearCareAmbassador(Enrollee $enrollee): void
+    {
+        $enrollee->care_ambassador_user_id = null;
+        $enrollee->save();
+    }
+
     private function getFromCache(): ?Enrollee
     {
         $queue = \Cache::has("care_ambassador_{$this->careAmbassadorInfo->id}_queue")
             ? \Cache::get("care_ambassador_{$this->careAmbassadorInfo->id}_queue")
             : [];
 
-        //do not check status for call_queue. If they have been selected by the CA they must have been on call queue initially
-        //per CPM-2256 we will be applying statuses on confirmed family members, so that we can pre-fill their data on the page.
         if ( ! empty($queue)) {
             $nextEnrolleeId = collect($queue)->first();
 
             return Enrollee::withCaPanelRelationships()
+                ->ofActivePractice()
                 ->find($nextEnrolleeId);
         }
 
@@ -161,6 +165,7 @@ class EnrollableCallQueue
     private function getFromCallQueue()
     {
         return Enrollee::withCaPanelRelationships()
+            ->ofActivePractice()
             ->lessThanMaxAllowedAttempts()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
@@ -174,6 +179,7 @@ class EnrollableCallQueue
     private function getPendingConfirmedFamilyMembers()
     {
         return Enrollee::withCaPanelRelationships()
+            ->ofActivePractice()
             ->whereIn('status', Enrollee::TO_CONFIRM_STATUSES)
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->first();
@@ -185,7 +191,7 @@ class EnrollableCallQueue
     private function getRequestedCallbackToday()
     {
         return Enrollee::withCaPanelRelationships()
-            //added < just in case CA missed them/did not work etc.
+            ->ofActivePractice()
             ->where('requested_callback', '<=', Carbon::now()->toDateString())
             ->whereNotNull('requested_callback')
             ->whereIn('status', [
@@ -193,7 +199,6 @@ class EnrollableCallQueue
                 Enrollee::UNREACHABLE,
             ])
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
-            //make sure that most recently updated comes first: e.g. Enrollee that just has been marked for callback from CA Director
             ->orderByDesc('updated_at')
             ->first();
     }
@@ -206,15 +211,27 @@ class EnrollableCallQueue
         $days = isProductionEnv() ? self::DAYS_FOR_NEXT_ATTEMPT : minDaysPastForCareAmbassadorNextAttempt();
 
         return Enrollee::withCaPanelRelationships()
+            ->ofActivePractice()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->lessThanMaxAllowedAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
-            //important. Patient has 1 attempt and has been called 3 days ago. However then they requested that they be called in 10 days
-            //thus they will be picked up by method 'getRequestedCallbackToday' in 10 days.
             ->whereNull('requested_callback')
             ->orderBy('attempt_count')
             ->first();
+    }
+
+    private function isFetchingConfirmedFamilyMember(string $function): bool
+    {
+        return in_array($function, ['getFromCache', 'getPendingConfirmedFamilyMembers']);
+    }
+
+    private function reAssignToCurrentCareAmbassadorIfYouShould(Enrollee $enrollee): void
+    {
+        if ($enrollee->care_ambassador_user_id !== $this->careAmbassadorInfo->user_id) {
+            $enrollee->care_ambassador_user_id = $this->careAmbassadorInfo->user_id;
+            $enrollee->save();
+        }
     }
 
     /**
@@ -233,19 +250,13 @@ class EnrollableCallQueue
             }
 
             if (
-                $enrollee->speaksSpanish() && ! $this->careAmbassadorInfo->speaks_spanish && ! in_array($function, ['getFromCache',
-                    'getPendingConfirmedFamilyMembers', ])
+                $enrollee->speaksSpanish() && ! $this->careAmbassadorInfo->speaks_spanish && ! $this->isFetchingConfirmedFamilyMember($function)
             ) {
-                //return to CA Director page to be assigned again
-                $enrollee->care_ambassador_user_id = null;
-                $enrollee->save();
-
+                $this->clearCareAmbassador($enrollee);
                 continue;
             }
 
-            //re-assign care ambassador, in case patient has been retrieved as a confirmed family member
-            $enrollee->care_ambassador_user_id = $this->careAmbassadorInfo->user_id;
-            $enrollee->save();
+            $this->reAssignToCurrentCareAmbassadorIfYouShould($enrollee);
 
             return $enrollee;
         }

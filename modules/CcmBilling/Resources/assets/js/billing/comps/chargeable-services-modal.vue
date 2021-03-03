@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="row">
-                <span v-if="validationMessage">{{ validationMessage }}</span>
+                <span v-if="validationMessage"><span style="font-weight: 700; color: red">&#33;</span> {{ validationMessage }}</span>
             </div>
         </template>
     </modal>
@@ -53,10 +53,11 @@
                 changes: [],
                 row: null,
                 validationMessage: null,
+                billingRevampEnabled: false,
                 info: {
                     okHandler() {
-                        if (typeof (self.done) == 'function' && self.changes.length) {
-                            self.done(self.patientServices, self.changes);
+                        if (typeof (this.done) == 'function' && self.changes.length) {
+                            this.done(self.patientServices, self.changes);
                         }
                         Event.$emit("modal-chargeable-services:hide")
                     },
@@ -113,7 +114,7 @@
             },
 
             checkForClashes() {
-                let clashing = new Set();
+                const clashing = new Set();
                 const selected = this.patientServices.filter(s => s.selected);
                 selected.forEach(service => {
                     const clashingServices = SERVICE_CLASHES[service.code];
@@ -140,13 +141,14 @@
         },
         mounted() {
             Event.$on('modal-chargeable-services:show', (modal) => {
+                this.billingRevampEnabled = (modal || {}).billing_revamp_enabled
                 this.row = (modal || {}).row
                 this.info.done = (this.row || {}).onChargeableServicesUpdate
                 this.patientServices = this.services.map(service => {
                     const pService = this.row.chargeable_services.find((item) => service.id === item.id);
                     service.selected = pService && pService.is_fulfilled;
                     service.total_time = pService ? pService.total_time : 0;
-                    service.disabled = !this.isServiceChargeableForPatient(service);
+                    service.disabled = this.billingRevampEnabled ? !this.isServiceChargeableForPatient(service) :  false;
 
                     return service;
                 });

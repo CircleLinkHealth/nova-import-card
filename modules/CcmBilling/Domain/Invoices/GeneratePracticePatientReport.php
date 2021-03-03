@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Invoices;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -21,7 +22,7 @@ class GeneratePracticePatientReport
     {
         $patient              = $this->billingStatus->patientUser;
         $result               = new PracticePatientReportData();
-        $result->ccmTime      = $this->roundToMinutes($this->getAllTimeExceptBhi());
+        $result->ccmTime      = $this->roundToMinutes($this->getBillableCcmCs());
         $result->bhiTime      = $this->roundToMinutes($this->getBhiTime());
         $result->name         = $patient->getFullName();
         $result->dob          = $patient->getBirthDate();
@@ -55,18 +56,16 @@ class GeneratePracticePatientReport
             ->implode(', ');
     }
 
-    private function getAllTimeExceptBhi(): int
-    {
-        return $this->billingStatus->patientUser->chargeableMonthlyTime
-            ->where('chargeable_service_id', '!=', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)
-            ->sum('total_time');
-    }
-
     private function getBhiTime(): int
     {
         return $this->billingStatus->patientUser->chargeableMonthlyTime
-            ->where('chargeable_service_id', '!=', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)
+            ->where('chargeable_service_id', '!=', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
             ->sum('total_time');
+    }
+
+    private function getBillableCcmCs(): int
+    {
+        return ClashingChargeableServices::getCcmTimeForLegacyReportsInPriority($this->billingStatus->patientUser);
     }
 
     private function getBillingCodes(): string
@@ -85,7 +84,7 @@ class GeneratePracticePatientReport
     {
         return $this->billingStatus->patientUser->chargeableMonthlySummaries
             ->where('is_fulfilled', '=', 1)
-            ->where('chargeable_service_id', '=', ChargeableService::cached()->firstWhere('code', $code)->id)
+            ->where('chargeable_service_id', '=', ChargeableService::getChargeableServiceIdUsingCode($code))
             ->isNotEmpty();
     }
 

@@ -35,8 +35,7 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
     public function test_patient_is_bhi_helper_uses_new_summaries()
     {
-        BillingCache::clearPatients();
-        BillingCache::clearLocations();
+        BillingCache::setBillingRevampIsEnabled(true);
         $bhiPatient = $this->setupPatient($this->practice, true);
 
         $bhiPatient->notes()->create([
@@ -48,7 +47,7 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
         $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode);
 
-        self::assertTrue(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));
+        self::assertTrue(BillingCache::billingRevampIsEnabled());
         self::assertTrue($bhiPatient->isBhi());
         self::assertTrue(
             $bhiPatient->chargeableMonthlySummaries()
@@ -66,11 +65,10 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
     public function test_patient_is_pcm_helper_uses_new_summaries()
     {
-        BillingCache::clearPatients();
-        BillingCache::clearLocations();
+        BillingCache::setBillingRevampIsEnabled(true);
         $patient = $this->setupPatient($this->practice, false, true);
 
-        self::assertTrue(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));
+        self::assertTrue(BillingCache::billingRevampIsEnabled());
         self::assertTrue($patient->isPcm());
         self::assertTrue(
             $patient->chargeableMonthlySummaries()

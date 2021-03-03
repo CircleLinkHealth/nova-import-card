@@ -13,7 +13,6 @@ use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Artisan;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class CcmBillingTest extends TestCase
 {

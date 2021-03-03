@@ -38,7 +38,7 @@ class AttestPatientProblems
     //todo: deprecate
     protected ?PatientMonthlySummary $pms;
 
-    protected ?int $pmsId;
+    protected ?int $pmsId =null;
 
     public function createRecords(): void
     {

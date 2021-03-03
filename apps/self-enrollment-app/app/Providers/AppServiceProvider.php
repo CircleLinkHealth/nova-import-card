@@ -1,24 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use CircleLinkHealth\Core\ChunksEloquentBuilder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
-    }
-
     /**
      * Bootstrap any application services.
      *
@@ -45,5 +40,41 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         );
+
+        QueryBuilder::macro(
+            'toRawSql',
+            function () {
+                return array_reduce(
+                    $this->getBindings(),
+                    function ($sql, $binding) {
+                        return preg_replace(
+                            '/\?/',
+                            is_numeric($binding)
+                                ? $binding
+                                : "'".$binding."'",
+                            $sql,
+                            1
+                        );
+                    },
+                    $this->toSql()
+                );
+            }
+        );
+
+        EloquentBuilder::macro(
+            'toRawSql',
+            function () {
+                return $this->getQuery()->toRawSql();
+            }
+        );
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
     }
 }

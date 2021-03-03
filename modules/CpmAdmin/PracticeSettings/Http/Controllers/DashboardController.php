@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers;
 
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Resources\SAAS\PracticeChargeableServices;
 use CircleLinkHealth\CpmAdmin\PracticeSettings\Services\OnboardingService;
@@ -166,6 +167,8 @@ class DashboardController extends Controller
         $this->primaryPractice
             ->chargeableServices()
             ->sync($sync);
+
+        SetupPracticeBillingData::sync($this->primaryPractice->id);
 
         return redirect()->back();
     }

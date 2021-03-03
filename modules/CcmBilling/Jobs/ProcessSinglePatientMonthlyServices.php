@@ -57,12 +57,6 @@ class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdenti
      */
     public function handle()
     {
-        BillingCache::clearPatients([$this->getPatientId()]);
-
         (app(ProcessPatientSummaries::class))->execute($this->getPatientId(), $this->getMonth());
-        (app(ProcessPatientBillingStatus::class))
-            ->setPatientId($this->getPatientId())
-            ->setMonth($this->getMonth())
-            ->execute();
     }
 }

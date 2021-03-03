@@ -114,15 +114,13 @@ class ForcePatientChargeableService
 
     private function reprocessPatientForBilling(): void
     {
+        $month = is_null($this->input->getMonth())
+            ? Carbon::now()->startOfMonth()
+            : $this->input->getMonth();
+
         ProcessPatientSummaries::wipeAndReprocessForMonth(
             $this->input->getPatientUserId(),
-            is_null($this->input->getMonth())
-                ? Carbon::now()->startOfMonth()
-                : $this->input->getMonth()
+            $month
         );
-        (app(ProcessPatientBillingStatus::class))
-            ->setPatientId($this->input->getPatientUserId())
-            ->setMonth($this->input->getMonth())
-            ->execute();
     }
 }
