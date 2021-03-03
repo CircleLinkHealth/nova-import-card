@@ -74,13 +74,19 @@ class ApproveBillablePatientsService
         $approved = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', true)
-            ->where('rejected', '=', false)
+            ->where(function ($sq){
+                $sq ->where('rejected', '=', false)
+                    ->orWhereNull('rejected');
+            })
             ->count();
 
         $toQA = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', false)
-            ->where('rejected', '=', false)
+            ->where(function ($sq){
+                $sq ->where('rejected', '=', false)
+                    ->orWhereNull('rejected');
+            })
             ->where('needs_qa', '=', true)
             ->count();
 
@@ -94,9 +100,15 @@ class ApproveBillablePatientsService
         // 2. or we have an actor_id but none of these is true
         $other = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
-            ->where('rejected', '=', false)
+            ->where(function ($sq){
+                $sq ->where('rejected', '=', false)
+                    ->orWhereNull('rejected');
+            })
             ->where('approved', '=', false)
-            ->where('needs_qa', '=', false)
+            ->where(function ($sq){
+                $sq ->where('needs_qa', '=', false)
+                    ->orWhereNull('needs_qa');
+            })
             ->count();
 
         return new BillablePatientsCountForMonthDTO($approved, $toQA, $rejected, $other);
