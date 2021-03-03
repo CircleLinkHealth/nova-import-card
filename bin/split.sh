@@ -18,7 +18,7 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-remote admin-app git@github.com:CircleLinkHealth/app-cpm-admin.git
+remote superadmin-app git@github.com:CircleLinkHealth/app-cpm-admin.git
 remote awv-app git@github.com:CircleLinkHealth/app-awv.git
 remote caller-app git@github.com:CircleLinkHealth/app-cpm-caller.git
 remote provider-app git@github.com:CircleLinkHealth/app-cpm-web.git
@@ -53,7 +53,7 @@ remote VaporCli git@github.com:CircleLinkHealth/vapor-cli.git
 remote VaporCore git@github.com:CircleLinkHealth/vapor-core.git
 remote VaporDevopsHelpers git@github.com:CircleLinkHealth/vapor-devops-helpers.git
 
-split 'apps/admin-app' admin-app
+split 'apps/superadmin-app' superadmin-app
 split 'apps/awv-app' awv-app
 split 'apps/caller-app' caller-app
 split 'apps/provider-app' provider-app

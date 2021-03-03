@@ -31,7 +31,7 @@ trait MakesOrReceivesCalls
 
     public function completedCallsFor(Carbon $date)
     {
-        return $this->callsWithCallbacks($date)->whereIn('calls.status', ['reached', 'not reached']);
+        return $this->callsWithCallbacks($date)->whereIn('calls.status', [Call::REACHED, Call::NOT_REACHED, Call::IGNORED]);
     }
 
     public function countCompletedCallsFor(Carbon $date)
@@ -120,6 +120,6 @@ trait MakesOrReceivesCalls
     public function unsuccessfulCallsFor(Carbon $date)
     {
         return $this->callsWithCallbacks($date)
-            ->where('calls.status', '=', 'not reached');
+            ->whereIn('calls.status', [Call::NOT_REACHED, Call::IGNORED]);
     }
 }

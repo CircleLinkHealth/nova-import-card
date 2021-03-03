@@ -13,11 +13,11 @@ abstract class InParallelCommand extends Command
     use DisplaysDeploymentProgress;
 
     const CPM_APPS = [
-        'admin',
         'awv',
         'caller',
         'provider',
         'self-enrollment',
+        'superadmin',
     ];
 
     /**
