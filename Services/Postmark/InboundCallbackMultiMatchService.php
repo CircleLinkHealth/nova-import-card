@@ -11,7 +11,6 @@ use CircleLinkHealth\SharedModels\DTO\InboundCallbackNameFields;
 use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Entities\PostmarkMatchedData;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class InboundCallbackMultiMatchService
 {
@@ -24,13 +23,6 @@ class InboundCallbackMultiMatchService
 
         $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, $nameFieldsToCompare);
         $count                      = $matchedInboundPtnFieldName->count();
-
-        if (0 === $count) {
-            Log::critical("Couldn't match sanitized patient name for record_id:$recordId in postmark_inbound_mail");
-            sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient sanitized name match for record_id:[$recordId] in postmark_inbound_mail");
-
-            return null;
-        }
 
         if (1 === $count) {
             return app(InboundCallbackSingleMatchService::class)
