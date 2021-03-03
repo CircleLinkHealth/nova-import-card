@@ -23,8 +23,12 @@ use Illuminate\Support\Collection;
 class PatientServicesForTimeTracker
 {
     private const NON_TIME_TRACKABLE_SERVICES = [
-        'AWV1',
-        'AWV2+',
+        ChargeableService::AWV_INITIAL,
+        ChargeableService::AWV_SUBSEQUENT,
+        ChargeableService::CCM_PLUS_40,
+        ChargeableService::CCM_PLUS_60,
+        ChargeableService::RPM40,
+        ChargeableService::RPM60
     ];
 
     protected PatientMonthlyBillingDTO $dto;
