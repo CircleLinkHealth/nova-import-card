@@ -202,7 +202,7 @@ END ASC, attempt_count ASC");
             Artisan::call('enrollees:erase-test');
             $message = 'Queued job to erase all demo patients. CareAmbassador Logs related to these patients will be reset. This may take a minute. Please refresh the page.';
         } else {
-            Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+            Artisan::call('db:seed', ['--class' => \CircleLinkHealth\Customer\Database\Seeders\EnrolleesSeeder::class]);
             $message = 'Created 10 Demo Patients. Please refresh the page.';
         }
 
