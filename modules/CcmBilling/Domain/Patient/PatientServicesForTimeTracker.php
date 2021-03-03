@@ -192,7 +192,8 @@ class PatientServicesForTimeTracker
         $this->monthlyTimes = $this->monthlyTimes
             ->reject(function (ChargeablePatientMonthlyTime $summary) {
                 return in_array($summary->chargeableService->code, self::NON_TIME_TRACKABLE_SERVICES);
-            });
+            })
+        ->values();
 
         return $this;
     }

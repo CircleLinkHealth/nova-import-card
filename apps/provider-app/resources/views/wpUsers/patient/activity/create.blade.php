@@ -128,7 +128,7 @@
                                                style="display:inline"
                                                value="{{ $chargeableService->chargeable_service_id  }}"
                                                 {{ $chargeableService->chargeable_service_id == old('chargeable_service_id') ? 'checked' : ''}}/>
-                                        {{ $chargeableService->chargeable_service_name  }}
+                                        {{ $chargeableService->chargeableService->display_name  }}
                                     </label>
                                 </div>
                             @endforeach
