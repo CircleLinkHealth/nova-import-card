@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers;
+namespace CircleLinkHealth\Customer\PracticeSettings\Http\Controllers;
 
-use CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Requests\UpdatePracticeSettingsAndNotifications;
-use CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Resources\SAAS\PracticeChargeableServices;
-use CircleLinkHealth\CpmAdmin\PracticeSettings\Services\OnboardingService;
+use CircleLinkHealth\Customer\PracticeSettings\Http\Requests\UpdatePracticeSettingsAndNotifications;
+use CircleLinkHealth\Customer\PracticeSettings\Http\Resources\SAAS\PracticeChargeableServices;
+use CircleLinkHealth\Customer\PracticeSettings\Services\OnboardingService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Middleware;
+namespace CircleLinkHealth\Customer\PracticeSettings\Http\Middleware;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use Closure;

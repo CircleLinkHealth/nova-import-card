@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\PracticeSettings\Services;
+namespace CircleLinkHealth\Customer\PracticeSettings\Services;
 
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;

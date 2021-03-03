@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Requests;
+namespace CircleLinkHealth\Customer\PracticeSettings\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

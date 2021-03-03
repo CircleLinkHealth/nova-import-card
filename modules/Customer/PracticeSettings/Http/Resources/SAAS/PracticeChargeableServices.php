@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Resources\SAAS;
+namespace CircleLinkHealth\Customer\PracticeSettings\Http\Resources\SAAS;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
