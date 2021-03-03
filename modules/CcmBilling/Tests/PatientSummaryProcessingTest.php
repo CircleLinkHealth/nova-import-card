@@ -18,6 +18,7 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLo
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStatusDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -47,7 +48,7 @@ class PatientSummaryProcessingTest extends TestCase
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
             ->ofLocation(1)
-            ->setBillingStatusIsTouched(false)
+            ->setBillingStatus((new PatientMonthlyBillingStatusDTO())->setMonth($startOfMonth)->setActorId(null))
             ->forMonth($startOfMonth)
             ->withLocationServices(
                 (new LocationChargeableServicesForProcessing())
@@ -105,7 +106,7 @@ class PatientSummaryProcessingTest extends TestCase
             ->forPatient($patientId)
             ->ofLocation($locationId)
             ->forMonth($startOfMonth)
-            ->setBillingStatusIsTouched(false)
+            ->setBillingStatus((new PatientMonthlyBillingStatusDTO())->setMonth($startOfMonth)->setActorId(null))
             ->withLocationServices(
                 (new LocationChargeableServicesForProcessing())
                     ->setCode(ChargeableService::CCM)
@@ -163,7 +164,7 @@ class PatientSummaryProcessingTest extends TestCase
             ->forPatient($patient->id)
             ->forMonth($startOfMonth = Carbon::now()->startOfMonth())
             ->ofLocation(1)
-            ->setBillingStatusIsTouched(false)
+            ->setBillingStatus((new PatientMonthlyBillingStatusDTO())->setMonth($startOfMonth)->setActorId(5))
             ->withLocationServices(
                 (new LocationChargeableServicesForProcessing())
                     ->setCode(ChargeableService::CCM)

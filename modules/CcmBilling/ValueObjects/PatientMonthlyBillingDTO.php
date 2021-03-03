@@ -224,7 +224,7 @@ class PatientMonthlyBillingDTO
 
     public function updateOrPushServiceFromOutput(PatientServiceProcessorOutputDTO $output): void
     {
-        $this->patientServices = $this->getPatientServices()->filter(function (PatientSummaryForProcessing $s) use ($output) {
+        $this->patientServices = collect($this->getPatientServices())->filter(function (PatientSummaryForProcessing $s) use ($output) {
                 return $s->getCode() === $output->getCode();
             })->push($output->toPatientChargeableServiceForProcessingDTO())->toArray();
     }
