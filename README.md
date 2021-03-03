@@ -122,7 +122,7 @@ sh bin/release.sh release-release_feature_billing-revamp_mono billing_monorepo_t
 ### Available Scripts
 #### Run a shell command in an app
 ```bash
-sh bin/run.sh admin-app "php artisan module:make-migration TestMigration CpmMigrations"
+sh bin/run.sh superadmin-app "php artisan module:make-migration TestMigration CpmMigrations"
 ```
 ### Merging from separate repositories into the monorepo
 ```bash
