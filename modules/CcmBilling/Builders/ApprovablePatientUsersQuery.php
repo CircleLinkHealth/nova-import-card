@@ -28,6 +28,7 @@ trait ApprovablePatientUsersQuery
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
+            //todo: remove eager loads after refactor
             'attestedProblems' => function ($q) use ($monthYear) {
                 $q->with('ccdProblem.cpmProblem')
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
@@ -53,6 +54,12 @@ trait ApprovablePatientUsersQuery
                     ->where(fn ($q)   => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
                     ->orWhere(fn ($q) => $q->where('chargeable_month', null));
             },
+            'inboundSuccessfulCalls' => function ($q) use ($monthYear){
+                $q->createdInMonth($monthYear, 'called_date');
+            },
+            'monthlyBillingStatus' => function ($status) use ($monthYear){
+                $status->createdOnIfNotNull($monthYear, 'chargeable_month');
+            } 
         ];
 
         $notesControllerRelationships = [
