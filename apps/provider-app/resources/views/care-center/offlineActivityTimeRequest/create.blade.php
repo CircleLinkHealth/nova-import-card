@@ -105,7 +105,7 @@
                                             (empty(old('chargeable_service_id')) && $loop->index === 0)
                                             ? 'checked' : ''
                                         }}/>
-                                {{ $chargeableService->chargeable_service_name  }}
+                                {{ $chargeableService->chargeableService->display_name }}
                             </div>
                         @endforeach
                     </div>
