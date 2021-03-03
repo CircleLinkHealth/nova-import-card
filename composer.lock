@@ -1004,7 +1004,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app",
+                "url": "./apps/superadmin-app",
                 "reference": "9962bc3a864bb14d4dae06b166ad7c1232d25d12"
             },
             "require": {
@@ -1639,7 +1639,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app/nova-components/ClhImportCardExtended",
+                "url": "./apps/superadmin-app/nova-components/ClhImportCardExtended",
                 "reference": "bac4b57c57f9855a977085a202cc4b778f82de4b"
             },
             "require": {
@@ -1675,7 +1675,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app/nova-components/ClhNovaTheme",
+                "url": "./apps/superadmin-app/nova-components/ClhNovaTheme",
                 "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe"
             },
             "require": {
@@ -2015,7 +2015,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app/nova-components/GeneratePatientCallDataCsv",
+                "url": "./apps/superadmin-app/nova-components/GeneratePatientCallDataCsv",
                 "reference": "4ccdf99bf9b5f2821f0ad5d7cc9920625856b3ac"
             },
             "require": {
@@ -2051,7 +2051,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app/nova-components/GenerateSuccessStoriesReport",
+                "url": "./apps/superadmin-app/nova-components/GenerateSuccessStoriesReport",
                 "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4"
             },
             "require": {
@@ -2087,7 +2087,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app/nova-components/ImportPracticeStaffCsv",
+                "url": "./apps/superadmin-app/nova-components/ImportPracticeStaffCsv",
                 "reference": "ad30d141704f92fc1bf7b937ea7d68177376d6bb"
             },
             "require": {
@@ -2124,7 +2124,7 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./apps/admin-app/nova-components/InvoicesDownload",
+                "url": "./apps/superadmin-app/nova-components/InvoicesDownload",
                 "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1"
             },
             "require": {

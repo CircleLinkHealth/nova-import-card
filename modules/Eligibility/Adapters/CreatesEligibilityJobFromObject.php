@@ -38,7 +38,7 @@ trait CreatesEligibilityJobFromObject
 
         $hash = $practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
 
-        return EligibilityJob::firstOrCreate(
+        return EligibilityJob::updateOrCreate(
             [
                 'batch_id' => $batch->id,
                 'hash'     => $hash,

@@ -52,7 +52,7 @@ class CareTeamFromAthena implements MedicalRecordDecorator
         );
 
         if (is_array($careTeam)) {
-            $this->fillProvider($eligibilityJob, $eligibilityJob->targetPatient->ccda, $careTeam);
+            $this->fillCareTeam($eligibilityJob, $eligibilityJob->targetPatient->ccda, $careTeam);
         }
 
         return $eligibilityJob;
@@ -63,27 +63,16 @@ class CareTeamFromAthena implements MedicalRecordDecorator
         $careTeam = $eligibilityJob->data['care_team'];
 
         if (is_array($careTeam) && empty($eligibilityJob->data['referring_provider_name'])) {
-            $this->fillProvider($eligibilityJob, $eligibilityJob->targetPatient->ccda, $careTeam);
+            $this->fillCareTeam($eligibilityJob, $eligibilityJob->targetPatient->ccda, $careTeam);
         }
 
         return $eligibilityJob;
     }
 
-    private function fillProvider(EligibilityJob &$eligibilityJob, Ccda $ccda, array &$careTeam)
+    private function fillCareTeam(EligibilityJob &$eligibilityJob, Ccda $ccda, array &$careTeam)
     {
         $data              = $eligibilityJob->data;
         $data['care_team'] = $careTeam;
-
-        foreach ($careTeam['members'] as $member) {
-            if (array_key_exists('name', $member)) {
-                $providerName = $member['name'];
-
-                $data['referring_provider_name'] = $ccda->referring_provider_name = $providerName;
-                $ccda->save();
-
-                break;
-            }
-        }
 
         $eligibilityJob->data = $data;
 

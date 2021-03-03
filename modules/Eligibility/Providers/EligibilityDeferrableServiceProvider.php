@@ -40,7 +40,6 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             AthenaApiConnection::class,
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,
@@ -62,7 +61,6 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
         $this->commands([
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,

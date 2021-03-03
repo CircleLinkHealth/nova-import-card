@@ -255,8 +255,30 @@
       <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
       <path value="$PROJECT_DIR$/vendor/laravel/vapor-cli" />
-      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/invoices-download" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/invoices-download" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
 </project>
