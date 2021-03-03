@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b7ae4626cc83d5bb7b88f8e743c275b",
+    "content-hash": "10db82c3f0f7056f4eefdc0f714a8d50",
     "packages": [],
     "packages-dev": [
         {
@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.19",
+            "version": "3.173.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "63c6feca49bf4083f33bf250401c0c286759e101"
+                "reference": "3e6143f5c12986d727307d5d19d6aec21575d903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/63c6feca49bf4083f33bf250401c0c286759e101",
-                "reference": "63c6feca49bf4083f33bf250401c0c286759e101",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3e6143f5c12986d727307d5d19d6aec21575d903",
+                "reference": "3e6143f5c12986d727307d5d19d6aec21575d903",
                 "shasum": ""
             },
             "require": {
@@ -529,9 +529,9 @@
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
                 "guzzlehttp/guzzle": "^5.3.3|^6.2.1|^7.0",
-                "guzzlehttp/promises": "^1.0",
-                "guzzlehttp/psr7": "^1.4.1",
-                "mtdowling/jmespath.php": "^2.5",
+                "guzzlehttp/promises": "^1.4.0",
+                "guzzlehttp/psr7": "^1.7.0",
+                "mtdowling/jmespath.php": "^2.6",
                 "php": ">=5.5"
             },
             "require-dev": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-03-01T19:15:59+00:00"
+            "time": "2021-03-02T19:13:50+00:00"
         },
         {
             "name": "brick/math",
@@ -3942,16 +3942,16 @@
         },
         {
             "name": "epartment/nova-dependency-container",
-            "version": "1.2.12",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/epartment/nova-dependency-container.git",
-                "reference": "d0978d823a47be09506681e29fe723dab8d2f799"
+                "reference": "b432a2d45c4c5271e5154ebe781200563d6b7861"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/d0978d823a47be09506681e29fe723dab8d2f799",
-                "reference": "d0978d823a47be09506681e29fe723dab8d2f799",
+                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/b432a2d45c4c5271e5154ebe781200563d6b7861",
+                "reference": "b432a2d45c4c5271e5154ebe781200563d6b7861",
                 "shasum": ""
             },
             "require": {
@@ -3979,7 +3979,7 @@
                 "laravel",
                 "nova"
             ],
-            "time": "2021-02-19T16:03:47+00:00"
+            "time": "2021-03-02T20:01:36+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -6100,16 +6100,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.30.0",
+            "version": "v8.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "81ef9850cc388f2f92b868fb35ffb76f0c9a0f46"
+                "reference": "ab7e1c19ee0403e15fc59983b7ccb86d85db45e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/81ef9850cc388f2f92b868fb35ffb76f0c9a0f46",
-                "reference": "81ef9850cc388f2f92b868fb35ffb76f0c9a0f46",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/ab7e1c19ee0403e15fc59983b7ccb86d85db45e6",
+                "reference": "ab7e1c19ee0403e15fc59983b7ccb86d85db45e6",
                 "shasum": ""
             },
             "require": {
@@ -6260,7 +6260,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-03-02T14:28:44+00:00"
+            "time": "2021-03-03T14:59:13+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -10034,16 +10034,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.16.0",
+            "version": "1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "76d4323b85129d0c368149c831a07a3e258b2b50"
+                "reference": "c55269cb06911575a126dc225a05c0e4626e5fb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/76d4323b85129d0c368149c831a07a3e258b2b50",
-                "reference": "76d4323b85129d0c368149c831a07a3e258b2b50",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/c55269cb06911575a126dc225a05c0e4626e5fb4",
+                "reference": "c55269cb06911575a126dc225a05c0e4626e5fb4",
                 "shasum": ""
             },
             "require": {
@@ -10071,7 +10071,7 @@
             },
             "require-dev": {
                 "dompdf/dompdf": "^0.8.5",
-                "friendsofphp/php-cs-fixer": "^2.16",
+                "friendsofphp/php-cs-fixer": "^2.18",
                 "jpgraph/jpgraph": "^4.0",
                 "mpdf/mpdf": "^8.0",
                 "phpcompatibility/php-compatibility": "^9.3",
@@ -10127,7 +10127,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2020-12-31T18:03:49+00:00"
+            "time": "2021-03-02T17:54:11+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -11509,26 +11509,28 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "be9658a57d554f8bfe587facc1492a45c6bd0e1c"
+                "reference": "76ce423c37f33b5aa5c2df0f9e8e25aa79739fa0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/be9658a57d554f8bfe587facc1492a45c6bd0e1c",
-                "reference": "be9658a57d554f8bfe587facc1492a45c6bd0e1c",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/76ce423c37f33b5aa5c2df0f9e8e25aa79739fa0",
+                "reference": "76ce423c37f33b5aa5c2df0f9e8e25aa79739fa0",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "5.0 - 5.8 | ^6.0 | ^7.0 | ^8.0",
+                "nyholm/psr7": "^1.0",
                 "php": "^7.2 | ^8.0",
                 "sentry/sdk": "^3.1",
-                "sentry/sentry": "3.1.*"
+                "sentry/sentry": "3.1.*",
+                "symfony/psr-http-message-bridge": "^1.0 | ^2.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "2.16.*",
-                "laravel/framework": "^8.0",
+                "laravel/framework": "5.0 - 5.8 | ^6.0 | ^7.0 | ^8.0",
                 "mockery/mockery": "1.3.*",
-                "orchestra/testbench": "^6.0",
-                "phpunit/phpunit": "^9.3"
+                "orchestra/testbench": "3.1 - 3.8 | ^4.7 | ^5.1 | ^6.0",
+                "phpunit/phpunit": "^5.7 | ^6.5 | ^7.5 | ^8.4 | ^9.3"
             },
             "type": "library",
             "extra": {
@@ -11583,7 +11585,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-01-23T13:49:59+00:00"
+            "time": "2021-03-03T15:39:26+00:00"
         },
         {
             "name": "setasign/fpdf",
