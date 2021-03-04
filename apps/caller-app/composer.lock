@@ -363,8 +363,8 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "../../modules/CcmBilling",
-                "reference": "2ca333e13808b0801e396d251ed138afd315c325"
+                "url": "./CircleLinkHealth/CcmBilling",
+                "reference": "038aee540af1af45a9edb88df938d500bcccc219"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -416,7 +416,6 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -508,8 +507,8 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "../../modules/Core",
-                "reference": "cf3b1a302dee876905052ee74537b5af565f808d"
+                "url": "./CircleLinkHealth/Core",
+                "reference": "664de263aef56a886531a9f34c69be922494dccd"
             },
             "require": {
                 "amnuts/opcache-gui": "dev-master",
@@ -557,17 +556,16 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "v3.0",
             "dist": {
                 "type": "path",
-                "url": "../../modules/CpmMigrations",
-                "reference": "658c9bc01c322de618df39eb962ae80429b2cdde"
+                "url": "./CircleLinkHealth/CpmMigrations",
+                "reference": "f891f9766706c52019c3ca7cbec0cec7a779397f"
             },
             "type": "laravel-module",
             "extra": {
@@ -588,7 +586,6 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -597,8 +594,8 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "../../modules/Customer",
-                "reference": "def4fae236bbad49f6348c9702230fbbdbe29dc5"
+                "url": "./CircleLinkHealth/Customer",
+                "reference": "5c8e288daefad0444933dd443ee4b110c381e53e"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -638,17 +635,16 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "4.5.x-dev",
             "dist": {
                 "type": "path",
-                "url": "../../modules/Eligibility",
-                "reference": "31c510e757bbe5dd07bf8310681c0995e5f25470"
+                "url": "./CircleLinkHealth/Eligibility",
+                "reference": "ecdc8f2e462fed8805349a46585995f0e7adec6e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -676,17 +672,16 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
-            "version": "dev-master",
+            "version": "v1.0",
             "dist": {
                 "type": "path",
-                "url": "../../modules/PdfService",
-                "reference": "bb2d96380bda18d045f0fc04efa4ccda3dd55548"
+                "url": "./CircleLinkHealth/PdfService",
+                "reference": "bb78555bec140e02e16cbfbee72b1f5bc072d119"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -721,7 +716,6 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -783,8 +777,8 @@
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "../../modules/SelfEnrollment",
-                "reference": "1f335e7822a9f219ea4c7dac882106cadee529e3"
+                "url": "./CircleLinkHealth/SelfEnrollment",
+                "reference": "1382614b9b0dec9850b885537665fc611b9d307c"
             },
             "type": "laravel-module",
             "autoload": {
@@ -799,17 +793,16 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-master",
+            "version": "v2.2.2",
             "dist": {
                 "type": "path",
-                "url": "../../modules/SharedModels",
-                "reference": "bbff29dc6fed4c63f08a0dc6106be2bcd3134832"
+                "url": "./CircleLinkHealth/SharedModels",
+                "reference": "b7233591089e06f0dd9b64e3e27a8c2d452a8a39"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "*"
@@ -827,17 +820,16 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-master",
+            "version": "v2.0",
             "dist": {
                 "type": "path",
-                "url": "../../modules/SqlViews",
-                "reference": "b72ff7a0a91e1455af96c30317f79ec78c6556e3"
+                "url": "./CircleLinkHealth/SqlViews",
+                "reference": "c0f9bc8aa85791f02a03d8e2739a917e03efaf0d"
             },
             "require": {
                 "phlak/semver": "^3.2"
@@ -866,17 +858,16 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "dev-master",
+            "version": "v1.0",
             "dist": {
                 "type": "path",
-                "url": "../../modules/Synonyms",
-                "reference": "78dae877a5d9309b996567e5f34082ca542d4b13"
+                "url": "./CircleLinkHealth/Synonyms",
+                "reference": "e0bb71dd5c8e897bfc9da0f1f47960bf01088a96"
             },
             "type": "laravel-module",
             "extra": {
@@ -898,7 +889,6 @@
             ],
             "description": "Add synonyms for a specific Model and Field.",
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -944,11 +934,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-master",
+            "version": "v2.0",
             "dist": {
                 "type": "path",
-                "url": "../../modules/TwoFA",
-                "reference": "31c10b4262942e03afdf9d700033cc4f6dd65306"
+                "url": "./CircleLinkHealth/TwoFA",
+                "reference": "7904806d4746126e95d4584d80a7a4f054937003"
             },
             "require": {
                 "authy/php": "^4.0",
@@ -976,7 +966,6 @@
                 }
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -7980,10 +7969,16 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/LaravelScheduleMonitor",
-                "reference": "53fc45f75209b529f0b4891fe7aa57acf60d2586"
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "reference": "677a8aaeec625ff1d64f1133be81f653841ebbd8",
+                "shasum": ""
             },
             "require": {
                 "illuminate/bus": "^8.0",
@@ -8017,25 +8012,7 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "psalm": [
-                    "vendor/bin/psalm"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ],
-                "format": [
-                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -8053,10 +8030,13 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-15T12:05:52+00:00"
         },
         {
             "name": "spatie/laravel-view-models",
@@ -12179,16 +12159,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.13",
+            "version": "2.5.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "5e9ef386aaad9985cee2ac23281a27568d083b7e"
+                "reference": "17097f7a83e200d90d1cf9f4d1b35c1001513a47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/5e9ef386aaad9985cee2ac23281a27568d083b7e",
-                "reference": "5e9ef386aaad9985cee2ac23281a27568d083b7e",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/17097f7a83e200d90d1cf9f4d1b35c1001513a47",
+                "reference": "17097f7a83e200d90d1cf9f4d1b35c1001513a47",
                 "shasum": ""
             },
             "require": {
@@ -12246,7 +12226,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2021-02-16T12:46:19+00:00"
+            "time": "2021-03-04T08:48:01+00:00"
         },
         {
             "name": "facade/ignition-contracts",
