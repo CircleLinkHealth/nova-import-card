@@ -282,6 +282,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/vapor-cli" />
       <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/CircleLinkHealth" />
       <excludeFolder url="file://$MODULE_DIR$/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/public/compiled" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/VaporCli/vendor" />
     </content>
     <content url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
     <orderEntry type="inheritedJdk" />
