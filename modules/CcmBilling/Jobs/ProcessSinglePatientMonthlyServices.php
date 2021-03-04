@@ -12,8 +12,9 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientBillingStatus;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdentifierForDebounce
+class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdentifierForDebounce, ShouldBeEncrypted
 {
     protected string $month;
 

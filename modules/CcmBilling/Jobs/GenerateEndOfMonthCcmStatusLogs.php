@@ -9,8 +9,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class GenerateEndOfMonthCcmStatusLogs extends Job
+class GenerateEndOfMonthCcmStatusLogs extends Job implements ShouldBeEncrypted
 {
     protected Carbon $month;
 

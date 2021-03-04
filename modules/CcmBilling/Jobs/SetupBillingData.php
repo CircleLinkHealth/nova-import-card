@@ -9,8 +9,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class SetupBillingData extends Job
+class SetupBillingData extends Job implements ShouldBeEncrypted
 {
     /**
      * Execute the job.

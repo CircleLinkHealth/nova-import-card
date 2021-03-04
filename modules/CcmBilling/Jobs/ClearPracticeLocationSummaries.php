@@ -10,8 +10,9 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Location;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class ClearPracticeLocationSummaries extends Job
+class ClearPracticeLocationSummaries extends Job implements ShouldBeEncrypted
 {
     protected Carbon $month;
 
