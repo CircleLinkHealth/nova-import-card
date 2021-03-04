@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
 
 class AutoPatientAttestation
 {
+    //todo:this class needs cleanup and optimisation. It's performing un-needed queries despite the fact that it's been called by a resource
     private ?Carbon $month  = null;
     private ?User $patient  = null;
     private ?int $patientId = null;
@@ -237,9 +238,9 @@ class AutoPatientAttestation
     {
         if ( ! $this->isNewBillingEnabled()) {
             /** @var PatientMonthlySummary $pms */
-            $pms = $this->patient->patientSummaryForMonth($this->month);
+            $pms = $this->patient->patientSummaries->firstWhere('month_year', $this->month);
 
-            return boolval(optional($pms)->hasServiceCode($code));
+            return boolval(optional($pms)->hasServiceCode($code, true));
         }
 
         return $this->patient->chargeableMonthlySummaries->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($code))->isNotEmpty();
