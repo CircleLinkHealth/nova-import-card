@@ -32,19 +32,26 @@ class CopyApplicationToBuildPath
                 : $this->createFileForCopy($file);
         }
 
-        Helpers::step('<options=bold>Copying Modules</>');
+        Helpers::step('<options=bold>Prepare composer.json for deployment</>');
 
-        foreach (CLHModulesFiles::get("$this->path/../../modules") as $file) {
-            if ($file->isLink()) {
-                continue;
-            }
+        $this->prepareComposerFiles();
 
-            $file->isDir()
-                ? $this->createDirectoryForCLHModulesCopy($file)
-                : $this->createFileForCLHModulesCopy($file);
-        }
         $this->flushCacheFiles();
         $this->flushStorageDirectories();
+    }
+
+    protected function prepareComposerFiles()
+    {
+        foreach ([
+                     "$this->appPath/composer.json",
+                     "$this->appPath/composer.lock",
+                 ] as $composerPath) {
+            $composerJsonContents = file_get_contents($composerPath);
+            $composerJsonContents = str_replace('"symlink": true', '"symlink": false', $composerJsonContents);
+            $composerJsonContents = str_replace('"../../modules/', '"../../../../../modules/', $composerJsonContents);
+
+            file_put_contents($composerPath, $composerJsonContents);
+        }
     }
 
     /**
@@ -77,7 +84,9 @@ class CopyApplicationToBuildPath
             $this->appPath.'/'.$file->getRelativePathname(),
             fileperms($file->getRealPath())
         );
-    } /**
+    }
+
+    /**
      * Create a directory for the application copy operation.
      *
      * @param \SplFileInfo $file

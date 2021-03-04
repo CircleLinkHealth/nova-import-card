@@ -45,21 +45,21 @@ namespace App;
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                                   $schedulerUser
  * @property \CircleLinkHealth\SharedModels\Entities\VoiceCall[]|\Illuminate\Database\Eloquent\Collection                    $voiceCalls
  * @property int|null                                                                                                        $voice_calls_count
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call calledLastThreeMonths()
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdInMonth(\Carbon\Carbon $date, string $field = 'created_at')
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdOn(\Carbon\Carbon $date, string $field = 'created_at')
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdOnIfNotNull(?\Carbon\Carbon $date = null, $field = 'created_at')
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdThisMonth(string $field = 'created_at')
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdToday(string $field = 'created_at')
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdYesterday(string $field = 'created_at')
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call newModelQuery()
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call newQuery()
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call ofMonth(\Carbon\Carbon $monthYear)
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call ofStatus($status)
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call query()
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call scheduled()
- * @method static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call unassigned()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call calledLastThreeMonths()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdInMonth(\Carbon\Carbon $date, string $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdOn(\Carbon\Carbon $date, string $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdOnIfNotNull(?\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdThisMonth(string $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdToday(string $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdYesterday(string $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call newModelQuery()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call newQuery()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call ofMonth(\Carbon\Carbon $monthYear)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call ofStatus($status)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call query()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call scheduled()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call unassigned()
  * @mixin \Eloquent
  */
 class Call extends \CircleLinkHealth\SharedModels\Entities\Call
