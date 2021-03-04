@@ -42,6 +42,11 @@ const webpackConfig = {
         }),
     ] : [],
     resolve: {
+        alias: {
+            NurseInvoices: path.resolve(__dirname, 'vendor/circlelinkhealth/nurseinvoices-module'),
+            SharedVueComponents: path.resolve(__dirname, 'vendor/circlelinkhealth/sharedvuecomponents-module'),
+            TwoFA: path.resolve(__dirname, 'vendor/circlelinkhealth/twofa-module'),
+        },
         modules: [
             path.resolve(__dirname, 'node_modules'),
             path.resolve(__dirname, './'),
@@ -55,8 +60,7 @@ mix.combine([
     'node_modules/select2/dist/js/select2.js'
 ], 'public/compiled/js/dependencies.js');
 
-mix.js('CircleLinkHealth/CpmAdmin/Resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
-mix.js('CircleLinkHealth/CpmAdmin/Resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('vendor/circlelinkhealth/cpm-admin-module/Resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
 
 if (mix.inProduction()) {
     const ASSET_URL = process.env.ASSET_URL + "/";

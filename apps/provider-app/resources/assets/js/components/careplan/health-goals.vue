@@ -37,10 +37,10 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import { rootUrl } from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config'
     import { Event } from 'vue-tables-2'
     import HealthGoalsModal from './modals/health-goals.modal'
-    import NoteTypes from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/constants/note.types'
+    import NoteTypes from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/constants/note.types'
     import CareplanMixin from './mixins/careplan.mixin'
     import DisableEditingMixin from './mixins/disable-editing.mixin'
     import transformHealthGoal from './utils/health-goal-transform'

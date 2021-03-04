@@ -5,7 +5,7 @@
 
 <script>
     import { Event } from 'vue-tables-2'
-    import Modal from '../../../../../../Sharedvuecomponents/Resources/assets/js/admin/common/modal'
+    import Modal from 'SharedVueComponents/Resources/assets/js/admin/common/modal'
 
     export default {
         name: 'error-modal',

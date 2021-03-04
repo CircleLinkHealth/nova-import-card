@@ -1,14 +1,14 @@
-import store from "../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store";
+import store from "../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/store";
 
-require('../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap');
+require('../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/bootstrap');
 
 import 'es6-string-polyfills';
-import '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/prototypes/array.prototype';
+import '../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/prototypes/array.prototype';
 import Vue from 'vue';
-import axios from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios';
+import axios from '../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/bootstrap-axios';
 import VueAxios from 'vue-axios';
-import EventBus from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus';
-import {BindWindowFocusChange, BindWindowVisibilityChange} from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/events/window.event'
+import EventBus from '../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus';
+import {BindWindowFocusChange, BindWindowVisibilityChange} from '../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/events/window.event'
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]');

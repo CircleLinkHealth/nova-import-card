@@ -6,8 +6,8 @@
 
 namespace App\Http;
 
-use CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Middleware\ProviderDashboardACL;
 use CircleLinkHealth\Customer\Http\Middleware\PatientProgramSecurity;
+use CircleLinkHealth\Customer\PracticeSettings\Http\Middleware\ProviderDashboardACL;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel

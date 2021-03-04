@@ -87,5 +87,3 @@ split 'modules/TwilioIntegration' TwilioIntegration
 split 'modules/VaporCli' VaporCli
 split 'modules/VaporCore' VaporCore
 split 'modules/VaporDevopsHelpers' VaporDevopsHelpers
-
-bash "$PWD/bin/local-dev/setup-symlinks.sh"
