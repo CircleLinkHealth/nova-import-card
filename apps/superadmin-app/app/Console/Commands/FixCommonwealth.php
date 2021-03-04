@@ -47,6 +47,7 @@ class FixCommonwealth extends Command
             ->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT)
             ->where('auto_enrollment_triggered', 0)
             ->whereNull('user_id')
+            ->whereNull('provider_id')
             ->with('eligibilityJob.targetPatient.ccda')
             ->each(
                 function ($enrollee) {

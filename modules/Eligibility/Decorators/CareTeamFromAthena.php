@@ -34,7 +34,7 @@ class CareTeamFromAthena implements MedicalRecordDecorator
     {
         $eligibilityJob->loadMissing('targetPatient.ccda');
 
-        if (array_key_exists('care_team', $eligibilityJob->data) && ! empty($eligibilityJob->data['care_team'])) {
+        if (array_key_exists('care_team', $eligibilityJob->data) && ! empty($eligibilityJob->data['care_team']) && ! empty($eligibilityJob->data['care_team']['members'])) {
             return $this->addCareTeamFromEligibilityJob($eligibilityJob);
         }
 
