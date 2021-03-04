@@ -28,7 +28,7 @@ class InboundCallbackSingleMatchService
             return PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
         }
 
-        if (0 === $patientUser->id || Patient::ENROLLED !== $patientUser->patientInfo->ccm_status) {
+        if (0 === $patientUser->id || Patient::ENROLLED !== optional($patientUser->patientInfo)->ccm_status) {
             /** @var Enrollee $enrollee */
             $enrollee = $patientUser->enrollee;
 
