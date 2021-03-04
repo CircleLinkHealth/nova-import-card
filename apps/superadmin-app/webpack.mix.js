@@ -44,7 +44,7 @@ const webpackConfig = {
     resolve: {
         alias: {
             NurseInvoices: path.resolve(__dirname, 'vendor/circlelinkhealth/nurseinvoices-module'),
-            // SharedVueComponents: path.resolve(__dirname, 'vendor/circlelinkhealth/sharedvuecomponents-module'),
+            SharedVueComponents: path.resolve(__dirname, 'vendor/circlelinkhealth/sharedvuecomponents-module'),
             TwoFA: path.resolve(__dirname, 'vendor/circlelinkhealth/twofa-module'),
         },
         modules: [
