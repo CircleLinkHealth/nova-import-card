@@ -123,7 +123,7 @@ class AutoPatientAttestation
                 $p          = $attestedProblem->ccdProblem;
                 $cpmProblem = $p->cpmProblem;
                 if (is_null($cpmProblem)) {
-                    return true;
+                    return false;
                 }
 
                 return true == $cpmProblem->is_behavioral || in_array($cpmProblem->name,
