@@ -343,30 +343,37 @@ class CallController extends Controller
 
         if ('task' === $input['type'] && empty($input['sub_type'])) {
             return [
-                'errors' => ['invalid form'],
+                'errors' => ['Invalid form.'],
                 'code'   => 407,
             ];
         }
 
         $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
         $isFamilyOverride = ! empty($input['family_override']);
-
-        if ($isCallBack || ! $isFamilyOverride) {
-            $patient = User::without(['roles', 'perms'])->with('patientInfo')->find($input['inbound_cpm_id']);
-        } else {
-            $patient = User::without(['roles', 'perms'])->find($input['inbound_cpm_id']);
-        }
+        $patient          = User::without(['roles', 'perms'])->with('patientInfo')->find($input['inbound_cpm_id']);
 
         if ( ! $patient) {
             return [
-                'errors' => ['could not find patient'],
+                'errors' => ['Could not find patient.'],
+                'code'   => 406,
+            ];
+        }
+
+        if (in_array($patient->patientInfo->ccm_status, [
+            Patient::WITHDRAWN,
+            Patient::WITHDRAWN_1ST_CALL,
+            Patient::PAUSED,
+            Patient::UNREACHABLE,
+        ])) {
+            return [
+                'errors' => ["Patient has status {$patient->patientInfo->ccm_status}. Please change their status to enrolled before scheduling an activity."],
                 'code'   => 406,
             ];
         }
 
         if ('call' === $input['type'] && $this->alreadyHasScheduledCall($patient)) {
             return [
-                'errors' => ['patient already has a scheduled call'],
+                'errors' => ['Patient already has a scheduled call.'],
                 'code'   => 406,
             ];
         }
@@ -379,7 +386,7 @@ class CallController extends Controller
                 $input['window_end']
             )) {
             return [
-                'errors' => ['patient belongs to family and the family has a call at different time'],
+                'errors' => ['Patient belongs to family and the family has a call at different time.'],
                 'code'   => 418,
             ];
         }
