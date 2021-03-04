@@ -42,6 +42,7 @@ class FixSelfEnrollmentEnrolleesCommonwealth extends Command
         $enrolleeIds = $this->getEnrolleeIds();
         Enrollee::where('practice_id', 232)
             ->whereIn('id', $enrolleeIds)
+            ->whereNull('user_id')
             ->whereNotNull('provider_id')
             ->chunk(50, function ($enrollees){
                 foreach ($enrollees as $enrollee){
