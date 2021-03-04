@@ -83,16 +83,16 @@ class ApprovableBillablePatient extends JsonResource
 
     private function getBhiAttestedProblems()
     {
-        return $this->bhiAttestedProblems()->unique()->pluck('id')->toArray();
+        return $this->bhiAttestedProblems()->unique()->pluck('id')->values()->toArray();
     }
 
     private function getCcmAttestedProblems(Collection $allProblems)
     {
         if ($this->hasServiceCode(ChargeableServiceModel::RPM)) {
-            return $allProblems->pluck('id')->toArray();
+            return $allProblems->pluck('id')->values()->toArray();
         }
 
-        return $this->ccmAttestedProblems()->unique()->pluck('id')->toArray();
+        return $this->ccmAttestedProblems()->unique()->pluck('id')->values()->toArray();
     }
 
     private function getChargeableServices(): AnonymousResourceCollection
