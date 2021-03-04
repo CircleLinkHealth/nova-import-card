@@ -26,7 +26,7 @@
 
 
 <script>
-import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+import LoaderComponent from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader'
 
 export default {
     name: "pusher-notifications",

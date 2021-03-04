@@ -149,13 +149,13 @@
      */
 
     import {Event} from 'vue-tables-2'
-    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal';
-    import LoaderComponent from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
-    import {rootUrl} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
-    import {today} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/today';
-    import Notifications from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import Modal from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/modal';
+    import LoaderComponent from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader';
+    import {rootUrl} from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config';
+    import {today} from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/util/today';
+    import Notifications from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based';
     import VueSelect from 'vue-select';
-    import VueCache from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache';
+    import VueCache from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/util/vue-cache';
     import {mapActions} from 'vuex';
 
     const UNASSIGNED_VALUE = {label: 'Unassigned', value: null};
