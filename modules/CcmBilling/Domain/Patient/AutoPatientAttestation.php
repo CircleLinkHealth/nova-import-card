@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -22,10 +21,10 @@ use Illuminate\Support\Collection;
 class AutoPatientAttestation
 {
     //todo:this class needs cleanup and optimisation. It's performing un-needed queries despite the fact that it's been called by a resource
-    private ?Carbon $month  = null;
-    private ?User $patient  = null;
+    private ?Carbon $month = null;
+    private ?User $patient = null;
     private ?int $patientId = null;
-    private ?int $pmsId     = null;
+    private ?int $pmsId = null;
 
     private function __construct()
     {
@@ -51,7 +50,7 @@ class AutoPatientAttestation
         $relations = [
             'attestedProblems' => function ($q) {
                 $q->with('ccdProblem.cpmProblem')
-                    ->createdOnIfNotNull($this->month, 'chargeable_month');
+                  ->createdOnIfNotNull($this->month, 'chargeable_month');
             },
         ];
 
@@ -62,7 +61,7 @@ class AutoPatientAttestation
         } else {
             $relations['patientSummaries'] = function ($q) {
                 $q->with('chargeableServices')
-                    ->createdOnIfNotNull($this->month, 'month_year');
+                  ->createdOnIfNotNull($this->month, 'month_year');
             };
         }
 
@@ -118,8 +117,21 @@ class AutoPatientAttestation
             return collect();
         }
 
-        return $this->patient->attestedProblems
-            ->where('ccdProblem.cpmProblem.is_behavioral', '=', true);
+        return $this->patient
+            ->attestedProblems
+            ->filter(function (AttestedProblem $attestedProblem) {
+                $p          = $attestedProblem->ccdProblem;
+                $cpmProblem = $p->cpmProblem;
+                if (is_null($cpmProblem)) {
+                    return true;
+                }
+
+                return true == $cpmProblem->is_behavioral || in_array($cpmProblem->name,
+                        CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+            })
+            ->map(fn(AttestedProblem $attestedProblem) => $attestedProblem->ccdProblem)
+            ->unique()
+            ->pluck('id');
     }
 
     /**
@@ -145,19 +157,21 @@ class AutoPatientAttestation
         $attestedProblems = $this->patient->attestedProblems;
         if ($hasBhi) {
             $attestedProblems = $attestedProblems->filter(function (AttestedProblem $attestedProblem) {
-                $p = $attestedProblem->ccdProblem;
+                $p          = $attestedProblem->ccdProblem;
                 $cpmProblem = $p->cpmProblem;
                 if (is_null($cpmProblem)) {
                     return true;
                 }
 
-                return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+                return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name,
+                        CpmProblem::DUAL_CCM_BHI_CONDITIONS);
             });
         }
 
         return $attestedProblems
-            ->map(fn (AttestedProblem $attestedProblem) => $attestedProblem->ccdProblem)
-            ->unique()->pluck('id');
+            ->map(fn(AttestedProblem $attestedProblem) => $attestedProblem->ccdProblem)
+            ->unique()
+            ->pluck('id');
     }
 
     public function setMonth(Carbon $month): AutoPatientAttestation
@@ -194,8 +208,8 @@ class AutoPatientAttestation
         if ( ! $this->isNewBillingEnabled()) {
             //todo: deprecate
             $this->patient->patientSummaryForMonth($this->month)
-                ->attestedProblems()
-                ->update(['call_problems.patient_monthly_summary_id' => null]);
+                          ->attestedProblems()
+                          ->update(['call_problems.patient_monthly_summary_id' => null]);
         }
 
         (new AttestPatientProblems())
@@ -207,7 +221,7 @@ class AutoPatientAttestation
     private function getBhiProblemsForAutoAttestation(): array
     {
         /** @var Problem $bhiProblem */
-        $bhiProblem = $this->patientProblemsSortedByWeight()->filter(fn (Problem $p) => $p->isBehavioral())->first();
+        $bhiProblem = $this->patientProblemsSortedByWeight()->filter(fn(Problem $p) => $p->isBehavioral())->first();
 
         if ( ! $bhiProblem) {
             return [];
@@ -243,7 +257,8 @@ class AutoPatientAttestation
             return boolval(optional($pms)->hasServiceCode($code, true));
         }
 
-        return $this->patient->chargeableMonthlySummaries->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($code))->isNotEmpty();
+        return $this->patient->chargeableMonthlySummaries->where('chargeable_service_id',
+            ChargeableService::getChargeableServiceIdUsingCode($code))->isNotEmpty();
     }
 
     private function isNewBillingEnabled()
@@ -262,12 +277,12 @@ class AutoPatientAttestation
         return $this->patient->ccdProblems->unique(function (Problem $p) {
             return $p->icd10Code();
         })
-            ->sortByDesc(function ($problem) {
-                if ( ! $problem->cpmProblem) {
-                    return null;
-                }
+                                          ->sortByDesc(function ($problem) {
+                                              if ( ! $problem->cpmProblem) {
+                                                  return null;
+                                              }
 
-                return $problem->cpmProblem->weight;
-            });
+                                              return $problem->cpmProblem->weight;
+                                          });
     }
 }
