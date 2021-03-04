@@ -169,7 +169,7 @@
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/core-module": "3.2",
-        "circlelinkhealth/cpm-admin-module": "1.7.4",
+        "circlelinkhealth/cpm-admin-module": "1.7.5",
         "circlelinkhealth/cpm-migrations-module": "3.0.9",
         "circlelinkhealth/customer-module": "4.3.9",
         "circlelinkhealth/eligibility-module": "4.8.6",
