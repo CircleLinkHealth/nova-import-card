@@ -67,7 +67,7 @@ class DashboardController extends Controller
                 return $service;
             });
 
-        return view('cpm-admin::provider.chargableServices.create', array_merge([
+        return view('customer::provider.chargableServices.create', array_merge([
             'practice'           => $this->primaryPractice,
             'practiceSlug'       => $this->practiceSlug,
             'practiceSettings'   => $this->primaryPractice->cpmSettings(),
@@ -77,7 +77,7 @@ class DashboardController extends Controller
 
     public function getCreateEnrollment()
     {
-        return view('cpm-admin::provider.enrollment.create', array_merge([
+        return view('customer::provider.enrollment.create', array_merge([
             'practice'         => $this->primaryPractice,
             'practiceSlug'     => $this->practiceSlug,
             'practiceSettings' => $this->primaryPractice->cpmSettings(),
@@ -93,7 +93,7 @@ class DashboardController extends Controller
             return response('Practice not found', 404);
         }
 
-        return view('cpm-admin::provider.location.create', [
+        return view('customer::provider.location.create', [
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
         ]);
@@ -103,7 +103,7 @@ class DashboardController extends Controller
     {
         $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
 
-        return view('cpm-admin::provider.notifications.create', array_merge([
+        return view('customer::provider.notifications.create', array_merge([
             'practice'          => $this->primaryPractice,
             'practiceSlug'      => $this->practiceSlug,
             'practiceSettings'  => $this->primaryPractice->cpmSettings(),
@@ -116,7 +116,7 @@ class DashboardController extends Controller
         $result    = $this->onboardingService->getExistingStaff($this->primaryPractice);
         $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
 
-        return view('cpm-admin::provider.practice.create', array_merge([
+        return view('customer::provider.practice.create', array_merge([
             'practiceSlug'         => $this->practiceSlug,
             'staff'                => $result['existingUsers'],
             'existingStaffHelpers' => $result,
@@ -139,12 +139,12 @@ class DashboardController extends Controller
         $practiceSlug = $this->practiceSlug;
 
         //removed variable invite
-        return view('cpm-admin::provider.user.create-staff', compact('practiceSlug', 'practice'));
+        return view('customer::provider.user.create-staff', compact('practiceSlug', 'practice'));
     }
 
     public function getIndex()
     {
-        return view('cpm-admin::provider.layouts.dashboard', array_merge([
+        return view('customer::provider.layouts.dashboard', array_merge([
             'practiceSlug' => $this->practiceSlug,
         ], $this->returnWithAll));
     }

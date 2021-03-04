@@ -1,4 +1,4 @@
-@extends('cpm-admin::provider.layouts.default')
+@extends('customer::provider.layouts.default')
 
 @section('title', 'Provider Dashboard')
 
@@ -23,7 +23,7 @@
 @section('content')
     <header>
         <div class="row">
-            @include('cpm-admin::provider.partials.topBarHeader')
+            @include('customer::provider.partials.topBarHeader')
         </div>
 
         <ul id="slide-out" class="side-nav" style="transform: translateX(0);">
@@ -41,7 +41,7 @@
                 <div class="divider"></div>
             </li>
             <li>
-                @include('cpm-admin::provider.navigation.default')
+                @include('customer::provider.navigation.default')
             </li>
         </ul>
     </header>

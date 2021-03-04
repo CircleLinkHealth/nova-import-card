@@ -1,4 +1,4 @@
-@extends('cpm-admin::provider.layouts.dashboard')
+@extends('customer::provider.layouts.dashboard')
 
 @section('title', 'Manage Staff Members')
 
