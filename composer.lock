@@ -760,7 +760,7 @@
             "dist": {
                 "type": "path",
                 "url": "./apps/awv-app",
-                "reference": "329d7c3a72512fb17b4c1d018e696edc85fcb58c"
+                "reference": "d4b995fc9dc2841938aac6a173ae61a1ac509cd5"
             },
             "require": {
                 "algolia/algoliasearch-client-php": "^2.6",
@@ -6100,16 +6100,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.30.1",
+            "version": "v8.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ab7e1c19ee0403e15fc59983b7ccb86d85db45e6"
+                "reference": "2aa5c2488d25178ebc097052c7897a0e463ddc35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ab7e1c19ee0403e15fc59983b7ccb86d85db45e6",
-                "reference": "ab7e1c19ee0403e15fc59983b7ccb86d85db45e6",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2aa5c2488d25178ebc097052c7897a0e463ddc35",
+                "reference": "2aa5c2488d25178ebc097052c7897a0e463ddc35",
                 "shasum": ""
             },
             "require": {
@@ -6260,7 +6260,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-03-03T14:59:13+00:00"
+            "time": "2021-03-04T15:22:36+00:00"
         },
         {
             "name": "laravel/helpers",
