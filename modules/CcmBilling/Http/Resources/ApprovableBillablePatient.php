@@ -89,11 +89,6 @@ class ApprovableBillablePatient extends JsonResource
     private function getCcmAttestedProblems(Collection $allProblems)
     {
         if ($this->hasServiceCode(ChargeableServiceModel::RPM)) {
-            //Auto Attestation has not run yet, so we return empty in order to match same result as {@link AutoPatientAttestation}
-            if ($this->month_year->gt(now()->subMonth()->endOfMonth())) {
-                return [];
-            }
-
             return $allProblems->pluck('id')->toArray();
         }
 
