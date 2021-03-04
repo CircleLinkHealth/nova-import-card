@@ -255,8 +255,12 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         if (err.response && err.response.data && err.response.data.errors) {
                             // {is_manual: ['error message']}
                             const errors = err.response.data.errors;
-                            const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
-                            msg += `: ${errorsMessages}`;
+                            if (Array.isArray(errors)) {
+                                msg += `: ${errors.join(', ')}`;
+                            } else {
+                                const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
+                                msg += `: ${errorsMessages}`;
+                            }
                         }
 
                         Event.$emit('notifications-edit-call-modal:create', {text: msg, type: 'error'});
