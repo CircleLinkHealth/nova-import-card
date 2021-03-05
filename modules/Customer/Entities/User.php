@@ -62,6 +62,7 @@ use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\Synonyms\Traits\Synonymable;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -344,6 +345,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use PivotEventTrait;
     use SaasAccountable;
     use SoftDeletes;
+    use Synonymable;
     use TimezoneTrait;
 
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER                   = 'forward_alerts_in_addition_to_provider';
