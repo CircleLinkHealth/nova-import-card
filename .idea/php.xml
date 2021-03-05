@@ -255,6 +255,7 @@
       <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
       <path value="$PROJECT_DIR$/vendor/php-http/client-common" />
       <path value="$PROJECT_DIR$/vendor/onelogin/php-saml" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

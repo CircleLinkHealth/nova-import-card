@@ -37,8 +37,8 @@ Vue.use(VueForm, {
         invalid: 'form-control-danger'
     }
 })
-const BillingComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../CircleLinkHealth/CcmBilling/Resources/assets/js/billing')
-const ComponentProxy = () => import(/* webpackChunkName: "chunk-careplan" */ '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/component-proxy')
+const BillingComponent = () => import(/* webpackChunkName: "chunk-provider" */ 'CcmBilling/Resources/assets/js/billing')
+const ComponentProxy = () => import(/* webpackChunkName: "chunk-careplan" */ 'SharedVueComponents/Resources/assets/js/components/shared/component-proxy')
 const CareTeamComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/view-care-plan/care-team')
 const CreateAppointmentsAddCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ './components/CareTeam/create-appointments-add-care-person')
 const CreateCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ './components/CareTeam/create-care-person')
