@@ -5,7 +5,7 @@ namespace CircleLinkHealth\SelfEnrollment\Entities;
 use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
 
 /**
- * CircleLinkHealth\SelfEnrollment\Entities\User
+ * CircleLinkHealth\Customer\Entities\User
  *
  * @property int $id
  * @property int|null $saas_account_id

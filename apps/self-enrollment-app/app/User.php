@@ -242,6 +242,6 @@ namespace App;
  * @method   static                                                                                                                        \Illuminate\Database\Eloquent\Builder|User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  * @mixin \Eloquent
  */
-class User extends \CircleLinkHealth\SelfEnrollment\Entities\User
+class User extends \CircleLinkHealth\Customer\Entities\User
 {
 }
