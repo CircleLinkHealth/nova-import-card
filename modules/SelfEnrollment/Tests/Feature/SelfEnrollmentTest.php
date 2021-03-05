@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
 use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SelfEnrollment\Constants;
 use CircleLinkHealth\SelfEnrollment\Services\NotifyEnrollableSurveyCompletedService;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
@@ -38,9 +39,8 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
-use CircleLinkHealth\SelfEnrollment\Tests\TestCase;
 
-class SelfEnrollmentTest extends TestCase
+class SelfEnrollmentTest extends CustomerTestCase
 {
     use EnrollableNotificationContent;
     use WithFaker;

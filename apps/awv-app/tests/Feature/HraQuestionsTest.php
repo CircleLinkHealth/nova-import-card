@@ -12,7 +12,7 @@ use App\QuestionTypesAnswer;
 use App\SurveyInstance;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Helpers\SetupTestSurveyData;
-use Tests\TestCase;
+use \CircleLinkHealth\Core\Tests\TestCase;
 
 class HraQuestionsTest extends TestCase
 {

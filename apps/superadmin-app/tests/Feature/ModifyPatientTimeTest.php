@@ -17,7 +17,7 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use JoshGaber\NovaUnit\Actions\NovaActionTest;
-use Tests\TestCase;
+use CircleLinkHealth\Core\Tests\TestCase;
 
 class ModifyPatientTimeTest extends TestCase
 {

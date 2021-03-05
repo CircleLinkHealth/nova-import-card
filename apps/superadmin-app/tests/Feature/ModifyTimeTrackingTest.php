@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use JoshGaber\NovaUnit\Actions\NovaActionTest;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ModifyTimeTrackingTest extends CustomerTestCase
 {

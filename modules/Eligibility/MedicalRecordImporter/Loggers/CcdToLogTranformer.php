@@ -178,12 +178,12 @@ class CcdToLogTranformer
      *
      * @return array
      */
-    public function parseProviders($documentSection, $demographicsSection)
+    public function parseProviders($documentSection, $demographicsSection, int $practiceId)
     {
-        //Add them both together
-        array_push($documentSection->documentation_of, $documentSection->author);
+        $providers = collect($documentSection->documentation_of);
+        $providers->push($documentSection->author);
 
-        array_push($documentSection->documentation_of, $demographicsSection->provider);
+        $providers->push($demographicsSection->provider);
 
         $address         = new \stdClass();
         $address->street = [];
@@ -198,9 +198,9 @@ class CcdToLogTranformer
         $legalAuth->organization = '';
         $legalAuth->address      = $address;
 
-        array_push($documentSection->documentation_of, $legalAuth);
+        $providers->push($legalAuth);
 
-        return $documentSection->documentation_of;
+        return $providers->unique()->filter();
     }
 
     /**

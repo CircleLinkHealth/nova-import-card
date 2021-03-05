@@ -780,6 +780,7 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
+        $args['referring_provider_name'] = (new FindBillingProvider())->from($args);
         if ((! isset($args['provider_id']) || empty($args['provider_id'])) && (isset($args['referring_provider_name']) && !empty($args['referring_provider_name']))) {
             $args['provider_id'] = optional(CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id))->id;
         }

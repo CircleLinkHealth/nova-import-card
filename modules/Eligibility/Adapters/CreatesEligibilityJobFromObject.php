@@ -92,7 +92,7 @@ trait CreatesEligibilityJobFromObject
 
         $patient = $this->handleLastEncounter($patient, $decodedCcda, $batch);
 
-        $provider = collect($this->getCcdaTransformer()->parseProviders($decodedCcda->document, $decodedCcda->demographics))
+        $provider = collect($this->getCcdaTransformer()->parseProviders($decodedCcda->document, $decodedCcda->demographics, $practice->id))
             ->transform(
                 function ($p) {
                     $p = $this->getCcdaTransformer()->provider($p);

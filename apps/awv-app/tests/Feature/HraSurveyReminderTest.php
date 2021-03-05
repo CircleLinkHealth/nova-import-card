@@ -14,7 +14,7 @@ use App\User;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\PatientHelpers;
 use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
+use \CircleLinkHealth\Core\Tests\TestCase;
 
 class HraSurveyReminderTest extends TestCase
 {

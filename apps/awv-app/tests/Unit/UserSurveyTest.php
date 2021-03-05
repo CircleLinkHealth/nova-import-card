@@ -16,9 +16,8 @@ use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 
-class UserSurveyTest extends TestCase
+class UserSurveyTest extends \CircleLinkHealth\Core\Tests\TestCase
 {
     use DatabaseTransactions;
     private $date;

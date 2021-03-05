@@ -9,7 +9,7 @@ namespace Tests\Unit;
 use App\Survey;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Helpers\SetupTestSurveyData;
-use Tests\TestCase;
+use \CircleLinkHealth\Core\Tests\TestCase;
 
 class SurveyQuestionsAnswersTest extends TestCase
 {
