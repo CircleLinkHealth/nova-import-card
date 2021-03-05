@@ -59,7 +59,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/app-self-enrollment" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/ccda-parser-processor-php-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/ccm-billing-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/condition-code-lookup-module" />
@@ -235,7 +234,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image-optimizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-medialibrary" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-slack-slash-command" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-view-models" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/once" />
