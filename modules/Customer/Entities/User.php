@@ -33,6 +33,7 @@ use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
+use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -345,6 +346,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use SaasAccountable;
     use SoftDeletes;
     use TimezoneTrait;
+    use SelfEnrollableTrait;
 
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER                   = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';

@@ -3,7 +3,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Jobs;
 
 use AshAllenDesign\ShortURL\Models\ShortURL;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Notifications\NotifySelfEnrollmentUserErrorIsFixed;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;

@@ -6,7 +6,7 @@ namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLette
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
 use Illuminate\Database\Eloquent\Model;
