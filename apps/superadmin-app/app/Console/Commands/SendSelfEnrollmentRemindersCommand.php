@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -11,18 +15,17 @@ use Illuminate\Console\Command;
 class SendSelfEnrollmentRemindersCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'send:self-enrollment-reminders-commonwealth';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Send Self Enrollment reminders for given ids and practice:commonwealth';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'send:self-enrollment-reminders-commonwealth';
 
     /**
      * Create a new command instance.
@@ -32,37 +35,6 @@ class SendSelfEnrollmentRemindersCommand extends Command
     public function __construct()
     {
         parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-       Enrollee::with('user.patientInfo')
-           ->where('practice_id', 232)
-           ->whereIn('id', $this->getIds())
-           ->whereHas('user.patientInfo', function ($patient){
-               $patient->where('ccm_status', Patient::UNREACHABLE);
-           })
-           ->whereNotNull('user_id')
-           ->chunk(50, function ($enrollees){
-
-               Enrollee::whereIn('id', $enrollees->pluck('id')
-                   ->all())
-                   ->update(
-                       [
-                           'status' => Enrollee::QUEUE_AUTO_ENROLLMENT
-                       ]
-                   );
-
-           foreach ($enrollees as $enrollee){
-               SendReminder::dispatch(new User($enrollee->user->toArray()));
-               $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
-           }
-           });
     }
 
     public function getIds()
@@ -474,5 +446,44 @@ class SendSelfEnrollmentRemindersCommand extends Command
             374448,
             374459,
         ];
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        Enrollee::with('user.patientInfo')
+            ->where('practice_id', 232)
+            ->whereIn('id', $this->getIds())
+            ->whereHas(
+                'user.patientInfo',
+                function ($patient) {
+                        $patient->where('ccm_status', Patient::UNREACHABLE);
+                    }
+            )
+            ->whereNotNull('user_id')
+            ->chunk(
+                50,
+                function ($enrollees) {
+                        Enrollee::whereIn(
+                            'id',
+                            $enrollees->pluck('id')
+                                ->all()
+                        )
+                            ->update(
+                                [
+                                    'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                                ]
+                            );
+
+                        foreach ($enrollees as $enrollee) {
+                            SendReminder::dispatch(new User($enrollee->user->toArray()));
+                            $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
+                        }
+                    }
+            );
     }
 }
