@@ -8,7 +8,7 @@ use CircleLinkHealth\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
-class SendSelfEnrollmentRemindersCommnand extends Command
+class SendSelfEnrollmentRemindersCommand extends Command
 {
     /**
      * The name and signature of the console command.
