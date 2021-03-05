@@ -49,18 +49,18 @@ class SendSelfEnrollmentRemindersCommnand extends Command
            })
            ->whereNotNull('user_id')
            ->chunk(50, function ($enrollees){
-           foreach ($enrollees as $enrollee){
-               $updated = $enrollee->update([
-                  'status' => Enrollee::QUEUE_AUTO_ENROLLMENT
-               ]);
 
-               if($updated){
-                   SendReminder::dispatch(new User($enrollee->user->toArray()));
-                   $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
-               }else{
-                   $this->info("Enrollee [$enrollee->id] status did not updated. Reminder will not be send.");
-                   return;
-               }
+               Enrollee::whereIn('id', $enrollees->pluck('id')
+                   ->all())
+                   ->update(
+                       [
+                           'status' => Enrollee::QUEUE_AUTO_ENROLLMENT
+                       ]
+                   );
+
+           foreach ($enrollees as $enrollee){
+               SendReminder::dispatch(new User($enrollee->user->toArray()));
+               $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
            }
            });
     }
