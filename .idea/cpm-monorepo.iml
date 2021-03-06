@@ -86,7 +86,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravelcollective/html" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/core-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/pdf-service-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/revisionable-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/ccm-billing-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/time-tracking-module" />
@@ -171,7 +170,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/maatwebsite/excel" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/swiftmailer/swiftmailer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/robrichards/xmlseclibs" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jenssegers/model" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jenssegers/agent" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/waynestate/nova-ckeditor4-field" />

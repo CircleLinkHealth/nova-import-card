@@ -276,6 +276,7 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
