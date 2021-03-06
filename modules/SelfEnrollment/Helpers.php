@@ -28,6 +28,13 @@ class Helpers
             ->where('survey_instance_id', '=', $surveyInstance->id);
     }
 
+    public static function canSendSelfEnrollmentInvitation(Enrollee $enrollee, bool $isReminder)
+    {
+        return Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status
+            && empty($enrollee->source)
+            && ( ! $isReminder && self::canSendOriginalInvitation($enrollee));
+    }
+
     public static function getCurrentYearEnrolleeSurveyInstance(): object
     {
         return Cache::remember('current_year_self_enrollment_survey_instance_'.now()->year.'_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
@@ -151,13 +158,6 @@ class Helpers
     public static function selfEnrollmentSlackLogChannel()
     {
         return AppConfig::pull('self-enrolment-log-slack-channel', '');
-    }
-
-    public static function canSendSelfEnrollmentInvitation(Enrollee $enrollee, bool $isReminder)
-    {
-        return $enrollee->status === Enrollee::QUEUE_AUTO_ENROLLMENT
-            && empty($enrollee->source)
-            && (! $isReminder && self::canSendOriginalInvitation($enrollee));
     }
 
     private static function canSendOriginalInvitation(Enrollee $enrollee)

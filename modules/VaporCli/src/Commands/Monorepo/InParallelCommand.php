@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands\Monorepo;
 
 use Laravel\VaporCli\Commands\Command;
@@ -28,8 +32,10 @@ abstract class InParallelCommand extends Command
      * @var Process[]
      */
     protected $allProcesses = [];
-    protected $startTimes   = [];
     protected $endTimes     = [];
+    protected $startTimes   = [];
+
+    abstract public function createProcess(string $app): Process;
 
     /**
      * Execute the command.
@@ -81,11 +87,16 @@ abstract class InParallelCommand extends Command
         Helpers::line("It took $totalTimeInSeconds seconds for all processes to finish.");
     }
 
+    protected function appPath(string $app)
+    {
+        return Path::current()."/apps/$app-app";
+    }
+
     protected function reportFinishedProcesses(): void
     {
         foreach ($this->allProcesses as $appName => $process) {
-            $end = $this->endTimes[$appName];
-            $start = $this->startTimes[$appName];
+            $end                = $this->endTimes[$appName];
+            $start              = $this->startTimes[$appName];
             $totalTimeInSeconds = $end - $start;
             Helpers::line("Process[$appName] duration: $totalTimeInSeconds seconds.");
 
@@ -97,11 +108,4 @@ abstract class InParallelCommand extends Command
             Helpers::line("Success[$appName] ".$process->getCommandLine());
         }
     }
-
-    protected function appPath(string $app)
-    {
-        return Path::current()."/apps/$app-app";
-    }
-
-    abstract public function createProcess(string $app): Process;
 }

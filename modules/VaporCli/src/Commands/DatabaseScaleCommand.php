@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\DatabaseInstanceClasses;
@@ -9,19 +13,6 @@ use Symfony\Component\Console\Input\InputArgument;
 class DatabaseScaleCommand extends Command
 {
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:scale')
-            ->addArgument('database', InputArgument::REQUIRED, 'The database name / ID')
-            ->setDescription('Modify the instance class and / or allocated storage for a database');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
@@ -30,7 +21,7 @@ class DatabaseScaleCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($this->vapor->databases(), $databaseId);
         }
 
@@ -56,34 +47,21 @@ class DatabaseScaleCommand extends Command
     }
 
     /**
-     * Determine the instance class of an RDS database.
+     * Configure the command options.
      *
-     * @return string
+     * @return void
      */
-    protected function determineRdsInstanceClass()
+    protected function configure()
     {
-        $type = $this->menu('Which type of database instance would you like to scale to?', [
-            'general' => 'General Purpose',
-            'memory'  => 'Memory Optimized',
-        ]);
-
-        if ($type == 'general') {
-            return $this->menu(
-                'Which database size would you like to scale to?',
-                DatabaseInstanceClasses::general()
-            );
-        } else {
-            return $this->menu(
-                'Which database size would you like to scale to?',
-                DatabaseInstanceClasses::memory()
-            );
-        }
+        $this
+            ->setName('database:scale')
+            ->addArgument('database', InputArgument::REQUIRED, 'The database name / ID')
+            ->setDescription('Modify the instance class and / or allocated storage for a database');
     }
 
     /**
      * Determine how much storage should be allocated to the database.
      *
-     * @param array $database
      *
      * @return int
      */
@@ -100,5 +78,30 @@ class DatabaseScaleCommand extends Command
         }
 
         return $allocatedStorage;
+    }
+
+    /**
+     * Determine the instance class of an RDS database.
+     *
+     * @return string
+     */
+    protected function determineRdsInstanceClass()
+    {
+        $type = $this->menu('Which type of database instance would you like to scale to?', [
+            'general' => 'General Purpose',
+            'memory'  => 'Memory Optimized',
+        ]);
+
+        if ('general' == $type) {
+            return $this->menu(
+                'Which database size would you like to scale to?',
+                DatabaseInstanceClasses::general()
+            );
+        }
+
+        return $this->menu(
+            'Which database size would you like to scale to?',
+            DatabaseInstanceClasses::memory()
+        );
     }
 }

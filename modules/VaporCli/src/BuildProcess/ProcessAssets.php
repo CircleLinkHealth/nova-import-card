@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Illuminate\Support\Str;
@@ -28,8 +32,8 @@ class ProcessAssets
     {
         $this->assetUrl = $assetUrl;
 
-        $this->appPath = Path::app();
-        $this->path = Path::current();
+        $this->appPath   = Path::app();
+        $this->path      = Path::current();
         $this->vaporPath = Path::vapor();
         $this->buildPath = Path::build();
     }
@@ -44,7 +48,7 @@ class ProcessAssets
         Helpers::step('<options=bold>Processing Assets</>');
 
         foreach (AssetFiles::get($this->appPath.'/public') as $file) {
-            if (! Str::endsWith($file->getRealPath(), '.css')) {
+            if ( ! Str::endsWith($file->getRealPath(), '.css')) {
                 continue;
             }
 

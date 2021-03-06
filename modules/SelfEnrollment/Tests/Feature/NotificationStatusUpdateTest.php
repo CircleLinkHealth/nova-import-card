@@ -9,8 +9,8 @@ namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
 use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
@@ -43,7 +43,7 @@ class NotificationStatusUpdateTest extends CustomerTestCase
     public function test_it_updates_notification_status_in_db()
     {
         // 1. create notification
-        $patient = new User($this->patient()->toArray());
+        $patient  = new User($this->patient()->toArray());
         $provider = $this->createUser($patient->primaryPractice->id, 'provider');
         $patient->setBillingProviderId($provider->id);
         $patient->fresh();

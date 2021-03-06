@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Laravel\Vapor\Contracts\LambdaResponse;
@@ -16,7 +20,6 @@ class ArrayLambdaResponse implements LambdaResponse
     /**
      * Create a new response instance.
      *
-     * @param  array  $response
      * @return void
      */
     public function __construct(array $response)

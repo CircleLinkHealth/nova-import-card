@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Queue;
 
 use Illuminate\Queue\SqsQueue;
@@ -9,20 +13,23 @@ class VaporQueue extends SqsQueue
     /**
      * Pop the next job off of the queue.
      *
-     * @param  string  $queue
+     * @param  string                               $queue
      * @return \Illuminate\Contracts\Queue\Job|null
      */
     public function pop($queue = null)
     {
         $response = $this->sqs->receiveMessage([
-            'QueueUrl' => $queue = $this->getQueue($queue),
+            'QueueUrl'       => $queue = $this->getQueue($queue),
             'AttributeNames' => ['ApproximateReceiveCount'],
         ]);
 
-        if (! is_null($response['Messages']) && count($response['Messages']) > 0) {
+        if ( ! is_null($response['Messages']) && count($response['Messages']) > 0) {
             return new VaporJob(
-                $this->container, $this->sqs, $response['Messages'][0],
-                $this->connectionName, $queue
+                $this->container,
+                $this->sqs,
+                $response['Messages'][0],
+                $this->connectionName,
+                $queue
             );
         }
     }
@@ -30,8 +37,8 @@ class VaporQueue extends SqsQueue
     /**
      * Create a payload string from the given job and data.
      *
-     * @param  string  $job
-     * @param  string  $queue
+     * @param  string $job
+     * @param  string $queue
      * @param  mixed  $data
      * @return array
      */

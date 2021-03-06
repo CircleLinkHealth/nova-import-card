@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Fpm;
 
 use hollodotme\FastCGI\Client;
@@ -24,13 +28,12 @@ class FpmApplication
     /**
      * Create a new FPM application instance.
      *
-     * @param  \hollodotme\FastCGI\Client  $client
-     * @param  \Hoa\FastCGI\SocketConnections\UnixDomainSocket  $socketConnection
+     * @param  \Hoa\FastCGI\SocketConnections\UnixDomainSocket $socketConnection
      * @return void
      */
     public function __construct(Client $client, UnixDomainSocket $socketConnection)
     {
-        $this->client = $client;
+        $this->client           = $client;
         $this->socketConnection = $socketConnection;
     }
 

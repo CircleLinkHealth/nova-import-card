@@ -13,13 +13,13 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -315,9 +315,9 @@ class CcdaImporterWrapper
     {
         $term = self::prepareForMysqlMatch($term);
 
-        return User::where(function($q) use ($term) {
+        return User::where(function ($q) use ($term) {
             $q->whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\")")
-                ->orWhere(function ($q) use ($term){
+                ->orWhere(function ($q) use ($term) {
                     $q->whereColumnOrSynonym('display_name', $term);
                 });
         })->ofPractice($practiceId)->ofType('provider')->first();

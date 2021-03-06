@@ -121,7 +121,7 @@ class Preloader
                 return true;
             }
         }
-    
+
         foreach ($this->ignoresIfContains as $ignore) {
             if ($this->strContains($name, $ignore)) {
                 return true;
@@ -130,8 +130,9 @@ class Preloader
 
         return false;
     }
-    
-    private function strContains(string $haystack, string $needle): bool {
+
+    private function strContains(string $haystack, string $needle): bool
+    {
         return '' === $needle || false !== strpos($haystack, $needle);
     }
 }

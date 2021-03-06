@@ -217,14 +217,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-         $response =  app(NotifyEnrollableSurveyCompletedService::class)
+            $response = app(NotifyEnrollableSurveyCompletedService::class)
                 ->makeRequestToProviderApp('import-enrollees-self-enrollment', $enrollee->id);
 
-         if (!$response->successful()) {
-             Log::error("Enrollee:[$enrollee->id] failed during redirect to provider app. [Status: {$response->status()}],
+            if ( ! $response->successful()) {
+                Log::error("Enrollee:[$enrollee->id] failed during redirect to provider app. [Status: {$response->status()}],
              [Body: {$response->body()}]");
-             return;
-         }
+
+                return;
+            }
 
             $patientType = 'Initial';
             $id          = $enrollee->id;

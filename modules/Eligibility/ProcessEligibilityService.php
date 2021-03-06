@@ -234,7 +234,7 @@ class ProcessEligibilityService
 
         return $batch->fresh();
     }
-    
+
     public function notify(EligibilityBatch $batch)
     {
         if (isProductionEnv()) {
@@ -294,9 +294,7 @@ class ProcessEligibilityService
 
         return $batch;
     }
-    
-   
-    
+
     /**
      * @param $patient
      *

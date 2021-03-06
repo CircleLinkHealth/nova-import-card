@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Laravel\VaporCli\Aws\AwsStorageProvider;
@@ -10,7 +14,6 @@ class ServeAssets
      * Serve the project's assets.
      *
      * @param \Laravel\VaporCli\ConsoleVaporClient $vapor
-     * @param array                                $artifact
      *
      * @return void
      */
@@ -31,6 +34,25 @@ class ServeAssets
             $artifact['id'],
             $assetFiles
         );
+    }
+
+    /**
+     * Execute the given requests to copy assets.
+     *
+     * @param array  $requests
+     * @param string $assetPath
+     *
+     * @return void
+     */
+    protected function executeCopyAssetRequests($requests, $assetPath)
+    {
+        $storage = Helpers::app(AwsStorageProvider::class);
+
+        foreach ($requests as $request) {
+            Helpers::step('<fg=magenta>Copying Unchanged Asset:</> '.$request['path'].' ('.Helpers::kilobytes($assetPath.'/'.$request['path']).')');
+        }
+
+        $storage->executeCopyRequests($requests);
     }
 
     /**
@@ -57,29 +79,27 @@ class ServeAssets
     }
 
     /**
-     * Execute the given requests to copy assets.
+     * Get the asset files within the given directory.
      *
-     * @param array  $requests
      * @param string $assetPath
      *
-     * @return void
+     * @return array
      */
-    protected function executeCopyAssetRequests($requests, $assetPath)
+    protected function getAssetFiles($assetPath)
     {
-        $storage = Helpers::app(AwsStorageProvider::class);
-
-        foreach ($requests as $request) {
-            Helpers::step('<fg=magenta>Copying Unchanged Asset:</> '.$request['path'].' ('.Helpers::kilobytes($assetPath.'/'.$request['path']).')');
-        }
-
-        $storage->executeCopyRequests($requests);
+        return collect(AssetFiles::relativePaths($assetPath))
+            ->map(function ($path) use ($assetPath) {
+                    return [
+                        'path' => $path,
+                        'hash' => md5_file($assetPath.'/'.$path),
+                    ];
+                })->all();
     }
 
     /**
      * Get the pre-signed URLs for storing the artifact's assets.
      *
      * @param \Laravel\VaporCli\ConsoleVaporClient $vapor
-     * @param array                                $artifact
      * @param string                               $assetFiles
      *
      * @return array
@@ -93,23 +113,5 @@ class ServeAssets
             $artifact['id'],
             $assetFiles
         );
-    }
-
-    /**
-     * Get the asset files within the given directory.
-     *
-     * @param string $assetPath
-     *
-     * @return array
-     */
-    protected function getAssetFiles($assetPath)
-    {
-        return collect(AssetFiles::relativePaths($assetPath))
-                ->map(function ($path) use ($assetPath) {
-                    return [
-                        'path' => $path,
-                        'hash' => md5_file($assetPath.'/'.$path),
-                    ];
-                })->all();
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class BalancerCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('balancer')
-            ->addArgument('name', InputArgument::OPTIONAL, 'The name of the load balancer')
-            ->setDescription('Create a new load balancer');
-    }
-
     /**
      * Execute the command.
      *
@@ -45,5 +36,18 @@ class BalancerCommand extends Command
         Helpers::info('Load balancer creation initiated successfully.');
         Helpers::line();
         Helpers::line('Load balancers may take several minutes to finish provisioning.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('balancer')
+            ->addArgument('name', InputArgument::OPTIONAL, 'The name of the load balancer')
+            ->setDescription('Create a new load balancer');
     }
 }

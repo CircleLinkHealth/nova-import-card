@@ -1,8 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands\Monorepo;
 
-use Laravel\VaporCli\Commands\Monorepo\InParallelCommand;
 use Laravel\VaporCli\Path;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,6 +13,22 @@ use Symfony\Component\Process\Process;
 
 class DeployCpmCommand extends InParallelCommand
 {
+    public function createProcess(string $app): Process
+    {
+        return new Process(
+            [
+                Path::current().'/modules/VaporCli/vapor',
+                'deploy',
+                $this->argument('environment'),
+                $this->argument('environment_type'),
+            ],
+            $this->appPath($app),
+            null,
+            null,
+            null
+        );
+    }
+
     /**
      * Configure the command options.
      *
@@ -31,17 +50,5 @@ class DeployCpmCommand extends InParallelCommand
             )
             ->addOption('without-waiting', null, InputOption::VALUE_NONE, 'Deploy without waiting for progress')
             ->setDescription('Deploy all CPM apps');
-    }
-
-    public function createProcess(string $app): Process
-    {
-        return new Process(
-            [
-                Path::current().'/modules/VaporCli/vapor',
-                'deploy',
-                $this->argument('environment'),
-                $this->argument('environment_type'),
-            ], $this->appPath($app), null, null, null
-        );
     }
 }

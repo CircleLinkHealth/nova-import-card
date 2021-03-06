@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\OhDearPayload\Payloads;
 
 use Illuminate\Support\Arr;
@@ -9,12 +13,7 @@ class FailedPayload extends Payload
 {
     public static function canHandle(MonitoredScheduledTaskLogItem $logItem): bool
     {
-        return $logItem->type === MonitoredScheduledTaskLogItem::TYPE_FAILED;
-    }
-
-    public function url()
-    {
-        return "{$this->baseUrl()}/failed";
+        return MonitoredScheduledTaskLogItem::TYPE_FAILED === $logItem->type;
     }
 
     public function data(): array
@@ -22,5 +21,10 @@ class FailedPayload extends Payload
         return Arr::only($this->logItem->meta ?? [], [
             'failure_message',
         ]);
+    }
+
+    public function url()
+    {
+        return "{$this->baseUrl()}/failed";
     }
 }

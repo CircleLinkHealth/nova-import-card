@@ -52,7 +52,7 @@ class ManuallyCreateEnrollmentTestData extends Command
     {
         $practiceName = $this->argument('practiceName') ?? null;
 
-        if (isProductionEnv() && $practiceName !== GenerateDemoLetter::DEMO_PRACTICE_NAME) {
+        if (isProductionEnv() && GenerateDemoLetter::DEMO_PRACTICE_NAME !== $practiceName) {
             $this->warn('You cannot execute this action in production environment');
 
             return 'You cannot execute this action in production environment';
@@ -60,12 +60,13 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         if (is_null($practiceName)) {
             $this->warn('Practice input is required');
+
             return 'Practice input is required';
         }
 
         $practice = Practice::whereName($practiceName)->first();
 
-        if (! $practice && ! App::environment('production')){
+        if ( ! $practice && ! App::environment('production')) {
             $this->info("Practice $practiceName to test not found. Creating practice with Location now...");
             $practice = $this->selfEnrollmentTestPractice($practiceName);
             $this->selfEnrollmentTestLocation($practice->id, $practiceName);

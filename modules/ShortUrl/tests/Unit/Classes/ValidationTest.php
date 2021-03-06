@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Tests\Unit\Classes;
 
 use AshAllenDesign\ShortURL\Classes\Validation;
@@ -10,24 +14,12 @@ use Illuminate\Support\Facades\Config;
 class ValidationTest extends TestCase
 {
     /** @test */
-    public function exception_is_thrown_if_the_key_length_is_not_an_integer()
+    public function exception_is_thrown_if_any_of_the_tracking_options_are_not_null()
     {
         $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('The config URL length is not a valid integer.');
+        $this->expectExceptionMessage('The ip_address config variable must be a boolean.');
 
-        Config::set('short-url.key_length', 'INVALID');
-
-        $validation = new Validation();
-        $validation->validateConfig();
-    }
-
-    /** @test */
-    public function exception_is_thrown_if_the_key_length_is_below_3()
-    {
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('The config URL length must be 3 or above.');
-
-        Config::set('short-url.key_length', 2);
+        Config::set('short-url.tracking.fields.ip_address', 'INVALID');
 
         $validation = new Validation();
         $validation->validateConfig();
@@ -46,18 +38,6 @@ class ValidationTest extends TestCase
     }
 
     /** @test */
-    public function exception_is_thrown_if_any_of_the_tracking_options_are_not_null()
-    {
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('The ip_address config variable must be a boolean.');
-
-        Config::set('short-url.tracking.fields.ip_address', 'INVALID');
-
-        $validation = new Validation();
-        $validation->validateConfig();
-    }
-
-    /** @test */
     public function exception_is_thrown_if_the_disable_default_route_option_is_not_a_boolean()
     {
         $this->expectException(ValidationException::class);
@@ -70,12 +50,36 @@ class ValidationTest extends TestCase
     }
 
     /** @test */
-    public function exception_is_thrown_if_the_key_salt_is_not_a_string()
+    public function exception_is_thrown_if_the_enforce_https_variable_is_not_a_boolean()
     {
         $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('The config key salt must be a string.');
+        $this->expectExceptionMessage('The enforce_https config variable must be a boolean.');
 
-        Config::set('short-url.key_salt', true);
+        Config::set('short-url.enforce_https', 'INVALID');
+
+        $validation = new Validation();
+        $validation->validateConfig();
+    }
+
+    /** @test */
+    public function exception_is_thrown_if_the_key_length_is_below_3()
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('The config URL length must be 3 or above.');
+
+        Config::set('short-url.key_length', 2);
+
+        $validation = new Validation();
+        $validation->validateConfig();
+    }
+
+    /** @test */
+    public function exception_is_thrown_if_the_key_length_is_not_an_integer()
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('The config URL length is not a valid integer.');
+
+        Config::set('short-url.key_length', 'INVALID');
 
         $validation = new Validation();
         $validation->validateConfig();
@@ -94,12 +98,12 @@ class ValidationTest extends TestCase
     }
 
     /** @test */
-    public function exception_is_thrown_if_the_enforce_https_variable_is_not_a_boolean()
+    public function exception_is_thrown_if_the_key_salt_is_not_a_string()
     {
         $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('The enforce_https config variable must be a boolean.');
+        $this->expectExceptionMessage('The config key salt must be a string.');
 
-        Config::set('short-url.enforce_https', 'INVALID');
+        Config::set('short-url.key_salt', true);
 
         $validation = new Validation();
         $validation->validateConfig();

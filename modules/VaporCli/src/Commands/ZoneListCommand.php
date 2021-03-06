@@ -1,23 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 class ZoneListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('zone:list')
-            ->setDescription('List the DNS zones that belong to the current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -36,5 +28,17 @@ class ZoneListCommand extends Command
                 implode(PHP_EOL, $zone['nameservers']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('zone:list')
+            ->setDescription('List the DNS zones that belong to the current team');
     }
 }

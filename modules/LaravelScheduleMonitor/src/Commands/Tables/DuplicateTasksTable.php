@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Commands\Tables;
 
 use Spatie\ScheduleMonitor\Support\ScheduledTasks\ScheduledTasks;
@@ -22,10 +26,10 @@ class DuplicateTasksTable extends ScheduledTasksTable
         $this->command->line('');
 
         $headers = ['Type', 'Frequency'];
-        $rows = $duplicateTasks->map(function (Task $task) {
+        $rows    = $duplicateTasks->map(function (Task $task) {
             return [
-                'name' => $task->name(),
-                'type' => ucfirst($task->type()),
+                'name'            => $task->name(),
+                'type'            => ucfirst($task->type()),
                 'cron_expression' => $task->humanReadableCron(),
             ];
         });

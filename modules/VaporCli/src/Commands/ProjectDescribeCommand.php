@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -12,21 +16,6 @@ class ProjectDescribeCommand extends Command
     const DEFAULT_FORMAT = '[<comment>%attribute-key%</comment>] <info>%attribute-value%</info>';
 
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('project:describe')
-            ->addArgument('attribute', null, 'The project attribute you would like to retrieve')
-            ->addOption('list', 'l', InputOption::VALUE_NONE, 'Indicate that all attributes should be listed')
-            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The list format string')
-            ->setDescription('Describe the project');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
@@ -37,7 +26,7 @@ class ProjectDescribeCommand extends Command
 
         $settingKey = $this->argument('attribute');
 
-        if ($settingKey && $settingKey === 'id') {
+        if ($settingKey && 'id' === $settingKey) {
             // If we want the ID, we can just get it.
             Helpers::line(Manifest::id());
 
@@ -74,11 +63,11 @@ class ProjectDescribeCommand extends Command
             return;
         }
 
-        if (! $settingKey || ! is_string($settingKey)) {
+        if ( ! $settingKey || ! is_string($settingKey)) {
             return;
         }
 
-        if (! array_key_exists($settingKey, $description)) {
+        if ( ! array_key_exists($settingKey, $description)) {
             throw new RuntimeException($settingKey.' is not defined');
         }
 
@@ -89,5 +78,20 @@ class ProjectDescribeCommand extends Command
         }
 
         Helpers::line($settingValue);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('project:describe')
+            ->addArgument('attribute', null, 'The project attribute you would like to retrieve')
+            ->addOption('list', 'l', InputOption::VALUE_NONE, 'Indicate that all attributes should be listed')
+            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The list format string')
+            ->setDescription('Describe the project');
     }
 }

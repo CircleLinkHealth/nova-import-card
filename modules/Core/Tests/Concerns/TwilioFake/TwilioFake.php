@@ -6,13 +6,11 @@
 
 namespace CircleLinkHealth\Core\Tests\Concerns\TwilioFake;
 
-use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\TwilioFakeLogDriver;
 use CircleLinkHealth\TwilioIntegration\Services\TwilioInterface;
 use NotificationChannels\Twilio\TwilioConfig;
 use NotificationChannels\Twilio\TwilioMessage;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Log\LoggerInterface;
-
 
 class TwilioFake implements TwilioInterface
 {

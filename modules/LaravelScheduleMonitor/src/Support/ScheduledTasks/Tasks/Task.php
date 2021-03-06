@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\ScheduledTasks\Tasks;
 
 use Carbon\CarbonInterface;
@@ -15,44 +19,42 @@ abstract class Task
 {
     protected Event $event;
 
-    protected string $uniqueId;
-
     protected ?MonitoredScheduledTask $monitoredScheduledTask = null;
 
-    abstract public static function canHandleEvent(Event $event): bool;
-
-    abstract public function defaultName(): ?string;
-
-    abstract public function type(): string;
+    protected string $uniqueId;
 
     public function __construct(Event $event)
     {
         $this->event = $event;
 
-        $this->uniqueId = (string)Str::uuid();
+        $this->uniqueId = (string) Str::uuid();
 
-        if (! empty($this->name())) {
+        if ( ! empty($this->name())) {
             $this->monitoredScheduledTask = MonitoredScheduledTask::findByName($this->name());
         }
     }
 
-    public function uniqueId(): string
+    abstract public static function canHandleEvent(Event $event): bool;
+
+    public function cronExpression(): string
     {
-        return $this->uniqueId;
+        return $this->event->getExpression();
     }
 
-    public function name(): ?string
+    abstract public function defaultName(): ?string;
+
+    public function graceTimeInMinutes()
     {
-        return $this->event->monitorName ?? $this->defaultName();
+        return $this->event->graceTimeInMinutes ?? 5;
     }
 
-    public function shouldMonitor(): bool
+    public function humanReadableCron(): string
     {
-        if (! isset($this->event->doNotMonitor)) {
-            return true;
+        try {
+            return CronTranslator::translate($this->cronExpression());
+        } catch (CronParsingException $exception) {
+            return $this->cronExpression();
         }
-
-        return ! $this->event->doNotMonitor;
     }
 
     public function isBeingMonitored(): bool
@@ -62,18 +64,70 @@ abstract class Task
 
     public function isBeingMonitoredAtOhDear(): bool
     {
-        if (! $this->isBeingMonitored()) {
+        if ( ! $this->isBeingMonitored()) {
             return false;
         }
 
         return ! empty($this->monitoredScheduledTask->ping_url);
     }
 
-    public function previousRunAt(): CarbonInterface
+    public function lastRunFailed(): bool
     {
-        $dateTime = CronExpression::factory($this->cronExpression())->getPreviousRunDate(now());
+        if ( ! $this->isBeingMonitored()) {
+            return false;
+        }
 
-        return Date::instance($dateTime);
+        if ( ! $lastRunFailedAt = $this->lastRunFailedAt()) {
+            return false;
+        }
+
+        if ( ! $lastRunStartedAt = $this->lastRunStartedAt()) {
+            return true;
+        }
+
+        return $lastRunFailedAt->isAfter($lastRunStartedAt->subSecond());
+    }
+
+    public function lastRunFailedAt(): ?CarbonInterface
+    {
+        return optional($this->monitoredScheduledTask)->last_failed_at;
+    }
+
+    public function lastRunFinishedAt(): ?CarbonInterface
+    {
+        return optional($this->monitoredScheduledTask)->last_finished_at;
+    }
+
+    public function lastRunFinishedTooLate(): bool
+    {
+        if ( ! $this->isBeingMonitored()) {
+            return false;
+        }
+
+        $lastFinishedAt = $this->lastRunFinishedAt()
+            ? $this->lastRunFinishedAt()
+            : $this->monitoredScheduledTask->created_at;
+
+        $expectedNextRunStart = $this->nextRunAt($lastFinishedAt->subSecond());
+
+        $shouldHaveFinishedAt = $expectedNextRunStart->addMinutes($this->graceTimeInMinutes());
+
+        return $shouldHaveFinishedAt->isPast();
+    }
+
+    public function lastRunSkippedAt(): ?CarbonInterface
+    {
+        return optional($this->monitoredScheduledTask)->last_skipped_at;
+    }
+
+    public function lastRunStartedAt(): ?CarbonInterface
+    {
+        return optional($this->monitoredScheduledTask)->last_started_at;
+    }
+
+    public function name(): ?string
+    {
+        return $this->event->monitorName ?? $this->defaultName();
     }
 
     public function nextRunAt(CarbonInterface $now = null): CarbonInterface
@@ -92,81 +146,31 @@ abstract class Task
         return $date;
     }
 
-    public function lastRunStartedAt(): ?CarbonInterface
+    public function previousRunAt(): CarbonInterface
     {
-        return optional($this->monitoredScheduledTask)->last_started_at;
+        $dateTime = CronExpression::factory($this->cronExpression())->getPreviousRunDate(now());
+
+        return Date::instance($dateTime);
     }
 
-    public function lastRunFinishedAt(): ?CarbonInterface
+    public function shouldMonitor(): bool
     {
-        return optional($this->monitoredScheduledTask)->last_finished_at;
-    }
-
-    public function lastRunFailedAt(): ?CarbonInterface
-    {
-        return optional($this->monitoredScheduledTask)->last_failed_at;
-    }
-
-    public function lastRunSkippedAt(): ?CarbonInterface
-    {
-        return optional($this->monitoredScheduledTask)->last_skipped_at;
-    }
-
-    public function lastRunFinishedTooLate(): bool
-    {
-        if (! $this->isBeingMonitored()) {
-            return false;
-        }
-
-        $lastFinishedAt = $this->lastRunFinishedAt()
-            ? $this->lastRunFinishedAt()
-            : $this->monitoredScheduledTask->created_at;
-
-        $expectedNextRunStart = $this->nextRunAt($lastFinishedAt->subSecond());
-
-        $shouldHaveFinishedAt = $expectedNextRunStart->addMinutes($this->graceTimeInMinutes());
-
-        return $shouldHaveFinishedAt->isPast();
-    }
-
-    public function lastRunFailed(): bool
-    {
-        if (! $this->isBeingMonitored()) {
-            return false;
-        }
-
-        if (! $lastRunFailedAt = $this->lastRunFailedAt()) {
-            return false;
-        }
-
-        if (! $lastRunStartedAt = $this->lastRunStartedAt()) {
+        if ( ! isset($this->event->doNotMonitor)) {
             return true;
         }
 
-        return $lastRunFailedAt->isAfter($lastRunStartedAt->subSecond());
-    }
-
-    public function graceTimeInMinutes()
-    {
-        return $this->event->graceTimeInMinutes ?? 5;
-    }
-
-    public function cronExpression(): string
-    {
-        return $this->event->getExpression();
+        return ! $this->event->doNotMonitor;
     }
 
     public function timezone(): string
     {
-        return (string)$this->event->timezone;
+        return (string) $this->event->timezone;
     }
 
-    public function humanReadableCron(): string
+    abstract public function type(): string;
+
+    public function uniqueId(): string
     {
-        try {
-            return CronTranslator::translate($this->cronExpression());
-        } catch (CronParsingException $exception) {
-            return $this->cronExpression();
-        }
+        return $this->uniqueId;
     }
 }

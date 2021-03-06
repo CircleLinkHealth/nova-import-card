@@ -8,12 +8,12 @@ namespace Tests\Feature;
 
 use App\Nova\Actions\ModifyTimeTracker;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use JoshGaber\NovaUnit\Actions\NovaActionTest;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 
 class ModifyTimeTrackingTest extends CustomerTestCase
 {

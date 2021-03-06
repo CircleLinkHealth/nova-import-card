@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,20 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CacheMetricsCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cache:metrics')
-            ->addArgument('cache', InputArgument::REQUIRED, 'The cache name / ID')
-            ->addArgument('period', InputArgument::OPTIONAL, 'The metric period (1m, 5m, 1h, 8h, 1d, 3d, 7d, 1M)', '1d')
-            ->setDescription('Get usage and performance metrics for a cache');
-    }
-
     /**
      * Execute the command.
      *
@@ -30,7 +20,7 @@ class CacheMetricsCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($cacheId = $this->argument('cache'))) {
+        if ( ! is_numeric($cacheId = $this->argument('cache'))) {
             $cacheId = $this->findIdByName($this->vapor->caches(), $cacheId);
         }
 
@@ -53,5 +43,19 @@ class CacheMetricsCommand extends Command
                 $metrics['totalCacheMisses'][$node],
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cache:metrics')
+            ->addArgument('cache', InputArgument::REQUIRED, 'The cache name / ID')
+            ->addArgument('period', InputArgument::OPTIONAL, 'The metric period (1m, 5m, 1h, 8h, 1d, 3d, 7d, 1M)', '1d')
+            ->setDescription('Get usage and performance metrics for a cache');
     }
 }

@@ -80,7 +80,7 @@ class MedicalRecordFactory
         if (Demographics::forPatient($user->program_id, $user->first_name, $user->last_name, $user->patientInfo->birth_date)->exists()) {
             return new PracticePullMedicalRecord(optional($ccda)->patient_mrn ?? $user->getMRN(), optional($ccda)->practice_id ?? $user->program_id);
         }
-    
+
         return new CcdaMedicalRecord($ccda->bluebuttonJson(true));
     }
 

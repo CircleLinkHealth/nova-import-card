@@ -23,9 +23,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property Ehr                                                                                         $idpRelation
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser query()
  * @mixin \Eloquent
  */
 class SamlUser extends BaseModel

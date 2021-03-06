@@ -11,16 +11,12 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use function PHPUnit\Framework\isEmpty;
 
 class SendInvitation implements ShouldQueue
 {
@@ -93,8 +89,8 @@ class SendInvitation implements ShouldQueue
     public function handle()
     {
         if ( ! $this->shouldRun()) {
-                return;
-            }
+            return;
+        }
 
         $this->sendInvite($this->createLink());
     }
@@ -113,7 +109,7 @@ class SendInvitation implements ShouldQueue
 
         $notifiable = $this->getEnrolleeToNotify($this->user, $this->isReminder);
 
-        if (! $notifiable){
+        if ( ! $notifiable) {
             return '';
         }
 
@@ -127,7 +123,23 @@ class SendInvitation implements ShouldQueue
 
         $this->link     = $url;
         $this->shortUrl = shortenUrl(url($url));
+
         return $this->shortUrl;
+    }
+
+    private function getEnrolleeToNotify(User $user, bool $isReminder)
+    {
+        if ($user->enrollee && Helpers::canSendSelfEnrollmentInvitation($user->enrollee, $isReminder)) {
+            return $user->enrollee;
+        }
+
+        $user->load([
+            'enrollee' => function ($enrollee) use ($isReminder) {
+                $enrollee->canSendSelfEnrollmentInvitation( ! $isReminder);
+            },
+        ]);
+
+        return $user->enrollee ?? null;
     }
 
     private function getSignedRouteParams(): array
@@ -140,7 +152,7 @@ class SendInvitation implements ShouldQueue
 
     private function sendInvite(string $link)
     {
-        if (empty($link)){
+        if (empty($link)) {
             return;
         }
         $this->user->notify(new SelfEnrollmentInviteNotification($link, $this->isReminder, $this->channels));
@@ -157,20 +169,5 @@ class SendInvitation implements ShouldQueue
         }
 
         return true;
-    }
-
-    private function getEnrolleeToNotify(User $user, bool $isReminder)
-    {
-        if ($user->enrollee && Helpers::canSendSelfEnrollmentInvitation($user->enrollee, $isReminder)){
-            return $user->enrollee;
-        }
-
-        $user->load([
-            'enrollee' => function($enrollee) use ($isReminder){
-                $enrollee->canSendSelfEnrollmentInvitation(!$isReminder);
-            },
-        ]);
-
-        return $user->enrollee ?? null;
     }
 }

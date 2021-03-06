@@ -1,23 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 class BalancerListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('balancer:list')
-            ->setDescription('List the load balancers that belong to the current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -37,5 +29,17 @@ class BalancerListCommand extends Command
                 ucfirst($balancer['status']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('balancer:list')
+            ->setDescription('List the load balancers that belong to the current team');
     }
 }

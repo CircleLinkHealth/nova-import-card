@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Laravel\Vapor\Runtime\Handlers\FpmHandler;
@@ -13,23 +17,25 @@ class HttpHandlerFactory
     /**
      * Create a new handler for the given HTTP event.
      *
-     * @param  array  $event
      * @return \Laravel\Vapor\Contracts\LambdaEventHandler
      */
     public static function make(array $event)
     {
         if (isset($event['vaporWarmer'])) {
-            return new WarmerHandler;
-        } elseif (isset($event['vaporWarmerPing'])) {
-            return new WarmerPingHandler;
-        } elseif (isset($event['requestContext']['elb'])) {
-            return new LoadBalancedFpmHandler;
-//            return new LoadBalancedAppHandler;
-        } elseif (isset($event['httpMethod'])) {
-            return new FpmHandler;
-        // return new AppHandler;
-        } else {
-            return new UnknownEventHandler;
+            return new WarmerHandler();
         }
+        if (isset($event['vaporWarmerPing'])) {
+            return new WarmerPingHandler();
+        }
+        if (isset($event['requestContext']['elb'])) {
+            return new LoadBalancedFpmHandler();
+//            return new LoadBalancedAppHandler;
+        }
+        if (isset($event['httpMethod'])) {
+            return new FpmHandler();
+            // return new AppHandler;
+        }
+
+        return new UnknownEventHandler();
     }
 }

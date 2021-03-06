@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,19 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class EnvPullCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('env:pull')
-            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
-            ->setDescription('Download the environment file for the given environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -43,5 +34,18 @@ class EnvPullCommand extends Command
         );
 
         Helpers::info(PHP_EOL."Environment variables written to [./.env.{$environment}].");
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('env:pull')
+            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
+            ->setDescription('Download the environment file for the given environment');
     }
 }

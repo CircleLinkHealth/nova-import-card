@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor;
 
 /*
@@ -35,8 +39,7 @@ class Arr
     /**
      * Set a multi-part body array value in the given array.
      *
-     * @param  array  $array
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return array
      */
@@ -50,7 +53,7 @@ class Arr
             // If this is our first time through the loop we will just grab the initial
             // key's part of the array. After this we will start digging deeper into
             // the array as needed until we get to the correct depth in the array.
-            if ($key === 0) {
+            if (0 === $key) {
                 $pointer = &$pointer[$segment];
 
                 continue;
@@ -85,11 +88,11 @@ class Arr
      *
      * This can occur when there are two [[ or no closing bracket.
      *
-     * @param  string  $segment
+     * @param  string $segment
      * @return bool
      */
     protected static function malformedMultipartSegment($segment)
     {
-        return $segment === '' || substr($segment, -1) !== ']';
+        return '' === $segment || ']' !== substr($segment, -1);
     }
 }

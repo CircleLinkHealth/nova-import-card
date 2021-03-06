@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Monolog\Formatter\JsonFormatter;
@@ -16,24 +20,9 @@ class Logger
     protected static $logger;
 
     /**
-     * Write general information to the log.
-     *
-     * @param  string  $message
-     * @param  array  $context
-     * @return void
-     */
-    public static function info($message, array $context = [])
-    {
-        static::ensureLoggerIsAvailable();
-
-        static::$logger->info($message, $context);
-    }
-
-    /**
      * Write error information to the log.
      *
-     * @param  string  $message
-     * @param  array  $context
+     * @param  string $message
      * @return void
      */
     public static function error($message, array $context = [])
@@ -41,6 +30,19 @@ class Logger
         static::ensureLoggerIsAvailable();
 
         static::$logger->error($message, $context);
+    }
+
+    /**
+     * Write general information to the log.
+     *
+     * @param  string $message
+     * @return void
+     */
+    public static function info($message, array $context = [])
+    {
+        static::ensureLoggerIsAvailable();
+
+        static::$logger->info($message, $context);
     }
 
     /**
@@ -55,7 +57,7 @@ class Logger
         }
 
         static::$logger = new MonologLogger('vapor', [
-            (new StreamHandler('php://stderr'))->setFormatter(new JsonFormatter),
+            (new StreamHandler('php://stderr'))->setFormatter(new JsonFormatter()),
         ]);
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Dockerfile;
@@ -11,20 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class EnvCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('env')
-            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
-            ->addOption('docker', null, InputOption::VALUE_NONE, 'Indicate that the environment will use Docker images as its runtime')
-            ->setDescription('Create a new environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -40,10 +30,11 @@ class EnvCommand extends Command
             $this->option('docker')
         );
 
-        Manifest::addEnvironment($environment,
+        Manifest::addEnvironment(
+            $environment,
             ! $this->option('docker') ? [] : [
                 'runtime' => 'docker',
-                'build' => ['COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'],
+                'build'   => ['COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'],
             ]
         );
 
@@ -54,5 +45,19 @@ class EnvCommand extends Command
         GitIgnore::add(['.env.'.$environment]);
 
         Helpers::info('Environment created successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('env')
+            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
+            ->addOption('docker', null, InputOption::VALUE_NONE, 'Indicate that the environment will use Docker images as its runtime')
+            ->setDescription('Create a new environment');
     }
 }

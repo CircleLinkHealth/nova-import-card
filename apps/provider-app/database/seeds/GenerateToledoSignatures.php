@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\ProviderSignature;
 use Illuminate\Database\Seeder;
 
 class GenerateToledoSignatures extends Seeder

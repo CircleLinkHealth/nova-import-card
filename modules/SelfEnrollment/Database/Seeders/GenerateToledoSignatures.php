@@ -1,12 +1,16 @@
 <?php
-namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\ProviderSignature;
+namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
+
+// This file is part of CarePlan Manager by CircleLink Health.
+
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\ProviderSignature;
 use Illuminate\Database\Seeder;
 
 class GenerateToledoSignatures extends Seeder

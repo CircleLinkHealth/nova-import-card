@@ -13,7 +13,6 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 

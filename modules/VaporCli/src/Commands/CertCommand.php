@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -9,22 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class CertCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cert')
-            // ->addArgument('validation-method', InputArgument::REQUIRED, 'The certificate validation method (email, dns)')
-            ->addArgument('domain', InputArgument::REQUIRED, 'The domain name')
-            // ->addOption('add', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'The additional domain names that should be added to the certificate', [])
-            ->addOption('provider', null, InputOption::VALUE_OPTIONAL, 'The cloud provider ID')
-            ->setDescription('Request a new SSL certificate');
-    }
-
     /**
      * Execute the command.
      *
@@ -39,8 +27,8 @@ class CertCommand extends Command
         // $additionalDomains = $this->option('add');
         $additionalDomains = [];
 
-        if (count(explode('.', $domain)) == 2 ||
-            (count(explode('.', $domain)) === 3 &&
+        if (2 == count(explode('.', $domain)) ||
+            (3 === count(explode('.', $domain)) &&
              Str::endsWith($domain, static::multiPartDomainEndings()))) {
             $additionalDomains = array_unique(
                 array_merge($additionalDomains, ['*.'.$domain])
@@ -79,10 +67,25 @@ class CertCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cert')
+            // ->addArgument('validation-method', InputArgument::REQUIRED, 'The certificate validation method (email, dns)')
+            ->addArgument('domain', InputArgument::REQUIRED, 'The domain name')
+            // ->addOption('add', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'The additional domain names that should be added to the certificate', [])
+            ->addOption('provider', null, InputOption::VALUE_OPTIONAL, 'The cloud provider ID')
+            ->setDescription('Request a new SSL certificate');
+    }
+
+    /**
      * Display the certificate domains.
      *
      * @param string $domain
-     * @param array  $additionalDomains
      *
      * @return void
      */

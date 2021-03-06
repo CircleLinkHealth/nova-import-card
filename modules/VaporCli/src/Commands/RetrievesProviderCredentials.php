@@ -1,11 +1,31 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 trait RetrievesProviderCredentials
 {
+    /**
+     * Determine which credential to load from the credential file.
+     *
+     *
+     * @return string
+     */
+    protected function determineCredential(array $credentials)
+    {
+        return $this->menu(
+            'Which set of credentials would you like to use?',
+            collect($credentials)->mapWithKeys(function ($credential, $key) {
+                return [$key => $key];
+            })->all()
+        );
+    }
+
     /**
      * Get the credentials for an AWS provider.
      *
@@ -39,22 +59,5 @@ trait RetrievesProviderCredentials
             'key'    => $credentials[$credential]['aws_access_key_id'],
             'secret' => $credentials[$credential]['aws_secret_access_key'],
         ];
-    }
-
-    /**
-     * Determine which credential to load from the credential file.
-     *
-     * @param array $credentials
-     *
-     * @return string
-     */
-    protected function determineCredential(array $credentials)
-    {
-        return $this->menu(
-            'Which set of credentials would you like to use?',
-            collect($credentials)->mapWithKeys(function ($credential, $key) {
-                return [$key => $key];
-            })->all()
-        );
     }
 }

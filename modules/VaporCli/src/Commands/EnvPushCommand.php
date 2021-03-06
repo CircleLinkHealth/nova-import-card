@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,19 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class EnvPushCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('env:push')
-            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
-            ->setDescription('Upload the environment file for the given environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -32,7 +23,7 @@ class EnvPushCommand extends Command
 
         $environment = $this->argument('environment');
 
-        if (! file_exists($file = getcwd().'/.env.'.$environment)) {
+        if ( ! file_exists($file = getcwd().'/.env.'.$environment)) {
             Helpers::abort('The environment variables for that environment have not been downloaded.');
         }
 
@@ -52,5 +43,18 @@ class EnvPushCommand extends Command
         if (Helpers::confirm('Would you like to delete the environment file from your machine')) {
             @unlink($file);
         }
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('env:push')
+            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
+            ->setDescription('Upload the environment file for the given environment');
     }
 }

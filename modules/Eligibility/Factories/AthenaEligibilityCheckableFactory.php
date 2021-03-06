@@ -9,10 +9,10 @@ namespace CircleLinkHealth\Eligibility\Factories;
 use CircleLinkHealth\Eligibility\Checkables\AthenaCheckable;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\Checkable;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\Tasks\CreateCcdaFromAthenaApi;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 
 /**
  * This class encapsulates the logic for creating an Checkable for AthenaApiImplementation patients.

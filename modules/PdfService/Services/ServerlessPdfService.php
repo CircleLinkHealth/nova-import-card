@@ -16,13 +16,13 @@ class ServerlessPdfService implements HtmlToPdfService
     private ?string $htmlString;
     private array $options;
     private string $url;
-    
+
     /**
      * ServerlessPdfService constructor.
      */
     public function __construct()
     {
-        $this->url          = config('services.serverless-pdf-generator.api-url');
+        $this->url    = config('services.serverless-pdf-generator.api-url');
         $this->client = new Client([
             'base_uri' => $this->url,
             'headers'  => [

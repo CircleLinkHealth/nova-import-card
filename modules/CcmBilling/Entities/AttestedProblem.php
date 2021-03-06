@@ -29,24 +29,28 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property Call|null                       $call
  * @property Problem                         $ccdProblem
  * @property User|null                       $patient
- * @method static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newModelQuery()
- * @method static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newQuery()
- * @method static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem query()
  * @mixin \Eloquent
  * @property int|null                   $addendum_id
- * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
- * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
- * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
  * @property int|null                   $attestor_id
  * @property PatientMonthlySummary|null $pms
- * @method static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
- * @property-read User|null $attestor
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @property User|null                  $attestor
  */
 class AttestedProblem extends Pivot
 {
     use DateScopesTrait;
+
+    protected $dates = [
+        'chargeable_month',
+    ];
 
     protected $fillable = [
         'patient_user_id',
@@ -60,11 +64,12 @@ class AttestedProblem extends Pivot
         'addendum_id',
     ];
 
-    protected $dates = [
-        'chargeable_month'
-    ];
-
     protected $table = 'call_problems';
+
+    public function attestor()
+    {
+        return $this->belongsTo(User::class, 'attestor_id');
+    }
 
     public function call()
     {
@@ -79,11 +84,6 @@ class AttestedProblem extends Pivot
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
-    }
-
-    public function attestor()
-    {
-        return $this->belongsTo(User::class, 'attestor_id');
     }
 
     /**

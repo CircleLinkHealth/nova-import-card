@@ -461,29 +461,29 @@ class SendSelfEnrollmentRemindersCommand extends Command
             ->whereHas(
                 'user.patientInfo',
                 function ($patient) {
-                        $patient->where('ccm_status', Patient::UNREACHABLE);
-                    }
+                    $patient->where('ccm_status', Patient::UNREACHABLE);
+                }
             )
             ->whereNotNull('user_id')
             ->chunk(
                 50,
                 function ($enrollees) {
-                        Enrollee::whereIn(
-                            'id',
-                            $enrollees->pluck('id')
+                    Enrollee::whereIn(
+                        'id',
+                        $enrollees->pluck('id')
                                 ->all()
-                        )
-                            ->update(
-                                [
-                                    'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
-                                ]
-                            );
+                    )
+                        ->update(
+                            [
+                                'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                            ]
+                        );
 
-                        foreach ($enrollees as $enrollee) {
-                            SendReminder::dispatch(new User($enrollee->user->toArray()));
-                            $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
-                        }
+                    foreach ($enrollees as $enrollee) {
+                        SendReminder::dispatch(new User($enrollee->user->toArray()));
+                        $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
                     }
+                }
             );
     }
 }

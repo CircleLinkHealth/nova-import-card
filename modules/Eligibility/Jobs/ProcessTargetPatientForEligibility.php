@@ -23,7 +23,7 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     protected int $targetPatientId;
 
     /**
@@ -77,13 +77,13 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
         try {
             return tap(
                 app(AthenaEligibilityCheckableFactory::class)
-                        ->makeAthenaEligibilityCheckable($tP)
-                        ->createAndProcessEligibilityJobFromMedicalRecord(),
+                    ->makeAthenaEligibilityCheckable($tP)
+                    ->createAndProcessEligibilityJobFromMedicalRecord(),
                 function (EligibilityJob $eligibilityJob) use ($tP) {
-                        $tP->setStatusFromEligibilityJob($eligibilityJob);
-                        $tP->eligibility_job_id = $eligibilityJob->id;
-                        $tP->save();
-                    }
+                    $tP->setStatusFromEligibilityJob($eligibilityJob);
+                    $tP->eligibility_job_id = $eligibilityJob->id;
+                    $tP->save();
+                }
             );
         } catch (CcdaWasNotFetchedFromAthenaApi $e) {
             $tP->setStatusFromException($e);

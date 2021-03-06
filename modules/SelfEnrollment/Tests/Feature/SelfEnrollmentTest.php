@@ -6,18 +6,18 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
-use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Tests\CustomerTestCase;
-use CircleLinkHealth\SelfEnrollment\Constants;
-use CircleLinkHealth\SelfEnrollment\Services\NotifyEnrollableSurveyCompletedService;
-use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Core\Jobs\LogSuccessfulLoginToDB;
+use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
 use CircleLinkHealth\Customer\Constants\ProviderClinicalTypes;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\SelfEnrollment\AppConfig\Reminders;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\SelfEnrollment\Constants;
 use CircleLinkHealth\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use CircleLinkHealth\SelfEnrollment\Domain\RemindEnrollees;
 use CircleLinkHealth\SelfEnrollment\Domain\UnreachablesFinalAction;
@@ -28,6 +28,7 @@ use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\LoginLogout;
 use CircleLinkHealth\TwilioIntegration\Notifications\Channels\CustomTwilioChannel;
@@ -37,8 +38,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
-use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\Core\Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends CustomerTestCase
 {
@@ -48,6 +47,139 @@ class SelfEnrollmentTest extends CustomerTestCase
      * @var
      */
     private $factory;
+
+    public function test_it_assigns_same_user_id_to_same_person_enrollee()
+    {
+        $enrollee1 = $this->createEnrollees(1);
+        DB::commit();
+        $enrollee1User = $enrollee1->user;
+        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
+        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
+        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
+
+        $samePersonAttributes = [
+            'first_name'  => $enrollee1->first_name,
+            'last_name'   => $enrollee1->last_name,
+            'dob'         => $enrollee1->dob,
+            'practice_id' => $enrollee1->practice_id,
+        ];
+
+        $enrollee2     = $this->createEnrollees(1, $samePersonAttributes);
+        $enrollee2User = $enrollee2->user;
+
+        self::assertTrue($enrollee2->first_name === $enrollee2User->first_name);
+        self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
+        self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
+
+        self::assertTrue( ! is_null($enrollee1->user_id));
+        self::assertTrue( ! is_null($enrollee2->user_id));
+
+        self::assertTrue($enrollee1User->first_name === $enrollee2User->first_name);
+        self::assertTrue($enrollee1User->last_name === $enrollee2User->last_name);
+        self::assertTrue($enrollee1User->program_id === $enrollee2User->program_id);
+        self::assertTrue($enrollee1->first_name === $enrollee2->first_name);
+        self::assertTrue($enrollee1->last_name === $enrollee2->last_name);
+        self::assertTrue($enrollee1->dob->isSameDay($enrollee2->dob));
+        self::assertTrue($enrollee1->practice_id === $enrollee2->practice_id);
+        self::assertTrue($enrollee1->user_id === $enrollee2->user_id);
+    }
+
+    public function test_it_assigns_same_user_id_to_same_person_enrollee_with_different_middle_name()
+    {
+        $firstName            = $this->faker->firstName;
+        $samePersonAttributes = [
+            'last_name'   => $this->faker->lastName,
+            'practice_id' => $this->practice()->id,
+        ];
+
+        $enrollee1                          = $this->createEnrollees(1);
+        $samePersonAttributes['dob']        = Carbon::now()->subYears($this->faker->numberBetween(50, 100));
+        $samePersonAttributes['first_name'] = "$firstName, M";
+        $enrollee1->update($samePersonAttributes);
+
+        DB::commit();
+
+        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee1->fresh());
+        $enrollee2                   = $this->createEnrollees(1);
+        $samePersonAttributes['dob'] = Carbon::now()->subYears($this->faker->numberBetween(50, 100));
+
+        $samePersonAttributes['first_name'] = "$firstName, A";
+        $enrollee2->update($samePersonAttributes);
+
+        /** @var Enrollee $enrollee1Fresh */
+        $enrollee1Fresh = $enrollee1->fresh();
+        $enrollee2Fresh = $enrollee2->fresh();
+
+        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee2->fresh());
+
+        /** @var Enrollee $enrollee1Fresh */
+        $enrollee1Fresh = $enrollee1->fresh();
+        $enrollee2Fresh = $enrollee2->fresh();
+
+        self::assertTrue($enrollee1Fresh->first_name !== $enrollee2Fresh->first_name);
+        self::assertTrue( ! is_null($enrollee1Fresh->user_id));
+        self::assertTrue( ! is_null($enrollee2Fresh->user_id));
+        self::assertTrue($enrollee1Fresh->last_name === $enrollee2Fresh->last_name);
+        self::assertFalse($enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
+        self::assertTrue($enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
+        self::assertFalse($enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
+    }
+
+    public function test_it_assigns_same_user_id_to_same_person_enrollee_with_middle_name()
+    {
+        $enrollee1 = $this->createEnrollees(1);
+        DB::commit();
+        $enrollee1User = $enrollee1->user;
+
+        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
+        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
+        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
+
+        $samePersonAttributes = [
+            'first_name'  => "{$enrollee1->first_name} M",
+            'last_name'   => $enrollee1->last_name,
+            'dob'         => $enrollee1->dob,
+            'practice_id' => $enrollee1->practice_id,
+        ];
+
+        $enrollee2     = $this->createEnrollees(1, $samePersonAttributes);
+        $enrollee2User = $enrollee2->user;
+
+        self::assertTrue($enrollee1->first_name !== $enrollee2->first_name);
+        self::assertTrue( ! is_null($enrollee1->user_id));
+        self::assertTrue( ! is_null($enrollee2->user_id));
+        self::assertTrue($enrollee1->last_name === $enrollee2->last_name);
+        self::assertTrue($enrollee1->dob->isSameDay($enrollee2->dob));
+        self::assertTrue($enrollee1->practice_id === $enrollee2->practice_id);
+        self::assertTrue($enrollee1->user_id === $enrollee2->user_id);
+    }
+
+    public function test_it_assigns_same_user_id_to_same_person_enrollee_with_middle_name_2()
+    {
+        $firstName            = $this->faker->firstName;
+        $samePersonAttributes = [
+            'last_name'   => $this->faker->lastName,
+            'dob'         => Carbon::now()->subYears($this->faker->numberBetween(50, 100)),
+            'practice_id' => $this->practice()->id,
+        ];
+
+        $samePersonAttributes['first_name'] = "$firstName, M";
+        $enrollee1                          = $this->createEnrollees(1, $samePersonAttributes);
+
+        DB::commit();
+
+        $samePersonAttributes['first_name'] = $firstName;
+
+        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
+
+        self::assertTrue($enrollee1->first_name !== $enrollee2->first_name);
+        self::assertTrue( ! is_null($enrollee1->user_id));
+        self::assertTrue( ! is_null($enrollee2->user_id));
+        self::assertTrue($enrollee1->last_name === $enrollee2->last_name);
+        self::assertTrue($enrollee1->dob->isSameDay($enrollee2->dob));
+        self::assertTrue($enrollee1->practice_id === $enrollee2->practice_id);
+        self::assertTrue($enrollee1->user_id === $enrollee2->user_id);
+    }
 
     public function test_it_creates_batch()
     {
@@ -162,6 +294,38 @@ class SelfEnrollmentTest extends CustomerTestCase
         self::assertTrue( ! is_null($enrollee->user_id));
     }
 
+    public function test_it_does_not_assign_same_user_id_to_similarly_named_enrollees()
+    {
+        $samePersonAttributes = [
+            'last_name'   => $this->faker->lastName,
+            'dob'         => Carbon::now()->subYears($this->faker->numberBetween(50, 100)),
+            'practice_id' => $this->practice()->id,
+        ];
+
+        $enrollee1 = $this->createEnrollees(1);
+        $enrollee1->update($samePersonAttributes);
+
+        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee1->fresh());
+        $enrollee2 = $this->createEnrollees(1);
+        $enrollee2->update($samePersonAttributes);
+
+        DB::commit();
+
+        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee2->fresh());
+
+        /** @var Enrollee $enrollee1Fresh */
+        $enrollee1Fresh = $enrollee1->fresh();
+        $enrollee2Fresh = $enrollee2->fresh();
+
+        self::assertTrue($enrollee1Fresh->first_name !== $enrollee2Fresh->first_name);
+        self::assertTrue( ! is_null($enrollee1Fresh->user_id));
+        self::assertTrue( ! is_null($enrollee2Fresh->user_id));
+        self::assertTrue($enrollee1Fresh->last_name === $enrollee2Fresh->last_name);
+        self::assertTrue($enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
+        self::assertTrue($enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
+        self::assertFalse($enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
+    }
+
     public function test_it_does_not_send_sms_if_only_email_selected()
     {
         $this->createEnrollees($number = 2);
@@ -185,9 +349,9 @@ class SelfEnrollmentTest extends CustomerTestCase
         Twilio::fake();
         Mail::fake();
 
-       $this->setFakeNotification($patient->id, $enrollee->id, now()->subMonth());
+        $this->setFakeNotification($patient->id, $enrollee->id, now()->subMonth());
 
-       $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
         );
@@ -311,79 +475,6 @@ class SelfEnrollmentTest extends CustomerTestCase
         );
 
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
-    }
-
-    public function test_scope_unique_patients_same_name_same_dob()
-    {
-        $count = 3;
-        $users = $this->patient($count);
-        $userIds = collect($users)->pluck('id')->toArray();
-        $firstName = $this->faker->firstName;
-        $lastName = $this->faker->lastName;
-        $displayName = "$firstName $lastName";
-        $birthDate = now()->subYears(60);
-
-
-
-       $usersUpdated = User::whereIn('id', $userIds)
-            ->update([
-                'display_name' => $displayName,
-                'first_name' => $firstName,
-                'last_name' => $lastName
-            ]);
-
-
-       Patient::whereIn('user_id', $userIds)
-            ->update([
-                'birth_date'=> $birthDate
-            ]);
-
-
-
-        $usersWithSameName = User::whereIn('id', $userIds)->pluck("display_name");
-        $usersWithSameName->each(function (string $name) use ($displayName){
-            self::assertTrue($name === $displayName);
-        });
-
-        $usersWithSameDob = Patient::whereIn('user_id', $userIds)->pluck("birth_date");
-        $usersWithSameDob->each(function (Carbon $dob) use ($birthDate){
-            self::assertTrue($dob->isSameDay($birthDate));
-        });
-
-
-        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
-
-        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
-        self::assertTrue($countUnique === 1, "$countUnique patients found instead of 1");
-    }
-
-    public function test_scope_unique_patients_same_name_different_dob()
-    {
-        $count = 3;
-        $users = $this->patient($count);
-        $userIds = collect($users)->pluck('id')->toArray();
-        $firstName = $this->faker->firstName;
-        $lastName = $this->faker->lastName;
-        $displayName = "$firstName $lastName";
-
-
-        User::whereIn('id', $userIds)
-            ->update([
-                'display_name' => $displayName,
-                'first_name' => $firstName,
-                'last_name' => $lastName
-            ]);
-
-        $usersWithSameName = User::whereIn('id', $userIds)->pluck("display_name");
-        $usersWithSameName->each(function (string $name) use ($displayName){
-            self::assertTrue($name === $displayName);
-        });
-
-
-        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
-
-        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
-        self::assertTrue($countUnique === $count, "$countUnique patients found instead of $count");
     }
 
     public function test_it_sends_enrollment_notifications_limited()
@@ -548,8 +639,8 @@ class SelfEnrollmentTest extends CustomerTestCase
     {
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
-        $patient                                = $enrollee->user;
-        $billingProviderUser = $patient->billingProviderUser();
+        $patient                     = $enrollee->user;
+        $billingProviderUser         = $patient->billingProviderUser();
         $billingProviderUser->suffix = ProviderClinicalTypes::DO_SUFFIX;
         $patient->fresh();
         $patient->save();
@@ -569,8 +660,8 @@ class SelfEnrollmentTest extends CustomerTestCase
     {
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
-        $patient                                = $enrollee->user;
-        $billingProviderUser = $patient->billingProviderUser();
+        $patient                     = $enrollee->user;
+        $billingProviderUser         = $patient->billingProviderUser();
         $billingProviderUser->suffix = ProviderClinicalTypes::LPN_SUFFIX;
         $patient->fresh();
         $patient->save();
@@ -591,8 +682,8 @@ class SelfEnrollmentTest extends CustomerTestCase
     {
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
-        $patient                                = $enrollee->user;
-        $billingProviderUser = $patient->billingProviderUser();
+        $patient                     = $enrollee->user;
+        $billingProviderUser         = $patient->billingProviderUser();
         $billingProviderUser->suffix = ProviderClinicalTypes::MD_SUFFIX;
         $patient->fresh();
         $patient->save();
@@ -612,8 +703,8 @@ class SelfEnrollmentTest extends CustomerTestCase
     {
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
-        $patient                                = $enrollee->user;
-        $billingProviderUser = $patient->billingProviderUser();
+        $patient                     = $enrollee->user;
+        $billingProviderUser         = $patient->billingProviderUser();
         $billingProviderUser->suffix = ProviderClinicalTypes::NP_SUFFIX;
         $patient->fresh();
         $patient->save();
@@ -692,6 +783,71 @@ class SelfEnrollmentTest extends CustomerTestCase
         $lastEnrollmentLink->save();
 
         self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
+    }
+
+    public function test_scope_unique_patients_same_name_different_dob()
+    {
+        $count       = 3;
+        $users       = $this->patient($count);
+        $userIds     = collect($users)->pluck('id')->toArray();
+        $firstName   = $this->faker->firstName;
+        $lastName    = $this->faker->lastName;
+        $displayName = "$firstName $lastName";
+
+        User::whereIn('id', $userIds)
+            ->update([
+                'display_name' => $displayName,
+                'first_name'   => $firstName,
+                'last_name'    => $lastName,
+            ]);
+
+        $usersWithSameName = User::whereIn('id', $userIds)->pluck('display_name');
+        $usersWithSameName->each(function (string $name) use ($displayName) {
+            self::assertTrue($name === $displayName);
+        });
+
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
+
+        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
+        self::assertTrue($countUnique === $count, "$countUnique patients found instead of $count");
+    }
+
+    public function test_scope_unique_patients_same_name_same_dob()
+    {
+        $count       = 3;
+        $users       = $this->patient($count);
+        $userIds     = collect($users)->pluck('id')->toArray();
+        $firstName   = $this->faker->firstName;
+        $lastName    = $this->faker->lastName;
+        $displayName = "$firstName $lastName";
+        $birthDate   = now()->subYears(60);
+
+        $usersUpdated = User::whereIn('id', $userIds)
+            ->update([
+                'display_name' => $displayName,
+                'first_name'   => $firstName,
+                'last_name'    => $lastName,
+            ]);
+
+        Patient::whereIn('user_id', $userIds)
+            ->update([
+                'birth_date' => $birthDate,
+            ]);
+
+        $usersWithSameName = User::whereIn('id', $userIds)->pluck('display_name');
+        $usersWithSameName->each(function (string $name) use ($displayName) {
+            self::assertTrue($name === $displayName);
+        });
+
+        $usersWithSameDob = Patient::whereIn('user_id', $userIds)->pluck('birth_date');
+        $usersWithSameDob->each(function (Carbon $dob) use ($birthDate) {
+            self::assertTrue($dob->isSameDay($birthDate));
+        });
+
+        $countUnique = User::where('display_name', $displayName)->uniquePatients()->count(DB::raw('DISTINCT display_name, birth_date'));
+
+        self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
+        self::assertTrue(1 === $countUnique, "$countUnique patients found instead of 1");
     }
 
     private function createEnrollees(int $number = 1, array $arguments = [])
@@ -776,172 +932,6 @@ class SelfEnrollmentTest extends CustomerTestCase
         ]);
 
         return $surveyId;
-    }
-
-    public function test_it_does_not_assign_same_user_id_to_similarly_named_enrollees()
-    {
-        $samePersonAttributes = [
-            'last_name' => $this->faker->lastName,
-            'dob'=> Carbon::now()->subYears($this->faker->numberBetween(50, 100)),
-            'practice_id'=> $this->practice()->id
-        ];
-
-        $enrollee1 = $this->createEnrollees(1);
-        $enrollee1->update($samePersonAttributes);
-
-        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee1->fresh());
-        $enrollee2 = $this->createEnrollees(1);
-        $enrollee2->update($samePersonAttributes);
-
-        DB::commit();
-
-        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee2->fresh());
-
-        /** @var Enrollee $enrollee1Fresh */
-        $enrollee1Fresh = $enrollee1->fresh();
-        $enrollee2Fresh = $enrollee2->fresh();
-
-        self::assertTrue($enrollee1Fresh->first_name !== $enrollee2Fresh->first_name);
-        self::assertTrue(! is_null($enrollee1Fresh->user_id));
-        self::assertTrue( ! is_null($enrollee2Fresh->user_id));
-        self::assertTrue( $enrollee1Fresh->last_name === $enrollee2Fresh->last_name);
-        self::assertTrue( $enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
-        self::assertTrue( $enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
-        self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
-    }
-
-    public function test_it_assigns_same_user_id_to_same_person_enrollee()
-    {
-        $enrollee1 = $this->createEnrollees(1);
-        DB::commit();
-        $enrollee1User = $enrollee1->user;
-        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
-        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
-        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
-
-        $samePersonAttributes = [
-            'first_name' => $enrollee1->first_name,
-            'last_name' => $enrollee1->last_name,
-            'dob' => $enrollee1->dob,
-            'practice_id'=> $enrollee1->practice_id,
-        ];
-
-        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
-        $enrollee2User = $enrollee2->user;
-
-        self::assertTrue($enrollee2->first_name === $enrollee2User->first_name);
-        self::assertTrue($enrollee2->last_name === $enrollee2User->last_name);
-        self::assertTrue($enrollee2->practice_id === $enrollee2User->program_id);
-
-        self::assertTrue(! is_null($enrollee1->user_id));
-        self::assertTrue( ! is_null($enrollee2->user_id));
-
-        self::assertTrue($enrollee1User->first_name === $enrollee2User->first_name);
-        self::assertTrue($enrollee1User->last_name === $enrollee2User->last_name);
-        self::assertTrue($enrollee1User->program_id === $enrollee2User->program_id);
-        self::assertTrue($enrollee1->first_name === $enrollee2->first_name);
-        self::assertTrue( $enrollee1->last_name === $enrollee2->last_name);
-        self::assertTrue( $enrollee1->dob->isSameDay($enrollee2->dob));
-        self::assertTrue( $enrollee1->practice_id === $enrollee2->practice_id);
-        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
-    }
-
-    public function test_it_assigns_same_user_id_to_same_person_enrollee_with_middle_name()
-    {
-
-        $enrollee1 = $this->createEnrollees(1);
-        DB::commit();
-        $enrollee1User = $enrollee1->user;
-
-        self::assertTrue($enrollee1->first_name === $enrollee1User->first_name);
-        self::assertTrue($enrollee1->last_name === $enrollee1User->last_name);
-        self::assertTrue($enrollee1->practice_id === $enrollee1User->program_id);
-
-        $samePersonAttributes = [
-            'first_name' => "{$enrollee1->first_name} M",
-            'last_name' => $enrollee1->last_name,
-            'dob' => $enrollee1->dob,
-            'practice_id'=> $enrollee1->practice_id,
-        ];
-
-        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
-        $enrollee2User = $enrollee2->user;
-
-        self::assertTrue($enrollee1->first_name !== $enrollee2->first_name);
-        self::assertTrue(! is_null($enrollee1->user_id));
-        self::assertTrue( ! is_null($enrollee2->user_id));
-        self::assertTrue( $enrollee1->last_name === $enrollee2->last_name);
-        self::assertTrue( $enrollee1->dob->isSameDay($enrollee2->dob));
-        self::assertTrue( $enrollee1->practice_id === $enrollee2->practice_id);
-        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
-    }
-
-    public function test_it_assigns_same_user_id_to_same_person_enrollee_with_middle_name_2()
-    {
-        $firstName = $this->faker->firstName;
-        $samePersonAttributes = [
-            'last_name' => $this->faker->lastName,
-            'dob' => Carbon::now()->subYears($this->faker->numberBetween(50, 100)),
-            'practice_id'=> $this->practice()->id
-        ];
-
-        $samePersonAttributes['first_name'] = "$firstName, M";
-        $enrollee1 = $this->createEnrollees(1, $samePersonAttributes);
-
-        DB::commit();
-
-        $samePersonAttributes['first_name'] = $firstName;
-
-        $enrollee2 = $this->createEnrollees(1, $samePersonAttributes);
-
-        self::assertTrue($enrollee1->first_name !== $enrollee2->first_name);
-        self::assertTrue(! is_null($enrollee1->user_id));
-        self::assertTrue( ! is_null($enrollee2->user_id));
-        self::assertTrue( $enrollee1->last_name === $enrollee2->last_name);
-        self::assertTrue( $enrollee1->dob->isSameDay($enrollee2->dob));
-        self::assertTrue( $enrollee1->practice_id === $enrollee2->practice_id);
-        self::assertTrue( $enrollee1->user_id === $enrollee2->user_id);
-    }
-
-    public function test_it_assigns_same_user_id_to_same_person_enrollee_with_different_middle_name()
-    {
-        $firstName = $this->faker->firstName;
-        $samePersonAttributes = [
-            'last_name' => $this->faker->lastName,
-            'practice_id'=> $this->practice()->id
-        ];
-
-        $enrollee1 = $this->createEnrollees(1);
-        $samePersonAttributes['dob'] = Carbon::now()->subYears($this->faker->numberBetween(50, 100));
-        $samePersonAttributes['first_name'] = "$firstName, M";
-        $enrollee1->update($samePersonAttributes);
-
-        DB::commit();
-
-        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee1->fresh());
-        $enrollee2 = $this->createEnrollees(1);
-        $samePersonAttributes['dob'] = Carbon::now()->subYears($this->faker->numberBetween(50, 100));
-
-        $samePersonAttributes['first_name'] = "$firstName, A";
-        $enrollee2->update($samePersonAttributes);
-
-        /** @var Enrollee $enrollee1Fresh */
-        $enrollee1Fresh = $enrollee1->fresh();
-        $enrollee2Fresh = $enrollee2->fresh();
-
-        CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee2->fresh());
-
-        /** @var Enrollee $enrollee1Fresh */
-        $enrollee1Fresh = $enrollee1->fresh();
-        $enrollee2Fresh = $enrollee2->fresh();
-
-        self::assertTrue($enrollee1Fresh->first_name !== $enrollee2Fresh->first_name);
-        self::assertTrue(! is_null($enrollee1Fresh->user_id));
-        self::assertTrue( ! is_null($enrollee2Fresh->user_id));
-        self::assertTrue( $enrollee1Fresh->last_name === $enrollee2Fresh->last_name);
-        self::assertFalse( $enrollee1Fresh->dob->isSameDay($enrollee2Fresh->dob));
-        self::assertTrue( $enrollee1Fresh->practice_id === $enrollee2Fresh->practice_id);
-        self::assertFalse( $enrollee1Fresh->user_id === $enrollee2Fresh->user_id);
     }
 
     private function setFakeNotification(int $patientId, int $enrolleeId, Carbon $time, $isReminder = true)

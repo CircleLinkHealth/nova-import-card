@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests\ScheduledTaskSubscriber;
 
 use Exception;
@@ -28,6 +32,21 @@ class ScheduledTaskSubscriberTest extends TestCase
     }
 
     /** @test */
+    public function it_can_use_a_specific_queue_to_ping_oh_dear()
+    {
+        Bus::fake();
+
+        config()->set('schedule-monitor.oh_dear.queue', 'custom-queue');
+
+        $this->artisan(SyncCommand::class)->assertExitCode(0);
+        $this->artisan('schedule:run')->assertExitCode(0);
+
+        Bus::assertDispatched(function (PingOhDearJob $job) {
+            return 'custom-queue' === $job->queue;
+        });
+    }
+
+    /** @test */
     public function it_will_fire_a_job_and_create_a_log_item_when_a_monitored_scheduled_task_finished()
     {
         $this->artisan(SyncCommand::class)->assertExitCode(0);
@@ -36,7 +55,7 @@ class ScheduledTaskSubscriberTest extends TestCase
         Bus::assertDispatched(function (PingOhDearJob $job) {
             $monitoredScheduledTask = $job->logItem->monitoredScheduledTask;
 
-            return $monitoredScheduledTask->name === 'dummy-task';
+            return 'dummy-task' === $monitoredScheduledTask->name;
         });
 
         $logTypes = MonitoredScheduledTask::findByName('dummy-task')->logItems->pluck('type')->toArray();
@@ -48,32 +67,12 @@ class ScheduledTaskSubscriberTest extends TestCase
     }
 
     /** @test */
-    public function it_will_log_skipped_scheduled_tasks()
-    {
-        TestKernel::replaceScheduledTasks(function (Schedule $schedule) {
-            $schedule
-                ->call(fn () => TestTime::addSecond())
-                ->everyMinute()->skip(fn () => true)
-                ->monitorName('dummy-task');
-        });
-        $this->artisan(SyncCommand::class)->assertExitCode(0);
-
-        $this->artisan('schedule:run')->assertExitCode(0);
-
-        $logTypes = MonitoredScheduledTask::findByName('dummy-task')->logItems->pluck('type')->toArray();
-
-        $this->assertEquals([
-            MonitoredScheduledTaskLogItem::TYPE_SKIPPED,
-        ], $logTypes);
-    }
-
-    /** @test */
     public function it_will_log_failures_of_scheduled_tasks()
     {
         TestKernel::replaceScheduledTasks(function (Schedule $schedule) {
             $schedule
                 ->call(function () {
-                    throw new Exception("exception");
+                    throw new Exception('exception');
                 })
                 ->everyMinute()
                 ->monitorName('failing-task');
@@ -90,6 +89,26 @@ class ScheduledTaskSubscriberTest extends TestCase
         $this->assertEquals([
             MonitoredScheduledTaskLogItem::TYPE_FAILED,
             MonitoredScheduledTaskLogItem::TYPE_STARTING,
+        ], $logTypes);
+    }
+
+    /** @test */
+    public function it_will_log_skipped_scheduled_tasks()
+    {
+        TestKernel::replaceScheduledTasks(function (Schedule $schedule) {
+            $schedule
+                ->call(fn ()                => TestTime::addSecond())
+                ->everyMinute()->skip(fn () => true)
+                ->monitorName('dummy-task');
+        });
+        $this->artisan(SyncCommand::class)->assertExitCode(0);
+
+        $this->artisan('schedule:run')->assertExitCode(0);
+
+        $logTypes = MonitoredScheduledTask::findByName('dummy-task')->logItems->pluck('type')->toArray();
+
+        $this->assertEquals([
+            MonitoredScheduledTaskLogItem::TYPE_SKIPPED,
         ], $logTypes);
     }
 
@@ -122,21 +141,6 @@ class ScheduledTaskSubscriberTest extends TestCase
         $this->artisan('schedule:run')->assertExitCode(0);
 
         Bus::assertNotDispatched(PingOhDearJob::class);
-    }
-
-    /** @test */
-    public function it_can_use_a_specific_queue_to_ping_oh_dear()
-    {
-        Bus::fake();
-
-        config()->set('schedule-monitor.oh_dear.queue', 'custom-queue');
-
-        $this->artisan(SyncCommand::class)->assertExitCode(0);
-        $this->artisan('schedule:run')->assertExitCode(0);
-
-        Bus::assertDispatched(function (PingOhDearJob $job) {
-            return $job->queue === 'custom-queue';
-        });
     }
 
     /** @test */

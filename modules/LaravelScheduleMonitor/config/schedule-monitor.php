@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 return [
     /*
      * If you have multiple apps using the same DB,
      * then you should set these values to unique per app
      */
-    'tasks_db_table' => 'monitored_scheduled_tasks',
+    'tasks_db_table'           => 'monitored_scheduled_tasks',
     'tasks_log_items_db_table' => 'monitored_scheduled_task_log_items',
 
     /*

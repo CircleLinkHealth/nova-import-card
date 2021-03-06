@@ -8,8 +8,8 @@ namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLette
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCameronLetter;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCameronLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +36,7 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
         return $this->viewConfigurations($this->practice, $this->enrollee);
     }
 
-    public static function groupSharedSignatoryName($uiRequests, \CircleLinkHealth\Customer\Entities\User $userProvider)
+    public static function groupSharedSignatoryName($uiRequests, User $userProvider)
     {
         if ( ! empty($uiRequests)) {
             $millersTeam = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::MILLER_SIGNATURE);
@@ -73,7 +73,7 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
         return $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider): string
+    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $uiRequests = json_decode($practiceLetter->ui_requests);
         if ( ! empty($uiRequests)) {
@@ -82,11 +82,13 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
 
             if (in_array($provider->id, $millersTeam)) {
                 $signature = asset('/img/signatures/cameron-memorial/millers_signature.png');
+
                 return "'<img src=$signature alt='$practice->dipslay_name' style='max-width: 17%;'/>";
             }
 
             if (in_array($provider->id, $faursTeam)) {
                 $signature = asset('/img/signatures/cameron-memorial/faurs_signature.png');
+
                 return "'<img src=$signature  alt='$practice->dipslay_name' style='max-width: 14%;'/>";
             }
         }

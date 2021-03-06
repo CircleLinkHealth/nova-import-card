@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\Eligibility\Adapters;
 
 use Carbon\Carbon;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\DTO\MedicalRecordForEligibilityCheck;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Seld\JsonLint\JsonParser;

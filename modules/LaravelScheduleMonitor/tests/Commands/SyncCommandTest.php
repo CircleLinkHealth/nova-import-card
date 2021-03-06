@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests\Commands;
 
 use Illuminate\Console\Scheduling\Schedule;
@@ -38,90 +42,58 @@ class SyncCommandTest extends TestCase
         $this->assertCount(4, $monitoredScheduledTasks);
 
         $this->assertDatabaseHas('monitored_scheduled_tasks', [
-            'name' => 'dummy',
-            'type' => 'command',
-            'cron_expression' => '* * * * *',
-            'ping_url' => 'https://ping.ohdear.app/test-ping-url-dummy',
+            'name'                     => 'dummy',
+            'type'                     => 'command',
+            'cron_expression'          => '* * * * *',
+            'ping_url'                 => 'https://ping.ohdear.app/test-ping-url-dummy',
             'registered_on_oh_dear_at' => now()->format('Y-m-d H:i:s'),
-            'grace_time_in_minutes' => 5,
-            'last_pinged_at' => null,
-            'last_started_at' => null,
-            'last_finished_at' => null,
-            'timezone' => 'UTC',
+            'grace_time_in_minutes'    => 5,
+            'last_pinged_at'           => null,
+            'last_started_at'          => null,
+            'last_finished_at'         => null,
+            'timezone'                 => 'UTC',
         ]);
 
         $this->assertDatabaseHas('monitored_scheduled_tasks', [
-            'name' => 'execute',
-            'type' => 'shell',
-            'cron_expression' => '*/15 * * * *',
-            'ping_url' => 'https://ping.ohdear.app/test-ping-url-execute',
+            'name'                     => 'execute',
+            'type'                     => 'shell',
+            'cron_expression'          => '*/15 * * * *',
+            'ping_url'                 => 'https://ping.ohdear.app/test-ping-url-execute',
             'registered_on_oh_dear_at' => now()->format('Y-m-d H:i:s'),
-            'grace_time_in_minutes' => 5,
-            'last_pinged_at' => null,
-            'last_started_at' => null,
-            'last_finished_at' => null,
-            'timezone' => 'UTC',
+            'grace_time_in_minutes'    => 5,
+            'last_pinged_at'           => null,
+            'last_started_at'          => null,
+            'last_finished_at'         => null,
+            'timezone'                 => 'UTC',
         ]);
 
         $this->assertDatabaseHas('monitored_scheduled_tasks', [
-            'name' => 'my-closure',
-            'type' => 'closure',
-            'cron_expression' => '0 * * * *',
-            'ping_url' => 'https://ping.ohdear.app/test-ping-url-my-closure',
+            'name'                     => 'my-closure',
+            'type'                     => 'closure',
+            'cron_expression'          => '0 * * * *',
+            'ping_url'                 => 'https://ping.ohdear.app/test-ping-url-my-closure',
             'registered_on_oh_dear_at' => now()->format('Y-m-d H:i:s'),
-            'grace_time_in_minutes' => 5,
-            'last_pinged_at' => null,
-            'last_started_at' => null,
-            'last_finished_at' => null,
-            'timezone' => 'UTC',
+            'grace_time_in_minutes'    => 5,
+            'last_pinged_at'           => null,
+            'last_started_at'          => null,
+            'last_finished_at'         => null,
+            'timezone'                 => 'UTC',
         ]);
 
         $this->assertDatabaseHas('monitored_scheduled_tasks', [
-            'name' => TestJob::class,
-            'type' => 'job',
-            'cron_expression' => '0 0 * * *',
-            'ping_url' => 'https://ping.ohdear.app/test-ping-url-' . urlencode(TestJob::class),
+            'name'                     => TestJob::class,
+            'type'                     => 'job',
+            'cron_expression'          => '0 0 * * *',
+            'ping_url'                 => 'https://ping.ohdear.app/test-ping-url-'.urlencode(TestJob::class),
             'registered_on_oh_dear_at' => now()->format('Y-m-d H:i:s'),
-            'grace_time_in_minutes' => 5,
-            'last_pinged_at' => null,
-            'last_started_at' => null,
-            'last_finished_at' => null,
-            'timezone' => 'Asia/Kolkata',
+            'grace_time_in_minutes'    => 5,
+            'last_pinged_at'           => null,
+            'last_started_at'          => null,
+            'last_finished_at'         => null,
+            'timezone'                 => 'Asia/Kolkata',
         ]);
 
         $this->assertMatchesSnapshot($this->ohDear->getSyncedCronCheckAttributes());
-    }
-
-    /** @test */
-    public function it_will_not_monitor_commands_without_a_name()
-    {
-        TestKernel::registerScheduledTasks(function (Schedule $schedule) {
-            $schedule->call(fn () => 'a closure has no name')->hourly();
-        });
-
-        $this->artisan(SyncCommand::class);
-
-        $monitoredScheduledTasks = MonitoredScheduledTask::get();
-        $this->assertCount(0, $monitoredScheduledTasks);
-
-        $this->assertEquals([], $this->ohDear->getSyncedCronCheckAttributes());
-    }
-
-    /** @test **/
-    public function it_will_remove_old_tasks_from_the_database()
-    {
-        factory(MonitoredScheduledTask::class)->create(['name' => 'old-task']);
-        $this->assertCount(1, MonitoredScheduledTask::get());
-
-        TestKernel::registerScheduledTasks(function (Schedule $schedule) {
-            $schedule->command('new')->everyMinute();
-        });
-
-        $this->artisan(SyncCommand::class);
-
-        $this->assertCount(1, MonitoredScheduledTask::get());
-
-        $this->assertEquals('new', MonitoredScheduledTask::first()->name);
     }
 
     /** @test */
@@ -143,6 +115,21 @@ class SyncCommandTest extends TestCase
     }
 
     /** @test */
+    public function it_will_not_monitor_commands_without_a_name()
+    {
+        TestKernel::registerScheduledTasks(function (Schedule $schedule) {
+            $schedule->call(fn () => 'a closure has no name')->hourly();
+        });
+
+        $this->artisan(SyncCommand::class);
+
+        $monitoredScheduledTasks = MonitoredScheduledTask::get();
+        $this->assertCount(0, $monitoredScheduledTasks);
+
+        $this->assertEquals([], $this->ohDear->getSyncedCronCheckAttributes());
+    }
+
+    /** @test */
     public function it_will_not_monitor_tasks_that_should_not_be_monitored()
     {
         TestKernel::registerScheduledTasks(function (Schedule $schedule) {
@@ -154,6 +141,36 @@ class SyncCommandTest extends TestCase
         $this->assertCount(0, MonitoredScheduledTask::get());
 
         $this->assertEquals([], $this->ohDear->getSyncedCronCheckAttributes());
+    }
+
+    /** @test */
+    public function it_will_not_sync_with_oh_dear_when_no_site_id_is_set()
+    {
+        config()->set('schedule-monitor.oh_dear.site_id', null);
+
+        TestKernel::registerScheduledTasks(function (Schedule $schedule) {
+            $schedule->command('dummy')->daily();
+        });
+        $this->artisan(SyncCommand::class);
+        $this->assertCount(1, MonitoredScheduledTask::get());
+        $this->assertEquals([], $this->ohDear->getSyncedCronCheckAttributes());
+    }
+
+    /** @test */
+    public function it_will_remove_old_tasks_from_the_database()
+    {
+        factory(MonitoredScheduledTask::class)->create(['name' => 'old-task']);
+        $this->assertCount(1, MonitoredScheduledTask::get());
+
+        TestKernel::registerScheduledTasks(function (Schedule $schedule) {
+            $schedule->command('new')->everyMinute();
+        });
+
+        $this->artisan(SyncCommand::class);
+
+        $this->assertCount(1, MonitoredScheduledTask::get());
+
+        $this->assertEquals('new', MonitoredScheduledTask::first()->name);
     }
 
     /** @test */
@@ -174,7 +191,7 @@ class SyncCommandTest extends TestCase
     public function it_will_update_tasks_that_have_their_schedule_updated()
     {
         $monitoredScheduledTask = factory(MonitoredScheduledTask::class)->create([
-            'name' => 'dummy',
+            'name'            => 'dummy',
             'cron_expression' => '* * * * *',
         ]);
 
@@ -185,18 +202,5 @@ class SyncCommandTest extends TestCase
 
         $this->assertCount(1, MonitoredScheduledTask::get());
         $this->assertEquals('0 0 * * *', $monitoredScheduledTask->refresh()->cron_expression);
-    }
-
-    /** @test */
-    public function it_will_not_sync_with_oh_dear_when_no_site_id_is_set()
-    {
-        config()->set('schedule-monitor.oh_dear.site_id', null);
-
-        TestKernel::registerScheduledTasks(function (Schedule $schedule) {
-            $schedule->command('dummy')->daily();
-        });
-        $this->artisan(SyncCommand::class);
-        $this->assertCount(1, MonitoredScheduledTask::get());
-        $this->assertEquals([], $this->ohDear->getSyncedCronCheckAttributes());
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Illuminate\Contracts\Console\Kernel;
@@ -25,7 +29,7 @@ class QueueHandler implements LambdaEventHandler
      */
     public function __construct()
     {
-        if (! isset(static::$app)) {
+        if ( ! isset(static::$app)) {
             static::$app = require $_ENV['LAMBDA_TASK_ROOT'].'/bootstrap/app.php';
         }
     }
@@ -33,7 +37,6 @@ class QueueHandler implements LambdaEventHandler
     /**
      * Handle an incoming Lambda event.
      *
-     * @param  array  $event
      * @param  \Laravel\Vapor\Contracts\LambdaResponse
      * @return ArrayLambdaResponse
      */
@@ -57,15 +60,16 @@ class QueueHandler implements LambdaEventHandler
             );
 
             $consoleKernel->terminate($consoleInput, $status = $consoleKernel->handle(
-                $consoleInput, $output = new BufferedOutput
+                $consoleInput,
+                $output = new BufferedOutput()
             ));
 
             return new ArrayLambdaResponse([
-                'requestId' => $_ENV['AWS_REQUEST_ID'] ?? null,
-                'logGroup' => $_ENV['AWS_LAMBDA_LOG_GROUP_NAME'] ?? null,
-                'logStream' => $_ENV['AWS_LAMBDA_LOG_STREAM_NAME'] ?? null,
+                'requestId'  => $_ENV['AWS_REQUEST_ID'] ?? null,
+                'logGroup'   => $_ENV['AWS_LAMBDA_LOG_GROUP_NAME'] ?? null,
+                'logStream'  => $_ENV['AWS_LAMBDA_LOG_STREAM_NAME'] ?? null,
                 'statusCode' => $status,
-                'output' => base64_encode($output->fetch()),
+                'output'     => base64_encode($output->fetch()),
             ]);
         } finally {
             $this->terminate();

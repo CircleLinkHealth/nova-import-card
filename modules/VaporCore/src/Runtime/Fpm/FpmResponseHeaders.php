@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Fpm;
 
 class FpmResponseHeaders
@@ -7,7 +11,7 @@ class FpmResponseHeaders
     /**
      * Extract the response headers from the raw response.
      *
-     * @param  string  $body
+     * @param  string $body
      * @return array
      */
     public static function fromBody($body)

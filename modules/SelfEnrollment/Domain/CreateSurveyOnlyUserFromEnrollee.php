@@ -85,6 +85,7 @@ class CreateSurveyOnlyUserFromEnrollee
         } catch (PatientAlreadyExistsException $e) {
             $this->enrollee->user_id = $e->getPatientUserId();
             $this->enrollee->save();
+
             return;
         }
 
