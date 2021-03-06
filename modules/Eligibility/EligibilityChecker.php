@@ -7,20 +7,22 @@
 namespace CircleLinkHealth\Eligibility;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Constants\Formats;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Core\Utilities\JsonFixer;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\DTO\Problem;
 use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PcmProblem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Validator;
@@ -171,8 +173,32 @@ class EligibilityChecker
     {
         return $this->patientList;
     }
+    
+    private static function fixJsonProblemsString(EligibilityJob &$eligibilityJob) {
+        $fixAttempt = JsonFixer::attemptFix($eligibilityJob->data['problems'] ?? $eligibilityJob->data['problems_string']);
+    
+        $wasFixed = ! is_null($fixAttempt);
+    
+        if ($wasFixed) {
+            if (isset($eligibilityJob->data['problems'])) {
+                $data                     = $eligibilityJob->data;
+                $brokenProblemsJsonString = $data['problems'] = $fixAttempt;
+                $eligibilityJob->data     = $data;
+            }
+            if (isset($eligibilityJob->data['problems_string'])) {
+                $data                     = $eligibilityJob->data;
+                $brokenProblemsJsonString = $data['problems_string'] = $fixAttempt;
+                $eligibilityJob->data     = $data;
+            }
+        }
+        
+        return $wasFixed;
+    }
+    private static function shouldAttemptToFixBrokenJsonProblems($class) {
+        return method_exists($class, 'expects') && Formats::JSON === $class->expects();
+    }
 
-    public static function getProblemsForEligibility(EligibilityJob $eligibilityJob)
+    public static function getProblemsForEligibility(EligibilityJob &$eligibilityJob)
     {
         $problems = $eligibilityJob->data['problems'] ?? $eligibilityJob->data['problems_string'] ?? null;
 
@@ -182,8 +208,13 @@ class EligibilityChecker
 
         foreach (config('importer.problem_loggers') as $class) {
             $class = app($class);
-
-            if ($class->shouldHandle($problems)) {
+            $shouldHandle = $class->shouldHandle($problems);
+            
+            if (false === $shouldHandle && self::shouldAttemptToFixBrokenJsonProblems($class)) {
+                $shouldHandle = self::fixJsonProblemsString($eligibilityJob);
+            }
+            
+            if ($shouldHandle) {
                 $problems = $class->handle($problems);
                 break;
             }

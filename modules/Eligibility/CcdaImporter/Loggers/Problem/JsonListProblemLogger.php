@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem;
 
+use CircleLinkHealth\Core\Constants\Formats;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
 use CircleLinkHealth\Eligibility\DTO\Problem;
 
@@ -40,12 +41,10 @@ class JsonListProblemLogger implements Logger
 
     public function shouldHandle($problems)
     {
-        $check = is_json($problems);
-
-//        if ($check === false) {
-//            throw new \Exception("The string contains invalid json. String: `$problemsString`");
-//        }
-
-        return (bool) $check;
+        return (bool) is_json($problems);
+    }
+    
+    public function expects() {
+        return Formats::JSON;
     }
 }
