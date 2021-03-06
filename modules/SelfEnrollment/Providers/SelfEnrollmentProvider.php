@@ -7,15 +7,11 @@
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateContinuumFamilyLetterCommand;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\SendSelfEnrollmentRemindersCommand;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateCameronEnrolleesMissingUserId;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentLetters;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
@@ -62,7 +58,7 @@ class SelfEnrollmentProvider extends ServiceProvider
             GenerateSelfEnrollmentSurveyCommand::class,
             UpdateCameronEnrolleesMissingUserId::class,
             SelfEnrollmentSendErrorFixedCommand::class,
-            SendSelfEnrollmentRemindersCommand::class
+            SendSelfEnrollmentRemindersCommand::class,
         ]);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(CoreServiceProvider::class);
