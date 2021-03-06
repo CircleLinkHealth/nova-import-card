@@ -8,14 +8,12 @@ namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
-use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Seeder;
 
@@ -60,7 +58,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $this->uiRequestsForThisPractice = $uiRequestsForThisPractice;
     }
 
-    public function createEnrollee(Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider, array $args = [])
+    public function createEnrollee(Practice $practice, User $provider, array $args = [])
     {
         $enrolleeForTesting = factory(Enrollee::class)->create(array_merge($args, [
             'provider_id'             => $provider->id,

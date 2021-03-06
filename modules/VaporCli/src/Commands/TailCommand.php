@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use DateTime;
@@ -12,6 +16,12 @@ use Symfony\Component\Console\Input\InputOption;
 
 class TailCommand extends Command
 {
+    /**
+     * The time the command was invoked.
+     *
+     * @var \DateTimeInterface
+     */
+    protected $invokedAt;
     /**
      * The event IDs that we have seen while tailing.
      *
@@ -27,26 +37,19 @@ class TailCommand extends Command
     protected $start;
 
     /**
-     * The time the command was invoked.
+     * Format the given log message date.
      *
-     * @var \DateTimeInterface
-     */
-    protected $invokedAt;
-
-    /**
-     * Configure the command options.
+     * @param array|string $date
      *
-     * @return void
+     * @return string
      */
-    protected function configure()
+    public function formatDate($date)
     {
-        $this
-            ->setName('tail')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->addOption('filter', null, InputOption::VALUE_OPTIONAL, 'The text that should be used to filter the logs')
-            ->addOption('cli', null, InputOption::VALUE_NONE, 'Tail the log for the CLI / queue function')
-            ->addOption('without-queue', null, InputOption::VALUE_NONE, 'Hide Vapor generated queue processing messages')
-            ->setDescription('Tail the log for an environment');
+        if (is_array($date)) {
+            return $date['date'];
+        }
+
+        return (new DateTime($date))->format('Y-m-d H:i:s');
     }
 
     /**
@@ -72,25 +75,78 @@ class TailCommand extends Command
     }
 
     /**
-     * Initialize the command's timestamps.
+     * Configure the command options.
      *
      * @return void
      */
-    protected function initializeTimestamps()
+    protected function configure()
     {
-        $this->start = time() * 1000;
-
-        $this->invokedAt = Carbon::now();
+        $this
+            ->setName('tail')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->addOption('filter', null, InputOption::VALUE_OPTIONAL, 'The text that should be used to filter the logs')
+            ->addOption('cli', null, InputOption::VALUE_NONE, 'Tail the log for the CLI / queue function')
+            ->addOption('without-queue', null, InputOption::VALUE_NONE, 'Hide Vapor generated queue processing messages')
+            ->setDescription('Tail the log for an environment');
     }
 
     /**
-     * Detrmine if the tail command should timeout.
+     * Get the current filter string for the tail operation.
      *
-     * @return bool
+     * @return string|null
      */
-    protected function shouldTimeout()
+    protected function currentFilter()
     {
-        return Carbon::now()->subMinutes(30)->gte($this->invokedAt);
+        if ($this->option('filter')) {
+            return '"'.$this->option('filter').'"';
+        }
+    }
+
+    /**
+     * Display the message context.
+     *
+     *
+     * @return void
+     */
+    protected function displayContext(array $context)
+    {
+        unset($context['aws_request_id']);
+
+        if (empty($context)) {
+            return;
+        }
+
+        $context = json_encode($context, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+
+        $this->output->writeln(PHP_EOL.$context.PHP_EOL);
+    }
+
+    /**
+     * Display the given log event.
+     *
+     *
+     * @return void
+     */
+    protected function displayEvent(array $event)
+    {
+        if ($this->skippable($event)) {
+            return;
+        }
+
+        $messages = trim(Str::after($event['message'], '[STDERR]'));
+
+        foreach (explode("\n", $messages) as $message) {
+            if ($this->currentFilter() &&
+                ! Str::contains($message, trim($this->currentFilter(), '"'))) {
+                continue;
+            }
+
+            $message = json_decode($message, true);
+
+            if ($message && ! empty($message)) {
+                $this->displayMessage($message);
+            }
+        }
     }
 
     /**
@@ -121,50 +177,8 @@ class TailCommand extends Command
     }
 
     /**
-     * Get the current filter string for the tail operation.
-     *
-     * @return string|null
-     */
-    protected function currentFilter()
-    {
-        if ($this->option('filter')) {
-            return '"'.$this->option('filter').'"';
-        }
-    }
-
-    /**
-     * Display the given log event.
-     *
-     * @param array $event
-     *
-     * @return void
-     */
-    protected function displayEvent(array $event)
-    {
-        if ($this->skippable($event)) {
-            return;
-        }
-
-        $messages = trim(Str::after($event['message'], '[STDERR]'));
-
-        foreach (explode("\n", $messages) as $message) {
-            if ($this->currentFilter() &&
-                ! Str::contains($message, trim($this->currentFilter(), '"'))) {
-                continue;
-            }
-
-            $message = json_decode($message, true);
-
-            if ($message && ! empty($message)) {
-                $this->displayMessage($message);
-            }
-        }
-    }
-
-    /**
      * Display the event message.
      *
-     * @param array $message
      *
      * @return void
      */
@@ -206,22 +220,6 @@ class TailCommand extends Command
     }
 
     /**
-     * Format the given log message date.
-     *
-     * @param string|array $date
-     *
-     * @return string
-     */
-    public function formatDate($date)
-    {
-        if (is_array($date)) {
-            return $date['date'];
-        }
-
-        return (new DateTime($date))->format('Y-m-d H:i:s');
-    }
-
-    /**
      * Format the log message.
      *
      * @param string $message
@@ -238,23 +236,25 @@ class TailCommand extends Command
     }
 
     /**
-     * Display the message context.
-     *
-     * @param array $context
+     * Initialize the command's timestamps.
      *
      * @return void
      */
-    protected function displayContext(array $context)
+    protected function initializeTimestamps()
     {
-        unset($context['aws_request_id']);
+        $this->start = time() * 1000;
 
-        if (empty($context)) {
-            return;
-        }
+        $this->invokedAt = Carbon::now();
+    }
 
-        $context = json_encode($context, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-
-        $this->output->writeln(PHP_EOL.$context.PHP_EOL);
+    /**
+     * Detrmine if the tail command should timeout.
+     *
+     * @return bool
+     */
+    protected function shouldTimeout()
+    {
+        return Carbon::now()->subMinutes(30)->gte($this->invokedAt);
     }
 
     /**

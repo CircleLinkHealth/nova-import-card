@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\Eligibility\Decorators;
 
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
+use CircleLinkHealth\Eligibility\DTO\Problem;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\PcmProblem;
-use CircleLinkHealth\Eligibility\DTO\Problem;
 use Illuminate\Support\Facades\Cache;
 
 class PcmChargeableServices implements MedicalRecordDecorator

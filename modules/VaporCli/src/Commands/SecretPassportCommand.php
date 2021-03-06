@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,6 +12,27 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class SecretPassportCommand extends Command
 {
+    /**
+     * Execute the command.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        Helpers::ensure_api_token_is_available();
+
+        if ( ! file_exists(getcwd().'/storage/oauth-private.key') ||
+            ! file_exists(getcwd().'/storage/oauth-public.key')) {
+            Helpers::abort('Unable to find Passport keys in [storage] directory.');
+        }
+
+        $this->storePrivateKey();
+        $this->storePublicKey();
+
+        Helpers::info('Keys stored successfully as secrets.');
+        Helpers::line('You should deploy the project to ensure the keys are available.');
+    }
+
     /**
      * Configure the command options.
      *
@@ -19,27 +44,6 @@ class SecretPassportCommand extends Command
             ->setName('secret:passport')
             ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
             ->setDescription('Store the application\'s Passport keys as secrets');
-    }
-
-    /**
-     * Execute the command.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        Helpers::ensure_api_token_is_available();
-
-        if (! file_exists(getcwd().'/storage/oauth-private.key') ||
-            ! file_exists(getcwd().'/storage/oauth-public.key')) {
-            Helpers::abort('Unable to find Passport keys in [storage] directory.');
-        }
-
-        $this->storePrivateKey();
-        $this->storePublicKey();
-
-        Helpers::info('Keys stored successfully as secrets.');
-        Helpers::line('You should deploy the project to ensure the keys are available.');
     }
 
     /**

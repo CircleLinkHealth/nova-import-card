@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Exception;
@@ -19,7 +23,7 @@ class LambdaRuntime
     /**
      * Create a new Lambda runtime.
      *
-     * @param  string  $apiUrl
+     * @param  string $apiUrl
      * @return void
      */
     public function __construct($apiUrl)
@@ -38,31 +42,8 @@ class LambdaRuntime
     }
 
     /**
-     * Handle the next Lambda invocation.
-     *
-     * @param  callable  $callback
-     * @return void
-     */
-    public function nextInvocation(callable $callback)
-    {
-        [$invocationId, $event] = LambdaInvocation::next($this->apiUrl);
-
-        $_ENV['AWS_REQUEST_ID'] = $invocationId;
-
-        try {
-            $this->notifyLambdaOfResponse($invocationId, $callback($invocationId, $event));
-        } catch (Throwable $error) {
-            $this->handleException($invocationId, $error);
-
-            exit(1);
-        }
-    }
-
-    /**
      * Inform Lambda of an invocation failure.
      *
-     * @param  string  $invocationId
-     * @param  \Throwable  $error
      * @return void
      */
     public function handleException(string $invocationId, Throwable $error)
@@ -81,8 +62,28 @@ class LambdaRuntime
 
         $this->notifyLambdaOfError($invocationId, [
             'errorMessage' => $error->getMessage(),
-            'errorType' => get_class($error),
-            'stackTrace' => explode(PHP_EOL, $error->getTraceAsString()),
+            'errorType'    => get_class($error),
+            'stackTrace'   => explode(PHP_EOL, $error->getTraceAsString()),
         ]);
+    }
+
+    /**
+     * Handle the next Lambda invocation.
+     *
+     * @return void
+     */
+    public function nextInvocation(callable $callback)
+    {
+        [$invocationId, $event] = LambdaInvocation::next($this->apiUrl);
+
+        $_ENV['AWS_REQUEST_ID'] = $invocationId;
+
+        try {
+            $this->notifyLambdaOfResponse($invocationId, $callback($invocationId, $event));
+        } catch (Throwable $error) {
+            $this->handleException($invocationId, $error);
+
+            exit(1);
+        }
     }
 }

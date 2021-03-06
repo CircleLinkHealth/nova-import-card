@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Controllers;
 
 use AshAllenDesign\ShortURL\Classes\Resolver;
@@ -15,15 +19,10 @@ class ShortURLController
      * in the config but the controller has been
      * reached using that route, return HTTP
      * 404.
-     *
-     * @param  Request  $request
-     * @param  Resolver  $resolver
-     * @param  string  $shortURLKey
-     * @return RedirectResponse
      */
     public function __invoke(Request $request, Resolver $resolver, string $shortURLKey): RedirectResponse
     {
-        if ($request->route()->getName() === 'short-url.invoke'
+        if ('short-url.invoke' === $request->route()->getName()
             && config('short-url.disable_default_route')) {
             abort(404);
         }

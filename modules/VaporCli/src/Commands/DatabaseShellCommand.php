@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,20 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DatabaseShellCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:shell')
-            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
-            ->addArgument('user', InputArgument::OPTIONAL, 'The username of the database user to connect as')
-            ->setDescription('Start a shell for the given database');
-    }
-
     /**
      * Execute the command.
      *
@@ -32,7 +22,7 @@ class DatabaseShellCommand extends Command
 
         $databases = $this->vapor->databases();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($databases, $databaseId);
         }
 
@@ -68,9 +58,22 @@ class DatabaseShellCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:shell')
+            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
+            ->addArgument('user', InputArgument::OPTIONAL, 'The username of the database user to connect as')
+            ->setDescription('Start a shell for the given database');
+    }
+
+    /**
      * Find a jump-box compatible with the database.
      *
-     * @param array $database
      *
      * @return array
      */
@@ -94,7 +97,6 @@ class DatabaseShellCommand extends Command
     /**
      * Find the database user for the shell session.
      *
-     * @param array $database
      *
      * @return array
      */
@@ -122,7 +124,6 @@ class DatabaseShellCommand extends Command
     /**
      * Store the private SSH key for the jump-box.
      *
-     * @param array $jumpBox
      *
      * @return string
      */

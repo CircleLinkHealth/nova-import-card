@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -9,19 +13,6 @@ use Symfony\Component\Console\Input\InputArgument;
 class DatabaseShowCommand extends Command
 {
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:show')
-            ->addArgument('database', InputArgument::REQUIRED, 'The database name / ID')
-            ->setDescription('Display the details of a database');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
@@ -30,7 +21,7 @@ class DatabaseShowCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($this->vapor->databases(), $databaseId);
         }
 
@@ -48,7 +39,7 @@ class DatabaseShowCommand extends Command
                 $database['cloud_provider']['name'],
                 $database['name'],
                 $database['region'],
-                $database['type'] == 'aurora-serverless' ? 'Serverless' : 'Fixed Size',
+                'aurora-serverless' == $database['type'] ? 'Serverless' : 'Fixed Size',
                 $database['instance_class'],
                 $database['storage'].'GB',
                 Str::title(str_replace('_', ' ', $database['status'])),
@@ -64,5 +55,18 @@ class DatabaseShowCommand extends Command
         Helpers::line();
 
         $this->call('database:metrics', ['database' => $this->argument('database')]);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:show')
+            ->addArgument('database', InputArgument::REQUIRED, 'The database name / ID')
+            ->setDescription('Display the details of a database');
     }
 }

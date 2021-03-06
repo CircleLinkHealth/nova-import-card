@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Symfony\Component\Yaml\Yaml;
@@ -7,37 +11,29 @@ use Symfony\Component\Yaml\Yaml;
 class Manifest
 {
     /**
-     * Get the project ID from the current directory's manifest.
+     * Add an environment to the manifest.
      *
-     * @return int
+     * @param string $environment
+     *
+     * @return void
      */
-    public static function id()
+    public static function addEnvironment($environment, array $config = [])
     {
-        return static::current()['id'];
-    }
+        $manifest = static::current();
 
-    /**
-     * Get the project name from the current directory's manifest.
-     *
-     * @return int
-     */
-    public static function name()
-    {
-        return static::current()['name'];
-    }
-
-    /**
-     * Retrieve the manifest for the current working directory.
-     *
-     * @return array
-     */
-    public static function current()
-    {
-        if (! file_exists(Path::manifest())) {
-            Helpers::abort('Unable to find a Vapor manifest in this directory.');
+        if (isset($manifest['environments'][$environment])) {
+            Helpers::abort('That environment already exists.');
         }
 
-        return Yaml::parse(file_get_contents(Path::manifest()));
+        $manifest['environments'][$environment] = ! empty($config) ? $config : [
+            'build' => ['COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'],
+        ];
+
+        $manifest['environments'] = collect(
+            $manifest['environments']
+        )->sortKeys()->all();
+
+        static::write($manifest);
     }
 
     /**
@@ -49,7 +45,7 @@ class Manifest
      */
     public static function buildCommands($environment)
     {
-        if (! isset(static::current()['environments'][$environment])) {
+        if ( ! isset(static::current()['environments'][$environment])) {
             Helpers::abort("The [{$environment}] environment has not been defined.");
         }
 
@@ -57,52 +53,33 @@ class Manifest
     }
 
     /**
-     * Get the ignored file patterns for the project.
+     * Retrieve the manifest for the current working directory.
      *
      * @return array
      */
-    public static function ignoredFiles()
+    public static function current()
     {
-        return static::current()['ignore'] ?? [];
-        // return static::current()['environments'][$environment]['ignore'] ?? [];
-    }
-
-    /**
-     * Determine if we should separate the vendor directory.
-     *
-     * @param  string  $environment
-     * @return bool
-     */
-    public static function shouldSeparateVendor($environment)
-    {
-        if (static::usesContainerImage($environment)) {
-            return false;
+        if ( ! file_exists(Path::manifest())) {
+            Helpers::abort('Unable to find a Vapor manifest in this directory.');
         }
 
-        return static::current()['separate-vendor'] ?? false;
+        return Yaml::parse(file_get_contents(Path::manifest()));
     }
 
     /**
-     * Get the runtime for the given environment.
+     * Delete the given environment from the manifest.
      *
      * @param string $environment
      *
-     * @return string|null
+     * @return void
      */
-    public static function runtime($environment)
+    public static function deleteEnvironment($environment)
     {
-        return static::current()['environments'][$environment]['runtime'] ?? null;
-    }
+        $manifest = static::current();
 
-    /**
-     * Determine if the environment uses a Docker image.
-     *
-     * @param  string  $environment
-     * @return bool
-     */
-    public static function usesContainerImage($environment)
-    {
-        return (static::current()['environments'][$environment]['runtime'] ?? null) == 'docker';
+        unset($manifest['environments'][$environment]);
+
+        static::write($manifest);
     }
 
     /**
@@ -125,6 +102,75 @@ class Manifest
     public static function fresh($project)
     {
         static::freshConfiguration($project);
+    }
+
+    /**
+     * Get the project ID from the current directory's manifest.
+     *
+     * @return int
+     */
+    public static function id()
+    {
+        return static::current()['id'];
+    }
+
+    /**
+     * Get the ignored file patterns for the project.
+     *
+     * @return array
+     */
+    public static function ignoredFiles()
+    {
+        return static::current()['ignore'] ?? [];
+        // return static::current()['environments'][$environment]['ignore'] ?? [];
+    }
+
+    /**
+     * Get the project name from the current directory's manifest.
+     *
+     * @return int
+     */
+    public static function name()
+    {
+        return static::current()['name'];
+    }
+
+    /**
+     * Get the runtime for the given environment.
+     *
+     * @param string $environment
+     *
+     * @return string|null
+     */
+    public static function runtime($environment)
+    {
+        return static::current()['environments'][$environment]['runtime'] ?? null;
+    }
+
+    /**
+     * Determine if we should separate the vendor directory.
+     *
+     * @param  string $environment
+     * @return bool
+     */
+    public static function shouldSeparateVendor($environment)
+    {
+        if (static::usesContainerImage($environment)) {
+            return false;
+        }
+
+        return static::current()['separate-vendor'] ?? false;
+    }
+
+    /**
+     * Determine if the environment uses a Docker image.
+     *
+     * @param  string $environment
+     * @return bool
+     */
+    public static function usesContainerImage($environment)
+    {
+        return (static::current()['environments'][$environment]['runtime'] ?? null) == 'docker';
     }
 
     /**
@@ -165,52 +211,8 @@ class Manifest
     }
 
     /**
-     * Add an environment to the manifest.
-     *
-     * @param string $environment
-     * @param array  $config
-     *
-     * @return void
-     */
-    public static function addEnvironment($environment, array $config = [])
-    {
-        $manifest = static::current();
-
-        if (isset($manifest['environments'][$environment])) {
-            Helpers::abort('That environment already exists.');
-        }
-
-        $manifest['environments'][$environment] = ! empty($config) ? $config : [
-            'build' => ['COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'],
-        ];
-
-        $manifest['environments'] = collect(
-            $manifest['environments']
-        )->sortKeys()->all();
-
-        static::write($manifest);
-    }
-
-    /**
-     * Delete the given environment from the manifest.
-     *
-     * @param string $environment
-     *
-     * @return void
-     */
-    public static function deleteEnvironment($environment)
-    {
-        $manifest = static::current();
-
-        unset($manifest['environments'][$environment]);
-
-        static::write($manifest);
-    }
-
-    /**
      * Write the given array to disk as the new manifest.
      *
-     * @param array       $manifest
      * @param string|null $path
      *
      * @return void

@@ -243,6 +243,7 @@ class SelfEnrollmentController extends Controller
         try {
             /** @var User $user */
             $user = Auth::loginUsingId((int) $userId, true);
+
             return $this->enrollableInvitationManager(
                 $user
             );

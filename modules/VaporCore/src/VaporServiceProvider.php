@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor;
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
@@ -16,7 +20,12 @@ use Laravel\Vapor\Queue\VaporConnector;
 
 class VaporServiceProvider extends ServiceProvider
 {
-    use ConfiguresAssets, ConfiguresDynamoDb, ConfiguresQueue, ConfiguresRedis, ConfiguresSqs, DefinesRoutes;
+    use ConfiguresAssets;
+    use ConfiguresDynamoDb;
+    use ConfiguresQueue;
+    use ConfiguresRedis;
+    use ConfiguresSqs;
+    use DefinesRoutes;
 
     /**
      * Bootstrap any application services.
@@ -35,23 +44,10 @@ class VaporServiceProvider extends ServiceProvider
             call_user_func($this->queueExtender());
         } else {
             $this->app->afterResolving(
-                'queue', $this->queueExtender()
+                'queue',
+                $this->queueExtender()
             );
         }
-    }
-
-    /**
-     * Get the queue extension callback.
-     *
-     * @return \Closure
-     */
-    protected function queueExtender()
-    {
-        return function () {
-            Queue::extend('sqs', function () {
-                return new VaporConnector;
-            });
-        };
     }
 
     /**
@@ -88,8 +84,21 @@ class VaporServiceProvider extends ServiceProvider
     protected function configure()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/vapor.php', 'vapor'
+            __DIR__.'/../config/vapor.php',
+            'vapor'
         );
+    }
+
+    /**
+     * Ensure Laravel Mix is properly configured.
+     *
+     * @return void
+     */
+    protected function ensureMixIsConfigured()
+    {
+        if (isset($_ENV['MIX_URL'])) {
+            Config::set('app.mix_url', $_ENV['MIX_URL']);
+        }
     }
 
     /**
@@ -107,25 +116,40 @@ class VaporServiceProvider extends ServiceProvider
     }
 
     /**
-     * Ensure Laravel Mix is properly configured.
+     * Get the queue extension callback.
      *
-     * @return void
+     * @return \Closure
      */
-    protected function ensureMixIsConfigured()
+    protected function queueExtender()
     {
-        if (isset($_ENV['MIX_URL'])) {
-            Config::set('app.mix_url', $_ENV['MIX_URL']);
-        }
+        return function () {
+            Queue::extend('sqs', function () {
+                return new VaporConnector();
+            });
+        };
     }
 
     /**
-     * Configure trusted proxy.
+     * Register the Vapor console commands.
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
-    private function configureTrustedProxy()
+    protected function registerCommands()
     {
-        Config::set('trustedproxy.proxies', Config::get('trustedproxy.proxies') ?? ['0.0.0.0/0', '2000:0:0:0:0:0:0:0/3']);
+        if ( ! $this->app->runningInConsole()) {
+            return;
+        }
+
+        $this->app[ConsoleKernel::class]->command('vapor:handle {payload}', function () {
+            throw new InvalidArgumentException('Unknown event type. Please create a vapor:handle command to handle custom events.');
+        });
+
+        $this->app->singleton('command.vapor.work', function ($app) {
+            return new VaporWorkCommand($app['queue.vaporWorker']);
+        });
+
+        $this->commands(['command.vapor.work']);
     }
 
     /**
@@ -139,28 +163,12 @@ class VaporServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the Vapor console commands.
+     * Configure trusted proxy.
      *
      * @return void
-     *
-     * @throws \InvalidArgumentException
      */
-    protected function registerCommands()
+    private function configureTrustedProxy()
     {
-        if (! $this->app->runningInConsole()) {
-            return;
-        }
-
-        $this->app[ConsoleKernel::class]->command('vapor:handle {payload}', function () {
-            throw new InvalidArgumentException(
-                'Unknown event type. Please create a vapor:handle command to handle custom events.'
-            );
-        });
-
-        $this->app->singleton('command.vapor.work', function ($app) {
-            return new VaporWorkCommand($app['queue.vaporWorker']);
-        });
-
-        $this->commands(['command.vapor.work']);
+        Config::set('trustedproxy.proxies', Config::get('trustedproxy.proxies') ?? ['0.0.0.0/0', '2000:0:0:0:0:0:0:0/3']);
     }
 }

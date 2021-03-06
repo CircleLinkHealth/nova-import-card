@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,22 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class RecordCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('record')
-            ->addArgument('zone', InputArgument::REQUIRED, 'The zone name / ID')
-            ->addArgument('type', InputArgument::REQUIRED, 'The DNS record type')
-            ->addArgument('name', InputArgument::REQUIRED, 'The DNS record name')
-            ->addArgument('value', InputArgument::REQUIRED, 'The DNS record value')
-            ->setDescription('Add a new DNS record to a zone');
-    }
-
     /**
      * Execute the command.
      *
@@ -32,7 +20,7 @@ class RecordCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($zoneId = $this->argument('zone'))) {
+        if ( ! is_numeric($zoneId = $this->argument('zone'))) {
             $zoneId = $this->findIdByName($this->vapor->zones(), $zoneId, 'zone');
         }
 
@@ -48,5 +36,21 @@ class RecordCommand extends Command
         );
 
         Helpers::info('Record updated successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('record')
+            ->addArgument('zone', InputArgument::REQUIRED, 'The zone name / ID')
+            ->addArgument('type', InputArgument::REQUIRED, 'The DNS record type')
+            ->addArgument('name', InputArgument::REQUIRED, 'The DNS record name')
+            ->addArgument('value', InputArgument::REQUIRED, 'The DNS record value')
+            ->setDescription('Add a new DNS record to a zone');
     }
 }

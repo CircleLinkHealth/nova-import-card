@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -12,20 +16,6 @@ use Symfony\Component\Console\Input\InputOption;
 class RollbackCommand extends Command
 {
     use DisplaysDeploymentProgress;
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('rollback')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->addOption('select', null, InputOption::VALUE_NONE, 'Present a list of deployments to choose from')
-            ->setDescription('Rollback an environment to a previous deployment');
-    }
 
     /**
      * Execute the command.
@@ -81,7 +71,7 @@ class RollbackCommand extends Command
         }
 
         $deployments = collect($deployments)->filter(function ($deployment) {
-            return $deployment['status'] == 'finished';
+            return 'finished' == $deployment['status'];
         })->slice(1)->values()->all();
 
         if (empty($deployments)) {
@@ -92,23 +82,22 @@ class RollbackCommand extends Command
     }
 
     /**
-     * Format the deployments into an array of choices.
+     * Configure the command options.
      *
-     * @param array $deployments
-     *
-     * @return array
+     * @return void
      */
-    protected function formatDeployments(array $deployments)
+    protected function configure()
     {
-        return collect($deployments)->mapWithKeys(function ($deployment) {
-            return [$deployment['id'] => $this->deploymentName($deployment)];
-        })->all();
+        $this
+            ->setName('rollback')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->addOption('select', null, InputOption::VALUE_NONE, 'Present a list of deployments to choose from')
+            ->setDescription('Rollback an environment to a previous deployment');
     }
 
     /**
      * Get the displayable deployment name for the given deployment.
      *
-     * @param array $deployment
      *
      * @return string
      */
@@ -121,5 +110,18 @@ class RollbackCommand extends Command
             $deployment['artifact']['commit'] ? ' ('.Str::substr($deployment['artifact']['commit'], 0, 8).')' : '',
             Helpers::time_ago($deployment['created_at'])
         ));
+    }
+
+    /**
+     * Format the deployments into an array of choices.
+     *
+     *
+     * @return array
+     */
+    protected function formatDeployments(array $deployments)
+    {
+        return collect($deployments)->mapWithKeys(function ($deployment) {
+            return [$deployment['id'] => $this->deploymentName($deployment)];
+        })->all();
     }
 }

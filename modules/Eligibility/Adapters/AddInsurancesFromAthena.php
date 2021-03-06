@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Support\Collection;
 
 class AddInsurancesFromAthena implements EligibilityCheckAdapter

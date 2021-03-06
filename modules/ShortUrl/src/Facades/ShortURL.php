@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Facades;
 
 use AshAllenDesign\ShortURL\Classes\Builder;
@@ -33,7 +37,6 @@ class ShortURL extends Facade
     /**
      * Get the registered name of the component.
      *
-     * @return string
      *
      * @throws RuntimeException
      */

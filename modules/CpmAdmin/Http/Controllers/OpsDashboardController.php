@@ -21,7 +21,7 @@ class OpsDashboardController extends Controller
             try {
                 $requestDate = Carbon::parse($request['date']);
                 $date        = $requestDate->copy();
-            }catch (InvalidFormatException $exception){
+            } catch (InvalidFormatException $exception) {
                 return redirect()->back()->withErrors('Something went wrong. Please reload the page, select a report to export and try again. If the problem persists, please contact support.');
             }
         } else {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class JumpCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('jump')
-            ->addArgument('name', InputArgument::OPTIONAL, 'The name of the jumpbox')
-            ->setDescription('Create a new jumpbox for accessing private databases');
-    }
-
     /**
      * Execute the command.
      *
@@ -56,10 +47,24 @@ class JumpCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('jump')
+            ->addArgument('name', InputArgument::OPTIONAL, 'The name of the jumpbox')
+            ->setDescription('Create a new jumpbox for accessing private databases');
+    }
+
+    /**
      * Store the private key for the jump-box if the user desires.
      *
      * @param array  $jumpBox
      * @param string $privateKey
+     * @param mixed  $name
      *
      * @return void
      */

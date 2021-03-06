@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Illuminate\Support\Str;
@@ -26,6 +30,55 @@ class RemoveIgnoredFiles
         $this->removeSymfonyTests();
 
         $this->removeUserIgnoredFiles();
+    }
+
+    /**
+     * Parse the given ignore pattern into a base directory and file pattern.
+     *
+     * @param string $pattern
+     *
+     * @return array
+     */
+    protected function parsePattern($pattern)
+    {
+        $filePattern = basename(trim($pattern, '/'));
+
+        return Str::contains(trim($pattern, '/'), '/')
+                    ? [dirname(Path::app().'/'.trim($pattern, '/')), $filePattern]
+                    : [Path::app(), $filePattern];
+    }
+
+    /**
+     * Remove the directories that are ignored by default.
+     *
+     * @return void
+     */
+    protected function removeDefaultIgnoredDirectories()
+    {
+        $defaultDirectories = [
+            // Path::app().'/database/factories',
+            // Path::app().'/database/seeds',
+            Path::app().'/resources/css',
+            Path::app().'/resources/js',
+            Path::app().'/resources/less',
+            Path::app().'/resources/sass',
+            Path::app().'/resources/scss',
+            Path::app().'/storage/cache',
+            Path::app().'/storage/debugbar',
+            Path::app().'/storage/logs',
+            Path::app().'/storage/sessions',
+            Path::app().'/storage/testing',
+            Path::app().'/vendor/aws/aws-sdk-php/.changes',
+            Path::app().'/vendor/monolog/monolog/tests',
+            Path::app().'/vendor/swiftmailer/swiftmailer/doc',
+            Path::app().'/vendor/swiftmailer/swiftmailer/tests',
+        ];
+
+        foreach ($defaultDirectories as $directory) {
+            if ($this->files->isDirectory($directory)) {
+                $this->files->deleteDirectory($directory, $preserve = true);
+            }
+        }
     }
 
     /**
@@ -66,39 +119,6 @@ class RemoveIgnoredFiles
     }
 
     /**
-     * Remove the directories that are ignored by default.
-     *
-     * @return void
-     */
-    protected function removeDefaultIgnoredDirectories()
-    {
-        $defaultDirectories = [
-            // Path::app().'/database/factories',
-            // Path::app().'/database/seeds',
-            Path::app().'/resources/css',
-            Path::app().'/resources/js',
-            Path::app().'/resources/less',
-            Path::app().'/resources/sass',
-            Path::app().'/resources/scss',
-            Path::app().'/storage/cache',
-            Path::app().'/storage/debugbar',
-            Path::app().'/storage/logs',
-            Path::app().'/storage/sessions',
-            Path::app().'/storage/testing',
-            Path::app().'/vendor/aws/aws-sdk-php/.changes',
-            Path::app().'/vendor/monolog/monolog/tests',
-            Path::app().'/vendor/swiftmailer/swiftmailer/doc',
-            Path::app().'/vendor/swiftmailer/swiftmailer/tests',
-        ];
-
-        foreach ($defaultDirectories as $directory) {
-            if ($this->files->isDirectory($directory)) {
-                $this->files->deleteDirectory($directory, $preserve = true);
-            }
-        }
-    }
-
-    /**
      * Remove the tests from the Symfony components.
      *
      * @return void
@@ -128,10 +148,10 @@ class RemoveIgnoredFiles
                 $this->files->deleteDirectory($directory.'/'.$filePattern, $preserve = false);
             } else {
                 $files = (new Finder())
-                            ->in($directory)
-                            ->depth('== 0')
-                            ->ignoreDotFiles(false)
-                            ->name($filePattern);
+                    ->in($directory)
+                    ->depth('== 0')
+                    ->ignoreDotFiles(false)
+                    ->name($filePattern);
 
                 foreach ($files as $file) {
                     Helpers::step('<comment>Removing Ignored File:</comment> '.str_replace(Path::app().'/', '', $file->getRealPath()));
@@ -140,21 +160,5 @@ class RemoveIgnoredFiles
                 }
             }
         }
-    }
-
-    /**
-     * Parse the given ignore pattern into a base directory and file pattern.
-     *
-     * @param string $pattern
-     *
-     * @return array
-     */
-    protected function parsePattern($pattern)
-    {
-        $filePattern = basename(trim($pattern, '/'));
-
-        return Str::contains(trim($pattern, '/'), '/')
-                    ? [dirname(Path::app().'/'.trim($pattern, '/')), $filePattern]
-                    : [Path::app(), $filePattern];
     }
 }

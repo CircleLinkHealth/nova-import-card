@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,18 +11,6 @@ use Laravel\VaporCli\Helpers;
 class ProviderCommand extends Command
 {
     use RetrievesProviderCredentials;
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('provider')
-            ->setDescription('Link a new cloud provider account to your user account');
-    }
 
     /**
      * Execute the command.
@@ -40,5 +32,17 @@ class ProviderCommand extends Command
         );
 
         Helpers::info('Cloud provider account linked successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('provider')
+            ->setDescription('Link a new cloud provider account to your user account');
     }
 }

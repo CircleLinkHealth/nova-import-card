@@ -1,24 +1,25 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateNbiLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Artisan;
 
 class GenerateDemoLetter extends Seeder
 {
-    const DEMO_PRACTICE_NAME = 'demo';
-    const PRACTICE_SIGNATORY_NAME = "Dr. Demo Testing <br> Cardiologist";
+    const DEMO_PRACTICE_NAME      = 'demo';
+    const PRACTICE_SIGNATORY_NAME = 'Dr. Demo Testing <br> Cardiologist';
     const UI_REQUESTS             = 'ui_requests';
+    private string $practiceName;
     private string $practiceNumber;
     private string $signatoryName;
-    private string $practiceName;
-
 
     /**
      * Run the database seeds.
@@ -27,15 +28,15 @@ class GenerateDemoLetter extends Seeder
      */
     public function run()
     {
-        $this->practiceNumber       = EnrollmentInvitationLetter::PRACTICE_NUMBER;
-        $this->signatoryName        = EnrollmentInvitationLetter::SIGNATORY_NAME;
-        $this->practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
+        $this->practiceNumber = EnrollmentInvitationLetter::PRACTICE_NUMBER;
+        $this->signatoryName  = EnrollmentInvitationLetter::SIGNATORY_NAME;
+        $this->practiceName   = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
         $demoPractice = $this->getPractice();
 
-        $bodyPageOne = $this->pageOne($customerSignaturePic);
-        $bodyPageTwo = $this->pageTwo();
+        $bodyPageOne   = $this->pageOne($customerSignaturePic);
+        $bodyPageTwo   = $this->pageTwo();
         $bodyPageThree = $this->pageThree();
 
         EnrollmentInvitationLetter::updateOrCreate(
@@ -66,7 +67,7 @@ class GenerateDemoLetter extends Seeder
                 ),
 
                 self::UI_REQUESTS => json_encode([
-                    'logo_position'        => 'text-align:left',
+                    'logo_position' => 'text-align:left',
                 ]),
             ]
         );
@@ -79,11 +80,11 @@ class GenerateDemoLetter extends Seeder
         if ( ! App::environment(['production']) && ! $demoPractice) {
             $demoPractice = Practice::firstOrCreate(
                 [
-                    'name' =>  self::DEMO_PRACTICE_NAME,
+                    'name' => self::DEMO_PRACTICE_NAME,
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => "Demo Clinic",
+                    'display_name'          => 'Demo Clinic',
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
@@ -100,9 +101,10 @@ class GenerateDemoLetter extends Seeder
 
     private function pageOne(string $customerSignaturePic)
     {
-        $providerName = $this->signatoryName;
-        $phoneNumber = $this->practiceNumber;
+        $providerName          = $this->signatoryName;
+        $phoneNumber           = $this->practiceNumber;
         $practiceSignatoryName = self::PRACTICE_SIGNATORY_NAME;
+
         return "<p><span>We are reaching out to you on behalf of your provider, $providerName, to let you know about a program called the </span><strong style='font-weight: 600;'>Beth Care Coordination Program</strong><span>.
         </span></p>
         <p><span>The Beth Care Coordination Program was created to help people living with chronic medical illnesses like diabetes, heart disease and kidney disease. People with these kinds of illnesses have lots of doctor visits, tests and medications. Keeping track of all this can be very hard.</span></p>
@@ -135,26 +137,10 @@ class GenerateDemoLetter extends Seeder
         <br>";
     }
 
-    private function pageTwo()
-    {
-        return "<p style=\"text-decoration: underline;\"><strong style='font-weight: 600;''>Frequently Asked Questions</strong></p>
-        <p><strong style='font-weight: 600;'>What is a chronic illness?</strong></p>
-        <p><span>A chronic illness is a long-lasting health problem that can often be controlled with proper treatment and management. A few examples include asthma, diabetes, arthritis, hypertension, and heart disease.</span></p>
-        <p><strong style='font-weight: 600;'>What is the Beth Care Coordination program?</strong></p>
-        <p><span>The Beth Care coordination program provides support and care between doctor visits to eligible patients who have multiple chronic illnesses. Services include access to a care team who can answer your healthcare questions and help you get the information, appointments, treatments, and care you need to live a healthier life.</span></p>
-        <p><strong style='font-weight: 600;'>Why does my doctor want this for me?</strong></p>
-        <p><span>While everyone can benefit from having their care coordinated, it can be especially important if you have multiple chronic illnesses. You may be seeing different types of doctors or taking several medications. When your care is coordinated properly, your doctors get the information they need when they need it and have peace of mind knowing that your healthcare needs are being met.</span></p>
-        <p><strong style='font-weight: 600;'>Is my information private and secure?</strong></p>
-        <p><span>Yes - just like there are rules in banking that protect your financial information, there are rules in healthcare that protect your medical information.&nbsp;</span></p>
-        <p><strong style='font-weight: 600;'>But what if I feel fine?</strong></p>
-        <p><span>Great. Let's keep it that way. One of the reasons your doctor is inviting you to participate in this program is to help you get and stay as healthy as possible. The program also focuses on things like helping you keep on top of preventive care and helping you find valuable healthcare resources and community services.</span></p>
-        <p><strong style='font-weight: 600;'>What does the program cost?</strong></p>
-        <p><span>The Beth Care Coordination program is a benefit under Medicare Part B. However, there may be a co-payment for this benefit. If you have a secondary health plan, it will likely cover the remainder. For example, if you have both Medicare and Medicaid, there is </span><span>$0</span><span> out of pocket cost. You can contact your health plan if you&rsquo;re not sure of your coverage or you can ask our care coordinators for assistance when they reach out to you.&nbsp;</span></p> <br>";
-    }
-
     private function pageThree()
     {
         $phoneNumber = $this->practiceNumber;
+
         return "<p><strong style='font-weight: 600;'>What are the benefits of signing up for the Beth Care Coordination program?</strong></p>
         <p><span>When you sign up, you will be taking an important step toward living a healthier life. Benefits of the program include:</span></p>
         <ul class='browser-default'>
@@ -189,5 +175,22 @@ class GenerateDemoLetter extends Seeder
         <p><strong style='font-weight: 600;'>How do I sign up?</strong></p>
         <p><span>If you would like additional information, or are interested in enrolling today, please call $phoneNumber.</span></p>
         <p><span>Your doctor can count on them to look out for you between visits and make sure that you get the information, appointments, treatments and care you need when you need it.</span></p>";
+    }
+
+    private function pageTwo()
+    {
+        return "<p style=\"text-decoration: underline;\"><strong style='font-weight: 600;''>Frequently Asked Questions</strong></p>
+        <p><strong style='font-weight: 600;'>What is a chronic illness?</strong></p>
+        <p><span>A chronic illness is a long-lasting health problem that can often be controlled with proper treatment and management. A few examples include asthma, diabetes, arthritis, hypertension, and heart disease.</span></p>
+        <p><strong style='font-weight: 600;'>What is the Beth Care Coordination program?</strong></p>
+        <p><span>The Beth Care coordination program provides support and care between doctor visits to eligible patients who have multiple chronic illnesses. Services include access to a care team who can answer your healthcare questions and help you get the information, appointments, treatments, and care you need to live a healthier life.</span></p>
+        <p><strong style='font-weight: 600;'>Why does my doctor want this for me?</strong></p>
+        <p><span>While everyone can benefit from having their care coordinated, it can be especially important if you have multiple chronic illnesses. You may be seeing different types of doctors or taking several medications. When your care is coordinated properly, your doctors get the information they need when they need it and have peace of mind knowing that your healthcare needs are being met.</span></p>
+        <p><strong style='font-weight: 600;'>Is my information private and secure?</strong></p>
+        <p><span>Yes - just like there are rules in banking that protect your financial information, there are rules in healthcare that protect your medical information.&nbsp;</span></p>
+        <p><strong style='font-weight: 600;'>But what if I feel fine?</strong></p>
+        <p><span>Great. Let's keep it that way. One of the reasons your doctor is inviting you to participate in this program is to help you get and stay as healthy as possible. The program also focuses on things like helping you keep on top of preventive care and helping you find valuable healthcare resources and community services.</span></p>
+        <p><strong style='font-weight: 600;'>What does the program cost?</strong></p>
+        <p><span>The Beth Care Coordination program is a benefit under Medicare Part B. However, there may be a co-payment for this benefit. If you have a secondary health plan, it will likely cover the remainder. For example, if you have both Medicare and Medicaid, there is </span><span>$0</span><span> out of pocket cost. You can contact your health plan if you&rsquo;re not sure of your coverage or you can ask our care coordinators for assistance when they reach out to you.&nbsp;</span></p> <br>";
     }
 }

@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;

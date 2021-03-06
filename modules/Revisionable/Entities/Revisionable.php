@@ -21,9 +21,9 @@ use Illuminate\Support\Arr;
  * Class Revisionable.
  *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revisionable newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revisionable newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revisionable query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revisionable newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revisionable newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revisionable query()
  * @mixin \Eloquent
  * @property int|null $revision_history_count
  */

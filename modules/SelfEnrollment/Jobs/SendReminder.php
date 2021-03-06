@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\SelfEnrollment\Jobs;
 
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AppConfig\Reminders;
+use CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
@@ -51,7 +51,7 @@ class SendReminder implements ShouldQueue
             return;
         }
 
-        $color      = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
         SendInvitation::dispatch($this->patient, $this->getBatch($this->patient->program_id, $color)->id, $color, true);
     }
 

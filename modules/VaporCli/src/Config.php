@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Illuminate\Support\Arr;
@@ -20,6 +24,24 @@ class Config
     }
 
     /**
+     * Load the entire configuration array.
+     *
+     * @return array
+     */
+    public static function load()
+    {
+        if ( ! is_dir(dirname(static::path()))) {
+            mkdir(dirname(static::path()), 0755, true);
+        }
+
+        if (file_exists(static::path())) {
+            return json_decode(file_get_contents(static::path()), true);
+        }
+
+        return [];
+    }
+
+    /**
      * Store the given configuration value.
      *
      * @param string $key
@@ -34,24 +56,6 @@ class Config
         Arr::set($config, $key, $value);
 
         file_put_contents(static::path(), json_encode($config, JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * Load the entire configuration array.
-     *
-     * @return array
-     */
-    public static function load()
-    {
-        if (! is_dir(dirname(static::path()))) {
-            mkdir(dirname(static::path()), 0755, true);
-        }
-
-        if (file_exists(static::path())) {
-            return json_decode(file_get_contents(static::path()), true);
-        }
-
-        return [];
     }
 
     /**

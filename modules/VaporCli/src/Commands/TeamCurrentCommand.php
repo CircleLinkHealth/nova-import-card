@@ -1,23 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 class TeamCurrentCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('team:current')
-            ->setDescription('Determine your current team context');
-    }
-
     /**
      * Execute the command.
      *
@@ -32,10 +24,22 @@ class TeamCurrentCommand extends Command
             $this->vapor->ownedTeams()
         ))->where('id', Helpers::config('team'))->first();
 
-        if (! $team) {
+        if ( ! $team) {
             Helpers::abort('Unable to determine current team.');
         }
 
         Helpers::line('<info>You are currently within the</info> <comment>['.$team['name'].']</comment> <info>team context.</info>');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('team:current')
+            ->setDescription('Determine your current team context');
     }
 }

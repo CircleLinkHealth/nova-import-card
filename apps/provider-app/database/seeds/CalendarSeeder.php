@@ -5,13 +5,13 @@
  */
 
 use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Services\NurseCalendarService;
-use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Illuminate\Database\Seeder;
 
 class CalendarSeeder extends Seeder

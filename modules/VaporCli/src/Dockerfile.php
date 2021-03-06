@@ -1,9 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 class Dockerfile
 {
+    /**
+     * Delete the Dockerfile for the given environment.
+     *
+     * @param  string $environment
+     * @return void
+     */
+    public static function deleteEnvironment($environment)
+    {
+        @unlink(Path::dockerfile($environment));
+    }
+
     /**
      * Add a fresh Dockerfile for the given environment.
      *
@@ -24,8 +39,8 @@ Dockerfile;
     /**
      * Write the given content to the environment Dockerfile.
      *
-     * @param  string  $environment
-     * @param  string  $content
+     * @param  string $environment
+     * @param  string $content
      * @return void
      */
     protected static function write($environment, $content)
@@ -34,16 +49,5 @@ Dockerfile;
             Path::dockerfile($environment),
             $content
         );
-    }
-
-    /**
-     * Delete the Dockerfile for the given environment.
-     *
-     * @param  string  $environment
-     * @return void
-     */
-    public static function deleteEnvironment($environment)
-    {
-        @unlink(Path::dockerfile($environment));
     }
 }

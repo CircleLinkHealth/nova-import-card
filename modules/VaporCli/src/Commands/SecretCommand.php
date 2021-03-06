@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -9,21 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class SecretCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('secret')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->addOption('name', null, InputOption::VALUE_OPTIONAL, 'The secret name')
-            ->addOption('file', null, InputOption::VALUE_OPTIONAL, 'The file that contains the secret value')
-            ->setDescription('Create or update an environment secret');
-    }
-
     /**
      * Execute the command.
      *
@@ -42,6 +31,21 @@ class SecretCommand extends Command
 
         Helpers::info('Secret stored successfully.');
         Helpers::line('You should deploy the project to ensure the new secrets are available.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('secret')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->addOption('name', null, InputOption::VALUE_OPTIONAL, 'The secret name')
+            ->addOption('file', null, InputOption::VALUE_OPTIONAL, 'The file that contains the secret value')
+            ->setDescription('Create or update an environment secret');
     }
 
     /**

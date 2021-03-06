@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Filesystem\Filesystem;
@@ -12,20 +16,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class EnvCloneCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('env:clone')
-            ->addArgument('from', InputArgument::REQUIRED, 'The environment to clone from')
-            ->addArgument('to', InputArgument::REQUIRED, 'The name that should be assigned to the cloned environment')
-            ->setDescription('Clone an existing environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -58,5 +48,19 @@ class EnvCloneCommand extends Command
         GitIgnore::add(['.env.'.$this->argument('to')]);
 
         Helpers::info('Environment cloned successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('env:clone')
+            ->addArgument('from', InputArgument::REQUIRED, 'The environment to clone from')
+            ->addArgument('to', InputArgument::REQUIRED, 'The name that should be assigned to the cloned environment')
+            ->setDescription('Clone an existing environment');
     }
 }

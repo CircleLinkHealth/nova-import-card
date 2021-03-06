@@ -11,10 +11,10 @@ use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
 use App\User;
+use CircleLinkHealth\Core\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\PatientHelpers;
 use Tests\Helpers\UserHelpers;
-use \CircleLinkHealth\Core\Tests\TestCase;
 
 class HraSurveyReminderTest extends TestCase
 {

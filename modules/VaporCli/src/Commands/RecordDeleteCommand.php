@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,33 +12,17 @@ use Symfony\Component\Console\Input\InputArgument;
 class RecordDeleteCommand extends Command
 {
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('record:delete')
-            ->addArgument('zone', InputArgument::REQUIRED, 'The zone name / record ID')
-            ->addArgument('type', InputArgument::REQUIRED, 'The record type')
-            ->addArgument('name', InputArgument::OPTIONAL, 'The record name')
-            ->addArgument('value', InputArgument::OPTIONAL, 'The record value')
-            ->setDescription('Delete a DNS record');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
      */
     public function handle()
     {
-        if (! Helpers::confirm('Are you sure you want to delete this record', false)) {
+        if ( ! Helpers::confirm('Are you sure you want to delete this record', false)) {
             Helpers::abort('Action cancelled.');
         }
 
-        if (! is_numeric($zoneId = $this->argument('zone'))) {
+        if ( ! is_numeric($zoneId = $this->argument('zone'))) {
             $zoneId = $this->findIdByName($this->vapor->zones(), $zoneId, 'zone');
         }
 
@@ -50,5 +38,21 @@ class RecordDeleteCommand extends Command
         );
 
         Helpers::info('Record deleted successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('record:delete')
+            ->addArgument('zone', InputArgument::REQUIRED, 'The zone name / record ID')
+            ->addArgument('type', InputArgument::REQUIRED, 'The record type')
+            ->addArgument('name', InputArgument::OPTIONAL, 'The record name')
+            ->addArgument('value', InputArgument::OPTIONAL, 'The record value')
+            ->setDescription('Delete a DNS record');
     }
 }

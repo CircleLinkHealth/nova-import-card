@@ -12,9 +12,9 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics.
  *
  * @property string|null $color
- * @method static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics newModelQuery()
- * @method static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics newQuery()
- * @method static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics query()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics newModelQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics newQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics query()
  * @mixin \Eloquent
  * @property int|null    $batch_id
  * @property string|null $batch_date

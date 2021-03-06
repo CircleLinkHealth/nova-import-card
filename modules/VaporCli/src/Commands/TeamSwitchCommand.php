@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Config;
@@ -8,20 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class TeamSwitchCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('team:switch')
-            ->setAliases(['switch'])
-            ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'The ID of the team to switch to')
-            ->setDescription('Switch to a different team context, you may optionally pass Team ID or Team Name');
-    }
-
     /**
      * Execute the command.
      *
@@ -38,7 +28,7 @@ class TeamSwitchCommand extends Command
 
         $teamId = null;
 
-        if (! empty($this->option('id'))) {
+        if ( ! empty($this->option('id'))) {
             $team = collect($allTeams)->where('id', $this->option('id'))->first();
 
             if (empty($team)) {
@@ -62,5 +52,19 @@ class TeamSwitchCommand extends Command
         Config::set('team', $teamId);
 
         Helpers::info('Current team context changed successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('team:switch')
+            ->setAliases(['switch'])
+            ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'The ID of the team to switch to')
+            ->setDescription('Switch to a different team context, you may optionally pass Team ID or Team Name');
     }
 }

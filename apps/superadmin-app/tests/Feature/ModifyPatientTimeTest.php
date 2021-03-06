@@ -8,6 +8,7 @@ namespace Tests\Feature;
 
 use App\Nova\Actions\ModifyPatientTime;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
@@ -17,7 +18,6 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use JoshGaber\NovaUnit\Actions\NovaActionTest;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class ModifyPatientTimeTest extends TestCase
 {

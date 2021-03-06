@@ -1,9 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Support\Str;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Session Driver
@@ -197,5 +200,4 @@ return [
     */
 
     'same_site' => 'lax',
-
 ];

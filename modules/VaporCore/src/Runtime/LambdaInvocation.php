@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Exception;
@@ -16,7 +20,7 @@ class LambdaInvocation
     /**
      * Get the next Lambda invocation ID and body.
      *
-     * @param  string  $apiUrl
+     * @param  string $apiUrl
      * @return array
      */
     public static function next($apiUrl)
@@ -32,13 +36,13 @@ class LambdaInvocation
         $invocationId = '';
 
         curl_setopt(static::$handler, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$invocationId) {
-            if (! preg_match('/:\s*/', $header)) {
+            if ( ! preg_match('/:\s*/', $header)) {
                 return strlen($header);
             }
 
             [$name, $value] = preg_split('/:\s*/', $header, 2);
 
-            if (strtolower($name) === 'lambda-runtime-aws-request-id') {
+            if ('lambda-runtime-aws-request-id' === strtolower($name)) {
                 $invocationId = trim($value);
             }
 
@@ -57,7 +61,8 @@ class LambdaInvocation
         curl_exec(static::$handler);
 
         static::ensureNoErrorsOccurred(
-            $invocationId, $body
+            $invocationId,
+            $body
         );
 
         return [$invocationId, json_decode($body, true)];
@@ -66,8 +71,8 @@ class LambdaInvocation
     /**
      * Ensure no errors occurred retrieving the invocation.
      *
-     * @param  string  $invocationId
-     * @param  string  $body
+     * @param  string $invocationId
+     * @param  string $body
      * @return void
      */
     protected static function ensureNoErrorsOccurred($invocationId, $body)
@@ -76,11 +81,11 @@ class LambdaInvocation
             throw new Exception('Failed to retrieve the next Lambda invocation: '.curl_error(static::$handler));
         }
 
-        if ($invocationId === '') {
+        if ('' === $invocationId) {
             throw new Exception('Failed to parse the Lambda invocation ID.');
         }
 
-        if ($body === '') {
+        if ('' === $body) {
             throw new Exception('The Lambda runtime API returned an empty response.');
         }
     }

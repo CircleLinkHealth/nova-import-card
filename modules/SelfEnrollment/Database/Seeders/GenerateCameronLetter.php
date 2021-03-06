@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\App;
 class GenerateCameronLetter extends Seeder
 {
     use UserHelpers;
-    const CAMERON_PRACTICE_NAME = 'cameron-memorial';
 
     const CAMERON_LOGO          = '/img/logos/CameronMemorial/cameron_logo.png';
+    const CAMERON_PRACTICE_NAME = 'cameron-memorial';
     const FAUR_SIGNATURE        = '/img/signatures/cameron-memorial/faurs_signature.png';
     const MILLER_SIGNATURE      = '/img/signatures/cameron-memorial/millers_signature.png';
     const SIGNATORY_NAME_FAUR   = 'Dr. Lynn Faur';

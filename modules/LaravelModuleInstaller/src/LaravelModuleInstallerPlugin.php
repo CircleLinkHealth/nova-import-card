@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Joshbrw\LaravelModuleInstaller;
 
 use Composer\Composer;
@@ -8,11 +12,9 @@ use Composer\Plugin\PluginInterface;
 
 class LaravelModuleInstallerPlugin implements PluginInterface
 {
-
     public function activate(Composer $composer, IOInterface $io)
     {
         $installer = new LaravelModuleInstaller($io, $composer);
         $composer->getInstallationManager()->addInstaller($installer);
     }
-
 }

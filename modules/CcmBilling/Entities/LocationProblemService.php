@@ -20,9 +20,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property int                             $chargeable_service_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService newModelQuery()
- * @method static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService newQuery()
- * @method static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService query()
  * @mixin \Eloquent
  * @property ChargeableService      $chargeableService
  * @property CpmProblem             $cpmProblem
