@@ -31,9 +31,9 @@ class JsonListProblemLogger implements Logger
                         'code'                   => $problem['Code'],
                         'code_system_name'       => $problem['CodeType'],
                         'problem_code_system_id' => getProblemCodeSystemCPMId([$problem['CodeType'] ?? '']),
-                        'start'                  => $problem['AddedDate'],
-                        'end'                    => $problem['ResolveDate'],
-                        'status'                 => $problem['Status'],
+                        'start'                  => $problem['AddedDate'] ?? null,
+                        'end'                    => $problem['ResolveDate'] ?? null,
+                        'status'                 => $problem['Status'] ?? null,
                     ]);
                 })
                 ->filter()
