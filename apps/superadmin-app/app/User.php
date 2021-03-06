@@ -245,6 +245,9 @@ use Laravel\Nova\Actions\Actionable;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight|null                                       $cpmWeight
  * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User activeNurses()
  * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User uniquePatients()
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection       $synonyms
+ * @property int|null                                                                                     $synonyms_count
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
