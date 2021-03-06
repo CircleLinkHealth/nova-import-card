@@ -27,9 +27,9 @@ class JsonListProblemLogger implements Logger
             return collect($problems['Problems'])
                 ->map(function ($problem) {
                     return Problem::create([
-                        'name'                   => $problem['Name'],
-                        'code'                   => $problem['Code'],
-                        'code_system_name'       => $problem['CodeType'],
+                        'name'                   => $problem['Name'] ?? null,
+                        'code'                   => $problem['Code'] ?? null,
+                        'code_system_name'       => $problem['CodeType'] ?? null,
                         'problem_code_system_id' => getProblemCodeSystemCPMId([$problem['CodeType'] ?? '']),
                         'start'                  => $problem['AddedDate'] ?? null,
                         'end'                    => $problem['ResolveDate'] ?? null,

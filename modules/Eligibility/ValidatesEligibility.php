@@ -162,15 +162,15 @@ trait ValidatesEligibility
                 $row['problems_string'] = [];
                 foreach ($problems as $problem) {
                     $row['problems'][] = [
-                        'Name' => $problem->Name,
-                        'Code' => $problem->Code,
+                        'Name' => $problem->Name ?? null,
+                        'Code' => $problem->Code ?? null,
                     ];
                 }
             } elseif (is_string($row['problems_string'])) {
                 foreach (explode(',', $row['problems_string']) as $problem) {
                     $row['problems'][] = [
-                        'Name' => $problem,
-                        'Code' => $problem,
+                        'Name' => $problem ?? null,
+                        'Code' => $problem ?? null,
                     ];
                 }
             }
