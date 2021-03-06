@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Core\GoogleDrive;
-use CircleLinkHealth\Eligibility\Adapters\MultipleFiledsTemplateToString;
+use CircleLinkHealth\Eligibility\Adapters\MultipleFiledsTemplateToJson;
 use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
@@ -127,7 +127,7 @@ class ProcessGoogleDriveCsv implements ShouldQueue, ShouldBeEncrypted
                     continue;
                 }
             
-                $patient = sanitize_array_keys(MultipleFiledsTemplateToString::fromRow($row));
+                $patient = sanitize_array_keys(MultipleFiledsTemplateToJson::fromRow($row));
             
                 //we do this to use the data transformation the method performs
                 $validator = $this->validateRow($patient);

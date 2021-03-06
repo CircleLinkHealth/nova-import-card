@@ -8,7 +8,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFi
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
 
-class MultipleFiledsTemplateToString
+class MultipleFiledsTemplateToJson
 {
     public static function fromRow(array $row) {
         if (count(preg_grep('/^problem_[\d]*/', array_keys($row))) > 0) {

@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility;
 
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
-use CircleLinkHealth\Eligibility\Adapters\MultipleFiledsTemplateToString;
+use CircleLinkHealth\Eligibility\Adapters\MultipleFiledsTemplateToJson;
 use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
 use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
@@ -304,6 +304,6 @@ class ProcessEligibilityService
      */
     private function transformCsvRow($patient)
     {
-        return MultipleFiledsTemplateToString::fromRow($patient);
+        return MultipleFiledsTemplateToJson::fromRow($patient);
     }
 }
