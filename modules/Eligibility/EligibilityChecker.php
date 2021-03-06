@@ -175,7 +175,7 @@ class EligibilityChecker
     }
     
     private static function fixJsonProblemsString(EligibilityJob &$eligibilityJob) {
-        $fixAttempt = JsonFixer::attemptFix($eligibilityJob->data['problems'] ?? $eligibilityJob->data['problems_string']);
+        $fixAttempt = JsonFixer::attemptFix($eligibilityJob->getProblems());
     
         $wasFixed = ! is_null($fixAttempt);
     
@@ -200,7 +200,7 @@ class EligibilityChecker
 
     public static function getProblemsForEligibility(EligibilityJob &$eligibilityJob)
     {
-        $problems = $eligibilityJob->data['problems'] ?? $eligibilityJob->data['problems_string'] ?? null;
+        $problems = $eligibilityJob->getProblems();
 
         if (empty($problems)) {
             return false;
@@ -212,6 +212,7 @@ class EligibilityChecker
             
             if (false === $shouldHandle && self::shouldAttemptToFixBrokenJsonProblems($class)) {
                 $shouldHandle = self::fixJsonProblemsString($eligibilityJob);
+                $problems = $eligibilityJob->getProblems();
             }
             
             if ($shouldHandle) {
