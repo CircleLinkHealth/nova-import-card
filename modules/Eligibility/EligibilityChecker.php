@@ -173,30 +173,6 @@ class EligibilityChecker
     {
         return $this->patientList;
     }
-    
-    private static function fixJsonProblemsString(EligibilityJob &$eligibilityJob) {
-        $fixAttempt = JsonFixer::attemptFix($eligibilityJob->getProblems());
-    
-        $wasFixed = ! is_null($fixAttempt);
-    
-        if ($wasFixed) {
-            if (isset($eligibilityJob->data['problems'])) {
-                $data                     = $eligibilityJob->data;
-                $brokenProblemsJsonString = $data['problems'] = $fixAttempt;
-                $eligibilityJob->data     = $data;
-            }
-            if (isset($eligibilityJob->data['problems_string'])) {
-                $data                     = $eligibilityJob->data;
-                $brokenProblemsJsonString = $data['problems_string'] = $fixAttempt;
-                $eligibilityJob->data     = $data;
-            }
-        }
-        
-        return $wasFixed;
-    }
-    private static function shouldAttemptToFixBrokenJsonProblems($class) {
-        return method_exists($class, 'expects') && Formats::JSON === $class->expects();
-    }
 
     public static function getProblemsForEligibility(EligibilityJob &$eligibilityJob)
     {
@@ -207,14 +183,14 @@ class EligibilityChecker
         }
 
         foreach (config('importer.problem_loggers') as $class) {
-            $class = app($class);
+            $class        = app($class);
             $shouldHandle = $class->shouldHandle($problems);
-            
+
             if (false === $shouldHandle && self::shouldAttemptToFixBrokenJsonProblems($class)) {
                 $shouldHandle = self::fixJsonProblemsString($eligibilityJob);
-                $problems = $eligibilityJob->getProblems();
+                $problems     = $eligibilityJob->getProblems();
             }
-            
+
             if ($shouldHandle) {
                 $problems = $class->handle($problems);
                 break;
@@ -811,9 +787,9 @@ class EligibilityChecker
             }
         }
 
-        $args['practice_id'] = $this->practice->id;
+        $args['practice_id']             = $this->practice->id;
         $args['referring_provider_name'] = (new FindBillingProvider())->from($args);
-        if ((! isset($args['provider_id']) || empty($args['provider_id'])) && (isset($args['referring_provider_name']) && !empty($args['referring_provider_name']))) {
+        if (( ! isset($args['provider_id']) || empty($args['provider_id'])) && (isset($args['referring_provider_name']) && ! empty($args['referring_provider_name']))) {
             $args['provider_id'] = optional(CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id))->id;
         }
 
@@ -936,8 +912,8 @@ class EligibilityChecker
                         )->whereHas(
                             'patientInfo',
                             function ($q) use ($args) {
-                            $q->withTrashed()->whereBirthDate($args['dob']);
-                        }
+                                $q->withTrashed()->whereBirthDate($args['dob']);
+                            }
                         );
                 }
             )->first();
@@ -1005,6 +981,28 @@ class EligibilityChecker
         $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
 
         return true;
+    }
+
+    private static function fixJsonProblemsString(EligibilityJob &$eligibilityJob)
+    {
+        $fixAttempt = JsonFixer::attemptFix($eligibilityJob->getProblems());
+
+        $wasFixed = ! is_null($fixAttempt);
+
+        if ($wasFixed) {
+            if (isset($eligibilityJob->data['problems'])) {
+                $data                     = $eligibilityJob->data;
+                $brokenProblemsJsonString = $data['problems'] = $fixAttempt;
+                $eligibilityJob->data     = $data;
+            }
+            if (isset($eligibilityJob->data['problems_string'])) {
+                $data                     = $eligibilityJob->data;
+                $brokenProblemsJsonString = $data['problems_string'] = $fixAttempt;
+                $eligibilityJob->data     = $data;
+            }
+        }
+
+        return $wasFixed;
     }
 
     private function getSnomedToIcdMap()
@@ -1075,6 +1073,11 @@ class EligibilityChecker
             EligibilityJob::ERROR,
             $reason
         );
+    }
+
+    private static function shouldAttemptToFixBrokenJsonProblems($class)
+    {
+        return method_exists($class, 'expects') && Formats::JSON === $class->expects();
     }
 
     private function validateInsuranceWithCollection($record)
