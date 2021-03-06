@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Fpm;
 
 use Exception;
@@ -10,30 +14,9 @@ use Throwable;
 
 class Fpm
 {
-    public const SOCKET = '/tmp/.vapor/php-fpm.sock';
-    public const CONFIG = '/tmp/.vapor/php-fpm.conf';
+    public const CONFIG   = '/tmp/.vapor/php-fpm.conf';
     public const PID_FILE = '/tmp/.vapor/php-fpm.pid';
-
-    /**
-     * The static FPM instance for the container.
-     *
-     * @var static
-     */
-    protected static $instance;
-
-    /**
-     * The file that should be invoked by FPM.
-     *
-     * @var string
-     */
-    protected $handler;
-
-    /**
-     * The additional server variables that should be passed to FPM.
-     *
-     * @var array
-     */
-    protected $serverVariables = [];
+    public const SOCKET   = '/tmp/.vapor/php-fpm.sock';
 
     /**
      * The FPM socket client instance.
@@ -43,13 +26,6 @@ class Fpm
     protected $client;
 
     /**
-     * The FPM socket connection instance.
-     *
-     * @var \Hoa\FastCGI\SocketConnections\UnixDomainSocket
-     */
-    protected $socketConnection;
-
-    /**
      * The FPM process instance.
      *
      * @var \Symfony\Component\Process\Process
@@ -57,27 +33,62 @@ class Fpm
     protected $fpm;
 
     /**
+     * The file that should be invoked by FPM.
+     *
+     * @var string
+     */
+    protected $handler;
+
+    /**
+     * The static FPM instance for the container.
+     *
+     * @var static
+     */
+    protected static $instance;
+
+    /**
+     * The additional server variables that should be passed to FPM.
+     *
+     * @var array
+     */
+    protected $serverVariables = [];
+
+    /**
+     * The FPM socket connection instance.
+     *
+     * @var \Hoa\FastCGI\SocketConnections\UnixDomainSocket
+     */
+    protected $socketConnection;
+
+    /**
      * Create a new FPM instance.
      *
-     * @param  \Hoa\Socket\Client  $handler
-     * @param  \Hoa\FastCGI\SocketConnections\UnixDomainSocket  $socketConnection
-     * @param  string  $handler
-     * @param  array  $serverVariables
+     * @param  \Hoa\Socket\Client                              $handler
+     * @param  \Hoa\FastCGI\SocketConnections\UnixDomainSocket $socketConnection
      * @return void
      */
     public function __construct(Client $client, UnixDomainSocket $socketConnection, string $handler, array $serverVariables = [])
     {
-        $this->client = $client;
-        $this->handler = $handler;
-        $this->serverVariables = $serverVariables;
+        $this->client           = $client;
+        $this->handler          = $handler;
+        $this->serverVariables  = $serverVariables;
         $this->socketConnection = $socketConnection;
+    }
+
+    /**
+     * Handle the destruction of the class.
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        $this->stop();
     }
 
     /**
      * Boot FPM with the given handler.
      *
-     * @param  string  $handler
-     * @param  array  $serverVariables
+     * @param  string $handler
      * @return static
      */
     public static function boot($handler, array $serverVariables = [])
@@ -88,9 +99,60 @@ class Fpm
 
         $socketConnection = new UnixDomainSocket(self::SOCKET, 1000, 900000);
 
-        return static::$instance = tap(new static(new Client, $socketConnection, $handler, $serverVariables), function ($fpm) {
+        return static::$instance = tap(new static(new Client(), $socketConnection, $handler, $serverVariables), function ($fpm) {
             $fpm->start();
         });
+    }
+
+    /**
+     * Ensure that the FPM process is still running.
+     *
+     * @throws \Exception
+     * @return void
+     */
+    public function ensureRunning()
+    {
+        try {
+            if ( ! $this->fpm || ! $this->fpm->isRunning()) {
+                throw new Exception('PHP-FPM has stopped unexpectedly.');
+            }
+        } catch (Throwable $e) {
+            echo $e->getMessage().PHP_EOL;
+
+            exit(1);
+        }
+    }
+
+    /**
+     * Proxy the request to PHP-FPM and return its response.
+     *
+     * @param  \Laravel\Vapor\Runtime\Fpm\FpmRequest  $request
+     * @return \Laravel\Vapor\Runtime\Fpm\FpmResponse
+     */
+    public function handle($request)
+    {
+        return (new FpmApplication($this->client, $this->socketConnection))
+            ->handle($request);
+    }
+
+    /**
+     * Get the handler.
+     *
+     * @return string
+     */
+    public function handler()
+    {
+        return $this->handler;
+    }
+
+    /**
+     * Get the underlying process.
+     *
+     * @return \Symfony\Component\Process\Process
+     */
+    public function process()
+    {
+        return $this->fpm;
     }
 
     /**
@@ -101,6 +163,16 @@ class Fpm
     public static function resolve()
     {
         return static::$instance;
+    }
+
+    /**
+     * Get the server variables.
+     *
+     * @return array
+     */
+    public function serverVariables()
+    {
+        return $this->serverVariables;
     }
 
     /**
@@ -136,34 +208,15 @@ class Fpm
     }
 
     /**
-     * Ensure that the proper configuration is in place to start FPM.
+     * Stop the FPM process.
      *
      * @return void
      */
-    protected function ensureReadyToStart()
+    public function stop()
     {
-        if (! is_dir(dirname(self::SOCKET))) {
-            mkdir(dirname(self::SOCKET));
+        if ($this->fpm && $this->fpm->isRunning()) {
+            $this->fpm->stop();
         }
-
-        if (! file_exists(self::CONFIG)) {
-            file_put_contents(
-                self::CONFIG,
-                file_get_contents(__DIR__.'/../../../stubs/php-fpm.conf')
-            );
-        }
-    }
-
-    /**
-     * Proxy the request to PHP-FPM and return its response.
-     *
-     * @param  \Laravel\Vapor\Runtime\Fpm\FpmRequest  $request
-     * @return \Laravel\Vapor\Runtime\Fpm\FpmResponse
-     */
-    public function handle($request)
-    {
-        return (new FpmApplication($this->client, $this->socketConnection))
-                    ->handle($request);
     }
 
     /**
@@ -175,7 +228,7 @@ class Fpm
     {
         $elapsed = 0;
 
-        while (! $this->isReady()) {
+        while ( ! $this->isReady()) {
             usleep(5000);
 
             $elapsed += 5000;
@@ -184,9 +237,28 @@ class Fpm
                 throw new Exception('Timed out waiting for FPM to start: '.self::SOCKET);
             }
 
-            if (! $this->fpm->isRunning()) {
+            if ( ! $this->fpm->isRunning()) {
                 throw new Exception('PHP-FPM was unable to start.');
             }
+        }
+    }
+
+    /**
+     * Ensure that the proper configuration is in place to start FPM.
+     *
+     * @return void
+     */
+    protected function ensureReadyToStart()
+    {
+        if ( ! is_dir(dirname(self::SOCKET))) {
+            mkdir(dirname(self::SOCKET));
+        }
+
+        if ( ! file_exists(self::CONFIG)) {
+            file_put_contents(
+                self::CONFIG,
+                file_get_contents(__DIR__.'/../../../stubs/php-fpm.conf')
+            );
         }
     }
 
@@ -203,38 +275,6 @@ class Fpm
     }
 
     /**
-     * Ensure that the FPM process is still running.
-     *
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function ensureRunning()
-    {
-        try {
-            if (! $this->fpm || ! $this->fpm->isRunning()) {
-                throw new Exception('PHP-FPM has stopped unexpectedly.');
-            }
-        } catch (Throwable $e) {
-            echo $e->getMessage().PHP_EOL;
-
-            exit(1);
-        }
-    }
-
-    /**
-     * Stop the FPM process.
-     *
-     * @return void
-     */
-    public function stop()
-    {
-        if ($this->fpm && $this->fpm->isRunning()) {
-            $this->fpm->stop();
-        }
-    }
-
-    /**
      * Kill any existing FPM processes on the system.
      *
      * @return void
@@ -243,19 +283,19 @@ class Fpm
     {
         fwrite(STDERR, 'Killing existing FPM'.PHP_EOL);
 
-        if (! file_exists(static::PID_FILE)) {
+        if ( ! file_exists(static::PID_FILE)) {
             return unlink(static::SOCKET);
         }
 
         $pid = (int) file_get_contents(static::PID_FILE);
 
-        if (posix_getpgid($pid) === false) {
+        if (false === posix_getpgid($pid)) {
             return $this->removeFpmProcessFiles();
         }
 
         $result = posix_kill($pid, SIGTERM);
 
-        if ($result === false) {
+        if (false === $result) {
             return $this->removeFpmProcessFiles();
         }
 
@@ -285,7 +325,7 @@ class Fpm
     {
         $elapsed = 0;
 
-        while (posix_getpgid($pid) !== false) {
+        while (false !== posix_getpgid($pid)) {
             usleep(5000);
 
             $elapsed += 5000;
@@ -294,45 +334,5 @@ class Fpm
                 throw new Exception('Process did not stop within the given threshold.');
             }
         }
-    }
-
-    /**
-     * Get the underlying process.
-     *
-     * @return \Symfony\Component\Process\Process
-     */
-    public function process()
-    {
-        return $this->fpm;
-    }
-
-    /**
-     * Get the handler.
-     *
-     * @return string
-     */
-    public function handler()
-    {
-        return $this->handler;
-    }
-
-    /**
-     * Get the server variables.
-     *
-     * @return array
-     */
-    public function serverVariables()
-    {
-        return $this->serverVariables;
-    }
-
-    /**
-     * Handle the destruction of the class.
-     *
-     * @return void
-     */
-    public function __destruct()
-    {
-        $this->stop();
     }
 }

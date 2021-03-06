@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -12,18 +16,6 @@ use Laravel\Vapor\Queue\VaporWorker;
 class VaporWorkCommand extends Command
 {
     use WritesQueueEventMessages;
-
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $signature = 'vapor:work
-                            {message : The Base64 encoded message payload}
-                            {--delay=0 : The number of seconds to delay failed jobs}
-                            {--timeout=0 : The number of seconds a child process can run}
-                            {--tries=0 : Number of times to attempt a job before logging it failed}
-                            {--force : Force the worker to run even in maintenance mode}';
 
     /**
      * The console command description.
@@ -40,13 +32,6 @@ class VaporWorkCommand extends Command
     protected $hidden = true;
 
     /**
-     * The queue worker instance.
-     *
-     * @var \Laravel\Vapor\Queue\VaporWorker
-     */
-    protected $worker;
-
-    /**
      * Indicates if the worker is already listening for events.
      *
      * @var bool
@@ -54,9 +39,27 @@ class VaporWorkCommand extends Command
     protected static $listeningForEvents = false;
 
     /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $signature = 'vapor:work
+                            {message : The Base64 encoded message payload}
+                            {--delay=0 : The number of seconds to delay failed jobs}
+                            {--timeout=0 : The number of seconds a child process can run}
+                            {--tries=0 : Number of times to attempt a job before logging it failed}
+                            {--force : Force the worker to run even in maintenance mode}';
+
+    /**
+     * The queue worker instance.
+     *
+     * @var \Laravel\Vapor\Queue\VaporWorker
+     */
+    protected $worker;
+
+    /**
      * Create a new queue work command.
      *
-     * @param  \Laravel\Vapor\Queue\VaporWorker  $worker
      * @return void
      */
     public function __construct(VaporWorker $worker)
@@ -77,7 +80,7 @@ class VaporWorkCommand extends Command
             return;
         }
 
-        if (! static::$listeningForEvents) {
+        if ( ! static::$listeningForEvents) {
             $this->listenForEvents();
 
             static::$listeningForEvents = true;
@@ -93,70 +96,17 @@ class VaporWorkCommand extends Command
     }
 
     /**
-     * Marshal the job with the given message ID.
+     * Determine if the worker should run in maintenance mode.
      *
-     * @param  array  $message
-     * @return \Laravel\Vapor\Queue\VaporJob
+     * @return bool
      */
-    protected function marshalJob(array $message)
+    protected function downForMaintenance()
     {
-        $normalizedMessage = $this->normalizeMessage($message);
+        if ( ! $this->option('force')) {
+            return $this->laravel->isDownForMaintenance();
+        }
 
-        $queue = $this->worker->getManager()->connection('sqs');
-
-        return new VaporJob(
-            $this->laravel, $queue->getSqs(), $normalizedMessage,
-            'sqs', $this->queueUrl($message)
-        );
-    }
-
-    /**
-     * Normalize the casing of the message array.
-     *
-     * @param  array  $message
-     * @return array
-     */
-    protected function normalizeMessage(array $message)
-    {
-        return [
-            'MessageId' => $message['messageId'],
-            'ReceiptHandle' => $message['receiptHandle'],
-            'Body' => $message['body'],
-            'Attributes' => $message['attributes'],
-            'MessageAttributes' => $message['messageAttributes'],
-        ];
-    }
-
-    /**
-     * Get the decoded message payload.
-     *
-     * @return array
-     */
-    protected function message()
-    {
-        return tap(json_decode(base64_decode($this->argument('message')), true), function ($message) {
-            if ($message === false) {
-                throw new InvalidArgumentException('Unable to unserialize message.');
-            }
-        });
-    }
-
-    /**
-     * Get the queue URL from the given message.
-     *
-     * @param  array  $message
-     * @return string
-     */
-    protected function queueUrl(array $message)
-    {
-        $eventSourceArn = explode(':', $message['eventSourceARN']);
-
-        return sprintf(
-            'https://sqs.%s.amazonaws.com/%s/%s',
-            $message['awsRegion'],
-            $accountId = $eventSourceArn[4],
-            $queue = $eventSourceArn[5]
-        );
+        return false;
     }
 
     /**
@@ -186,28 +136,82 @@ class VaporWorkCommand extends Command
     /**
      * Store a failed job event.
      *
-     * @param  \Illuminate\Queue\Events\JobFailed  $event
      * @return void
      */
     protected function logFailedJob(JobFailed $event)
     {
         $this->laravel['queue.failer']->log(
-            $event->connectionName, $event->job->getQueue(),
-            $event->job->getRawBody(), $event->exception
+            $event->connectionName,
+            $event->job->getQueue(),
+            $event->job->getRawBody(),
+            $event->exception
         );
     }
 
     /**
-     * Determine if the worker should run in maintenance mode.
+     * Marshal the job with the given message ID.
      *
-     * @return bool
+     * @return \Laravel\Vapor\Queue\VaporJob
      */
-    protected function downForMaintenance()
+    protected function marshalJob(array $message)
     {
-        if (! $this->option('force')) {
-            return $this->laravel->isDownForMaintenance();
-        }
+        $normalizedMessage = $this->normalizeMessage($message);
 
-        return false;
+        $queue = $this->worker->getManager()->connection('sqs');
+
+        return new VaporJob(
+            $this->laravel,
+            $queue->getSqs(),
+            $normalizedMessage,
+            'sqs',
+            $this->queueUrl($message)
+        );
+    }
+
+    /**
+     * Get the decoded message payload.
+     *
+     * @return array
+     */
+    protected function message()
+    {
+        return tap(json_decode(base64_decode($this->argument('message')), true), function ($message) {
+            if (false === $message) {
+                throw new InvalidArgumentException('Unable to unserialize message.');
+            }
+        });
+    }
+
+    /**
+     * Normalize the casing of the message array.
+     *
+     * @return array
+     */
+    protected function normalizeMessage(array $message)
+    {
+        return [
+            'MessageId'         => $message['messageId'],
+            'ReceiptHandle'     => $message['receiptHandle'],
+            'Body'              => $message['body'],
+            'Attributes'        => $message['attributes'],
+            'MessageAttributes' => $message['messageAttributes'],
+        ];
+    }
+
+    /**
+     * Get the queue URL from the given message.
+     *
+     * @return string
+     */
+    protected function queueUrl(array $message)
+    {
+        $eventSourceArn = explode(':', $message['eventSourceARN']);
+
+        return sprintf(
+            'https://sqs.%s.amazonaws.com/%s/%s',
+            $message['awsRegion'],
+            $accountId = $eventSourceArn[4],
+            $queue = $eventSourceArn[5]
+        );
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Laravel\Vapor\Contracts\LambdaEventHandler;
@@ -12,8 +16,7 @@ class FpmHandler implements LambdaEventHandler
     /**
      * Handle an incoming Lambda event.
      *
-     * @param  array  $event
-     * @return  \Laravel\Vapor\Contracts\LambdaResponse
+     * @return \Laravel\Vapor\Contracts\LambdaResponse
      */
     public function handle(array $event)
     {
@@ -25,20 +28,22 @@ class FpmHandler implements LambdaEventHandler
     /**
      * Create a new fpm request from the incoming event.
      *
-     * @param  array  $event
+     * @param  array                                 $event
      * @return \Laravel\Vapor\Runtime\Fpm\FpmRequest
      */
     public function request($event)
     {
         return FpmRequest::fromLambdaEvent(
-            $event, Fpm::resolve()->handler(), $this->serverVariables()
+            $event,
+            Fpm::resolve()->handler(),
+            $this->serverVariables()
         );
     }
 
     /**
      * Covert FPM response to Lambda-ready response.
      *
-     * @param  \Laravel\Vapor\Runtime\Fpm\FpmResponse  $fpmResponse
+     * @param  \Laravel\Vapor\Runtime\Fpm\FpmResponse       $fpmResponse
      * @return \Laravel\Vapor\Runtime\Fpm\FpmLambdaResponse
      */
     public function response($fpmResponse)

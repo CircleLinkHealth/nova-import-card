@@ -1,21 +1,23 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
-
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GeneratePrimaryCare360;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class PrimaryCare360Letter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
 {
+    const CONTACT_FAX   = '1-888-213-5007';
     const CONTACT_PHONE = '501-833-4001';
-    const CONTACT_FAX = '1-888-213-5007';
     public bool $disableButtons;
     public $enrollee;
     public $extraAddressValues;
@@ -25,10 +27,6 @@ class PrimaryCare360Letter extends EnrollmentLetterDefaultConfigs implements Sel
 
     /**
      * ContinuumFamilyCareLlcLetter constructor.
-     * @param bool $hideButtons
-     * @param array $baseLetter
-     * @param Practice $practice
-     * @param User $userEnrollee
      * @param bool $disableButton
      */
     public function __construct(bool $hideButtons, array $baseLetter, Practice $practice, User $userEnrollee, bool $disableButtons = false)
@@ -47,10 +45,10 @@ class PrimaryCare360Letter extends EnrollmentLetterDefaultConfigs implements Sel
 
     public function letterBladeView()
     {
-        $baseLetterConfigs                  = $this->getBaseViewConfigs();
-        $className                          = $baseLetterConfigs['className'];
-        $letterViewParams                   = LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs);
-        $letterViewParams['disableButtons'] = $this->disableButtons;
+        $baseLetterConfigs                       = $this->getBaseViewConfigs();
+        $className                               = $baseLetterConfigs['className'];
+        $letterViewParams                        = LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs);
+        $letterViewParams['disableButtons']      = $this->disableButtons;
         $letterViewParams['extraContactDetails'] = $this->extraContactDetails();
 
         return view("selfEnrollment::enrollment-letters.$className", $letterViewParams);
@@ -65,10 +63,19 @@ class PrimaryCare360Letter extends EnrollmentLetterDefaultConfigs implements Sel
         return $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider): string
+    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $signature = asset(GeneratePrimaryCare360::ANITA_ARAB_SIGNATURE);
+
         return "<img src=$signature  alt='' style='width: 250px;'/>";
+    }
+
+    private function extraContactDetails()
+    {
+        return [
+            'phone' => self::CONTACT_PHONE,
+            'fax'   => self::CONTACT_FAX,
+        ];
     }
 
     /**
@@ -88,13 +95,5 @@ class PrimaryCare360Letter extends EnrollmentLetterDefaultConfigs implements Sel
         ];
 
         return LettersHelper::extraAddressValues($extraProps, $practiceLocationArray);
-    }
-
-    private function extraContactDetails()
-    {
-        return [
-            'phone' => self::CONTACT_PHONE,
-            'fax' => self::CONTACT_FAX,
-        ];
     }
 }

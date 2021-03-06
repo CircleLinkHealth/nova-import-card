@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Commands\Tables;
 
 use Spatie\ScheduleMonitor\Support\ScheduledTasks\ScheduledTasks;
@@ -29,10 +33,10 @@ class ReadyForMonitoringTasksTable extends ScheduledTasksTable
             ->reject(fn (Task $task) => $task->isBeingMonitored());
 
         $headers = ['Name', 'Type', 'Frequency'];
-        $rows = $tasks->map(function (Task $task) {
+        $rows    = $tasks->map(function (Task $task) {
             return [
-                'name' => $task->name(),
-                'type' => ucfirst($task->type()),
+                'name'            => $task->name(),
+                'type'            => ucfirst($task->type()),
                 'cron_expression' => $task->humanReadableCron(),
             ];
         });

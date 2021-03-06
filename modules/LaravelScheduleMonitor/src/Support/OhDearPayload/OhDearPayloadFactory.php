@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\OhDearPayload;
 
 use Spatie\ScheduleMonitor\Models\MonitoredScheduledTaskLogItem;
@@ -19,7 +23,7 @@ class OhDearPayloadFactory
         $payloadClass = collect($payloadClasses)
             ->first(fn (string $payloadClass) => $payloadClass::canHandle($logItem));
 
-        if (! $payloadClass) {
+        if ( ! $payloadClass) {
             return null;
         }
 

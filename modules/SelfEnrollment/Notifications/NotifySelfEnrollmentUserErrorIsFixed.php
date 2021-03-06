@@ -1,11 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Notifications;
 
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
@@ -17,55 +20,36 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
 
     private string $invitationLink;
     private string $line1;
-    private $line2Sms;
     private string $line2Email;
+    private $line2Sms;
 
     /**
      * Create a new notification instance.
-     *
-     * @param string $invitationLink
      */
     public function __construct(string $invitationLink)
     {
         $this->invitationLink = $invitationLink;
-        $this->line1 = $this->subjectLine1();
-        $this->line2Sms = $this->subjectLine2Sms();
-        $this->line2Email = $this->subjectLine2ForEmail();
+        $this->line1          = $this->subjectLine1();
+        $this->line2Sms       = $this->subjectLine2Sms();
+        $this->line2Email     = $this->subjectLine2ForEmail();
     }
 
     /**
-     * @param User $notifiable
-     */
-    public function toTwilio(User $notifiable)
-    {
-        if (empty($this->invitationLink)) {
-            throw new InvalidArgumentException("`invitationLink` cannot be empty. User ID {$notifiable->id}");
-        }
-
-        $subject = $this->getSubjectSms();
-
-        return (new TwilioSmsMessage())
-            ->content($subject);
-    }
-    /**
-     * Get the notification's delivery channels.
+     * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function toArray($notifiable)
     {
-        $channels = ['mail', 'twilio'];
-        if (Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])){
-            unset($channels[array_search('mail', $channels)]);
-        }
-        return $channels;
+        return [
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed                                          $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -96,17 +80,32 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
             ->action('Get my Care Coach', $this->invitationLink);
     }
 
+    public function toTwilio(User $notifiable)
+    {
+        if (empty($this->invitationLink)) {
+            throw new InvalidArgumentException("`invitationLink` cannot be empty. User ID {$notifiable->id}");
+        }
+
+        $subject = $this->getSubjectSms();
+
+        return (new TwilioSmsMessage())
+            ->content($subject);
+    }
+
     /**
-     * Get the array representation of the notification.
+     * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function via($notifiable)
     {
-        return [
-            //
-        ];
+        $channels = ['mail', 'twilio'];
+        if (Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])) {
+            unset($channels[array_search('mail', $channels)]);
+        }
+
+        return $channels;
     }
 
     private function getSubjectSms()
@@ -116,16 +115,16 @@ class NotifySelfEnrollmentUserErrorIsFixed extends Notification
 
     private function subjectLine1()
     {
-        return "Our apologies about the error you experienced earlier when trying to get your care coach.";
-    }
-
-    private function subjectLine2Sms()
-    {
-        return "Our team has fixed this error. Whenever you have a chance, please visit";
+        return 'Our apologies about the error you experienced earlier when trying to get your care coach.';
     }
 
     private function subjectLine2ForEmail()
     {
-        return "Our team has fixed this error. Whenever you have a chance, please use the button below to get your care coach.";
+        return 'Our team has fixed this error. Whenever you have a chance, please use the button below to get your care coach.';
+    }
+
+    private function subjectLine2Sms()
+    {
+        return 'Our team has fixed this error. Whenever you have a chance, please visit';
     }
 }

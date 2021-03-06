@@ -12,6 +12,11 @@ use CircleLinkHealth\Eligibility\DTO\Problem;
 
 class JsonListProblemLogger implements Logger
 {
+    public function expects()
+    {
+        return Formats::JSON;
+    }
+
     public function handle($problemsString): array
     {
 //        Expected format
@@ -42,9 +47,5 @@ class JsonListProblemLogger implements Logger
     public function shouldHandle($problems)
     {
         return (bool) is_json($problems);
-    }
-    
-    public function expects() {
-        return Formats::JSON;
     }
 }

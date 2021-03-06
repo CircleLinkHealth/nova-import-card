@@ -51,33 +51,33 @@ class FixCommonwealth extends Command
             ->with('eligibilityJob.targetPatient.ccda')
             ->each(
                 function ($enrollee) {
-                        $this->warn("Start Enrollee[$enrollee->id]");
-                        $tP = $enrollee->eligibilityJob->targetPatient;
-                        $checkable = app(AthenaEligibilityCheckableFactory::class)->makeAthenaEligibilityCheckable(
-                            $tP
-                        );
-                        $eJ = $checkable->createAndProcessEligibilityJobFromMedicalRecord();
-                        $ccd = $checkable->getMedicalRecord();
-                        $providerName = $enrollee->referring_provider_name = $ccd->referring_provider_name = $eJ->data['referring_provider_name'];
-                        $provider = CcdaImporterWrapper::mysqlMatchProvider($providerName, $enrollee->practice_id);
+                    $this->warn("Start Enrollee[$enrollee->id]");
+                    $tP = $enrollee->eligibilityJob->targetPatient;
+                    $checkable = app(AthenaEligibilityCheckableFactory::class)->makeAthenaEligibilityCheckable(
+                        $tP
+                    );
+                    $eJ = $checkable->createAndProcessEligibilityJobFromMedicalRecord();
+                    $ccd = $checkable->getMedicalRecord();
+                    $providerName = $enrollee->referring_provider_name = $ccd->referring_provider_name = $eJ->data['referring_provider_name'];
+                    $provider = CcdaImporterWrapper::mysqlMatchProvider($providerName, $enrollee->practice_id);
 
-                        if ( ! $provider) {
-                            return;
-                        }
-
-                        $ccd->billing_provider_id = $enrollee->provider_id = $provider->id;
-
-                        if ($ccd->isDirty()) {
-                            $ccd->save();
-                        }
-                        if ($eJ->isDirty()) {
-                            $eJ->save();
-                        }
-                        if ($enrollee->isDirty()) {
-                            $enrollee->save();
-                            $this->line("Saving Enrollee[$enrollee->id]");
-                        }
+                    if ( ! $provider) {
+                        return;
                     }
+
+                    $ccd->billing_provider_id = $enrollee->provider_id = $provider->id;
+
+                    if ($ccd->isDirty()) {
+                        $ccd->save();
+                    }
+                    if ($eJ->isDirty()) {
+                        $eJ->save();
+                    }
+                    if ($enrollee->isDirty()) {
+                        $enrollee->save();
+                        $this->line("Saving Enrollee[$enrollee->id]");
+                    }
+                }
             );
     }
 }

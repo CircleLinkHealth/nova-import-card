@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands\Output;
 
 use DateTime;
@@ -12,8 +16,6 @@ class DeploymentSuccess
     /**
      * Render the output.
      *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
-     * @param \DateTimeInterface                  $startedAt
      *
      * @return void
      */
@@ -44,7 +46,6 @@ class DeploymentSuccess
     /**
      * Display the target domains for the deployment domains.
      *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
      *
      * @return void
      */

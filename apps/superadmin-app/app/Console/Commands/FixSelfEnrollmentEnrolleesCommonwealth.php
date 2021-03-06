@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
@@ -9,18 +13,17 @@ use Illuminate\Console\Command;
 class FixSelfEnrollmentEnrolleesCommonwealth extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'create:commonwealth-survey-only-users';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Will run CreateSurveyOnlyUserFromEnrolle for Commonwealth.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'create:commonwealth-survey-only-users';
 
     /**
      * Create a new command instance.
@@ -30,27 +33,6 @@ class FixSelfEnrollmentEnrolleesCommonwealth extends Command
     public function __construct()
     {
         parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-        $enrolleeIds = $this->getEnrolleeIds();
-        Enrollee::where('practice_id', 232)
-            ->whereIn('id', $enrolleeIds)
-            ->whereNull('user_id')
-            ->whereNotNull('provider_id')
-            ->chunk(50, function ($enrollees){
-                foreach ($enrollees as $enrollee){
-                    CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-                }
-            });
-
-        $this->info("Command dispatched for each Enrollee");
     }
 
     public function getEnrolleeIds()
@@ -662,7 +644,28 @@ class FixSelfEnrollmentEnrolleesCommonwealth extends Command
             376007,
             376017,
             376026,
-            376028
+            376028,
         ];
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $enrolleeIds = $this->getEnrolleeIds();
+        Enrollee::where('practice_id', 232)
+            ->whereIn('id', $enrolleeIds)
+            ->whereNull('user_id')
+            ->whereNotNull('provider_id')
+            ->chunk(50, function ($enrollees) {
+                foreach ($enrollees as $enrollee) {
+                    CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
+                }
+            });
+
+        $this->info('Command dispatched for each Enrollee');
     }
 }

@@ -5,7 +5,6 @@
  */
 
 use Circlelinkhealth\ClhImportCardExtended\CLHImportCardController;
-use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Card API Routes
