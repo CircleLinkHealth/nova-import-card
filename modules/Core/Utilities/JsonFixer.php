@@ -24,17 +24,46 @@ class JsonFixer
             return null;
         }
 
-        $expl               = explode('{', $jsonString);
-        $lastElement        = array_key_last($expl);
-        $lastJsonStringPart = preg_replace('/[^}\]]/', '', $expl[$lastElement]);
-        unset($expl[$lastElement]);
+        $expl        = explode('{', $jsonString);
+        $lastIndex   = array_key_last($expl);
+        $lastElement = $expl[$lastIndex];
+        unset($expl[$lastIndex]);
+        $lastJsonStringPart = '';
 
-        $fixed = rtrim(implode('{', $expl), ', \t\n\r\0\x0B').$lastJsonStringPart;
+        $charsToTrim = ', \t\n\r\0\x0B';
+        $fixed = rtrim(implode('{', $expl), $charsToTrim);
 
-        if (is_json($fixed)) {
-            return $fixed;
+        if (self::shouldAddClosingChar($fixed, '[', ']')) {
+            $lastJsonStringPart .= ']';
+        }
+
+        if (self::shouldAddClosingChar($fixed, '{', '}')) {
+            $lastJsonStringPart .= '}';
+        }
+        
+        $withLastLine = $fixed.', {'.rtrim($lastElement, $charsToTrim).'}'.$lastJsonStringPart;
+        if (is_json($withLastLine)) {
+            return $withLastLine;
+        }
+    
+        $withoutLastLine = $fixed.$lastJsonStringPart;
+        if (is_json($withoutLastLine)) {
+            return $withoutLastLine;
         }
 
         return null;
+    }
+
+    private static function shouldAddClosingChar(string $string, string $openingChar, string $closingChar)
+    {
+        $openingCount = substr_count($string, $openingChar);
+
+        if (0 === $openingCount) {
+            return false;
+        }
+
+        $closingCount = substr_count($string, $closingChar);
+
+        return 1 === $openingCount - $closingCount;
     }
 }
