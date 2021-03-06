@@ -7,18 +7,12 @@
 namespace CircleLinkHealth\Eligibility;
 
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
-use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Eligibility\Adapters\MultipleFiledsTemplateToString;
 use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
-use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
 use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
-use Illuminate\Support\Facades\Storage;
 
 class ProcessEligibilityService
 {
@@ -300,29 +294,9 @@ class ProcessEligibilityService
 
         return $batch;
     }
-
-    private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)
-    {
-        $patient = array_flip($headings);
-
-        $csvPatientList = new CsvPatientList(collect([$patient]));
-        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
-
-        $errors = [];
-        if ( ! $isValid) {
-            $errors[] = $this->validateRow($patient)->errors()->keys();
-        }
-
-        if ( ! empty($errors)) {
-            $options                        = $batch->options;
-            $options['errorsReadingSource'] = $errors;
-            $batch->options                 = $options;
-            $batch->save();
-
-            throw new CsvEligibilityListStructureValidationException($batch, $errors);
-        }
-    }
-
+    
+   
+    
     /**
      * @param $patient
      *
@@ -330,36 +304,6 @@ class ProcessEligibilityService
      */
     private function transformCsvRow($patient)
     {
-        if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
-            $problems = (new NumberedProblemFields())->handle($patient);
-
-            $patient['problems_string'] = json_encode(
-                [
-                    'Problems' => $problems,
-                ]
-            );
-        }
-
-        if (count(preg_grep('/^medication_[\d]*/', array_keys($patient))) > 0) {
-            $medications = (new NumberedMedicationFields())->handle($patient);
-
-            $patient['medications_string'] = json_encode(
-                [
-                    'Medications' => $medications,
-                ]
-            );
-        }
-
-        if (count(preg_grep('/^allergy_[\d]*/', array_keys($patient))) > 0) {
-            $allergies = (new NumberedAllergyFields())->handle($patient);
-
-            $patient['allergies_string'] = json_encode(
-                [
-                    'Allergies' => $allergies,
-                ]
-            );
-        }
-
-        return $patient;
+        return MultipleFiledsTemplateToString::fromRow($patient);
     }
 }
