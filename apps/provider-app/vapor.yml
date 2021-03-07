@@ -14,8 +14,8 @@ environments:
         concurrency: 5
         mail: false
         queues:
-            - cpm-provider-low-staging
-            - cpm-provider-high-staging
+            - cpm-provider-low-feature-billing-revamp
+            - cpm-provider-high-feature-billing-revamp
             - cpm-provider-revisionable-staging
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
