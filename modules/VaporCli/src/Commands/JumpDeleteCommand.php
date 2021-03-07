@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,26 +12,13 @@ use Symfony\Component\Console\Input\InputArgument;
 class JumpDeleteCommand extends Command
 {
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('jump:delete')
-            ->addArgument('jump', InputArgument::REQUIRED, 'The jumpbox name / ID')
-            ->setDescription('Delete a jumpbox');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
      */
     public function handle()
     {
-        if (! Helpers::confirm('Are you sure you want to delete this jumpbox', false)) {
+        if ( ! Helpers::confirm('Are you sure you want to delete this jumpbox', false)) {
             Helpers::abort('Action cancelled.');
         }
 
@@ -47,6 +38,19 @@ class JumpDeleteCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('jump:delete')
+            ->addArgument('jump', InputArgument::REQUIRED, 'The jumpbox name / ID')
+            ->setDescription('Delete a jumpbox');
+    }
+
+    /**
      * Determine the jump-box that should be deleted.
      *
      * @return array
@@ -55,7 +59,7 @@ class JumpDeleteCommand extends Command
     {
         $jumpBoxes = $this->vapor->jumpBoxes();
 
-        if (! is_numeric($jumpBoxId = $this->argument('jump'))) {
+        if ( ! is_numeric($jumpBoxId = $this->argument('jump'))) {
             $jumpBoxName = $jumpBoxId;
 
             $jumpBoxId = $this->findIdByName($jumpBoxes, $jumpBoxId);

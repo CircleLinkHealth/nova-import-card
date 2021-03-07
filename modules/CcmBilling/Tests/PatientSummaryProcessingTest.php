@@ -25,13 +25,13 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Bus;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class PatientSummaryProcessingTest extends TestCase
 {

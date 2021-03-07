@@ -104,7 +104,7 @@ class GenerateNurseInvoice implements ShouldQueue, ShouldBeEncrypted
             }
         );
     }
-    
+
     /**
      * @return Invoice
      */

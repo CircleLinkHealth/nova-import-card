@@ -7,7 +7,6 @@
 namespace App\Nova\Actions;
 
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
@@ -67,7 +66,7 @@ class SelfEnrollmentManualInvite extends Action
             }
 
             $manualInviteBatch = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
-            $user = new User($enrollee->user->toArray());
+            $user = $enrollee->user;
             SendInvitation::dispatch(
                 $user,
                 EnrollmentInvitationsBatch::firstOrCreateAndRemember(

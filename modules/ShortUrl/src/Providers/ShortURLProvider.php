@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Providers;
 
 use AshAllenDesign\ShortURL\Classes\Builder;
@@ -10,23 +14,8 @@ use Illuminate\Support\ServiceProvider;
 class ShortURLProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        $this->mergeConfigFrom(__DIR__.'/../../config/short-url.php', 'short-url');
-
-        $this->app->bind('short-url.builder', function () {
-            return new Builder();
-        });
-    }
-
-    /**
      * Bootstrap any application services.
      *
-     * @return void
      * @throws ValidationException
      */
     public function boot(): void
@@ -48,5 +37,17 @@ class ShortURLProvider extends ServiceProvider
         if (config('short-url') && config('short-url.validate_config')) {
             (new Validation())->validateConfig();
         }
+    }
+
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../../config/short-url.php', 'short-url');
+
+        $this->app->bind('short-url.builder', function () {
+            return new Builder();
+        });
     }
 }

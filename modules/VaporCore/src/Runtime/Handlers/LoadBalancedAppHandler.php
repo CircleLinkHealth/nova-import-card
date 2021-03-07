@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Laravel\Vapor\Runtime\Http\LoadBalancedPsrRequestFactory;
@@ -21,7 +25,6 @@ class LoadBalancedAppHandler extends AppHandler
     /**
      * Marshal the PSR-7 response to a Lambda response.
      *
-     * @param  \Psr\Http\Message\ResponseInterface  $response
      * @return \Laravel\Vapor\Runtime\ArrayLambdaResponse
      */
     protected function marshalResponse(ResponseInterface $response)

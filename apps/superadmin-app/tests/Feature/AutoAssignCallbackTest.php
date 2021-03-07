@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\DTO\PostmarkCallbackInboundData;
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundCallbackRequest;
@@ -27,7 +28,6 @@ use CircleLinkHealth\SharedModels\Services\Postmark\PostmarkInboundCallbackMatch
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\SharedModels\Traits\Tests\PostmarkCallbackHelpers;
 use Notification;
-use Tests\TestCase;
 
 class AutoAssignCallbackTest extends TestCase
 {

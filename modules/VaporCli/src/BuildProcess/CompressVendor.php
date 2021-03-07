@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\BuiltApplicationFiles;
@@ -19,7 +23,7 @@ class CompressVendor
      */
     public function __invoke()
     {
-        if (! Manifest::shouldSeparateVendor($this->environment)) {
+        if ( ! Manifest::shouldSeparateVendor($this->environment)) {
             return;
         }
 
@@ -31,7 +35,7 @@ class CompressVendor
 
         $archive = new ZipArchive();
 
-        $archive->open($this->buildPath.'/vendor.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $archive->open($this->buildPath.'/vendor.zip', ZipArchive::CREATE|ZipArchive::OVERWRITE);
 
         foreach (BuiltApplicationFiles::get($this->vendorPath) as $file) {
             $relativePathName = str_replace('\\', '/', $file->getRelativePathname());
@@ -67,7 +71,7 @@ class CompressVendor
      */
     protected function getPermissions($file)
     {
-        return $file->isDir() || $file->getFilename() == 'php'
+        return $file->isDir() || 'php' == $file->getFilename()
                         ? 33133  // '-r-xr-xr-x'
                         : fileperms($file->getRealPath());
     }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Clipboard;
@@ -10,19 +14,6 @@ use Symfony\Component\Console\Input\InputArgument;
 class RedeployCommand extends Command
 {
     use DisplaysDeploymentProgress;
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('redeploy')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->setDescription("Redeploy an environment's latest deployment");
-    }
 
     /**
      * Execute the command.
@@ -40,5 +31,18 @@ class RedeployCommand extends Command
         );
 
         Clipboard::deployment($deployment);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('redeploy')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->setDescription("Redeploy an environment's latest deployment");
     }
 }

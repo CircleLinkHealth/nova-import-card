@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -10,8 +14,9 @@ use Illuminate\Support\Facades\App;
 
 class GenerateContinuumFamilyCareLetter extends Seeder
 {
-    const PRACTICE_SIGNATORY_NAME = 'Chip Fillingane <br> DO';
     const CONTINUUM_FAMILY_PRACTICE_NAME = 'continuum-family-care-llc';
+    const PRACTICE_SIGNATORY_NAME        = 'Chip Fillingane <br> DO';
+
     /**
      * Run the database seeds.
      *

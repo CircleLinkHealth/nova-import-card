@@ -6,7 +6,6 @@
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Artisan;
 
 class SeedRpm60ChargeableService extends Migration
 {

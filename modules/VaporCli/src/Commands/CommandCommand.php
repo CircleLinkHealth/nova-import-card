@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -9,20 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class CommandCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('command')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->addOption('command', null, InputOption::VALUE_OPTIONAL, 'The command that should be executed')
-            ->setDescription('Execute a CLI command');
-    }
-
     /**
      * Execute the command.
      *
@@ -60,55 +50,40 @@ class CommandCommand extends Command
     }
 
     /**
-     * Get the command to run.
-     *
-     * @return string
-     */
-    protected function getCommand()
-    {
-        return $this->option('command') ?? Helpers::ask('What command would you like to execute');
-    }
-
-    /**
-     * Wait for the given command to finish executing.
-     *
-     * @param array $command
-     *
-     * @return array
-     */
-    protected function waitForCommandToFinish(array $command)
-    {
-        while ($command['status'] !== 'finished') {
-            sleep(1);
-
-            $command = $this->vapor->command($command['id']);
-        }
-
-        return $command;
-    }
-
-    /**
-     * Display the status code of the command.
-     *
-     * @param array $command
+     * Configure the command options.
      *
      * @return void
      */
-    protected function displayStatusCode(array $command)
+    protected function configure()
     {
-        if (! isset($command['status_code'])) {
-            return;
-        }
+        $this
+            ->setName('command')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->addOption('command', null, InputOption::VALUE_OPTIONAL, 'The command that should be executed')
+            ->setDescription('Execute a CLI command');
+    }
 
-        $command['status_code'] === 0
-                ? Helpers::line('<finished>Status Code:</> 0')
-                : Helpers::line('<fg=red>Status Code:</> '.$command['status_code']);
+    /**
+     * Display the command's log messages.
+     *
+     * @param int $statusCode
+     *
+     * @return void
+     */
+    protected function displayLog(array $command, $statusCode)
+    {
+        if ( ! isset($command['output']) || 0 !== $statusCode) {
+            Helpers::line();
+            Helpers::comment('Function Logs:');
+            Helpers::line();
+
+            Helpers::write(base64_decode($command['log']));
+        }
     }
 
     /**
      * Display the output of the command.
      *
-     * @param array $command
      *
      * @return void
      */
@@ -131,21 +106,46 @@ class CommandCommand extends Command
     }
 
     /**
-     * Display the command's log messages.
+     * Display the status code of the command.
      *
-     * @param array $command
-     * @param int   $statusCode
      *
      * @return void
      */
-    protected function displayLog(array $command, $statusCode)
+    protected function displayStatusCode(array $command)
     {
-        if (! isset($command['output']) || $statusCode !== 0) {
-            Helpers::line();
-            Helpers::comment('Function Logs:');
-            Helpers::line();
-
-            Helpers::write(base64_decode($command['log']));
+        if ( ! isset($command['status_code'])) {
+            return;
         }
+
+        0 === $command['status_code']
+                ? Helpers::line('<finished>Status Code:</> 0')
+                : Helpers::line('<fg=red>Status Code:</> '.$command['status_code']);
+    }
+
+    /**
+     * Get the command to run.
+     *
+     * @return string
+     */
+    protected function getCommand()
+    {
+        return $this->option('command') ?? Helpers::ask('What command would you like to execute');
+    }
+
+    /**
+     * Wait for the given command to finish executing.
+     *
+     *
+     * @return array
+     */
+    protected function waitForCommandToFinish(array $command)
+    {
+        while ('finished' !== $command['status']) {
+            sleep(1);
+
+            $command = $this->vapor->command($command['id']);
+        }
+
+        return $command;
     }
 }

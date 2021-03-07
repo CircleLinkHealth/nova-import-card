@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Classes;
 
 use AshAllenDesign\ShortURL\Models\ShortURL;
@@ -34,15 +38,13 @@ class KeyGenerator
      * we increment the ID and then
      * attempt to create a new
      * unique key again.
-     *
-     * @return string
      */
     public function generateRandom(): string
     {
         $ID = $this->getLastInsertedID();
 
         do {
-            $ID++;
+            ++$ID;
             $key = $this->hashids->encode($ID);
         } while (ShortURL::where('url_key', $key)->exists());
 
@@ -56,8 +58,6 @@ class KeyGenerator
      * called. From doing this, we can create a
      * unique hash without a reduced chance of
      * a collision.
-     *
-     * @return int
      */
     protected function getLastInsertedID(): int
     {

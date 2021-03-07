@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Aws\S3\S3Client;
@@ -25,51 +29,52 @@ class CollectSecretsFromS3
         );
 
         $this->files->put(
-            $this->appPath . '/vaporSecrets.php',
-            '<?php return ' . var_export($secrets, true) . ';'
+            $this->appPath.'/vaporSecrets.php',
+            '<?php return '.var_export($secrets, true).';'
         );
     }
 
     public function fetchSecrets(array $deployVars)
     {
-        if (empty($deployVars)) return [];
-
+        if (empty($deployVars)) {
+            return [];
+        }
         $envType = $deployVars['ENV_TYPE'];
         $appName = $deployVars['APP_NAME'];
-        $bucket = $deployVars['S3_SECRETS_BUCKET'];
+        $bucket  = $deployVars['S3_SECRETS_BUCKET'];
 
-        echo "Building [{$appName}] [{$envType}] environment." . PHP_EOL;
+        echo "Building [{$appName}] [{$envType}] environment.".PHP_EOL;
 
         $client = new S3Client([
-            "version" => "latest",
-            "credentials" => [
-                "key" => $deployVars['S3_SECRETS_KEY'],
-                "secret" => $deployVars['S3_SECRETS_SECRET'],
+            'version'     => 'latest',
+            'credentials' => [
+                'key'    => $deployVars['S3_SECRETS_KEY'],
+                'secret' => $deployVars['S3_SECRETS_SECRET'],
             ],
-            "region" => $deployVars['S3_SECRETS_REGION'],
-            "bucket" => $bucket,
+            'region' => $deployVars['S3_SECRETS_REGION'],
+            'bucket' => $bucket,
         ]);
 
         $secrets = [];
 
         foreach ($this->s3FileMapPath($appName, $envType, $this->appPath) as $tuple) {
-            $s3Key = $tuple['s3'];
+            $s3Key     = $tuple['s3'];
             $localPath = $tuple['local'];
 
-            echo "Fetching [{$s3Key}] from S3." . PHP_EOL;
+            echo "Fetching [{$s3Key}] from S3.".PHP_EOL;
 
             $client->getObject([
                 'Bucket' => $bucket,
-                'Key' => $s3Key,
+                'Key'    => $s3Key,
                 'SaveAs' => $localPath,
             ]);
 
-            if (!$this->endsWith($s3Key, '.env')) {
+            if ( ! $this->endsWith($s3Key, '.env')) {
                 continue;
             }
 
             foreach (self::parseSecrets($localPath) as $name => $value) {
-                echo "Fetched secret [{$name}]." . PHP_EOL;
+                echo "Fetched secret [{$name}].".PHP_EOL;
 
                 $secrets[$name] = $value;
             }
@@ -83,35 +88,31 @@ class CollectSecretsFromS3
     private function endsWith($haystack, $needle)
     {
         $length = strlen($needle);
-        if (!$length) {
+        if ( ! $length) {
             return true;
         }
+
         return substr($haystack, -$length) === $needle;
     }
 
     private function parseSecrets(string $localPath): array
     {
-        if (!file_exists($localPath)) {
+        if ( ! file_exists($localPath)) {
             return [];
         }
 
-        return collect(file($localPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES))
+        return collect(file($localPath, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES))
             ->mapWithKeys(function ($line) {
-                if (strpos(trim($line), '#') === 0) {
+                if (0 === strpos(trim($line), '#')) {
                     return null;
                 }
 
                 [$name, $value] = explode('=', $line, 2);
 
                 return [
-                    $this->sanitize($name) => $this->sanitize($value)
+                    $this->sanitize($name) => $this->sanitize($value),
                 ];
             })->filter()->all();
-    }
-
-    private function sanitize(string $value)
-    {
-        return str_replace("'", '', str_replace('"', '', trim($value)));
     }
 
     /**
@@ -121,21 +122,35 @@ class CollectSecretsFromS3
      */
     private function s3credentialsPath()
     {
-        return getcwd() . "/{$this->environmentType}-deploy-s3.env";
+        return getcwd()."/{$this->environmentType}-deploy-s3.env";
     }
 
-    private function s3FileMapPath(string $appName, string $envType, string $vaporBuildAppPath):array
+    private function s3FileMapPath(string $appName, string $envType, string $vaporBuildAppPath): array
     {
         return json_decode(
-            str_replace('__DIR__', __DIR__,
-                str_replace('$vaporBuildAppPath', $vaporBuildAppPath,
-                    str_replace('$envType', $envType,
-                        str_replace('$appName', $appName,
-                            file_get_contents(getcwd() . "/deploy-file-path-map.json"))
+            str_replace(
+                '__DIR__',
+                __DIR__,
+                str_replace(
+                    '$vaporBuildAppPath',
+                    $vaporBuildAppPath,
+                    str_replace(
+                        '$envType',
+                        $envType,
+                        str_replace(
+                            '$appName',
+                            $appName,
+                            file_get_contents(getcwd().'/deploy-file-path-map.json')
+                        )
                     )
                 )
             ),
             true
         );
+    }
+
+    private function sanitize(string $value)
+    {
+        return str_replace("'", '', str_replace('"', '', trim($value)));
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests\ScheduledTaskSubscriber;
 
 use Illuminate\Http\Client\Request;
@@ -11,9 +15,8 @@ use Spatie\TestTime\TestTime;
 
 class PingFailedToOhDearTest extends TestCase
 {
-    private MonitoredScheduledTaskLogItem $monitoredScheduledTaskLogItem;
-
     private array $meta;
+    private MonitoredScheduledTaskLogItem $monitoredScheduledTaskLogItem;
 
     public function setUp(): void
     {
@@ -48,7 +51,7 @@ class PingFailedToOhDearTest extends TestCase
         Http::assertSent(function (Request $request) {
             $this->assertEquals(
                 $request->url(),
-                $this->monitoredScheduledTaskLogItem->monitoredScheduledTask->ping_url . '/failed'
+                $this->monitoredScheduledTaskLogItem->monitoredScheduledTask->ping_url.'/failed'
             );
 
             $this->assertEquals($this->meta, $request->data());

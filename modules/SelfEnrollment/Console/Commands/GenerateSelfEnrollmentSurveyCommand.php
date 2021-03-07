@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\CreateEnrolleesSurveySeeder;
@@ -9,18 +13,17 @@ use Illuminate\Support\Facades\Artisan;
 class GenerateSelfEnrollmentSurveyCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'generate:selfEnrollmentSurvey';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Populates DB with Self Enrollment Question and Survey attributes';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'generate:selfEnrollmentSurvey';
 
     /**
      * Create a new command instance.
@@ -39,8 +42,7 @@ class GenerateSelfEnrollmentSurveyCommand extends Command
      */
     public function handle()
     {
-
-        /**
+        /*
          * Cases that this will work:
          *  1. No Enrollee Questions Data Exists at all.
          *  2. Enrollee Questions Data Exists but survey_questions are missing current survey_instance(instance for current year).
@@ -48,6 +50,6 @@ class GenerateSelfEnrollmentSurveyCommand extends Command
          * You are bout to enter a not great written seeder...
          */
         Artisan::call('db:seed', ['--class' => CreateEnrolleesSurveySeeder::class]);
-        $this->info("done");
+        $this->info('done');
     }
 }

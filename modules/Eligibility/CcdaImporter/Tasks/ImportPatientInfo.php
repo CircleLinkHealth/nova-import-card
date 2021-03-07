@@ -269,11 +269,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
         ];
     }
 
-    private function transform(object $demographics): array
-    {
-        return $this->getTransformer()->demographics($demographics);
-    }
-    
     private function isNewSurveyOnlyUser()
     {
         return (
@@ -285,5 +280,10 @@ class ImportPatientInfo extends BaseCcdaImportTask
             && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
             && 1 === Revision::whereRevisionableId($this->patient->patientInfo->id)->whereRevisionableType(Patient::class)->whereNull('old_value')->where('new_value', Patient::UNREACHABLE)->where('key', 'ccm_status')->count()
         );
+    }
+
+    private function transform(object $demographics): array
+    {
+        return $this->getTransformer()->demographics($demographics);
     }
 }

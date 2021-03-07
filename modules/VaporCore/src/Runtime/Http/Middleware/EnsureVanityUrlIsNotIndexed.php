@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Http\Middleware;
 
 class EnsureVanityUrlIsNotIndexed
@@ -7,8 +11,8 @@ class EnsureVanityUrlIsNotIndexed
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  callable  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  callable                 $next
      * @return mixed
      */
     public function handle($request, $next)

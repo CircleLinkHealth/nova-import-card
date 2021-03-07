@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Requests;
 
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -71,13 +71,15 @@ class SelfEnrollableUserAuthRequest extends FormRequest
 
             if ($validator->failed()) {
                 $validator->errors()->add('help_login', $helpLoginMessage);
+
                 return;
             }
 
             if ($enrolleeQuery->exists()) {
                 $this->request->add([
-                    'userId'=>$userId
+                    'userId' => $userId,
                 ]);
+
                 return;
             }
 
@@ -86,7 +88,7 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             $validator->errors()->add('help_login', $helpLoginMessage);
 
             $this->request->add([
-                'userId'=>$userId
+                'userId' => $userId,
             ]);
         });
     }
@@ -98,10 +100,10 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 $q->where('birth_date', $dob);
             })->whereHas('enrollee', function ($q) {
                 $q->whereIn('status', [
-                        Enrollee::QUEUE_AUTO_ENROLLMENT,
-                        Enrollee::TO_CALL,
-                        Enrollee::SOFT_REJECTED,
-                    ])
+                    Enrollee::QUEUE_AUTO_ENROLLMENT,
+                    Enrollee::TO_CALL,
+                    Enrollee::SOFT_REJECTED,
+                ])
                     ->where(function ($q) {
                         $q->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
                             ->orWhereNull('source');
@@ -112,14 +114,12 @@ class SelfEnrollableUserAuthRequest extends FormRequest
 
     private function helpLoginMessage()
     {
-        $practiceNumber =  $this->user->primaryProgramPhoneE164();
-        $mainMessageBody = "If you are having trouble to log in, please contact your practice";
-        if ($practiceNumber){
+        $practiceNumber  = $this->user->primaryProgramPhoneE164();
+        $mainMessageBody = 'If you are having trouble to log in, please contact your practice';
+        if ($practiceNumber) {
             return "$mainMessageBody at $practiceNumber.";
         }
 
         return "$mainMessageBody.";
-
     }
-
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Http\Middleware;
 
 use Illuminate\Support\Str;
@@ -10,8 +14,8 @@ class EnsureBinaryEncoding
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  callable  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  callable                 $next
      * @return mixed
      */
     public function handle($request, $next)
@@ -28,8 +32,7 @@ class EnsureBinaryEncoding
     /**
      * Determine if base64 encoding is required for the response.
      *
-     * @param  \Illuminate\Http\Response  $response
-     * @return bool
+     * @param \Illuminate\Http\Response $response
      */
     public static function isBase64EncodingRequired(Response $response): bool
     {

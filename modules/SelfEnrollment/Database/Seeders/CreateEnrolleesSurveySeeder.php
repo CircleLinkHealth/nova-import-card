@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CreateEnrolleesSurveySeeder extends Seeder
 {
@@ -253,5 +253,4 @@ class CreateEnrolleesSurveySeeder extends Seeder
             $this->createQuestions($currentInstance, $questionsData);
         }
     }
-
 }

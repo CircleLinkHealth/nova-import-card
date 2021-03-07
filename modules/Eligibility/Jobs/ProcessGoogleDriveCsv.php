@@ -7,6 +7,10 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Eligibility\Adapters\MultipleFiledsTemplateToJson;
+use CircleLinkHealth\Eligibility\DTO\CsvPatientList;
+use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
@@ -23,6 +27,7 @@ class ProcessGoogleDriveCsv implements ShouldQueue, ShouldBeEncrypted
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use ValidatesEligibility;
 
     protected int $batchId;
 
@@ -122,7 +127,7 @@ class ProcessGoogleDriveCsv implements ShouldQueue, ShouldBeEncrypted
                     continue;
                 }
 
-                $patient = sanitize_array_keys($this->transformCsvRow($row));
+                $patient = sanitize_array_keys(MultipleFiledsTemplateToJson::fromRow($row));
 
                 //we do this to use the data transformation the method performs
                 $validator = $this->validateRow($patient);
@@ -176,6 +181,28 @@ class ProcessGoogleDriveCsv implements ShouldQueue, ShouldBeEncrypted
             \Log::info("FINISH deleting `${fileName}`");
 
             throw $e;
+        }
+    }
+
+    private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)
+    {
+        $patient = array_flip($headings);
+
+        $csvPatientList = new CsvPatientList(collect([$patient]));
+        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
+
+        $errors = [];
+        if ( ! $isValid) {
+            $errors[] = $this->validateRow($patient)->errors()->keys();
+        }
+
+        if ( ! empty($errors)) {
+            $options                        = $batch->options;
+            $options['errorsReadingSource'] = $errors;
+            $batch->options                 = $options;
+            $batch->save();
+
+            throw new CsvEligibilityListStructureValidationException($batch, $errors);
         }
     }
 }

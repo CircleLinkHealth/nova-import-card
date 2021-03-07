@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CommandLogCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('command:log')
-            ->addArgument('id', InputArgument::OPTIONAL, 'The command ID')
-            ->setDescription('Retrieve the log messages for an invoked command');
-    }
-
     /**
      * Execute the command.
      *
@@ -41,5 +32,18 @@ class CommandLogCommand extends Command
         isset($command['log']) && ! empty($command['log'])
                     ? Helpers::write(base64_decode($command['log']))
                     : Helpers::line('No log information is available for this invocation.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('command:log')
+            ->addArgument('id', InputArgument::OPTIONAL, 'The command ID')
+            ->setDescription('Retrieve the log messages for an invoked command');
     }
 }

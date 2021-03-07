@@ -1,19 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 class DatabaseInstanceClasses
 {
-    /**
-     * Get the available RDS instance classes.
-     *
-     * @return array
-     */
-    public static function keys()
-    {
-        return array_keys(static::available());
-    }
-
     /**
      * Get the available general purpose RDS instance classes.
      *
@@ -27,11 +21,11 @@ class DatabaseInstanceClasses
             // 'db.t2.medium' => 'db.t2.medium - (2 VCPU, 4Gib RAM) - ~$50 / month',
             // 'db.t2.large' => 'db.t2.large - (2 VCPU, 8Gib RAM) - ~$100 / month',
 
-            'db.t3.micro'  => 'db.t3.micro - (2 VCPU, 1Gib RAM) - ~$15 / month',
-            'db.t3.small'  => 'db.t3.small - (2 VCPU, 2Gib RAM) - ~$25 / month',
-            'db.t3.medium' => 'db.t3.medium - (2 VCPU, 4Gib RAM) - ~$50 / month',
-            'db.t3.large'  => 'db.t3.large - (2 VCPU, 8Gib RAM) - ~$100 / month',
-            'db.t3.xlarge' => 'db.t3.xlarge - (4 VCPU, 16Gib RAM) - ~$200 / month',
+            'db.t3.micro'   => 'db.t3.micro - (2 VCPU, 1Gib RAM) - ~$15 / month',
+            'db.t3.small'   => 'db.t3.small - (2 VCPU, 2Gib RAM) - ~$25 / month',
+            'db.t3.medium'  => 'db.t3.medium - (2 VCPU, 4Gib RAM) - ~$50 / month',
+            'db.t3.large'   => 'db.t3.large - (2 VCPU, 8Gib RAM) - ~$100 / month',
+            'db.t3.xlarge'  => 'db.t3.xlarge - (4 VCPU, 16Gib RAM) - ~$200 / month',
             'db.t3.2xlarge' => 'db.t3.2xlarge - (8 VCPU, 32Gib RAM) - ~$400 / month',
 
             'db.m5.large'    => 'db.m5.large - (2 VCPU, 8GB RAM) - ~$125 / month',
@@ -43,6 +37,16 @@ class DatabaseInstanceClasses
             'db.m5.16xlarge' => 'db.m5.16xlarge - (64 VCPU, 256Gib RAM) - ~$4000 / month',
             'db.m5.24xlarge' => 'db.m5.24xlarge - (96 VCPU, 384GiB RAM) - ~$6000 / month',
         ];
+    }
+
+    /**
+     * Get the available RDS instance classes.
+     *
+     * @return array
+     */
+    public static function keys()
+    {
+        return array_keys(static::available());
     }
 
     /**

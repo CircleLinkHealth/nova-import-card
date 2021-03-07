@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Symfony\Component\Finder\Finder;
@@ -11,28 +15,28 @@ class AssetFiles
      *
      * @param string $path
      *
-     * @return \Symfony\Component\Finder\Finder|array
+     * @return array|\Symfony\Component\Finder\Finder
      */
     public static function get($path)
     {
-        if (! is_dir($path)) {
+        if ( ! is_dir($path)) {
             return collect();
         }
 
         return (new Finder())
-                ->in($path)
-                ->files()
-                ->exclude('storage')
-                ->notName('.htaccess')
-                ->notName('web.config')
-                ->notName('browserconfig.xml')
-                ->notName('*.webmanifest')
-                ->notName('manifest.json')
-                ->notName('mix-manifest.json')
-                ->notName('*.php')
-                ->ignoreVcs(true)
-                ->ignoreDotFiles(! Manifest::dotFilesAsAssets())
-                ->sortByName();
+            ->in($path)
+            ->files()
+            ->exclude('storage')
+            ->notName('.htaccess')
+            ->notName('web.config')
+            ->notName('browserconfig.xml')
+            ->notName('*.webmanifest')
+            ->notName('manifest.json')
+            ->notName('mix-manifest.json')
+            ->notName('*.php')
+            ->ignoreVcs(true)
+            ->ignoreDotFiles( ! Manifest::dotFilesAsAssets())
+            ->sortByName();
     }
 
     /**

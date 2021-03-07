@@ -5,3 +5,4 @@ apps/*/*deploy-s3.env
 staging-deploy-s3.env
 production-deploy-s3.env
 /apps/*/public/compiled/
+.php_cs.cache

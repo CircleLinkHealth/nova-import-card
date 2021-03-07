@@ -241,7 +241,10 @@ namespace App;
  * @method   static                                                                                                                        \Illuminate\Database\Eloquent\Builder|User withCareTeamOfType($type)
  * @method   static                                                                                                                        \Illuminate\Database\Eloquent\Builder|User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  * @mixin \Eloquent
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection $synonyms
+ * @property int|null                                                                               $synonyms_count
+ * @method   static                                                                                 \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
  */
-class User extends \CircleLinkHealth\SelfEnrollment\Entities\User
+class User extends \CircleLinkHealth\Customer\Entities\User
 {
 }

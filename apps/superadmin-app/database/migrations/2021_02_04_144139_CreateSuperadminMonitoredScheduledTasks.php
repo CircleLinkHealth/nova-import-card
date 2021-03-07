@@ -13,7 +13,6 @@ class CreateSuperadminMonitoredScheduledTasks extends Migration
     public function up()
     {
         if (Schema::hasTable($this->getTasksName())) {
-
             return;
         }
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Tests\Unit\Models\ShortURL;
 
 use AshAllenDesign\ShortURL\Models\ShortURL;

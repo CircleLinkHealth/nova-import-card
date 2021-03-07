@@ -1,8 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Foundation\Testing\WithFaker;
 
 class UsersTableSeeder extends Seeder
 {

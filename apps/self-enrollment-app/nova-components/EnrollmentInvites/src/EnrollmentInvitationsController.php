@@ -8,7 +8,6 @@ namespace Circlelinkhealth\EnrollmentInvites;
 
 use CircleLinkHealth\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use CircleLinkHealth\SelfEnrollment\Domain\InviteUnreachablePatients;
-use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnrollmentInvitationsController

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Exception;
@@ -7,37 +11,9 @@ use Exception;
 trait NotifiesLambda
 {
     /**
-     * Send the response data to Lambda.
-     *
-     * @param  string  $invocationId
-     * @param  mixed  $data
-     * @return void
-     */
-    protected function notifyLambdaOfResponse($invocationId, $data)
-    {
-        return $this->lambdaRequest(
-            "http://{$this->apiUrl}/2018-06-01/runtime/invocation/{$invocationId}/response", $data
-        );
-    }
-
-    /**
-     * Send the error response data to Lambda.
-     *
-     * @param  string  $invocationId
-     * @param  mixed  $data
-     * @return void
-     */
-    protected function notifyLambdaOfError($invocationId, $data)
-    {
-        return $this->lambdaRequest(
-            "http://{$this->apiUrl}/2018-06-01/runtime/invocation/{$invocationId}/error", $data
-        );
-    }
-
-    /**
      * Send the given data to the given URL as JSON.
      *
-     * @param  string  $url
+     * @param  string $url
      * @param  mixed  $data
      * @return void
      */
@@ -45,7 +21,7 @@ trait NotifiesLambda
     {
         $json = json_encode($data);
 
-        if ($json === false) {
+        if (false === $json) {
             throw new Exception('Error encoding runtime JSON response: '.json_last_error_msg());
         }
 
@@ -76,5 +52,35 @@ trait NotifiesLambda
         curl_reset($handler);
 
         curl_close($handler);
+    }
+
+    /**
+     * Send the error response data to Lambda.
+     *
+     * @param  string $invocationId
+     * @param  mixed  $data
+     * @return void
+     */
+    protected function notifyLambdaOfError($invocationId, $data)
+    {
+        return $this->lambdaRequest(
+            "http://{$this->apiUrl}/2018-06-01/runtime/invocation/{$invocationId}/error",
+            $data
+        );
+    }
+
+    /**
+     * Send the response data to Lambda.
+     *
+     * @param  string $invocationId
+     * @param  mixed  $data
+     * @return void
+     */
+    protected function notifyLambdaOfResponse($invocationId, $data)
+    {
+        return $this->lambdaRequest(
+            "http://{$this->apiUrl}/2018-06-01/runtime/invocation/{$invocationId}/response",
+            $data
+        );
     }
 }

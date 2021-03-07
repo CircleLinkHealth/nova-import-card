@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CacheTunnelCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cache:tunnel')
-            ->addArgument('cache', InputArgument::REQUIRED, 'The name of the cache')
-            ->setDescription('Create a secure tunnel to a cache, allowing local connections');
-    }
-
     /**
      * Execute the command.
      *
@@ -31,7 +22,7 @@ class CacheTunnelCommand extends Command
 
         $caches = $this->vapor->caches();
 
-        if (! is_numeric($cacheId = $this->argument('cache'))) {
+        if ( ! is_numeric($cacheId = $this->argument('cache'))) {
             $cacheId = $this->findIdByName($caches, $cacheId);
         }
 
@@ -54,9 +45,21 @@ class CacheTunnelCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cache:tunnel')
+            ->addArgument('cache', InputArgument::REQUIRED, 'The name of the cache')
+            ->setDescription('Create a secure tunnel to a cache, allowing local connections');
+    }
+
+    /**
      * Find a jump-box compatible with the cache.
      *
-     * @param array $cache
      *
      * @return array
      */
@@ -79,7 +82,6 @@ class CacheTunnelCommand extends Command
     /**
      * Store the private SSH key for the jump-box.
      *
-     * @param array $jumpBox
      *
      * @return string
      */

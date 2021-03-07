@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\InvitationLink;
 use Illuminate\Database\Seeder;
 

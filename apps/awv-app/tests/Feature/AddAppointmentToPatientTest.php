@@ -9,9 +9,8 @@ namespace Tests\Feature;
 use App\PatientAwvSurveyInstanceStatusView;
 use Tests\Helpers\PatientHelpers;
 use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
 
-class AddAppointmentToPatientTest extends TestCase
+class AddAppointmentToPatientTest extends \CircleLinkHealth\Core\Tests\TestCase
 {
     use PatientHelpers;
     use UserHelpers;

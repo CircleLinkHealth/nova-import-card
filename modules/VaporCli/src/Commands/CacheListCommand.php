@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -7,18 +11,6 @@ use Laravel\VaporCli\Helpers;
 
 class CacheListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cache:list')
-            ->setDescription('List the caches that belong to the current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -41,5 +33,17 @@ class CacheListCommand extends Command
                 Str::title(str_replace('_', ' ', $cache['status'])),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cache:list')
+            ->setDescription('List the caches that belong to the current team');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Symfony\Component\Process\Process;
@@ -9,7 +13,6 @@ class Clipboard
     /**
      * Store the deployment environment's vanity URL in the clipboard.
      *
-     * @param array $deployment
      *
      * @return void
      */
@@ -27,7 +30,7 @@ class Clipboard
      */
     public static function put($string)
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        if ('WIN' === strtoupper(substr(PHP_OS, 0, 3))) {
             Process::fromShellCommandline('echo '.$string.' | clip')->run();
         } else {
             Process::fromShellCommandline('echo "'.$string.'" | pbcopy')->run();

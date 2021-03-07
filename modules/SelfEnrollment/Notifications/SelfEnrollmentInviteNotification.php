@@ -7,13 +7,12 @@
 namespace CircleLinkHealth\SelfEnrollment\Notifications;
 
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 

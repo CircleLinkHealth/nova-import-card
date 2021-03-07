@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Commands;
 
 use Illuminate\Console\Command;
@@ -12,13 +16,12 @@ use Spatie\ScheduleMonitor\Support\ScheduledTasks\Tasks\Task;
 
 class SyncCommand extends Command
 {
-    public $signature = 'schedule-monitor:sync';
-
     public $description = 'Sync the schedule of the app with the schedule monitor';
+    public $signature   = 'schedule-monitor:sync';
 
     public function handle()
     {
-        $this->info('Start syncing schedule...' . PHP_EOL);
+        $this->info('Start syncing schedule...'.PHP_EOL);
 
         $this
             ->syncScheduledTasksWithDatabase()
@@ -26,45 +29,20 @@ class SyncCommand extends Command
 
         $monitoredScheduledTasksCount = MonitoredScheduledTask::count();
         $this->info('');
-        $this->info('All done! Now monitoring ' . $monitoredScheduledTasksCount . ' ' . Str::plural('scheduled task', $monitoredScheduledTasksCount) . '.');
+        $this->info('All done! Now monitoring '.$monitoredScheduledTasksCount.' '.Str::plural('scheduled task', $monitoredScheduledTasksCount).'.');
         $this->info('');
         $this->info('Run `php artisan schedule-monitor:list` to see which jobs are now monitored.');
     }
 
-    protected function syncScheduledTasksWithDatabase(): self
-    {
-        $this->comment('Start syncing schedule with database...');
-
-        $monitoredScheduledTasks = ScheduledTasks::createForSchedule()
-            ->uniqueTasks()
-            ->map(function (Task $task) {
-                return MonitoredScheduledTask::updateOrCreate(
-                    ['name' => $task->name()],
-                    [
-                        'type' => $task->type(),
-                        'cron_expression' => $task->cronExpression(),
-                        'timezone' => $task->timezone(),
-                        'grace_time_in_minutes' => $task->graceTimeInMinutes(),
-                    ]
-                );
-            });
-
-        MonitoredScheduledTask::query()
-            ->whereNotIn('id', $monitoredScheduledTasks->pluck('id'))
-            ->delete();
-
-        return $this;
-    }
-
     protected function syncMonitoredScheduledTaskWithOhDear(): self
     {
-        if (! class_exists(OhDear::class)) {
+        if ( ! class_exists(OhDear::class)) {
             return $this;
         }
 
         $siteId = config('schedule-monitor.oh_dear.site_id');
 
-        if (! $siteId) {
+        if ( ! $siteId) {
             $this->warn('Not syncing schedule with Oh Dear because not `site_id` is not set in the `oh-dear` config file. Learn how to set this up at https://ohdear.app/TODO-add-link.');
 
             return $this;
@@ -77,12 +55,12 @@ class SyncCommand extends Command
         $cronChecks = $monitoredScheduledTasks
             ->map(function (MonitoredScheduledTask $monitoredScheduledTask) {
                 return [
-                    'name' => $monitoredScheduledTask->name,
-                    'type' => 'cron',
-                    'cron_expression' => $monitoredScheduledTask->cron_expression,
+                    'name'                  => $monitoredScheduledTask->name,
+                    'type'                  => 'cron',
+                    'cron_expression'       => $monitoredScheduledTask->cron_expression,
                     'grace_time_in_minutes' => $monitoredScheduledTask->grace_time_in_minutes,
-                    'server_timezone' => $monitoredScheduledTask->timezone,
-                    'description' => '',
+                    'server_timezone'       => $monitoredScheduledTask->timezone,
+                    'description'           => '',
                 ];
             })
             ->toArray();
@@ -93,7 +71,7 @@ class SyncCommand extends Command
         collect($cronChecks)
             ->each(
                 function (CronCheck $cronCheck) {
-                    if (! $monitoredScheduledTask = MonitoredScheduledTask::findForCronCheck($cronCheck)) {
+                    if ( ! $monitoredScheduledTask = MonitoredScheduledTask::findForCronCheck($cronCheck)) {
                         return;
                     }
 
@@ -101,6 +79,31 @@ class SyncCommand extends Command
                     $monitoredScheduledTask->markAsRegisteredOnOhDear();
                 }
             );
+
+        return $this;
+    }
+
+    protected function syncScheduledTasksWithDatabase(): self
+    {
+        $this->comment('Start syncing schedule with database...');
+
+        $monitoredScheduledTasks = ScheduledTasks::createForSchedule()
+            ->uniqueTasks()
+            ->map(function (Task $task) {
+                return MonitoredScheduledTask::updateOrCreate(
+                    ['name' => $task->name()],
+                    [
+                        'type'                  => $task->type(),
+                        'cron_expression'       => $task->cronExpression(),
+                        'timezone'              => $task->timezone(),
+                        'grace_time_in_minutes' => $task->graceTimeInMinutes(),
+                    ]
+                );
+            });
+
+        MonitoredScheduledTask::query()
+            ->whereNotIn('id', $monitoredScheduledTasks->pluck('id'))
+            ->delete();
 
         return $this;
     }

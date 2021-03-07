@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor;
 
 use Illuminate\Console\Events\CommandStarting;
@@ -32,33 +36,9 @@ class ScheduleMonitorServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/schedule-monitor.php', 'schedule-monitor');
     }
 
-    protected function registerPublishables(): self
-    {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/schedule-monitor.php' => config_path('schedule-monitor.php'),
-            ], 'config');
-        }
-
-        return $this;
-    }
-
-    protected function registerCommands(): self
-    {
-        $this->commands([
-            CleanLogCommand::class,
-            ListCommand::class,
-            SyncCommand::class,
-            VerifyCommand::class,
-            CreateMigrationCommand::class
-        ]);
-
-        return $this;
-    }
-
     protected function configureOhDearApi(): self
     {
-        if (! class_exists(OhDear::class)) {
+        if ( ! class_exists(OhDear::class)) {
             return $this;
         }
 
@@ -71,10 +51,34 @@ class ScheduleMonitorServiceProvider extends ServiceProvider
         return $this;
     }
 
+    protected function registerCommands(): self
+    {
+        $this->commands([
+            CleanLogCommand::class,
+            ListCommand::class,
+            SyncCommand::class,
+            VerifyCommand::class,
+            CreateMigrationCommand::class,
+        ]);
+
+        return $this;
+    }
+
     protected function registerEventHandlers(): self
     {
         Event::subscribe(ScheduledTaskEventSubscriber::class);
         Event::listen(CommandStarting::class, BackgroundCommandListener::class);
+
+        return $this;
+    }
+
+    protected function registerPublishables(): self
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/schedule-monitor.php' => config_path('schedule-monitor.php'),
+            ], 'config');
+        }
 
         return $this;
     }

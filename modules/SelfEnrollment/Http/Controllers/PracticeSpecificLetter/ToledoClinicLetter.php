@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
@@ -88,7 +88,7 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
         return $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider): string
+    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
@@ -96,7 +96,7 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
                 $practiceNameToGetSignature = $practice->name;
                 $npiNumber                  = $provider->load('providerInfo')->providerInfo->npi_number;
                 $type                       = ProviderSignature::SIGNATURE_PIC_TYPE;
-                $signature = asset("/img/signatures/$practiceNameToGetSignature/$npiNumber$type");
+                $signature                  = asset("/img/signatures/$practiceNameToGetSignature/$npiNumber$type");
                 $practiceSigSrc             = "<img src=$signature alt='$practice->dipslay_name' style='max-width: 100%;'/>";
             }
         }

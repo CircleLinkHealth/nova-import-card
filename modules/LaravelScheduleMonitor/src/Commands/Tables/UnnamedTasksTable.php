@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Commands\Tables;
 
 use Spatie\ScheduleMonitor\Support\ScheduledTasks\ScheduledTasks;
@@ -21,11 +25,10 @@ class UnnamedTasksTable extends ScheduledTasksTable
         $this->command->line('These tasks cannot be monitored because no name could be determined for them.');
         $this->command->line('');
 
-
         $headers = ['Type', 'Frequency'];
-        $rows = $unnamedTasks->map(function (Task $task) {
+        $rows    = $unnamedTasks->map(function (Task $task) {
             return [
-                'type' => ucfirst($task->type()),
+                'type'            => ucfirst($task->type()),
                 'cron_expression' => $task->humanReadableCron(),
             ];
         });

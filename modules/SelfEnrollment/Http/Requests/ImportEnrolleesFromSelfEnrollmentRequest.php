@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Http\Requests;
 
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -27,7 +31,7 @@ class ImportEnrolleesFromSelfEnrollmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'enrolleeId' => 'required'
+            'enrolleeId' => 'required',
         ];
     }
 
@@ -38,15 +42,16 @@ class ImportEnrolleesFromSelfEnrollmentRequest extends FormRequest
             $enrolleeId = intval($input['enrolleeId']);
             $enrollee = Enrollee::find($enrolleeId);
 
-            if (!$enrollee){
+            if ( ! $enrollee) {
                 $message = "Enrollee [$enrolleeId] missing from CPM during importing from SelfEnrollment.";
                 Log::error($message);
                 sendSlackMessage('#self_enrollment_logs', $message);
+
                 return;
             }
 
             $this->request->add([
-                'enrolleeId'=>$enrolleeId
+                'enrolleeId' => $enrolleeId,
             ]);
         });
     }

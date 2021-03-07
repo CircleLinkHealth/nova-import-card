@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Http\Controllers;
 
 use Aws\S3\S3Client;
@@ -15,7 +19,6 @@ class SignedStorageUrlController extends Controller implements SignedStorageUrlC
     /**
      * Create a new signed URL.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -39,10 +42,10 @@ class SignedStorageUrlController extends Controller implements SignedStorageUrlC
         $uri = $signedRequest->getUri();
 
         return response()->json([
-            'uuid' => $uuid,
-            'bucket' => $bucket,
-            'key' => $key,
-            'url' => 'https://'.$uri->getHost().$uri->getPath().'?'.$uri->getQuery(),
+            'uuid'    => $uuid,
+            'bucket'  => $bucket,
+            'key'     => $key,
+            'url'     => 'https://'.$uri->getHost().$uri->getPath().'?'.$uri->getQuery(),
             'headers' => $this->headers($request, $signedRequest),
         ], 201);
     }
@@ -50,45 +53,35 @@ class SignedStorageUrlController extends Controller implements SignedStorageUrlC
     /**
      * Create a command for the PUT operation.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Aws\S3\S3Client  $client
-     * @param  string  $bucket
-     * @param  string  $key
+     * @param  string       $bucket
+     * @param  string       $key
      * @return \Aws\Command
      */
     protected function createCommand(Request $request, S3Client $client, $bucket, $key)
     {
         return $client->getCommand('putObject', array_filter([
-            'Bucket' => $bucket,
-            'Key' => $key,
-            'ACL' => $request->input('visibility') ?: $this->defaultVisibility(),
-            'ContentType' => $request->input('content_type') ?: 'application/octet-stream',
+            'Bucket'       => $bucket,
+            'Key'          => $key,
+            'ACL'          => $request->input('visibility') ?: $this->defaultVisibility(),
+            'ContentType'  => $request->input('content_type') ?: 'application/octet-stream',
             'CacheControl' => $request->input('cache_control') ?: null,
-            'Expires' => $request->input('expires') ?: null,
+            'Expires'      => $request->input('expires') ?: null,
         ]));
     }
 
     /**
-     * Get the headers that should be used when making the signed request.
+     * Get the default visibility for uploads.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \GuzzleHttp\Psr7\Request
-     * @return array
+     * @return string
      */
-    protected function headers(Request $request, $signedRequest)
+    protected function defaultVisibility()
     {
-        return array_merge(
-            $signedRequest->getHeaders(),
-            [
-                'Content-Type' => $request->input('content_type') ?: 'application/octet-stream',
-            ]
-        );
+        return 'private';
     }
 
     /**
      * Ensure the required environment variables are available.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return void
      */
     protected function ensureEnvironmentVariablesAreAvailable(Request $request)
@@ -104,8 +97,23 @@ class SignedStorageUrlController extends Controller implements SignedStorageUrlC
             return;
         }
 
-        throw new InvalidArgumentException(
-            'Unable to issue signed URL. Missing environment variables: '.implode(', ', array_keys($missing))
+        throw new InvalidArgumentException('Unable to issue signed URL. Missing environment variables: '.implode(', ', array_keys($missing)));
+    }
+
+    /**
+     * Get the headers that should be used when making the signed request.
+     *
+     * @param  \GuzzleHttp\Psr7\Request
+     * @param  mixed $signedRequest
+     * @return array
+     */
+    protected function headers(Request $request, $signedRequest)
+    {
+        return array_merge(
+            $signedRequest->getHeaders(),
+            [
+                'Content-Type' => $request->input('content_type') ?: 'application/octet-stream',
+            ]
         );
     }
 
@@ -117,34 +125,24 @@ class SignedStorageUrlController extends Controller implements SignedStorageUrlC
     protected function storageClient()
     {
         $config = [
-            'region' => $_ENV['AWS_DEFAULT_REGION'],
-            'version' => 'latest',
+            'region'            => $_ENV['AWS_DEFAULT_REGION'],
+            'version'           => 'latest',
             'signature_version' => 'v4',
         ];
 
-        if (! isset($_ENV['AWS_LAMBDA_FUNCTION_VERSION'])) {
+        if ( ! isset($_ENV['AWS_LAMBDA_FUNCTION_VERSION'])) {
             $config['credentials'] = array_filter([
-                'key' => $_ENV['AWS_ACCESS_KEY_ID'] ?? null,
+                'key'    => $_ENV['AWS_ACCESS_KEY_ID'] ?? null,
                 'secret' => $_ENV['AWS_SECRET_ACCESS_KEY'] ?? null,
-                'token' => $_ENV['AWS_SESSION_TOKEN'] ?? null,
+                'token'  => $_ENV['AWS_SESSION_TOKEN'] ?? null,
             ]);
 
             if (array_key_exists('AWS_URL', $_ENV) && ! is_null($_ENV['AWS_URL'])) {
-                $config['url'] = $_ENV['AWS_URL'];
+                $config['url']      = $_ENV['AWS_URL'];
                 $config['endpoint'] = $_ENV['AWS_URL'];
             }
         }
 
         return S3Client::factory($config);
-    }
-
-    /**
-     * Get the default visibility for uploads.
-     *
-     * @return string
-     */
-    protected function defaultVisibility()
-    {
-        return 'private';
     }
 }

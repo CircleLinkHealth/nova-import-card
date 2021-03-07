@@ -35,13 +35,13 @@ class Patients implements ShouldQueue
                     $q->where(function ($q) {
                         $q->whereNull('last_auto_qa_attempt_at')
                             ->orWhere(function ($q) {
-                                $q->where('last_auto_qa_attempt_at', '<', now()->subHours(2));
-                            });
+                              $q->where('last_auto_qa_attempt_at', '<', now()->subHours(2));
+                          });
                     })->where(function ($q) {
                         $q->whereNull('drafted_at')
                             ->orWhere(function ($q) {
-                                $q->where('drafted_at', '>', now()->subDays(1)->startOfDay());
-                            });
+                              $q->where('drafted_at', '>', now()->subDays(1)->startOfDay());
+                          });
                     });
                 }
             )

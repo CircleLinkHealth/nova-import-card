@@ -104,8 +104,8 @@ class PatientIsUnique implements Rule
                 }
             )->whereMrnNumber($this->mrn)->whereNotNull('mrn_number')
                 ->when($this->patientUserId, function ($q) {
-                    $q->where('user_id', '!=', $this->patientUserId);
-                })
+                                                        $q->where('user_id', '!=', $this->patientUserId);
+                                                    })
                 ->pluck('user_id');
 
             if ($this->duplicatePatientUserIds->isNotEmpty()) {

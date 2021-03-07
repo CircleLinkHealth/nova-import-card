@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Illuminate\Support\Str;
@@ -10,15 +14,16 @@ class Docker
     /**
      * Build a docker image.
      *
-     * @param  string  $path
-     * @param  string  $project
-     * @param  string  $environment
+     * @param  string $path
+     * @param  string $project
+     * @param  string $environment
      * @return void
      */
     public static function build($path, $project, $environment)
     {
         Process::fromShellCommandline(
-            sprintf('docker build --pull --file=%s.Dockerfile --tag=%s .',
+            sprintf(
+                'docker build --pull --file=%s.Dockerfile --tag=%s .',
                 $environment,
                 Str::slug($project).':'.$environment
             ),
@@ -31,18 +36,19 @@ class Docker
     /**
      * Publish a docker image.
      *
-     * @param  string  $path
-     * @param  string  $project
-     * @param  string  $environment
-     * @param  string  $token
-     * @param  string  $repoUri
-     * @param  string  $tag
+     * @param  string $path
+     * @param  string $project
+     * @param  string $environment
+     * @param  string $token
+     * @param  string $repoUri
+     * @param  string $tag
      * @return void
      */
     public static function publish($path, $project, $environment, $token, $repoUri, $tag)
     {
         Process::fromShellCommandline(
-            sprintf('docker tag %s %s',
+            sprintf(
+                'docker tag %s %s',
                 Str::slug($project).':'.$environment,
                 $repoUri.':'.$tag
             ),
@@ -50,7 +56,8 @@ class Docker
         )->setTimeout(null)->mustRun();
 
         Process::fromShellCommandline(
-            sprintf('docker login --username AWS --password %s %s',
+            sprintf(
+                'docker login --username AWS --password %s %s',
                 str_replace('AWS:', '', base64_decode($token)),
                 explode('/', $repoUri)[0]
             ),
@@ -58,7 +65,8 @@ class Docker
         )->setTimeout(null)->mustRun();
 
         Process::fromShellCommandline(
-            sprintf('docker push %s',
+            sprintf(
+                'docker push %s',
                 $repoUri.':'.$tag
             ),
             $path

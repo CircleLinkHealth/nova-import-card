@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Psr\Http\Message\ResponseInterface;
@@ -9,7 +13,6 @@ class PsrLambdaResponseFactory
     /**
      * Create a new Lambda response array from the given PSR response.
      *
-     * @param  \Psr\Http\Message\ResponseInterface  $response
      * @return \Laravel\Vapor\Runtime\ArrayLambdaResponse
      */
     public static function fromPsrResponse(ResponseInterface $response)
@@ -24,47 +27,15 @@ class PsrLambdaResponseFactory
 
         return new ArrayLambdaResponse([
             'isBase64Encoded' => $requiresEncoding,
-            'statusCode' => $response->getStatusCode(),
-            'headers' => $headers,
-            'body' => $requiresEncoding ? base64_encode($body) : $body,
+            'statusCode'      => $response->getStatusCode(),
+            'headers'         => $headers,
+            'body'            => $requiresEncoding ? base64_encode($body) : $body,
         ]);
-    }
-
-    /**
-     * Parse the headers for the outgoing response.
-     *
-     * @param  \Psr\Http\Message\ResponseInterface  $response
-     * @return array
-     */
-    protected static function parseHeaders(ResponseInterface $response)
-    {
-        $headers = [];
-
-        foreach ($response->getHeaders() as $name => $values) {
-            $name = static::normalizeHeaderName($name);
-
-            if ($name == 'Set-Cookie') {
-                $headers = array_merge($headers, static::buildCookieHeaders($values));
-
-                continue;
-            }
-
-            foreach ($values as $value) {
-                $headers[$name] = $value;
-            }
-        }
-
-        if (! isset($headers['Content-Type'])) {
-            $headers['Content-Type'] = 'text/html';
-        }
-
-        return $headers;
     }
 
     /**
      * Build the Set-Cookie header names using binary casing.
      *
-     * @param  array  $values
      * @return array
      */
     protected static function buildCookieHeaders(array $values)
@@ -81,7 +52,7 @@ class PsrLambdaResponseFactory
     /**
      * Calculate the permutation of Set-Cookie for the current index.
      *
-     * @param  int  $index
+     * @param  int    $index
      * @return string
      */
     protected static function cookiePermutation($index)
@@ -131,11 +102,41 @@ class PsrLambdaResponseFactory
     /**
      * Normalize the given header name into studly-case.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return string
      */
     protected static function normalizeHeaderName($name)
     {
         return str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
+    }
+
+    /**
+     * Parse the headers for the outgoing response.
+     *
+     * @return array
+     */
+    protected static function parseHeaders(ResponseInterface $response)
+    {
+        $headers = [];
+
+        foreach ($response->getHeaders() as $name => $values) {
+            $name = static::normalizeHeaderName($name);
+
+            if ('Set-Cookie' == $name) {
+                $headers = array_merge($headers, static::buildCookieHeaders($values));
+
+                continue;
+            }
+
+            foreach ($values as $value) {
+                $headers[$name] = $value;
+            }
+        }
+
+        if ( ! isset($headers['Content-Type'])) {
+            $headers['Content-Type'] = 'text/html';
+        }
+
+        return $headers;
     }
 }

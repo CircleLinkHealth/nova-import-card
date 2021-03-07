@@ -23,7 +23,7 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     protected int $targetPatientId;
 
     /**

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Commands;
 
 use Illuminate\Console\Command;
@@ -10,9 +14,8 @@ use Spatie\ScheduleMonitor\Commands\Tables\UnnamedTasksTable;
 
 class ListCommand extends Command
 {
-    public $signature = 'schedule-monitor:list';
-
     public $description = 'Display monitored scheduled tasks';
+    public $signature   = 'schedule-monitor:list';
 
     public function handle()
     {

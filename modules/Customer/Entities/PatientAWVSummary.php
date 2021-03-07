@@ -20,17 +20,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null          $created_at
  * @property \Illuminate\Support\Carbon|null          $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $patient
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary newModelQuery()
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary newQuery()
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary query()
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereBillableAt($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereCreatedAt($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereId($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereIsBillable($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereIsInitialVisit($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereUpdatedAt($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereUserId($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereYear($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary newModelQuery()
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary newQuery()
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary query()
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereBillableAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereCreatedAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereIsBillable($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereIsInitialVisit($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereUpdatedAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereUserId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSummary whereYear($value)
  * @mixin \Eloquent
  */
 class PatientAWVSummary extends Model

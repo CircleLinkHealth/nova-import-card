@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers;
 
 use Carbon\Carbon;
-use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Routing\Controller;
 

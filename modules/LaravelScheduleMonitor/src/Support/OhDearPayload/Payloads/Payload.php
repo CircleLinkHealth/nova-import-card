@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\OhDearPayload\Payloads;
 
 use Spatie\ScheduleMonitor\Models\MonitoredScheduledTaskLogItem;
@@ -8,16 +12,16 @@ abstract class Payload
 {
     protected MonitoredScheduledTaskLogItem $logItem;
 
-    abstract public static function canHandle(MonitoredScheduledTaskLogItem $logItem): bool;
-
     public function __construct(MonitoredScheduledTaskLogItem $logItem)
     {
         $this->logItem = $logItem;
     }
 
-    abstract public function url();
+    abstract public static function canHandle(MonitoredScheduledTaskLogItem $logItem): bool;
 
     abstract public function data();
+
+    abstract public function url();
 
     protected function baseUrl(): string
     {

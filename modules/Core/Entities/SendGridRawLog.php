@@ -15,9 +15,9 @@ namespace CircleLinkHealth\Core\Entities;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog query()
  * @mixin \Eloquent
  */
 class SendGridRawLog extends BaseModel

@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Providers;
 
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
-use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;

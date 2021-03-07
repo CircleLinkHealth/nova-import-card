@@ -76,7 +76,7 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
     /**
      * @return array Array of Job objects
      */
-    public function splitToBatches(int $limit = 10): array
+    public function splitToBatches(int $limit = 1000): array
     {
         $count  = $this->unsetWith($this->query())->count();
         $offset = 0;

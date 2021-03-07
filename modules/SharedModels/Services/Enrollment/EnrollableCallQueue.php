@@ -55,15 +55,15 @@ class EnrollableCallQueue
         $patientsPending = Enrollee::whereCareAmbassadorUserId($careAmbassadorUserId)
             ->lessThanMaxAllowedAttempts()
             ->where(function ($e) {
-                                       $e->where(function ($subQ) {
-                                           $subQ->where('status', Enrollee::UNREACHABLE)
-                                               ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT));
-                                       })
-                                           ->orWhere(function ($subQ) {
-                                             $subQ->where('status', Enrollee::TO_CALL)
-                                                 ->where('requested_callback', '>', Carbon::now()->startOfDay());
-                                         });
-                                   })
+                $e->where(function ($subQ) {
+                    $subQ->where('status', Enrollee::UNREACHABLE)
+                        ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT));
+                })
+                    ->orWhere(function ($subQ) {
+                                               $subQ->where('status', Enrollee::TO_CALL)
+                                                   ->where('requested_callback', '>', Carbon::now()->startOfDay());
+                                           });
+            })
             ->get();
 
         $patientsPendingCount = $patientsPending->count();

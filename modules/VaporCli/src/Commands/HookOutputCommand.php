@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class HookOutputCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('hook:output')
-            ->addArgument('hook', InputArgument::OPTIONAL, 'The deployment hook ID')
-            ->setDescription('Retrieve the output for a deployment hook');
-    }
-
     /**
      * Execute the command.
      *
@@ -60,5 +51,18 @@ class HookOutputCommand extends Command
         }
 
         Helpers::write($output);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('hook:output')
+            ->addArgument('hook', InputArgument::OPTIONAL, 'The deployment hook ID')
+            ->setDescription('Retrieve the output for a deployment hook');
     }
 }

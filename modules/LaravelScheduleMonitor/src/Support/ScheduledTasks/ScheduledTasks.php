@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\ScheduledTasks;
 
 use Illuminate\Console\Scheduling\Event;
@@ -13,13 +17,6 @@ class ScheduledTasks
 
     protected Collection $tasks;
 
-    public static function createForSchedule()
-    {
-        $schedule = app(Schedule::class);
-
-        return new static($schedule);
-    }
-
     public function __construct(Schedule $schedule)
     {
         $this->schedule = $schedule;
@@ -30,13 +27,11 @@ class ScheduledTasks
             );
     }
 
-    public function uniqueTasks(): Collection
+    public static function createForSchedule()
     {
-        return $this->tasks
-            ->filter(fn (Task $task) => $task->shouldMonitor())
-            ->reject(fn (Task $task) => empty($task->name()))
-            ->unique(fn (Task $task) => $task->name())
-            ->values();
+        $schedule = app(Schedule::class);
+
+        return new static($schedule);
     }
 
     public function duplicateTasks(): Collection
@@ -49,6 +44,15 @@ class ScheduledTasks
             ->filter(fn (Task $task) => $task->shouldMonitor())
             ->reject(fn (Task $task) => empty($task->name()))
             ->reject(fn (Task $task) => in_array($task->uniqueId(), $uniqueTasksIds))
+            ->values();
+    }
+
+    public function uniqueTasks(): Collection
+    {
+        return $this->tasks
+            ->filter(fn (Task $task) => $task->shouldMonitor())
+            ->reject(fn (Task $task) => empty($task->name()))
+            ->unique(fn (Task $task) => $task->name())
             ->values();
     }
 
