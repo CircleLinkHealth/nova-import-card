@@ -53,6 +53,7 @@ trait ApprovableBillingStatusesQuery
                 ])->select(['id', 'first_name', 'last_name', 'display_name', 'suffix']);
             },
             'chargeableMonthlySummaries' => fn ($q) => $q->createdOnIfNotNull($monthYear, 'chargeable_month'),
+            'forcedChargeableServices' => fn ($q) => $q->where('chargeable_month', $monthYear)->orWhereNull('chargeable_month'),
             'patientSummaries'           => fn ($q) => $q->with(['allChargeableServices'])->createdOnIfNotNull($monthYear, 'month_year'),
             'chargeableMonthlyTime'      => fn ($q)      => $q->createdOnIfNotNull($monthYear, 'chargeable_month'),
             'patientInfo'                => fn ($q)                => $q->with(['location']),

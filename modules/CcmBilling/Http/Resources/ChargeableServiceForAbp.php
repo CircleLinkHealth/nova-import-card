@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -19,11 +20,10 @@ class ChargeableServiceForAbp extends JsonResource
 {
     public static function collectionFromChargeableMonthlySummaries(User $user): AnonymousResourceCollection
     {
+        $forcedServices = $user->forcedChargeableServices;
         $services = $user->chargeableMonthlySummaries
-            ->map(function (ChargeablePatientMonthlySummary $item) use ($user) {
-
-                /** @var ChargeablePatientMonthlyTime $time */
-                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id',
+            ->map(function (ChargeablePatientMonthlySummary $item) use ($user, $forcedServices) {
+                $patientForcedCs = $forcedServices->firstWhere($csId =
                     ChargeableServiceModel::getChargeableServiceIdUsingCode(
                         ChargeableServiceModel::getBaseCode(
                             $item->chargeableService->code
@@ -31,21 +31,29 @@ class ChargeableServiceForAbp extends JsonResource
                     )
                 );
 
+                /** @var ChargeablePatientMonthlyTime $time */
+                $time = $user->chargeableMonthlyTime->firstWhere('chargeable_service_id', $csId);
+
                 return [
                     'id'           => $item->chargeable_service_id,
                     'is_fulfilled' => $item->is_fulfilled,
                     'total_time'   => optional($time)->total_time ?? 0,
+                    'is_blocked'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::BLOCK_ACTION_TYPE,
+                    'is_forced'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::FORCE_ACTION_TYPE
                 ];
             })
             ->values();
 
-        $user->chargeableMonthlyTime->each(function (ChargeablePatientMonthlyTime $time) use ($services) {
+        $user->chargeableMonthlyTime->each(function (ChargeablePatientMonthlyTime $time) use ($services, $forcedServices) {
+            $patientForcedCs = $forcedServices->firstWhere('chargeable_service_id', $time->chargeable_service_id);
             $entry = $services->firstWhere('chargeable_service_id', $time->chargeable_service_id);
             if ( ! $entry) {
                 $services->push([
                     'id'           => $time->chargeable_service_id,
                     'is_fulfilled' => false,
                     'total_time'   => $time->total_time,
+                    'is_blocked'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::BLOCK_ACTION_TYPE,
+                    'is_forced'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::FORCE_ACTION_TYPE
                 ]);
             }
         });
@@ -64,6 +72,8 @@ class ChargeableServiceForAbp extends JsonResource
                     'id'           => $cs->id,
                     'is_fulfilled' => true,
                     'total_time'   => ChargeableServiceModel::BHI === $cs->code ? $pms->bhi_time : $pms->getBillableCcmCs(),
+                    'is_forced' => null,
+                    'is_blocked' => null
                 ];
             })
             ->values()
@@ -85,6 +95,8 @@ class ChargeableServiceForAbp extends JsonResource
             'id'           => $this['id'],
             'total_time'   => $this['total_time'],
             'is_fulfilled' => $this['is_fulfilled'],
+            'is_blocked'   => $this['is_blocked'],
+            'is_forced'    => $this['is_forced']
         ];
     }
 }

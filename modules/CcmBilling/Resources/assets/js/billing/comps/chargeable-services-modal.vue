@@ -77,6 +77,28 @@
                 if (this.isPlusCode(service.code)) {
                     return false;
                 }
+
+                if (service.is_blocked){
+                    return false;
+                }
+                let clashesWithForcedService;
+                let forced = this.patientServices.filter(s => s.is_forced);
+                forced.forEach(service => {
+                    const clashingServices = SERVICE_CLASHES[service.code];
+                    if (!clashingServices) {
+                        return;
+                    }
+
+
+                    if (clashingServices.indexOf(service.code) > -1) {
+                        clashesWithForcedService = true;
+                    }
+                });
+
+                if (clashesWithForcedService){
+                    return false;
+                }
+
                 switch (service.code) {
                     case SERVICES.CCM:
                     case SERVICES.BHI:
@@ -149,6 +171,8 @@
                     service.selected = pService && pService.is_fulfilled;
                     service.total_time = pService ? pService.total_time : 0;
                     service.disabled = this.billingRevampEnabled ? !this.isServiceChargeableForPatient(service) :  false;
+                    service.is_forced = pService ? pService.is_forced : false;
+                    service.is_blocked = pService ? pService.is_blocked : false;
 
                     return service;
                 });

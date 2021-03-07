@@ -554,7 +554,9 @@
                             id: cs.id,
                             code: cs.code,
                             total_time: item.total_time,
-                            is_fulfilled: item.is_fulfilled
+                            is_fulfilled: item.is_fulfilled,
+                            is_blocked: item.is_blocked,
+                            is_forced: item.is_forced
                         };
                     })
                     .filter(Boolean);

@@ -13,16 +13,10 @@ class ApproveBillablePatientsOpenCloseMonthRequest extends FormRequest
 {
     public function authorize()
     {
-        if (parent::authorize()) {
-            return true;
-        }
-
-        $practiceId = $this->input('practice_id');
-
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasPermissionForSite(['patientSummary.update'], $practiceId);
+        return $user->hasPermission('patientSummary.update');
     }
 
     public function rules()
