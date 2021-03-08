@@ -25,7 +25,6 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
-            - 'php artisan schedule-monitor:sync'
     production:
         domain:
             - careplanmanager.com
