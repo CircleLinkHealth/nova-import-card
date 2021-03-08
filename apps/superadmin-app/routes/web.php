@@ -61,12 +61,17 @@ Route::group([
     Route::get('home', 'HomeController@index');
 
     Route::get('hospitalisation-notes-dashboard', [
-        'uses' => 'HospitalisationNotesController@index',
+        'uses' => 'LivewireDatatablesController@hospitalisationNotes',
         'as'   => 'hospitalization-notes.table',
     ]);
 
     Route::get('message-dispatch-messages-dashboard', [
-        'uses' => 'MessageDispatchMessagesController@index',
+        'uses' => 'LivewireDatatablesController@messageDispatchMessages',
         'as'   => 'message-dispatch-messages.table',
+    ]);
+    
+    Route::get('call-attempt-note-dashboard', [
+        'uses' => 'LivewireDatatablesController@callAttemptNote',
+        'as'   => 'call-attempt-note.table',
     ]);
 });
