@@ -4773,16 +4773,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.162.0",
+            "version": "v0.163.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "9085ff13f32f5baf8b3d2917ea63e2e029ecedb6"
+                "reference": "8e326f378a1f505064912fddd19fd93bbdcc80fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/9085ff13f32f5baf8b3d2917ea63e2e029ecedb6",
-                "reference": "9085ff13f32f5baf8b3d2917ea63e2e029ecedb6",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/8e326f378a1f505064912fddd19fd93bbdcc80fb",
+                "reference": "8e326f378a1f505064912fddd19fd93bbdcc80fb",
                 "shasum": ""
             },
             "require": {
@@ -4806,7 +4806,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2021-02-28T12:20:02+00:00"
+            "time": "2021-03-06T12:20:02+00:00"
         },
         {
             "name": "google/auth",
@@ -5066,16 +5066,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "60d379c243457e073cff02bc323a2a86cb355631"
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/60d379c243457e073cff02bc323a2a86cb355631",
-                "reference": "60d379c243457e073cff02bc323a2a86cb355631",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/8e7d04f1f6450fef59366c399cfad4b9383aa30d",
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d",
                 "shasum": ""
             },
             "require": {
@@ -5113,7 +5113,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2020-09-30T07:37:28+00:00"
+            "time": "2021-03-07T09:25:29+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -11400,16 +11400,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "3.1.5",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "62f6897e1e577de39b366b5c84e19a453da36016"
+                "reference": "899b0de58c1e01feb54829b3094af74252aff385"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/62f6897e1e577de39b366b5c84e19a453da36016",
-                "reference": "62f6897e1e577de39b366b5c84e19a453da36016",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/899b0de58c1e01feb54829b3094af74252aff385",
+                "reference": "899b0de58c1e01feb54829b3094af74252aff385",
                 "shasum": ""
             },
             "require": {
@@ -11454,7 +11454,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1.x-dev"
+                    "dev-master": "3.2.x-dev"
                 }
             },
             "autoload": {
@@ -11496,7 +11496,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-02-18T13:34:31+00:00"
+            "time": "2021-03-03T11:54:34+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -11504,12 +11504,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "76ce423c37f33b5aa5c2df0f9e8e25aa79739fa0"
+                "reference": "f4c7a5cd5185ed2124809f1591817cde50fc39fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/76ce423c37f33b5aa5c2df0f9e8e25aa79739fa0",
-                "reference": "76ce423c37f33b5aa5c2df0f9e8e25aa79739fa0",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/f4c7a5cd5185ed2124809f1591817cde50fc39fa",
+                "reference": "f4c7a5cd5185ed2124809f1591817cde50fc39fa",
                 "shasum": ""
             },
             "require": {
@@ -11517,11 +11517,11 @@
                 "nyholm/psr7": "^1.0",
                 "php": "^7.2 | ^8.0",
                 "sentry/sdk": "^3.1",
-                "sentry/sentry": "3.1.*",
+                "sentry/sentry": "3.2.*",
                 "symfony/psr-http-message-bridge": "^1.0 | ^2.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "2.16.*",
+                "friendsofphp/php-cs-fixer": "2.18.*",
                 "laravel/framework": "5.0 - 5.8 | ^6.0 | ^7.0 | ^8.0",
                 "mockery/mockery": "1.3.*",
                 "orchestra/testbench": "3.1 - 3.8 | ^4.7 | ^5.1 | ^6.0",
@@ -11580,7 +11580,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-03-03T15:39:26+00:00"
+            "time": "2021-03-08T08:04:04+00:00"
         },
         {
             "name": "setasign/fpdf",
