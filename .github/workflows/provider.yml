@@ -2,12 +2,12 @@ name: Deploy Provider App
 on:
   push:
     paths:
-      - ./apps/provider-app/**
+      - apps/provider-app/**
 jobs:
   deploy:
     defaults:
       run:
-        working-directory: ./apps/provider-app
+        working-directory: apps/provider-app
     name: Deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
