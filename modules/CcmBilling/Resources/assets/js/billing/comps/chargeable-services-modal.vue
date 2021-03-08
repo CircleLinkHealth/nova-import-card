@@ -78,19 +78,18 @@
                     return false;
                 }
 
-                if (service.is_blocked){
-                    return false;
-                }
-                let clashesWithForcedService;
+                let clashesWithForcedService = false;
                 let forced = this.patientServices.filter(s => s.is_forced);
-                forced.forEach(service => {
-                    const clashingServices = SERVICE_CLASHES[service.code];
-                    if (!clashingServices) {
-                        return;
+                forced.forEach(forced => {
+                    const clashingServicesForCurrent = SERVICE_CLASHES[service.code];
+
+                    if (clashingServicesForCurrent && clashingServicesForCurrent.indexOf(forced.code) > -1) {
+                        clashesWithForcedService = true;
                     }
 
+                    const clashingServicesForForced = SERVICE_CLASHES[forced.code];
 
-                    if (clashingServices.indexOf(service.code) > -1) {
+                    if (clashingServicesForForced && clashingServicesForForced.indexOf(service.code) > -1) {
                         clashesWithForcedService = true;
                     }
                 });
