@@ -250,4 +250,9 @@ class ApproveBillablePatientsService
                 return ApprovableBillablePatient::make($summary);
             });
     }
+
+    public function patientChargeableServicesInputContainsClashes(array $input):bool
+    {
+        return false;
+    }
 }

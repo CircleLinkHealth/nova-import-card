@@ -145,7 +145,9 @@ class ApproveBillablePatientsController extends Controller
         /** @var ApproveBillablePatientsService|ApproveBillablePatientsServiceV3 $service */
         $service = $this->getService($request);
 
-        return $service->setPatientChargeableServices($reportId, $chargeableServices);
+        return $service->patientChargeableServicesInputContainsClashes($chargeableServices)
+            ? $this->error(['The Chargeable Services provided as input are clashing.'])
+            : $service->setPatientChargeableServices($reportId, $chargeableServices);
     }
 
     /**

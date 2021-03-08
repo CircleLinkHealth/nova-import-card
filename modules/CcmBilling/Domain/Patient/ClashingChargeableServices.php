@@ -133,4 +133,19 @@ class ClashingChargeableServices
             })
             ->toArray();
     }
+
+    public static function arrayOfCodesContainsClashes(array $codes):bool
+    {
+        foreach ($codes as $code){
+            $clashes = self::getClashesOfService($code);
+
+            foreach ($clashes as $clash){
+                if (in_array($clash, $codes)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

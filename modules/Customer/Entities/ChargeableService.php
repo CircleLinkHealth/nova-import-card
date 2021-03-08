@@ -175,6 +175,11 @@ class ChargeableService extends BaseModel
         return optional(self::cached()->where('code', $code)->first())->id;
     }
 
+    public static function getChargeableServiceCodeUsingId(int $id): ?string
+    {
+        return optional(self::cached()->where('id', $id)->first())->code;
+    }
+
     public static function getBaseCode(string $code): string
     {
         //todo: cleaner mapping

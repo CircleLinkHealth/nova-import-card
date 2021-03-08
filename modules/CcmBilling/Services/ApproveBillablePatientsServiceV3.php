@@ -7,8 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\Http\Resources\ChargeableServiceForAbp;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientSuccessfulCallsCountForMonth;
@@ -18,6 +20,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsForMonthDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForceAttachInputDTO;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -149,5 +152,16 @@ class ApproveBillablePatientsServiceV3
             ->toArray();
 
         return PatientSuccessfulCallsCountForMonth::collection($arr);
+    }
+
+    public function patientChargeableServicesInputContainsClashes(array $input):bool
+    {
+        $filtered = collect($input)
+            ->filter(fn($item) => $item['action_type'] === PatientForcedChargeableService::FORCE_ACTION_TYPE)
+            ->transform(fn($item) => ChargeableService::getChargeableServiceCodeUsingId($item['id']))
+            ->flatten()
+            ->toArray();
+
+        return ClashingChargeableServices::arrayOfCodesContainsClashes($filtered);
     }
 }
