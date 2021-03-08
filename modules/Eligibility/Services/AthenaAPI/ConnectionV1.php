@@ -48,7 +48,7 @@ use Illuminate\Support\Str;
  * If an API response returns 401 Not Authorized, a new access token is obtained and the request is
  * retried.
  */
-class Connection implements AthenaApiConnection
+class ConnectionV1 implements AthenaApiConnection
 {
     public $practiceid;
     private $auth_url;
@@ -57,9 +57,9 @@ class Connection implements AthenaApiConnection
     private $refresh_token;
     private $secret;
     private $token;
-
+    
     private $version;
-
+    
     /**
      * Connects to the host, authenticates to the specified API version using key and secret.
      *
@@ -73,13 +73,13 @@ class Connection implements AthenaApiConnection
         if ( ! $version || ! $key || ! $secret) {
             return 'Required parameters missing.';
         }
-
+        
         $this->version    = $version;
         $this->key        = $key;
         $this->secret     = $secret;
         $this->practiceid = $practiceid;
         $this->baseurl    = 'https://api.athenahealth.com/'.$this->version;
-
+        
         $auth_prefixes = [
             'v1'           => 'oauth/token',
             'preview1'     => 'oauthpreview/token',
@@ -87,7 +87,7 @@ class Connection implements AthenaApiConnection
         ];
         $this->authurl = 'https://api.athenahealth.com/'.$auth_prefixes[$this->version];
     }
-
+    
     /**
      * Perform at HTTP DELETE request and return an associative array of the API response.
      *
@@ -101,15 +101,15 @@ class Connection implements AthenaApiConnection
         if ($parameters) {
             $new_url .= '?'.http_build_query($parameters);
         }
-
+        
         $new_headers = [];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-
+        
         return $this->authorized_call('DELETE', $new_url, [], $new_headers);
     }
-
+    
     /**
      * Perform at HTTP GET request and return an associative array of the API response.
      *
@@ -126,21 +126,21 @@ class Connection implements AthenaApiConnection
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
-
+        
         $new_headers = [];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-
+        
         // Join up a URL and add the parameters, since GET requests require parameters in the URL.
         $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
         if ($new_parameters) {
             $new_url .= '?'.http_build_query($new_parameters);
         }
-
+        
         return $this->authorized_call('GET', $new_url, [], $new_headers);
     }
-
+    
     /**
      * Returns the current access_token.
      */
@@ -148,12 +148,12 @@ class Connection implements AthenaApiConnection
     {
         return $this->token;
     }
-
+    
     public function getVersion()
     {
         return $this->version;
     }
-
+    
     /**
      * Perform at HTTP POST request and return an associative array of the API response.
      *
@@ -167,7 +167,7 @@ class Connection implements AthenaApiConnection
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
-
+        
         // Make sure POSTs have the proper headers
         $new_headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
@@ -175,13 +175,13 @@ class Connection implements AthenaApiConnection
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-
+        
         // Join up a URL
         $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
-
+        
         return $this->authorized_call('POST', $new_url, $new_parameters, $new_headers);
     }
-
+    
     /**
      * Perform at HTTP PUT request and return an associative array of the API response.
      *
@@ -195,7 +195,7 @@ class Connection implements AthenaApiConnection
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
-
+        
         // Make sure PUTs have the proper headers
         $new_headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
@@ -203,18 +203,18 @@ class Connection implements AthenaApiConnection
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-
+        
         // Join up a URL
         $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
-
+        
         return $this->authorized_call('PUT', $new_url, $new_parameters, $new_headers);
     }
-
+    
     public function setPracticeId($practiceId)
     {
         $this->practiceid = $practiceId;
     }
-
+    
     private function authenticate()
     {
         // This method is for internal use.  It performs the authentication process by following the
@@ -226,17 +226,17 @@ class Connection implements AthenaApiConnection
             'Content-type'  => 'application/x-www-form-urlencoded',
             'Authorization' => 'Basic '.base64_encode($this->key.':'.$this->secret),
         ];
-
+        
         $authorization = $this->call('POST', $url, $parameters, $headers);
-
+        
         if ( ! is_array($authorization) || ! array_key_exists('access_token', $authorization)) {
             return false;
         }
-
+        
         $this->token         = $authorization['access_token'];
         $this->refresh_token = $authorization['refresh_token'];
     }
-
+    
     /**
      * This method abstracts away adding the authorization header to requests.
      *
@@ -255,17 +255,17 @@ class Connection implements AthenaApiConnection
     ) {
         $auth_header = ['Authorization' => 'Bearer '.$this->token];
         $response    = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
-
+        
         // $response is false if we had a 401 Not Authorized, so re-authenticate and try again.
         if (false === $response && ! $secondcall) {
             $this->authenticate();
-
+            
             return $this->authorized_call($verb, $url, $body, $headers, $secondcall = true);
         }
-
+        
         return $response;
     }
-
+    
     /**
      * This method abstracts away the process of using stream contexts and file_get_contents for the
      * API calls.  It also does JSON decoding before return.
@@ -284,23 +284,23 @@ class Connection implements AthenaApiConnection
         foreach ($headers as $k => $v) {
             $formatted_headers[] = $k.': '.$v;
         }
-
+        
         // We shouldn't always be ignoring errors, but if we're calling this a second time, it's
         // because we found errors we want to ignore.  So we set ignore_errors to be the same as
         // $secondcall.
         $context = stream_context_create([
-            'http' => [
-                'method'        => $verb,
-                'header'        => $formatted_headers,
-                'content'       => http_build_query($body),
-                'ignore_errors' => $secondcall,
-            ],
-        ]);
+                                             'http' => [
+                                                 'method'        => $verb,
+                                                 'header'        => $formatted_headers,
+                                                 'content'       => http_build_query($body),
+                                                 'ignore_errors' => $secondcall,
+                                             ],
+                                         ]);
         // NOTE: The warnings in file_get_contents are suppressed because the MDP API returns HTTP
         // status codes other than 200 (like 401 and 400) with information in the body that provides
         // a much better explanation than the code itself.
         $contents = @file_get_contents($url, false, $context);
-
+        
         // $contents is false if there was an error, so if it was a 401 Not Authorized, propogate the
         // false.  Otherwise, try it again with ignored errors.
         if (false === $contents) {
@@ -316,15 +316,15 @@ class Connection implements AthenaApiConnection
                     return false;
                 }
             }
-
+            
             if ( ! $secondcall) {
                 return $this->call($verb, $url, $body, $headers, $secondcall = true);
             }
         }
-
+        
         return json_decode($contents, true);
     }
-
+    
     /**
      * This method joins together parts of a URL to make a valid one.
      *
