@@ -8,7 +8,7 @@ jobs:
     defaults:
       run:
         working-directory: apps/caller-app
-    name: Vaporize
+    name: Deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -33,7 +33,7 @@ jobs:
         with:
           version: 1
           php_version: 7.4
-          php_extensions: redis zip gd exif imagick opcache
+          php_extensions: redis zip gd exif imagick opcache sockets
           progress: yes
           dev: no
           args: --classmap-authoritative --no-scripts -d apps/caller-app
@@ -44,7 +44,7 @@ jobs:
         with:
           php-version: '7.4'
           tools: composer:v1
-          extensions: redis, zip, gd, exif, imagick, opcache
+          extensions: redis, zip, gd, exif, imagick, opcache, sockets
           coverage: none
 
       - name: Deploy - staging
