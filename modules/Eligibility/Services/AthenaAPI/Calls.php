@@ -17,7 +17,7 @@ class Calls implements AthenaApiImplementation
     use ValidatesDates;
 
     /**
-     * @var Connection
+     * @var ConnectionV2
      */
     private $connection;
 
@@ -41,7 +41,7 @@ class Calls implements AthenaApiImplementation
         }
 
         $response = $this->api()->POST(
-            "{$practiceId}/chart/{$patientId}/problems",
+            "/chart/{$patientId}/problems",
             [
                 'departmentid' => $problem->getDepartmentId(),
                 'snomedcode'   => $problem->getSnomedCode(),
@@ -53,15 +53,15 @@ class Calls implements AthenaApiImplementation
     }
 
     /**
-     * @return Connection
+     * @return ConnectionV2
      */
     public function api()
     {
-        if ( ! $this->connection instanceof Connection) {
+        if ( ! $this->connection instanceof AthenaApiConnection) {
             $this->connection = app(AthenaApiConnection::class);
         }
 
-        if ( ! $this->connection instanceof Connection) {
+        if ( ! $this->connection instanceof AthenaApiConnection) {
             throw new \Exception('AthenaAPI Connection not initialized');
         }
 
@@ -158,7 +158,7 @@ class Calls implements AthenaApiImplementation
         }
 
         $response = $this->api()->POST(
-            "{$practiceId}/patients",
+            "/patients",
             [
                 'departmentid' => $patient->getDepartmentId(),
                 'dob'          => $patient->getDob(),
@@ -208,6 +208,25 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
+    
+    public function getAppointmentReasons(
+        int $practiceId,
+        int $departmentId,
+        int $providerId
+    ) {
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET(
+            "/patientappointmentreasons",
+            [
+                'practiceid' => $practiceId,
+                'departmentid' => $departmentId,
+                'providerid' => $providerId,
+            ]
+        );
+
+        return $this->response($response);
+    }
 
     /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
@@ -219,9 +238,9 @@ class Calls implements AthenaApiImplementation
     public function getAvailablePractices($practiceId = 1)
     {
         $response = $this->api()->GET(
-            "${practiceId}/practiceinfo",
+            "practiceinfo",
             [
-                //$practiceId defaults to 1, which will give us all practices we have access to
+                'practiceid' => $practiceId,
             ]
         );
 
@@ -428,7 +447,7 @@ class Calls implements AthenaApiImplementation
         }
 
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/encounters",
+            "/chart/${patientId}/encounters",
             $args
         );
 
@@ -468,7 +487,7 @@ class Calls implements AthenaApiImplementation
     public function getMedications(int $patientId, int $practiceId, int $departmentId)
     {
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/medications",
+            "/chart/${patientId}/medications",
             [
                 'departmentid' => $departmentId,
                 'patientid'    => $patientId,
@@ -646,7 +665,7 @@ class Calls implements AthenaApiImplementation
         $departmentId = null
     ) {
         $response = $this->api()->GET(
-            "${practiceId}/patients",
+            "/patients",
             [
                 'firstname'    => $patientFirstName,
                 'middlename'   => $patientMiddleName,
@@ -683,7 +702,7 @@ class Calls implements AthenaApiImplementation
         $showinactive = false
     ) {
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/problems",
+            "/chart/${patientId}/problems",
             [
                 'departmentid'      => $departmentId,
                 'showdiagnosisinfo' => $showDiagnosisInfo,

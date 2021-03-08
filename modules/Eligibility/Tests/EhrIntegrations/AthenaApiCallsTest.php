@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\ExternalApi;
+namespace CircleLinkHealth\Eligibility\Tests\AthenaApi;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Tests\TestCase;
@@ -31,8 +31,12 @@ class AthenaApiCallsTest extends TestCase
         parent::setUp();
 
         $this->api = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
-
-        $this->athenaPracticeId   = 195900;
+    
+        $activeVersion = config('services.athena.active_version');
+    
+        $prefix = "services.athena.$activeVersion";
+        
+        $this->athenaPracticeId   = config("$prefix.practice_id");
         $this->athenaDepartmentId = 1;
         $this->fakePatient        = $this->fakePatient();
         $this->athenaPatientId    = $this->createAthenaApiPatient($this->fakePatient);
@@ -192,8 +196,8 @@ class AthenaApiCallsTest extends TestCase
     private function fakePatient()
     {
         $patient = new Patient();
-        $patient->setPracticeId(195900);
-        $patient->setDepartmentId(1);
+        $patient->setPracticeId($this->athenaPracticeId);
+        $patient->setDepartmentId($this->athenaDepartmentId);
         $patient->setFirstName($this->faker()->firstName());
         $patient->setLastName($this->faker()->lastName);
         $patient->setDob(Carbon::now()->subYear(50));
