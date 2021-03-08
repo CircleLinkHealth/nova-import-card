@@ -50,7 +50,7 @@ class MakeSurveyOnlyUsersForEnrollees extends Command
             ->where('practice_id', $this->argument('practiceId'))
             ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
             ->whereNotNull('provider_id')
-            ->when($enrolleeIds, function ($enrollees) use ($enrolleeIds){
+            ->when(!empty($enrolleeIds), function ($enrollees) use ($enrolleeIds){
                 $enrollees->whereIn('id', $enrolleeIds);
             })
             ->when($limit, function ($query) use($limit){

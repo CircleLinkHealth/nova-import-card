@@ -50,7 +50,7 @@ class SendSelfEnrollmentRemindersCommand extends Command
 
         Enrollee::with('user.patientInfo')
             ->where('practice_id', $this->argument('practiceId'))
-            ->when($enrolleeIds, function ($enrollee) use ($enrolleeIds){
+            ->when(!empty($enrolleeIds), function ($enrollee) use ($enrolleeIds){
                 $enrollee->whereIn('id', $enrolleeIds);
             })
             ->whereHas(

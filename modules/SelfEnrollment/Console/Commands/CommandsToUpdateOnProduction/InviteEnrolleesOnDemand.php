@@ -52,7 +52,7 @@ class InviteEnrolleesOnDemand extends Command
                 $user->canSendSelfEnrollmentInvitation(true);
             })
             ->whereNotNull('provider_id')
-            ->when($enrolleeIds, function ($enrollees) use ($enrolleeIds){
+            ->when(! empty($enrolleeIds), function ($enrollees) use ($enrolleeIds){
                 $enrollees->whereIn('id', $enrolleeIds);
             })
             ->limit(intval($limit))
