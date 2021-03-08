@@ -21,14 +21,14 @@ return [
         'v1' => [
             'key'         => env('ATHENA_V1_KEY'),
             'secret'      => env('ATHENA_V1_SECRET'),
-            'version'     => env('ATHENA_V1_VERSION'),
-            'practice_id' => env('ATHENA_V1_CLH_PRACTICE_ID'),
+            'version'     => env('ATHENA_V1_VERSION', 'preview1'),
+            'practice_id' => env('ATHENA_V1_CLH_PRACTICE_ID', '195900'),
         ],
         'v2' => [
             'key'         => env('ATHENA_V2_KEY'),
             'secret'      => env('ATHENA_V2_SECRET'),
-            'version'     => env('ATHENA_V2_VERSION'),
-            'practice_id' => env('ATHENA_V2_CLH_PRACTICE_ID'),
+            'version'     => env('ATHENA_V2_VERSION', 'preview1'),
+            'practice_id' => env('ATHENA_V2_CLH_PRACTICE_ID', '195900'),
         ],
         'active_version' => env('ATHENA_ACTIVE_VERSION', 'v1'),
     ],

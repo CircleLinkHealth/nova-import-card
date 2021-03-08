@@ -10,7 +10,7 @@
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
         <testsuite name="EligibilityModule">
-            <directory suffix="Test.php">./CircleLinkHealth/Eligibility/Tests</directory>
+            <directory suffix="Test.php">./vendor/circlelinkhealth/eligibility-module/tests</directory>
         </testsuite>
         <testsuite name="Core">
             <directory suffix="Test.php">./vendor/circlelinkhealth/core-module/tests</directory>
