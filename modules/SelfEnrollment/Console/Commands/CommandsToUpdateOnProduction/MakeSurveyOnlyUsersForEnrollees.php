@@ -11,7 +11,7 @@ use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
-class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
+class MakeSurveyOnlyUsersForEnrollees extends Command
 {
     /**
      * The console command description.
