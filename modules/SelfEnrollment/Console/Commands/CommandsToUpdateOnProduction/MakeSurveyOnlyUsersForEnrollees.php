@@ -44,17 +44,17 @@ class MakeSurveyOnlyUsersForEnrollees extends Command
     public function handle()
     {
         $enrolleeIds = CommandHelpers::getEnrolleeIds( $this->argument('enrolleeIds'));
-        $limit = $this->argument('limit');
+        $limit = $this->argument('limit') ?? null;
 
         Enrollee::whereNull('user_id')
             ->where('practice_id', $this->argument('practiceId'))
             ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
             ->whereNotNull('provider_id')
-            ->when($limit, function ($query) use($limit){
-                $query->limit($limit);
-            })
             ->when($enrolleeIds, function ($enrollees) use ($enrolleeIds){
                 $enrollees->whereIn('id', $enrolleeIds);
+            })
+            ->when($limit, function ($query) use($limit){
+                $query->limit(intval($limit));
             })
             ->select('id')
             ->chunk(100, function ($enrollees) {

@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnPro
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandHelpers;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -75,7 +75,7 @@ class SendSelfEnrollmentRemindersCommand extends Command
                         );
 
                     foreach ($enrollees as $enrollee) {
-                        SendReminder::dispatch(new User($enrollee->user->toArray()));
+                        SendReminder::dispatch($enrollee->user);
                         $this->info("SendReminder JOB queued for Enrollee $enrollee->id");
                     }
                 }
