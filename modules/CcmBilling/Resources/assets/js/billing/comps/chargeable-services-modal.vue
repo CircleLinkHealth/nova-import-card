@@ -31,10 +31,10 @@
 <script>
     import {Event} from 'vue-tables-2'
 
-    import SERVICES from '../../../../../../Sharedvuecomponents/Resources/assets/js/constants/services.types';
-    import SERVICE_CLASHES from '../../../../../../Sharedvuecomponents/Resources/assets/js/constants/services.clashes';
-    import Modal from '../../../../../../Sharedvuecomponents/Resources/assets/js/admin/common/modal'
-    import Loader from '../../../../../../Sharedvuecomponents/Resources/assets/js/components/loader'
+    import SERVICES from 'SharedVueComponents/Resources/assets/js/constants/services.types';
+    import SERVICE_CLASHES from 'SharedVueComponents/Resources/assets/js/constants/services.clashes';
+    import Modal from 'SharedVueComponents/Resources/assets/js/admin/common/modal'
+    import Loader from 'SharedVueComponents/Resources/assets/js/components/loader'
 
     export default {
         name: 'chargeable-services-modal',

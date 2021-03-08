@@ -14,8 +14,8 @@ environments:
         timeout: 60
         cli-timeout: 600
         queues:
-            - cpm-provider-low-feature-billing-revamp
-            - cpm-provider-high-feature-billing-revamp
+            - cpm-admin-low-feature-billing-revamp
+            - cpm-admin-high-feature-billing-revamp
             - cpm-admin-revisionable-staging
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
