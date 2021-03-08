@@ -31,7 +31,7 @@ class JsonFixer
         $lastJsonStringPart = '';
 
         $charsToTrim = ', \t\n\r\0\x0B';
-        $fixed = rtrim(implode('{', $expl), $charsToTrim);
+        $fixed       = rtrim(implode('{', $expl), $charsToTrim);
 
         if (self::shouldAddClosingChar($fixed, '[', ']')) {
             $lastJsonStringPart .= ']';
@@ -40,16 +40,16 @@ class JsonFixer
         if (self::shouldAddClosingChar($fixed, '{', '}')) {
             $lastJsonStringPart .= '}';
         }
-        
+
         if (self::shouldAddClosingChar($lastElement, '"', '"')) {
             $lastElement .= '"';
         }
-        
+
         $withLastLine = $fixed.', {'.rtrim($lastElement, $charsToTrim).'}'.$lastJsonStringPart;
         if (is_json($withLastLine)) {
             return $withLastLine;
         }
-    
+
         $withoutLastLine = $fixed.$lastJsonStringPart;
         if (is_json($withoutLastLine)) {
             return $withoutLastLine;
@@ -67,8 +67,8 @@ class JsonFixer
         }
 
         $closingCount = substr_count($string, $closingChar);
-        
-        if ($openingChar === $closingChar && $openingCount % 2 !== 0) {
+
+        if ($openingChar === $closingChar && 0 !== $openingCount % 2) {
             return true;
         }
 

@@ -4,15 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-    /**
-     * A helper file for Laravel, to provide autocomplete information to your IDE
-     * Generated for Laravel 8.30.1.
-     *
-     * This file should not be included in your code, only analyzed by your IDE!
-     *
-     * @author Barry vd. Heuvel <barryvdh@gmail.com>
-     * @see https://github.com/barryvdh/laravel-ide-helper
-     */
+/**
+ * A helper file for Laravel, to provide autocomplete information to your IDE
+ * Generated for Laravel 8.31.0.
+ *
+ * This file should not be included in your code, only analyzed by your IDE!
+ *
+ * @author Barry vd. Heuvel <barryvdh@gmail.com>
+ * @see https://github.com/barryvdh/laravel-ide-helper
+ */
 
 namespace Illuminate\Support\Facades {
         /**
@@ -742,6 +742,9 @@ namespace Illuminate\Support\Facades {
 
             /**
              * @static
+             * @param mixed $request
+             * @param mixed $type
+             * @param mixed $catch
              */
             public static function handle($request, $type = 1, $catch = true)
             {
@@ -3329,6 +3332,18 @@ namespace Illuminate\Support\Facades {
             }
 
             /**
+             * Get the Redis connection instance.
+             *
+             * @return \Illuminate\Redis\Connections\Connection
+             * @static
+             */
+            public static function connection()
+            {
+                // @var \Illuminate\Cache\RedisStore $instance
+                return $instance->connection();
+            }
+
+            /**
              * Decrement the value of an item in the cache.
              *
              * @param  string   $key
@@ -3408,7 +3423,7 @@ namespace Illuminate\Support\Facades {
              */
             public static function flush()
             {
-                // @var \Illuminate\Cache\FileStore $instance
+                // @var \Illuminate\Cache\RedisStore $instance
                 return $instance->flush();
             }
 
@@ -3491,18 +3506,6 @@ namespace Illuminate\Support\Facades {
             }
 
             /**
-             * Get the working directory of the cache.
-             *
-             * @return string
-             * @static
-             */
-            public static function getDirectory()
-            {
-                // @var \Illuminate\Cache\FileStore $instance
-                return $instance->getDirectory();
-            }
-
-            /**
              * Get the event dispatcher instance.
              *
              * @return \Illuminate\Contracts\Events\Dispatcher
@@ -3512,18 +3515,6 @@ namespace Illuminate\Support\Facades {
             {
                 // @var \Illuminate\Cache\Repository $instance
                 return $instance->getEventDispatcher();
-            }
-
-            /**
-             * Get the Filesystem instance.
-             *
-             * @return \Illuminate\Filesystem\Filesystem
-             * @static
-             */
-            public static function getFilesystem()
-            {
-                // @var \Illuminate\Cache\FileStore $instance
-                return $instance->getFilesystem();
             }
 
             /**
@@ -3551,8 +3542,20 @@ namespace Illuminate\Support\Facades {
              */
             public static function getPrefix()
             {
-                // @var \Illuminate\Cache\FileStore $instance
+                // @var \Illuminate\Cache\RedisStore $instance
                 return $instance->getPrefix();
+            }
+
+            /**
+             * Get the Redis database instance.
+             *
+             * @return \Illuminate\Contracts\Redis\Factory
+             * @static
+             */
+            public static function getRedis()
+            {
+                // @var \Illuminate\Cache\RedisStore $instance
+                return $instance->getRedis();
             }
 
             /**
@@ -3617,8 +3620,20 @@ namespace Illuminate\Support\Facades {
              */
             public static function lock($name, $seconds = 0, $owner = null)
             {
-                // @var \Illuminate\Cache\FileStore $instance
+                // @var \Illuminate\Cache\RedisStore $instance
                 return $instance->lock($name, $seconds, $owner);
+            }
+
+            /**
+             * Get the Redis connection instance that should be used to manage locks.
+             *
+             * @return \Illuminate\Redis\Connections\Connection
+             * @static
+             */
+            public static function lockConnection()
+            {
+                // @var \Illuminate\Cache\RedisStore $instance
+                return $instance->lockConnection();
             }
 
             /**
@@ -3864,7 +3879,7 @@ namespace Illuminate\Support\Facades {
              */
             public static function restoreLock($name, $owner)
             {
-                // @var \Illuminate\Cache\FileStore $instance
+                // @var \Illuminate\Cache\RedisStore $instance
                 return $instance->restoreLock($name, $owner);
             }
 
@@ -3899,6 +3914,19 @@ namespace Illuminate\Support\Facades {
             {
                 // @var \Illuminate\Cache\Repository $instance
                 return $instance->set($key, $value, $ttl);
+            }
+
+            /**
+             * Specify the name of the connection that should be used to store data.
+             *
+             * @param  string $connection
+             * @return void
+             * @static
+             */
+            public static function setConnection($connection)
+            {
+                // @var \Illuminate\Cache\RedisStore $instance
+                $instance->setConnection($connection);
             }
 
             /**
@@ -3941,6 +3969,19 @@ namespace Illuminate\Support\Facades {
             }
 
             /**
+             * Specify the name of the connection that should be used to manage locks.
+             *
+             * @param  string                       $connection
+             * @return \Illuminate\Cache\RedisStore
+             * @static
+             */
+            public static function setLockConnection($connection)
+            {
+                // @var \Illuminate\Cache\RedisStore $instance
+                return $instance->setLockConnection($connection);
+            }
+
+            /**
              * Persists a set of key => value pairs in the cache, with an optional TTL.
              *
              * @param  \Psr\SimpleCache\iterable                 $values a list of key => value pairs for a multiple-set operation
@@ -3957,6 +3998,19 @@ namespace Illuminate\Support\Facades {
             {
                 // @var \Illuminate\Cache\Repository $instance
                 return $instance->setMultiple($values, $ttl);
+            }
+
+            /**
+             * Set the cache key prefix.
+             *
+             * @param  string $prefix
+             * @return void
+             * @static
+             */
+            public static function setPrefix($prefix)
+            {
+                // @var \Illuminate\Cache\RedisStore $instance
+                $instance->setPrefix($prefix);
             }
 
             /**
@@ -10366,7 +10420,7 @@ namespace Illuminate\Support\Facades {
             }
 
             /**
-             * Returns true if the request is a XMLHttpRequest.
+             * Returns true if the request is an XMLHttpRequest.
              *
              * It works if your JavaScript library sets an X-Requested-With HTTP header.
              * It is known to work with common JavaScript frameworks:
@@ -19034,6 +19088,8 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed $name
+             * @param mixed $block
              */
             public static function backgroundTransaction($name, $block)
             {
@@ -19043,6 +19099,7 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed $newRequestUri
              */
             public static function changeRequestUri($newRequestUri)
             {
@@ -19104,6 +19161,7 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed $path
              */
             public static function ignored($path)
             {
@@ -19113,6 +19171,9 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed $type
+             * @param mixed $name
+             * @param mixed $block
              */
             public static function instrument($type, $name, $block)
             {
@@ -19131,6 +19192,7 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed $functionality
              */
             public static function shouldInstrument($functionality)
             {
@@ -19149,6 +19211,8 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed      $operation
+             * @param mixed|null $overrideTimestamp
              */
             public static function startSpan($operation, $overrideTimestamp = null)
             {
@@ -19178,6 +19242,8 @@ namespace Scoutapm\Laravel\Facades {
 
             /**
              * @static
+             * @param mixed $name
+             * @param mixed $block
              */
             public static function webTransaction($name, $block)
             {
@@ -19233,37 +19299,40 @@ namespace Sentry\Laravel {
             /**
              * Captures an exception event and sends it to Sentry.
              *
-             * @param \Throwable $exception The exception
+             * @param \Throwable                   $exception The exception
+             * @param \Sentry\State\EventHint|null $hint      Object that can contain additional information about the event
              * @static
              */
-            public static function captureException($exception)
+            public static function captureException($exception, $hint = null)
             {
                 // @var \Sentry\State\Hub $instance
-                return $instance->captureException($exception);
+                return $instance->captureException($exception, $hint);
             }
 
             /**
              * Captures an event that logs the last occurred error.
              *
+             * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
              * @static
              */
-            public static function captureLastError()
+            public static function captureLastError($hint = null)
             {
                 // @var \Sentry\State\Hub $instance
-                return $instance->captureLastError();
+                return $instance->captureLastError($hint);
             }
 
             /**
              * Captures a message event and sends it to Sentry.
              *
-             * @param string                 $message The message
-             * @param \Sentry\State\Severity $level   The severity level of the message
+             * @param string                       $message The message
+             * @param \Sentry\State\Severity|null  $level   The severity level of the message
+             * @param \Sentry\State\EventHint|null $hint    Object that can contain additional information about the event
              * @static
              */
-            public static function captureMessage($message, $level = null)
+            public static function captureMessage($message, $level = null, $hint = null)
             {
                 // @var \Sentry\State\Hub $instance
-                return $instance->captureMessage($message, $level);
+                return $instance->captureMessage($message, $level, $hint);
             }
 
             /**

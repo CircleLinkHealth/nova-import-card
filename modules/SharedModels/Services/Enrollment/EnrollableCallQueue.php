@@ -60,9 +60,9 @@ class EnrollableCallQueue
                         ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT));
                 })
                     ->orWhere(function ($subQ) {
-                                               $subQ->where('status', Enrollee::TO_CALL)
-                                                   ->where('requested_callback', '>', Carbon::now()->startOfDay());
-                                           });
+                        $subQ->where('status', Enrollee::TO_CALL)
+                            ->where('requested_callback', '>', Carbon::now()->startOfDay());
+                    });
             })
             ->get();
 

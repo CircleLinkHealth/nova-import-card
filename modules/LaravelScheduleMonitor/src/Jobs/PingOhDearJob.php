@@ -18,9 +18,9 @@ use Spatie\ScheduleMonitor\Support\OhDearPayload\OhDearPayloadFactory;
 class PingOhDearJob implements ShouldQueue
 {
     use Dispatchable;
-    use SerializesModels;
     use InteractsWithQueue;
     use Queueable;
+    use SerializesModels;
     public $deleteWhenMissingModels = true;
 
     public MonitoredScheduledTaskLogItem $logItem;

@@ -1,0 +1,87 @@
+name: Deploy Caller App
+on:
+  push:
+    paths:
+      - apps/caller-app/**
+jobs:
+  deploy:
+    defaults:
+      run:
+        working-directory: apps/caller-app
+    name: Deploy
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Check if commit message has [ci skip]
+        uses: mstachniuk/ci-skip@v1
+
+      - name: Turnstyle - run workflow only once
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: softprops/turnstyle@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Composer dependencies
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: php-actions/composer@v5
+        env:
+          COMPOSER_MIRROR_PATH_REPOS: 1
+        with:
+          version: 1
+          php_version: 7.4
+          php_extensions: redis zip gd exif imagick opcache sockets
+          progress: yes
+          dev: yes
+          args: --classmap-authoritative --no-scripts -d apps/caller-app
+
+      - name: Setup PHP - need this to run vapor deploy
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v1
+          extensions: redis, zip, gd, exif, imagick, opcache, sockets
+          coverage: none
+
+      - name: Deploy - staging
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
+        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        env:
+          VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
+          ENV_TYPE: staging
+          APP_ENV: staging
+
+      - name: Notify Slack - Success
+        if: ${{ env.CI_SKIP == 'false' && job.status == 'success'  }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#39C16C'
+          SLACK_TITLE: Deployment successful for caller app (monorepo staging)
+          SLACK_MESSAGE: Workflow - ${{ github.workflow }}
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':suspect:'
+
+      - name: Notify Slack - Failure
+        if: ${{ env.CI_SKIP == 'false' && job.status == 'failure'  }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#ff0033'
+          SLACK_TITLE: Deployment failed for caller app (monorepo staging)
+          SLACK_MESSAGE: Workflow - ${{ github.workflow }}
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':scream_cat:'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ env.CI_SKIP == 'false' && job.status == 'failure'  }}
+        with:
+          name: Logs
+          path: ./storage/logs

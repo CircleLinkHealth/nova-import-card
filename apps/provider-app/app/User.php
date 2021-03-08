@@ -244,15 +244,9 @@ namespace App;
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User activeNurses()
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User uniquePatients()
- * @property \CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime[]|\Illuminate\Database\Eloquent\Collection        $chargeableMonthlyTime
- * @property int|null                                                                                                             $chargeable_monthly_time_count
- * @property \CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService[]|\Illuminate\Database\Eloquent\Collection      $forcedChargeableServices
- * @property int|null                                                                                                             $forced_chargeable_services_count
- * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                              $inboundSuccessfulCalls
- * @property int|null                                                                                                             $inbound_successful_calls_count
- * @property \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[]|\Illuminate\Database\Eloquent\Collection         $monthlyBillingStatus
- * @property int|null                                                                                                             $monthly_billing_status_count
- * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection                               $synonyms
+ * @property int|null                                                                                                             $synonyms_count
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

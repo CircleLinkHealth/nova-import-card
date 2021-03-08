@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Nurseinvoices\Debug;
+namespace CircleLinkHealth\NurseInvoices\Debug;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;

@@ -46,13 +46,13 @@ class WarmerHandler implements LambdaEventHandler
     {
         return collect(range(1, $event['concurrency'] - 1))
             ->mapWithKeys(function ($i) use ($lambda, $event) {
-                    return ['warmer-'.$i => $lambda->invokeAsync([
-                        'FunctionName' => $event['functionName'],
-                        'Qualifier'    => $event['functionAlias'],
-                        'LogType'      => 'None',
-                        'Payload'      => json_encode(['vaporWarmerPing' => true]),
-                    ])];
-                })->all();
+                return ['warmer-'.$i => $lambda->invokeAsync([
+                    'FunctionName' => $event['functionName'],
+                    'Qualifier'    => $event['functionAlias'],
+                    'LogType'      => 'None',
+                    'Payload'      => json_encode(['vaporWarmerPing' => true]),
+                ])];
+            })->all();
     }
 
     /**

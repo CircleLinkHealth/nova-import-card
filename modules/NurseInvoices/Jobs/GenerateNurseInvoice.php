@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
-use CircleLinkHealth\Nurseinvoices\Config\DebugConfig;
+use CircleLinkHealth\NurseInvoices\Config\DebugConfig;
 use CircleLinkHealth\NurseInvoices\Time\TotalTimeAggregator;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;

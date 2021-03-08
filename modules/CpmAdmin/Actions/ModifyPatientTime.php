@@ -16,7 +16,7 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
-use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
+use CircleLinkHealth\TimeTracking\Services\TimeTrackerServerService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 

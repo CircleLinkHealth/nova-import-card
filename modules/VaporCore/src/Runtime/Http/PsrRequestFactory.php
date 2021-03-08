@@ -169,10 +169,10 @@ class PsrRequestFactory
             ->reject
             ->isFile()
             ->reduce(function ($parsedBody, $part) {
-                    return Str::contains($name = $part->getName(), '[')
+                return Str::contains($name = $part->getName(), '[')
                             ? Arr::setMultiPartArrayValue($parsedBody, $name, $part->getBody())
                             : SupportArr::set($parsedBody, $name, $part->getBody());
-                }, []);
+            }, []);
     }
 
     /**
@@ -214,10 +214,10 @@ class PsrRequestFactory
             ->filter
             ->isFile()
             ->reduce(function ($files, $part) {
-                    return Str::contains($name = $part->getName(), '[')
+                return Str::contains($name = $part->getName(), '[')
                             ? Arr::setMultiPartArrayValue($files, $name, $this->createFile($part))
                             : SupportArr::set($files, $name, $this->createFile($part));
-                }, []);
+            }, []);
     }
 
     /**

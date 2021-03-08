@@ -471,7 +471,7 @@ class SendSelfEnrollmentRemindersCommand extends Command
                     Enrollee::whereIn(
                         'id',
                         $enrollees->pluck('id')
-                                ->all()
+                            ->all()
                     )
                         ->update(
                             [
