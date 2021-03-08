@@ -24,7 +24,7 @@
             "Database/Factories"
         ],
         "psr-4": {
-            "CircleLinkHealth\\Saml\\": ""
+            "CircleLinkHealth\\SamlSp\\": ""
         }
     },
     "repositories": [

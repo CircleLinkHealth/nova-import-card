@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,19 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 class ProviderUpdateCommand extends Command
 {
     use RetrievesProviderCredentials;
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('provider:update')
-            ->addArgument('provider', InputArgument::REQUIRED, 'The cloud provider name / ID')
-            ->setDescription('Update a cloud provider that is linked to your account');
-    }
 
     /**
      * Execute the command.
@@ -33,7 +24,7 @@ class ProviderUpdateCommand extends Command
 
         $providers = $this->vapor->providers();
 
-        if (! is_numeric($providerId = $this->argument('provider'))) {
+        if ( ! is_numeric($providerId = $this->argument('provider'))) {
             $providerId = $this->findIdByName($providers, $providerId);
         }
 
@@ -54,5 +45,18 @@ class ProviderUpdateCommand extends Command
         );
 
         Helpers::info('Cloud provider account updated successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('provider:update')
+            ->addArgument('provider', InputArgument::REQUIRED, 'The cloud provider name / ID')
+            ->setDescription('Update a cloud provider that is linked to your account');
     }
 }

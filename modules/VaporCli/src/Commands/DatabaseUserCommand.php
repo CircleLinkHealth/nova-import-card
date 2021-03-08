@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,20 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DatabaseUserCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:user')
-            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
-            ->addArgument('user', InputArgument::REQUIRED, 'The username of the database user to create')
-            ->setDescription('Create an additional database user for a database');
-    }
-
     /**
      * Execute the command.
      *
@@ -32,7 +22,7 @@ class DatabaseUserCommand extends Command
 
         $databases = $this->vapor->databases();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($databases, $databaseId);
         }
 
@@ -49,5 +39,19 @@ class DatabaseUserCommand extends Command
         Helpers::line();
         Helpers::line('<comment>Username:</comment> '.$response['username']);
         Helpers::line('<comment>Password:</comment> '.$response['password']);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:user')
+            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
+            ->addArgument('user', InputArgument::REQUIRED, 'The username of the database user to create')
+            ->setDescription('Create an additional database user for a database');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Tests;
 
 use Laravel\Vapor\Queue\VaporConnector;
@@ -10,12 +14,12 @@ class VaporConnectorTest extends TestCase
 {
     public function test_can_create_vapor_queue()
     {
-        $queue = (new VaporConnector)->connect([
+        $queue = (new VaporConnector())->connect([
             'driver' => 'sqs',
-            'key' => 'test-key',
+            'key'    => 'test-key',
             'secret' => 'test-secret',
             'prefix' => 'https://sqs.us-east-1.amazonaws.com/111111111',
-            'queue' => 'test-queue',
+            'queue'  => 'test-queue',
             'region' => 'us-east-1',
         ]);
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\BuiltApplicationFiles;
@@ -33,7 +37,7 @@ class CompressApplication
 
         $archive = new ZipArchive();
 
-        $archive->open($this->buildPath.'/app.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $archive->open($this->buildPath.'/app.zip', ZipArchive::CREATE|ZipArchive::OVERWRITE);
 
         foreach (BuiltApplicationFiles::get($this->appPath) as $file) {
             $relativePathName = str_replace('\\', '/', $file->getRelativePathname());
@@ -60,20 +64,6 @@ class CompressApplication
     protected function compressApplicationOnMac()
     {
         (new Process(['zip', '-r', $this->buildPath.'/app.zip', '.'], $this->appPath))->mustRun();
-    }
-
-    /**
-     * Get the proper file permissions for the file.
-     *
-     * @param \SplFileInfo $file
-     *
-     * @return int
-     */
-    protected function getPermissions($file)
-    {
-        return $file->isDir() || $file->getFilename() == 'php'
-                        ? 33133  // '-r-xr-xr-x'
-                        : fileperms($file->getRealPath());
     }
 
     /**
@@ -107,5 +97,19 @@ class CompressApplication
         }
 
         return $size;
+    }
+
+    /**
+     * Get the proper file permissions for the file.
+     *
+     * @param \SplFileInfo $file
+     *
+     * @return int
+     */
+    protected function getPermissions($file)
+    {
+        return $file->isDir() || 'php' == $file->getFilename()
+                        ? 33133  // '-r-xr-xr-x'
+                        : fileperms($file->getRealPath());
     }
 }

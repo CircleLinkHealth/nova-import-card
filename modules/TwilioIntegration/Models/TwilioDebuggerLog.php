@@ -20,9 +20,9 @@ namespace CircleLinkHealth\TwilioIntegration\Models;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog query()
  * @mixin \Eloquent
  */
 class TwilioDebuggerLog extends \CircleLinkHealth\Core\Entities\BaseModel

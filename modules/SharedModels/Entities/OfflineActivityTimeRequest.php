@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
-use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
+use CircleLinkHealth\TimeTracking\Services\TimeTrackerServerService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\SharedModels\Entities\Activity|null $activity
  * @property \CircleLinkHealth\Customer\Entities\User              $patient
  * @property \CircleLinkHealth\Customer\Entities\User              $requester
- * @method static                                                bool|null forceDelete()
+ * @method   static                                                bool|null forceDelete()
  * @method static
  *     \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest
  *     newModelQuery()

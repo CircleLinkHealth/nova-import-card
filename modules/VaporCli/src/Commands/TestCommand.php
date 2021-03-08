@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Exception;
@@ -21,19 +25,6 @@ class TestCommand extends Command
     }
 
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('test')
-            ->addOption('php', null, InputOption::VALUE_OPTIONAL, 'The PHP version that should be used to execute the tests')
-            ->setDescription('Run PHPUnit inside a simulated Vapor environment');
-    }
-
-    /**
      * Execute the command.
      *
      * @throws Exception
@@ -47,5 +38,18 @@ class TestCommand extends Command
         $this->getApplication()->find('local')->run(new ArrayInput([
             '--php' => $this->option('php'),
         ]), $this->output);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('test')
+            ->addOption('php', null, InputOption::VALUE_OPTIONAL, 'The PHP version that should be used to execute the tests')
+            ->setDescription('Run PHPUnit inside a simulated Vapor environment');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,26 +12,13 @@ use Symfony\Component\Console\Input\InputArgument;
 class BalancerDeleteCommand extends Command
 {
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('balancer:delete')
-            ->addArgument('balancer', InputArgument::REQUIRED, 'The load balancer name / ID')
-            ->setDescription('Delete a load balancer');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
      */
     public function handle()
     {
-        if (! Helpers::confirm('Are you sure you want to delete this load balancer', false)) {
+        if ( ! Helpers::confirm('Are you sure you want to delete this load balancer', false)) {
             Helpers::abort('Action cancelled.');
         }
 
@@ -43,6 +34,19 @@ class BalancerDeleteCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('balancer:delete')
+            ->addArgument('balancer', InputArgument::REQUIRED, 'The load balancer name / ID')
+            ->setDescription('Delete a load balancer');
+    }
+
+    /**
      * Determine the load balancer that should be deleted.
      *
      * @return array
@@ -51,7 +55,7 @@ class BalancerDeleteCommand extends Command
     {
         $balancers = $this->vapor->balancers();
 
-        if (! is_numeric($balancerId = $this->argument('balancer'))) {
+        if ( ! is_numeric($balancerId = $this->argument('balancer'))) {
             $balancerName = $balancerId;
 
             $balancerId = $this->findIdByName($balancers, $balancerId);

@@ -8,10 +8,10 @@ namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
 use CircleLinkHealth\Eligibility\Decorators\CareTeamFromAthena;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 
 class AddCareTeamFromAthena implements EligibilityCheckAdapter
 {

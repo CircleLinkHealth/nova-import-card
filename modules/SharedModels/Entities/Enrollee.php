@@ -13,18 +13,14 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
-use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Traits\SelfEnrollableTrait;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
+use CircleLinkHealth\TwilioIntegration\Services\TwilioClientable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use function Clue\StreamFilter\fun;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\Enrollee.
@@ -90,8 +86,8 @@ use function Clue\StreamFilter\fun;
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
  * @property \CircleLinkHealth\SharedModels\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection
  *     $confirmedFamilyMembers
- * @property int|null                                                                    $confirmed_family_members_count
- * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null                  $eligibilityJob
+ * @property int|null                                                                          $confirmed_family_members_count
+ * @property \CircleLinkHealth\SharedModels\Entities\EligibilityJob|null                       $eligibilityJob
  * @property \CircleLinkHealth\SelfEnrollment\EnrollableRequestInfo\EnrollableRequestInfo|null $enrollableInfoRequest
  * @property \CircleLinkHealth\SelfEnrollment\EnrollableInvitationLink\EnrollableInvitationLink[]|\Illuminate\Database\Eloquent\Collection
  *     $enrollmentInvitationLinks
@@ -111,10 +107,10 @@ use function Clue\StreamFilter\fun;
  * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
- * @property int|null                                                  $revision_history_count
- * @property mixed                                                     $primary_phone_number
+ * @property int|null                                                   $revision_history_count
+ * @property mixed                                                      $primary_phone_number
  * @property \CircleLinkHealth\SharedModels\Entities\TargetPatient|null $targetPatient
- * @property \CircleLinkHealth\Customer\Entities\User|null             $user
+ * @property \CircleLinkHealth\Customer\Entities\User|null              $user
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Enrollee
  *     duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda
  *     $ccda)
@@ -155,12 +151,12 @@ use function Clue\StreamFilter\fun;
  * @property mixed                           $other_phone_npa_parenthesized
  * @property mixed                           $primary_phone_npa_parenthesized
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
- * @method static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
- * @method static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
- * @method static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
- * @method static \Illuminate\Database\Eloquent\Builder|Enrollee canSendSelfEnrollmentInvitation(bool $initialInvite)
- * @method static \Illuminate\Database\Eloquent\Builder|Enrollee ofActivePractice()
+ * @method   static                          \Illuminate\Database\Query\Builder|Enrollee onlyTrashed()
+ * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withTrashed()
+ * @method   static                          \Illuminate\Database\Query\Builder|Enrollee withoutTrashed()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee lessThanMaxAllowedAttempts()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee canSendSelfEnrollmentInvitation(bool $initialInvite)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|Enrollee ofActivePractice()
  */
 class Enrollee extends BaseModel
 {
@@ -196,7 +192,8 @@ class Enrollee extends BaseModel
     /**
      * status = ineligible.
      */
-    const INELIGIBLE = 'ineligible';
+    const INELIGIBLE                 = 'ineligible';
+    const INVITE_ONCE_EVERY_N_MONTHS = 5;
 
     /**
      * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
@@ -288,7 +285,6 @@ class Enrollee extends BaseModel
      * Csv with enrollees uploaded through Superadmin page
      */
     const UPLOADED_CSV = 'uploaded-csv';
-    const INVITE_ONCE_EVERY_N_MONTHS = 5;
 
     /**
      * For mySql full-text search.
@@ -498,18 +494,6 @@ class Enrollee extends BaseModel
         return collect($addresses)->filter()->implode(', ');
     }
 
-    public function scopeCanSendSelfEnrollmentInvitation($query, bool $initialInvite)
-    {
-        return $query->whereNull('source')
-            ->when($initialInvite, function ($q){
-                $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
-                    $q->where('created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
-                });
-            })
-            ->whereIn('status', [
-                Enrollee::QUEUE_AUTO_ENROLLMENT,
-            ]);
-    }
     /**
      * @param mixed $key
      */
@@ -787,6 +771,19 @@ class Enrollee extends BaseModel
     public function provider()
     {
         return $this->belongsTo(User::class, 'provider_id');
+    }
+
+    public function scopeCanSendSelfEnrollmentInvitation($query, bool $initialInvite)
+    {
+        return $query->whereNull('source')
+            ->when($initialInvite, function ($q) {
+                $q->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
+                    $q->where('created_at', '>', now()->subMonths(self::INVITE_ONCE_EVERY_N_MONTHS));
+                });
+            })
+            ->whereIn('status', [
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
+            ]);
     }
 
     /**

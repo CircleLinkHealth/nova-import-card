@@ -14,8 +14,8 @@ use Illuminate\Database\Seeder;
 
 class GenerateMarillacHealthLetter extends Seeder
 {
-    const SIGNATORY_NAME = 'Crystal Owens, MD <br> Chief Medical Officer, MarillacHealth';
     const MARILLAC_PRACTICE_NAME = 'marillac-clinic-inc';
+    const SIGNATORY_NAME         = 'Crystal Owens, MD <br> Chief Medical Officer, MarillacHealth';
 
     /**
      * Run the database seeds.

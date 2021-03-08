@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
-use CircleLinkHealth\Nurseinvoices\Debug\MeasureTime;
+use CircleLinkHealth\NurseInvoices\Debug\MeasureTime;
 use CircleLinkHealth\NurseInvoices\ValueObjects\CalculationResult;
 use CircleLinkHealth\NurseInvoices\ValueObjects\PatientPayCalculationResult;
 use Illuminate\Support\Collection;

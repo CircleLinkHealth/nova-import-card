@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\Docker;
@@ -17,7 +21,7 @@ class BuildContainerImage
      */
     public function __invoke()
     {
-        if (! Manifest::usesContainerImage($this->environment)) {
+        if ( ! Manifest::usesContainerImage($this->environment)) {
             return;
         }
 

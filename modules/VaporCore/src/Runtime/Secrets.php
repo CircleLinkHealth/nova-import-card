@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime;
 
 use Aws\Ssm\SsmClient;
@@ -9,14 +13,14 @@ class Secrets
     /**
      * Add all of the secret parameters at the given path to the environment.
      *
-     * @param  string  $path
-     * @param  array|null  $parameters
-     * @param  string  $file
+     * @param  string     $path
+     * @param  array|null $parameters
+     * @param  string     $file
      * @return array
      */
     public static function addToEnvironment($path, $parameters, $file)
     {
-        if (! $parameters && file_exists($file)) {
+        if ( ! $parameters && file_exists($file)) {
             $parameters = require $file;
         }
 
@@ -32,8 +36,7 @@ class Secrets
     /**
      * Get all of the secret parameters (AWS SSM) at the given path.
      *
-     * @param  string  $path
-     * @param  array  $parameters
+     * @param  string $path
      * @return array
      */
     public static function all($path, array $parameters = [])
@@ -43,7 +46,7 @@ class Secrets
         }
 
         $ssm = SsmClient::factory([
-            'region' => $_ENV['AWS_DEFAULT_REGION'],
+            'region'  => $_ENV['AWS_DEFAULT_REGION'],
             'version' => 'latest',
         ]);
 
@@ -64,7 +67,6 @@ class Secrets
     /**
      * Parse the secret names and values into an array.
      *
-     * @param  array  $secrets
      * @return array
      */
     protected static function parseSecrets(array $secrets)

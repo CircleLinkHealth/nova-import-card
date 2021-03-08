@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Domain;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;

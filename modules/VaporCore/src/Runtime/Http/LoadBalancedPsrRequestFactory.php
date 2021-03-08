@@ -1,44 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Http;
 
 class LoadBalancedPsrRequestFactory extends PsrRequestFactory
 {
     /**
-     * Get the server variables for the event.
+     * Get the HTTP headers for the event.
      *
-     * @param  array  $headers
-     * @param  string  $queryString
      * @return array
      */
-    protected function serverVariables(array $headers, string $queryString)
+    protected function headers()
     {
-        $variables = [
-            'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => $this->protocolVersion(),
-            'REQUEST_METHOD' => $this->method(),
-            'REQUEST_TIME' => time(),
-            'REQUEST_TIME_FLOAT' => microtime(true),
-            'QUERY_STRING' => $queryString,
-            'DOCUMENT_ROOT' => getcwd(),
-            'REQUEST_URI' => $this->uri(),
-        ];
-
-        if (isset($headers['Host'])) {
-            $variables['HTTP_HOST'] = $headers['Host'];
-        }
-
-        return $variables;
-    }
-
-    /**
-     * Get the HTTP protocol version for the event.
-     *
-     * @return string
-     */
-    protected function protocolVersion()
-    {
-        return '1.1';
+        return collect($this->event['multiValueHeaders'] ?? [])
+            ->mapWithKeys(function ($headers, $name) {
+                return [static::normalizeHeaderName($name) => $headers[0]];
+            })->all();
     }
 
     /**
@@ -52,13 +32,24 @@ class LoadBalancedPsrRequestFactory extends PsrRequestFactory
     }
 
     /**
-     * Get the URI for the event.
+     * Normalize the given header name into studly-case.
+     *
+     * @param  string $name
+     * @return string
+     */
+    protected static function normalizeHeaderName($name)
+    {
+        return str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
+    }
+
+    /**
+     * Get the HTTP protocol version for the event.
      *
      * @return string
      */
-    protected function uri()
+    protected function protocolVersion()
     {
-        return $this->event['path'] ?? '/';
+        return '1.1';
     }
 
     /**
@@ -71,32 +62,43 @@ class LoadBalancedPsrRequestFactory extends PsrRequestFactory
         return http_build_query(
             collect($this->event['multiValueQueryStringParameters'] ?? [])
                 ->mapWithKeys(function ($values, $key) {
-                    return count($values) === 1 ? [$key => $values[0]] : [$key => $values];
+                    return 1 === count($values) ? [$key => $values[0]] : [$key => $values];
                 })->all()
         );
     }
 
     /**
-     * Get the HTTP headers for the event.
+     * Get the server variables for the event.
      *
      * @return array
      */
-    protected function headers()
+    protected function serverVariables(array $headers, string $queryString)
     {
-        return collect($this->event['multiValueHeaders'] ?? [])
-                ->mapWithKeys(function ($headers, $name) {
-                    return [static::normalizeHeaderName($name) => $headers[0]];
-                })->all();
+        $variables = [
+            'HTTPS'              => 'on',
+            'SERVER_PROTOCOL'    => $this->protocolVersion(),
+            'REQUEST_METHOD'     => $this->method(),
+            'REQUEST_TIME'       => time(),
+            'REQUEST_TIME_FLOAT' => microtime(true),
+            'QUERY_STRING'       => $queryString,
+            'DOCUMENT_ROOT'      => getcwd(),
+            'REQUEST_URI'        => $this->uri(),
+        ];
+
+        if (isset($headers['Host'])) {
+            $variables['HTTP_HOST'] = $headers['Host'];
+        }
+
+        return $variables;
     }
 
     /**
-     * Normalize the given header name into studly-case.
+     * Get the URI for the event.
      *
-     * @param  string  $name
      * @return string
      */
-    protected static function normalizeHeaderName($name)
+    protected function uri()
     {
-        return str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
+        return $this->event['path'] ?? '/';
     }
 }

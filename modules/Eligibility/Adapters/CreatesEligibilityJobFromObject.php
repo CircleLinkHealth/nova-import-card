@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\DTO\Problem;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Support\Collection;
 
 trait CreatesEligibilityJobFromObject
@@ -38,7 +38,7 @@ trait CreatesEligibilityJobFromObject
 
         $hash = $practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
 
-        return EligibilityJob::firstOrCreate(
+        return EligibilityJob::updateOrCreate(
             [
                 'batch_id' => $batch->id,
                 'hash'     => $hash,
@@ -92,7 +92,7 @@ trait CreatesEligibilityJobFromObject
 
         $patient = $this->handleLastEncounter($patient, $decodedCcda, $batch);
 
-        $provider = collect($this->getCcdaTransformer()->parseProviders($decodedCcda->document, $decodedCcda->demographics))
+        $provider = collect($this->getCcdaTransformer()->parseProviders($decodedCcda->document, $decodedCcda->demographics, $practice->id))
             ->transform(
                 function ($p) {
                     $p = $this->getCcdaTransformer()->provider($p);

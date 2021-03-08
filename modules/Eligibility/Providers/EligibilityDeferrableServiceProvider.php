@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Providers;
 
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
-use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
@@ -41,7 +40,6 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             AthenaApiConnection::class,
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,
@@ -63,7 +61,6 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
         $this->commands([
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,

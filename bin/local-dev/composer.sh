@@ -15,6 +15,8 @@ do
     APP_PATH="$PWD/apps/$SUBDOMAIN"
     COMPOSER_FILE="composer.json"
 
+    (cd $PWD && COMPOSER_MEMORY_LIMIT=-1 composer $ACTION)
+
     if [ -f "$APP_PATH/$COMPOSER_FILE" ]; then
         echo "$APP_PATH: COMPOSER_FILE found!"
         echo "$APP_PATH: running composer update"

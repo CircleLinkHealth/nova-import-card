@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Fpm;
 
 use Laravel\Vapor\Runtime\Response;
@@ -16,18 +20,17 @@ class LoadBalancedFpmLambdaResponse extends FpmLambdaResponse
         $requiresEncoding = isset($this->headers['x-vapor-base64-encode'][0]);
 
         return [
-            'isBase64Encoded' => $requiresEncoding,
-            'statusCode' => $this->status,
+            'isBase64Encoded'   => $requiresEncoding,
+            'statusCode'        => $this->status,
             'statusDescription' => $this->status.' '.Response::statusText($this->status),
             'multiValueHeaders' => empty($this->headers) ? [] : $this->prepareHeaders($this->headers),
-            'body' => $requiresEncoding ? base64_encode($this->body) : $this->body,
+            'body'              => $requiresEncoding ? base64_encode($this->body) : $this->body,
         ];
     }
 
     /**
      * Prepare the given response headers.
      *
-     * @param  array  $responseHeaders
      * @return array
      */
     protected function prepareHeaders(array $responseHeaders)
@@ -38,7 +41,7 @@ class LoadBalancedFpmLambdaResponse extends FpmLambdaResponse
             $headers[static::normalizeHeaderName($name)] = $values;
         }
 
-        if (! isset($headers['Content-Type']) || empty($headers['Content-Type'])) {
+        if ( ! isset($headers['Content-Type']) || empty($headers['Content-Type'])) {
             $headers['Content-Type'] = ['text/html'];
         }
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Seeder;
 
@@ -12,7 +16,6 @@ class PopulateTwilioSMSToPractices extends Seeder
      */
     public function run()
     {
-
         $practicesToSendTo = [
             'carolina-medical-associates'         => '+17046664445',
             'clinicalosangeles'                   => '+17272050515',
@@ -25,13 +28,13 @@ class PopulateTwilioSMSToPractices extends Seeder
             'rocky-mountain-health-centers-south' => '+17206050215',
             'upg'                                 => '+17186827501',
             'urgent-medical-care-pc'              => '+19174777065',
-            'care-medica'                         => '+12036016075'
+            'care-medica'                         => '+12036016075',
         ];
 
         foreach ($practicesToSendTo as $key => $value) {
             $practice = Practice::whereName($key)->first();
 
-            if ($practice != null) {
+            if (null != $practice) {
                 $practice->outgoing_phone_number = $value;
                 $practice->save();
             }

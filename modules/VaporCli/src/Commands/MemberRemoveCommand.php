@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,20 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class MemberRemoveCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('member:remove')
-            ->setAliases(['team:remove'])
-            ->addArgument('email', InputArgument::OPTIONAL, "The user's email address")
-            ->setDescription('Remove a team member from your current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -35,5 +25,19 @@ class MemberRemoveCommand extends Command
         );
 
         Helpers::info('Team member removed successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('member:remove')
+            ->setAliases(['team:remove'])
+            ->addArgument('email', InputArgument::OPTIONAL, "The user's email address")
+            ->setDescription('Remove a team member from your current team');
     }
 }

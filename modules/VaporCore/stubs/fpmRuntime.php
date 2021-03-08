@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Laravel\Vapor\Runtime\CustomSecrets;
 use Laravel\Vapor\Runtime\Fpm\Fpm;
 use Laravel\Vapor\Runtime\HttpHandlerFactory;
 use Laravel\Vapor\Runtime\LambdaContainer;
 use Laravel\Vapor\Runtime\LambdaRuntime;
-use Laravel\Vapor\Runtime\CustomSecrets;
 use Laravel\Vapor\Runtime\StorageDirectories;
 
 /*
@@ -19,7 +23,7 @@ use Laravel\Vapor\Runtime\StorageDirectories;
 |
 */
 
-fwrite(STDERR, 'Preparing to add secrets to runtime' . PHP_EOL);
+fwrite(STDERR, 'Preparing to add secrets to runtime'.PHP_EOL);
 
 $secrets = CustomSecrets::fromFile(
     __DIR__.'/vaporSecrets.php'
@@ -36,10 +40,11 @@ $secrets = CustomSecrets::fromFile(
 |
 */
 
-fwrite(STDERR, 'Preparing to boot FPM' . PHP_EOL);
+fwrite(STDERR, 'Preparing to boot FPM'.PHP_EOL);
 
 $fpm = Fpm::boot(
-    __DIR__ . '/httpHandler.php', $secrets
+    __DIR__.'/httpHandler.php',
+    $secrets
 );
 
 /*
@@ -53,12 +58,12 @@ $fpm = Fpm::boot(
 |
 */
 
-with(require __DIR__ . '/bootstrap/app.php', function ($app) {
+with(require __DIR__.'/bootstrap/app.php', function ($app) {
     StorageDirectories::create();
 
     $app->useStoragePath(StorageDirectories::PATH);
 
-    fwrite(STDERR, 'Caching Laravel configuration' . PHP_EOL);
+    fwrite(STDERR, 'Caching Laravel configuration'.PHP_EOL);
 
     $app->make(ConsoleKernelContract::class)->call('config:cache');
 });
@@ -88,6 +93,7 @@ while (true) {
     $fpm->ensureRunning();
 
     LambdaContainer::terminateIfInvocationLimitHasBeenReached(
-        ++$invocations, (int)($_ENV['VAPOR_MAX_REQUESTS'] ?? 250)
+        ++$invocations,
+        (int) ($_ENV['VAPOR_MAX_REQUESTS'] ?? 250)
     );
 }

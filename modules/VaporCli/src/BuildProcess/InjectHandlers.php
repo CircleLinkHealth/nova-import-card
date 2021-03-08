@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\Helpers;
@@ -18,7 +22,7 @@ class InjectHandlers
     {
         Helpers::step('<options=bold>Injecting Serverless Handlers</>');
 
-        if (! is_dir($this->appPath.'/vendor/laravel/vapor-core')) {
+        if ( ! is_dir($this->appPath.'/vendor/laravel/vapor-core')) {
             Helpers::abort('Unable to find laravel/vapor-core installation.');
         }
 

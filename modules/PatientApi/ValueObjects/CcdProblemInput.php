@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Patientapi\ValueObjects;
+namespace CircleLinkHealth\ApiPatient\ValueObjects;
 
 class CcdProblemInput
 {

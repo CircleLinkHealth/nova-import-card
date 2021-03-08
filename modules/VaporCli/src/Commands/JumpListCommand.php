@@ -1,23 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 class JumpListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('jump:list')
-            ->setDescription('List the jumpboxes that belong to the current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -39,5 +31,17 @@ class JumpListCommand extends Command
                 ucfirst($jumpBox['status']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('jump:list')
+            ->setDescription('List the jumpboxes that belong to the current team');
     }
 }

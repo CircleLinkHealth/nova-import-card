@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "circlelinkhealth/app-self-enrollment",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Self Enrollment App",
     "keywords": [
         "framework",
         "laravel"
@@ -14,23 +14,38 @@
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CcmBilling"
+            "url": "../../modules/CcmBilling",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Core"
+            "url": "../../modules/Core",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/CpmMigrations"
+            "url": "../../modules/CpmMigrations",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Customer"
+            "url": "../../modules/Customer",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Eligibility"
+            "url": "../../modules/Eligibility",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
@@ -38,55 +53,94 @@
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Raygun"
+            "url": "../../modules/Raygun",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Revisionable"
+            "url": "../../modules/Revisionable",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/SamlSp"
+            "url": "../../modules/SamlSp",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/SelfEnrollment"
+            "url": "../../modules/SelfEnrollment",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/SharedModels"
+            "url": "../../modules/SharedModels",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/SqlViews"
+            "url": "../../modules/SqlViews",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/Synonyms"
+            "url": "../../modules/Synonyms",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/TwilioIntegration"
+            "url": "../../modules/TwilioIntegration",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/TwoFA"
+            "url": "../../modules/TwoFA",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/VaporCli"
+            "url": "../../modules/VaporCli",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/VaporCore"
+            "url": "../../modules/VaporCore",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/VaporDevopsHelpers"
+            "url": "../../modules/VaporDevopsHelpers",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/LaravelScheduleMonitor"
+            "url": "../../modules/LaravelScheduleMonitor",
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "git",
@@ -94,7 +148,10 @@
         },
         {
             "type": "path",
-            "url": "./CircleLinkHealth/PdfService"
+            "url": "../../modules/PdfService",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {

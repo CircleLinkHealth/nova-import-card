@@ -1,10 +1,13 @@
 <?php
 
-$env = env('APP_ENV', 'production');
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+$env    = env('APP_ENV', 'production');
 $isProd = in_array($env, ['production', 'worker']) || \Illuminate\Support\Str::contains($env, 'prod');
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
@@ -33,5 +36,4 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => true,
-
 ];

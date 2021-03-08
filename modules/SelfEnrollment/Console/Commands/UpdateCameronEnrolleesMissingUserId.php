@@ -1,8 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
-use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -10,18 +13,17 @@ use Illuminate\Console\Command;
 class UpdateCameronEnrolleesMissingUserId extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'create:survey-user-cameron-enrollees';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Run createSurveyOnlyUserFromEnrollee for Enrollees that are missing user_id.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'create:survey-user-cameron-enrollees';
 
     /**
      * Create a new command instance.
@@ -44,8 +46,8 @@ class UpdateCameronEnrolleesMissingUserId extends Command
 
         Enrollee::whereIn('id', $enrolleeIds)
             ->whereNull('user_id')
-            ->chunk(20, function ($enrollees){
-                $enrollees->each(function ($enrollee){
+            ->chunk(20, function ($enrollees) {
+                $enrollees->each(function ($enrollee) {
                     CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
                 });
             });
@@ -197,7 +199,7 @@ class UpdateCameronEnrolleesMissingUserId extends Command
             344181,
             344197,
             344275,
-            344284
+            344284,
         ];
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Exception;
@@ -30,19 +34,6 @@ class LocalCommand extends Command
         parent::__construct();
 
         $this->ignoreValidationErrors();
-    }
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('local')
-            ->addOption('php', null, InputOption::VALUE_OPTIONAL, 'The PHP version that should be used to execute the command')
-            ->setDescription('Run a command inside a simulated Vapor environment');
     }
 
     /**
@@ -86,6 +77,19 @@ class LocalCommand extends Command
         unlink($dockerComposePath);
 
         return $status;
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('local')
+            ->addOption('php', null, InputOption::VALUE_OPTIONAL, 'The PHP version that should be used to execute the command')
+            ->setDescription('Run a command inside a simulated Vapor environment');
     }
 
     /**

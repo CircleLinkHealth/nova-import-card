@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Core\Tests\Concerns\PhaxioFake;
 
 use CircleLinkHealth\Core\Contracts\Efax;
-use CircleLinkHealth\Core\Tests\Concerns\PhaxioFake\PhaxioFake;
 use Illuminate\Support\Facades\Facade;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;

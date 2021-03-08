@@ -18,7 +18,7 @@ trait CreatesApplication
     public function createApplication()
     {
         $basePath = $_SERVER['PWD'];
-        $app = require "$basePath/bootstrap/app.php";
+        $app      = require "$basePath/bootstrap/app.php";
 
         if ( ! getenv('CI')) {
             $app->loadEnvironmentFrom('.env.testing');

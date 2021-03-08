@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCommonwealthPatientForPcm;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Console\Command;
 
 class CreatePCMListForCommonWealth extends Command

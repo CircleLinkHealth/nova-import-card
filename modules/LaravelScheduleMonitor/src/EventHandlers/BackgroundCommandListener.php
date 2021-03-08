@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\EventHandlers;
 
 use Illuminate\Console\Events\CommandStarting;
@@ -12,7 +16,7 @@ class BackgroundCommandListener
 {
     public function handle(CommandStarting $event)
     {
-        if ($event->command !== 'schedule:finish') {
+        if ('schedule:finish' !== $event->command) {
             return;
         }
 
@@ -22,7 +26,7 @@ class BackgroundCommandListener
                 $task
                     ->then(
                         function () use ($task) {
-                            if (! $monitoredTask = MonitoredScheduledTask::findForTask($task)) {
+                            if ( ! $monitoredTask = MonitoredScheduledTask::findForTask($task)) {
                                 return;
                             }
 

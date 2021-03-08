@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use DateTime;
@@ -30,21 +34,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class BuildCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('build')
-            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
-            ->addArgument('environment_type', InputArgument::REQUIRED, 'The environment type')
-            ->addOption('asset-url', null, InputOption::VALUE_OPTIONAL, 'The asset base URL')
-            ->setDescription('Build the project archive');
-    }
-
     /**
      * Execute the command.
      *
@@ -89,5 +78,20 @@ class BuildCommand extends Command
 
         Helpers::line();
         Helpers::line('<info>Project built successfully.</info> ('.$time.')');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('build')
+            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
+            ->addArgument('environment_type', InputArgument::REQUIRED, 'The environment type')
+            ->addOption('asset-url', null, InputOption::VALUE_OPTIONAL, 'The asset base URL')
+            ->setDescription('Build the project archive');
     }
 }

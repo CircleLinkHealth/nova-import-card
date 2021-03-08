@@ -54,7 +54,7 @@ class DuplicatePatientResolver
         if (empty($validUserIds = array_filter($userIds))) {
             return;
         }
-        
+
         $results = collect($users = $this->getUsers($userIds))
             ->unique()
             ->filter()
@@ -64,11 +64,11 @@ class DuplicatePatientResolver
             ->sortByDesc('score');
 
         $keep = $results->first()['debug_logs']['patient']['user_id'];
-        
+
         if (count($validUserIds) > 1) {
             $this->storeLogs($results, $keep);
         }
-    
+
         $this->deleteAllExcept($keep, $results->pluck('debug_logs.patient.user_id')->all(), $users);
 
         $this->enrollee->user_id = $keep;
@@ -77,9 +77,9 @@ class DuplicatePatientResolver
 
     private function calculateScore(User $user)
     {
-        $pI = optional($user->patientInfo);
-        $score = 0;
-        $scoreLogs  = [];
+        $pI        = optional($user->patientInfo);
+        $score     = 0;
+        $scoreLogs = [];
 
         if ($user->isParticipant()) {
             $score += self::IS_PARTICIPANT;
@@ -120,30 +120,30 @@ class DuplicatePatientResolver
             $score += self::FUTURE_CALLS_SCORE;
             $scoreLogs['has_future_calls'] = $score;
         }
-        
+
         return [
-            'score' => $score,
-            'debug_logs'  => [
-                'score' => $scoreLogs,
+            'score'      => $score,
+            'debug_logs' => [
+                'score'   => $scoreLogs,
                 'patient' => [
-                    'user_id' => $user->id,
-                    'name' => $user->display_name,
-                    'practice_id' => $user->program_id,
+                    'user_id'         => $user->id,
+                    'name'            => $user->display_name,
+                    'practice_id'     => $user->program_id,
                     'patient_info_id' => $pI->id,
-                    'dob' => optional($pI->birth_date)->toDateString(),
-                    'mrn' => $pI->mrn_number,
-                    'careplan_id' => optional($user->carePlan)->id,
+                    'dob'             => optional($pI->birth_date)->toDateString(),
+                    'mrn'             => $pI->mrn_number,
+                    'careplan_id'     => optional($user->carePlan)->id,
                 ],
                 'enrollee' => [
-                    'name' => $this->enrollee->first_name.' '.$this->enrollee->last_name,
+                    'name'        => $this->enrollee->first_name.' '.$this->enrollee->last_name,
                     'practice_id' => $user->practice_id,
-                    'dob' => optional($this->enrollee->dob)->toDateString(),
-                    'mrn' => $this->enrollee->mrn,
+                    'dob'         => optional($this->enrollee->dob)->toDateString(),
+                    'mrn'         => $this->enrollee->mrn,
                     'enrollee_id' => $this->enrollee->id,
                 ],
                 'future_call_ids' => $user->calls->pluck('id')->all(),
-                'call_ids' => $user->calls->where('scheduled_date', '>', now())->pluck('id')->all(),
-                'note_ids' => $user->notes->pluck('id')
+                'call_ids'        => $user->calls->where('scheduled_date', '>', now())->pluck('id')->all(),
+                'note_ids'        => $user->notes->pluck('id'),
             ],
         ];
     }
@@ -180,6 +180,21 @@ class DuplicatePatientResolver
         ])->findMany($userIds);
     }
 
+    private function storeLogs(Collection $results, int $userIdToKeep)
+    {
+        $results->each(function ($debugLog) use ($userIdToKeep) {
+            $userId = $debugLog['debug_logs']['patient']['user_id'];
+            if ($userIdToKeep === $userId) {
+                return;
+            }
+
+            DuplicatePatientResolverLog::create([
+                'user_id_kept' => $userIdToKeep,
+                'debug_logs'   => $debugLog,
+            ]);
+        });
+    }
+
     private function validator()
     {
         if (is_null($this->validator)) {
@@ -188,20 +203,5 @@ class DuplicatePatientResolver
         }
 
         return $this->validator;
-    }
-    
-    private function storeLogs(Collection $results, int $userIdToKeep)
-    {
-        $results->each(function ($debugLog) use ($userIdToKeep) {
-            $userId = $debugLog['debug_logs']['patient']['user_id'];
-            if ($userIdToKeep === $userId) {
-                return;
-            }
-            
-            DuplicatePatientResolverLog::create([
-                                                    'user_id_kept' => $userIdToKeep,
-                                                    'debug_logs' => $debugLog,
-                                                ]);
-        });
     }
 }

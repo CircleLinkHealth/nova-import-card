@@ -41,9 +41,9 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics query()
  * @mixin \Eloquent
  * @property int|null    $eligibility_job_id
  * @property string|null $facility_name
@@ -84,16 +84,16 @@ class Demographics extends BaseModel
         'eligibility_job_id',
     ];
     protected $table = 'practice_pull_demographics';
-    
+
     public static function forPatient(?int $practiceId, ?string $firstName, ?string $lastName, ?Carbon $dob)
     {
         if ( ! $dob || ! $practiceId || ! $firstName || ! $lastName) {
             return null;
         }
-        
+
         return self::whereRaw("MATCH(first_name, last_name) AGAINST(\"+$firstName +$lastName\" IN BOOLEAN MODE)")
-                   ->where('practice_id', $practiceId)
-                   ->where('dob', $dob)
-                   ->orderByDesc('updated_at');
+            ->where('practice_id', $practiceId)
+            ->where('dob', $dob)
+            ->orderByDesc('updated_at');
     }
 }

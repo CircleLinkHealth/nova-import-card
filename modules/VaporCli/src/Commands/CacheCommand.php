@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\CacheInstanceClasses;
@@ -8,19 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CacheCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cache')
-            ->addArgument('name', InputArgument::REQUIRED, 'The name of the cache')
-            ->setDescription('Create a new cache');
-    }
-
     /**
      * Execute the command.
      *
@@ -38,7 +29,7 @@ class CacheCommand extends Command
             Helpers::abort('Unable to find a network with that name / ID.');
         }
 
-        if (! $this->networkHasNatGateway($networkId) &&
+        if ( ! $this->networkHasNatGateway($networkId) &&
             ! Helpers::confirm('A cache will require Vapor to add a NAT gateway to your network (~32 / month). Would you like to proceed', true)) {
             Helpers::abort('Action cancelled.');
         }
@@ -57,22 +48,16 @@ class CacheCommand extends Command
     }
 
     /**
-     * Determine the instance class of the cache.
+     * Configure the command options.
      *
-     * @return string|null
+     * @return void
      */
-    protected function determineInstanceClass()
+    protected function configure()
     {
-        $type = $this->menu('Which type of cache instance would you like to create?', [
-            'general' => 'General Purpose',
-            'memory'  => 'Memory Optimized',
-        ]);
-
-        if ($type == 'general') {
-            return $this->determineGeneralInstanceClass();
-        } else {
-            return $this->determineMemoryOptimizedInstanceClass();
-        }
+        $this
+            ->setName('cache')
+            ->addArgument('name', InputArgument::REQUIRED, 'The name of the cache')
+            ->setDescription('Create a new cache');
     }
 
     /**
@@ -86,6 +71,25 @@ class CacheCommand extends Command
             'How much performance does your cache require?',
             CacheInstanceClasses::general()
         );
+    }
+
+    /**
+     * Determine the instance class of the cache.
+     *
+     * @return string|null
+     */
+    protected function determineInstanceClass()
+    {
+        $type = $this->menu('Which type of cache instance would you like to create?', [
+            'general' => 'General Purpose',
+            'memory'  => 'Memory Optimized',
+        ]);
+
+        if ('general' == $type) {
+            return $this->determineGeneralInstanceClass();
+        }
+
+        return $this->determineMemoryOptimizedInstanceClass();
     }
 
     /**

@@ -10,9 +10,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 
-class ProviderReportTest extends TestCase
+class ProviderReportTest extends \CircleLinkHealth\Core\Tests\TestCase
 {
     protected $date;
     protected $faker;

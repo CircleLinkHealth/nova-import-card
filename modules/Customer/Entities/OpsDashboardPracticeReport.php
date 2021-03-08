@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null              $created_at
  * @property \Illuminate\Support\Carbon|null              $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
- * @method static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport newModelQuery()
- * @method static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport newQuery()
- * @method static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport query()
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport newModelQuery()
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport newQuery()
+ * @method   static                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport query()
  * @mixin \Eloquent
  */
 class OpsDashboardPracticeReport extends Model

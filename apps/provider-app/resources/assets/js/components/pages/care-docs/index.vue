@@ -210,13 +210,13 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config.js'
-    import modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue'
+    import {rootUrl} from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config.js'
+    import modal from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
-    import Loader from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
+    import Loader from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader.vue';
     import VueSelect from 'vue-select';
     import CareDocumentBox from './comps/care-document-box';
-    import Errors from "../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/Errors";
+    import Errors from "../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/src/Errors";
 
 
     let self;

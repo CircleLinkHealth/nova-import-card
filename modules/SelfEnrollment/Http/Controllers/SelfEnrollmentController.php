@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers;
 
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Http\Requests\EnrollmentLinkValidation;
@@ -83,7 +83,7 @@ class SelfEnrollmentController extends Controller
         /** @var Enrollee $enrollee */
         $enrollee = Enrollee::whereUserId($enrollableId)->has('user')->with('user')->firstOrFail();
 
-        $user = new User($enrollee->user->toArray());
+        $user = $enrollee->user;
         if (Helpers::hasCompletedSelfEnrollmentSurvey($user)) {
 //            Redirect to Survey Done Page (awv logout)
             return $this->createUrlAndRedirectToSurvey($user);
@@ -243,8 +243,9 @@ class SelfEnrollmentController extends Controller
         try {
             /** @var User $user */
             $user = Auth::loginUsingId((int) $userId, true);
+
             return $this->enrollableInvitationManager(
-                new User($user->toArray())
+                $user
             );
         } catch (\Exception $exception) {
             $message = $exception->getMessage();

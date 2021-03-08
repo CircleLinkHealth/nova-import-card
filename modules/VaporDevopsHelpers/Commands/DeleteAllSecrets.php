@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands;
+namespace CircleLinkHealth\VaporDevOpsHelpers\Commands;
 
 use Laravel\VaporCli\Commands\Command;
 use Laravel\VaporCli\Helpers;

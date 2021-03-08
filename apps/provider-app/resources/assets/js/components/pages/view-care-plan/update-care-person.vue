@@ -548,13 +548,13 @@
 </template>
 
 <script>
-    import modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue';
+    import modal from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/modal.vue';
     import {mapActions, mapGetters} from 'vuex'
 
-    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
+    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/store/actions'
     import specialtiesOptions from '../../CareTeam/specialties-options';
     import suffixOptions from '../../CareTeam/suffix-options';
-    import store from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store';
+    import store from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/store';
     import {
         RELATION_VALID_DROPDOWN_OPTIONS,
         BILLING_PROVIDER,

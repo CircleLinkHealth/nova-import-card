@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests\Support\Tasks;
 
 use Illuminate\Console\Scheduling\Event;
@@ -30,14 +34,26 @@ class LastRunFailedTest extends TestCase
     }
 
     /** @test */
+    public function it_will_return_false_if_it_did_start_but_not_fail_yet()
+    {
+        $this->monitoredScheduledTask->update(['last_started_at' => now()]);
+
+        $this->assertFalse($this->task()->lastRunFailed());
+    }
+
+    /** @test */
     public function it_will_return_false_if_it_didnt_start_or_fail_yet()
     {
         $this->assertFalse($this->task()->lastRunFailed());
     }
 
     /** @test */
-    public function it_will_return_false_if_it_did_start_but_not_fail_yet()
+    public function it_will_return_false_if_it_started_after_it_failed()
     {
+        $this->monitoredScheduledTask->update(['last_failed_at' => now()]);
+
+        TestTime::addMinute();
+
         $this->monitoredScheduledTask->update(['last_started_at' => now()]);
 
         $this->assertFalse($this->task()->lastRunFailed());
@@ -53,18 +69,6 @@ class LastRunFailedTest extends TestCase
         $this->monitoredScheduledTask->update(['last_failed_at' => now()]);
 
         $this->assertTrue($this->task()->lastRunFailed());
-    }
-
-    /** @test */
-    public function it_will_return_false_if_it_started_after_it_failed()
-    {
-        $this->monitoredScheduledTask->update(['last_failed_at' => now()]);
-
-        TestTime::addMinute();
-
-        $this->monitoredScheduledTask->update(['last_started_at' => now()]);
-
-        $this->assertFalse($this->task()->lastRunFailed());
     }
 
     protected function task(): Task

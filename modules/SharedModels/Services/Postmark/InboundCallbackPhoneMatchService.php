@@ -44,14 +44,12 @@ class InboundCallbackPhoneMatchService
         $str2 = (new StringManipulation())->formatPhoneNumberE164($callerIdFieldPhone);
         $str  = ! empty($str2) ? implode(', ', [$str1, $str2]) : $str1;
 
-        return Enrollee::withTrashed()
-            ->searchPhones($str);
+        return Enrollee::searchPhones($str);
     }
 
     private function matchUsers(string $phoneNumber, string $callerIdFieldPhone): Builder
     {
-        return User::withTrashed()
-            ->ofTypePatients()
+        return User::ofTypePatients()
             ->with([
                 'patientInfo' => function ($q) {
                     return $q->select(['id', 'ccm_status', 'user_id']);

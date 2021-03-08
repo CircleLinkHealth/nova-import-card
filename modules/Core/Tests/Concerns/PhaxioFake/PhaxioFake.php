@@ -8,11 +8,9 @@ namespace CircleLinkHealth\Core\Tests\Concerns\PhaxioFake;
 
 use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
-use CircleLinkHealth\Core\Tests\Concerns\PhaxioFake\PhaxioFakeLogDriver;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Log\LoggerInterface;
-
 
 class PhaxioFake implements Efax
 {

@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\HasMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\HasMedicalRecord;
 
 /**
  * A "Checkable" is an object encapsulating behavior and data necessary to determine whether the patient whose materials are encapsulated by the "Checkable" is eligible to receive service from CLH.
