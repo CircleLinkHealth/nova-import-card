@@ -24,7 +24,7 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'enrollees:create-survey-only-users {practiceId} {enrolleeIds?*}';
+    protected $signature = 'enrollees:create-survey-only-users {practiceId} {limit?} {enrolleeIds?*}';
 
     /**
      * Create a new command instance.
@@ -44,13 +44,17 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
     public function handle()
     {
         $enrolleeIds = CommandHelpers::getEnrolleeIds( $this->argument('enrolleeIds'));
+        $limit = $this->argument('limit');
 
         Enrollee::whereNull('user_id')
             ->where('practice_id', $this->argument('practiceId'))
             ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
             ->whereNotNull('provider_id')
-            ->when($enrolleeIds, function ($enrollee) use ($enrolleeIds){
-                $enrollee->whereIn('id', $enrolleeIds);
+            ->when($limit, function ($query) use($limit){
+                $query->limit($limit);
+            })
+            ->when($enrolleeIds, function ($enrollees) use ($enrolleeIds){
+                $enrollees->whereIn('id', $enrolleeIds);
             })
             ->select('id')
             ->chunk(100, function ($enrollees) {
