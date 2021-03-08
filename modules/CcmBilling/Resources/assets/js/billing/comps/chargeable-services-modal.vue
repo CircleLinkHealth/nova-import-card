@@ -78,26 +78,6 @@
                     return false;
                 }
 
-                let clashesWithForcedService = false;
-                let forced = this.patientServices.filter(s => s.is_forced);
-                forced.forEach(forced => {
-                    const clashingServicesForCurrent = SERVICE_CLASHES[service.code];
-
-                    if (clashingServicesForCurrent && clashingServicesForCurrent.indexOf(forced.code) > -1) {
-                        clashesWithForcedService = true;
-                    }
-
-                    const clashingServicesForForced = SERVICE_CLASHES[forced.code];
-
-                    if (clashingServicesForForced && clashingServicesForForced.indexOf(service.code) > -1) {
-                        clashesWithForcedService = true;
-                    }
-                });
-
-                if (clashesWithForcedService){
-                    return false;
-                }
-
                 switch (service.code) {
                     case SERVICES.CCM:
                     case SERVICES.BHI:
