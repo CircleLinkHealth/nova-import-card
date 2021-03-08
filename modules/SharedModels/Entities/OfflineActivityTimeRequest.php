@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
-use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
+use CircleLinkHealth\TimeTracking\Services\TimeTrackerServerService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

@@ -50,13 +50,13 @@ class Deployment
     {
         return collect($this->steps)
             ->filter(function ($step) {
-                    return 'pending' !== $step['status'] &&
+                return 'pending' !== $step['status'] &&
                            'cancelled' !== $step['status'];
-                })->map(function ($step) {
-                    return $this->formatDeploymentStepName($step['name']);
-                })->filter(function ($step) use ($displayedSteps) {
-                    return ! in_array($step, $displayedSteps);
-                })->all();
+            })->map(function ($step) {
+                return $this->formatDeploymentStepName($step['name']);
+            })->filter(function ($step) use ($displayedSteps) {
+                return ! in_array($step, $displayedSteps);
+            })->all();
     }
 
     /**

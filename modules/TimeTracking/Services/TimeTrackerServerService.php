@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Timetracking\Services;
+namespace CircleLinkHealth\TimeTracking\Services;
 
 use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
 use GuzzleHttp\Client;

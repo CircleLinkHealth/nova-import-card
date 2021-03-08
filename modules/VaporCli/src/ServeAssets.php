@@ -89,11 +89,11 @@ class ServeAssets
     {
         return collect(AssetFiles::relativePaths($assetPath))
             ->map(function ($path) use ($assetPath) {
-                    return [
-                        'path' => $path,
-                        'hash' => md5_file($assetPath.'/'.$path),
-                    ];
-                })->all();
+                return [
+                    'path' => $path,
+                    'hash' => md5_file($assetPath.'/'.$path),
+                ];
+            })->all();
     }
 
     /**

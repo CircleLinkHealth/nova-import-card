@@ -17,8 +17,8 @@ class LoadBalancedPsrRequestFactory extends PsrRequestFactory
     {
         return collect($this->event['multiValueHeaders'] ?? [])
             ->mapWithKeys(function ($headers, $name) {
-                    return [static::normalizeHeaderName($name) => $headers[0]];
-                })->all();
+                return [static::normalizeHeaderName($name) => $headers[0]];
+            })->all();
     }
 
     /**
