@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
