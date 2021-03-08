@@ -119,7 +119,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
         Bus::chain(array_merge(
             $jobs,
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
-            $batch->orchestratePendingJobsProcessing(1000),
+            $batch->orchestratePendingJobsProcessing(2000),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
@@ -138,7 +138,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
         Bus::chain(array_merge(
             $jobs,
-            $batch->orchestratePendingJobsProcessing(1000),
+            $batch->orchestratePendingJobsProcessing(2000),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
@@ -160,7 +160,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
         Bus::chain(array_merge(
             $jobs,
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
-            $batch->orchestratePendingJobsProcessing(1000),
+            $batch->orchestratePendingJobsProcessing(2000),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
@@ -173,7 +173,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     {
         Bus::chain(array_merge(
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])],
-            $batch->orchestratePendingJobsProcessing(1000),
+            $batch->orchestratePendingJobsProcessing(2000),
             [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
         ))
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
