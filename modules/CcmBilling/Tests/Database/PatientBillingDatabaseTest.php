@@ -20,7 +20,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
-use CircleLinkHealth\PatientApi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;

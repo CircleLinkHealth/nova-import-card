@@ -25,7 +25,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
-use CircleLinkHealth\PatientApi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;

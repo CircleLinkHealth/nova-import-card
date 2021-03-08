@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Repositories;
 
-use CircleLinkHealth\PatientApi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use Illuminate\Support\Facades\DB;
 

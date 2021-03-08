@@ -11,7 +11,7 @@ use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
-use CircleLinkHealth\PatientApi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 

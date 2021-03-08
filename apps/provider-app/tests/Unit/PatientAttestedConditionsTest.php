@@ -20,7 +20,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\PatientApi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Entities\Problem;

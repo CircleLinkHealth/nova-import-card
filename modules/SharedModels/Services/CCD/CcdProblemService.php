@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SharedModels\Services\CCD;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\PatientApi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
