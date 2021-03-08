@@ -98,7 +98,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#39C16C'
-          SLACK_TITLE: Deployment successful for ${{ github.repository }} (monorepo staging)
+          SLACK_TITLE: Deployment successful for self-enrollment app (monorepo staging)
           SLACK_MESSAGE: 🚀
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':suspect:'
@@ -110,7 +110,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#ff0033'
-          SLACK_TITLE: Deployment failed for ${{ github.repository }} (monorepo staging)
+          SLACK_TITLE: Deployment failed for self-enrollment app (monorepo staging)
           SLACK_MESSAGE: 💣
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':scream_cat:'

@@ -1,13 +1,13 @@
-name: Deploy Superadmin App
+name: Deploy AWV App
 on:
   push:
     paths:
-      - apps/superadmin-app/**
+      - apps/awv-app/**
 jobs:
   deploy:
     defaults:
       run:
-        working-directory: apps/superadmin-app
+        working-directory: apps/awv-app
     name: Deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
           php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath sockets
           progress: yes
           dev: yes
-          args: --classmap-authoritative --no-scripts -d apps/superadmin-app
+          args: --classmap-authoritative --no-scripts -d apps/awv-app
 
       - name: Setup PHP - need this to run vapor deploy
         if: ${{ env.CI_SKIP == 'false' }}
@@ -64,7 +64,7 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         uses: c-py/action-dotenv-to-setenv@v2
         with:
-          env-file: apps/superadmin-app/.env
+          env-file: apps/awv-app/.env
 
       - name: Create env files to connect to S3 after deployment - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
@@ -78,7 +78,7 @@ jobs:
         shell: bash
         env:
           ENV_TYPE: staging
-          APP_NAME: provider
+          APP_NAME: awv
           S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
@@ -103,7 +103,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#39C16C'
-          SLACK_TITLE: Deployment successful for superadmin app (monorepo staging)
+          SLACK_TITLE: Deployment successful for AWV app (monorepo staging)
           SLACK_MESSAGE: 🚀
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':suspect:'
@@ -115,7 +115,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#ff0033'
-          SLACK_TITLE: Deployment failed for superadmin app (monorepo staging)
+          SLACK_TITLE: Deployment failed AWV app (monorepo staging)
           SLACK_MESSAGE: 💣
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':scream_cat:'
