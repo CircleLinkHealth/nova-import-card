@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\MakeSurveyOnlyUsersForAllExistingEnrollees;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\FixSelfEnrollmentEnrolleesCommonwealth;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\SendSelfEnrollmentRemindersCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
@@ -60,7 +60,7 @@ class SelfEnrollmentProvider extends ServiceProvider
             UpdateCameronEnrolleesMissingUserId::class,
             SelfEnrollmentSendErrorFixedCommand::class,
             SendSelfEnrollmentRemindersCommand::class,
-            FixSelfEnrollmentEnrolleesCommonwealth::class,
+            MakeSurveyOnlyUsersForAllExistingEnrollees::class
         ]);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(CoreServiceProvider::class);

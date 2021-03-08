@@ -4,8 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandHelpers;
 use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -23,7 +24,7 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'enrollees:create-survey-only-users {practiceId}';
+    protected $signature = 'enrollees:create-survey-only-users {practiceId} {enrolleeIds?*}';
 
     /**
      * Create a new command instance.
@@ -42,9 +43,15 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
      */
     public function handle()
     {
+        $enrolleeIds = CommandHelpers::getEnrolleeIds( $this->argument('enrolleeIds'));
+
         Enrollee::whereNull('user_id')
             ->where('practice_id', $this->argument('practiceId'))
             ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
+            ->whereNotNull('provider_id')
+            ->when($enrolleeIds, function ($enrollee) use ($enrolleeIds){
+                $enrollee->whereIn('id', $enrolleeIds);
+            })
             ->select('id')
             ->chunk(100, function ($enrollees) {
                 $enrollees->each(function ($e) {
