@@ -18524,24 +18524,26 @@
          * Captures a message event and sends it to Sentry.
          *
          * @param string $message The message
-         * @param \Sentry\State\Severity $level The severity level of the message
+         * @param \Sentry\State\Severity|null $level The severity level of the message
+         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
-        public static function captureMessage($message, $level = null)
+        public static function captureMessage($message, $level = null, $hint = null)
         {
                         /** @var \Sentry\State\Hub $instance */
-                        return $instance->captureMessage($message, $level);
+                        return $instance->captureMessage($message, $level, $hint);
         }
                     /**
          * Captures an exception event and sends it to Sentry.
          *
          * @param \Throwable $exception The exception
+         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
-        public static function captureException($exception)
+        public static function captureException($exception, $hint = null)
         {
                         /** @var \Sentry\State\Hub $instance */
-                        return $instance->captureException($exception);
+                        return $instance->captureException($exception, $hint);
         }
                     /**
          * Captures a new event using the provided data.
@@ -18558,12 +18560,13 @@
                     /**
          * Captures an event that logs the last occurred error.
          *
+         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
-        public static function captureLastError()
+        public static function captureLastError($hint = null)
         {
                         /** @var \Sentry\State\Hub $instance */
-                        return $instance->captureLastError();
+                        return $instance->captureLastError($hint);
         }
                     /**
          * Records a new breadcrumb which will be attached to future events. They
