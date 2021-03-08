@@ -95,7 +95,6 @@ trait CreatesEligibilityJobFromObject
         $provider = collect($this->getCcdaTransformer()->parseProviders($decodedCcda->document, $decodedCcda->demographics, $practice->id))
             ->transform(
                 function ($p) {
-                    $p = $this->getCcdaTransformer()->provider($p);
                     if ( ! $p['first_name'] && ! $p['last_name']) {
                         return false;
                     }

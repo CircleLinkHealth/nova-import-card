@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers;
 
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 
 class CcdToLogTranformer
 {
@@ -200,7 +201,32 @@ class CcdToLogTranformer
 
         $providers->push($legalAuth);
 
-        return $providers->unique()->filter();
+        return $providers->transform(function ($rawProviderData) {
+            $provider = $this->provider($rawProviderData);
+
+            if ( ! $provider['first_name'] && ! $provider['last_name']) {
+                return false;
+            }
+
+            return $provider;
+        })->filter()
+            ->unique(function ($provider) {
+              return "{$provider['first_name']} {$provider['last_name']}";
+          })->values()
+            ->sortByDesc(function ($provider) use ($practiceId) {
+              $providerName = "{$provider['first_name']} {$provider['last_name']}";
+
+              if (empty($providerName)) {
+                  return 0;
+              }
+              $provider = CcdaImporterWrapper::mysqlMatchProvider($providerName, $practiceId);
+
+              if ($provider) {
+                  return $provider->id;
+              }
+
+              return 0;
+          });
     }
 
     /**
