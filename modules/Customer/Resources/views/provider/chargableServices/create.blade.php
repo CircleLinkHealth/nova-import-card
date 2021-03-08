@@ -16,7 +16,7 @@
                 @foreach($chargeableServices as $service)
                     <div class="col s12 m6">
                         <div class="card grey lighten-4">
-                            <div class="card-content blue-gray-text">
+                            <div class="card-content blue-gray-text" style="height: 150px">
                                 <span class="card-title">{{$service->code}}</span>
                                 <p>{{$service->description}}.</p>
                             </div>
