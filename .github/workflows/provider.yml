@@ -43,10 +43,9 @@ jobs:
           version: 1
           php_version: 7.4
           php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath sockets
-          command: cd apps/provider-app && composer install --classmap-authoritative --no-scripts
-          # progress: yes
-          # dev: yes
-          # args: --classmap-authoritative --no-scripts
+          progress: yes
+          dev: yes
+          args: --classmap-authoritative --no-scripts -d apps/provider-app
 
       - name: Setup PHP - need this to run vapor deploy
         if: ${{ env.CI_SKIP == 'false' }}
