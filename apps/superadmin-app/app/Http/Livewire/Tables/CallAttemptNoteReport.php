@@ -62,7 +62,7 @@ class CallAttemptNoteReport extends LivewireDatatable
                           $url = route('patient.note.show', ['patientId' => $id, 'noteId' => $noteId]);
                       }
 
-                      return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.$name.'</a>';
+                      return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.$name." [$id]".'</a>';
                   })
                 ->label('Patient')
                 ->filterable()
