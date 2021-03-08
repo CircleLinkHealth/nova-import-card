@@ -524,11 +524,6 @@ class Practice extends BaseModel implements HasMedia
         return $this->hasMany(\CircleLinkHealth\SharedModels\Entities\PcmProblem::class, 'practice_id');
     }
 
-    public function pcp()
-    {
-        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
-    }
-
     public function primaryLocation()
     {
         return $this->locations->where('is_primary', '=', true)->first();

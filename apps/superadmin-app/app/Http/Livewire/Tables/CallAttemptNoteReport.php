@@ -6,6 +6,8 @@
 
 namespace App\Http\Livewire\Tables;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Support\Facades\DB;
 use Mediconesystems\LivewireDatatables\Column;
@@ -17,7 +19,7 @@ class CallAttemptNoteReport extends LivewireDatatable
     public function builder()
     {
         return Call::query()
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->whereNotNull('attempt_note')
                     ->where('attempt_note', '<>', '');
             })
@@ -42,36 +44,47 @@ class CallAttemptNoteReport extends LivewireDatatable
                 ->filterable(),
 
             DateColumn::name('created_at')
-                      ->label('Date Created')
-                      ->filterable(),
+                ->label('Date Created')
+                ->filterable(),
 
             Column::name('nurses.display_name')
-                  ->label('Nurse')
-                  ->filterable()
-                  ->searchable(),
+                ->label('Nurse')
+                ->filterable($this->nurses())
+                ->searchable(),
 
             Column::name('patients.display_name')
-                  ->callback(['patients.id', 'patients.display_name', 'calls.note_id'], function ($id, $name, $noteId) {
-                      if (! $noteId) {
+                ->callback(['patients.id', 'patients.display_name', 'calls.note_id'], function ($id, $name, $noteId) {
+                      if ( ! $noteId) {
                           $url = route('patient.note.index', ['patientId' => $id]);
                       } else {
                           $url = route('patient.note.show', ['patientId' => $id, 'noteId' => $noteId]);
                       }
-    
+
                       return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.$name.'</a>';
                   })
-                  ->label('Patient')
-                  ->filterable()
-                  ->searchable(),
+                ->label('Patient')
+                ->filterable()
+                ->searchable(),
 
             Column::name('practices.display_name')
-                  ->label('Practice')
-                  ->filterable()
-                  ->searchable(),
+                ->label('Practice')
+                ->filterable($this->practices())
+                ->searchable(),
 
             Column::name('id')
                 ->label('ID')
+                ->filterable()
                 ->searchable(),
         ];
+    }
+    
+    private function nurses()
+    {
+        return User::careCoaches()->without(['roles', 'perms'])->orderBy('display_name')->pluck('display_name');
+    }
+    
+    private function practices()
+    {
+        return Practice::activeBillable()->orderBy('display_name')->pluck('display_name');
     }
 }
