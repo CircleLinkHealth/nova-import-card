@@ -1,4 +1,4 @@
-name: Deploy Provider App
+name: Deploy Superadmin App
 on:
   push:
     paths:
@@ -13,11 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
-      - name: Set working directory
-        id: step_one
-        run: |
-          echo "working_directory=apps/superadmin-app" >> $GITHUB_ENV
-
       - name: Check out code
         uses: actions/checkout@v2
 
@@ -50,7 +45,7 @@ jobs:
           php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath sockets
           progress: yes
           dev: yes
-          args: --classmap-authoritative --no-scripts -d ${{ env.working_directory }}
+          args: --classmap-authoritative --no-scripts -d apps/superadmin-app
 
       - name: Setup PHP - need this to run vapor deploy
         if: ${{ env.CI_SKIP == 'false' }}
@@ -69,7 +64,7 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         uses: c-py/action-dotenv-to-setenv@v2
         with:
-          env-file: ${{ env.working_directory }}/.env
+          env-file: apps/superadmin-app/.env
 
       - name: Create env files to connect to S3 after deployment - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
