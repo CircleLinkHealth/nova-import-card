@@ -35,7 +35,7 @@ jobs:
           php_version: 7.4
           php_extensions: redis zip gd exif imagick opcache sockets
           progress: yes
-          dev: no
+          dev: yes
           args: --classmap-authoritative --no-scripts -d apps/caller-app
 
       - name: Setup PHP - need this to run vapor deploy
