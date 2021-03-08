@@ -21,9 +21,10 @@ class ChargeableServiceForAbp extends JsonResource
     public static function collectionFromChargeableMonthlySummaries(User $user): AnonymousResourceCollection
     {
         $forcedServices = $user->forcedChargeableServices;
+
         $services = $user->chargeableMonthlySummaries
             ->map(function (ChargeablePatientMonthlySummary $item) use ($user, $forcedServices) {
-                $patientForcedCs = $forcedServices->firstWhere($csId =
+                $patientForcedCs = $forcedServices->firstWhere('chargeable_service_id', $csId =
                     ChargeableServiceModel::getChargeableServiceIdUsingCode(
                         ChargeableServiceModel::getBaseCode(
                             $item->chargeableService->code
