@@ -1,8 +1,6 @@
 name: Deploy Provider App
 on:
   push:
-    paths:
-      - './apps/provider-app/**'
 jobs:
   deploy:
     defaults:
