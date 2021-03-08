@@ -64,7 +64,7 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         uses: c-py/action-dotenv-to-setenv@v2
         with:
-          env-file: .env
+          env-file: apps/provider-app/.env
 
       - name: Create env files to connect to S3 after deployment - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
