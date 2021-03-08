@@ -43,7 +43,7 @@ class MakeSurveyOnlyUsersForEnrollees extends Command
      */
     public function handle()
     {
-        $enrolleeIds = CommandHelpers::getEnrolleeIds( $this->argument('enrolleeIds'));
+        $enrolleeIds = $this->argument('enrolleeIds');
         $limit = $this->argument('limit') ?? null;
 
         Enrollee::whereNull('user_id')

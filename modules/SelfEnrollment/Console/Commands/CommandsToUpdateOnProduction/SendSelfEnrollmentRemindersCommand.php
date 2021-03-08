@@ -45,9 +45,7 @@ class SendSelfEnrollmentRemindersCommand extends Command
      */
     public function handle()
     {
-        $ids =   $this->argument('enrolleeIds');
-        $enrolleeIds = CommandHelpers::getEnrolleeIds($ids);
-
+        $enrolleeIds = $this->argument('enrolleeIds');
         Enrollee::with('user.patientInfo')
             ->where('practice_id', $this->argument('practiceId'))
             ->when(!empty($enrolleeIds), function ($enrollee) use ($enrolleeIds){

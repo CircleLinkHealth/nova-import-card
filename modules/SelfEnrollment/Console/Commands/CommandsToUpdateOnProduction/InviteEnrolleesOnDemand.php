@@ -15,7 +15,7 @@ class InviteEnrolleesOnDemand extends Command
      *
      * @var string
      */
-    protected $signature = 'send:self-enrollment-invitations-for {practiceId} {limit} {enrolleeIds?}';
+    protected $signature = 'send:self-enrollment-invitations-for {practiceId} {limit} {enrolleeIds?*}';
 
     /**
      * The console command description.
@@ -41,7 +41,7 @@ class InviteEnrolleesOnDemand extends Command
      */
     public function handle()
     {
-        $enrolleeIds = CommandHelpers::getEnrolleeIds( $this->argument('enrolleeIds'));
+        $enrolleeIds = $this->argument('enrolleeIds');
         $limit = $this->argument('limit');
         $manualInviteBatch = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
 
