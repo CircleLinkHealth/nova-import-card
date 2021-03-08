@@ -9,6 +9,7 @@ namespace App\Http\Livewire\Tables;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Facades\DB;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
@@ -24,6 +25,7 @@ class CallAttemptNoteReport extends LivewireDatatable
                     ->where('attempt_note', '<>', '');
             })
             ->where('is_cpm_outbound', true)
+            ->where('attempt_note', 'like', '%'.SchedulerService::EMAIL_SMS_RESPONSE_ATTEMPT_NOTE.'%')
             ->leftJoin(DB::raw('users as patients'), 'calls.inbound_cpm_id', 'patients.id')
             ->leftJoin(DB::raw('users as nurses'), 'calls.outbound_cpm_id', 'nurses.id')
             ->leftJoin(DB::raw('practices'), 'patients.program_id', 'practices.id')
