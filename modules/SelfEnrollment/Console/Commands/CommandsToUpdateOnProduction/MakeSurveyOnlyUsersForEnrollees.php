@@ -4,13 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandHelpers;
 use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
-class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
+class MakeSurveyOnlyUsersForEnrollees extends Command
 {
     /**
      * The console command description.
@@ -23,7 +24,7 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'enrollees:create-survey-only-users {practiceId}';
+    protected $signature = 'enrollees:create-survey-only-users {practiceId} {limit?} {enrolleeIds?*}';
 
     /**
      * Create a new command instance.
@@ -42,9 +43,19 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
      */
     public function handle()
     {
+        $enrolleeIds = $this->argument('enrolleeIds');
+        $limit = $this->argument('limit') ?? null;
+
         Enrollee::whereNull('user_id')
             ->where('practice_id', $this->argument('practiceId'))
             ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
+            ->whereNotNull('provider_id')
+            ->when(!empty($enrolleeIds), function ($enrollees) use ($enrolleeIds){
+                $enrollees->whereIn('id', $enrolleeIds);
+            })
+            ->when($limit, function ($query) use($limit){
+                $query->limit(intval($limit));
+            })
             ->select('id')
             ->chunk(100, function ($enrollees) {
                 $enrollees->each(function ($e) {
