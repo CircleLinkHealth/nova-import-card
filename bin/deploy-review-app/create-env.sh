@@ -19,24 +19,22 @@ then
     exit 0
 fi
 
-
-
 APP_PATH="$PWD/apps/$APP_NAME-app"
 
 (cd $APP_PATH && vapor env $REVIEW_APP_NAME --docker)
 
 
 DOCKER_FILE=$REVIEW_APP_NAME".Dockerfile"
+PROD_DOCKER_FILE='production.Dockerfile'
 
 if [ -f "$APP_PATH/$DOCKER_FILE" ];
 then
     echo "$APP_PATH: DOCKER_FILE found!"
 else
-    #make sure it exists - to implement
+    (cd $APP_PATH && touch DOCKER_FILE)
 fi
 
-
-#pass prod file data inside as contents using cat
+(cd $APP_PATH && cp PROD_DOCKER_FILE DOCKER_FILE)
 
 #TODO:
 #edit vapor.yml review-app vars.
