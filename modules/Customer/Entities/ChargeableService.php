@@ -90,6 +90,7 @@ class ChargeableService extends BaseModel
         self::BHI,
         self::PCM,
         self::RPM,
+        self::GENERAL_CARE_MANAGEMENT
     ];
 
     /**

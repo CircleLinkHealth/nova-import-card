@@ -98,13 +98,14 @@ class AttestPatientProblems
 
     private function createRecordForProblem(Problem $problem): void
     {
-        AttestedProblem::create([
+        AttestedProblem::updatedOrCreate([
             'patient_user_id'            => $this->getPatientUserId(),
+            'chargeable_month'           => $this->getChargeableMonth(),
+            'ccd_problem_id'             => $problem->id,
+        ],[
             'call_id'                    => $this->callId,
             'patient_monthly_summary_id' => $this->pmsId ?? $this->getPms()->id ?? null,
-            'chargeable_month'           => $this->getChargeableMonth(),
             'addendum_id'                => $this->addendumId,
-            'ccd_problem_id'             => $problem->id,
             'ccd_problem_name'           => $problem->name,
             'ccd_problem_icd_10_code'    => $problem->icd10Code(),
             'attestor_id'                => $this->getAttestorId(),
