@@ -4,6 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::get('env', [
+    'uses' => 'EnvController@getEnv',
+    'as'   => 'welcome.get.env',
+])->middleware('auth');
+
 Route::get('login', [
     'uses' => 'Auth\LoginController@showLoginForm',
     'as'   => 'login',
