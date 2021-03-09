@@ -116,14 +116,10 @@
 
             checkForClashes() {
                 const clashing = new Set();
-                const selected = this.patientServices.filter(s => s.selected);
+                const selected = this.patientServices.filter(s => s.selected && ! this.isPlusCode(s.code));
                 selected.forEach(service => {
                     const clashingServices = SERVICE_CLASHES[service.code];
                     if (!clashingServices) {
-                        return;
-                    }
-
-                    if (this.isPlusCode(service.code)){
                         return;
                     }
 
