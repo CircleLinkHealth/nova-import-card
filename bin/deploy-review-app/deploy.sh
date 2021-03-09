@@ -28,5 +28,8 @@ do
     bash "$PWD/bin/deploy-review-app/update-vars.sh" $REVIEW_APP_NAME $APP_NAME
 done
 
+#deploy as well?
+monovapor deploy:cpm $REVIEW_APP_NAME staging $APP_NAMES
+
 
 
