@@ -21,7 +21,13 @@ fi
 
 APP_PATH="$PWD/apps/$APP_NAME-app"
 
-(cd $APP_PATH && vapor env $REVIEW_APP_NAME --docker)
+if [[ $(monovapor env:list | grep -q $REVIEW_APP_NAME) -eq 0 ]];
+then
+    echo "$REVIEW_APP_NAME already exists"
+    exit;
+fi
+
+(cd $APP_PATH && monovapor env $REVIEW_APP_NAME --docker)
 
 
 DOCKER_FILE=$REVIEW_APP_NAME".Dockerfile"
