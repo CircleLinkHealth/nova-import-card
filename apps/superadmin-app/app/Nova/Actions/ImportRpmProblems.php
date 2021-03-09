@@ -6,13 +6,13 @@
 
 namespace App\Nova\Actions;
 
-use Anaseqal\NovaImport\Actions\Action;
 use App\Nova\Importers\RpmProblems;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
@@ -30,6 +30,8 @@ class ImportRpmProblems extends Action
      * @var bool
      */
     public $onlyOnIndex = true;
+
+    public $standalone = true;
 
     /**
      * @var array

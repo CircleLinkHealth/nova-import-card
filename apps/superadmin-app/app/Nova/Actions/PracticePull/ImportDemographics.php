@@ -6,12 +6,12 @@
 
 namespace App\Nova\Actions\PracticePull;
 
-use Anaseqal\NovaImport\Actions\Action;
 use App\Nova\Importers\PracticePull\Demographics;
 use App\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
@@ -29,6 +29,8 @@ class ImportDemographics extends Action
      * @var bool
      */
     public $onlyOnIndex = true;
+
+    public $standalone = true;
 
     /**
      * @var array
