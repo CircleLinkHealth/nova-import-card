@@ -23,9 +23,9 @@ fi
 
 for APP_NAME in $APP_NAMES;
 do
-    bash "$PWD/bin/deploy-review-app/create-env.sh" $REVIEW_APP_NAME $APP_NAME
-    bash "$PWD/bin/deploy-review-app/ensure-staging-s3-env.sh" $REVIEW_APP_NAME $APP_NAME
-    bash "$PWD/bin/deploy-review-app/update-vars.sh" $REVIEW_APP_NAME $APP_NAME
+    bash "$PWD/bin/review-app/create-env.sh" $REVIEW_APP_NAME $APP_NAME
+    bash "$PWD/bin/review-app/ensure-staging-s3-env.sh" $REVIEW_APP_NAME $APP_NAME
+    bash "$PWD/bin/review-app/update-vars.sh" $REVIEW_APP_NAME $APP_NAME
 done
 
 monovapor deploy:cpm $REVIEW_APP_NAME staging $APP_NAMES
