@@ -182,20 +182,7 @@ class ChargeableService extends BaseModel
 
     public static function getBaseCode(string $code): string
     {
-        //todo: cleaner mapping
-        if (in_array($code, self::CCM_PLUS_CODES)) {
-            return self::CCM;
-        }
-
-        if (self::GENERAL_CARE_MANAGEMENT === $code) {
-            return self::CCM;
-        }
-
-        if (in_array($code, self::RPM_PLUS_CODES)) {
-            return self::RPM;
-        }
-
-        return $code;
+        return optional(self::getProcessorForCode($code))->baseCode() ?? $code;
     }
 
     public static function getFriendlyName($code)

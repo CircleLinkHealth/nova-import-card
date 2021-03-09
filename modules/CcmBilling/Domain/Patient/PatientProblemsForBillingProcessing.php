@@ -114,6 +114,12 @@ class PatientProblemsForBillingProcessing
 
         $practiceHasRhc = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
 
+        if ($practiceHasRhc){
+            return [
+                ChargeableService::GENERAL_CARE_MANAGEMENT
+            ];
+        }
+
         if ($cpmProblem = $problem->cpmProblem) {
             $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
 
@@ -121,18 +127,11 @@ class PatientProblemsForBillingProcessing
                 $services[] = ChargeableService::BHI;
             }
 
-            if ($practiceHasRhc || ! $cpmProblem->is_behavioral || $isDual) {
+            if ( ! $cpmProblem->is_behavioral || $isDual) {
                 $services[] = ChargeableService::CCM;
             }
         }
 
-        if ($practiceHasRhc) {
-            if (is_null($cpmProblem) && empty($services)) {
-                $services[] = ChargeableService::CCM;
-            }
-
-            return $services;
-        }
         $pcmProblems = $primaryPractice->pcmProblems;
 
         if ( ! empty($pcmProblems)) {
