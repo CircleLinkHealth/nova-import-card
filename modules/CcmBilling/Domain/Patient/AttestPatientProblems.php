@@ -20,6 +20,27 @@ class AttestPatientProblems
     protected ?Addendum $addendum;
     protected ?int $addendumId = null;
 
+    protected bool $syncing = false;
+
+    /**
+     * @return bool
+     */
+    public function isSyncing(): bool
+    {
+        return $this->syncing;
+    }
+
+    /**
+     * @param bool $syncing
+     *
+     * @return AttestPatientProblems
+     */
+    public function setSyncing(bool $syncing): AttestPatientProblems
+    {
+        $this->syncing = $syncing;
+
+        return $this;
+    }
     //add in Job too
     protected ?int $attestorId = null;
 
@@ -48,9 +69,21 @@ class AttestPatientProblems
             return;
         }
 
+        if ($this->isSyncing()){
+            $this->removeRecords();
+        }
+
         foreach ($this->getProblems() as $problem) {
             $this->createRecordForProblem($problem);
         }
+    }
+
+    public function removeRecords():void
+    {
+        AttestedProblem::where('chargeable_month', $this->getChargeableMonth())
+            ->whereNotIn('ccd_problem_id', $this->getCcdProblemIds())
+            ->where('patient_user_id', $this->getPatientUserId())
+            ->delete();
     }
 
     public function forAddendum(?int $addendumId): self
@@ -98,7 +131,7 @@ class AttestPatientProblems
 
     private function createRecordForProblem(Problem $problem): void
     {
-        AttestedProblem::updatedOrCreate([
+        AttestedProblem::updateOrCreate([
             'patient_user_id'            => $this->getPatientUserId(),
             'chargeable_month'           => $this->getChargeableMonth(),
             'ccd_problem_id'             => $problem->id,

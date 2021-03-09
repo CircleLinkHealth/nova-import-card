@@ -7,7 +7,10 @@
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
@@ -54,31 +57,17 @@ class AttestedConditionsController extends Controller
         } catch (\Exception $exception) {
             throw $exception;
         }
-
-        $patient = User::ofType('participant')
-            ->with([
-                'patientSummaries' => function ($pms) use ($date) {
-                    $pms->with('attestedProblems')
-                        ->getForMonth($date);
-                },
-            ])
-            ->findOrFail($userId);
+        $patient = app(PatientServiceProcessorRepository::class)->getPatientWithBillingDataForMonth($userId, $date);
 
         $attestedProblems = $request->input('attested_problems');
 
-        $summary = $patient->patientSummaries->first();
-
-        if ( ! $summary) {
-            //The request comes from ABP page. Patient should have summary, else throw Exception.
-            throw new \Exception("Patient {$patient->id} does not have a summary for month {$date->toDateString()->startOfMonth()}.");
-        }
-
-        //if summary does not have BHI all codes will be included in request from the CCM, no need to merge.
-        //else merge and attest, but return only the ones actually used by modal
-        if ($summary->hasServiceCode(ChargeableService::BHI)) {
+        if (PatientIsOfServiceCode::fromDTO(
+            PatientMonthlyBillingDTO::generateFromUser($patient, $date),
+            ChargeableService::BHI
+        )) {
             $attestedProblems = array_merge(
                 $attestedProblems,
-                $summary->attestedProblems->where(
+                $patient->attestedProblems->where(
                     'cpmProblem.is_behavioral',
                     '=',
                     ! $request->input('is_bhi')
@@ -86,10 +75,13 @@ class AttestedConditionsController extends Controller
             );
         }
 
-        (new AttestPatientProblems())->forPms($summary->id)
+        (new AttestPatientProblems())->forPms(
+            optional($patient->patientSummaries->first())->id
+        )
             ->forMonth($date)
             ->fromAttestor(Auth::id())
             ->problemsToAttest($attestedProblems)
+            ->setSyncing(true)
             ->createRecords();
 
 
