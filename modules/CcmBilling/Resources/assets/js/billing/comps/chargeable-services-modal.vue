@@ -123,6 +123,10 @@
                         return;
                     }
 
+                    if (this.isPlusCode(service.code)){
+                        return;
+                    }
+
                     selected.forEach(s2 => {
                         if (clashingServices.indexOf(s2.code) > -1) {
                             clashing.add(service.code);
