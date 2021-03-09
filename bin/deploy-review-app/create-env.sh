@@ -37,3 +37,6 @@ fi
 
 
 #pass prod file data inside as contents using cat
+
+#TODO:
+#edit vapor.yml review-app vars.
