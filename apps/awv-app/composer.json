@@ -133,6 +133,13 @@
         },
         {
             "type": "path",
+            "url": "../../modules/TwilioIntegration",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
             "url": "../../modules/VaporCli",
             "options": {
                 "symlink": true
@@ -182,6 +189,7 @@
         "circlelinkhealth/shared-models-module": "*",
         "circlelinkhealth/sqlviews-module": "*",
         "circlelinkhealth/synonyms-module": "*",
+        "circlelinkhealth/twilio-integration-module": "*",
         "ohdearapp/ohdear-php-sdk": "^3.0",
         "spatie/laravel-schedule-monitor": "*",
         "doctrine/dbal": "^2.9",
