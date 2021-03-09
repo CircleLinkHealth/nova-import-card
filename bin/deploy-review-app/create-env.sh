@@ -3,35 +3,37 @@
 set -e
 set -x
 
-APPS=$@
+REVIEW_APP_NAME=$1
 
-if [[ -z $APPS ]]
+if [[ -z $REVIEW_APP_NAME ]]
 then
-    echo "Please provide specific Apps names"
+    echo "Please provide specific a Review APP name"
+    exit 0
+fi
+
+APP_NAME=$2
+
+if [[ -z $APP_NAME ]]
+then
+    echo "Please provide specific a APP name"
     exit 0
 fi
 
 
-appsArray=( $APPS )
 
-for appName in "${appsArray[@]}";
+APP_PATH="$PWD/apps/$APP_NAME-app"
 
-do echo "$appName";
-    APP_PATH="$PWD/apps/$appName-app"
-
-    (cd $APP_PATH && vapor env my-environment --docker)
+(cd $APP_PATH && vapor env $REVIEW_APP_NAME --docker)
 
 
-    DOCKER_FILE="IMPLEMENT APP NAME"
+DOCKER_FILE=$REVIEW_APP_NAME".Dockerfile"
 
-    if [ -f "$APP_PATH/$DOCKER_FILE" ];
-    then
-        echo "$APP_PATH: DOCKER_FILE found!"
-    else
-      #make sure it exists - create from sample - to implement
-    fi
+if [ -f "$APP_PATH/$DOCKER_FILE" ];
+then
+    echo "$APP_PATH: DOCKER_FILE found!"
+else
+    #make sure it exists - to implement
+fi
 
 
-    #check dockerfile was created
-    #pass prod file data inside as contents using cat
-done
+#pass prod file data inside as contents using cat

@@ -3,28 +3,31 @@
 set -e
 set -x
 
-APPS=$@
+REVIEW_APP_NAME=$1
 
-if [[ -z $APPS ]]
+if [[ -z $REVIEW_APP_NAME ]]
 then
-    echo "Please provide specific Apps names"
+    echo "Please provide specific a Review APP name"
+    exit 0
+fi
+
+APP_NAME=$2
+
+if [[ -z $APP_NAME ]]
+then
+    echo "Please provide specific a APP name"
     exit 0
 fi
 
 
-appsArray=( $APPS )
 
-for appName in "${appsArray[@]}";
+APP_PATH="$PWD/apps/$APP_NAME-app"
 
-do echo "$appName";
-    APP_PATH="$PWD/apps/$appName-app"
+ENV_FILE="staging-deploy-s3.env"
 
-    ENV_FILE="staging-deploy-s3.env"
-
-    if [ -f "$APP_PATH/$ENV_FILE" ];
-    then
-        echo "$APP_PATH: ENV_FILE found!"
-    else
-      #make sure it exists - create from sample - to implement
-    fi
-done
+if [ -f "$APP_PATH/$ENV_FILE" ];
+then
+    echo "$APP_PATH: ENV_FILE found!"
+else
+    #make sure it exists - create from sample - to implement
+fi

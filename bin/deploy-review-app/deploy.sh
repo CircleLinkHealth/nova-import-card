@@ -3,14 +3,30 @@
 set -e
 set -x
 
-APPS=$@
-
-if [[ -z $APPS ]]
+REVIEW_APP_NAME=$1
+if [[ -z $REVIEW_APP_NAME ]]
 then
-    echo "Please provide specific App names"
+    echo "Please provide a name for the review app."
     exit 0
 fi
 
-bash "$PWD/bin/deploy-review-app/create-env.sh" $APPS
-bash "$PWD/bin/deploy-review-app/ensure-staging-s3-env.sh" $APPS
-bash "$PWD/bin/deploy-review-app/update-vars.sh" $APPS
+shift
+
+APP_NAMES=$@
+
+if [[ -z $APP_NAMES ]]
+then
+    echo "Please provide specific App names. Please follow the apps directory format: {app-name}-app"
+    exit 0
+fi
+
+
+for APP_NAME in $APP_NAMES;
+do
+    bash "$PWD/bin/deploy-review-app/create-env.sh" $REVIEW_APP_NAME $APP_NAME
+    bash "$PWD/bin/deploy-review-app/ensure-staging-s3-env.sh" $REVIEW_APP_NAME $APP_NAME
+    bash "$PWD/bin/deploy-review-app/update-vars.sh" $REVIEW_APP_NAME $APP_NAME
+done
+
+
+
