@@ -73,7 +73,7 @@ class ApproveBillablePatientsServiceV3
         }
 
         $billingStatus->status   = $newStatus;
-        $billingStatus->actor_id = auth()->id();
+        $billingStatus->actor_id = $newStatus !== PatientMonthlyBillingStatus::NEEDS_QA ? auth()->id() : null;
         $billingStatus->save();
 
         $counts = $this->counts($billingStatus->patientUser->primaryProgramId(), $billingStatus->chargeable_month)->toArray();
