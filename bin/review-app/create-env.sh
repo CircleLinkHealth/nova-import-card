@@ -27,8 +27,7 @@ then
     exit;
 fi
 
-(cd $APP_PATH && monovapor env $REVIEW_APP_NAME --docker)
-
+(cd $APP_PATH && monovapor review-app $REVIEW_APP_NAME --docker)
 
 DOCKER_FILE=$REVIEW_APP_NAME".Dockerfile"
 PROD_DOCKER_FILE='production.Dockerfile'
@@ -37,10 +36,6 @@ if [ -f "$APP_PATH/$DOCKER_FILE" ];
 then
     echo "$APP_PATH: DOCKER_FILE found!"
 else
-    (cd $APP_PATH && touch DOCKER_FILE)
+    (cd $APP_PATH && cp PROD_DOCKER_FILE DOCKER_FILE)
 fi
 
-(cd $APP_PATH && cp PROD_DOCKER_FILE DOCKER_FILE)
-
-#TODO:
-#edit vapor.yml review-app vars.
