@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace CircleLinkHealth\Customer\Jobs;
 
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

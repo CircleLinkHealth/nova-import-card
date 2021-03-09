@@ -315,12 +315,27 @@ class CcdaImporterWrapper
     {
         $term = self::prepareForMysqlMatch($term);
 
-        return User::where(function ($q) use ($term) {
+        $cacheKey = "mysqlmatchprovider:$term:$practiceId";
+        $cache    = Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
+
+        if ($cached = $cache->get($cacheKey)) {
+            return $cached;
+        }
+
+        $provider = User::where(function ($q) use ($term) {
             $q->whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\")")
                 ->orWhere(function ($q) use ($term) {
-                    $q->whereColumnOrSynonym('display_name', $term);
-                });
-        })->ofPractice($practiceId)->ofType('provider')->first();
+                  $q->whereColumnOrSynonym('display_name', $term);
+              });
+        })->ofPractice($practiceId)->ofType('provider')->without('roles.pers')->first();
+
+        if ( ! $provider) {
+            return null;
+        }
+
+        return Cache::remember($cacheKey, 10, function () use ($provider) {
+            return $provider;
+        });
     }
 
     /**

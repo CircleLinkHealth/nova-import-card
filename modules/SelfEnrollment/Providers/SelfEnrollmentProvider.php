@@ -6,8 +6,9 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\InviteEnrolleesOnDemand;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\MakeSurveyOnlyUsersForEnrollees;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\FixSelfEnrollmentEnrolleesCommonwealth;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\SendSelfEnrollmentRemindersCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
@@ -17,7 +18,6 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTes
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateCameronEnrolleesMissingUserId;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Observers\EnrolleeObserver;
@@ -53,14 +53,12 @@ class SelfEnrollmentProvider extends ServiceProvider
             SendSelfEnrollmentReminders::class,
             ManuallyCreateEnrollmentTestData::class,
             EnrollmentFinalAction::class,
-            GenerateNbiLetterCommand::class,
             GenerateSelfEnrollmentLetters::class,
-            UpdateEnrolmentLettersSignatoryName::class,
             GenerateSelfEnrollmentSurveyCommand::class,
-            UpdateCameronEnrolleesMissingUserId::class,
             SelfEnrollmentSendErrorFixedCommand::class,
             SendSelfEnrollmentRemindersCommand::class,
-            FixSelfEnrollmentEnrolleesCommonwealth::class,
+            MakeSurveyOnlyUsersForEnrollees::class,
+            InviteEnrolleesOnDemand::class
         ]);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(CoreServiceProvider::class);

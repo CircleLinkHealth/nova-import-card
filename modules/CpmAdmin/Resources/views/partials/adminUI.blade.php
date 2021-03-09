@@ -183,6 +183,9 @@
                                 <li>
                                     <a href="{{route('message-dispatch-messages.table')}}">Message Dispatch Messages</a>
                                 </li>
+                                <li>
+                                    <a href="{{route('call-attempt-note.table')}}">Call Attempt Note</a>
+                                </li>
                             </ul>
                         </li>
 

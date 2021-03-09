@@ -80,9 +80,9 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config.js'
-    import modal from '../../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/modal.vue'
-    import Loader from '../../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader.vue';
+    import {rootUrl} from 'SharedVueComponents/Resources/assets/js/app.config.js'
+    import modal from 'SharedVueComponents/Resources/assets/js/components/shared/modal.vue'
+    import Loader from 'SharedVueComponents/Resources/assets/js/components/loader.vue';
 
     let self;
 

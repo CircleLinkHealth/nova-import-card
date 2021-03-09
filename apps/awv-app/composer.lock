@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "68ae0725a1b6b4399e66a224dcbdab5f",
+    "content-hash": "a1941d97dfc10b3c78700396c9941731",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -357,16 +357,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.23",
+            "version": "3.173.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "259fa1a47a46f81e66b1ea328ed961a58fa061c2"
+                "reference": "e7275b22d0076d7bbb3c1a90810b1665ed72460c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/259fa1a47a46f81e66b1ea328ed961a58fa061c2",
-                "reference": "259fa1a47a46f81e66b1ea328ed961a58fa061c2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e7275b22d0076d7bbb3c1a90810b1665ed72460c",
+                "reference": "e7275b22d0076d7bbb3c1a90810b1665ed72460c",
                 "shasum": ""
             },
             "require": {
@@ -438,7 +438,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-03-05T19:20:35+00:00"
+            "time": "2021-03-08T19:22:30+00:00"
         },
         {
             "name": "brick/math",
@@ -1276,6 +1276,46 @@
                 }
             ],
             "description": "Add synonyms for a specific Model and Field.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "circlelinkhealth/twilio-integration-module",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "../../modules/TwilioIntegration",
+                "reference": "c0b27662e94118ee7b34b953019d863464c7e44b"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/shared-models-module": "*",
+                "laravel-notification-channels/twilio": "^3.0"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\TwilioIntegration\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com"
+                }
+            ],
             "transport-options": {
                 "symlink": true,
                 "relative": true
