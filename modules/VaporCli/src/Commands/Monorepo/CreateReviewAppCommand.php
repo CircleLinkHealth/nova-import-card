@@ -23,6 +23,8 @@ class CreateReviewAppCommand extends Command
      */
     public function handle()
     {
+        $blueprintEnv = 'staging';
+
         Helpers::ensure_api_token_is_available();
 
         $manifest = Manifest::current();
@@ -31,7 +33,7 @@ class CreateReviewAppCommand extends Command
 
         if (isset($manifest['environments']['staging'])) {
             $app = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
-            $envConfig = $manifest['environments']['staging'];
+            $envConfig = $manifest['environments'][$blueprintEnv];
             $envConfig['domain'] = str_replace($app, "$app-$environment", $envConfig['domain']);
 
             foreach ($envConfig['queues'] as $key => $name) {
@@ -55,7 +57,11 @@ class CreateReviewAppCommand extends Command
         );
 
         if ($this->option('docker')) {
-            Dockerfile::fresh($environment);
+            if (file_exists("$blueprintEnv.Dockerfile")) {
+                copy("$blueprintEnv.Dockerfile", "$environment.Dockerfile");
+            } else {
+                Dockerfile::fresh($environment);
+            }
         }
 
         GitIgnore::add(['.env.'.$environment]);
