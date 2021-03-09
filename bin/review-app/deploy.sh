@@ -24,7 +24,7 @@ fi
 for APP_NAME in $APP_NAMES;
 do
     bash "$PWD/bin/review-app/create-env.sh" $REVIEW_APP_NAME $APP_NAME
-    bash "$PWD/bin/review-app/ensure-staging-s3-env.sh" $REVIEW_APP_NAME $APP_NAME
+    bash "$PWD/bin/review-app/ensure-staging-s3-env.sh" $APP_NAME
     bash "$PWD/bin/review-app/update-vars.sh" $REVIEW_APP_NAME $APP_NAME
 done
 

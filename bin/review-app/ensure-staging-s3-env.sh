@@ -3,15 +3,7 @@
 set -e
 set -x
 
-REVIEW_APP_NAME=$1
-
-if [[ -z $REVIEW_APP_NAME ]]
-then
-    echo "Please provide specific a Review APP name"
-    exit 0
-fi
-
-APP_NAME=$2
+APP_NAME=$1
 
 if [[ -z $APP_NAME ]]
 then
@@ -28,11 +20,10 @@ then
     echo "$APP_PATH: ENV_FILE found!"
 else
     (cd APP_PATH &&
-#don't know if I should add the actual values here so they can go to git. I'm guessing no right?
 echo "
-S3_SECRETS_SECRET=
+S3_SECRETS_SECRET=1QfZhQDi8Ihxh67VY4Pk69Sx1vsWefZfjLf9+K/v
 S3_SECRETS_BUCKET=cpm-staging-keys
-S3_SECRETS_KEY=
+S3_SECRETS_KEY=AKIAZYB3F7ZGBKRUHG5Y
 S3_SECRETS_REGION=us-east-1
 ENV_TYPE=staging
 APP_NAME=$APP_NAME" > ENV_FILE
