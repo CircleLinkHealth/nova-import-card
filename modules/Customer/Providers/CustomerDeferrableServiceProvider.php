@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Providers;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
+use CircleLinkHealth\Customer\Console\Commands\EraseTestEnrollees;
 use CircleLinkHealth\Customer\Console\Commands\ProcessPostmarkInboundMailCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
@@ -55,6 +56,7 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
             CreateLocationsFromAthenaApi::class,
             ProcessPostmarkInboundMailCommand::class,
+            EraseTestEnrollees::class
         ]);
     }
 
