@@ -209,5 +209,6 @@ $app->add(new Commands\TestCommand);
 
 //Monorepo
 $app->add(new Commands\Monorepo\ComposerCommand);
+$app->add(new Commands\Monorepo\CreateReviewAppCommand);
 
 $app->run();
