@@ -175,7 +175,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         foreach ($this->clashesWith() as $clash) {
             $clash->setInput($this->input);
 
-            if ($clash->isAttached() || $clash->isEligibleForPatient($this->input)) {
+            if ($clash->isEligibleForPatient($this->input)) {
                 return true;
             }
         }
