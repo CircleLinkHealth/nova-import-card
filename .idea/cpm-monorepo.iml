@@ -83,14 +83,11 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel-notification-channels/twilio" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/nurseinvoices-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravelcollective/html" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/core-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/pdf-service-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/revisionable-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/ccm-billing-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/time-tracking-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cpm-migrations-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/customer-module" />
@@ -141,12 +138,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/routing" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/deprecation-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/string" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/raygun-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/invoices-download" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/app-cpm-admin" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/sqlviews-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cpm-admin-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/saml-sp-module" />
@@ -157,7 +150,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/shared-models-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/sharedvuecomponents-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/synonyms-module" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mediconesystems/livewire-datatables" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/twilio-integration-module" />
@@ -178,7 +170,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/maatwebsite/excel" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/swiftmailer/swiftmailer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/robrichards/xmlseclibs" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jenssegers/model" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jenssegers/agent" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/waynestate/nova-ckeditor4-field" />
@@ -285,6 +276,14 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/app-caller" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/stopwatch" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/yaml" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/vapor-cli" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/CircleLinkHealth" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/public/compiled" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/.vapor" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/superadmin-app/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/VaporCli/vendor" />
     </content>
     <content url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
     <orderEntry type="inheritedJdk" />

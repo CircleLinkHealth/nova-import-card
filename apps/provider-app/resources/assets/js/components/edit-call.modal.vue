@@ -99,13 +99,13 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 
 <script>
     import {Event} from 'vue-tables-2'
-    import Modal from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
-    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
-    import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
-    import {today} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/today'
-    import Notifications from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
+    import Modal from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/common/modal'
+    import LoaderComponent from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader'
+    import {rootUrl} from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config'
+    import {today} from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/util/today'
+    import Notifications from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import VueSelect from 'vue-select'
-    import VueCache from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
+    import VueCache from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/util/vue-cache'
 
     const defaultFormData = {
         id: null,
@@ -255,8 +255,12 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         if (err.response && err.response.data && err.response.data.errors) {
                             // {is_manual: ['error message']}
                             const errors = err.response.data.errors;
-                            const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
-                            msg += `: ${errorsMessages}`;
+                            if (Array.isArray(errors)) {
+                                msg += `: ${errors.join(', ')}`;
+                            } else {
+                                const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
+                                msg += `: ${errorsMessages}`;
+                            }
                         }
 
                         Event.$emit('notifications-edit-call-modal:create', {text: msg, type: 'error'});

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV2;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Problem;
 
@@ -20,7 +20,7 @@ interface AthenaApiImplementation
     public function addProblem(Problem $problem);
 
     /**
-     * @return Connection
+     * @return ConnectionV2
      */
     public function api();
 

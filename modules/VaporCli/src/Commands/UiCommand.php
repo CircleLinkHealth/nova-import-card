@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,18 +12,6 @@ use Symfony\Component\Process\Process;
 
 class UiCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('ui')
-            ->setDescription("Open the current project in Vapor's dashboard");
-    }
-
     /**
      * Execute the command.
      *
@@ -33,10 +25,22 @@ class UiCommand extends Command
 
         Helpers::info("Opening [{$url}] using your default browser...");
 
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        if ('WIN' === strtoupper(substr(PHP_OS, 0, 3))) {
             Process::fromShellCommandline('start '.escapeshellarg($url))->run();
         } else {
             Process::fromShellCommandline('open '.escapeshellarg($url))->run();
         }
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('ui')
+            ->setDescription("Open the current project in Vapor's dashboard");
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeSpecificLetter;
 
-
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Contracts\SelfEnrollmentLetter;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\PracticeLetterHelper\LettersHelper;
@@ -14,21 +16,16 @@ use Illuminate\Database\Eloquent\Model;
 class DemoLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
 {
     public bool $disableButtons;
-    public $practice;
     public $enrollee;
     public array $extraAddressValues;
     /**
      * @var false
      */
     public bool $extraAddressValuesExists;
+    public $practice;
 
     /**
      * BethcareNewarkBethIsrael constructor.
-     * @param bool $hideButtons
-     * @param array $baseLetter
-     * @param Practice $practice
-     * @param User $userEnrollee
-     * @param bool $disableButtons
      */
     public function __construct(bool $hideButtons, array $baseLetter, Practice $practice, User $userEnrollee, bool $disableButtons = false)
     {
@@ -53,15 +50,16 @@ class DemoLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmen
 
     public function letterSpecificView()
     {
-        $this->extraAddressValues = [];
+        $this->extraAddressValues       = [];
         $this->extraAddressValuesExists = false;
 
         return $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, \CircleLinkHealth\Customer\Entities\User $provider): string
+    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $signature = asset($practiceLetter->customer_signature_src);
+
         return "<img src=$signature  alt='$practice->dipslay_name' style='width: 200px;'/>";
     }
 }

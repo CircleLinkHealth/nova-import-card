@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class NetworkCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('network')
-            ->addArgument('network', InputArgument::REQUIRED, 'The network name')
-            ->setDescription('Create a new network');
-    }
-
     /**
      * Execute the command.
      *
@@ -39,5 +30,18 @@ class NetworkCommand extends Command
         Helpers::info('Network created successfully.');
         Helpers::line();
         Helpers::line('Networks may take several minutes to finish provisioning.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('network')
+            ->addArgument('network', InputArgument::REQUIRED, 'The network name')
+            ->setDescription('Create a new network');
     }
 }

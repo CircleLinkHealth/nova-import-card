@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\TwilioIntegration\Notifications\Channels;
 
 use CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
+use CircleLinkHealth\Core\Notifications\DuplicateNotificationChecker;
 use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use CircleLinkHealth\TwilioIntegration\Services\TwilioInterface;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -49,6 +50,10 @@ class CustomTwilioChannel extends TwilioChannel
         try {
             if (isset($notifiable->id) && $this->isUserBlackListed($notifiable->id)) {
                 throw new CannotSendNotificationException("User[$notifiable->id] is in sms exclusions list. Will not send sms.");
+            }
+
+            if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, 'twilio')) {
+                throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
             }
 
             $to        = $this->getTo($notifiable);

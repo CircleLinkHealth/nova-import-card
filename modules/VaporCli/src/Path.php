@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 class Path
@@ -15,16 +19,6 @@ class Path
     }
 
     /**
-     * Get the path to the vendor directory.
-     *
-     * @return string
-     */
-    public static function vendor()
-    {
-        return static::build().'/vendor';
-    }
-
-    /**
      * Get the path to the deployment artifact.
      *
      * @return string
@@ -32,16 +26,6 @@ class Path
     public static function artifact()
     {
         return getcwd().'/.vapor/build/app.zip';
-    }
-
-    /**
-     * Get the path to the deployment artifact.
-     *
-     * @return string
-     */
-    public static function vendorArtifact()
-    {
-        return getcwd().'/.vapor/build/vendor.zip';
     }
 
     /**
@@ -75,6 +59,17 @@ class Path
     }
 
     /**
+     * Get the path to the environment's dockerfile.
+     *
+     * @param  string $environment
+     * @return string
+     */
+    public static function dockerfile($environment)
+    {
+        return getcwd().'/'.$environment.'.Dockerfile';
+    }
+
+    /**
      * Get the path to the project's manifest file.
      *
      * @return string
@@ -95,13 +90,22 @@ class Path
     }
 
     /**
-     * Get the path to the environment's dockerfile.
+     * Get the path to the vendor directory.
      *
-     * @param  string  $environment
      * @return string
      */
-    public static function dockerfile($environment)
+    public static function vendor()
     {
-        return getcwd().'/'.$environment.'.Dockerfile';
+        return static::build().'/vendor';
+    }
+
+    /**
+     * Get the path to the deployment artifact.
+     *
+     * @return string
+     */
+    public static function vendorArtifact()
+    {
+        return getcwd().'/.vapor/build/vendor.zip';
     }
 }

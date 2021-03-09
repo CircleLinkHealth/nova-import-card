@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Queue;
 
 use Illuminate\Queue\Worker;
@@ -11,9 +15,8 @@ class VaporWorker extends Worker
     /**
      * Process the given job.
      *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
-     * @param  string  $connectionName
-     * @param  \Illuminate\Queue\WorkerOptions  $options
+     * @param  \Illuminate\Contracts\Queue\Job $job
+     * @param  string                          $connectionName
      * @return void
      */
     public function runVaporJob($job, $connectionName, WorkerOptions $options)

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Illuminate\Console\Application as ConsoleApplication;
@@ -21,7 +25,6 @@ class AppHandler implements LambdaEventHandler
     /**
      * Handle an incoming Lambda event.
      *
-     * @param  array  $event
      * @param  \Laravel\Vapor\Contracts\LambdaResponse
      */
     public function handle(array $event)
@@ -30,10 +33,10 @@ class AppHandler implements LambdaEventHandler
             $app = require $_ENV['LAMBDA_TASK_ROOT'].'/bootstrap/app.php';
 
             $response = (new HttpKernel($app))->handle(Request::createFromBase(
-                (new HttpFoundationFactory)->createRequest($this->marshalRequest($event))
+                (new HttpFoundationFactory())->createRequest($this->marshalRequest($event))
             ));
 
-            $psr17Factory = new Psr17Factory;
+            $psr17Factory = new Psr17Factory();
 
             return $this->marshalResponse(
                 (new PsrHttpFactory(
@@ -65,7 +68,6 @@ class AppHandler implements LambdaEventHandler
     /**
      * Marshal the PSR-7 response to a Lambda response.
      *
-     * @param  \Psr\Http\Message\ResponseInterface  $response
      * @return \Laravel\Vapor\Runtime\ArrayLambdaResponse
      */
     protected function marshalResponse(ResponseInterface $response)
@@ -76,7 +78,6 @@ class AppHandler implements LambdaEventHandler
     /**
      * Terminate any relevant application services.
      *
-     * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
     protected function terminate(Application $app)

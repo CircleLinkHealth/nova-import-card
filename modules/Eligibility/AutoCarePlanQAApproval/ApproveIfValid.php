@@ -60,7 +60,7 @@ class ApproveIfValid implements ShouldQueue
         }
 
         $val = $patient->carePlan->validator();
-    
+
         $patient->carePlan->last_auto_qa_attempt_at = now();
 
         $this->logs->push(['data' => $val->getData()]);
@@ -84,7 +84,7 @@ class ApproveIfValid implements ShouldQueue
 
             $this->logs->push('approved');
         }
-        
+
         if ($patient->carePlan->isDirty()) {
             $patient->carePlan->save();
         }

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Traits;
 
 use Carbon\Carbon;
+use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
@@ -25,7 +26,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
-use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;

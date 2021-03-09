@@ -7,13 +7,12 @@
 namespace CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Insurances;
 use CircleLinkHealth\Eligibility\ValueObjects\ProblemsCollection;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 
@@ -90,6 +89,7 @@ class DetermineEnrollmentEligibility
                 $jobs[] = new GetAppointmentsForDepartment($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
             }
         }
+
         return $jobs;
     }
 

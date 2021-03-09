@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use DateTime;
@@ -16,13 +20,6 @@ class Command extends SymfonyCommand
     use ProvidesSelectionMenus;
 
     /**
-     * The Vapor client instance.
-     *
-     * @var \Laravel\VaporCli\ConsoleVaporClient
-     */
-    public $vapor;
-
-    /**
      * The input implementation.
      *
      * @var \Symfony\Component\Console\Input\InputInterface
@@ -37,13 +34,6 @@ class Command extends SymfonyCommand
     public $output;
 
     /**
-     * The DateTime representing the time the command started.
-     *
-     * @var \DateTime
-     */
-    protected $startedAt;
-
-    /**
      * The number of rows in the last refreshed table.
      *
      * @var int
@@ -51,10 +41,111 @@ class Command extends SymfonyCommand
     public $rowCount = 0;
 
     /**
+     * The Vapor client instance.
+     *
+     * @var \Laravel\VaporCli\ConsoleVaporClient
+     */
+    public $vapor;
+
+    /**
+     * The DateTime representing the time the command started.
+     *
+     * @var \DateTime
+     */
+    protected $startedAt;
+
+    /**
+     * Call another console command.
+     *
+     * @param string $command
+     *
+     * @return int
+     */
+    public function call($command, array $arguments = [])
+    {
+        $arguments['command'] = $command;
+
+        return $this->getApplication()->find($command)->run(
+            new ArrayInput($arguments),
+            Helpers::app('output')
+        );
+    }
+
+    /**
+     * Create a selection menu with the given choices.
+     *
+     * @param string $title
+     * @param array  $choices
+     *
+     * @return mixed
+     */
+    public function menu($title, $choices)
+    {
+        return Helpers::menu($title, $choices);
+    }
+
+    /**
+     * Format input into a textual table.
+     *
+     * @param string $style
+     *
+     * @return void
+     */
+    public function table(array $headers, array $rows, $style = 'borderless')
+    {
+        Helpers::table($headers, $rows, $style);
+    }
+
+    /**
+     * Get an argument from the input list.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    protected function argument($key)
+    {
+        return $this->input->getArgument($key);
+    }
+
+    /**
+     * Configure the output styles for the application.
+     *
+     *
+     * @return void
+     */
+    protected function configureOutputStyles(OutputInterface $output)
+    {
+        $output->getFormatter()->setStyle(
+            'finished',
+            new OutputFormatterStyle('green', 'default', ['bold'])
+        );
+    }
+
+    /**
+     * Ensure the user intends to manipulate the production environment.
+     *
+     * @param string $environment
+     * @param bool   $force
+     *
+     * @return void
+     */
+    protected function confirmIfProduction($environment, $force = null)
+    {
+        if (($this->input->hasOption('force') &&
+            $this->option('force')) ||
+            'production' !== $environment) {
+            return;
+        }
+
+        if ( ! Helpers::confirm('You are manipulating the production environment. Are you sure you want to proceed', false)) {
+            Helpers::abort('Action cancelled.');
+        }
+    }
+
+    /**
      * Execute the command.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @return int
      */
@@ -73,30 +164,18 @@ class Command extends SymfonyCommand
     }
 
     /**
-     * Configure the output styles for the application.
+     * Get the ID of an item by name.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param string $name
+     * @param mixed  $attribute
      *
-     * @return void
+     * @return int
      */
-    protected function configureOutputStyles(OutputInterface $output)
+    protected function findIdByName(array $items, $name, $attribute = 'name')
     {
-        $output->getFormatter()->setStyle(
-            'finished',
-            new OutputFormatterStyle('green', 'default', ['bold'])
-        );
-    }
-
-    /**
-     * Get an argument from the input list.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    protected function argument($key)
-    {
-        return $this->input->getArgument($key);
+        return collect($items)->first(function ($item) use ($name, $attribute) {
+            return $item[$attribute] == $name;
+        })['id'] ?? null;
     }
 
     /**
@@ -112,45 +191,8 @@ class Command extends SymfonyCommand
     }
 
     /**
-     * Ensure the user intends to manipulate the production environment.
-     *
-     * @param string $environment
-     * @param bool   $force
-     *
-     * @return void
-     */
-    protected function confirmIfProduction($environment, $force = null)
-    {
-        if (($this->input->hasOption('force') &&
-            $this->option('force')) ||
-            $environment !== 'production') {
-            return;
-        }
-
-        if (! Helpers::confirm('You are manipulating the production environment. Are you sure you want to proceed', false)) {
-            Helpers::abort('Action cancelled.');
-        }
-    }
-
-    /**
-     * Format input into a textual table.
-     *
-     * @param array  $headers
-     * @param array  $rows
-     * @param string $style
-     *
-     * @return void
-     */
-    public function table(array $headers, array $rows, $style = 'borderless')
-    {
-        Helpers::table($headers, $rows, $style);
-    }
-
-    /**
      * Format input to textual table, remove the prior table.
      *
-     * @param array $headers
-     * @param array $rows
      *
      * @return void
      */
@@ -163,51 +205,5 @@ class Command extends SymfonyCommand
         $this->rowCount = count($rows);
 
         $this->table($headers, $rows);
-    }
-
-    /**
-     * Create a selection menu with the given choices.
-     *
-     * @param string $title
-     * @param array  $choices
-     *
-     * @return mixed
-     */
-    public function menu($title, $choices)
-    {
-        return Helpers::menu($title, $choices);
-    }
-
-    /**
-     * Get the ID of an item by name.
-     *
-     * @param array  $items
-     * @param string $name
-     *
-     * @return int
-     */
-    protected function findIdByName(array $items, $name, $attribute = 'name')
-    {
-        return collect($items)->first(function ($item) use ($name, $attribute) {
-            return $item[$attribute] == $name;
-        })['id'] ?? null;
-    }
-
-    /**
-     * Call another console command.
-     *
-     * @param string $command
-     * @param array  $arguments
-     *
-     * @return int
-     */
-    public function call($command, array $arguments = [])
-    {
-        $arguments['command'] = $command;
-
-        return $this->getApplication()->find($command)->run(
-            new ArrayInput($arguments),
-            Helpers::app('output')
-        );
     }
 }

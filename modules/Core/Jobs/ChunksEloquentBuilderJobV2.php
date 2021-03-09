@@ -39,27 +39,6 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
             $offset = $offset + $limit;
         }
     }
-    
-    /**
-     * @param int $limit
-     *
-     * @return array Array of Job objects
-     */
-    public function splitToBatches(int $limit = 1000):array
-    {
-        $count  = $this->unsetWith($this->query())->count();
-        $offset = 0;
-        
-        $jobs = [];
-        
-        while ($offset < $count) {
-            $jobs[] = $this->setOffset($offset)
-                     ->setLimit($limit);
-            $offset = $offset + $limit;
-        }
-        
-        return $jobs;
-    }
 
     public function getBuilder(): Builder
     {
@@ -93,7 +72,26 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
 
         return $this;
     }
-    
+
+    /**
+     * @return array Array of Job objects
+     */
+    public function splitToBatches(int $limit = 1000): array
+    {
+        $count  = $this->unsetWith($this->query())->count();
+        $offset = 0;
+
+        $jobs = [];
+
+        while ($offset < $count) {
+            $jobs[] = $this->setOffset($offset)
+                ->setLimit($limit);
+            $offset = $offset + $limit;
+        }
+
+        return $jobs;
+    }
+
     private function unsetWith(Builder $query)
     {
         return $query->without(array_keys($query->getEagerLoads()));

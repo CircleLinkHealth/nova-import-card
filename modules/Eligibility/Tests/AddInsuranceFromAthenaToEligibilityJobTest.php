@@ -6,14 +6,14 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Tests\Fakers\AthenaApiResponses;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class AddInsuranceFromAthenaToEligibilityJobTest extends TestCase
 {

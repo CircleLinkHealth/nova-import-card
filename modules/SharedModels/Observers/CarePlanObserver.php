@@ -118,8 +118,8 @@ class CarePlanObserver
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
-    
-        if ($carePlan->isDirty('status') && $carePlan->status === CarePlan::DRAFT) {
+
+        if ($carePlan->isDirty('status') && CarePlan::DRAFT === $carePlan->status) {
             $carePlan->drafted_at = now();
         }
     }

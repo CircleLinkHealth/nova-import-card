@@ -27,8 +27,10 @@ use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
-    const CALL_BACK_TYPE                              = 'Call Back';
-    const CALL_TYPE                                   = 'call';
+    const CALL_BACK_TYPE = 'Call Back';
+    const CALL_TYPE      = 'call';
+
+    const EMAIL_SMS_RESPONSE_ATTEMPT_NOTE             = 'Email/SMS Response at';
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
     const TASK_TYPE                                   = 'task';
@@ -108,30 +110,39 @@ class SchedulerService
             $calledDate = now();
         }
 
-        return Call::when($withParticipants, function ($q) {
-            return $q->with([
-                'inboundUser' => function ($q) {
-                    $q->without(['roles', 'perms'])
-                        ->with([
-                            'billingProvider' => function ($q) {
-                                $q->with([
-                                    'user' => function ($q) {
-                                        $q->without(['roles', 'perms'])
-                                            ->select(['id', 'last_name']);
-                                    },
-                                ]);
-                            },
-                            'primaryPractice' => function ($q) {
-                                $q->select(['id', 'display_name']);
-                            },
-                        ]);
-                },
-                'outboundUser' => function ($q) {
-                    $q->without(['roles', 'perms'])
-                        ->select(['id', 'first_name']);
-                },
-            ]);
-        })
+        return Call::when(
+            $withParticipants,
+            function ($q) {
+                return $q->with(
+                    [
+                        'inboundUser' => function ($q) {
+                            $q->without(['roles', 'perms'])
+                                ->with(
+                                    [
+                                        'billingProvider' => function ($q) {
+                                            $q->with(
+                                                [
+                                                    'user' => function ($q) {
+                                                        $q->without(['roles', 'perms'])
+                                                            ->select(['id', 'last_name']);
+                                                    },
+                                                ]
+                                            );
+                                        },
+                                        'primaryPractice' => function ($q) {
+                                            $q->select(['id', 'display_name']);
+                                        },
+                                    ]
+                                );
+                        },
+                        'outboundUser' => function ($q) {
+                            $q->without(['roles', 'perms'])
+                                ->select(['id', 'first_name']);
+                        },
+                    ]
+                );
+            }
+        )
             ->whereInboundCpmId($patientId)
             ->where('status', '=', Call::NOT_REACHED)
             ->whereBetween('called_date', [$calledDate->copy()->startOfDay(), $calledDate->copy()->endOfDay()])
@@ -145,11 +156,11 @@ class SchedulerService
             ->when(
                 $excludeToday,
                 function ($query) {
-                    $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
-                },
+                           $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
+                       },
                 function ($query) {
-                    $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-                }
+                           $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+                       }
             )
             ->orderBy('scheduled_date', 'desc');
     }
@@ -157,10 +168,16 @@ class SchedulerService
     public static function getNextScheduledCall($patientId, $excludeToday = false): ?Call
     {
         return self::getNextScheduledActivities($patientId, $excludeToday)
-            ->where(function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', \CircleLinkHealth\SharedModels\Services\SchedulerService::CALL_TYPE);
-            })
+            ->where(
+                function ($q) {
+                           $q->whereNull('type')
+                               ->orWhere(
+                                   'type',
+                                   '=',
+                                   \CircleLinkHealth\SharedModels\Services\SchedulerService::CALL_TYPE
+                               );
+                       }
+            )
             ->first();
     }
 
@@ -225,9 +242,12 @@ class SchedulerService
         )
             ->where('inbound_cpm_id', $patientId)
             ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
-            ->when($authorId, function ($q) use ($authorId) {
-                return $q->where('outbound_cpm_id', $authorId);
-            })
+            ->when(
+                $authorId,
+                function ($q) use ($authorId) {
+                            return $q->where('outbound_cpm_id', $authorId);
+                        }
+            )
             ->orderBy('updated_at', 'desc');
 
         $scheduled = $base->where('status', Call::SCHEDULED);
@@ -245,12 +265,14 @@ class SchedulerService
         $attemptsLeft  = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - $patient->patientInfo->no_call_attempts_since_last_success;
 
         if ($isUnreachable || $attemptsLeft < PatientWriteRepository::MAX_CALLBACK_ATTEMPTS) {
-            Patient::withoutEvents(function () use (&$patient, $isUnreachable) {
-                if ($isUnreachable) {
-                    $patient->patientInfo->ccm_status = Patient::ENROLLED;
+            Patient::withoutEvents(
+                function () use (&$patient, $isUnreachable) {
+                    if ($isUnreachable) {
+                        $patient->patientInfo->ccm_status = Patient::ENROLLED;
+                    }
+                    $patient->patientInfo->no_call_attempts_since_last_success = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - PatientWriteRepository::MAX_CALLBACK_ATTEMPTS;
                 }
-                $patient->patientInfo->no_call_attempts_since_last_success = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - PatientWriteRepository::MAX_CALLBACK_ATTEMPTS;
-            });
+            );
         }
 
         return $this->getNurseToAssignCallBackTo($patient, $outboundCpmId);
@@ -270,13 +292,13 @@ class SchedulerService
                 ->whereHas(
                     'patientInfo',
                     function ($q) use (
-                        $row
-                    ) {
-                        $q->where(
-                            'birth_date',
-                            Carbon::parse($row['DOB'])->toDateString()
-                        );
-                    }
+                                   $row
+                               ) {
+                                   $q->where(
+                                       'birth_date',
+                                       Carbon::parse($row['DOB'])->toDateString()
+                                   );
+                               }
                 )
                 ->first();
 
@@ -372,9 +394,12 @@ class SchedulerService
                 $q->whereIn('outbound_cpm_id', $cb)
                     ->orWhereIn('inbound_cpm_id', $cb);
             }
-        )->whereHas('inboundUser', function ($q) {
-            return $q->ofType('participant');
-        })
+        )->whereHas(
+            'inboundUser',
+            function ($q) {
+                return $q->ofType('participant');
+            }
+        )
             ->where('status', '=', 'scheduled')
             ->delete();
     }
@@ -386,8 +411,13 @@ class SchedulerService
      *
      * @throws NurseNotFoundException
      */
-    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
-    {
+    public function scheduleAsapCallbackTask(
+        User $patient,
+        $taskNote,
+        $scheduler,
+        $phoneNumber = null,
+        string $taskSubType
+    ): Call {
         // check if there is already a task scheduled
         /** @var Call $existing */
         $existing = Call::where('type', '=', SchedulerService::TASK_TYPE)
@@ -438,11 +468,13 @@ class SchedulerService
 
         return Call::create(
             [
-                'type'                  => SchedulerService::TASK_TYPE,
-                'sub_type'              => $taskSubType,
-                'status'                => Call::SCHEDULED,
-                'attempt_note'          => "Email/SMS Response at $callbackDateTime: $taskNote",
-                'scheduler'             => $schedulerIsInboundCallback ? $nurseId : $scheduler,
+                'type'         => SchedulerService::TASK_TYPE,
+                'sub_type'     => $taskSubType,
+                'status'       => Call::SCHEDULED,
+                'attempt_note' => self::EMAIL_SMS_RESPONSE_ATTEMPT_NOTE." $callbackDateTime: $taskNote",
+                'scheduler'    => $schedulerIsInboundCallback
+                    ? $nurseId
+                    : $scheduler,
                 'is_manual'             => false,
                 'inbound_phone_number'  => $phoneNumber ?? '',
                 'outbound_phone_number' => '',
@@ -479,11 +511,11 @@ class SchedulerService
         )
             ->where(
                 function ($q) use (
-                    $patient
-                ) {
-                    $q->where('outbound_cpm_id', $patient->id)
-                        ->orWhere('inbound_cpm_id', $patient->id);
-                }
+                           $patient
+                       ) {
+                           $q->where('outbound_cpm_id', $patient->id)
+                               ->orWhere('inbound_cpm_id', $patient->id);
+                       }
             )
             ->where('status', '=', Call::SCHEDULED)
             ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
@@ -539,7 +571,9 @@ class SchedulerService
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end   = Carbon::parse($window_end)->format('H:i');
 
-        $nurse_id = ! is_numeric($nurse_id) ? null : $nurse_id;
+        $nurse_id = ! is_numeric($nurse_id)
+            ? null
+            : $nurse_id;
 
         if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
@@ -590,8 +624,8 @@ class SchedulerService
             ->whereHas(
                 'roles',
                 function ($q) {
-                    $q->where('name', '=', 'care-center');
-                }
+                                $q->where('name', '=', 'care-center');
+                            }
             )
             ->pluck('id')
             ->all();

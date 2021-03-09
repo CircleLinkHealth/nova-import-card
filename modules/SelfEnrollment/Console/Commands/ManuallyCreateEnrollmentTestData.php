@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Artisan;
 class ManuallyCreateEnrollmentTestData extends Command
 {
     use UserHelpers;
+
     /**
      * The console command description.
      *
@@ -44,15 +45,15 @@ class ManuallyCreateEnrollmentTestData extends Command
     /**
      * Execute the console command.
      *
+     * @return int
      * @throws \Exception
      *
-     * @return int
      */
     public function handle()
     {
         $practiceName = $this->argument('practiceName') ?? null;
 
-        if (isProductionEnv() && $practiceName !== GenerateDemoLetter::DEMO_PRACTICE_NAME) {
+        if (isProductionEnv() && GenerateDemoLetter::DEMO_PRACTICE_NAME !== $practiceName) {
             $this->warn('You cannot execute this action in production environment');
 
             return 'You cannot execute this action in production environment';
@@ -60,12 +61,13 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         if (is_null($practiceName)) {
             $this->warn('Practice input is required');
+
             return 'Practice input is required';
         }
 
         $practice = Practice::whereName($practiceName)->first();
 
-        if (! $practice && ! App::environment('production')){
+        if (!$practice && !App::environment('production')) {
             $this->info("Practice $practiceName to test not found. Creating practice with Location now...");
             $practice = $this->selfEnrollmentTestPractice($practiceName);
             $this->selfEnrollmentTestLocation($practice->id, $practiceName);
@@ -73,9 +75,10 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
 
-        if ( ! $letter && ! App::environment('production')) {
+        if (!$letter && !App::environment('production')) {
             $this->info("$practiceName practice letter not found. Generating Letter for $practiceName now...");
             Artisan::call(GenerateSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
+            $letter->fresh();
         }
 
         $uiRequestsForThisPractice = '';

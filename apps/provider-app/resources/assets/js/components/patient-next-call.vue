@@ -31,10 +31,10 @@
 <script>
 
     import EditCallModal from './edit-call.modal.vue';
-    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
+    import LoaderComponent from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader';
     import {Event} from 'vue-tables-2';
-    import {today} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/today";
-    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
+    import {today} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/util/today";
+    import {rootUrl} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config";
 
     const defaultNextCall = {
         id: null,

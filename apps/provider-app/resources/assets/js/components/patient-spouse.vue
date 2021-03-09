@@ -9,7 +9,7 @@
 </template>
 <script>
 
-    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
+    import {rootUrl} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config";
 
     export default {
         name: 'patient-spouse',

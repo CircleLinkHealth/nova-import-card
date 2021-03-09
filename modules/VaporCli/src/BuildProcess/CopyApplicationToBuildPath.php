@@ -1,9 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\ApplicationFiles;
-use Laravel\VaporCli\CLHModulesFiles;
 use Laravel\VaporCli\Helpers;
 use SplFileInfo;
 
@@ -32,17 +35,10 @@ class CopyApplicationToBuildPath
                 : $this->createFileForCopy($file);
         }
 
-        Helpers::step('<options=bold>Copying Modules</>');
+        Helpers::step('<options=bold>Prepare composer.json for deployment</>');
 
-        foreach (CLHModulesFiles::get("$this->path/../../modules") as $file) {
-            if ($file->isLink()) {
-                continue;
-            }
+        $this->prepareComposerFiles();
 
-            $file->isDir()
-                ? $this->createDirectoryForCLHModulesCopy($file)
-                : $this->createFileForCLHModulesCopy($file);
-        }
         $this->flushCacheFiles();
         $this->flushStorageDirectories();
     }
@@ -50,7 +46,17 @@ class CopyApplicationToBuildPath
     /**
      * Create a directory for the application copy operation.
      *
-     * @param \SplFileInfo $file
+     *
+     * @return void
+     */
+    protected function createDirectoryForCLHModulesCopy(SplFileInfo $file)
+    {
+        $this->files->makeDirectory($this->appPath.'/CircleLinkHealth/'.$file->getRelativePathname());
+    }
+
+    /**
+     * Create a directory for the application copy operation.
+     *
      *
      * @return void
      */
@@ -62,37 +68,6 @@ class CopyApplicationToBuildPath
     /**
      * Create a file for the application copy operation.
      *
-     * @param \SplFileInfo $file
-     *
-     * @return void
-     */
-    protected function createFileForCopy(SplFileInfo $file)
-    {
-        $this->files->copy(
-            $file->getRealPath(),
-            $this->appPath.'/'.$file->getRelativePathname()
-        );
-
-        $this->files->chmod(
-            $this->appPath.'/'.$file->getRelativePathname(),
-            fileperms($file->getRealPath())
-        );
-    } /**
-     * Create a directory for the application copy operation.
-     *
-     * @param \SplFileInfo $file
-     *
-     * @return void
-     */
-    protected function createDirectoryForCLHModulesCopy(SplFileInfo $file)
-    {
-        $this->files->makeDirectory($this->appPath.'/CircleLinkHealth/'.$file->getRelativePathname());
-    }
-
-    /**
-     * Create a file for the application copy operation.
-     *
-     * @param \SplFileInfo $file
      *
      * @return void
      */
@@ -105,6 +80,25 @@ class CopyApplicationToBuildPath
 
         $this->files->chmod(
             $this->appPath.'/CircleLinkHealth/'.$file->getRelativePathname(),
+            fileperms($file->getRealPath())
+        );
+    }
+
+    /**
+     * Create a file for the application copy operation.
+     *
+     *
+     * @return void
+     */
+    protected function createFileForCopy(SplFileInfo $file)
+    {
+        $this->files->copy(
+            $file->getRealPath(),
+            $this->appPath.'/'.$file->getRelativePathname()
+        );
+
+        $this->files->chmod(
+            $this->appPath.'/'.$file->getRelativePathname(),
             fileperms($file->getRealPath())
         );
     }
@@ -152,5 +146,19 @@ class CopyApplicationToBuildPath
         $this->files->deleteDirectory($path.'/storage/framework/views', true);
         $this->files->deleteDirectory($path.'/storage/framework/testing', true);
         $this->files->deleteDirectory($path.'/storage/framework/sessions', true);
+    }
+
+    protected function prepareComposerFiles()
+    {
+        foreach ([
+            "$this->appPath/composer.json",
+            "$this->appPath/composer.lock",
+        ] as $composerPath) {
+            $composerJsonContents = file_get_contents($composerPath);
+            $composerJsonContents = str_replace('"symlink": true', '"symlink": false', $composerJsonContents);
+            $composerJsonContents = str_replace('"../../modules/', '"../../../../../modules/', $composerJsonContents);
+
+            file_put_contents($composerPath, $composerJsonContents);
+        }
     }
 }

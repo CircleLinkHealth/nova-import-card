@@ -1,0 +1,128 @@
+name: Deploy AWV App
+on:
+  push:
+    paths:
+      - apps/awv-app/**
+jobs:
+  deploy:
+    defaults:
+      run:
+        working-directory: apps/awv-app
+    name: Deploy
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Check if commit message has [ci skip]
+        uses: mstachniuk/ci-skip@v1
+
+      - name: Turnstyle - run workflow only once
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: softprops/turnstyle@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy .env
+        if: ${{ env.CI_SKIP == 'false' }}
+        run: php -r "copy('.env.githubactions', '.env');"
+
+      - name: Set SSH key for npm install
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_PANGRATIOS }}
+
+      - name: Install Composer dependencies
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: php-actions/composer@v5
+        env:
+          COMPOSER_MIRROR_PATH_REPOS: 1
+        with:
+          version: 1
+          php_version: 7.4
+          php_extensions: redis zip gd exif imagick opcache intl libxml pdo dom bcmath sockets
+          progress: yes
+          dev: yes
+          args: --classmap-authoritative --no-scripts -d apps/awv-app
+
+      - name: Setup PHP - need this to run vapor deploy
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v1
+          extensions: redis, zip, gd, exif, imagick, opcache, intl, libxml, pdo, dom, bcmath, sockets
+          coverage: none
+
+      - name: Predeploy 1 - Generate app key
+        if: ${{ env.CI_SKIP == 'false' }}
+        run: php artisan key:generate && php artisan config:clear
+
+      - name: Predeploy 2 - Export .env file to $GITHUB_ENV
+        if: ${{ env.CI_SKIP == 'false' }}
+        uses: c-py/action-dotenv-to-setenv@v2
+        with:
+          env-file: apps/awv-app/.env
+
+      - name: Create env files to connect to S3 after deployment - staging
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
+        run: |
+          echo ENV_TYPE=$ENV_TYPE >> staging-deploy-s3.env
+          echo APP_NAME=$APP_NAME >> staging-deploy-s3.env
+          echo S3_SECRETS_BUCKET=$S3_SECRETS_BUCKET >> staging-deploy-s3.env
+          echo S3_SECRETS_KEY=$S3_SECRETS_KEY >> staging-deploy-s3.env
+          echo S3_SECRETS_SECRET=$S3_SECRETS_SECRET >> staging-deploy-s3.env
+          echo S3_SECRETS_REGION=$S3_SECRETS_REGION >> staging-deploy-s3.env
+        shell: bash
+        env:
+          ENV_TYPE: staging
+          APP_NAME: awv
+          S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
+          S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
+          S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
+          S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
+
+      - name: Set permissions to allow creating env files
+        if: ${{ env.CI_SKIP == 'false' }}
+        run: sudo chmod -R 777 ./vendor/laravel/vapor-cli/src/BuildProcess
+
+      - name: Deploy - staging
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
+        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        env:
+          VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
+          ENV_TYPE: staging
+          APP_ENV: staging
+
+      - name: Notify Slack - Success
+        if: ${{ env.CI_SKIP == 'false' && success()  }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#39C16C'
+          SLACK_TITLE: Deployment successful for AWV app (monorepo staging)
+          SLACK_MESSAGE: 🚀
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':suspect:'
+
+      - name: Notify Slack - Failure
+        if: ${{ env.CI_SKIP == 'false' && failure()  }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#ff0033'
+          SLACK_TITLE: Deployment failed AWV app (monorepo staging)
+          SLACK_MESSAGE: 💣
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':scream_cat:'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ env.CI_SKIP == 'false' && failure()  }}
+        with:
+          name: Logs
+          path: ./storage/logs

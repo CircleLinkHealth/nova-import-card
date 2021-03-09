@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests\ScheduledTaskSubscriber;
 
 use Illuminate\Http\Client\Request;
@@ -11,9 +15,8 @@ use Spatie\TestTime\TestTime;
 
 class PingFinishedToOhDearTest extends TestCase
 {
-    private MonitoredScheduledTaskLogItem $monitoredScheduledTaskLogItem;
-
     private array $meta;
+    private MonitoredScheduledTaskLogItem $monitoredScheduledTaskLogItem;
 
     public function setUp(): void
     {
@@ -26,9 +29,9 @@ class PingFinishedToOhDearTest extends TestCase
         ]);
 
         $this->meta = [
-            'runtime' => 12.34,
+            'runtime'   => 12.34,
             'exit_code' => 123,
-            'memory' => 12345,
+            'memory'    => 12345,
         ];
 
         $this->monitoredScheduledTaskLogItem = factory(MonitoredScheduledTaskLogItem::class)->create([
@@ -50,7 +53,7 @@ class PingFinishedToOhDearTest extends TestCase
         Http::assertSent(function (Request $request) {
             $this->assertEquals(
                 $request->url(),
-                $this->monitoredScheduledTaskLogItem->monitoredScheduledTask->ping_url . '/finished'
+                $this->monitoredScheduledTaskLogItem->monitoredScheduledTask->ping_url.'/finished'
             );
 
             $this->assertEquals($this->meta, $request->data());

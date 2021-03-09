@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -11,22 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 class EnvDescribeCommand extends Command
 {
     const DEFAULT_FORMAT = '[<comment>%attribute-key%</comment>] <info>%attribute-value%</info>';
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('env:describe')
-            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
-            ->addArgument('attribute', null, 'The environment attribute you would like to retrieve')
-            ->addOption('list', 'l', InputOption::VALUE_NONE, 'Indicate that all attributes should be listed')
-            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The list format string')
-            ->setDescription('Describe an environment');
-    }
 
     /**
      * Execute the command.
@@ -87,11 +75,11 @@ class EnvDescribeCommand extends Command
 
         $settingKey = $this->argument('attribute');
 
-        if (! $settingKey || ! is_string($settingKey)) {
+        if ( ! $settingKey || ! is_string($settingKey)) {
             return;
         }
 
-        if (! array_key_exists($settingKey, $description)) {
+        if ( ! array_key_exists($settingKey, $description)) {
             throw new RuntimeException($settingKey.' is not defined');
         }
 
@@ -102,5 +90,21 @@ class EnvDescribeCommand extends Command
         }
 
         Helpers::line($settingValue);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('env:describe')
+            ->addArgument('environment', InputArgument::REQUIRED, 'The environment name')
+            ->addArgument('attribute', null, 'The environment attribute you would like to retrieve')
+            ->addOption('list', 'l', InputOption::VALUE_NONE, 'Indicate that all attributes should be listed')
+            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The list format string')
+            ->setDescription('Describe an environment');
     }
 }

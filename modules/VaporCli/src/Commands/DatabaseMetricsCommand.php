@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,20 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DatabaseMetricsCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:metrics')
-            ->addArgument('database', InputArgument::REQUIRED, 'The database name / ID')
-            ->addArgument('period', InputArgument::OPTIONAL, 'The metric period (1m, 5m, 30m, 1h, 8h, 1d, 3d, 7d, 1M)', '1d')
-            ->setDescription('Get usage and performance metrics for a database');
-    }
-
     /**
      * Execute the command.
      *
@@ -30,7 +20,7 @@ class DatabaseMetricsCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($this->vapor->databases(), $databaseId);
         }
 
@@ -50,5 +40,19 @@ class DatabaseMetricsCommand extends Command
             ['Average Database Connections', number_format($metrics['averageDatabaseConnections'])],
             ['Max Database Connections', number_format($metrics['maxDatabaseConnections'])],
         ]);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:metrics')
+            ->addArgument('database', InputArgument::REQUIRED, 'The database name / ID')
+            ->addArgument('period', InputArgument::OPTIONAL, 'The metric period (1m, 5m, 30m, 1h, 8h, 1d, 3d, 7d, 1M)', '1d')
+            ->setDescription('Get usage and performance metrics for a database');
     }
 }

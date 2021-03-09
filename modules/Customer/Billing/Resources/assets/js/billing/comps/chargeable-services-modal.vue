@@ -23,9 +23,9 @@
 <script>
     import { Event } from 'vue-tables-2'
 
-    import SERVICES from '../../../../../../../SharedVueComponents/Resources/assets/js/constants/services.types';
-    import Modal from '../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
-    import Loader from '../../../../../../../SharedVueComponents/Resources/assets/js/components/loader'
+    import SERVICES from 'SharedVueComponents/Resources/assets/js/constants/services.types';
+    import Modal from 'SharedVueComponents/Resources/assets/js/admin/common/modal'
+    import Loader from 'SharedVueComponents/Resources/assets/js/components/loader'
 
     export default {
         name: 'chargeable-services-modal',

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Exception;
@@ -113,18 +117,6 @@ class Helpers
     }
 
     /**
-     * Display a warning message.
-     *
-     * @param string $text
-     *
-     * @return void
-     */
-    public static function warn($text)
-    {
-        static::app('output')->writeln('<fg=yellow>'.$text.'</>');
-    }
-
-    /**
      * Ensure that the user has authenticated with Laravel Vapor.
      *
      * @return void
@@ -136,7 +128,7 @@ class Helpers
             return;
         }
 
-        if (! static::config('token') || ! static::config('team')) {
+        if ( ! static::config('token') || ! static::config('team')) {
             throw new Exception("Please authenticate using the 'login' command before proceeding.");
         }
     }
@@ -228,6 +220,8 @@ class Helpers
      *
      * @param string $question
      * @param mixed  $default
+     * @param mixed  $title
+     * @param mixed  $choices
      *
      * @return mixed
      */
@@ -267,8 +261,6 @@ class Helpers
     /**
      * Format input into a textual table.
      *
-     * @param array  $headers
-     * @param array  $rows
      * @param string $style
      *
      * @return void
@@ -294,6 +286,18 @@ class Helpers
     public static function time_ago($date)
     {
         return Carbon::parse($date)->diffForHumans();
+    }
+
+    /**
+     * Display a warning message.
+     *
+     * @param string $text
+     *
+     * @return void
+     */
+    public static function warn($text)
+    {
+        static::app('output')->writeln('<fg=yellow>'.$text.'</>');
     }
 
     /**

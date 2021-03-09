@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\SelfEnrollment\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -10,14 +14,14 @@ use Illuminate\Support\Facades\App;
 
 class GeneratePrimaryCare360 extends Seeder
 {
-    const PRACTICE_SIGNATORY_NAME = 'two_names';
+    const ADEEB_KHALIL_SIGNATURE         = '/img/signatures/primary-care-360/adeeb_khalil_signature.png';
+    const ANITA_ARAB_SIGNATURE           = '/img/signatures/primary-care-360/anita_arab_signature.png';
+    const DISPLAY_NAME                   = 'Primary Care 360';
+    const LOGO_SOURCE                    = '/img/logos/PrimaryCare360/primary_care_360_logo.png';
+    const PRACTICE_SIGNATORY_NAME        = 'two_names';
     const PRIMARY_CARE_360_PRACTICE_NAME = 'primary-care-360';
-    const LOGO_SOURCE = '/img/logos/PrimaryCare360/primary_care_360_logo.png';
-    const ANITA_ARAB_SIGNATURE        = '/img/signatures/primary-care-360/anita_arab_signature.png';
-    const ADEEB_KHALIL_SIGNATURE      = '/img/signatures/primary-care-360/adeeb_khalil_signature.png';
-    const SIGNATORY_NAME_ANITA_ARAB   = 'Anita Arab, Administrator';
-    const SIGNATORY_NAME_ADEEB_KHALIL = 'Adeeb Khalil, Administrator';
-    const DISPLAY_NAME = 'Primary Care 360';
+    const SIGNATORY_NAME_ADEEB_KHALIL    = 'Adeeb Khalil, Administrator';
+    const SIGNATORY_NAME_ANITA_ARAB      = 'Anita Arab, Administrator';
 
     /**
      * Run the database seeds.
@@ -30,7 +34,7 @@ class GeneratePrimaryCare360 extends Seeder
         $signatoryName        = EnrollmentInvitationLetter::SIGNATORY_NAME;
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
-        $logoBelow = $this->logoBelow();
+        $logoBelow            = $this->logoBelow();
 
         $primaryCare360Practice = $this->getPractice();
 
@@ -117,8 +121,9 @@ $logoBelow
 
     private function logoBelow()
     {
-        $logoSrc = asset(self::LOGO_SOURCE);
+        $logoSrc     = asset(self::LOGO_SOURCE);
         $displayName = self::DISPLAY_NAME;
+
         return "<img src=$logoSrc  alt='$displayName' style='width: 220px;'/>";
     }
 }

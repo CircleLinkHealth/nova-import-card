@@ -24,13 +24,11 @@ class CreateEligibilityJobsFromCLHMedicalRecordJson implements ShouldQueue, Shou
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     protected int $batchId;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param int $batchId
      */
     public function __construct(
         int $batchId
@@ -46,17 +44,17 @@ class CreateEligibilityJobsFromCLHMedicalRecordJson implements ShouldQueue, Shou
     public function handle()
     {
         $batch = EligibilityBatch::findOrFail($this->batchId);
-        
+
         if ( ! isset($batch->options['folder'])) {
             \Log::critical("Batch with id:{$batch->id} does not have a folder path.");
-        
+
             return null;
         }
-    
+
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
         $driveFilePath = $batch->options['filePath'] ?? null;
-    
+
         $driveHandler = new GoogleDrive();
         try {
             $stream = $driveHandler
@@ -65,60 +63,60 @@ class CreateEligibilityJobsFromCLHMedicalRecordJson implements ShouldQueue, Shou
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
-        
+
             return $batch;
         }
-    
+
         $localDisk = Storage::disk('local');
-    
+
         $fileName   = "eligibl_{$driveFileName}";
         $pathToFile = storage_path("app/${fileName}");
-    
+
         $savedLocally = $localDisk->put($fileName, $stream);
-    
+
         if ( ! $savedLocally) {
             throw new \Exception("Failed saving ${pathToFile}");
         }
-    
+
         try {
             \Log::debug(
                 "BEGIN creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
-            
+
             $this->readUsingGenerator($pathToFile, $batch);
-        
+
             \Log::debug(
                 "FINISH creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
-        
+
             $mem = format_bytes(memory_get_peak_usage());
-        
+
             \Log::debug("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
             \Log::debug("FINISH deleting `${fileName}`");
-        
+
             \Log::debug("memory_get_peak_usage: ${mem}");
-        
+
             $options                        = $batch->options;
             $options['finishedReadingFile'] = true;
             $batch->options                 = $options;
             $batch->save();
-        
+
             $initiator = $batch->initiatorUser()->firstOrFail();
             if ($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo) {
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
         } catch (\Exception $e) {
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
-        
+
             \Log::debug("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
             \Log::debug("FINISH deleting `${fileName}`");
-        
+
             throw $e;
         }
     }
-    
+
     /**
      * Read the file containing patient data for batch type `clh_medical_record_template`, using a fopen.
      *
@@ -138,19 +136,19 @@ class CreateEligibilityJobsFromCLHMedicalRecordJson implements ShouldQueue, Shou
             fclose($handle);
         }
     }
-    
+
     /**
      * Read the file containing patient data for batch type `clh_medical_record_template`, using a generator.
      */
     private function readUsingGenerator(string $pathToFile, EligibilityBatch $batch)
     {
         $iterator = read_file_using_generator($pathToFile);
-        
+
         foreach ($iterator as $iteration) {
             if ( ! $iteration) {
                 continue;
             }
-            
+
             CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
         }
     }

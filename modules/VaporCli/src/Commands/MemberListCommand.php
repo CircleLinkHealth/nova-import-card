@@ -1,23 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 class MemberListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('member:list')
-            ->setDescription('List the members of the current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -35,5 +27,17 @@ class MemberListCommand extends Command
                 $user['email'],
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('member:list')
+            ->setDescription('List the members of the current team');
     }
 }

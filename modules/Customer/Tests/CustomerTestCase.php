@@ -31,6 +31,14 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     protected $careCoach;
+    /**
+     * @var array|User
+     */
+    protected $patient;
+    /**
+     * @var array|User
+     */
+    protected $provider;
 
     /**
      * @var Enrollee
@@ -43,17 +51,9 @@ class CustomerTestCase extends TestCase
     private $location;
     private $medicalAssistant;
     /**
-     * @var array|User
-     */
-    protected $patient;
-    /**
      * @var Practice
      */
     private $practice;
-    /**
-     * @var array|User
-     */
-    protected $provider;
     /**
      * @var array|User
      */

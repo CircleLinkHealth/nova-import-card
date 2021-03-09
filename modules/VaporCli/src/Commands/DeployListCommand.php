@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -9,19 +13,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DeployListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('deploy:list')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->setDescription('List the deployments for an environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -51,5 +42,18 @@ class DeployListCommand extends Command
                 Helpers::time_ago($deployment['created_at']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('deploy:list')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->setDescription('List the deployments for an environment');
     }
 }

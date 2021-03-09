@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Commands\Output\DeploymentFailure;
@@ -17,9 +21,23 @@ trait DisplaysDeploymentProgress
     protected $displayedSteps = [];
 
     /**
+     * Display any new, active deployment steps.
+     *
+     *
+     * @return void
+     */
+    protected function displayActiveDeploymentSteps(Deployment $deployment)
+    {
+        foreach ($deployment->displayableSteps($this->displayedSteps) as $step) {
+            Helpers::step("<options=bold>{$step}</>");
+
+            $this->displayedSteps[] = $step;
+        }
+    }
+
+    /**
      * Display the server-side deployment pipeline for the given deployment.
      *
-     * @param array $deployment
      *
      * @return array
      */
@@ -43,13 +61,12 @@ trait DisplaysDeploymentProgress
     /**
      * Display the deployment steps until the deployment is finished.
      *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
      *
      * @return \Laravel\VaporCli\Models\Deployment
      */
     protected function displayDeploymentSteps(Deployment $deployment)
     {
-        while (! $deployment->hasEnded()) {
+        while ( ! $deployment->hasEnded()) {
             $this->displayActiveDeploymentSteps($deployment = new Deployment(
                 $this->vapor->deployment($deployment->id)
             ));
@@ -61,42 +78,24 @@ trait DisplaysDeploymentProgress
     }
 
     /**
-     * Display any new, active deployment steps.
-     *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
-     *
-     * @return void
-     */
-    protected function displayActiveDeploymentSteps(Deployment $deployment)
-    {
-        foreach ($deployment->displayableSteps($this->displayedSteps) as $step) {
-            Helpers::step("<options=bold>{$step}</>");
-
-            $this->displayedSteps[] = $step;
-        }
-    }
-
-    /**
-     * Display the deployment success message.
-     *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
-     *
-     * @return void
-     */
-    protected function displaySuccessMessage(Deployment $deployment)
-    {
-        (new DeploymentSuccess())->render($deployment, $this->startedAt);
-    }
-
-    /**
      * Display the deployment failure message.
      *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
      *
      * @return void
      */
     protected function displayFailureMessage(Deployment $deployment)
     {
         (new DeploymentFailure())->render($deployment);
+    }
+
+    /**
+     * Display the deployment success message.
+     *
+     *
+     * @return void
+     */
+    protected function displaySuccessMessage(Deployment $deployment)
+    {
+        (new DeploymentSuccess())->render($deployment, $this->startedAt);
     }
 }

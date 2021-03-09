@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,20 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class MetricsCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('metrics')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->addArgument('period', InputArgument::OPTIONAL, 'The metric period (1m, 5m, 30m, 1h, 8h, 1d, 3d, 7d, 1M)', '1d')
-            ->setDescription('Get usage and performance metrics for an environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -55,5 +45,19 @@ class MetricsCommand extends Command
         Helpers::line();
 
         Helpers::line('<info>Total Estimated Application Layer Cost:</info> $'.number_format($metrics['estimatedApiCost'] + $metrics['estimatedCost'] + $metrics['estimatedCliCost'], 2));
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('metrics')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->addArgument('period', InputArgument::OPTIONAL, 'The metric period (1m, 5m, 30m, 1h, 8h, 1d, 3d, 7d, 1M)', '1d')
+            ->setDescription('Get usage and performance metrics for an environment');
     }
 }

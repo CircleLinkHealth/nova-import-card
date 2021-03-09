@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use Laravel\Vapor\Runtime\CustomSecrets;
 use Laravel\Vapor\Runtime\HttpHandlerFactory;
 use Laravel\Vapor\Runtime\LambdaContainer;
 use Laravel\Vapor\Runtime\LambdaRuntime;
-use Laravel\Vapor\Runtime\CustomSecrets;
 
 ini_set('display_errors', '1');
 
@@ -42,11 +46,12 @@ $lambdaRuntime = LambdaRuntime::fromEnvironmentVariable();
 while (true) {
     $lambdaRuntime->nextInvocation(function ($invocationId, $event) {
         return HttpHandlerFactory::make($event)
-                    ->handle($event)
-                    ->toApiGatewayFormat();
+            ->handle($event)
+            ->toApiGatewayFormat();
     });
 
     LambdaContainer::terminateIfInvocationLimitHasBeenReached(
-        ++$invocations, (int) ($_ENV['VAPOR_MAX_REQUESTS'] ?? 250)
+        ++$invocations,
+        (int) ($_ENV['VAPOR_MAX_REQUESTS'] ?? 250)
     );
 }

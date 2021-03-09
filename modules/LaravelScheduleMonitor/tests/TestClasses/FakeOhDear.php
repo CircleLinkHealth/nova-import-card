@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests\TestClasses;
 
 use OhDear\PhpSdk\OhDear;
@@ -14,9 +18,9 @@ class FakeOhDear extends OhDear
     {
     }
 
-    public function site(int $siteId): Site
+    public function getSyncedCronCheckAttributes(): array
     {
-        return new FakeSite($this);
+        return $this->syncedCronCheckAttributes;
     }
 
     public function setSyncedCronCheckAttributes(array $cronCheckAttributes)
@@ -24,9 +28,9 @@ class FakeOhDear extends OhDear
         $this->syncedCronCheckAttributes = $cronCheckAttributes;
     }
 
-    public function getSyncedCronCheckAttributes(): array
+    public function site(int $siteId): Site
     {
-        return $this->syncedCronCheckAttributes;
+        return new FakeSite($this);
     }
 }
 
@@ -40,7 +44,7 @@ class FakeSite extends Site
 
         parent::__construct([
             'sort_url' => 'example.com',
-            'checks' => [],
+            'checks'   => [],
         ]);
     }
 
@@ -50,7 +54,7 @@ class FakeSite extends Site
 
         return collect($cronCheckAttributes)
             ->map(function (array $singleCronCheckAttributes) {
-                $singleCronCheckAttributes['ping_url'] = 'https://ping.ohdear.app/test-ping-url-' . urlencode($singleCronCheckAttributes['name']);
+                $singleCronCheckAttributes['ping_url'] = 'https://ping.ohdear.app/test-ping-url-'.urlencode($singleCronCheckAttributes['name']);
 
                 return new CronCheck($singleCronCheckAttributes, $this->fakeOhDear);
             })

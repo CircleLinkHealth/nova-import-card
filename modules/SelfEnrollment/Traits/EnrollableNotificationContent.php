@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Traits;
 
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use Illuminate\Support\Facades\Log;
 

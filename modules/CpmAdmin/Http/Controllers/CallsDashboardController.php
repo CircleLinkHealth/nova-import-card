@@ -45,7 +45,7 @@ class CallsDashboardController extends Controller
             }
             $nurses = User::ofType('care-center')
                 ->has('nurseInfo')
-                ->get();
+                ->get(['id', 'display_name']);
 
             return view('cpm-admin::admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }

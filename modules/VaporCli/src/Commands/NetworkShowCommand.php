@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class NetworkShowCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('network:show')
-            ->addArgument('network', InputArgument::REQUIRED, 'The network name / ID')
-            ->setDescription('Display the details of a network');
-    }
-
     /**
      * Execute the command.
      *
@@ -29,7 +20,7 @@ class NetworkShowCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($networkId = $this->argument('network'))) {
+        if ( ! is_numeric($networkId = $this->argument('network'))) {
             $networkId = $this->findIdByName($this->vapor->networks(), $networkId);
         }
 
@@ -52,15 +43,27 @@ class NetworkShowCommand extends Command
             ];
         })->all());
 
-        if ($network['status'] === 'available') {
+        if ('available' === $network['status']) {
             $this->displayNetworkDetails($network);
         }
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('network:show')
+            ->addArgument('network', InputArgument::REQUIRED, 'The network name / ID')
+            ->setDescription('Display the details of a network');
+    }
+
+    /**
      * Display the network's details.
      *
-     * @param array $network
      *
      * @return void
      */

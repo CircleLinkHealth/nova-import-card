@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Laravel\Vapor\Contracts\LambdaEventHandler;
@@ -11,7 +15,6 @@ class UnknownEventHandler implements LambdaEventHandler
     /**
      * Handle an incoming Lambda event.
      *
-     * @param  array  $event
      * @param  \Laravel\Vapor\Contracts\LambdaResponse
      */
     public function handle(array $event)

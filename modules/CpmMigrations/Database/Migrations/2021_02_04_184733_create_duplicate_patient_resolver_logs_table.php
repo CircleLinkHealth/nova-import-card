@@ -1,11 +1,25 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateDuplicatePatientResolverLogsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('duplicate_patient_resolver_logs');
+    }
+
     /**
      * Run the migrations.
      *
@@ -22,15 +36,5 @@ class CreateDuplicatePatientResolverLogsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('duplicate_patient_resolver_logs');
     }
 }

@@ -102,13 +102,13 @@ import {Device} from 'twilio-client';
 
 import PatientToEnroll from './patient-to-enroll';
 
-import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
+import {rootUrl} from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config';
 
-import TimeTracker from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker';
-import TimeTrackerEventBus from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus';
+import TimeTracker from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker';
+import TimeTrackerEventBus from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus';
 
-import Loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
-import {Logger} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
+import Loader from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader.vue';
+import {Logger} from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/logger-logdna';
 
 const userId = window.userId;
 const userFullName = window.userFullName;

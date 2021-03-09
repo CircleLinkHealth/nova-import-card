@@ -14,9 +14,9 @@
 [remote "awv-app"]
 	url = git@github.com:CircleLinkHealth/app-awv.git
 	fetch = +refs/heads/*:refs/remotes/awv-app/*
-[remote "admin-app"]
+[remote "superadmin-app"]
 	url = git@github.com:CircleLinkHealth/app-cpm-admin.git
-	fetch = +refs/heads/*:refs/remotes/admin-app/*
+	fetch = +refs/heads/*:refs/remotes/superadmin-app/*
 [remote "provider-app"]
 	url = git@github.com:CircleLinkHealth/app-cpm-web.git
 	fetch = +refs/heads/*:refs/remotes/provider-app/*

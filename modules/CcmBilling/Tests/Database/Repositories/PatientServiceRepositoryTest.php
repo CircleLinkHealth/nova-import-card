@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;

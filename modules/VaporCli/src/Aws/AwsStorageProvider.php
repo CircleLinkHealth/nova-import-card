@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Aws;
 
 use GuzzleHttp\Client;
@@ -16,7 +20,6 @@ class AwsStorageProvider
     /**
      * Create a new storage provider instance.
      *
-     * @param \Laravel\VaporCli\ConsoleVaporClient $vapor
      *
      * @return void
      */
@@ -26,12 +29,54 @@ class AwsStorageProvider
     }
 
     /**
+     * Execute the given copy requests.
+     *
+     * @param array $requests
+     *
+     * @return void
+     */
+    public function executeCopyRequests($requests)
+    {
+        $requests = function () use ($requests) {
+            foreach ($requests as $request) {
+                yield new Request(
+                    'PUT',
+                    $request['url'],
+                    array_merge(
+                        $request['headers'],
+                        ['Cache-Control' => 'public, max-age=2628000']
+                    )
+                );
+            }
+        };
+
+        (new Pool(new Client(), $requests(), ['concurrency' => 10]))
+            ->promise()
+            ->wait();
+    }
+
+    /**
+     * Execute the given pre-signed request.
+     *
+     * @param string $method
+     * @param string $url
+     *
+     * @return void
+     */
+    public function request($method, $url, array $headers = [])
+    {
+        (new Client())->request('PUT', $url, array_filter([
+            'headers' => empty($headers) ? null : $headers,
+        ]));
+    }
+
+    /**
      * Store the given file using the given pre-signed URL.
      *
      * @param string $url
-     * @param array  $headers
      * @param string $file
      * @param bool   $progress
+     * @param mixed  $withProgress
      *
      * @return void
      */
@@ -68,48 +113,5 @@ class AwsStorageProvider
         if (is_resource($stream)) {
             fclose($stream);
         }
-    }
-
-    /**
-     * Execute the given pre-signed request.
-     *
-     * @param string $method
-     * @param string $url
-     * @param array  $headers
-     *
-     * @return void
-     */
-    public function request($method, $url, array $headers = [])
-    {
-        (new Client())->request('PUT', $url, array_filter([
-            'headers' => empty($headers) ? null : $headers,
-        ]));
-    }
-
-    /**
-     * Execute the given copy requests.
-     *
-     * @param array $requests
-     *
-     * @return void
-     */
-    public function executeCopyRequests($requests)
-    {
-        $requests = function () use ($requests) {
-            foreach ($requests as $request) {
-                yield new Request(
-                    'PUT',
-                    $request['url'],
-                    array_merge(
-                        $request['headers'],
-                        ['Cache-Control' => 'public, max-age=2628000']
-                    )
-                );
-            }
-        };
-
-        (new Pool(new Client(), $requests(), ['concurrency' => 10]))
-            ->promise()
-            ->wait();
     }
 }

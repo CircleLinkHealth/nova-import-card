@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\App;
 
 class GenerateCalvaryClinicLetter extends Seeder
 {
+    const CALVARY_PRACTICE_NAME   = 'calvary-medical-clinic';
     const PRACTICE_SIGNATORY_NAME = 'Joseph E. Goin, MD <br> Medical Director';
     const UI_REQUESTS             = 'ui_requests';
-    const CALVARY_PRACTICE_NAME = 'calvary-medical-clinic';
 
     /**
      * Run the database seeds.

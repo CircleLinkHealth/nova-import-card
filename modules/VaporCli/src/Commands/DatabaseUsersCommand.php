@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DatabaseUsersCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:users')
-            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
-            ->setDescription('List the database users for a database');
-    }
-
     /**
      * Execute the command.
      *
@@ -31,7 +22,7 @@ class DatabaseUsersCommand extends Command
 
         $databases = $this->vapor->databases();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($databases, $databaseId);
         }
 
@@ -48,5 +39,18 @@ class DatabaseUsersCommand extends Command
                 Helpers::time_ago($user['created_at']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:users')
+            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
+            ->setDescription('List the database users for a database');
     }
 }

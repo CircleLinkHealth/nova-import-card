@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Models;
 
 use Carbon\Carbon;
@@ -21,40 +25,52 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon referer_url
  * @property Carbon created_at
  * @property Carbon updated_at
- * @property int $id
- * @property int $short_url_id
- * @property string|null $ip_address
- * @property string|null $operating_system
- * @property string|null $operating_system_version
- * @property string|null $browser
- * @property string|null $browser_version
- * @property string|null $referer_url
- * @property string|null $device_type
- * @property \Illuminate\Support\Carbon $visited_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \AshAllenDesign\ShortURL\Models\ShortURL $shortURL
- * @method static \Illuminate\Database\Eloquent\Builder|ShortURLVisit newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ShortURLVisit newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ShortURLVisit query()
+ * @property int                                      $id
+ * @property int                                      $short_url_id
+ * @property string|null                              $ip_address
+ * @property string|null                              $operating_system
+ * @property string|null                              $operating_system_version
+ * @property string|null                              $browser
+ * @property string|null                              $browser_version
+ * @property string|null                              $referer_url
+ * @property string|null                              $device_type
+ * @property \Illuminate\Support\Carbon               $visited_at
+ * @property \Illuminate\Support\Carbon|null          $created_at
+ * @property \Illuminate\Support\Carbon|null          $updated_at
+ * @property \AshAllenDesign\ShortURL\Models\ShortURL $shortURL
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|ShortURLVisit newModelQuery()
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|ShortURLVisit newQuery()
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|ShortURLVisit query()
  * @mixin \Eloquent
  */
 class ShortURLVisit extends Model
 {
-    const DEVICE_TYPE_MOBILE = 'mobile';
-
     const DEVICE_TYPE_DESKTOP = 'desktop';
-
-    const DEVICE_TYPE_TABLET = 'tablet';
+    const DEVICE_TYPE_MOBILE  = 'mobile';
 
     const DEVICE_TYPE_ROBOT = 'robot';
 
+    const DEVICE_TYPE_TABLET = 'tablet';
+
     /**
-     * The table associated with the model.
+     * The attributes that should be cast to native types.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'short_url_visits';
+    protected $casts = [
+        'short_url_id' => 'integer',
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'visited_at',
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -74,29 +90,14 @@ class ShortURLVisit extends Model
     ];
 
     /**
-     * The attributes that should be mutated to dates.
+     * The table associated with the model.
      *
-     * @var array
+     * @var string
      */
-    protected $dates = [
-        'visited_at',
-        'created_at',
-        'updated_at',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'short_url_id' => 'integer',
-    ];
+    protected $table = 'short_url_visits';
 
     /**
      * A URL visit belongs to one specific shortened URL.
-     *
-     * @return BelongsTo
      */
     public function shortURL(): BelongsTo
     {

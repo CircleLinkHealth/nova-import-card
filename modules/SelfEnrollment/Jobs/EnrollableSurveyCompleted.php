@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Services\NotifyEnrollableSurveyCompletedService;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -217,14 +217,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-         $response =  app(NotifyEnrollableSurveyCompletedService::class)
+            $response = app(NotifyEnrollableSurveyCompletedService::class)
                 ->makeRequestToProviderApp('import-enrollees-self-enrollment', $enrollee->id);
 
-         if (!$response->successful()) {
-             Log::error("Enrollee:[$enrollee->id] failed during redirect to provider app. [Status: {$response->status()}],
+            if ( ! $response->successful()) {
+                Log::error("Enrollee:[$enrollee->id] failed during redirect to provider app. [Status: {$response->status()}],
              [Body: {$response->body()}]");
-             return;
-         }
+
+                return;
+            }
 
             $patientType = 'Initial';
             $id          = $enrollee->id;

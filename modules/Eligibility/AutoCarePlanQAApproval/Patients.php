@@ -32,16 +32,16 @@ class Patients implements ShouldQueue
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                    $q->where(function ($q){
+                    $q->where(function ($q) {
                         $q->whereNull('last_auto_qa_attempt_at')
-                          ->orWhere(function ($q) {
-                              $q->where('last_auto_qa_attempt_at', '<', now()->subHours(2));
-                          });
-                    })->where(function ($q){
+                            ->orWhere(function ($q) {
+                                $q->where('last_auto_qa_attempt_at', '<', now()->subHours(2));
+                            });
+                    })->where(function ($q) {
                         $q->whereNull('drafted_at')
-                          ->orWhere(function ($q) {
-                              $q->where('drafted_at', '>', now()->subDays(1)->startOfDay());
-                          });
+                            ->orWhere(function ($q) {
+                                $q->where('drafted_at', '>', now()->subDays(1)->startOfDay());
+                            });
                     });
                 }
             )

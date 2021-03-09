@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands;
+namespace CircleLinkHealth\VaporDevOpsHelpers\Commands;
 
 use CircleLinkHealth\Core\Traits\RunsCommands;
 use Dotenv\Dotenv;

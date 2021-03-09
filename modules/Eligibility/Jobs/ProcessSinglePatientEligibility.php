@@ -24,15 +24,17 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
 
     protected int $eligibilityJobId;
 
+    protected bool $force;
+
     /**
      * Create a new job instance.
-     *
-     * @param int $eligibilityJobId
      */
     public function __construct(
-        int $eligibilityJobId
+        int $eligibilityJobId,
+        bool $force = false
     ) {
         $this->eligibilityJobId = $eligibilityJobId;
+        $this->force            = $force;
     }
 
     /**
@@ -42,13 +44,10 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
-        $ej = EligibilityJob::with('batch.practice')->findOrFail($this->eligibilityJobId);
+        $ej    = EligibilityJob::with('batch.practice')->findOrFail($this->eligibilityJobId);
         $batch = $ej->batch;
 
-        //Only process if EligibilityJob status is 0 (not_started), or 1 (processing) and last update is more than 10 minutes ago
-        if (0 == $ej->status
-            || (1 == $ej->status && $ej->updated_at->lt(now()->subMinutes(10)))
-        ) {
+        if ($this->shouldProcess($ej)) {
             new EligibilityChecker(
                 $ej,
                 $batch->practice,
@@ -59,5 +58,18 @@ class ProcessSinglePatientEligibility implements ShouldQueue, ShouldBeEncrypted
                 true
             );
         }
+    }
+
+    public function shouldProcess(EligibilityJob $ej)
+    {
+        if (true === $this->force) {
+            return true;
+        }
+
+        if (0 == $ej->status) {
+            return true;
+        }
+
+        return 1 == $ej->status && $ej->updated_at->lt(now()->subMinutes(10));
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,19 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class SecretListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('secret:list')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->setDescription('List the secrets for a given environment');
-    }
-
     /**
      * Execute the command.
      *
@@ -45,5 +36,18 @@ class SecretListCommand extends Command
                 Helpers::time_ago($secret['updated_at']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('secret:list')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->setDescription('List the secrets for a given environment');
     }
 }

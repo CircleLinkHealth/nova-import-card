@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Nurseinvoices\Debug\MeasureTime;
+use CircleLinkHealth\NurseInvoices\Debug\MeasureTime;
 use CircleLinkHealth\NurseInvoices\Time\TimeSplitter;
 use CircleLinkHealth\NurseInvoices\ValueObjects\PatientPayCalculationResult;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeRangeEntry;

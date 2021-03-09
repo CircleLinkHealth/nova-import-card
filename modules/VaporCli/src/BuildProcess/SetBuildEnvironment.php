@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Illuminate\Filesystem\Filesystem;
@@ -25,11 +29,11 @@ class SetBuildEnvironment
      */
     public function __construct($environment = null, $assetUrl = null)
     {
-        $this->assetUrl = $assetUrl;
+        $this->assetUrl    = $assetUrl;
         $this->environment = $environment;
 
-        $this->appPath = Path::app();
-        $this->path = Path::current();
+        $this->appPath   = Path::app();
+        $this->path      = Path::current();
         $this->vaporPath = Path::vapor();
         $this->buildPath = Path::build();
 
@@ -45,7 +49,7 @@ class SetBuildEnvironment
     {
         Helpers::step('<options=bold>Setting Build Environment</>');
 
-        if (! file_exists($envPath = $this->appPath.'/.env')) {
+        if ( ! file_exists($envPath = $this->appPath.'/.env')) {
             $this->files->put($envPath, '');
         }
 

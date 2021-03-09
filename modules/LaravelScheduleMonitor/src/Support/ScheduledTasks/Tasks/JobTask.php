@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\ScheduledTasks\Tasks;
 
 use Illuminate\Console\Scheduling\CallbackEvent;
@@ -11,11 +15,11 @@ class JobTask extends Task
 
     public static function canHandleEvent(Event $event): bool
     {
-        if (! $event instanceof CallbackEvent) {
+        if ( ! $event instanceof CallbackEvent) {
             return false;
         }
 
-        if (! is_null($event->command)) {
+        if ( ! is_null($event->command)) {
             return false;
         }
 

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Http\Request;
@@ -17,8 +18,12 @@ class OpsDashboardController extends Controller
     public function dailyCsv(Request $request)
     {
         if ($request->has('date')) {
-            $requestDate = Carbon::parse($request['date']);
-            $date        = $requestDate->copy();
+            try {
+                $requestDate = Carbon::parse($request['date']);
+                $date        = $requestDate->copy();
+            } catch (InvalidFormatException $exception) {
+                return redirect()->back()->withErrors('Something went wrong. Please reload the page, select a report to export and try again. If the problem persists, please contact support.');
+            }
         } else {
             //if the admin loads the page today, we need to display last night's report
             $date = Carbon::yesterday();

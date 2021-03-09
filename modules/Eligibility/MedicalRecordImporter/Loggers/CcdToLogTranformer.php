@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers;
 
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 
 class CcdToLogTranformer
 {
@@ -178,12 +179,12 @@ class CcdToLogTranformer
      *
      * @return array
      */
-    public function parseProviders($documentSection, $demographicsSection)
+    public function parseProviders($documentSection, $demographicsSection, int $practiceId)
     {
-        //Add them both together
-        array_push($documentSection->documentation_of, $documentSection->author);
+        $providers = collect($documentSection->documentation_of);
+        $providers->push($documentSection->author);
 
-        array_push($documentSection->documentation_of, $demographicsSection->provider);
+        $providers->push($demographicsSection->provider);
 
         $address         = new \stdClass();
         $address->street = [];
@@ -198,9 +199,34 @@ class CcdToLogTranformer
         $legalAuth->organization = '';
         $legalAuth->address      = $address;
 
-        array_push($documentSection->documentation_of, $legalAuth);
+        $providers->push($legalAuth);
 
-        return $documentSection->documentation_of;
+        return $providers->transform(function ($rawProviderData) {
+            $provider = $this->provider($rawProviderData);
+
+            if ( ! $provider['first_name'] && ! $provider['last_name']) {
+                return false;
+            }
+
+            return $provider;
+        })->filter()
+            ->unique(function ($provider) {
+              return "{$provider['first_name']} {$provider['last_name']}";
+          })->values()
+            ->sortByDesc(function ($provider) use ($practiceId) {
+              $providerName = "{$provider['first_name']} {$provider['last_name']}";
+
+              if (empty($providerName)) {
+                  return 0;
+              }
+              $provider = CcdaImporterWrapper::mysqlMatchProvider($providerName, $practiceId);
+
+              if ($provider) {
+                  return $provider->id;
+              }
+
+              return 0;
+          });
     }
 
     /**

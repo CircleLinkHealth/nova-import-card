@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Aws\Lambda\LambdaClient;
@@ -14,7 +18,6 @@ class WarmerHandler implements LambdaEventHandler
     /**
      * Handle an incoming Lambda event.
      *
-     * @param  array  $event
      * @param  \Laravel\Vapor\Contracts\LambdaResponse
      */
     public function handle(array $event)
@@ -37,21 +40,19 @@ class WarmerHandler implements LambdaEventHandler
     /**
      * Build the array of warmer invocation promises.
      *
-     * @param  \Aws\Lambda\LambdaClient  $lambda
-     * @param  array  $event
      * @return array
      */
     protected function buildPromises(LambdaClient $lambda, array $event)
     {
         return collect(range(1, $event['concurrency'] - 1))
-                ->mapWithKeys(function ($i) use ($lambda, $event) {
-                    return ['warmer-'.$i => $lambda->invokeAsync([
-                        'FunctionName' => $event['functionName'],
-                        'Qualifier' => $event['functionAlias'],
-                        'LogType' => 'None',
-                        'Payload' => json_encode(['vaporWarmerPing' => true]),
-                    ])];
-                })->all();
+            ->mapWithKeys(function ($i) use ($lambda, $event) {
+                return ['warmer-'.$i => $lambda->invokeAsync([
+                    'FunctionName' => $event['functionName'],
+                    'Qualifier'    => $event['functionAlias'],
+                    'LogType'      => 'None',
+                    'Payload'      => json_encode(['vaporWarmerPing' => true]),
+                ])];
+            })->all();
     }
 
     /**
@@ -62,10 +63,10 @@ class WarmerHandler implements LambdaEventHandler
     protected function lambdaClient()
     {
         return new LambdaClient([
-            'region' => $_ENV['AWS_DEFAULT_REGION'],
+            'region'  => $_ENV['AWS_DEFAULT_REGION'],
             'version' => 'latest',
-            'http' => [
-                'timeout' => 5,
+            'http'    => [
+                'timeout'         => 5,
                 'connect_timeout' => 5,
             ],
         ]);

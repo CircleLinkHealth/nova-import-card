@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Http\Request;
 use Laravel\Vapor\Runtime\HttpKernel;
 
-/**
+/*
  * Laravel - A PHP Framework For Web Artisans.
  *
  * @author   Taylor Otwell <taylor@laravel.com>
