@@ -16,7 +16,7 @@ APP_NAMES=$@
 
 if [[ -z $APP_NAMES ]]
 then
-    echo "Please provide specific App names. Please follow the apps directory format: {app-name}-app"
+    echo "Please provide specific App names. (As found in the monorepo apps directory, without the -app suffix)"
     exit 0
 fi
 
