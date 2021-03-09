@@ -14,16 +14,24 @@ fi
 
 appsArray=( $APPS )
 
-for i in "${appsArray[@]}";
+for appName in "${appsArray[@]}";
 
-do echo "$i";
+do echo "$appName";
+    APP_PATH="$PWD/apps/$appName-app"
 
+    (cd $APP_PATH && vapor env my-environment --docker)
+
+
+    DOCKER_FILE="IMPLEMENT APP NAME"
+
+    if [ -f "$APP_PATH/$DOCKER_FILE" ];
+    then
+        echo "$APP_PATH: DOCKER_FILE found!"
+    else
+      #make sure it exists - create from sample - to implement
+    fi
+
+
+    #check dockerfile was created
+    #pass prod file data inside as contents using cat
 done
-
-#take review-app-name
-#for admin and provider apps
-#check if env exists
-#if not create
-#create docker file.
-#vapor env my-environment --docker
-#or copy production docker file contents and put in new dockerfile using cat
