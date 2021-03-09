@@ -1,2 +1,2 @@
 #push using
-vapor env:push production
+#vapor env:push production
