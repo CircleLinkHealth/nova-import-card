@@ -97,7 +97,7 @@ class GeneratePracticePatientReport
     {
         $attested = $this->billingStatus->patientUser->attestedProblems->pluck('ccd_problem_id')->toArray();
 
-        $ccmProblems                = PatientProblemsForBillingProcessing::getForCodes($this->billingStatus->patient_user_id, [ChargeableService::CCM]);
+        $ccmProblems                = PatientProblemsForBillingProcessing::getForCodes($this->billingStatus->patient_user_id, [ChargeableService::CCM, ChargeableService::PCM, ChargeableService::GENERAL_CARE_MANAGEMENT]);
         $ccmProblemCodes            = $this->hasServiceCode(ChargeableService::RPM) ? $ccmProblems : $ccmProblems->filter(fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested));
         $result->ccmProblemCodes    = $this->formatProblemCodesForReport($ccmProblemCodes);
         $result->allCcmProblemCodes = $this->formatProblemCodesForReport($ccmProblems);
