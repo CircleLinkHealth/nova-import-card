@@ -88,7 +88,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             
             switch ($activeVersion) {
                 case 'v2':
-                    return new ConnectionV2($version, $key, $secret, $practiceId);
+                    return new ConnectionV2($version, $key, $secret);
                 case 'v1':
                     return new ConnectionV1($version, $key, $secret, $practiceId);
                 default:
