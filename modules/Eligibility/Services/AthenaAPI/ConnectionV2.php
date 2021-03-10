@@ -342,7 +342,8 @@ class ConnectionV2 implements AthenaApiConnection
     private function authenticate()
     {
         if ($this->cache()->has(self::ATHENA_CACHE_KEY)) {
-            return $this->cache()->get(self::ATHENA_CACHE_KEY);
+            $this->token = $this->cache()->get(self::ATHENA_CACHE_KEY);
+            return $this->token;
         }
         $ch = curl_init();
     
