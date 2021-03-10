@@ -7,8 +7,8 @@
 namespace App\Providers;
 
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
-use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\TwilioIntegration\Notifications\Channels\CustomTwilioChannel;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Auth;

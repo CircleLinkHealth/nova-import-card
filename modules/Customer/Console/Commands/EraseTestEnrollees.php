@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\Customer\Console\Commands;
 
-use App\Jobs\EraseTestEnrollees as EraseTestEnrolleesJob;
+use CircleLinkHealth\Customer\Jobs\EraseTestEnrollees as EraseTestEnrolleesJob;
 use Illuminate\Console\Command;
 
 class EraseTestEnrollees extends Command

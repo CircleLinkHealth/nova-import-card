@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\DTO;
+namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 /**
  * This value object refers to the row created by the makeRow() method in the PracticeReportsService class,

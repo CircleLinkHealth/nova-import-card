@@ -48,15 +48,12 @@ class InviteEnrolleesOnDemand extends Command
         Enrollee::with('user')
             ->whereNotNull('user_id')
             ->where('practice_id', $this->argument('practiceId'))
-            ->whereHas('user', function ($user){
-                $user->canSendSelfEnrollmentInvitation(true);
-            })
+            ->canSendSelfEnrollmentInvitation(true)
             ->whereNotNull('provider_id')
             ->when(! empty($enrolleeIds), function ($enrollees) use ($enrolleeIds){
                 $enrollees->whereIn('id', $enrolleeIds);
             })
             ->limit(intval($limit))
-            ->select('id')
             ->chunk(100, function ($enrollees) use ($manualInviteBatch){
                 $enrollees->each(function ($enrollee) use ($manualInviteBatch) {
                     $this->warn("Inviting enrollee {$enrollee->id}");
