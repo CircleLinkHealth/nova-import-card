@@ -363,7 +363,6 @@ class CallController extends Controller
             Patient::WITHDRAWN,
             Patient::WITHDRAWN_1ST_CALL,
             Patient::PAUSED,
-            Patient::UNREACHABLE,
         ])) {
             return [
                 'errors' => ["Patient has status {$patient->patientInfo->ccm_status}. Please change their status to enrolled before scheduling an activity."],
