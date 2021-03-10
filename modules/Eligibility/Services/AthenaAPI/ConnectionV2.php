@@ -77,20 +77,26 @@ class ConnectionV2 implements AthenaApiConnection
         $this->key        = $key;
         $this->secret     = $secret;
         $this->practiceid = $practiceid;
-        
-        $base_prefixes = [
-            'v1'           => "https://api.platform.athenahealth.com/v1/$practiceid",
-            'preview1'     => "https://api.preview.platform.athenahealth.com/v1/$practiceid",
-            'openpreview1' => 'ouathopenpreview/token',
-        ];
-        
-        $this->baseurl = $base_prefixes[$this->version];
-        
+    }
+    
+    public function getAuthUrl()
+    {
         $auth_prefixes = [
             'v1'           => 'https://api.platform.athenahealth.com/oauth2/v1/token',
             'preview1'     => 'https://api.preview.platform.athenahealth.com/oauth2/v1/token',
         ];
-        $this->authurl = $auth_prefixes[$this->version];
+        
+        return $auth_prefixes[$this->version];
+    }
+    
+    public function getBaseUrl() {
+        $base_prefixes = [
+            'v1'           => "https://api.platform.athenahealth.com/v1/{$this->practiceid}",
+            'preview1'     => "https://api.preview.platform.athenahealth.com/v1/{$this->practiceid}",
+            'openpreview1' => 'ouathopenpreview/token',
+        ];
+    
+        return $base_prefixes[$this->version];
     }
     
     /**
@@ -102,7 +108,7 @@ class ConnectionV2 implements AthenaApiConnection
      */
     public function DELETE($url, $parameters = null, $headers = null)
     {
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
         if ($parameters) {
             $new_url .= '?'.http_build_query($parameters);
         }
@@ -138,7 +144,7 @@ class ConnectionV2 implements AthenaApiConnection
         }
         
         // Join up a URL and add the parameters, since GET requests require parameters in the URL.
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
         if ($new_parameters) {
             $new_url .= '?'.http_build_query($new_parameters);
         }
@@ -182,7 +188,7 @@ class ConnectionV2 implements AthenaApiConnection
         }
         
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
         
         return $this->authorized_call('POST', $new_url, $new_parameters, $new_headers);
     }
@@ -210,7 +216,7 @@ class ConnectionV2 implements AthenaApiConnection
         }
         
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
         
         return $this->authorized_call('PUT', $new_url, $new_parameters, $new_headers);
     }
@@ -236,7 +242,7 @@ class ConnectionV2 implements AthenaApiConnection
         $headers,
         $secondcall = false
     ) {
-        $response = $this->authenticate();
+        $token = $this->authenticate();
     
         $auth_header = ['Authorization' => 'Bearer '.$this->token];
         $response    = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
@@ -340,7 +346,7 @@ class ConnectionV2 implements AthenaApiConnection
         }
         $ch = curl_init();
     
-        curl_setopt($ch, CURLOPT_URL, $this->authurl);
+        curl_setopt($ch, CURLOPT_URL, $this->getAuthUrl());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&scope=athena/service/Athenanet.MDP.*");
