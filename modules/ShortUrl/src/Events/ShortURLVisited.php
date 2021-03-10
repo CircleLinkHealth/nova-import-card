@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Events;
 
 use AshAllenDesign\ShortURL\Models\ShortURL;
@@ -10,7 +14,9 @@ use Illuminate\Queue\SerializesModels;
 
 class ShortURLVisited
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * The short URL that was visited.
@@ -28,13 +34,10 @@ class ShortURLVisited
 
     /**
      * Create a new event instance.
-     *
-     * @param  ShortURL  $shortURL
-     * @param  ShortURLVisit  $shortURLVisit
      */
     public function __construct(ShortURL $shortURL, ShortURLVisit $shortURLVisit)
     {
-        $this->shortURL = $shortURL;
+        $this->shortURL      = $shortURL;
         $this->shortURLVisit = $shortURLVisit;
     }
 }

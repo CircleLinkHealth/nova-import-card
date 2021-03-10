@@ -119,12 +119,12 @@ use Illuminate\Support\Collection;
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
  * @property int|null                                                                                         $all_chargeable_services_count
  * @property int                                                                                              $should_process
- * @method static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdThisMonth($field = 'created_at')
- * @method static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
- * @method static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
- * @method static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  * @property int                                                                                              $ccm_time_for_billable_ccm_cs
  */
 class PatientMonthlySummary extends BaseModel

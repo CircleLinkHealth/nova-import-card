@@ -16,13 +16,13 @@ use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
-use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 
 class AthenaCheckable implements Checkable
 {

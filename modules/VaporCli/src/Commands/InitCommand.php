@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -11,18 +15,6 @@ use Laravel\VaporCli\Path;
 
 class InitCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('init')
-            ->setDescription('Initialize a new project in the current directory');
-    }
-
     /**
      * Execute the command.
      *
@@ -64,15 +56,15 @@ class InitCommand extends Command
     }
 
     /**
-     * Initialize the account with a few basic entities if necessary.
+     * Configure the command options.
      *
      * @return void
      */
-    protected function initializeAccount()
+    protected function configure()
     {
-        if (empty($this->vapor->providers())) {
-            $this->call('provider');
-        }
+        $this
+            ->setName('init')
+            ->setDescription('Initialize a new project in the current directory');
     }
 
     /**
@@ -100,5 +92,17 @@ class InitCommand extends Command
             '.env.production',
             '.env.staging',
         ];
+    }
+
+    /**
+     * Initialize the account with a few basic entities if necessary.
+     *
+     * @return void
+     */
+    protected function initializeAccount()
+    {
+        if (empty($this->vapor->providers())) {
+            $this->call('provider');
+        }
     }
 }

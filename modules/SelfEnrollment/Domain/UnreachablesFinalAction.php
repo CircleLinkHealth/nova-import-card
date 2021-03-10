@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SelfEnrollment\Domain;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Services\EnrollmentInvitationService;
@@ -83,7 +83,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
             })->when($this->practiceId, function ($q) {
                 return $q->where('program_id', $this->practiceId);
             })->whereHas('enrollee', function ($q) {
-               $q->canSendSelfEnrollmentInvitation(false);
+                $q->canSendSelfEnrollmentInvitation(false);
             })
             ->uniquePatients()
             ->with('enrollee');

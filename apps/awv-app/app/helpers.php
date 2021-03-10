@@ -25,7 +25,7 @@ if ( ! function_exists('is_json')) {
     function is_json($string)
     {
         if ('' === $string || ! is_string($string)) {
-            return;
+            return null;
         }
 
         \json_decode($string);

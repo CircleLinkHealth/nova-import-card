@@ -1,23 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
 
 class CertValidateCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cert:validate')
-            ->setDescription('Resend the validation email for a certificate');
-    }
-
     /**
      * Execute the command.
      *
@@ -44,5 +36,17 @@ class CertValidateCommand extends Command
         Helpers::line();
         Helpers::line('You will receive a domain verification email within the next few minutes.');
         Helpers::line('Please approve the certificate by following the directions in the verification email.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cert:validate')
+            ->setDescription('Resend the validation email for a certificate');
     }
 }

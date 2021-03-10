@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Illuminate\Filesystem\Filesystem;
@@ -17,7 +21,7 @@ class ExtractVendorToSeparateDirectory
      */
     public function __invoke()
     {
-        if (! Manifest::shouldSeparateVendor($this->environment)) {
+        if ( ! Manifest::shouldSeparateVendor($this->environment)) {
             return;
         }
 

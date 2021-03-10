@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DatabaseDeleteProxyCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:delete-proxy')
-            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
-            ->setDescription('Delete the proxy associated to the database.');
-    }
-
     /**
      * Execute the command.
      *
@@ -31,7 +22,7 @@ class DatabaseDeleteProxyCommand extends Command
 
         $databases = $this->vapor->databases();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($databases, $databaseId);
         }
 
@@ -44,5 +35,18 @@ class DatabaseDeleteProxyCommand extends Command
         );
 
         Helpers::info('Database proxy deleted successfully.');
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:delete-proxy')
+            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
+            ->setDescription('Delete the proxy associated to the database.');
     }
 }

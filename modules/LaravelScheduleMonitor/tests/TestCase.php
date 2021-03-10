@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Tests;
 
 use CreateScheduleMonitorTables;
@@ -27,6 +31,22 @@ class TestCase extends Orchestra
         $this->withFactories(__DIR__.'/database/factories');
     }
 
+    public function getEnvironmentSetUp($app)
+    {
+        config()->set('schedule-monitor.oh_dear.api_token', 'oh-dear-test-token');
+        config()->set('schedule-monitor.oh_dear.site_id', 1);
+
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
+
+        include_once __DIR__.'/../database/migrations/create_schedule_monitor_tables.php.stub';
+        (new CreateScheduleMonitorTables())->up();
+    }
+
     protected function getPackageProviders($app)
     {
         return [
@@ -37,21 +57,5 @@ class TestCase extends Orchestra
     protected function resolveApplicationConsoleKernel($app)
     {
         $app->singleton(Kernel::class, TestKernel::class);
-    }
-
-    public function getEnvironmentSetUp($app)
-    {
-        config()->set('schedule-monitor.oh_dear.api_token', 'oh-dear-test-token');
-        config()->set('schedule-monitor.oh_dear.site_id', 1);
-
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-
-        include_once __DIR__ . '/../database/migrations/create_schedule_monitor_tables.php.stub';
-        (new CreateScheduleMonitorTables())->up();
     }
 }

@@ -69,6 +69,7 @@
     @endpush
 
     <div class="container">
+        @include('core::partials.errors.errors')
 {{--        Currently not in use, remove until and if needed--}}
 {{--        <div class="col-md-12">--}}
 {{--            @include('cpm-admin::admin.opsDashboard.panel')--}}

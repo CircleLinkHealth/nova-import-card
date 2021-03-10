@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\BuildProcess;
 
 use Laravel\VaporCli\ConsoleVaporClient;
@@ -21,7 +25,7 @@ class CollectSecrets
 
         $secrets = collect(
             Helpers::app(ConsoleVaporClient::class)
-                    ->secrets(Manifest::id(), $this->environment)
+                ->secrets(Manifest::id(), $this->environment)
         )->mapWithKeys(function ($secret) {
             return [$secret['name'] => $secret['version']];
         })->toArray();

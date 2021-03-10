@@ -21,10 +21,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon                       $created_at
  * @property \CircleLinkHealth\Customer\Entities\Patient|null $patient
  * @property \CircleLinkHealth\Customer\Entities\User|null    $patientUser
- * @method static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision newModelQuery()
- * @method static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision newQuery()
- * @method static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision ofDate(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate = null)
- * @method static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision query()
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision newModelQuery()
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision newQuery()
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision ofDate(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate = null)
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision query()
  * @mixin \Eloquent
  */
 class PatientCcmStatusRevision extends Model

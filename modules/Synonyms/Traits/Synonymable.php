@@ -13,7 +13,7 @@ trait Synonymable
     public function scopeWhereColumnOrSynonym($builder, $column, $synonym)
     {
         $builder->where(function ($q) use ($column, $synonym) {
-            $q->where('name', $synonym)
+            $q->where($column, $synonym)
                 ->orWhereHas('synonyms', function ($q) use ($column, $synonym) {
                     $q->where('column', $column)
                         ->where('synonym', $synonym);

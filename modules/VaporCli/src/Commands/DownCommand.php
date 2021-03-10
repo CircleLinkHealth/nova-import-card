@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Clipboard;
@@ -11,20 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 class DownCommand extends Command
 {
     use DisplaysDeploymentProgress;
-
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('down')
-            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
-            ->addOption('secret', null, InputOption::VALUE_REQUIRED, 'The secret phrase that may be used to bypass maintenance mode')
-            ->setDescription('Place an environment in maintenance mode');
-    }
 
     /**
      * Execute the command.
@@ -46,5 +36,19 @@ class DownCommand extends Command
         );
 
         Clipboard::deployment($deployment);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('down')
+            ->addArgument('environment', InputArgument::OPTIONAL, 'The environment name', 'staging')
+            ->addOption('secret', null, InputOption::VALUE_REQUIRED, 'The secret phrase that may be used to bypass maintenance mode')
+            ->setDescription('Place an environment in maintenance mode');
     }
 }

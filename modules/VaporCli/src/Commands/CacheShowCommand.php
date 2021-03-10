@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -9,19 +13,6 @@ use Symfony\Component\Console\Input\InputArgument;
 class CacheShowCommand extends Command
 {
     /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cache:show')
-            ->addArgument('cache', InputArgument::REQUIRED, 'The cache name / ID')
-            ->setDescription('Display the details of a cache');
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
@@ -30,7 +21,7 @@ class CacheShowCommand extends Command
     {
         Helpers::ensure_api_token_is_available();
 
-        if (! is_numeric($cacheId = $this->argument('cache'))) {
+        if ( ! is_numeric($cacheId = $this->argument('cache'))) {
             $cacheId = $this->findIdByName($this->vapor->caches(), $cacheId);
         }
 
@@ -63,5 +54,18 @@ class CacheShowCommand extends Command
         Helpers::line();
 
         $this->call('cache:metrics', ['cache' => $this->argument('cache')]);
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cache:show')
+            ->addArgument('cache', InputArgument::REQUIRED, 'The cache name / ID')
+            ->setDescription('Display the details of a cache');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Symfony\Component\Finder\Finder;
@@ -16,9 +20,9 @@ class BuiltApplicationFiles
     public static function get($path)
     {
         return (new Finder())
-                ->in($path)
-                ->files()
-                ->ignoreVcs(true)
-                ->ignoreDotFiles(false);
+            ->in($path)
+            ->files()
+            ->ignoreVcs(true)
+            ->ignoreDotFiles(false);
     }
 }

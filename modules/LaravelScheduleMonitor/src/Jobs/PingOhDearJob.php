@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -13,9 +17,11 @@ use Spatie\ScheduleMonitor\Support\OhDearPayload\OhDearPayloadFactory;
 
 class PingOhDearJob implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     public $deleteWhenMissingModels = true;
-
-    use Dispatchable, SerializesModels, InteractsWithQueue, Queueable;
 
     public MonitoredScheduledTaskLogItem $logItem;
 
@@ -30,7 +36,7 @@ class PingOhDearJob implements ShouldQueue
 
     public function handle()
     {
-        if (! $payload = OhDearPayloadFactory::createForLogItem($this->logItem)) {
+        if ( ! $payload = OhDearPayloadFactory::createForLogItem($this->logItem)) {
             return;
         }
 

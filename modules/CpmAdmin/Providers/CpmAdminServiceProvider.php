@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CpmAdmin\Providers;
 
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class CpmAdminServiceProvider extends ServiceProvider

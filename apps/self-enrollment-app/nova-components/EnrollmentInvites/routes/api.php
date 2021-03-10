@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvitationsController;
 use Illuminate\Support\Facades\Route;
 

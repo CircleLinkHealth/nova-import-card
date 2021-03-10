@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Tests;
 
 use Aws\Sqs\SqsClient;
@@ -18,20 +22,20 @@ class VaporQueueTest extends TestCase
     {
         $sqs = Mockery::mock(SqsClient::class);
 
-        $job = new FakeJob;
+        $job = new FakeJob();
 
         $sqs->shouldReceive('sendMessage')->once()->with([
-            'QueueUrl' => '/test-vapor-queue-url',
+            'QueueUrl'    => '/test-vapor-queue-url',
             'MessageBody' => json_encode([
                 'displayName' => FakeJob::class,
-                'job' => 'Illuminate\Queue\CallQueuedHandler@call',
-                'maxTries' => null,
-                'delay' => null,
-                'timeout' => null,
-                'timeoutAt' => null,
-                'data' => [
+                'job'         => 'Illuminate\Queue\CallQueuedHandler@call',
+                'maxTries'    => null,
+                'delay'       => null,
+                'timeout'     => null,
+                'timeoutAt'   => null,
+                'data'        => [
                     'commandName' => FakeJob::class,
-                    'command' => serialize($job),
+                    'command'     => serialize($job),
                 ],
                 'attempts' => 0,
             ]),

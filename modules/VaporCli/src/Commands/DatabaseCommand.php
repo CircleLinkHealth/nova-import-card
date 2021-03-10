@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\DatabaseInstanceClasses;
@@ -9,22 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class DatabaseCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database')
-            ->addArgument('name', InputArgument::REQUIRED, 'The name of the database')
-            ->addOption('public', null, InputOption::VALUE_NONE, 'Indicate that the database should be publicly accessible (with password)')
-            ->addOption('serverless', null, InputOption::VALUE_NONE, 'Indicate that a serverless Aurora database should be created')
-            ->addOption('dev', null, InputOption::VALUE_NONE, 'Create a small (db.t3.micro), public RDS instance')
-            ->setDescription('Create a new database');
-    }
-
     /**
      * Execute the command.
      *
@@ -44,7 +32,7 @@ class DatabaseCommand extends Command
 
         $public = $this->determineIfPublic();
 
-        if (! $public &&
+        if ( ! $public &&
             ! $this->networkHasNatGateway($networkId) &&
             ! Helpers::confirm('A private database will require Vapor to add a NAT gateway to your network (~32 / month). Would you like to proceed', true)) {
             Helpers::abort('Action cancelled.');
@@ -56,7 +44,7 @@ class DatabaseCommand extends Command
 
         $allocatedStorage = $this->determineAllocatedStorage($databaseType);
 
-        $pause = $databaseType == 'aurora-serverless' &&
+        $pause = 'aurora-serverless' == $databaseType &&
                  Helpers::confirm('To reduce your bill, should the database pause during periods of inactivity', false);
 
         $response = $this->vapor->createDatabase(
@@ -78,21 +66,45 @@ class DatabaseCommand extends Command
     }
 
     /**
-     * Determine if the database should be public.
+     * Configure the command options.
      *
-     * @return bool
+     * @return void
      */
-    protected function determineIfPublic()
+    protected function configure()
     {
-        if ($this->option('serverless')) {
-            return false;
+        $this
+            ->setName('database')
+            ->addArgument('name', InputArgument::REQUIRED, 'The name of the database')
+            ->addOption('public', null, InputOption::VALUE_NONE, 'Indicate that the database should be publicly accessible (with password)')
+            ->addOption('serverless', null, InputOption::VALUE_NONE, 'Indicate that a serverless Aurora database should be created')
+            ->addOption('dev', null, InputOption::VALUE_NONE, 'Create a small (db.t3.micro), public RDS instance')
+            ->setDescription('Create a new database');
+    }
+
+    /**
+     * Determine how much storage should be allocated to the database.
+     *
+     * @param string $type
+     *
+     * @return int
+     */
+    protected function determineAllocatedStorage($type)
+    {
+        if ('aurora-serverless' == $type) {
+            return;
         }
 
-        if ($this->option('public') || $this->option('dev')) {
-            return true;
+        if ($this->option('dev')) {
+            return 25;
         }
 
-        return Helpers::confirm('Should the database be publicly accessible (with password)', false);
+        $allocatedStorage = Helpers::ask('What is the maximum amount of storage that may be allocated to your database (between 25GB and 32768GB) ($0.115 / GB)', 100);
+
+        if ($allocatedStorage < 25 || $allocatedStorage > 32768) {
+            Helpers::abort('Maximum allocated storage must be between 25GB and 32TB.');
+        }
+
+        return $allocatedStorage;
     }
 
     /**
@@ -116,10 +128,28 @@ class DatabaseCommand extends Command
             'rds-pgsql'               => 'Fixed Size PostgreSQL Instance 10.7',
             'aurora-serverless-pgsql' => 'Serverless PostgreSQL Aurora Cluster',
         ]), function ($type) use ($public) {
-            if ($type == 'aurora-serverless' && $public) {
+            if ('aurora-serverless' == $type && $public) {
                 Helpers::abort('Aurora Serverless clusters may not be publicly accessible.');
             }
         });
+    }
+
+    /**
+     * Determine if the database should be public.
+     *
+     * @return bool
+     */
+    protected function determineIfPublic()
+    {
+        if ($this->option('serverless')) {
+            return false;
+        }
+
+        if ($this->option('public') || $this->option('dev')) {
+            return true;
+        }
+
+        return Helpers::confirm('Should the database be publicly accessible (with password)', false);
     }
 
     /**
@@ -135,14 +165,14 @@ class DatabaseCommand extends Command
             return 'db.t3.micro';
         }
 
-        if ($type == 'aurora-serverless') {
+        if ('aurora-serverless' == $type) {
             return;
         }
 
-        if ($type == 'rds'
-            || $type == 'rds-mysql-5.7'
-            || $type == 'rds-pgsql'
-            || $type == 'rds-pgsql-11.10') {
+        if ('rds' == $type
+            || 'rds-mysql-5.7' == $type
+            || 'rds-pgsql' == $type
+            || 'rds-pgsql-11.10' == $type) {
             return $this->determineRdsInstanceClass();
         }
     }
@@ -159,43 +189,17 @@ class DatabaseCommand extends Command
             'memory'  => 'Memory Optimized',
         ]);
 
-        if ($type == 'general') {
+        if ('general' == $type) {
             return $this->menu(
                 'How much performance does your database require?',
                 DatabaseInstanceClasses::general()
             );
-        } else {
-            return $this->menu(
-                'How much performance does your database require?',
-                DatabaseInstanceClasses::memory()
-            );
-        }
-    }
-
-    /**
-     * Determine how much storage should be allocated to the database.
-     *
-     * @param string $type
-     *
-     * @return int
-     */
-    protected function determineAllocatedStorage($type)
-    {
-        if ($type == 'aurora-serverless') {
-            return;
         }
 
-        if ($this->option('dev')) {
-            return 25;
-        }
-
-        $allocatedStorage = Helpers::ask('What is the maximum amount of storage that may be allocated to your database (between 25GB and 32768GB) ($0.115 / GB)', 100);
-
-        if ($allocatedStorage < 25 || $allocatedStorage > 32768) {
-            Helpers::abort('Maximum allocated storage must be between 25GB and 32TB.');
-        }
-
-        return $allocatedStorage;
+        return $this->menu(
+            'How much performance does your database require?',
+            DatabaseInstanceClasses::memory()
+        );
     }
 
     /**

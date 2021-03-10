@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Tests;
 
 use Laravel\Vapor\Runtime\Fpm\FpmRequest;
@@ -16,7 +20,7 @@ class FpmRequestTest extends TestCase
     public function test_query_string_is_decoded_for_elb_requests()
     {
         $request = FpmRequest::fromLambdaEvent([
-            'httpMethod' => 'GET',
+            'httpMethod'                      => 'GET',
             'multiValueQueryStringParameters' => [
                 'Host' => [$host = '2000-01-01%2000%3A00%3A00'],
             ],

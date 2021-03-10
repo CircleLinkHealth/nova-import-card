@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Spatie\ScheduleMonitor\Support\OhDearPayload\Payloads;
 
 use Illuminate\Support\Arr;
@@ -9,12 +13,7 @@ class FinishedPayload extends Payload
 {
     public static function canHandle(MonitoredScheduledTaskLogItem $logItem): bool
     {
-        return $logItem->type === MonitoredScheduledTaskLogItem::TYPE_FINISHED;
-    }
-
-    public function url()
-    {
-        return "{$this->baseUrl()}/finished";
+        return MonitoredScheduledTaskLogItem::TYPE_FINISHED === $logItem->type;
     }
 
     public function data(): array
@@ -24,5 +23,10 @@ class FinishedPayload extends Payload
             'exit_code',
             'memory',
         ]);
+    }
+
+    public function url()
+    {
+        return "{$this->baseUrl()}/finished";
     }
 }

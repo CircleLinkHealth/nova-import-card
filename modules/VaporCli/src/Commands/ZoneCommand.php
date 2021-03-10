@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class ZoneCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('zone')
-            ->addArgument('zone', InputArgument::REQUIRED, 'The zone name')
-            ->setDescription('Create a new DNS zone');
-    }
-
     /**
      * Execute the command.
      *
@@ -39,5 +30,18 @@ class ZoneCommand extends Command
         Helpers::info('Nameservers:');
         Helpers::line();
         Helpers::line(implode(PHP_EOL, $zone['nameservers']));
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('zone')
+            ->addArgument('zone', InputArgument::REQUIRED, 'The zone name')
+            ->setDescription('Create a new DNS zone');
     }
 }

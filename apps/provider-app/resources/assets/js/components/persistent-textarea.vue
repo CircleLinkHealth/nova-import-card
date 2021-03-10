@@ -24,7 +24,7 @@
 </template>
 
 <script>
-    import {sstor} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/stor'
+    import {sstor} from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/stor'
 
     export default {
         name: 'persistent-textarea',

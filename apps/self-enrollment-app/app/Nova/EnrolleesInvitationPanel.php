@@ -130,7 +130,7 @@ class EnrolleesInvitationPanel extends Resource
         $awvUserSurvey      = null;
         $enroleeHasLoggedIn = false;
         if ( ! is_null($this->resource->user)) {
-            $awvUserSurvey      = Helpers::awvUserSurveyQuery(new \CircleLinkHealth\SelfEnrollment\Entities\User($this->resource->user->toArray()), $surveyInstance)->first();
+            $awvUserSurvey      = Helpers::awvUserSurveyQuery(new \CircleLinkHealth\Customer\Entities\User($this->resource->user->toArray()), $surveyInstance)->first();
             $enroleeHasLoggedIn = $this->resource->user->loginEvents->isNotEmpty();
         }
 

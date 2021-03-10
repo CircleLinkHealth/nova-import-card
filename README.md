@@ -1,41 +1,12 @@
 # CPM Monorepo
 
+### Deployments
+[![Provider App - Staging](https://github.com/CircleLinkHealth/cpm-monorepo/actions/workflows/provider.yml/badge.svg)](https://github.com/CircleLinkHealth/cpm-monorepo/actions/workflows/provider.yml)
+
 ### How does it work?
 The monorepo is created by mirroring all CPM repositories into one, while maintaining references to the original repositories. Once we build the monorepo (see section "How to build the monorepo from scratch" below for how), we commit the outcome, and all further work happens on the monorepo. During development, we will commit all changes directly to the monorepo, and open a PR. When we're ready to make a release, we will run a command to write all our changes back to all the original repos. We also have the capability to merge changes from the original apps into the monorepo, but for an easier workflow let's make the monorepo the source of truth. The monorepo allows us to work with the entire CPM ecosystem in one state. This means that we should not expect any surprises in "Admin App" if say we deploy "Provider App" after having made changes to "Customer Module". Going forward, any module CLH maintains should live in the monorepo. This includes all languages. Each module's repository will be a read only instance of tags and versioned branches.
 
-### New workflow for pulling CLH Modules
-Instead of pulling modules using composer, we'll just copy them from the mono-repo as a step in the release command. To do that create a `monorepo-modules.txt` file in the root of your app, and include one module directory name per line as it appears in `cpm-monorepo/modules`. When we run the split command, the monorepo will copy the modules in directory `CircleLinkHealth` in the root of your project.
-
 **Make sure you only have the monorepo in PHPStorm's VCS settings otherwise things can go seriously wrong.**
-
-```
-// monorepo-modules.txt
-
-CcdaParser
-CcmBilling
-CerberusGatekeeper
-ConditionCodeLookup
-Core
-CpmAdmin
-CpmMigrations
-Customer
-Eligibility
-NurseInvoices
-PatientApi
-PdfService
-Raygun
-Revisionable
-SamlSp
-SelfEnrollment
-SharedModels
-SharedVueComponents
-SqlViews
-Synonyms
-Revisionable
-TimeTracking
-TwilioIntegration
-TwoFA
-```
 
 ### Getting Started
 1. Clone the monorepo locally
@@ -122,7 +93,7 @@ sh bin/release.sh release-release_feature_billing-revamp_mono billing_monorepo_t
 ### Available Scripts
 #### Run a shell command in an app
 ```bash
-sh bin/run.sh admin-app "php artisan module:make-migration TestMigration CpmMigrations"
+sh bin/run.sh superadmin-app "php artisan module:make-migration TestMigration CpmMigrations"
 ```
 ### Merging from separate repositories into the monorepo
 ```bash

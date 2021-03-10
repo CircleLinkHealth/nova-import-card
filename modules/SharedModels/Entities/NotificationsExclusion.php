@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property User                            $user
- * @method static                          \Illuminate\Database\Eloquent\Builder|NotificationsExclusion newModelQuery()
- * @method static                          \Illuminate\Database\Eloquent\Builder|NotificationsExclusion newQuery()
- * @method static                          \Illuminate\Database\Eloquent\Builder|NotificationsExclusion query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|NotificationsExclusion newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|NotificationsExclusion newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|NotificationsExclusion query()
  * @mixin \Eloquent
  * @property bool $sms
  * @property bool $mail

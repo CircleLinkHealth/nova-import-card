@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 8.29.0.
+ * Generated for Laravel 8.31.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -5148,7 +5148,7 @@
          * Register an event listener with the dispatcher.
          *
          * @param \Closure|string|array $events
-         * @param \Closure|string|null $listener
+         * @param \Closure|string|array|null $listener
          * @return void 
          * @static 
          */ 
@@ -6427,6 +6427,7 @@
      * @method static \Illuminate\Http\Client\PendingRequest bodyFormat(string $format)
      * @method static \Illuminate\Http\Client\PendingRequest contentType(string $contentType)
      * @method static \Illuminate\Http\Client\PendingRequest retry(int $times, int $sleep = 0)
+     * @method static \Illuminate\Http\Client\PendingRequest sink($to)
      * @method static \Illuminate\Http\Client\PendingRequest stub(callable $callback)
      * @method static \Illuminate\Http\Client\PendingRequest timeout(int $seconds)
      * @method static \Illuminate\Http\Client\PendingRequest withBasicAuth(string $username, string $password)
@@ -7749,7 +7750,7 @@
      * 
      *
      * @method static mixed reset(array $credentials, \Closure $callback)
-     * @method static string sendResetLink(array $credentials)
+     * @method static string sendResetLink(array $credentials, \Closure $callback = null)
      * @method static \Illuminate\Contracts\Auth\CanResetPassword getUser(array $credentials)
      * @method static string createToken(\Illuminate\Contracts\Auth\CanResetPassword $user)
      * @method static void deleteToken(\Illuminate\Contracts\Auth\CanResetPassword $user)
@@ -9886,7 +9887,7 @@
                         return $instance->getAcceptableContentTypes();
         }
                     /**
-         * Returns true if the request is a XMLHttpRequest.
+         * Returns true if the request is an XMLHttpRequest.
          * 
          * It works if your JavaScript library sets an X-Requested-With HTTP header.
          * It is known to work with common JavaScript frameworks:
@@ -17500,6 +17501,268 @@
      
 }
 
+    namespace Livewire { 
+            /**
+     * 
+     *
+     * @see \Livewire\LivewireManager
+     */ 
+        class Livewire {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function component($alias, $viewClass = null)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->component($alias, $viewClass);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getAlias($class, $default = null)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->getAlias($class, $default);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getClass($alias)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->getClass($alias);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getInstance($component, $id)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->getInstance($component, $id);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function mount($name, $params = [])
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->mount($name, $params);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function dummyMount($id, $tagName)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->dummyMount($id, $tagName);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function test($name, $params = [])
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->test($name, $params);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function visit($browser, $class, $queryString = '')
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->visit($browser, $class, $queryString);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function actingAs($user, $driver = null)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->actingAs($user, $driver);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function addPersistentMiddleware($middleware)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->addPersistentMiddleware($middleware);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setPersistentMiddleware($middleware)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->setPersistentMiddleware($middleware);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getPersistentMiddleware()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->getPersistentMiddleware();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function styles($options = [])
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->styles($options);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function scripts($options = [])
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->scripts($options);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function isLivewireRequest()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->isLivewireRequest();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function isDefinitelyLivewireRequest()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->isDefinitelyLivewireRequest();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function isProbablyLivewireRequest()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->isProbablyLivewireRequest();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function originalUrl()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->originalUrl();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function originalPath()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->originalPath();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function originalMethod()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->originalMethod();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getRootElementTagName($dom)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->getRootElementTagName($dom);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function dispatch($event, ...$params)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->dispatch($event, ...$params);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function listen($event, $callback)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->listen($event, $callback);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function isOnVapor()
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->isOnVapor();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function withQueryParams($queryParams)
+        {
+                        /** @var \Livewire\LivewireManager $instance */
+                        return $instance->withQueryParams($queryParams);
+        }
+         
+    }
+     
+}
+
     namespace Maatwebsite\Excel\Facades { 
             /**
      * 
@@ -18261,24 +18524,26 @@
          * Captures a message event and sends it to Sentry.
          *
          * @param string $message The message
-         * @param \Sentry\State\Severity $level The severity level of the message
+         * @param \Sentry\State\Severity|null $level The severity level of the message
+         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
-        public static function captureMessage($message, $level = null)
+        public static function captureMessage($message, $level = null, $hint = null)
         {
                         /** @var \Sentry\State\Hub $instance */
-                        return $instance->captureMessage($message, $level);
+                        return $instance->captureMessage($message, $level, $hint);
         }
                     /**
          * Captures an exception event and sends it to Sentry.
          *
          * @param \Throwable $exception The exception
+         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
-        public static function captureException($exception)
+        public static function captureException($exception, $hint = null)
         {
                         /** @var \Sentry\State\Hub $instance */
-                        return $instance->captureException($exception);
+                        return $instance->captureException($exception, $hint);
         }
                     /**
          * Captures a new event using the provided data.
@@ -18295,12 +18560,13 @@
                     /**
          * Captures an event that logs the last occurred error.
          *
+         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
-        public static function captureLastError()
+        public static function captureLastError($hint = null)
         {
                         /** @var \Sentry\State\Hub $instance */
-                        return $instance->captureLastError();
+                        return $instance->captureLastError($hint);
         }
                     /**
          * Records a new breadcrumb which will be attached to future events. They
@@ -18677,6 +18943,115 @@
         public static function emailVerification()
         {
                         return \Illuminate\Routing\Router::emailVerification();
+        }
+         
+    }
+     
+}
+
+    namespace Illuminate\Testing { 
+            /**
+     * 
+     *
+     * @mixin \Illuminate\Http\Response
+     */ 
+        class TestResponse {
+                    /**
+         * 
+         *
+         * @see \Livewire\LivewireServiceProvider::registerTestMacros()
+         * @param mixed $component
+         * @static 
+         */ 
+        public static function assertSeeLivewire($component)
+        {
+                        return \Illuminate\Testing\TestResponse::assertSeeLivewire($component);
+        }
+                    /**
+         * 
+         *
+         * @see \Livewire\LivewireServiceProvider::registerTestMacros()
+         * @param mixed $component
+         * @static 
+         */ 
+        public static function assertDontSeeLivewire($component)
+        {
+                        return \Illuminate\Testing\TestResponse::assertDontSeeLivewire($component);
+        }
+         
+    }
+     
+}
+
+    namespace Illuminate\View { 
+            /**
+     * 
+     *
+     */ 
+        class ComponentAttributeBag {
+                    /**
+         * 
+         *
+         * @see \Livewire\LivewireServiceProvider::registerViewMacros()
+         * @param mixed $name
+         * @static 
+         */ 
+        public static function wire($name)
+        {
+                        return \Illuminate\View\ComponentAttributeBag::wire($name);
+        }
+         
+    }
+            /**
+     * 
+     *
+     */ 
+        class View {
+                    /**
+         * 
+         *
+         * @see \Livewire\Macros\ViewMacros::extends()
+         * @param mixed $view
+         * @param mixed $params
+         * @static 
+         */ 
+        public static function extends($view, $params = [])
+        {
+                        return \Illuminate\View\View::extends($view, $params);
+        }
+                    /**
+         * 
+         *
+         * @see \Livewire\Macros\ViewMacros::layout()
+         * @param mixed $view
+         * @param mixed $params
+         * @static 
+         */ 
+        public static function layout($view, $params = [])
+        {
+                        return \Illuminate\View\View::layout($view, $params);
+        }
+                    /**
+         * 
+         *
+         * @see \Livewire\Macros\ViewMacros::section()
+         * @param mixed $section
+         * @static 
+         */ 
+        public static function section($section)
+        {
+                        return \Illuminate\View\View::section($section);
+        }
+                    /**
+         * 
+         *
+         * @see \Livewire\Macros\ViewMacros::slot()
+         * @param mixed $slot
+         * @static 
+         */ 
+        public static function slot($slot)
+        {
+                        return \Illuminate\View\View::slot($slot);
         }
          
     }
@@ -21992,6 +22367,7 @@ namespace  {
             class Nova extends \Laravel\Nova\Nova {}
             class Form extends \Collective\Html\FormFacade {}
             class Html extends \Collective\Html\HtmlFacade {}
+            class Livewire extends \Livewire\Livewire {}
             class Excel extends \Maatwebsite\Excel\Facades\Excel {}
             class Debouncer extends \Mpbarlow\LaravelQueueDebouncer\Facade\Debouncer {}
             class ScoutApm extends \Scoutapm\Laravel\Facades\ScoutApm {}

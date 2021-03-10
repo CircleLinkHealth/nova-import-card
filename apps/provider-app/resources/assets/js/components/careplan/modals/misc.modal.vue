@@ -22,11 +22,11 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import { rootUrl } from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config'
     import { Event } from 'vue-tables-2'
-    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
-    import EventBus from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import NotificationsComponent from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
+    import Modal from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/common/modal'
+    import EventBus from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import NotificationsComponent from '../../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based'
     import CareplanMixin from '../mixins/careplan.mixin'
     import DisableEditingMixin from '../mixins/disable-editing.mixin'
 

@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,18 +11,6 @@ use Laravel\VaporCli\Manifest;
 
 class EnvListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('env:list')
-            ->setDescription('List the environments for the project');
-    }
-
     /**
      * Execute the command.
      *
@@ -37,5 +29,17 @@ class EnvListCommand extends Command
                 'https://'.$environment['vanity_domain'],
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('env:list')
+            ->setDescription('List the environments for the project');
     }
 }

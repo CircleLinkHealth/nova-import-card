@@ -1,7 +1,7 @@
 git merge --strategy recursive --strategy-option subtree=apps/provider-app provider-app/master
 git merge --strategy recursive --strategy-option subtree=apps/provider-app provider-app/development
-git merge --strategy recursive --strategy-option subtree=apps/admin-app admin-app/master
-git merge --strategy recursive --strategy-option subtree=apps/admin-app admin-app/development
+git merge --strategy recursive --strategy-option subtree=apps/superadmin-app superadmin-app/master
+git merge --strategy recursive --strategy-option subtree=apps/superadmin-app superadmin-app/development
 git merge --strategy recursive --strategy-option subtree=apps/awv-app awv-app/master
 git merge --strategy recursive --strategy-option subtree=apps/awv-app awv-app/development
 git merge --strategy recursive --strategy-option subtree=apps/self-enrollment-app self-enrollment-app/master

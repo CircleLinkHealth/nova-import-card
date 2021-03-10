@@ -17,6 +17,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled;
 use CircleLinkHealth\Core\Http\Middleware\SentryContext;
 use CircleLinkHealth\Customer\Http\Middleware\PatientProgramSecurity;
+use CircleLinkHealth\Customer\PracticeSettings\Http\Middleware\ProviderDashboardACL;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -110,5 +111,6 @@ class Kernel extends HttpKernel
         'enrollmentCenter'       => EnrollmentCenter::class,
         'careAmbassadorAPI'      => CareAmbassadorAPI::class,
         'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
+        'providerDashboardACL'   => ProviderDashboardACL::class,
     ];
 }

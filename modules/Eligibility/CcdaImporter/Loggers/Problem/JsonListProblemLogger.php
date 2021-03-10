@@ -6,11 +6,17 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Loggers\Problem;
 
+use CircleLinkHealth\Core\Constants\Formats;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecord\Section\Logger;
 use CircleLinkHealth\Eligibility\DTO\Problem;
 
 class JsonListProblemLogger implements Logger
 {
+    public function expects()
+    {
+        return Formats::JSON;
+    }
+
     public function handle($problemsString): array
     {
 //        Expected format
@@ -21,13 +27,13 @@ class JsonListProblemLogger implements Logger
             return collect($problems['Problems'])
                 ->map(function ($problem) {
                     return Problem::create([
-                        'name'                   => $problem['Name'],
-                        'code'                   => $problem['Code'],
-                        'code_system_name'       => $problem['CodeType'],
+                        'name'                   => $problem['Name'] ?? null,
+                        'code'                   => $problem['Code'] ?? null,
+                        'code_system_name'       => $problem['CodeType'] ?? null,
                         'problem_code_system_id' => getProblemCodeSystemCPMId([$problem['CodeType'] ?? '']),
-                        'start'                  => $problem['AddedDate'],
-                        'end'                    => $problem['ResolveDate'],
-                        'status'                 => $problem['Status'],
+                        'start'                  => $problem['AddedDate'] ?? null,
+                        'end'                    => $problem['ResolveDate'] ?? null,
+                        'status'                 => $problem['Status'] ?? null,
                     ]);
                 })
                 ->filter()
@@ -40,12 +46,6 @@ class JsonListProblemLogger implements Logger
 
     public function shouldHandle($problems)
     {
-        $check = is_json($problems);
-
-//        if ($check === false) {
-//            throw new \Exception("The string contains invalid json. String: `$problemsString`");
-//        }
-
-        return (bool) $check;
+        return (bool) is_json($problems);
     }
 }

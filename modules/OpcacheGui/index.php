@@ -3,20 +3,17 @@
 namespace OpcacheGui;
 
 /**
- * OPcache GUI
+ * OPcache GUI.
  *
  * A simple but effective single-file GUI for the OPcache PHP extension.
  *
  * @author Andrew Collington, andy@amnuts.com
  * @version 2.4.0
- * @link https://github.com/amnuts/opcache-gui
+ * @see https://github.com/amnuts/opcache-gui
  * @license MIT, http://acollington.mit-license.org/
  */
 
-
-/*
- * User configuration
- */
+// User configuration
 
 $options = [
     'allow_filelist'   => true,          // show/hide the files tab
@@ -29,26 +26,23 @@ $options = [
     'charts'           => true,          // show gauge chart or just big numbers
     'debounce_rate'    => 250,           // milliseconds after key press to send keyup event when filtering
     'cookie_name'      => 'opcachegui',  // name of cookie
-    'cookie_ttl'       => 365            // days to store cookie
+    'cookie_ttl'       => 365,            // days to store cookie
 ];
 
-/*
- * Shouldn't need to alter anything else below here
- */
+// Shouldn't need to alter anything else below here
 
-if (!extension_loaded('Zend OPcache')) {
-    die('The Zend OPcache extension does not appear to be installed');
+if ( ! extension_loaded('Zend OPcache')) {
+    exit('The Zend OPcache extension does not appear to be installed');
 }
 
 $ocEnabled = ini_get('opcache.enable');
 if (empty($ocEnabled)) {
-    die('The Zend OPcache extension is installed but not turned on');
+    exit('The Zend OPcache extension is installed but not turned on');
 }
 
 class OpCacheService
 {
     protected $data;
-    protected $options;
     protected $defaults = [
         'allow_filelist'   => true,
         'allow_invalidate' => true,
@@ -60,97 +54,92 @@ class OpCacheService
         'charts'           => true,
         'debounce_rate'    => 250,
         'cookie_name'      => 'opcachegui',
-        'cookie_ttl'       => 365
+        'cookie_ttl'       => 365,
     ];
+    protected $options;
 
     private function __construct($options = [])
     {
         $this->options = array_merge($this->defaults, $options);
-        $this->data = $this->compileState();
+        $this->data    = $this->compileState();
+    }
+
+    public function canInvalidate()
+    {
+        return $this->getOption('allow_invalidate') && function_exists('opcache_invalidate');
+    }
+
+    public function getData($section = null, $property = null)
+    {
+        if (null === $section) {
+            return $this->data;
+        }
+        $section = strtolower($section);
+        if (isset($this->data[$section])) {
+            if (null === $property || ! isset($this->data[$section][$property])) {
+                return $this->data[$section];
+            }
+
+            return $this->data[$section][$property];
+        }
+
+        return null;
+    }
+
+    public function getOption($name = null)
+    {
+        if (null === $name) {
+            return $this->options;
+        }
+
+        return isset($this->options[$name])
+            ? $this->options[$name]
+            : null
+        ;
     }
 
     public static function init($options = [])
     {
         $self = new self($options);
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'
+        if ( ! empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && 'xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])
         ) {
             if (isset($_GET['reset']) && $self->getOption('allow_reset')) {
-                echo '{ "success": "' . ($self->resetCache() ? 'yes' : 'no') . '" }';
-            } else if (isset($_GET['invalidate']) && $self->getOption('allow_invalidate')) {
-                echo '{ "success": "' . ($self->resetCache($_GET['invalidate']) ? 'yes' : 'no') . '" }';
+                echo '{ "success": "'.($self->resetCache() ? 'yes' : 'no').'" }';
+            } elseif (isset($_GET['invalidate']) && $self->getOption('allow_invalidate')) {
+                echo '{ "success": "'.($self->resetCache($_GET['invalidate']) ? 'yes' : 'no').'" }';
             } else {
                 echo json_encode($self->getData((empty($_GET['section']) ? null : $_GET['section'])));
             }
             exit;
-        } else if (isset($_GET['reset']) && $self->getOption('allow_reset')) {
+        }
+        if (isset($_GET['reset']) && $self->getOption('allow_reset')) {
             $self->resetCache();
             header('Location: ?');
             exit;
-        } else if (isset($_GET['invalidate']) && $self->getOption('allow_invalidate')) {
+        }
+        if (isset($_GET['invalidate']) && $self->getOption('allow_invalidate')) {
             $self->resetCache($_GET['invalidate']);
             header('Location: ?');
             exit;
         }
+
         return $self;
-    }
-
-    public function getOption($name = null)
-    {
-        if ($name === null) {
-            return $this->options;
-        }
-        return (isset($this->options[$name])
-            ? $this->options[$name]
-            : null
-        );
-    }
-
-    public function getData($section = null, $property = null)
-    {
-        if ($section === null) {
-            return $this->data;
-        }
-        $section = strtolower($section);
-        if (isset($this->data[$section])) {
-            if ($property === null || !isset($this->data[$section][$property])) {
-                return $this->data[$section];
-            }
-            return $this->data[$section][$property];
-        }
-        return null;
-    }
-
-    public function canInvalidate()
-    {
-        return ($this->getOption('allow_invalidate') && function_exists('opcache_invalidate'));
     }
 
     public function resetCache($file = null)
     {
         $success = false;
-        if ($file === null) {
+        if (null === $file) {
             $success = opcache_reset();
-        } else if (function_exists('opcache_invalidate')) {
+        } elseif (function_exists('opcache_invalidate')) {
             $success = opcache_invalidate(urldecode($file), true);
         }
         if ($success) {
             $this->compileState();
         }
-        return $success;
-    }
 
-    protected function size($size)
-    {
-        $i = 0;
-        $val = array('b', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-        while (($size / 1024) > 1) {
-            $size /= 1024;
-            ++$i;
-        }
-        return sprintf('%.'.$this->getOption('size_precision').'f%s%s',
-            $size, ($this->getOption('size_space') ? ' ' : ''), $val[$i]
-        );
+        return $success;
     }
 
     protected function compileState()
@@ -159,28 +148,31 @@ class OpCacheService
         $config = opcache_get_configuration();
 
         $files = [];
-        if (!empty($status['scripts']) && $this->getOption('allow_filelist')) {
-            uasort($status['scripts'], function($a, $b) {
+        if ( ! empty($status['scripts']) && $this->getOption('allow_filelist')) {
+            uasort($status['scripts'], function ($a, $b) {
                 return $a['hits'] < $b['hits'];
             });
             foreach ($status['scripts'] as &$file) {
                 $file['full_path'] = str_replace('\\', '/', $file['full_path']);
-                $file['readable'] = [
+                $file['readable']  = [
                     'hits'               => number_format($file['hits']),
-                    'memory_consumption' => $this->size($file['memory_consumption'])
+                    'memory_consumption' => $this->size($file['memory_consumption']),
                 ];
             }
             $files = array_values($status['scripts']);
         }
 
         $overview = array_merge(
-            $status['memory_usage'], $status['opcache_statistics'], [
-                'used_memory_percentage'  => round(100 * (
-                        ($status['memory_usage']['used_memory'] + $status['memory_usage']['wasted_memory'])
-                        / $config['directives']['opcache.memory_consumption'])),
-                'hit_rate_percentage'     => round($status['opcache_statistics']['opcache_hit_rate']),
-                'wasted_percentage'       => round($status['memory_usage']['current_wasted_percentage'], 2),
-                'readable' => [
+            $status['memory_usage'],
+            $status['opcache_statistics'],
+            [
+                'used_memory_percentage' => round(100 * (
+                    ($status['memory_usage']['used_memory'] + $status['memory_usage']['wasted_memory'])
+                        / $config['directives']['opcache.memory_consumption']
+                )),
+                'hit_rate_percentage' => round($status['opcache_statistics']['opcache_hit_rate']),
+                'wasted_percentage'   => round($status['memory_usage']['current_wasted_percentage'], 2),
+                'readable'            => [
                     'total_memory'       => $this->size($config['directives']['opcache.memory_consumption']),
                     'used_memory'        => $this->size($status['memory_usage']['used_memory']),
                     'free_memory'        => $this->size($status['memory_usage']['free_memory']),
@@ -193,20 +185,21 @@ class OpCacheService
                     'max_cached_keys'    => number_format($status['opcache_statistics']['max_cached_keys']),
                     'interned'           => null,
                     'start_time'         => date('Y-m-d H:i:s', $status['opcache_statistics']['start_time']),
-                    'last_restart_time'  => ($status['opcache_statistics']['last_restart_time'] == 0
+                    'last_restart_time'  => (
+                        0 == $status['opcache_statistics']['last_restart_time']
                             ? 'never'
                             : date('Y-m-d H:i:s', $status['opcache_statistics']['last_restart_time'])
-                        )
-                ]
+                    ),
+                ],
             ]
         );
 
-        if (!empty($status['interned_strings_usage'])) {
+        if ( ! empty($status['interned_strings_usage'])) {
             $overview['readable']['interned'] = [
-                'buffer_size' => $this->size($status['interned_strings_usage']['buffer_size']),
+                'buffer_size'         => $this->size($status['interned_strings_usage']['buffer_size']),
                 'strings_used_memory' => $this->size($status['interned_strings_usage']['used_memory']),
                 'strings_free_memory' => $this->size($status['interned_strings_usage']['free_memory']),
-                'number_of_strings' => number_format($status['interned_strings_usage']['number_of_strings'])
+                'number_of_strings'   => number_format($status['interned_strings_usage']['number_of_strings']),
             ];
         }
 
@@ -221,15 +214,18 @@ class OpCacheService
             [
                 'php'    => phpversion(),
                 'server' => empty($_SERVER['SERVER_SOFTWARE']) ? '' : $_SERVER['SERVER_SOFTWARE'],
-                'host'   => (function_exists('gethostname')
+                'host'   => (
+                    function_exists('gethostname')
                     ? gethostname()
-                    : (php_uname('n')
-                        ?: (empty($_SERVER['SERVER_NAME'])
+                    : (
+                        php_uname('n')
+                        ?: (
+                            empty($_SERVER['SERVER_NAME'])
                             ? $_SERVER['HOST_NAME']
                             : $_SERVER['SERVER_NAME']
                         )
                     )
-                )
+                ),
             ]
         );
 
@@ -239,8 +235,25 @@ class OpCacheService
             'files'      => $files,
             'directives' => $directives,
             'blacklist'  => $config['blacklist'],
-            'functions'  => get_extension_funcs('Zend OPcache')
+            'functions'  => get_extension_funcs('Zend OPcache'),
         ];
+    }
+
+    protected function size($size)
+    {
+        $i   = 0;
+        $val = ['b', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        while (($size / 1024) > 1) {
+            $size /= 1024;
+            ++$i;
+        }
+
+        return sprintf(
+            '%.'.$this->getOption('size_precision').'f%s%s',
+            $size,
+            ($this->getOption('size_space') ? ' ' : ''),
+            $val[$i]
+        );
     }
 }
 
@@ -343,15 +356,15 @@ $opcache = OpCacheService::init($options);
     <nav>
         <ul>
             <li><a data-for="overview" href="#overview" class="active">Overview</a></li>
-            <?php if ($opcache->getOption('allow_filelist')): ?>
+            <?php if ($opcache->getOption('allow_filelist')) { ?>
             <li><a data-for="files" href="#files">File usage</a></li>
-            <?php endif; ?>
-            <?php if ($opcache->getOption('allow_reset')): ?>
+            <?php } ?>
+            <?php if ($opcache->getOption('allow_reset')) { ?>
             <li><a href="?reset=1" id="resetCache" onclick="return confirm('Are you sure you want to reset the cache?');">Reset cache</a></li>
-            <?php endif; ?>
-            <?php if ($opcache->getOption('allow_realtime')): ?>
+            <?php } ?>
+            <?php if ($opcache->getOption('allow_realtime')) { ?>
             <li><a href="#" id="toggleRealtime">Enable real-time update</a></li>
-            <?php endif; ?>
+            <?php } ?>
         </ul>
     </nav>
 </header>
@@ -369,9 +382,9 @@ $opcache = OpCacheService::init($options);
                             <tr><th>Available functions</th></tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($opcache->getData('functions') as $func): ?>
+                            <?php foreach ($opcache->getData('functions') as $func) { ?>
                             <tr><td><a href="http://php.net/<?php echo $func; ?>" title="View manual page" target="_blank"><?php echo $func; ?></a></td></tr>
-                            <?php endforeach; ?>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -380,12 +393,12 @@ $opcache = OpCacheService::init($options);
         </div>
     </div>
     <div id="files">
-        <?php if ($opcache->getOption('allow_filelist')): ?>
+        <?php if ($opcache->getOption('allow_filelist')) { ?>
         <form action="#">
             <label for="frmFilter">Start typing to filter on script path</label><br>
             <input type="text" name="filter" id="frmFilter">
         </form>
-        <?php endif; ?>
+        <?php } ?>
         <div class="container" id="filelist"></div>
     </div>
 </div>
@@ -430,7 +443,7 @@ $opcache = OpCacheService::init($options);
         });
         $('#filelist table tbody').trigger('paint');
     };
-    <?php if ($opcache->getOption('charts')): ?>
+    <?php if ($opcache->getOption('charts')) { ?>
     var Gauge = function(el, colour) {
         this.canvas  = $(el).get(0);
         this.ctx     = this.canvas.getContext('2d');
@@ -481,23 +494,23 @@ $opcache = OpCacheService::init($options);
             this.draw();
         };
     }
-    <?php endif; ?>
+    <?php } ?>
 
     $(function(){
-        <?php if ($opcache->getOption('allow_realtime')): ?>
+        <?php if ($opcache->getOption('allow_realtime')) { ?>
         function setCookie() {
             var d = new Date();
             var secure = (window.location.protocol === 'https:' ? ';secure' : '');
-            d.setTime(d.getTime() + (<?php echo ($opcache->getOption('cookie_ttl')); ?> * 86400000));
+            d.setTime(d.getTime() + (<?php echo $opcache->getOption('cookie_ttl'); ?> * 86400000));
             var expires = "expires="+d.toUTCString();
-            document.cookie = "<?php echo ($opcache->getOption('cookie_name')); ?>=true;" + expires + ";path=/" + secure;
+            document.cookie = "<?php echo $opcache->getOption('cookie_name'); ?>=true;" + expires + ";path=/" + secure;
         };
         function removeCookie() {
             var secure = (window.location.protocol === 'https:' ? ';secure' : '');
-            document.cookie = "<?php echo ($opcache->getOption('cookie_name')); ?>=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/" + secure;
+            document.cookie = "<?php echo $opcache->getOption('cookie_name'); ?>=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/" + secure;
         };
         function getCookie() {
-            var v = document.cookie.match('(^|;) ?<?php echo ($opcache->getOption('cookie_name')); ?>=([^;]*)(;|$)');
+            var v = document.cookie.match('(^|;) ?<?php echo $opcache->getOption('cookie_name'); ?>=([^;]*)(;|$)');
             return v ? v[2] : null;
         };
         function updateStatus() {
@@ -528,7 +541,7 @@ $opcache = OpCacheService::init($options);
         }
         $('#toggleRealtime').click(function(){
             if (realtime === false) {
-                realtime = setInterval(function(){updateStatus()}, <?php echo (int)$opcache->getOption('refresh_time') * 1000; ?>);
+                realtime = setInterval(function(){updateStatus()}, <?php echo (int) $opcache->getOption('refresh_time') * 1000; ?>);
                 $(this).text('Disable real-time update');
                 setCookie();
             } else {
@@ -539,10 +552,10 @@ $opcache = OpCacheService::init($options);
             }
         });
         if (getCookie() == 'true') {
-            realtime = setInterval(function(){updateStatus()}, <?php echo (int)$opcache->getOption('refresh_time') * 1000; ?>);
+            realtime = setInterval(function(){updateStatus()}, <?php echo (int) $opcache->getOption('refresh_time') * 1000; ?>);
             $('#toggleRealtime').text('Disable real-time update');
         }
-        <?php endif; ?>
+        <?php } ?>
         $('nav a[data-for]').click(function(){
             $('#tabs > div').hide();
             $('#' + $(this).data('for')).show();

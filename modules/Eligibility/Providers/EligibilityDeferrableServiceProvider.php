@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Providers;
 
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
-use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
@@ -21,7 +20,8 @@ use CircleLinkHealth\Eligibility\Console\RestoreEnrolleeProvidersFromRevisions;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV1;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV2;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,7 +40,6 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             AthenaApiConnection::class,
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,
@@ -62,7 +61,6 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
         $this->commands([
             AutoPullEnrolleesFromAthena::class,
             CreatePCMListForCommonWealth::class,
-            FixBatch235::class,
             GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,
@@ -79,11 +77,15 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
         });
 
         $this->app->singleton(AthenaApiConnection::class, function () {
-            $key = config('services.athena.key');
-            $secret = config('services.athena.secret');
-            $version = config('services.athena.version');
-
-            return new Connection($version, $key, $secret);
+            $activeVersion = config('services.athena.active_version');
+            
+            $prefix = "services.athena.$activeVersion";
+            
+            $key = config("$prefix.key");
+            $secret = config("$prefix.secret");
+            $version = config("$prefix.version");
+            
+            return new ConnectionV2($version, $key, $secret);
         });
     }
 }

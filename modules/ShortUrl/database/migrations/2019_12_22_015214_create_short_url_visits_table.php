@@ -1,11 +1,25 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateShortUrlVisitsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('short_url_visits');
+    }
+
     /**
      * Run the migrations.
      *
@@ -26,15 +40,5 @@ class CreateShortUrlVisitsTable extends Migration
 
             $table->foreign('short_url_id')->references('id')->on('short_urls')->onDelete('cascade');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('short_url_visits');
     }
 }

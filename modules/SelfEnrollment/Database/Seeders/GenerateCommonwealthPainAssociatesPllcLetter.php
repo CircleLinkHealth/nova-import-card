@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\App;
 
 class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 {
+    const COMMON_WEALTH_NAME      = 'commonwealth-pain-associates-pllc';
     const PRACTICE_SIGNATORY_NAME = 'Jeff Ellison <br> Chief Operating Officer';
-    const COMMON_WEALTH_NAME = 'commonwealth-pain-associates-pllc';
 
     /**
      * Run the database seeds.

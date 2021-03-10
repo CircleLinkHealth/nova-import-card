@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Symfony\Component\Process\Process;
@@ -19,6 +23,16 @@ class Git
     }
 
     /**
+     * Determine if the Git status of the project is clean.
+     *
+     * @return bool
+     */
+    public static function isClean()
+    {
+        return empty(static::command('git status -s'));
+    }
+
+    /**
      * Get the Git current commit message for the project.
      *
      * @return string
@@ -28,16 +42,6 @@ class Git
         if (static::isClean()) {
             return static::command("git log --pretty=format:'%s' -n 1");
         }
-    }
-
-    /**
-     * Determine if the Git status of the project is clean.
-     *
-     * @return bool
-     */
-    public static function isClean()
-    {
-        return empty(static::command('git status -s'));
     }
 
     /**

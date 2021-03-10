@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Console\Commands;
 
 use Illuminate\Contracts\Queue\Job;
@@ -34,7 +38,6 @@ trait WritesQueueEventMessages
     /**
      * Write the status output for the queue worker.
      *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
      * @param  string $status
      * @return void
      */
@@ -53,16 +56,16 @@ trait WritesQueueEventMessages
     /**
      * Format the status output for the queue worker.
      *
-     * @param  \Illuminate\Contracts\Queue\Job  $job
-     * @param  string  $status
-     * @param  string  $type
+     * @param  string $status
+     * @param  string $type
      * @return void
      */
     protected function writeStatus(Job $job, $status, $type)
     {
         $this->output->writeln(sprintf(
             "<{$type}>%s</{$type}> %s",
-            str_pad("{$status}:", 11), $job->resolveName()
+            str_pad("{$status}:", 11),
+            $job->resolveName()
         ));
     }
 }

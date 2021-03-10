@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor;
 
 use Illuminate\Support\Facades\Config;
@@ -13,29 +17,29 @@ trait ConfiguresRedis
      */
     protected function ensureRedisIsConfigured()
     {
-        if (! isset($_ENV['VAPOR_CACHE']) || $_ENV['VAPOR_CACHE'] !== 'true') {
+        if ( ! isset($_ENV['VAPOR_CACHE']) || 'true' !== $_ENV['VAPOR_CACHE']) {
             return;
         }
 
         Config::set('database.redis', [
-            'client' => $_ENV['REDIS_CLIENT'] ?? 'phpredis',
+            'client'  => $_ENV['REDIS_CLIENT'] ?? 'phpredis',
             'options' => array_merge(Config::get('database.redis.options', []), [
                 'cluster' => $_ENV['REDIS_CLUSTER'] ?? 'redis',
             ]),
             'clusters' => array_merge(Config::get('database.redis.clusters', []), [
                 'default' => [
                     [
-                        'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+                        'host'     => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
                         'password' => null,
-                        'port' => 6379,
+                        'port'     => 6379,
                         'database' => 0,
                     ],
                 ],
                 'cache' => [
                     [
-                        'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+                        'host'     => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
                         'password' => null,
-                        'port' => 6379,
+                        'port'     => 6379,
                         'database' => 0,
                     ],
                 ],

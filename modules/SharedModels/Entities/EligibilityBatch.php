@@ -11,7 +11,6 @@ use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\EligibilityBatch.
@@ -30,19 +29,19 @@ use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
  * @property \CircleLinkHealth\Customer\Entities\User                                                          $initiatorUser
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                 $practice
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection       $revisionHistory
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch newModelQuery()
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch newQuery()
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch query()
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereCreatedAt($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereDeletedAt($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereId($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereInitiatorId($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereOptions($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch wherePracticeId($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereStats($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereStatus($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereType($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereUpdatedAt($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch newModelQuery()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch newQuery()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch query()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereCreatedAt($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereDeletedAt($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereInitiatorId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereOptions($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch wherePracticeId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereStats($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereStatus($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereType($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
@@ -278,14 +277,14 @@ class EligibilityBatch extends BaseModel
         return route('eligibility.batch.show', [$this->id]);
     }
 
-    public function practice()
-    {
-        return $this->belongsTo(Practice::class);
-    }
-
     public function orchestratePendingJobsProcessing($pageSize = 100, $onQueue = CpmConstants::LOW_QUEUE)
     {
         return (new ProcessPendingEligibilityJobs($this->id))->splitToBatches($pageSize);
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
     }
 
     /**

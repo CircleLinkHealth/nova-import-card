@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Fpm;
 
 use Laravel\Vapor\Contracts\LambdaResponse;
@@ -8,20 +12,6 @@ use stdClass;
 class FpmLambdaResponse implements LambdaResponse
 {
     /**
-     * The response status code.
-     *
-     * @var int
-     */
-    protected $statusCode = 200;
-
-    /**
-     * The response headers.
-     *
-     * @var array
-     */
-    protected $headers;
-
-    /**
      * The response body.
      *
      * @var string
@@ -29,17 +19,28 @@ class FpmLambdaResponse implements LambdaResponse
     protected $body;
 
     /**
+     * The response headers.
+     *
+     * @var array
+     */
+    protected $headers;
+    /**
+     * The response status code.
+     *
+     * @var int
+     */
+    protected $statusCode = 200;
+
+    /**
      * Create a new Lambda response from an FPM response.
      *
-     * @param  int  $status
-     * @param  array  $headers
-     * @param  string  $body
+     * @param  string $body
      * @return void
      */
     public function __construct(int $status, array $headers, $body)
     {
-        $this->body = $body;
-        $this->status = $status;
+        $this->body    = $body;
+        $this->status  = $status;
         $this->headers = $headers;
     }
 
@@ -54,47 +55,15 @@ class FpmLambdaResponse implements LambdaResponse
 
         return [
             'isBase64Encoded' => $requiresEncoding,
-            'statusCode' => $this->status,
-            'headers' => empty($this->headers) ? new stdClass : $this->prepareHeaders($this->headers),
-            'body' => $requiresEncoding ? base64_encode($this->body) : $this->body,
+            'statusCode'      => $this->status,
+            'headers'         => empty($this->headers) ? new stdClass() : $this->prepareHeaders($this->headers),
+            'body'            => $requiresEncoding ? base64_encode($this->body) : $this->body,
         ];
-    }
-
-    /**
-     * Prepare the given response headers for API Gateway.
-     *
-     * @param  array  $responseHeaders
-     * @return array
-     */
-    protected function prepareHeaders(array $responseHeaders)
-    {
-        $headers = [];
-
-        foreach ($responseHeaders as $name => $values) {
-            $name = $this->normalizeHeaderName($name);
-
-            if ($name == 'Set-Cookie') {
-                $headers = array_merge($headers, $this->buildCookieHeaders($values));
-
-                continue;
-            }
-
-            foreach ($values as $value) {
-                $headers[$name] = $value;
-            }
-        }
-
-        if (! isset($headers['Content-Type'])) {
-            $headers['Content-Type'] = 'text/html';
-        }
-
-        return $headers;
     }
 
     /**
      * Build the Set-Cookie header names using binary casing.
      *
-     * @param  array  $values
      * @return array
      */
     protected function buildCookieHeaders(array $values)
@@ -111,7 +80,7 @@ class FpmLambdaResponse implements LambdaResponse
     /**
      * Calculate the permutation of Set-Cookie for the current index.
      *
-     * @param  int  $index
+     * @param  int    $index
      * @return string
      */
     protected function cookiePermutation($index)
@@ -162,11 +131,41 @@ class FpmLambdaResponse implements LambdaResponse
     /**
      * Normalize the given header name into studly-case.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return string
      */
     protected function normalizeHeaderName($name)
     {
         return str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
+    }
+
+    /**
+     * Prepare the given response headers for API Gateway.
+     *
+     * @return array
+     */
+    protected function prepareHeaders(array $responseHeaders)
+    {
+        $headers = [];
+
+        foreach ($responseHeaders as $name => $values) {
+            $name = $this->normalizeHeaderName($name);
+
+            if ('Set-Cookie' == $name) {
+                $headers = array_merge($headers, $this->buildCookieHeaders($values));
+
+                continue;
+            }
+
+            foreach ($values as $value) {
+                $headers[$name] = $value;
+            }
+        }
+
+        if ( ! isset($headers['Content-Type'])) {
+            $headers['Content-Type'] = 'text/html';
+        }
+
+        return $headers;
     }
 }

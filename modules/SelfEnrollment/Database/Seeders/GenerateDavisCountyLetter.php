@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\App;
 
 class GenerateDavisCountyLetter extends Seeder
 {
+    const DAVIS_PRACTICE_NAME     = 'davis-county';
     const PRACTICE_SIGNATORY_NAME = 'Robert D Floyd, DO <br> Davis County Medical Associates, Medical Director';
-    const DAVIS_PRACTICE_NAME = 'davis-county';
 
     /**
      * Run the database seeds.

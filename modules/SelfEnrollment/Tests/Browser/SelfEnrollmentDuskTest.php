@@ -7,14 +7,14 @@
 namespace CircleLinkHealth\SelfEnrollment\Tests\Browser;
 
 use AshAllenDesign\ShortURL\Models\ShortURL;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
-use CircleLinkHealth\SelfEnrollment\Domain\InvitePracticeEnrollees;
-use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
-use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Tests\DuskTestCase;
 use CircleLinkHealth\Customer\Tests\Helpers\CustomerTestCaseHelper;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\PrepareDataForReEnrollmentTestSeeder;
+use CircleLinkHealth\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 
 class SelfEnrollmentDuskTest extends DuskTestCase
 {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Runtime\Handlers;
 
 use Laravel\Vapor\Runtime\Fpm\LoadBalancedFpmLambdaResponse;
@@ -9,7 +13,7 @@ class LoadBalancedFpmHandler extends FpmHandler
     /**
      * Covert FPM response to Lambda-ready response.
      *
-     * @param  \Laravel\Vapor\Runtime\Fpm\FpmResponse  $fpmResponse
+     * @param  \Laravel\Vapor\Runtime\Fpm\FpmResponse       $fpmResponse
      * @return \Laravel\Vapor\Runtime\Fpm\FpmLambdaResponse
      */
     public function response($fpmResponse)

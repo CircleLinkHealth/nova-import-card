@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\Vapor\Queue;
 
 use Aws\Sqs\SqsClient;
@@ -11,7 +15,6 @@ class VaporConnector implements ConnectorInterface
     /**
      * Establish a queue connection.
      *
-     * @param  array  $config
      * @return \Illuminate\Contracts\Queue\Queue
      */
     public function connect(array $config)
@@ -33,15 +36,14 @@ class VaporConnector implements ConnectorInterface
     /**
      * Get the default configuration for SQS.
      *
-     * @param  array  $config
      * @return array
      */
     protected function getDefaultConfiguration(array $config)
     {
         return array_merge([
             'version' => 'latest',
-            'http' => [
-                'timeout' => 60,
+            'http'    => [
+                'timeout'         => 60,
                 'connect_timeout' => 60,
             ],
         ], $config);

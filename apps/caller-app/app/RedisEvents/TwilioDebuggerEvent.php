@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\RedisEvents;
 
@@ -8,11 +11,12 @@ use Illuminate\Support\Facades\Redis;
 
 class TwilioDebuggerEvent
 {
-    const CHANNEL = "twillio-debugger-log-created";
+    const CHANNEL = 'twillio-debugger-log-created';
     private $id;
 
     /**
      * TwilioDebuggerEvent constructor.
+     * @param mixed $id
      */
     public function __construct($id)
     {
@@ -26,6 +30,5 @@ class TwilioDebuggerEvent
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
         }
-
     }
 }

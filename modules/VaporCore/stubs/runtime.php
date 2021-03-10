@@ -1,10 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 ini_set('display_errors', '1');
 
 error_reporting(E_ALL);
 
-if (! file_exists('/tmp/opcache')) {
+if ( ! file_exists('/tmp/opcache')) {
     mkdir('/tmp/opcache');
 }
 
@@ -26,8 +30,8 @@ fwrite(STDERR, 'Loaded Composer autoload file'.PHP_EOL);
 */
 
 if (isset($_ENV['APP_RUNNING_IN_CONSOLE']) &&
-    $_ENV['APP_RUNNING_IN_CONSOLE'] === 'true') {
+    'true' === $_ENV['APP_RUNNING_IN_CONSOLE']) {
     return require __DIR__.'/cliRuntime.php';
-} else {
-    return require __DIR__.'/fpmRuntime.php';
 }
+
+    return require __DIR__.'/fpmRuntime.php';

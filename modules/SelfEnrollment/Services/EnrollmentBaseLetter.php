@@ -7,9 +7,8 @@
 namespace CircleLinkHealth\SelfEnrollment\Services;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentLetters;
-use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateCommonwealthPainAssociatesPllcLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Model;
@@ -142,15 +141,12 @@ class EnrollmentBaseLetter
     }
 
     /**
-     * @param Practice $practice
-     * @param Model $practiceLetter
      * @param $practiceNumber
-     * @param \CircleLinkHealth\Customer\Entities\User $provider
      * @param bool $hideButtons
      *
      * @return array
      */
-    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, \CircleLinkHealth\Customer\Entities\User $provider, $hideButtons = false)
+    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -181,7 +177,6 @@ class EnrollmentBaseLetter
             : '';
 
         $practiceSigSrc = $this->getPracticeSignatures($practiceLetter);
-
 
         $signatoryName = $provider->display_name;
 
@@ -224,6 +219,15 @@ class EnrollmentBaseLetter
         return $this->practiceLetterView->name::signatures($practiceLetter, $this->practice, $this->provider);
     }
 
+    /**
+     * @param $uiRequests
+     * @return mixed
+     */
+    private function getSpecificGroupSignatoryName($uiRequests)
+    {
+        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
+    }
+
     private function letterPages(object $letter, array $varsToBeReplaced, array $replacementVars)
     {
         $letterPages = [];
@@ -233,14 +237,5 @@ class EnrollmentBaseLetter
         }
 
         return $letterPages;
-    }
-
-    /**
-     * @param $uiRequests
-     * @return mixed
-     */
-    private function getSpecificGroupSignatoryName($uiRequests)
-    {
-        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
     }
 }

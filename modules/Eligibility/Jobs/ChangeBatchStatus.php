@@ -56,6 +56,7 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
                     ProcessEligibilityBatch::dispatch($this->batchId);
                     $cache->put($cacheKey, ++$attemptCount, now()->endOfDay());
                 }
+
                 return;
             }
 

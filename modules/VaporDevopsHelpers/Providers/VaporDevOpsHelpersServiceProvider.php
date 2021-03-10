@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\VaporDevOpsHelpers\Providers;
 
-use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\DeleteAllSecrets;
-use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\SyncEnvFiles;
-use CircleLinkHealth\Core\Vapor\DevOpsHelpers\Commands\UploadSecretsFromFile;
+use CircleLinkHealth\VaporDevOpsHelpers\Commands\DeleteAllSecrets;
+use CircleLinkHealth\VaporDevOpsHelpers\Commands\SyncEnvFiles;
+use CircleLinkHealth\VaporDevOpsHelpers\Commands\UploadSecretsFromFile;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 

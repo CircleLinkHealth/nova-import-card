@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands\Output;
 
 use Laravel\VaporCli\Commands\HookOutputCommand;
@@ -12,7 +16,6 @@ class DeploymentFailure
     /**
      * Render the output.
      *
-     * @param \Laravel\VaporCli\Models\Deployment $deployment
      *
      * @return void
      */

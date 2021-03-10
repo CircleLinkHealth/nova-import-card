@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,19 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class CertListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('cert:list')
-            ->addArgument('domain', InputArgument::OPTIONAL, 'The domain name to list certificates for')
-            ->setDescription('List the certificates linked to your account');
-    }
-
     /**
      * Execute the command.
      *
@@ -50,5 +41,18 @@ class CertListCommand extends Command
                 Helpers::time_ago($certificate['created_at']),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('cert:list')
+            ->addArgument('domain', InputArgument::OPTIONAL, 'The domain name to list certificates for')
+            ->setDescription('List the certificates linked to your account');
     }
 }

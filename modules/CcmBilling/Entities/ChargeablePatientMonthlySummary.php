@@ -26,17 +26,17 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property User                                                                                        $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary query()
  * @mixin \Eloquent
  * @property int    $requires_patient_consent
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdThisMonth($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdToday($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdYesterday($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdToday($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class ChargeablePatientMonthlySummary extends BaseModel
 {

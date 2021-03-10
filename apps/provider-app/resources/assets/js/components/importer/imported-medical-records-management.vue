@@ -130,18 +130,18 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
-    import TextEditable from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/calls/comps/text-editable'
-    import EventBus from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
-    import ErrorModal from '../../../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing/comps/error-modal'
-    import ErrorModalButton from '../../../../../CircleLinkHealth/Customer/Billing/Resources/assets/js/billing/comps/error-modal-button'
-    import NotificationComponent from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based'
-    import VueCache from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
+    import {rootUrl} from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config'
+    import TextEditable from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/calls/comps/text-editable'
+    import EventBus from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader'
+    import ErrorModal from '../../../../../vendor/circlelinkhealth/customer-module/Billing/Resources/assets/js/billing/comps/error-modal'
+    import ErrorModalButton from '../../../../../vendor/circlelinkhealth/customer-module/Billing/Resources/assets/js/billing/comps/error-modal-button'
+    import NotificationComponent from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based'
+    import VueCache from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/util/vue-cache'
     import {mapGetters} from 'vuex'
-    import {currentUser} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters';
+    import {currentUser} from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/store/getters';
     import VueSelect from "vue-select";
-    import GetsNurses from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/mixins/gets-nurses'
+    import GetsNurses from '../../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/mixins/gets-nurses'
     import moment from "moment";
 
     export default {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace AshAllenDesign\ShortURL\Tests\Unit\Controllers;
 
 use AshAllenDesign\ShortURL\Events\ShortURLVisited;
@@ -13,46 +17,6 @@ use Illuminate\Support\Facades\Event;
 class ShortURLControllerTest extends TestCase
 {
     use RefreshDatabase;
-
-    /** @test */
-    public function request_is_aborted_with_http_404_if_the_short_url_cannot_be_found()
-    {
-        $this->get('/short/INVALID')->assertNotFound();
-    }
-
-    /** @test */
-    public function visitor_is_redirected_to_the_destination_url()
-    {
-        ShortURL::create([
-            'destination_url'      => 'https://google.com',
-            'default_short_url'    => config('app.url').'/short/12345',
-            'url_key'              => '12345',
-            'single_use'           => true,
-            'track_visits'         => true,
-            'redirect_status_code' => 301,
-            'activated_at'         => now()->subMinute(),
-        ]);
-
-        $this->get('/short/12345')->assertStatus(301)->assertRedirect('https://google.com');
-    }
-
-    /** @test */
-    public function request_is_aborted_if_custom_routing_is_enabled_but_the_default_route_has_been_used()
-    {
-        Config::set('short-url.disable_default_route', true);
-
-        ShortURL::create([
-            'destination_url'      => 'https://google.com',
-            'default_short_url'    => config('app.url').'/short/12345',
-            'url_key'              => '12345',
-            'single_use'           => true,
-            'track_visits'         => true,
-            'redirect_status_code' => 301,
-            'activated_at'         => now()->subMinute(),
-        ]);
-
-        $this->get('/short/12345')->assertNotFound();
-    }
 
     /** @test */
     public function event_is_dispatched_when_the_short_url_is_visited()
@@ -96,19 +60,21 @@ class ShortURLControllerTest extends TestCase
     }
 
     /** @test */
-    public function visitor_is_redirected_with_correct_status_code()
+    public function request_is_aborted_if_custom_routing_is_enabled_but_the_default_route_has_been_used()
     {
+        Config::set('short-url.disable_default_route', true);
+
         ShortURL::create([
             'destination_url'      => 'https://google.com',
             'default_short_url'    => config('app.url').'/short/12345',
             'url_key'              => '12345',
             'single_use'           => true,
             'track_visits'         => true,
-            'redirect_status_code' => 302,
+            'redirect_status_code' => 301,
             'activated_at'         => now()->subMinute(),
         ]);
 
-        $this->get('/short/12345')->assertStatus(302)->assertRedirect('https://google.com');
+        $this->get('/short/12345')->assertNotFound();
     }
 
     /** @test */
@@ -146,6 +112,28 @@ class ShortURLControllerTest extends TestCase
     }
 
     /** @test */
+    public function request_is_aborted_with_http_404_if_the_short_url_cannot_be_found()
+    {
+        $this->get('/short/INVALID')->assertNotFound();
+    }
+
+    /** @test */
+    public function visitor_is_redirected_to_the_destination_url()
+    {
+        ShortURL::create([
+            'destination_url'      => 'https://google.com',
+            'default_short_url'    => config('app.url').'/short/12345',
+            'url_key'              => '12345',
+            'single_use'           => true,
+            'track_visits'         => true,
+            'redirect_status_code' => 301,
+            'activated_at'         => now()->subMinute(),
+        ]);
+
+        $this->get('/short/12345')->assertStatus(301)->assertRedirect('https://google.com');
+    }
+
+    /** @test */
     public function visitor_is_redirected_to_the_destination_url_if_the_deactivation_date_is_in_the_future()
     {
         ShortURL::create([
@@ -157,6 +145,22 @@ class ShortURLControllerTest extends TestCase
             'redirect_status_code' => 302,
             'activated_at'         => now()->subMinute(),
             'deactivated_at'       => now()->addMinute(),
+        ]);
+
+        $this->get('/short/12345')->assertStatus(302)->assertRedirect('https://google.com');
+    }
+
+    /** @test */
+    public function visitor_is_redirected_with_correct_status_code()
+    {
+        ShortURL::create([
+            'destination_url'      => 'https://google.com',
+            'default_short_url'    => config('app.url').'/short/12345',
+            'url_key'              => '12345',
+            'single_use'           => true,
+            'track_visits'         => true,
+            'redirect_status_code' => 302,
+            'activated_at'         => now()->subMinute(),
         ]);
 
         $this->get('/short/12345')->assertStatus(302)->assertRedirect('https://google.com');

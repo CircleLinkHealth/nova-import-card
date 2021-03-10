@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 

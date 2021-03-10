@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -8,22 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class MemberAddCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('member:add')
-            ->setAliases(['team:add', 'member:update'])
-            ->addArgument('email', InputArgument::OPTIONAL, "The user's email address")
-            ->addOption('permissions', null, InputOption::VALUE_OPTIONAL, "The user's permissions")
-            ->addOption('admin', null, InputOption::VALUE_NONE, 'Authorize the user to perform all operations')
-            ->setDescription('Add a team member to your current team or update their permissions');
-    }
-
     /**
      * Execute the command.
      *
@@ -51,5 +39,21 @@ class MemberAddCommand extends Command
         Helpers::info('This team member has the following permissions:');
         Helpers::line();
         Helpers::line(implode(PHP_EOL, $permissions));
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('member:add')
+            ->setAliases(['team:add', 'member:update'])
+            ->addArgument('email', InputArgument::OPTIONAL, "The user's email address")
+            ->addOption('permissions', null, InputOption::VALUE_OPTIONAL, "The user's permissions")
+            ->addOption('admin', null, InputOption::VALUE_NONE, 'Authorize the user to perform all operations')
+            ->setDescription('Add a team member to your current team or update their permissions');
     }
 }

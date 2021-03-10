@@ -59,7 +59,7 @@
                             <h5>Assign Nurse to Call:</h5>
                             <select name="nurseId" class="select2">
                                 @foreach($nurses as $n)
-                                    <option value="{{$n->id}}">{{$n->display_name}}</option>
+                                    <option value="{{$n->id}}" {{$n->id == $note->author_id ? 'selected' : ''}}>{{$n->display_name}}</option>
                                 @endforeach
                             </select>
                         </div>

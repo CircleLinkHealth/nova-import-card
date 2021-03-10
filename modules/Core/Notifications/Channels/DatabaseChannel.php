@@ -36,8 +36,9 @@ class DatabaseChannel extends LaravelDatabaseChannel
         $payload = parent::buildPayload($notifiable, $notification);
 
         if (method_exists($notification, 'getAttachment')) {
-            $payload['attachment_id']   = $notification->getAttachment()->id;
-            $payload['attachment_type'] = get_class($notification->getAttachment());
+            $attachment                 = $notification->getAttachment();
+            $payload['attachment_id']   = $attachment->id;
+            $payload['attachment_type'] = get_class($attachment);
         }
 
         if (method_exists($notification, 'notificationAboutPatientWithUserId')) {

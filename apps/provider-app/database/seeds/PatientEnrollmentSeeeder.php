@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 

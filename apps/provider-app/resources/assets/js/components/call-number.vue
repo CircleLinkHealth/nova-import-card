@@ -221,20 +221,14 @@
     </div>
 </template>
 <script>
-    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
-    import EventBus
-        from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import LoaderComponent
-        from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
-    import {
-        registerHandler,
-        sendRequest
-    } from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/bc-job-manager";
-    import {Logger} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
+    import {rootUrl} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config";
+    import EventBus from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader';
+    import {registerHandler, sendRequest} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/bc-job-manager";
+    import {Logger} from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import Notifications
-        from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import Notifications from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based';
     import EditPatientNumber from './edit-patient-number';
 
     let self;

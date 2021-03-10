@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Illuminate\Support\Str;
@@ -7,18 +11,6 @@ use Laravel\VaporCli\Helpers;
 
 class NetworkListCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('network:list')
-            ->setDescription('List the networks that belong to the current team');
-    }
-
     /**
      * Execute the command.
      *
@@ -41,5 +33,17 @@ class NetworkListCommand extends Command
                 Str::title(str_replace('_', ' ', $network['status'])),
             ];
         })->all());
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('network:list')
+            ->setDescription('List the networks that belong to the current team');
     }
 }

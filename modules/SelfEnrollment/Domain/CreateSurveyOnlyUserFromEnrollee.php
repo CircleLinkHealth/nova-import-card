@@ -10,7 +10,7 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
@@ -85,6 +85,7 @@ class CreateSurveyOnlyUserFromEnrollee
         } catch (PatientAlreadyExistsException $e) {
             $this->enrollee->user_id = $e->getPatientUserId();
             $this->enrollee->save();
+
             return;
         }
 

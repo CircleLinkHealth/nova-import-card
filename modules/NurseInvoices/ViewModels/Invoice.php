@@ -11,7 +11,7 @@ use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
-use CircleLinkHealth\Nurseinvoices\ValueObjects\VisitFeePay;
+use CircleLinkHealth\NurseInvoices\ValueObjects\VisitFeePay;
 use Illuminate\Support\Collection;
 use Spatie\ViewModels\ViewModel;
 

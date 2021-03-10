@@ -1,10 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Laravel\Vapor\Runtime\CliHandlerFactory;
+use Laravel\Vapor\Runtime\CustomSecrets;
 use Laravel\Vapor\Runtime\LambdaContainer;
 use Laravel\Vapor\Runtime\LambdaRuntime;
-use Laravel\Vapor\Runtime\CustomSecrets;
 use Laravel\Vapor\Runtime\StorageDirectories;
 
 /*
@@ -39,7 +43,7 @@ with(require __DIR__.'/bootstrap/app.php', function ($app) {
     $app->useStoragePath(StorageDirectories::PATH);
 
     if (isset($_ENV['VAPOR_MAINTENANCE_MODE']) &&
-        $_ENV['VAPOR_MAINTENANCE_MODE'] === 'true') {
+        'true' === $_ENV['VAPOR_MAINTENANCE_MODE']) {
         file_put_contents($app->storagePath().'/framework/down', '[]');
     }
 
@@ -70,11 +74,12 @@ $lambdaRuntime = LambdaRuntime::fromEnvironmentVariable();
 while (true) {
     $lambdaRuntime->nextInvocation(function ($invocationId, $event) {
         return CliHandlerFactory::make($event)
-                        ->handle($event)
-                        ->toApiGatewayFormat();
+            ->handle($event)
+            ->toApiGatewayFormat();
     });
 
     LambdaContainer::terminateIfInvocationLimitHasBeenReached(
-        ++$invocations, (int) ($_ENV['VAPOR_MAX_REQUESTS'] ?? 250)
+        ++$invocations,
+        (int) ($_ENV['VAPOR_MAX_REQUESTS'] ?? 250)
     );
 }

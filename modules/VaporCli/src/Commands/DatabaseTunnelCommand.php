@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use Laravel\VaporCli\Helpers;
@@ -7,20 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class DatabaseTunnelCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('database:tunnel')
-            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
-            ->addArgument('port', InputArgument::OPTIONAL, 'The local port to serve connections on')
-            ->setDescription('Create a secure tunnel to a database, allowing local connections');
-    }
-
     /**
      * Execute the command.
      *
@@ -32,7 +22,7 @@ class DatabaseTunnelCommand extends Command
 
         $databases = $this->vapor->databases();
 
-        if (! is_numeric($databaseId = $this->argument('database'))) {
+        if ( ! is_numeric($databaseId = $this->argument('database'))) {
             $databaseId = $this->findIdByName($databases, $databaseId);
         }
 
@@ -59,9 +49,22 @@ class DatabaseTunnelCommand extends Command
     }
 
     /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('database:tunnel')
+            ->addArgument('database', InputArgument::REQUIRED, 'The name of the database')
+            ->addArgument('port', InputArgument::OPTIONAL, 'The local port to serve connections on')
+            ->setDescription('Create a secure tunnel to a database, allowing local connections');
+    }
+
+    /**
      * Find a jump-box compatible with the database.
      *
-     * @param array $database
      *
      * @return array
      */
@@ -85,7 +88,6 @@ class DatabaseTunnelCommand extends Command
     /**
      * Store the private SSH key for the jump-box.
      *
-     * @param array $jumpBox
      *
      * @return string
      */

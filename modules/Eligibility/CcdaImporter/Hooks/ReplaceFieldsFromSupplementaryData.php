@@ -12,8 +12,8 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
+use CircleLinkHealth\SharedModels\Entities\SupplementalPatientData;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 

@@ -7,13 +7,12 @@
 namespace CircleLinkHealth\SelfEnrollment\Notifications;
 
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
-use CircleLinkHealth\SelfEnrollment\Entities\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
@@ -148,7 +147,7 @@ class SelfEnrollmentInviteNotification extends Notification
     {
         if (in_array('mail', $this->channels)
             && (
-                Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])
+                Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com', '@cpm.com'])
             || empty($notifiable->email)
             )) {
             unset($this->channels[array_search('mail', $this->channels)]);

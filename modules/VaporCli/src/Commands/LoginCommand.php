@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli\Commands;
 
 use GuzzleHttp\Exception\ClientException;
@@ -10,18 +14,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class LoginCommand extends Command
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('login')
-            ->setDescription('Authenticate with Laravel Vapor');
-    }
-
     /**
      * Execute the command.
      *
@@ -69,17 +61,15 @@ class LoginCommand extends Command
     }
 
     /**
-     * Store the API token.
-     *
-     * @param string $token
+     * Configure the command options.
      *
      * @return void
      */
-    protected function store($token)
+    protected function configure()
     {
-        Helpers::config(['token' => $token]);
-
-        Helpers::info('Authenticated successfully.'.PHP_EOL);
+        $this
+            ->setName('login')
+            ->setDescription('Authenticate with Laravel Vapor');
     }
 
     /**
@@ -108,5 +98,19 @@ class LoginCommand extends Command
         Config::set('team', collect($teams)->first(function ($team) {
             return $team['personal_team'] ?? false;
         })['id']);
+    }
+
+    /**
+     * Store the API token.
+     *
+     * @param string $token
+     *
+     * @return void
+     */
+    protected function store($token)
+    {
+        Helpers::config(['token' => $token]);
+
+        Helpers::info('Authenticated successfully.'.PHP_EOL);
     }
 }

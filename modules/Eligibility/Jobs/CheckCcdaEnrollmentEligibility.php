@@ -8,9 +8,9 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;

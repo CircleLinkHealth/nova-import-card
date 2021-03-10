@@ -986,4 +986,9 @@ Route::post('callcreate-multi', [
     'as'   => 'api.callcreate-multi',
 ])->middleware('auth');
 
+Route::get('import-enrollees-self-enrollment', [
+    'uses' => 'ImportSelfEnrollmentEnrollees@runImportConsentedEnrollees',
+    'as'   => 'import.enrollees.to.cpm',
+]);
+
 Route::get('login-from-heroku/{token}', 'LoginFromHerokuController@loginUser');

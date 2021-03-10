@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Laravel\VaporCli;
 
 use Illuminate\Support\Arr;
@@ -18,14 +22,14 @@ class GitIgnore
     {
         $paths = Arr::wrap($paths);
 
-        if (! file_exists(getcwd().'/.gitignore')) {
+        if ( ! file_exists(getcwd().'/.gitignore')) {
             return;
         }
 
         $contents = file_get_contents(getcwd().'/.gitignore');
 
         foreach ($paths as $path) {
-            if (! Str::contains($contents, $path.PHP_EOL)) {
+            if ( ! Str::contains($contents, $path.PHP_EOL)) {
                 $contents .= $path.PHP_EOL;
             }
         }
