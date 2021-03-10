@@ -224,7 +224,7 @@ class ConnectionV2 implements AthenaApiConnection
 
     private function authenticate()
     {
-        if (isProductionEnv() && $this->cache()->has(self::ATHENA_CACHE_KEY)) {
+        if ($this->cache()->has(self::ATHENA_CACHE_KEY)) {
             $this->token = $this->cache()->get(self::ATHENA_CACHE_KEY);
 
             return $this->token;
@@ -251,8 +251,14 @@ class ConnectionV2 implements AthenaApiConnection
 
         $this->token      = $result['access_token'];
         $this->expires_in = $result['expires_in'];
+        
+        if (isProductionEnv()) {
+            $ttl = $this->expires_in;
+        } else {
+            $ttl = 30;
+        }
 
-        $this->cache()->put(self::ATHENA_CACHE_KEY, $this->token, $this->expires_in);
+        $this->cache()->put(self::ATHENA_CACHE_KEY, $this->token, $ttl);
     }
 
     /**
