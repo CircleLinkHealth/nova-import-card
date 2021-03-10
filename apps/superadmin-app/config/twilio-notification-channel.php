@@ -40,6 +40,7 @@ return [
     'enabled'          => env('TWILIO_ENABLED', false),
     'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
     'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
+    'allow-911-calls'  => env('TWIML_ALLOW_911_CALLS', false),
     'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
     'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
 ];

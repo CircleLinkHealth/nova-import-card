@@ -52,73 +52,52 @@ use Illuminate\Support\Str;
 class ConnectionV2 implements AthenaApiConnection
 {
     const ATHENA_CACHE_KEY = 'athena_api_token';
-    public  $practiceid;
-    private $auth_url;
-    private $baseurl;
+    public  $practiceId;
     private $key;
-    private $refresh_token;
     private $secret;
     private $token;
-    
-    private        $version;
-    private string $authurl;
-    
+    private $version;
+
     /**
      * Connects to the host, authenticates to the specified API version using key and secret.
      *
-     * @param string $version the specified API version to access
-     * @param string $key the client key (also known as id)
-     * @param string $secret the client secret
-     * @param int|string $practiceid |null the practice id to be used in requests (optional)
+     * @param string     $version    the specified API version to access
+     * @param string     $key        the client key (also known as id)
+     * @param string     $secret     the client secret
      */
-    public function __construct(string $version, string $key, string $secret, int $practiceid)
+    public function __construct(string $version, string $key, string $secret)
     {
         $this->version    = $version;
         $this->key        = $key;
         $this->secret     = $secret;
-        $this->practiceid = $practiceid;
-        
-        $base_prefixes = [
-            'v1'           => "https://api.platform.athenahealth.com/v1/$practiceid",
-            'preview1'     => "https://api.preview.platform.athenahealth.com/v1/$practiceid",
-            'openpreview1' => 'ouathopenpreview/token',
-        ];
-        
-        $this->baseurl = $base_prefixes[$this->version];
-        
-        $auth_prefixes = [
-            'v1'           => 'https://api.platform.athenahealth.com/oauth2/v1/token',
-            'preview1'     => 'https://api.preview.platform.athenahealth.com/oauth2/v1/token',
-        ];
-        $this->authurl = $auth_prefixes[$this->version];
     }
-    
+
     /**
      * Perform at HTTP DELETE request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
     public function DELETE($url, $parameters = null, $headers = null)
     {
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
         if ($parameters) {
             $new_url .= '?'.http_build_query($parameters);
         }
-        
+
         $new_headers = [];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-        
+
         return $this->authorized_call('DELETE', $new_url, [], $new_headers);
     }
-    
+
     /**
      * Perform at HTTP GET request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
@@ -131,21 +110,21 @@ class ConnectionV2 implements AthenaApiConnection
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
-        
+
         $new_headers = [];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-        
+
         // Join up a URL and add the parameters, since GET requests require parameters in the URL.
-        $new_url = $this->url_join($this->baseurl, $url);
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
         if ($new_parameters) {
             $new_url .= '?'.http_build_query($new_parameters);
         }
-        
+
         return $this->authorized_call('GET', $new_url, [], $new_headers);
     }
-    
+
     /**
      * Returns the current access_token.
      */
@@ -153,16 +132,37 @@ class ConnectionV2 implements AthenaApiConnection
     {
         return $this->token;
     }
-    
+
+    public function getAuthUrl()
+    {
+        $auth_prefixes = [
+            'v1'       => 'https://api.platform.athenahealth.com/oauth2/v1/token',
+            'preview1' => 'https://api.preview.platform.athenahealth.com/oauth2/v1/token',
+        ];
+
+        return $auth_prefixes[$this->version];
+    }
+
+    public function getBaseUrl()
+    {
+        $base_prefixes = [
+            'v1'           => "https://api.platform.athenahealth.com/v1/{$this->practiceId}",
+            'preview1'     => "https://api.preview.platform.athenahealth.com/v1/{$this->practiceId}",
+            'openpreview1' => 'ouathopenpreview/token',
+        ];
+
+        return $base_prefixes[$this->version];
+    }
+
     public function getVersion()
     {
         return $this->version;
     }
-    
+
     /**
      * Perform at HTTP POST request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
@@ -172,7 +172,7 @@ class ConnectionV2 implements AthenaApiConnection
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
-        
+
         // Make sure POSTs have the proper headers
         $new_headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
@@ -180,17 +180,17 @@ class ConnectionV2 implements AthenaApiConnection
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-        
+
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $url);
-        
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
+
         return $this->authorized_call('POST', $new_url, $new_parameters, $new_headers);
     }
-    
+
     /**
      * Perform at HTTP PUT request and return an associative array of the API response.
      *
-     * @param string $url the path (URI) of the resource
+     * @param string      $url             the path (URI) of the resource
      * @param mixed array $parameters|null the request parameters
      * @param mixed array $headers|null    the request headers
      */
@@ -200,7 +200,7 @@ class ConnectionV2 implements AthenaApiConnection
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
-        
+
         // Make sure PUTs have the proper headers
         $new_headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
@@ -208,18 +208,59 @@ class ConnectionV2 implements AthenaApiConnection
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
-        
+
         // Join up a URL
-        $new_url = $this->url_join($this->baseurl, $url);
-        
+        $new_url = $this->url_join($this->getBaseUrl(), $url);
+
         return $this->authorized_call('PUT', $new_url, $new_parameters, $new_headers);
     }
-    
+
     public function setPracticeId($practiceId)
     {
-        $this->practiceid = $practiceId;
+        $this->practiceId = $practiceId;
+        
+        return $this;
     }
-    
+
+    private function authenticate()
+    {
+        if ($this->cache()->has(self::ATHENA_CACHE_KEY)) {
+            $this->token = $this->cache()->get(self::ATHENA_CACHE_KEY);
+
+            return $this->token;
+        }
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $this->getAuthUrl());
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials&scope=athena/service/Athenanet.MDP.*');
+        curl_setopt($ch, CURLOPT_USERPWD, "$this->key:$this->secret");
+
+        $headers   = [];
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            throw new \Exception(curl_error($ch));
+        }
+        curl_close($ch);
+
+        $result = json_decode($result, true);
+
+        $this->token      = $result['access_token'];
+        $this->expires_in = $result['expires_in'];
+        
+        if (isProductionEnv()) {
+            $ttl = $this->expires_in;
+        } else {
+            $ttl = 30;
+        }
+
+        $this->cache()->put(self::ATHENA_CACHE_KEY, $this->token, $ttl);
+    }
+
     /**
      * This method abstracts away adding the authorization header to requests.
      *
@@ -236,14 +277,18 @@ class ConnectionV2 implements AthenaApiConnection
         $headers,
         $secondcall = false
     ) {
-        $response = $this->authenticate();
-    
+        $this->authenticate();
+
         $auth_header = ['Authorization' => 'Bearer '.$this->token];
-        $response    = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
-    
-        return $response;
+
+        return $this->call($verb, $url, $body, array_merge($auth_header, $headers));
     }
-    
+
+    private function cache()
+    {
+        return Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
+    }
+
     /**
      * This method abstracts away the process of using stream contexts and file_get_contents for the
      * API calls.  It also does JSON decoding before return.
@@ -262,7 +307,7 @@ class ConnectionV2 implements AthenaApiConnection
         foreach ($headers as $k => $v) {
             $formatted_headers[] = $k.': '.$v;
         }
-        
+
         // We shouldn't always be ignoring errors, but if we're calling this a second time, it's
         // because we found errors we want to ignore.  So we set ignore_errors to be the same as
         // $secondcall.
@@ -280,7 +325,7 @@ class ConnectionV2 implements AthenaApiConnection
         // status codes other than 200 (like 401 and 400) with information in the body that provides
         // a much better explanation than the code itself.
         $contents = @file_get_contents($url, false, $context);
-        
+
         // $contents is false if there was an error, so if it was a 401 Not Authorized, propogate the
         // false.  Otherwise, try it again with ignored errors.
         if (false === $contents) {
@@ -293,21 +338,21 @@ class ConnectionV2 implements AthenaApiConnection
             } else {
                 // Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
                 if (isset($http_response_header, $http_response_header[0]) && Str::contains(
-                        $http_response_header[0],
-                        '401'
-                    )) {
+                    $http_response_header[0],
+                    '401'
+                )) {
                     return false;
                 }
             }
-            
+
             if ( ! $secondcall) {
                 return $this->call($verb, $url, $body, $headers, $secondcall = true);
             }
         }
-        
+
         return json_decode($contents, true);
     }
-    
+
     /**
      * This method joins together parts of a URL to make a valid one.
      *
@@ -331,43 +376,5 @@ class ConnectionV2 implements AthenaApiConnection
                 )
             )
         );
-    }
-    
-    private function authenticate()
-    {
-        if ($this->cache()->has(self::ATHENA_CACHE_KEY)) {
-            return $this->cache()->get(self::ATHENA_CACHE_KEY);
-        }
-        $ch = curl_init();
-    
-        curl_setopt($ch, CURLOPT_URL, $this->authurl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials&scope=athena/service/Athenanet.MDP.*");
-        curl_setopt($ch, CURLOPT_USERPWD, "$this->key:$this->secret");
-    
-        $headers = array();
-        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
-        $result = curl_exec($ch);
-        if (curl_errno($ch)) {
-            throw new \Exception(curl_error($ch));
-        }
-        curl_close($ch);
-        
-        $result = json_decode($result, true);
-    
-        $this->token         = $result['access_token'];
-        $this->expires_in = $result['expires_in'];
-        
-        $this->cache()->put(self::ATHENA_CACHE_KEY, $this->token, $this->expires_in);
-        
-        return $this->token;
-    }
-    
-    private function cache()
-    {
-        return Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
     }
 }

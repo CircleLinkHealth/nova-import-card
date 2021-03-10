@@ -148,14 +148,14 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 'outbound_cpm_id' => $careCoachId = $this->careCoach()->id,
                 'type'            => 'call',
                 'status'          => Call::REACHED,
-                'called_date'     => Carbon::now()->startOfMonth()->addDay(10),
+                'called_date'     => Carbon::now()->startOfMonth()->addDays(10),
             ],
             [
                 'inbound_cpm_id'  => $patientId,
                 'outbound_cpm_id' => $careCoachId,
                 'type'            => 'call',
                 'status'          => Call::NOT_REACHED,
-                'called_date'     => Carbon::now()->startOfMonth()->addDay(5),
+                'called_date'     => Carbon::now()->startOfMonth()->addDays(5),
             ],
         ]);
 
@@ -165,14 +165,14 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 'patient_id'            => $patientId,
                 'provider_id'           => $careCoachId,
                 'chargeable_service_id' => $ccmCodeId = ChargeableService::getChargeableServiceIdUsingCode($ccmCode),
-                'performed_at'          => Carbon::now()->startOfMonth()->addDay(7),
+                'performed_at'          => Carbon::now()->startOfMonth()->addDays(7),
             ],
             [
                 'duration'              => $duration2 = 100,
                 'patient_id'            => $patientId,
                 'provider_id'           => $careCoachId,
                 'chargeable_service_id' => $ccmCodeId,
-                'performed_at'          => Carbon::now()->startOfMonth()->addDay(14),
+                'performed_at'          => Carbon::now()->startOfMonth()->addDays(14),
             ],
         ]);
 
@@ -183,10 +183,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 ->first()
         );
 
-        self::assertEquals($viewSummary->no_of_calls, 2);
-        self::assertEquals($viewSummary->no_of_successful_calls, 1);
-
-        self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
+        self::assertEquals((int) $viewSummary->total_time, $duration1 + $duration2);
     }
 
     public function test_process_single_patient_services_job_attaches_services()
