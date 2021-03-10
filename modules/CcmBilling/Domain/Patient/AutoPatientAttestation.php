@@ -258,8 +258,11 @@ class AutoPatientAttestation
             return boolval(optional($pms)->hasServiceCode($code, true));
         }
 
-        return $this->patient->chargeableMonthlySummaries->where('chargeable_service_id',
-            ChargeableService::getChargeableServiceIdUsingCode($code))->isNotEmpty();
+        return $this->patient->chargeableMonthlySummaries
+            ->where('chargeable_service_id',
+            ChargeableService::getChargeableServiceIdUsingCode($code))
+            ->where('is_fulfilled', true)
+            ->isNotEmpty();
     }
 
     private function isNewBillingEnabled() : bool
