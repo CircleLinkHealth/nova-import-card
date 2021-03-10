@@ -23,6 +23,7 @@ class SetPatientChargeableServicesResponse extends JsonResource
             'approved'            => $this['approved'] ?? null,
             'rejected'            => $this['rejected'] ?? null,
             'qa'                  => $this['qa'] ?? null,
+            'ccm_time'            => $this['ccm_time'] ?? null,
             'chargeable_services' => $this['chargeable_services'] ?? null,
         ];
     }

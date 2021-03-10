@@ -629,6 +629,9 @@
                                     item.rejected = data.rejected;
                                     item.qa = data.qa;
                                     item.chargeable_services = this.buildChargeableServicesForPatient(data.chargeable_services);
+                                    if (data.ccm_time !== null){
+                                        item['CCM Mins'] = timeDisplay(data.ccm_time);
+                                    }
                                 }
                                 item.promises.update_chargeables = false;
                             })

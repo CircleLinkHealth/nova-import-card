@@ -133,6 +133,7 @@ class ApproveBillablePatientsServiceV3
             'approved'            => $billingStatus->isApproved(),
             'rejected'            => $billingStatus->isRejected(),
             'qa'            => $billingStatus->needsQA(),
+            'ccm_time'      => ClashingChargeableServices::getCcmTimeForLegacyReportsInPriority($billingStatus->patientUser),
             'chargeable_services' => ChargeableServiceForAbp::collectionFromChargeableMonthlySummaries($billingStatus->patientUser),
         ]);
     }
