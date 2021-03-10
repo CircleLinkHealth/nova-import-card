@@ -75,7 +75,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function isBlocked(): bool
     {
         return collect($this->input->getForcedPatientServices())->filter(
-            fn (ForcedPatientChargeableServicesForProcessing $s) => $s->getChargeableServiceCode() == $this->code() && $s->isBlocked()
+            fn (ForcedPatientChargeableServicesForProcessing $s) => in_array($s->getChargeableServiceCode(), [$this->code(), $this->baseCode()]) && $s->isBlocked()
         )
             ->isNotEmpty();
     }

@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Services;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ForcePatientChargeableService;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
@@ -108,7 +109,6 @@ class ApproveBillablePatientsServiceV3
             return SetPatientChargeableServicesResponse::make([]);
         }
 
-        //todo: optimise at some point - not uber high priority
         foreach ($services as $service) {
             $input = (new ForceAttachInputDTO())
                 ->setReason('abp')
@@ -117,8 +117,9 @@ class ApproveBillablePatientsServiceV3
                 ->setChargeableServiceId($service['id'])
                 ->setActionType($service['action_type']);
 
-            ForcePatientChargeableService::execute($input);
+            ForcePatientChargeableService::executeQuietly($input);
         }
+        (app(ProcessPatientSummaries::class))->execute($billingStatus->patient_user_id, $billingStatus->chargeable_month);
 
         $billingStatus = PatientMonthlyBillingStatus::with([
             'patientUser' => function ($p)  use ($billingStatus) {

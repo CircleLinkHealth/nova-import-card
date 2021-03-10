@@ -543,6 +543,15 @@
             },
 
             buildChargeableServicesForPatient(patientChargeableServices) {
+                if (!patientChargeableServices) {
+                    Event.$emit('notifications-billing:create', {
+                        text: `Something went wrong. Please refresh table data.`,
+                        type: 'warning',
+                        interval: 5000
+                    });
+                    return;
+                }
+
                 return patientChargeableServices
                     .map(item => {
                         const cs = this.selectedPracticeChargeableServices.find(cs => cs.id === item.id);
