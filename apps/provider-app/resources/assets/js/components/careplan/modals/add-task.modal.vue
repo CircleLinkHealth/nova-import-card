@@ -160,6 +160,9 @@
 
     const UNASSIGNED_VALUE = {label: 'Unassigned', value: null};
 
+    const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
+    const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call by ticking the checkbox.";
+
     //need in cancelHandler.
     let self;
 
