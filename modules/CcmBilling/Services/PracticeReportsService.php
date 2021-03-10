@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\DTO\QuickBooksRow;
+use CircleLinkHealth\CcmBilling\ValueObjects\QuickBooksRow;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;

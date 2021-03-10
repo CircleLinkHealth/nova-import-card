@@ -56,14 +56,14 @@ class CallAttemptNoteReport extends LivewireDatatable
 
             Column::name('patients.display_name')
                 ->callback(['patients.id', 'patients.display_name', 'calls.note_id'], function ($id, $name, $noteId) {
-                      if ( ! $noteId) {
-                          $url = route('patient.note.index', ['patientId' => $id]);
-                      } else {
-                          $url = route('patient.note.show', ['patientId' => $id, 'noteId' => $noteId]);
-                      }
+                    if ( ! $noteId) {
+                        $url = route('patient.note.index', ['patientId' => $id]);
+                    } else {
+                        $url = route('patient.note.show', ['patientId' => $id, 'noteId' => $noteId]);
+                    }
 
-                      return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.$name." [$id]".'</a>';
-                  })
+                    return '<a class="text-blue-500" target="_blank" href="'.$url.'">'.$name." [$id]".'</a>';
+                })
                 ->label('Patient')
                 ->filterable()
                 ->searchable(),
@@ -79,12 +79,12 @@ class CallAttemptNoteReport extends LivewireDatatable
                 ->searchable(),
         ];
     }
-    
+
     private function nurses()
     {
         return User::careCoaches()->without(['roles', 'perms'])->orderBy('display_name')->pluck('display_name');
     }
-    
+
     private function practices()
     {
         return Practice::activeBillable()->orderBy('display_name')->pluck('display_name');

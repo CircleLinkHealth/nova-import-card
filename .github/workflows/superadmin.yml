@@ -78,7 +78,7 @@ jobs:
         shell: bash
         env:
           ENV_TYPE: staging
-          APP_NAME: provider
+          APP_NAME: superadmin
           S3_SECRETS_BUCKET: ${{ secrets.STAGING_S3_SECRETS_BUCKET }}
           S3_SECRETS_KEY: ${{ secrets.STAGING_S3_SECRETS_KEY }}
           S3_SECRETS_SECRET: ${{ secrets.STAGING_S3_SECRETS_SECRET }}
