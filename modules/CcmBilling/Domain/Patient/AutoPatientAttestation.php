@@ -25,6 +25,7 @@ class AutoPatientAttestation
     private ?User $patient = null;
     private ?int $patientId = null;
     private ?int $pmsId = null;
+    private bool $billingRevamp = false;
 
     private function __construct()
     {
@@ -261,9 +262,12 @@ class AutoPatientAttestation
             ChargeableService::getChargeableServiceIdUsingCode($code))->isNotEmpty();
     }
 
-    private function isNewBillingEnabled()
+    private function isNewBillingEnabled() : bool
     {
-        return BillingCache::billingRevampIsEnabled();
+        if (! isset($this->billingRevamp)){
+            $this->billingRevamp = BillingCache::billingRevampIsEnabled();
+        }
+        return $this->billingRevamp;
     }
 
     private function patientProblemsSortedByWeight(): Collection
@@ -284,5 +288,11 @@ class AutoPatientAttestation
 
                                               return $problem->cpmProblem->weight;
                                           });
+    }
+    
+    public function setBillingRevamp(bool $bool):self
+    {
+        $this->billingRevamp = $bool;
+        return $this;
     }
 }

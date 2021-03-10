@@ -33,7 +33,7 @@ class ApprovablePatient extends JsonResource
         $ccmTime         = $this->getBillableCcmCs();
         $bhiTime         = $this->getBhiTime();
         $totalTime       = $this->getAllTimeExceptBhi() + $bhiTime;
-        $autoAttestation = AutoPatientAttestation::fromUser($user)->setMonth($billingStatus->chargeable_month);
+        $autoAttestation = AutoPatientAttestation::fromUser($user)->setMonth($billingStatus->chargeable_month)->setBillingRevamp(true);
 
         return [
             'id'          => $user->id,
