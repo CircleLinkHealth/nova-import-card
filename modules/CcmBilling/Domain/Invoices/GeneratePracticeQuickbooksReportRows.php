@@ -78,7 +78,7 @@ class GeneratePracticeQuickbooksReportRows
         //todo: question - does this logic cover AWV?
         return app(LocationProcessorRepository::class)
             ->approvedBillingStatuses($practice->locations->pluck('id')->toArray(), $this->date, false)
-            ->whereHas('chargeableMonthlySummaries', function ($q) use ($chargeableService) {
+            ->whereHas('patientUser.chargeableMonthlySummaries', function ($q) use ($chargeableService) {
                 $q->createdOnIfNotNull($this->date, 'chargeable_month')
                     ->where('chargeable_service_id', '=', $chargeableService->id)
                     ->where('is_fulfilled', '=', true);
@@ -105,7 +105,7 @@ class GeneratePracticeQuickbooksReportRows
         $lineUnitPrice = '';
 
         $chargeableServiceWithPivot = $practice->chargeableServices
-            ->whereId($chargeableService->id)
+            ->where('id', $chargeableService->id)
             ->first();
         if ($chargeableServiceWithPivot) {
             $lineUnitPrice = $chargeableServiceWithPivot->pivot->amount;
@@ -138,7 +138,7 @@ class GeneratePracticeQuickbooksReportRows
         $result                           = new PracticeQuickbooksReportData();
         $result->invoiceNo                = incrementInvoiceNo();
         $result->customer                 = $practice->display_name ?? 'N/A';
-        $result->txnDate                  = Carbon::createFromFormat('F, Y', $this->date)->endOfMonth()->toDateString();
+        $result->txnDate                  = $this->date->copy()->endOfMonth()->toDateString();
         $result->salesTerm                = 'Net'.' '.$practice->term_days;
         $result->patientBillingReportLink = $link;
         $result->lineItem                 = $chargeableService->code.$providerName;

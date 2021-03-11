@@ -44,6 +44,7 @@ class GeneratePracticesQuickbooksReportJob implements ShouldQueue, ShouldBeEncry
     public function handle()
     {
         (new GeneratePracticesQuickbooksReport())
+            ->setBatchId($this->batchId)
             ->setPractices($this->practices)
             ->setDate($this->date)
             ->setFormat($this->format)
