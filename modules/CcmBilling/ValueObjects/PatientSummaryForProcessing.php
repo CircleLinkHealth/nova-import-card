@@ -15,11 +15,33 @@ class PatientSummaryForProcessing
     protected string $code;
     protected bool $isFulfilled;
     protected bool $requiresConsent;
+    protected string $displayName;
+
+    /**
+     * @return string
+     */
+    public function getDisplayName(): string
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * @param string $displayName
+     *
+     * @return PatientSummaryForProcessing
+     */
+    public function setDisplayName(string $displayName): PatientSummaryForProcessing
+    {
+        $this->displayName = $displayName;
+
+        return $this;
+    }
 
     public static function fromCollection(EloquentCollection $summaries): array
     {
         return $summaries->map(function (ChargeablePatientMonthlySummary $summary) {
             return (new self())->setCode($summary->chargeableService->code)
+                ->setDisplayName($summary->chargeableService->display_name)
                 ->setChargeableServiceId($summary->chargeable_service_id)
                 ->setIsFulfilled($summary->is_fulfilled)
                 ->setRequiresConsent($summary->requires_patient_consent);
