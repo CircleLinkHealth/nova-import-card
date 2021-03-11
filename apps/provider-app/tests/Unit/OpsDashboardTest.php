@@ -8,7 +8,6 @@ namespace Tests\Unit;
 
 use App\Jobs\GenerateOpsDailyPracticeReport;
 use Carbon\Carbon;
-use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -16,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;

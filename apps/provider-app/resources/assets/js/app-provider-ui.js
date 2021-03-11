@@ -90,7 +90,6 @@ const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-provi
 const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
 const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-patient" */  './components/attest-call-conditions.modal');
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-nurse" */ 'SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
-const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
 const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
 const SchedulePatientActivity = () => import(/* webpackChunkName: "chunk-callbacks-admin" */  'SharedVueComponents/Resources/assets/js/admin/calls/comps/schedule-patient-activity.vue');
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-provider" */ 'SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications')
@@ -151,7 +150,6 @@ Vue.component('calendar-loader', CalendarLoader);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 Vue.component('calendar-daily-report', CalendarDailyReport);
-Vue.component('edit-patient-number', EditPatientNumber);
 Vue.component('edit-patient-alternate-contact', EditPatientAlternateContact);
 Vue.component('schedule-patient-activity', SchedulePatientActivity);
 

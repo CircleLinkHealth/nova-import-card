@@ -69,7 +69,7 @@ Route::group([
         'uses' => 'LivewireDatatablesController@messageDispatchMessages',
         'as'   => 'message-dispatch-messages.table',
     ]);
-    
+
     Route::get('call-attempt-note-dashboard', [
         'uses' => 'LivewireDatatablesController@callAttemptNote',
         'as'   => 'call-attempt-note.table',

@@ -11,14 +11,14 @@
         </div>
         <div class="window-close-banner">
             <strong>
-                When the call is ended, this window will close after {{endCallWindowCloseDelay}} seconds.
+                When the call is ended, this window will close after {{ endCallWindowCloseDelay }} seconds.
             </strong>
             <br/>
             <strong>
                 If you would like to make another call, please click on 'Make Call' again.
             </strong>
         </div>
-        <div :class="hasError ? 'error-logs' : ''">{{log}}</div>
+        <div :class="hasError ? 'error-logs' : ''">{{ log }}</div>
         <div v-if="hasError" style="display: none">
             <button class="btn btn-circle btn-warning" @click="initTwilio">
                 Retry
@@ -28,7 +28,7 @@
             We have detected poor call quality conditions. You may experience degraded call quality.
         </div>
         <div v-show="closeCountdown > 0">This window will close in <span
-                class="countdown-seconds">{{closeCountdown}}</span> seconds.
+                class="countdown-seconds">{{ closeCountdown }}</span> seconds.
         </div>
         <template v-if="!(waiting && device === null)">
             <div class="row">
@@ -53,15 +53,17 @@
                             </div>
 
                             <div class="col-xs-3 no-padding">
-                                <button class="btn btn-circle" @click="togglePatientCallMessage(patientNumberToCall)"
+                                <button class="btn btn-circle"
+                                        @click="togglePatientCallMessage(patientNumberToCall, false)"
                                         :disabled="!ready || closeCountdown > 0 || (!onPhone[patientNumberToCall] && isCurrentlyOnPhone)"
                                         :class="onPhone[patientNumberToCall] ? 'btn-danger': 'btn-success'">
-                                    <i class="fa fa-fw fa-phone"
+                                    <i class="fa fa-fw"
                                        :class="onPhone[patientNumberToCall] ? 'fa-close': 'fa-phone'"></i>
                                 </button>
 
                                 <loader v-if="saving"></loader>
-                                <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[patientNumberToCall]"
+                                <button id="callButton" class="btn btn-circle btn-default"
+                                        v-if="onPhone[patientNumberToCall]"
                                         @click="toggleMuteMessage(patientNumberToCall)">
                                     <i class="fa fa-fw"
                                        :class="muted[patientNumberToCall] ? 'fa-microphone-slash': 'fa-microphone'"></i>
@@ -87,23 +89,26 @@
                                         <input name="patient-unlisted-number"
                                                class="form-control" type="tel"
                                                title="10-digit US Phone Number" placeholder="1234567890"
-                                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                                               v-model="patientUnlistedNumber"
+                                               :disabled="onPhone[patientUnlistedNumber]"/>
                                     </template>
                                     <template v-else>
                                         <input name="patient-unlisted-number"
                                                maxlength="10" minlength="10"
                                                class="form-control" type="tel"
                                                title="10-digit US Phone Number" placeholder="1234567890"
-                                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                                               v-model="patientUnlistedNumber"
+                                               :disabled="onPhone[patientUnlistedNumber]"/>
                                     </template>
                                 </div>
                             </div>
 
                             <div class="col-xs-3 no-padding" style="padding-left: 37px;">
-                                <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
+                                <button class="btn btn-circle"
+                                        @click="togglePatientCallMessage(selectedPatientNumber, false)"
                                         :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                         :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
-                                    <i class="fa fa-fw fa-phone"
+                                    <i class="fa fa-fw"
                                        :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
                                 </button>
                                 <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
@@ -150,11 +155,13 @@
 
                                 </div>
                             </div>
-                            <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
-                                <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
+                            <div class="col-xs-3 no-padding"
+                                 style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                                <button class="btn btn-circle"
+                                        @click="toggleOtherCallMessage(otherUnlistedNumber, false)"
                                         :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference) || closeCountdown > 0"
                                         :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
-                                    <i class="fa fa-fw fa-phone"
+                                    <i class="fa fa-fw"
                                        :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
                                 </button>
                             </div>
@@ -179,18 +186,36 @@
                                disabled/>
                     </div>
                     <div class="col-xs-3 no-padding">
-                        <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber)"
+                        <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber, false)"
                                 :disabled="!ready || !clinicalEscalationNumber || clinicalEscalationNumber.length === 0
                                                                      || (!allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnPhone)
                                                                      || (allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnConference)
                                                                      || closeCountdown > 0"
                                 :class="onPhone[clinicalEscalationNumber] ? 'btn-danger': 'btn-success'">
-                            <i class="fa fa-fw fa-phone"
+                            <i class="fa fa-fw"
                                :class="onPhone[clinicalEscalationNumber] ? 'fa-close': 'fa-phone'"></i>
                         </button>
                     </div>
                 </div>
+            </div>
+            <br>
+            <div v-if="allow911Calls" class="row" style="margin-top: 5px">
 
+                <div class="col-xs-12">
+                    <label>Emergency Assistance Service</label>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="col-xs-3 no-padding">
+                        <button class="btn btn-circle" @click="toggleCall911Message()"
+                                :disabled="!ready || (!onPhone[EMERGENCY_ASSISTANCE_CALL_NUMBER] && isCurrentlyOnPhone) || closeCountdown > 0"
+                                :class="onPhone[EMERGENCY_ASSISTANCE_CALL_NUMBER] ? 'btn-danger': 'btn-warning'">
+                            {{ onPhone[EMERGENCY_ASSISTANCE_CALL_NUMBER] ? 'End Call 911' : 'Call 911' }}
+                            <i class="fa fa-fw"
+                               :class="onPhone[EMERGENCY_ASSISTANCE_CALL_NUMBER] ? 'fa-close': 'fa-phone'"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <br>
             <call-numpad v-if="isCurrentlyOnPhone" :on-input="numpadInput"></call-numpad>
@@ -200,13 +225,20 @@
 </template>
 <script>
     import {rootUrl} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/app.config";
-    import EventBus from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader';
-    import {registerHandler, sendRequest} from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/bc-job-manager";
+    import EventBus
+        from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent
+        from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/loader';
+    import {
+        registerHandler,
+        sendRequest
+    } from "../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/bc-job-manager";
     import {Logger} from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import Notifications from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import Notifications
+        from '../../../../vendor/circlelinkhealth/sharedvuecomponents-module/Resources/assets/js/components/shared/notifications/notifications-event-based';
+    import EditPatientNumber from './edit-patient-number';
 
     let self;
 
@@ -218,6 +250,7 @@
             'notifications': Notifications,
             loader: LoaderComponent,
             'call-numpad': CallNumpad,
+            'edit-patient-number': EditPatientNumber
         },
         props: {
             cpmToken: {
@@ -229,6 +262,10 @@
                 default: ''
             },
             debug: {
+                type: Boolean,
+                default: false
+            },
+            allow911Calls: {
                 type: Boolean,
                 default: false
             },
@@ -247,6 +284,7 @@
         },
         data() {
             return {
+                EMERGENCY_ASSISTANCE_CALL_NUMBER: 911,
                 ready: false,
                 waiting: false,
                 waitingForConference: false,
@@ -265,9 +303,9 @@
                 device: null,
                 radioSelectedNumber: '',
                 callSids: {},
-                saving:false,
+                saving: false,
                 patientUnlistedNumber: '',
-                otherUnlistedNumber:'',
+                otherUnlistedNumber: '',
             }
         },
         computed: {
@@ -307,7 +345,7 @@
 
             patientNumberToCall() {
                 if (this.radioSelectedNumber.length !== 0) {
-                    if (this.debug){
+                    if (this.debug) {
                         return "+" + this.radioSelectedNumber;
                     }
                     return "+1" + this.radioSelectedNumber;
@@ -364,7 +402,7 @@
                 }
             },
 
-            toggleOtherCallMessage: function (number) {
+            toggleOtherCallMessage: function (number, isDebug) {
                 //if not clinicalEscalationNumber, its unlisted
                 const isUnlisted = this.clinicalEscalationNumber !== number;
                 let makeTheCall = true;
@@ -374,8 +412,15 @@
                 }
 
                 if (makeTheCall) {
-                    this.toggleCallMessage(number, isUnlisted, false);
+                    this.toggleCallMessage(number, isUnlisted, false, isDebug);
                 }
+            },
+
+            toggleCall911Message: function () {
+                if (!confirm('Are you sure you want to call the Emergency Assistance Service?')) {
+                    return;
+                }
+                this.toggleCallMessage(this.EMERGENCY_ASSISTANCE_CALL_NUMBER, true, true, false);
             },
 
             toggleCallMessage: function (number, isUnlisted, isCallToPatient, isDebug) {
@@ -484,7 +529,11 @@
 
                 //if calling a practice, the fromNumber will be practice's phone number,
                 //the same as the 'to' number. so don't send From and will be decided on server
-                const to = number.startsWith('+') ? number : ('+1' + number);
+                let to = number;
+                if (to !== this.EMERGENCY_ASSISTANCE_CALL_NUMBER && !number.startsWith('+')) {
+                    to = '+1' + number;
+                }
+
                 const from = this.fromNumber !== to ? this.fromNumber : undefined;
 
                 return {
@@ -953,10 +1002,12 @@
     .error-logs {
         color: red;
     }
-    .call-button{
+
+    .call-button {
         float: right;
     }
-    .selected-number{
+
+    .selected-number {
         font-weight: bolder;
         font-size: 18px;
         padding: 10px;

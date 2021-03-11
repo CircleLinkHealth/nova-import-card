@@ -84,16 +84,8 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             $key = config("$prefix.key");
             $secret = config("$prefix.secret");
             $version = config("$prefix.version");
-            $practiceId = config("$prefix.practice_id");
             
-            switch ($activeVersion) {
-                case 'v2':
-                    return new ConnectionV2($version, $key, $secret, $practiceId);
-                case 'v1':
-                    return new ConnectionV1($version, $key, $secret, $practiceId);
-                default:
-                    return new ConnectionV1($version, $key, $secret, $practiceId);
-            }
+            return new ConnectionV2($version, $key, $secret);
         });
     }
 }

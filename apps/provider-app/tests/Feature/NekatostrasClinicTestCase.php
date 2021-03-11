@@ -7,6 +7,7 @@
 namespace Tests\Feature;
 
 use CircleLinkHealth\Core\Tests\TestCase;
+use CircleLinkHealth\Customer\Database\Seeders\NekatostrasClinicSeeder;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -33,7 +34,7 @@ abstract class NekatostrasClinicTestCase extends TestCase
     {
         if ( ! isset($this->practice)) {
             $this->practice = \Cache::remember('_tests_nekatostras_practice', 2, function () {
-                $p = Practice::whereName(\NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
+                $p = Practice::whereName(NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
 
                 if (is_null($p)) {
                     throw new \Exception('Data missing. Did you run `php artisan db:seed --class NekatostrasClinicSeeder`?');

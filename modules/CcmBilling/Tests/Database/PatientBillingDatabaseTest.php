@@ -143,14 +143,14 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 'outbound_cpm_id' => $careCoachId,
                 'type'            => 'call',
                 'status'          => Call::REACHED,
-                'called_date'     => Carbon::now()->startOfMonth()->addDay(10),
+                'called_date'     => Carbon::now()->startOfMonth()->addDays(10),
             ],
             [
                 'inbound_cpm_id'  => $patientId,
                 'outbound_cpm_id' => $careCoachId,
                 'type'            => 'call',
                 'status'          => Call::NOT_REACHED,
-                'called_date'     => Carbon::now()->startOfMonth()->addDay(5),
+                'called_date'     => Carbon::now()->startOfMonth()->addDays(5),
             ],
         ]);
 
@@ -190,7 +190,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
 //        self::assertEquals($viewSummary->no_of_calls, 2);
 //        self::assertEquals($viewSummary->no_of_successful_calls, 1);
 
-        self::assertEquals($monthlyTime->total_time, $duration1 + $duration2);
+        self::assertEquals((int) $monthlyTime->total_time, $duration1 + $duration2);
     }
 
     public function test_process_single_patient_services_job_attaches_services()

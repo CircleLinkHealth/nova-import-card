@@ -30,7 +30,7 @@ return [
             'version'     => env('ATHENA_V2_VERSION', 'preview1'),
             'practice_id' => env('ATHENA_V2_CLH_PRACTICE_ID', '195900'),
         ],
-        'active_version' => env('ATHENA_ACTIVE_VERSION', 'v1'),
+        'active_version' => env('ATHENA_ACTIVE_VERSION', 'v2'),
     ],
 
     'mailgun' => [

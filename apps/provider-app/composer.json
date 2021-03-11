@@ -364,6 +364,7 @@
             "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors --testdox"
         ],
         "run-tests": [
+            "./vendor/phpunit/phpunit/phpunit --testsuite=UserScope --colors --testdox",
             "./vendor/phpunit/phpunit/phpunit --testsuite=SamlSpModule --colors --testdox",
             "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
             "./vendor/phpunit/phpunit/phpunit --testsuite=CcmBillingModule --colors --testdox",

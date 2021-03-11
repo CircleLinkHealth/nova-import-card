@@ -49,6 +49,7 @@
                             <div class="col-sm-12">
                                 <call-number
                                         :debug="@json($allowNonUsPhones)"
+                                        :allow911-calls="@json(config('twilio-notification-channel.allow-911-calls'))"
                                         cpm-caller-url="{{config('twilio-notification-channel.cpm-caller-url')}}"
                                         cpm-token="{{$cpmToken}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"

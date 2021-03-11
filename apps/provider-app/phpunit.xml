@@ -10,19 +10,19 @@
       <directory suffix="Test.php">./tests/Unit</directory>
     </testsuite>
     <testsuite name="EligibilityModule">
-      <directory suffix="Test.php">./CircleLinkHealth/Eligibility/Tests</directory>
+      <directory suffix="Test.php">./vendor/circlelinkhealth/eligibility-module/Tests</directory>
     </testsuite>
     <testsuite name="CustomerModule">
-      <directory suffix="Test.php">./CircleLinkHealth/Customer/Tests</directory>
+      <directory suffix="Test.php">./vendor/circlelinkhealth/customer-module/Tests</directory>
     </testsuite>
     <testsuite name="CcmBillingModule">
-      <directory suffix="Test.php">./CircleLinkHealth/CcmBilling/Tests</directory>
+      <directory suffix="Test.php">./vendor/circlelinkhealth/ccm-billing-module/Tests</directory>
     </testsuite>
     <testsuite name="NurseInvoicesModule">
-      <directory suffix="Test.php">./CircleLinkHealth/NurseInvoices/Tests</directory>
+      <directory suffix="Test.php">./vendor/circlelinkhealth/nurseinvoices-module/Tests</directory>
     </testsuite>
     <testsuite name="SamlSpModule">
-      <directory suffix="Test.php">./CircleLinkHealth/SamlSp/Tests</directory>
+      <directory suffix="Test.php">./vendor/circlelinkhealth/saml-sp-module/Tests</directory>
     </testsuite>
     <testsuite name="Feature">
       <directory suffix="Test.php">./tests/Feature</directory>

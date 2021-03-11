@@ -43,6 +43,7 @@ class ManualCallControllerTest extends CustomerTestCase
     public function test_it_passes_correct_variables_to_view()
     {
         [$nurse, $patient] = $this->mockSuggestor($handler = new SuccessfulCall());
+        $patient->save();
 
         $this->putMessageInSession(json_encode((new CreateManualCallAfterNote($patient->id, true))->toArray()));
 

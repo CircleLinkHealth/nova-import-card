@@ -38,7 +38,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'G2058(>40mins)',
+            'code' => 'CPT 99439(>40mins)',
         ], [
             'order'        => 3,
             'is_enabled'   => true,
@@ -48,7 +48,7 @@ class SeedChargeableServices
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'G2058(>60mins)',
+            'code' => 'CPT 99439(>60mins)',
         ], [
             'order'        => 4,
             'is_enabled'   => true,

@@ -40,7 +40,7 @@ class Calls implements AthenaApiImplementation
             throw new \Exception('practiceid is required.', 422);
         }
 
-        $response = $this->api()->POST(
+        $response = $this->api($practiceId)->POST(
             "/chart/{$patientId}/problems",
             [
                 'departmentid' => $problem->getDepartmentId(),
@@ -51,11 +51,8 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
-
-    /**
-     * @return ConnectionV2
-     */
-    public function api()
+    
+    public function api(int $practiceId)
     {
         if ( ! $this->connection instanceof AthenaApiConnection) {
             $this->connection = app(AthenaApiConnection::class);
@@ -65,7 +62,7 @@ class Calls implements AthenaApiImplementation
             throw new \Exception('AthenaAPI Connection not initialized');
         }
 
-        return $this->connection;
+        return $this->connection->setPracticeId($practiceId);
     }
 
     /**
@@ -88,9 +85,9 @@ class Calls implements AthenaApiImplementation
         $appointmentId,
         $reasonId
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->PUT(
+        $response = $this->api($practiceId)->PUT(
             "appointments/${appointmentId}",
             [
                 'practiceid'                  => $practiceId,
@@ -131,9 +128,9 @@ class Calls implements AthenaApiImplementation
         $appointmentDate,
         $appointmentTime
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->POST(
+        $response = $this->api($practiceId)->POST(
             'appointments/open',
             [
                 'practiceid'      => $practiceId,
@@ -152,12 +149,14 @@ class Calls implements AthenaApiImplementation
     public function createNewPatient(Patient $patient)
     {
         $practiceId = $patient->getPracticeId();
-
+    
+        $this->api($practiceId)->setPracticeId($practiceId);
+    
         if ( ! $practiceId) {
             throw new \Exception('practiceid is required.', 422);
         }
 
-        $response = $this->api()->POST(
+        $response = $this->api($practiceId)->POST(
             "/patients",
             [
                 'departmentid' => $patient->getDepartmentId(),
@@ -197,9 +196,9 @@ class Calls implements AthenaApiImplementation
         $appointmentId,
         $showDeleted = false
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "appointments/{$appointmentId}/notes",
             [
                 'showdeleted' => $showDeleted,
@@ -214,9 +213,9 @@ class Calls implements AthenaApiImplementation
         int $departmentId,
         int $providerId
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "/patientappointmentreasons",
             [
                 'practiceid' => $practiceId,
@@ -237,7 +236,7 @@ class Calls implements AthenaApiImplementation
      */
     public function getAvailablePractices($practiceId = 1)
     {
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "practiceinfo",
             [
                 'practiceid' => $practiceId,
@@ -249,9 +248,9 @@ class Calls implements AthenaApiImplementation
 
     public function getBillingProviderName($practiceId, $providerId)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "providers/${providerId}",
             [
                 'showallproviderids' => true,
@@ -288,9 +287,9 @@ class Calls implements AthenaApiImplementation
         $limit = 1000,
         $showCancelled = false
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             'appointments/booked',
             [
                 'practiceid'    => $practiceId,
@@ -318,9 +317,9 @@ class Calls implements AthenaApiImplementation
      */
     public function getCareTeam(int $patientId, int $practiceId, int $departmentId)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "chart/{$patientId}/careteam",
             [
                 'patientid'    => $patientId,
@@ -346,9 +345,9 @@ class Calls implements AthenaApiImplementation
         $practiceId,
         $departmentId
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "patients/{$patientId}/ccda",
             [
                 'patientid'    => $patientId,
@@ -372,18 +371,18 @@ class Calls implements AthenaApiImplementation
      */
     public function getDemographics($patientId, $practiceId)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET("patients/{$patientId}");
+        $response = $this->api($practiceId)->GET("patients/{$patientId}");
 
         return $this->response($response);
     }
 
     public function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "departments/${departmentId}",
             [
                 'providerlist' => $providerList,
@@ -406,9 +405,9 @@ class Calls implements AthenaApiImplementation
      */
     public function getDepartments($practiceId, $showAllDepartments = false, $providerlist = false)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             'departments',
             [
                 'practiceid'         => $practiceId,
@@ -446,7 +445,7 @@ class Calls implements AthenaApiImplementation
             $args['enddate'] = $endDate;
         }
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "/chart/${patientId}/encounters",
             $args
         );
@@ -463,9 +462,9 @@ class Calls implements AthenaApiImplementation
      */
     public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "chart/${patientId}/medicalhistory",
             [
                 'departmentid' => $departmentId,
@@ -486,7 +485,7 @@ class Calls implements AthenaApiImplementation
      */
     public function getMedications(int $patientId, int $practiceId, int $departmentId)
     {
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "/chart/${patientId}/medications",
             [
                 'departmentid' => $departmentId,
@@ -517,9 +516,9 @@ class Calls implements AthenaApiImplementation
         }
 
         //just so it doesn't append clh_practice_id to the url
-        $this->api()->setPracticeId(null);
+        $this->api($practiceId)->setPracticeId(null);
 
-        return $this->api()->GET($url);
+        return $this->api($practiceId)->GET($url);
     }
 
     /**
@@ -559,9 +558,9 @@ class Calls implements AthenaApiImplementation
         $showPast = true,
         $showCancelled = false
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "patients/{$patientId}/appointments",
             [
                 'showpast'      => $showPast,
@@ -586,7 +585,7 @@ class Calls implements AthenaApiImplementation
         $practiceId,
         $departmentId
     ) {
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "patients/{$patientId}/customfields",
             [
                 'patientid'    => $patientId,
@@ -609,11 +608,11 @@ class Calls implements AthenaApiImplementation
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId)
     {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
         $apiPath = "patients/${patientId}/insurances";
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             $apiPath,
             [
                 'departmentid'  => $departmentId,
@@ -664,7 +663,7 @@ class Calls implements AthenaApiImplementation
         $workphone = null,
         $departmentId = null
     ) {
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "/patients",
             [
                 'firstname'    => $patientFirstName,
@@ -701,7 +700,7 @@ class Calls implements AthenaApiImplementation
         $showDiagnosisInfo = true,
         $showinactive = false
     ) {
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             "/chart/${patientId}/problems",
             [
                 'departmentid'      => $departmentId,
@@ -723,9 +722,9 @@ class Calls implements AthenaApiImplementation
     public function getPracticeCustomFields($practiceId)
     {
         //just so it doesn't append clh_practice_id to the url
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET(
+        $response = $this->api($practiceId)->GET(
             'customfields',
             [
                 'practiceid' => $practiceId,
@@ -739,9 +738,9 @@ class Calls implements AthenaApiImplementation
         $practiceId,
         $providerId
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->GET("providers/{$providerId}");
+        $response = $this->api($practiceId)->GET("providers/{$providerId}");
 
         return $this->response($response);
     }
@@ -766,9 +765,9 @@ class Calls implements AthenaApiImplementation
         $noteText,
         $showOnDisplay = false
     ) {
-        $this->api()->setPracticeId($practiceId);
+        $this->api($practiceId)->setPracticeId($practiceId);
 
-        $response = $this->api()->POST(
+        $response = $this->api($practiceId)->POST(
             "appointments/{$appointmentId}/notes",
             [
                 'displayonschedule' => $showOnDisplay,
@@ -801,7 +800,7 @@ class Calls implements AthenaApiImplementation
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
     ) {
-//        $response = $this->api()->POST("patients/{$patientId}/documents", [
+//        $response = $this->api($practiceId)->POST("patients/{$patientId}/documents", [
 //            'patientid' => $patientId,
 //            'practiceid' => $practiceId,
 //            'departmentid' => $departmentId,
@@ -813,7 +812,7 @@ class Calls implements AthenaApiImplementation
 //            'Content-type' => 'multipart/form-data',
 //        ]);
 
-        $version = $this->api()->getVersion();
+        $version = $this->api($practiceId)->getVersion();
 
         /*
          * HACK
@@ -823,7 +822,7 @@ class Calls implements AthenaApiImplementation
             ? "-F appointmentid=${appointmentId}"
             : '';
 
-        $command = "curl -v -k 'https://api.athenahealth.com/${version}/${practiceId}/patients/${patientId}/documents' -XPOST -F documentsubclass=${documentSubClass} -F departmentid=${departmentId} ${appointmentField} -F 'attachmentcontents=@${attachmentContent}' -H 'Authorization: Bearer {$this->api()->get_token()}'";
+        $command = "curl -v -k 'https://api.athenahealth.com/${version}/${practiceId}/patients/${patientId}/documents' -XPOST -F documentsubclass=${documentSubClass} -F departmentid=${departmentId} ${appointmentField} -F 'attachmentcontents=@${attachmentContent}' -H 'Authorization: Bearer {$this->api($practiceId)->get_token()}'";
 
         $response = exec($command);
 

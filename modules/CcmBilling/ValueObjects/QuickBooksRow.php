@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\DTO;
+namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 /**
  * @deprecated replaced with {@link \CircleLinkHealth\CcmBilling\ValueObjects\PracticeQuickbooksReportData}

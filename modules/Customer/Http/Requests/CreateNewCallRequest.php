@@ -22,7 +22,9 @@ class CreateNewCallRequest extends FormRequest
         $user = auth()->user();
 
         if ($user->isCareCoach()) {
-            return app(CreateNoteForPatient::class)->can($user->id, $this->route('patientId') ?? $this->input('0.patientId'));
+            $patientId = $this->route('patientId') ?? $this->input('patientId') ?? $this->input('0.patientId');
+
+            return app(CreateNoteForPatient::class)->can($user->id, $patientId);
         }
 
         return $user->hasPermission('call.create');
