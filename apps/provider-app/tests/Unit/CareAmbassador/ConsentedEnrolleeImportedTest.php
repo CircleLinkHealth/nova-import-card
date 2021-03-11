@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Bus;
 
 class ConsentedEnrolleeImportedTest extends TestCase
 {
-    use UserHelpers;
     use CareAmbassadorHelpers;
+    use UserHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;

@@ -90,8 +90,6 @@ class PatientWithdrawnTest extends TestCase
         $this->assertTrue(Patient::WITHDRAWN_1ST_CALL == $this->patient->getCcmStatus());
     }
 
-
-
     /**
      * A basic unit test example.
      *

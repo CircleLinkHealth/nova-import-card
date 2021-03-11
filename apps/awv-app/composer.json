@@ -177,7 +177,7 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "algolia/algoliasearch-client-php": "^2.6",
-        "ashallendesign/short-url": "^4.1",
+        "ashallendesign/short-url": "*",
         "appstract/laravel-opcache": "4.0.2",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "circlelinkhealth/core-module": "*",

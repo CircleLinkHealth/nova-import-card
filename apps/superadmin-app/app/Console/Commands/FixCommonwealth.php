@@ -1109,7 +1109,7 @@ class FixCommonwealth extends Command
                 378465,
                 378466,
                 378471,
-                378474
+                378474,
             ])
             ->with('eligibilityJob.targetPatient.ccda')
             ->with('user')
@@ -1132,7 +1132,7 @@ class FixCommonwealth extends Command
                     }
 
                     $ccd->billing_provider_id = $enrollee->provider_id = $provider->id;
-                    
+
                     if ($enrollee->user) {
                         $enrollee->user->setBillingProviderId($provider->id);
                     }
@@ -1147,7 +1147,8 @@ class FixCommonwealth extends Command
                         $enrollee->save();
                         $this->line("Saving Enrollee[$enrollee->id]");
                     }
-                }, 50
+                },
+                50
             );
     }
 }

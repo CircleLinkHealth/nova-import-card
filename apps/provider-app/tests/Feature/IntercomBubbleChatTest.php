@@ -23,7 +23,7 @@ class IntercomBubbleChatTest extends CustomerTestCase
         parent::setUp();
         AppConfig::remove(self::CONFIG_KEY);
         AppConfig::clearCache();
-        $fakePractice = \factory(Practice::class)->make();
+        $fakePractice     = \factory(Practice::class)->make();
         $fakePractice->id = 8;
         $fakePractice->save();
     }
