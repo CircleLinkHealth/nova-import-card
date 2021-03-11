@@ -7,6 +7,7 @@
 namespace Tests\Feature;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
@@ -22,6 +23,9 @@ class IntercomBubbleChatTest extends CustomerTestCase
         parent::setUp();
         AppConfig::remove(self::CONFIG_KEY);
         AppConfig::clearCache();
+        $fakePractice = \factory(Practice::class)->make();
+        $fakePractice->id = 8;
+        $fakePractice->save();
     }
 
     public function test_if_app_config_is_empty_no_user_can_see_bubble_chat()

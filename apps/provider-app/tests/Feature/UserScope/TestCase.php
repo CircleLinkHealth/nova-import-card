@@ -7,6 +7,7 @@
 namespace Tests\Feature\UserScope;
 
 use CircleLinkHealth\Core\Tests\TestCase as BaseTestCase;
+use CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
@@ -104,8 +105,8 @@ abstract class TestCase extends BaseTestCase
 
     public function withMultiLocationScope(): self
     {
-        $this->actor = User::whereFirstName(\CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME)
-            ->whereLastName(\CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME)
+        $this->actor = User::whereFirstName(UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME)
+            ->whereLastName(UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 
@@ -118,8 +119,8 @@ abstract class TestCase extends BaseTestCase
 
     public function withPracticeScope(): self
     {
-        $this->actor = User::whereFirstName(\CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME)
-            ->whereLastName(\CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME)
+        $this->actor = User::whereFirstName(UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME)
+            ->whereLastName(UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 
@@ -132,8 +133,8 @@ abstract class TestCase extends BaseTestCase
 
     public function withSingleLocationScope(): self
     {
-        $this->actor = User::whereFirstName(\CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
-            ->whereLastName(\CircleLinkHealth\Customer\Database\Seeders\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
+        $this->actor = User::whereFirstName(UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
+            ->whereLastName(UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 
@@ -149,7 +150,7 @@ abstract class TestCase extends BaseTestCase
         $responseData = null;
 
         if (is_json($response->getContent())) {
-            $responseData = $response->decodeResponseJson();
+            $responseData = $response->json();
         }
 
         if ( ! $responseData) {

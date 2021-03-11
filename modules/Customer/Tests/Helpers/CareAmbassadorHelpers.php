@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Traits\Tests;
+namespace CircleLinkHealth\Customer\Tests\Helpers;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

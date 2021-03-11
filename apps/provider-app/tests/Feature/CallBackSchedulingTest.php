@@ -45,7 +45,7 @@ class CallBackSchedulingTest extends NekatostrasClinicTestCase
         $this->assertEquals($careCoach->id, $repo->assignedNurse($patient->id)->nurse_user_id);
 
         $resp = $this->actingAs($careCoach)
-            ->call('get', route('call.create', [$patient->id]), $params);
+            ->call('get', route('call.create', ['patientId' => $patient->id]), $params);
 
         $resp->assertStatus(201);
 
@@ -65,7 +65,7 @@ class CallBackSchedulingTest extends NekatostrasClinicTestCase
         $this->assertEquals(Patient::ENROLLED, $patient->patientInfo->ccm_status);
 
         $resp = $this->actingAs($careCoach)
-            ->call('get', route('call.create', [$patient->id]), $params);
+            ->call('get', route('call.create', ['patientId' => $patient->id]), $params);
 
         $resp->assertStatus(201);
 
@@ -87,7 +87,7 @@ class CallBackSchedulingTest extends NekatostrasClinicTestCase
         $params = $this->newCallbackParams($patient->id, null);
 
         $resp = $this->actingAs($careCoach)
-            ->call('get', route('call.create', [$patient->id]), $params);
+            ->call('get', route('call.create', ['patientId' => $patient->id]), $params);
 
         $resp->assertStatus(201);
 
@@ -113,7 +113,7 @@ class CallBackSchedulingTest extends NekatostrasClinicTestCase
         $this->assertEquals(Patient::ENROLLED, $patient->patientInfo->ccm_status);
 
         $resp = $this->actingAs($admin)
-            ->call('get', route('call.create', [$patient->id]), $params);
+            ->call('get', route('call.create', ['patientId' => $patient->id]), $params);
 
         $resp->assertStatus(201);
 
@@ -132,7 +132,7 @@ class CallBackSchedulingTest extends NekatostrasClinicTestCase
         $this->assertEquals(Patient::ENROLLED, $patient->patientInfo->ccm_status);
 
         $resp = $this->actingAs($admin)
-            ->call('get', route('call.create', [$patient->id]), $params);
+            ->call('get', route('call.create', ['patientId' => $patient->id]), $params);
 
         $resp->assertStatus(201);
 
@@ -153,7 +153,7 @@ class CallBackSchedulingTest extends NekatostrasClinicTestCase
         $params = $this->newCallbackParams($patient->id, null);
 
         $resp = $this->actingAs($careCoach)
-            ->call('get', route('call.create', [$patient->id]), $params);
+            ->call('get', route('call.create', ['patientId' => $patient->id]), $params);
 
         $resp->assertStatus(403);
     }

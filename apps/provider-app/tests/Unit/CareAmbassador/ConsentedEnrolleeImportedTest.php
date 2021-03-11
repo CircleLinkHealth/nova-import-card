@@ -6,17 +6,18 @@
 
 namespace Tests\Unit;
 
-use App\Traits\Tests\CareAmbassadorHelpers;
 use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Tests\Helpers\CareAmbassadorHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Bus;
 
 class ConsentedEnrolleeImportedTest extends TestCase
 {
-    use \CircleLinkHealth\Customer\Traits\UserHelpers;
+    use UserHelpers;
     use CareAmbassadorHelpers;
 
     protected $careAmbassadorUser;
