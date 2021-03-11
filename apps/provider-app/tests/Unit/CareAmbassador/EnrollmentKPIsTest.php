@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Artisan;
 
 class EnrollmentKPIsTest extends TestCase
 {
-    use UserHelpers;
     use CareAmbassadorHelpers;
+    use UserHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;

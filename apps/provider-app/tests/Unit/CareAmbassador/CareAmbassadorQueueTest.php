@@ -16,8 +16,8 @@ use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
 
 class CareAmbassadorQueueTest extends TestCase
 {
-    use UserHelpers;
     use CareAmbassadorHelpers;
+    use UserHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;
