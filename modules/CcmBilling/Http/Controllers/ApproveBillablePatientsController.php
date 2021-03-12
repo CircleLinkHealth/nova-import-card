@@ -99,7 +99,7 @@ class ApproveBillablePatientsController extends Controller
             ];
         }
 
-        $chargeableServices = ChargeableService::cached()->sortBy('order');
+        $chargeableServices = ChargeableService::cached()->sortBy('order')->values();
         $version            = $request->get('version', '2');
 
         return view('ccmbilling::billing', compact([
