@@ -16,6 +16,7 @@ use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollectio
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceForTimeTrackerDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
@@ -135,7 +136,10 @@ class PatientServicesForTimeTracker
                     'chargeable_service_id'           => -1,
                     'chargeable_service_display_name' => 'NONE',
                     'chargeable_service_code'         => 'NONE',
-                    'total_time'                      => optional(collect($this->dto->getPatientTimes())->whereNull('chargeable_service_id')->first())->total_time ?? 0,
+                    'total_time'                      => optional(collect($this->dto->getPatientTimes())
+                            ->filter(fn(PatientTimeForProcessing $item) => is_null($item->getChargeableServiceId()))
+                            ->first())
+                                                             ->getTime() ?? 0,
                 ])
             );
 
@@ -153,7 +157,10 @@ class PatientServicesForTimeTracker
                     'chargeable_service_id'           => $service->id,
                     'chargeable_service_display_name' => $service->display_name,
                     'chargeable_service_code'         => $service->code,
-                    'total_time'                      => optional(collect($this->dto->getPatientTimes())->where('chargeable_service_id')->first())->total_time ?? 0,
+                    'total_time'                      => optional(collect($this->dto->getPatientTimes())
+                            ->filter(fn(PatientTimeForProcessing $item) => $item->getChargeableServiceId() === $service->id)
+                            ->first())
+                                                             ->getTime() ?? 0,
                 ])
             );
         }

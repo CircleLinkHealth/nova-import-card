@@ -136,7 +136,10 @@ class PatientServiceForTimeTrackerDTO
                         'chargeable_service_id' => $service->getChargeableServiceId(),
                         'chargeable_service_code' => $service->getCode(),
                         'chargeable_service_display_name' => $service->getDisplayName(),
-                        'total_time' => optional(collect($dto->getPatientTimes())->whereNull('chargeable_service_id')->first())->total_time ?? 0
+                        'total_time' => optional(collect($dto->getPatientTimes())
+                                ->filter(fn(PatientTimeForProcessing $item) => $item->getChargeableServiceId() === $service->getChargeableServiceId())
+                                ->first())
+                                            ->getTime() ?? 0
                     ])
             );
         }
@@ -147,7 +150,10 @@ class PatientServiceForTimeTrackerDTO
                     'chargeable_service_id' => -1,
                     'chargeable_service_display_name' => 'NONE',
                     'chargeable_service_code' => 'NONE',
-                    'total_time' => optional(collect($dto->getPatientTimes())->whereNull('chargeable_service_id')->first())->total_time ?? 0
+                    'total_time' => optional(collect($dto->getPatientTimes())
+                            ->filter(fn(PatientTimeForProcessing $item) => is_null($item->getChargeableServiceId()))
+                            ->first())
+                                        ->getTime() ?? 0
                 ])
             );
         }
