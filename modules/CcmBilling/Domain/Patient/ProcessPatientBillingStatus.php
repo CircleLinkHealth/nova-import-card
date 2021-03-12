@@ -111,8 +111,15 @@ class ProcessPatientBillingStatus
 
     private function attestedCountForService(string $service): int
     {
+        if ($service === ChargeableService::CCM && ! $this->fulfilledSummaryForService(ChargeableService::BHI)){
+            $service = null;
+        }
         return collect($this->dto->getPatientProblems())
-            ->filter(fn(PatientProblemForProcessing $p) => in_array($service, $p->getServiceCodes()) && $p->isAttestedForMonth())
+            ->filter(function(PatientProblemForProcessing $p) use ($service){
+                if (is_null($service)){
+                    return $p->isAttestedForMonth();
+                }
+                return in_array($service, $p->getServiceCodes()) && $p->isAttestedForMonth();})
             ->count();
     }
 
