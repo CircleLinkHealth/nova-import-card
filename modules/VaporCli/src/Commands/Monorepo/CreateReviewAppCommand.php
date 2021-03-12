@@ -31,10 +31,10 @@ class CreateReviewAppCommand extends Command
         $manifest = Manifest::current();
 
         $environment = $this->argument('environment');
-        $app = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
+        $app         = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
 
         if (isset($manifest['environments']['staging'])) {
-            $envConfig = $manifest['environments'][$blueprintEnv];
+            $envConfig           = $manifest['environments'][$blueprintEnv];
             $envConfig['domain'] = str_replace($app, "$app-$environment", $envConfig['domain']);
 
             foreach ($envConfig['queues'] as $key => $name) {
@@ -48,8 +48,7 @@ class CreateReviewAppCommand extends Command
 
         $projectId = Manifest::id();
 
-        if (is_null($this->vapor->environmentNamed($projectId, $environment)))
-        {
+        if (is_null($this->vapor->environmentNamed($projectId, $environment))) {
             $this->vapor->createEnvironment(
                 Manifest::id(),
                 $environment,
@@ -57,8 +56,7 @@ class CreateReviewAppCommand extends Command
             );
         }
 
-
-        if (! isset(Manifest::current()['environments'][$environment])){
+        if ( ! isset(Manifest::current()['environments'][$environment])) {
             Manifest::addEnvironment(
                 $environment,
                 $envConfig
@@ -73,9 +71,9 @@ class CreateReviewAppCommand extends Command
             }
         }
 
-        if (! file_exists("staging-deploy-s3.env")){
+        if ( ! file_exists("staging-deploy-s3.env")) {
             file_put_contents(
-                Path::current()."/staging-deploy-s3.env",
+                Path::current() . "/staging-deploy-s3.env",
                 "S3_SECRETS_SECRET=1QfZhQDi8Ihxh67VY4Pk69Sx1vsWefZfjLf9+K/v
 S3_SECRETS_BUCKET=cpm-staging-keys
 S3_SECRETS_KEY=AKIAZYB3F7ZGBKRUHG5Y
@@ -85,22 +83,26 @@ APP_NAME=$app"
             );
         }
 
-        $blueprintEnvVars = $this->vapor->environmentVariables($projectId, $blueprintEnv);
-        $vars = collect(explode("\n", $blueprintEnvVars))
-            ->mapWithKeys(function($item){
-                $vars = explode('=',$item);
-                return [$vars[0] => $vars[1]];
-            })
-        ->merge(
-            collect(self::defaultReviewEnvironmentVars($app, $environment))
-        )->transform(function ($value, $key){
-            return "$key=$value";
-            })
-        ->implode("\n");
+        $this->vapor->updateEnvironmentVariables(
+            $projectId,
+            $environment,
+            collect(
+                explode("\n", $this->vapor->environmentVariables($projectId, $blueprintEnv))
+            )
+                ->mapWithKeys(function ($item) {
+                    $vars = explode('=', $item);
 
-        $this->vapor->updateEnvironmentVariables($projectId, $environment, $vars);
+                    return [$vars[0] => $vars[1]];
+                })
+                ->merge(
+                    collect(self::defaultReviewEnvironmentVars($app, $environment))
+                )->transform(function ($value, $key) {
+                    return "$key=$value";
+                })
+                ->implode("\n")
+        );
 
-        GitIgnore::add(['.env.'.$environment]);
+        GitIgnore::add(['.env.' . $environment]);
 
         Helpers::info('Environment created successfully.');
     }
@@ -115,24 +117,25 @@ APP_NAME=$app"
         $this
             ->setName('review-app')
             ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
-            ->addOption('docker', null, InputOption::VALUE_NONE, 'Indicate that the environment will use Docker images as its runtime')
+            ->addOption('docker', null, InputOption::VALUE_NONE,
+                'Indicate that the environment will use Docker images as its runtime')
             ->setDescription('Create a new review app');
     }
 
     protected static function defaultReviewEnvironmentVars(string $app, string $environment): array
     {
         return [
-            "APP_DEBUG"=> "true",
-            "CACHE_DRIVER" => "array",
-            "MAIL_DRIVER" => "smtp",
-            "MAIL_MAILER" => "postmark",
-            "LOW_CPM_QUEUE_NAME"=> $app."-low-".$environment,
-            "HIGH_CPM_QUEUE_NAME"=> $app."-low-".$environment,
-            "REVISIONABLE_QUEUE" => $app."-revisionable-".$environment,
-            "APP_URL"=> "https://$app-$environment.clh-staging.com",
-            "SESSION_DOMAIN" => "$app-$environment.clh-staging.com",
-            "SCOUT_MONITOR" => "false",
-            "UNIQUE_ENV_NAME" => $environment
+            "APP_DEBUG"           => "true",
+            "CACHE_DRIVER"        => "array",
+            "MAIL_DRIVER"         => "smtp",
+            "MAIL_MAILER"         => "postmark",
+            "LOW_CPM_QUEUE_NAME"  => "$app-$environment-low-staging",
+            "HIGH_CPM_QUEUE_NAME" => "$app-$environment-high-staging",
+            "REVISIONABLE_QUEUE"  => "$app-$environment-revisionable-staging",
+            "APP_URL"             => "https://$app-$environment.clh-staging.com",
+            "SESSION_DOMAIN"      => "$app-$environment.clh-staging.com",
+            "SCOUT_MONITOR"       => "false",
+            "UNIQUE_ENV_NAME"     => $environment,
         ];
     }
 }
