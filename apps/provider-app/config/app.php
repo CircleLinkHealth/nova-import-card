@@ -219,6 +219,7 @@ return [
         AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
+        \CircleLinkHealth\EpicSso\Providers\EpicSsoServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
