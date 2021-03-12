@@ -71,7 +71,7 @@ class CheckForNullPatientActivities extends Command
                 $message->push($str);
             });
 
-        if (empty($message)) {
+        if ($message->isEmpty()) {
             return 0;
         }
 
