@@ -68,7 +68,7 @@ class PatientTimeForProcessing
     /**
      * @return int
      */
-    public function getChargeableServiceId(): int
+    public function getChargeableServiceId(): ?int
     {
         return $this->chargeableServiceId;
     }
