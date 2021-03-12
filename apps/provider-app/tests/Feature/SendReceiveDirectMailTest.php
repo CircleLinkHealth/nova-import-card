@@ -13,11 +13,13 @@ use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 
 class SendReceiveDirectMailTest extends TestCase
 {
+    //Uncomment after we figure out a secure way to give S3 and EMR Sandbox access to CI
+    /*
     public function test_it_sends_and_receives_dm_with_attachments()
     {
-        //Uncomment after we figure out a secure way to give S3 and EMR Sandbox access to CI
-//        $this->receiveAndAssertReceived($this->sendAndAssertSent());
+        $this->receiveAndAssertReceived($this->sendAndAssertSent());
     }
+    */
 
     private function receiveAndAssertReceived(SendResult $sent)
     {

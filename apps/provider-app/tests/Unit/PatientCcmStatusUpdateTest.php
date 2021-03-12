@@ -123,27 +123,6 @@ class PatientCcmStatusUpdateTest extends CustomerTestCase
         $this->assertEquals($info->withdrawn_reason, 'Changed Insurance');
     }
 
-    public function test_withdrawn_1st_call_status_is_saved_on_mass_withdrawal()
-    {
-        auth()->login($this->admin);
-
-        $response = $this->actingAs($this->admin)->call(
-            'GET',
-            route('admin.users.doAction'),
-            [
-                'action'           => 'withdraw',
-                'withdrawn-reason' => 'No Longer Interested',
-                'users'            => [
-                    $this->patient->id,
-                ],
-            ]
-        );
-
-        $info = $this->patient->patientInfo()->first();
-        $this->assertEquals($info->ccm_status, 'withdrawn_1st_call');
-        $this->assertEquals($info->withdrawn_reason, 'No Longer Interested');
-    }
-
     private function getNoteStoreParams(): array
     {
         return [

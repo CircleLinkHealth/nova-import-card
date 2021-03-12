@@ -90,20 +90,6 @@ class PatientWithdrawnTest extends TestCase
         $this->assertTrue(Patient::WITHDRAWN_1ST_CALL == $this->patient->getCcmStatus());
     }
 
-    public function test_withdrawn_from_all_users_page()
-    {
-        $this->actingAs($this->nurse);
-
-        $this->assertTrue(Patient::ENROLLED == $this->patient->getCcmStatus());
-        $this->assertTrue($this->patient->onFirstCall());
-
-        $this->actingAs($this->admin)->call('GET', route('admin.users.doAction'), $this->getAllUsersActionInput());
-
-        $this->patient->load('patientInfo');
-
-        $this->assertTrue(Patient::WITHDRAWN_1ST_CALL == $this->patient->getCcmStatus());
-    }
-
     /**
      * A basic unit test example.
      *
@@ -159,16 +145,6 @@ class PatientWithdrawnTest extends TestCase
 
             'is_cpm_outbound' => true,
         ]);
-    }
-
-    private function getAllUsersActionInput()
-    {
-        return [
-            'action'           => 'withdraw',
-            'withdrawn_reason' => 'test',
-            'users'            => [$this->patient->id],
-            'withdrawn-reason' => 'test',
-        ];
     }
 
     private function getPatientProfilePageInput()

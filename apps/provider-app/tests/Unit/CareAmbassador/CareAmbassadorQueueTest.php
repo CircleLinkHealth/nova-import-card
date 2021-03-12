@@ -6,17 +6,18 @@
 
 namespace Tests\Unit;
 
-use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Tests\Helpers\CareAmbassadorHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Services\Enrollment\EnrollableCallQueue;
 
 class CareAmbassadorQueueTest extends TestCase
 {
-    use \CircleLinkHealth\Customer\Traits\UserHelpers;
     use CareAmbassadorHelpers;
+    use UserHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;

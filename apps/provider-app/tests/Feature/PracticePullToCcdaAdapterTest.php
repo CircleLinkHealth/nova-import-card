@@ -6,11 +6,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\PracticePull\Demographics;
 use CircleLinkHealth\Core\DirectMail\Adapters\Ccda\PracticePullMedicalRecordToXmlAdapter;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 
 class PracticePullToCcdaAdapterTest extends CustomerTestCase
 {
