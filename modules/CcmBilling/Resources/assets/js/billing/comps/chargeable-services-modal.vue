@@ -56,6 +56,9 @@
                 billingRevampEnabled: false,
                 info: {
                     okHandler() {
+                        if (self.validationMessage !== null){
+                            return;
+                        }
                         if (typeof (this.done) == 'function' && self.changes.length) {
                             this.done(self.patientServices, self.changes);
                         }
