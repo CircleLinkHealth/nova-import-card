@@ -11,6 +11,7 @@ use Laravel\VaporCli\Dockerfile;
 use Laravel\VaporCli\GitIgnore;
 use Laravel\VaporCli\Helpers;
 use Laravel\VaporCli\Manifest;
+use Laravel\VaporCli\Path;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -30,9 +31,9 @@ class CreateReviewAppCommand extends Command
         $manifest = Manifest::current();
 
         $environment = $this->argument('environment');
+        $app = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
 
         if (isset($manifest['environments']['staging'])) {
-            $app = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
             $envConfig = $manifest['environments'][$blueprintEnv];
             $envConfig['domain'] = str_replace($app, "$app-$environment", $envConfig['domain']);
 
@@ -45,16 +46,24 @@ class CreateReviewAppCommand extends Command
             $envConfig['runtime'] = 'docker';
         }
 
-        $this->vapor->createEnvironment(
-            Manifest::id(),
-            $environment,
-            $this->option('docker')
-        );
+        $projectId = Manifest::id();
 
-        Manifest::addEnvironment(
-            $environment,
-            $envConfig
-        );
+        if (is_null($this->vapor->environmentNamed($projectId, $environment)))
+        {
+            $this->vapor->createEnvironment(
+                Manifest::id(),
+                $environment,
+                $this->option('docker')
+            );
+        }
+
+
+        if (! isset(Manifest::current()['environments'][$environment])){
+            Manifest::addEnvironment(
+                $environment,
+                $envConfig
+            );
+        }
 
         if ($this->option('docker')) {
             if (file_exists("$blueprintEnv.Dockerfile")) {
@@ -63,6 +72,25 @@ class CreateReviewAppCommand extends Command
                 Dockerfile::fresh($environment);
             }
         }
+
+        if (! file_exists("staging-deploy-s3.env")){
+            file_put_contents(
+                Path::current()."/staging-deploy-s3.env",
+                "S3_SECRETS_SECRET=1QfZhQDi8Ihxh67VY4Pk69Sx1vsWefZfjLf9+K/v
+S3_SECRETS_BUCKET=cpm-staging-keys
+S3_SECRETS_KEY=AKIAZYB3F7ZGBKRUHG5Y
+S3_SECRETS_REGION=us-east-1
+ENV_TYPE=staging
+APP_NAME=$app"
+            );
+        }
+
+        //check which apps are created - if admin exists make sure to add the correct url in env. Same with provider
+        //create .env file and upload vars to vapor
+
+        //use this
+//        public function updateEnvironmentVariables($projectId, $environment, $variables)
+
 
         GitIgnore::add(['.env.'.$environment]);
 
