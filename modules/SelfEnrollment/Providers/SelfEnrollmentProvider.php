@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
+use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\UpdateSelfEnrollmentEnrolleeStatus;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\InviteEnrolleesOnDemand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\MakeSurveyOnlyUsersForEnrollees;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
@@ -58,7 +59,8 @@ class SelfEnrollmentProvider extends ServiceProvider
             SelfEnrollmentSendErrorFixedCommand::class,
             SendSelfEnrollmentRemindersCommand::class,
             MakeSurveyOnlyUsersForEnrollees::class,
-            InviteEnrolleesOnDemand::class
+            InviteEnrolleesOnDemand::class,
+            UpdateSelfEnrollmentEnrolleeStatus::class
         ]);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(CoreServiceProvider::class);
