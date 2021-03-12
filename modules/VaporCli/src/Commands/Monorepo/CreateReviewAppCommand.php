@@ -85,12 +85,20 @@ APP_NAME=$app"
             );
         }
 
-        //check which apps are created - if admin exists make sure to add the correct url in env. Same with provider
-        //create .env file and upload vars to vapor
+        $blueprintEnvVars = $this->vapor->environmentVariables($projectId, $blueprintEnv);
+        $vars = collect(explode("\n", $blueprintEnvVars))
+            ->mapWithKeys(function($item){
+                $vars = explode('=',$item);
+                return [$vars[0] => $vars[1]];
+            })
+        ->merge(
+            collect(self::defaultReviewEnvironmentVars($app, $environment))
+        )->transform(function ($value, $key){
+            return "$key=$value";
+            })
+        ->implode("\n");
 
-        //use this
-//        public function updateEnvironmentVariables($projectId, $environment, $variables)
-
+        $this->vapor->updateEnvironmentVariables($projectId, $environment, $vars);
 
         GitIgnore::add(['.env.'.$environment]);
 
@@ -109,5 +117,22 @@ APP_NAME=$app"
             ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
             ->addOption('docker', null, InputOption::VALUE_NONE, 'Indicate that the environment will use Docker images as its runtime')
             ->setDescription('Create a new review app');
+    }
+
+    protected static function defaultReviewEnvironmentVars(string $app, string $environment): array
+    {
+        return [
+            "APP_DEBUG"=> "true",
+            "CACHE_DRIVER" => "array",
+            "MAIL_DRIVER" => "smtp",
+            "MAIL_MAILER" => "postmark",
+            "LOW_CPM_QUEUE_NAME"=> $app."-low-".$environment,
+            "HIGH_CPM_QUEUE_NAME"=> $app."-low-".$environment,
+            "REVISIONABLE_QUEUE" => $app."-revisionable-".$environment,
+            "APP_URL"=> "https://$app-$environment.clh-staging.com",
+            "SESSION_DOMAIN" => "$app-$environment.clh-staging.com",
+            "SCOUT_MONITOR" => "false",
+            "UNIQUE_ENV_NAME" => $environment
+        ];
     }
 }
