@@ -10,6 +10,7 @@ use App\Nova\Filters\UserPracticeFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceForTimeTrackerDTO;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\HasMany;
@@ -123,12 +124,12 @@ class ManagePatientForcedChargeableServices extends Resource
             Text::make('Patient Eligible Chargeable Services', function () {
                 $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
                     ->getRaw()
-                    ->map(function (ChargeablePatientMonthlyTime $s) {
-                        $minutes = secondsToMMSS($s->total_time);
+                    ->map(function (PatientServiceForTimeTrackerDTO $s) {
+                        $minutes = secondsToMMSS($s->getTotalTime());
 
-                        $line = "<li><strong>{$s->chargeableService->display_name}</strong> - {$s->chargeableService->code} (time: $minutes)</li>";
+                        $line = "<li><strong>{$s->getChargeableServiceDisplayName()}</strong> - {$s->getChargeableServiceCode()} (time: $minutes)</li>";
 
-                        if ($this->forcedChargeableServices->where('chargeableService.code', $s->chargeableService->code)->isNotEmpty()) {
+                        if ($this->forcedChargeableServices->where('chargeableService.code', $s->getChargeableServiceCode())->isNotEmpty()) {
                             $line .= '(forced)';
                         }
 
