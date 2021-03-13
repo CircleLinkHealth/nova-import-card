@@ -14,6 +14,7 @@ use Laravel\VaporCli\Manifest;
 use Laravel\VaporCli\Path;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Yaml\Yaml;
 
 class CreateReviewAppCommand extends Command
 {
@@ -117,6 +118,7 @@ APP_NAME=$app"
         $this
             ->setName('review-app')
             ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
+            ->addArgument('allApps', InputArgument::REQUIRED, 'All apps that we are creating environment for')
             ->addOption('docker', null, InputOption::VALUE_NONE,
                 'Indicate that the environment will use Docker images as its runtime')
             ->setDescription('Create a new review app');

@@ -34,6 +34,7 @@ class CreateReviewAppsCommand extends InParallelCommand
             Path::current().'/modules/VaporCli/vapor',
             'review-app',
             $this->argument('environment'),
+            implode(',',$this->argument('apps'))
         ];
 
         if ($this->option('docker')) {
