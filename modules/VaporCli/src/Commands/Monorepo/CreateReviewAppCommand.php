@@ -84,23 +84,53 @@ APP_NAME=$app"
             );
         }
 
+        $vars = collect(
+            explode("\n", $this->vapor->environmentVariables($projectId, $blueprintEnv))
+        )
+            ->mapWithKeys(function ($item) {
+                $vars = explode('=', $item);
+
+                return [$vars[0] => $vars[1]];
+            })
+            ->merge(
+                collect(self::defaultReviewEnvironmentVars($app, $environment))
+            );
+
+
+        $allAppsArray = explode(',', $this->argument('allApps'));
+
+        if ($app !== 'superadmin') {
+            if (in_array('superadmin', $allAppsArray)) {
+                $vars['CPM_ADMIN_APP_URL'] = "https://superadmin-$environment.clh-staging.com";
+            } else {
+                $superadminYaml = Yaml::parse(file_get_contents(str_replace($app, 'superadmin',
+                        getcwd()) . '/vapor.yml'));
+                //if not staging get production
+                $vars['CPM_ADMIN_APP_URL'] = $superadminYaml['environments']['staging'];
+            }
+
+        }
+
+        if ($app !== 'provider') {
+            if (in_array('superadmin', $allAppsArray)) {
+                $vars['CPM_PROVIDER_APP_URL'] = "https://provider-$environment.clh-staging.com";
+            } else {
+                $providerYaml = Yaml::parse(file_get_contents(str_replace($app, 'provider', getcwd()) . '/vapor.yml'));
+                //if not staging get production
+                $vars['CPM_PROVIDER_APP_URL'] = $superadminYaml['environments']['staging'];
+            }
+
+        }
+
+        $varsString = $vars->transform(function ($value, $key) {
+            return "$key=$value";
+        })
+                           ->implode("\n");
+
         $this->vapor->updateEnvironmentVariables(
             $projectId,
             $environment,
-            collect(
-                explode("\n", $this->vapor->environmentVariables($projectId, $blueprintEnv))
-            )
-                ->mapWithKeys(function ($item) {
-                    $vars = explode('=', $item);
-
-                    return [$vars[0] => $vars[1]];
-                })
-                ->merge(
-                    collect(self::defaultReviewEnvironmentVars($app, $environment))
-                )->transform(function ($value, $key) {
-                    return "$key=$value";
-                })
-                ->implode("\n")
+            $varsString
         );
 
         GitIgnore::add(['.env.' . $environment]);
