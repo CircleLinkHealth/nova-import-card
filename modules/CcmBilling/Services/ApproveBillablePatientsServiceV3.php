@@ -110,10 +110,11 @@ class ApproveBillablePatientsServiceV3
         }
 
         foreach ($services as $service) {
+            $isBhi = ChargeableService::BHI === ChargeableService::getChargeableServiceCodeUsingId($service['id']);
             $input = (new ForceAttachInputDTO())
                 ->setReason('abp')
                 ->setPatientUserId($billingStatus->patient_user_id)
-                ->setMonth($billingStatus->chargeable_month)
+                ->setMonth($isBhi ? $billingStatus->chargeable_month : null)
                 ->setChargeableServiceId($service['id'])
                 ->setActionType($service['action_type']);
 
