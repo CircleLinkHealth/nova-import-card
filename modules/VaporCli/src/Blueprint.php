@@ -35,7 +35,8 @@ class Blueprint
         }
 
         if ( ! in_array($blueprint, self::VALID_BLUEPRINT_ENVS)) {
-            throw new \Exception("Input blueprint '$blueprint' is invalid.");
+            $validBlueprintEnvsString = implode(',', self::VALID_BLUEPRINT_ENVS);
+            throw new \Exception("Input blueprint '$blueprint' is invalid. This value can only be one of the following: $validBlueprintEnvsString");
         }
     }
 
