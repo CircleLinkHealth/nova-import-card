@@ -28,19 +28,10 @@ class DeleteReviewAppCommand extends Command
         $environment = $this->argument('environment');
 
         if ( ! is_null($this->vapor->environmentNamed(Manifest::id(), $environment))) {
-            try {
-                $this->vapor->deleteEnvironment(
+            $this->vapor->deleteEnvironment(
                     Manifest::id(),
                     $environment,
                     );
-            }catch (\Exception $exception){
-                sleep(60);
-                $this->vapor->deleteEnvironment(
-                    Manifest::id(),
-                    $environment,
-                    );
-            }
-
         }
 
         Manifest::deleteEnvironment($environment);

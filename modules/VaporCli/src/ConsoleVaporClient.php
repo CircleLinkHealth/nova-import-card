@@ -572,6 +572,7 @@ class ConsoleVaporClient
     /**
      * Delete the given environment.
      *
+     *
      * @param string $projectId
      * @param string $environment
      *
@@ -1499,6 +1500,11 @@ class ConsoleVaporClient
             return $this->request($method, $uri, $json);
         } catch (ClientException $e) {
             $response = $e->getResponse();
+
+            if (str_contains($e->getMessage(), 'Please wait at least one minute between deleting env') && $response->getStatusCode() === 422){
+                sleep(60);
+                return $this->requestWithErrorHandling($method, $uri, $json);
+            }
 
             if (in_array($response->getStatusCode(), [400, 422])) {
                 $this->displayValidationErrors($response);
