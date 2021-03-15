@@ -23,6 +23,7 @@ class CreateReviewAppsCommand extends InParallelCommand
         $this
             ->setName('review-apps')
             ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
+            ->addArgument('blueprint-env', InputArgument::REQUIRED, 'The blueprint env. I.e. staging or provider')
             ->addArgument('apps', InputArgument::IS_ARRAY, 'The apps to run the command for', self::CPM_APPS)
             ->addOption('docker', null, InputOption::VALUE_NONE, 'Indicate that the environment will use Docker images as its runtime')
             ->setDescription('Create a new review app');
@@ -34,6 +35,7 @@ class CreateReviewAppsCommand extends InParallelCommand
             Path::current().'/modules/VaporCli/vapor',
             'review-app',
             $this->argument('environment'),
+            $this->argument('blueprint-env'),
             implode(',',$this->argument('apps'))
         ];
 

@@ -25,7 +25,15 @@ class CreateReviewAppCommand extends Command
      */
     public function handle()
     {
-        $blueprintEnv = 'staging';
+        $blueprintEnv = $this->argument('blueprint-env');
+
+        if (! in_array($blueprintEnv, [
+            'production',
+            'staging'
+        ])){
+            Helpers::danger('Invalid blueprint environment.');
+            return;
+        }
 
         Helpers::ensure_api_token_is_available();
 
@@ -34,7 +42,7 @@ class CreateReviewAppCommand extends Command
         $environment = $this->argument('environment');
         $app         = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
 
-        if (isset($manifest['environments']['staging'])) {
+        if (isset($manifest['environments'][$blueprintEnv])) {
             $envConfig           = $manifest['environments'][$blueprintEnv];
             $envConfig['domain'] = str_replace($app, "$app-$environment", $envConfig['domain']);
 
@@ -101,23 +109,23 @@ APP_NAME=$app"
 
         if ($app !== 'superadmin') {
             if (in_array('superadmin', $allAppsArray)) {
-                $vars['CPM_ADMIN_APP_URL'] = "https://superadmin-$environment.clh-staging.com";
+                $vars['CPM_ADMIN_APP_URL'] = "https://superadmin-$environment.clh-$blueprintEnv.com";
             } else {
                 $superadminYaml = Yaml::parse(file_get_contents(str_replace($app, 'superadmin',
                         getcwd()) . '/vapor.yml'));
                 //if not staging get production
-                $vars['CPM_ADMIN_APP_URL'] = $superadminYaml['environments']['staging'];
+                $vars['CPM_ADMIN_APP_URL'] = $superadminYaml['environments'][$blueprintEnv];
             }
 
         }
 
         if ($app !== 'provider') {
             if (in_array('superadmin', $allAppsArray)) {
-                $vars['CPM_PROVIDER_APP_URL'] = "https://provider-$environment.clh-staging.com";
+                $vars['CPM_PROVIDER_APP_URL'] = "https://provider-$environment.clh-$blueprintEnv.com";
             } else {
                 $providerYaml = Yaml::parse(file_get_contents(str_replace($app, 'provider', getcwd()) . '/vapor.yml'));
                 //if not staging get production
-                $vars['CPM_PROVIDER_APP_URL'] = $superadminYaml['environments']['staging'];
+                $vars['CPM_PROVIDER_APP_URL'] = $superadminYaml['environments'][$blueprintEnv];
             }
 
         }
