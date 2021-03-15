@@ -13,6 +13,7 @@ use Laravel\VaporCli\Exceptions\NeedsTwoFactorAuthenticationTokenException;
 
 class ConsoleVaporClient
 {
+    const WAIT_FOR_DELETE_MESSAGE_SECTION = 'Please wait at least one minute between deleting env';
     /**
      * Add a team member to the current team.
      *
@@ -1501,8 +1502,8 @@ class ConsoleVaporClient
         } catch (ClientException $e) {
             $response = $e->getResponse();
 
-            if (str_contains($e->getMessage(), 'Please wait at least one minute between deleting env') && $response->getStatusCode() === 422){
-                sleep(60);
+            if (str_contains($e->getMessage(), self::WAIT_FOR_DELETE_MESSAGE_SECTION) && $response->getStatusCode() === 422){
+                sleep(61);
                 return $this->requestWithErrorHandling($method, $uri, $json);
             }
 
