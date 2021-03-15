@@ -26,14 +26,21 @@ class DeleteReviewAppCommand extends Command
     public function handle()
     {
         $environment = $this->argument('environment');
-        $app         = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
-
 
         if ( ! is_null($this->vapor->environmentNamed(Manifest::id(), $environment))) {
-            $this->vapor->deleteEnvironment(
-                Manifest::id(),
-                $environment,
-                );
+            try {
+                $this->vapor->deleteEnvironment(
+                    Manifest::id(),
+                    $environment,
+                    );
+            }catch (\Exception $exception){
+                sleep(60);
+                $this->vapor->deleteEnvironment(
+                    Manifest::id(),
+                    $environment,
+                    );
+            }
+
         }
 
         Manifest::deleteEnvironment($environment);

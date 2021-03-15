@@ -156,6 +156,7 @@ APP_NAME=$app"
         $this
             ->setName('review-app')
             ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
+            ->addArgument('blueprint-env', InputArgument::REQUIRED, 'The blueprint env name. I.e. Staging or production')
             ->addArgument('allApps', InputArgument::REQUIRED, 'All apps that we are creating environment for')
             ->addOption('docker', null, InputOption::VALUE_NONE,
                 'Indicate that the environment will use Docker images as its runtime')
