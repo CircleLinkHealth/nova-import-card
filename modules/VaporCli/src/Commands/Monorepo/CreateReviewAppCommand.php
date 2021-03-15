@@ -101,7 +101,7 @@ APP_NAME=$app"
                 return [$vars[0] => $vars[1]];
             })
             ->merge(
-                collect(self::defaultReviewEnvironmentVars($app, $environment))
+                collect(self::defaultReviewEnvironmentVars($app, $environment, $blueprintEnv))
             );
 
 
@@ -162,18 +162,18 @@ APP_NAME=$app"
             ->setDescription('Create a new review app');
     }
 
-    protected static function defaultReviewEnvironmentVars(string $app, string $environment): array
+    protected static function defaultReviewEnvironmentVars(string $app, string $environment, string $blueprintEnv): array
     {
         return [
             "APP_DEBUG"           => "true",
             "CACHE_DRIVER"        => "array",
             "MAIL_DRIVER"         => "smtp",
             "MAIL_MAILER"         => "postmark",
-            "LOW_CPM_QUEUE_NAME"  => "$app-$environment-low-staging",
-            "HIGH_CPM_QUEUE_NAME" => "$app-$environment-high-staging",
-            "REVISIONABLE_QUEUE"  => "$app-$environment-revisionable-staging",
-            "APP_URL"             => "https://$app-$environment.clh-staging.com",
-            "SESSION_DOMAIN"      => "$app-$environment.clh-staging.com",
+            "LOW_CPM_QUEUE_NAME"  => "$app-$environment-low-$blueprintEnv",
+            "HIGH_CPM_QUEUE_NAME" => "$app-$environment-high-$blueprintEnv",
+            "REVISIONABLE_QUEUE"  => "$app-$environment-revisionable-$blueprintEnv",
+            "APP_URL"             => "https://$app-$environment.clh-$blueprintEnv.com",
+            "SESSION_DOMAIN"      => "$app-$environment.clh-$blueprintEnv.com",
             "SCOUT_MONITOR"       => "false",
             "UNIQUE_ENV_NAME"     => $environment,
         ];
