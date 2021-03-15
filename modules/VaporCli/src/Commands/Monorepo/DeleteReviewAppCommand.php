@@ -45,7 +45,7 @@ class DeleteReviewAppCommand extends Command
 
         GitIgnore::remove(['.env.' . $environment]);
 
-        Helpers::info('Environment created successfully.');
+        Helpers::info('Environment deleted successfully.');
     }
 
     /**
