@@ -30,6 +30,10 @@ class Blueprint
         $this->manifest     = Manifest::current();
         $this->optionDocker = (bool)$optionDocker;
 
+        if ( in_array($environment, self::VALID_BLUEPRINT_ENVS)) {
+            throw new \Exception("Cannot create review environment: $environment. Please check command signature.");
+        }
+
         if ( ! in_array($blueprint, self::VALID_BLUEPRINT_ENVS)) {
             throw new \Exception("Input blueprint '$blueprint' is invalid.");
         }
