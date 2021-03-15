@@ -28,6 +28,7 @@ class Blueprint
         $this->allApps      = explode(',', $allAppsString);
         $this->app          = array_reverse(explode('/', rtrim($_SERVER['PWD'], '-app')))[0];
         $this->manifest     = Manifest::current();
+        $this->optionDocker = (bool)$optionDocker;
 
         if ( ! in_array($blueprint, self::VALID_BLUEPRINT_ENVS)) {
             throw new \Exception("Input blueprint '$blueprint' is invalid.");
