@@ -27,6 +27,14 @@ class DeleteReviewAppCommand extends Command
     {
         $environment = $this->argument('environment');
 
+        if (in_array($environment, [
+            'staging',
+            'production'
+        ])){
+            Helpers::danger('Cannot delete production or staging environments using this command.');
+            return;
+        }
+
         if ( ! is_null($this->vapor->environmentNamed(Manifest::id(), $environment))) {
             $this->vapor->deleteEnvironment(
                     Manifest::id(),
