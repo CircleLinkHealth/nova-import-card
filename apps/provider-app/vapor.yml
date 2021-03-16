@@ -14,9 +14,9 @@ environments:
         concurrency: 5
         mail: false
         queues:
-            - cpm-provider-low-feature-billing-revamp
-            - cpm-provider-high-feature-billing-revamp
-            - cpm-provider-revisionable-staging
+            - provider-feature-billing-revamp-low-staging
+            - provider-feature-billing-revamp-high-staging
+            - provider-feature-billing-revamp-revisionable-staging
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
