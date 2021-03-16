@@ -1,5 +1,5 @@
 id: 13702
-name: cpm-admin
+name: superadmin
 environments:
     feature-billing-revamp:
         domain: cpm-admin-feature-billing-revamp.clh-staging.com
@@ -39,9 +39,9 @@ environments:
         mail: false
         timeout: 60
         queues:
-            - cpm-admin-low-production
-            - cpm-admin-high-production
-            - cpm-admin-revisionable-production
+            - superadmin-low-production
+            - superadmin-high-production
+            - superadmin-revisionable-production
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
@@ -52,7 +52,7 @@ environments:
             - 'php artisan migrate:views'
             - 'php artisan schedule-monitor:sync'
     staging:
-        domain: cpm-admin.clh-staging.com
+        domain: superadmin.clh-staging.com
         storage: cpm-staging-vapor-storage
         memory: 512
         cli-memory: 512
@@ -64,9 +64,9 @@ environments:
         timeout: 60
         cli-timeout: 600
         queues:
-            - cpm-admin-low-staging
-            - cpm-admin-high-staging
-            - cpm-admin-revisionable-staging
+            - superadmin-low-staging
+            - superadmin-high-staging
+            - superadmin-revisionable-staging
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
