@@ -101,7 +101,8 @@ abstract class InParallelCommand extends Command
             Helpers::line("Process[$appName] duration: $totalTimeInSeconds seconds.");
 
             if ( ! $process->isSuccessful()) {
-                Helpers::danger("Fail[$appName] ".$process->getErrorOutput());
+                $output = empty($process->getErrorOutput()) ? $process->getOutput() : $process->getErrorOutput();
+                Helpers::danger("Fail[$appName] ".$output);
                 continue;
             }
 
