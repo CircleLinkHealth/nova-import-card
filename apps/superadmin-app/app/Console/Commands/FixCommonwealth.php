@@ -44,7 +44,10 @@ class FixCommonwealth extends Command
     public function handle()
     {
         Enrollee::wherePracticeId(232)
-            ->where('status', '!=', Enrollee::ENROLLED)
+            ->whereIn('status', [
+                Enrollee::TO_CALL,
+                Enrollee::UNREACHABLE,
+            ])
             ->whereDoesntHave('user.patientInfo', function ($q) {
                 $q->enrolled();
             })
