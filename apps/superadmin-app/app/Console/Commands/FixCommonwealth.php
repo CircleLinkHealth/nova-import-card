@@ -57,7 +57,7 @@ class FixCommonwealth extends Command
                     $this->warn("Start Enrollee[$enrollee->id]");
                     PullProvider::dispatch($enrollee->id);
                 },
-                1
+                500
             );
     }
 }
