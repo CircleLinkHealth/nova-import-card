@@ -15,6 +15,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Jobs\ChainableJob;
 use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
 class PracticesInvoicesService
@@ -49,7 +50,8 @@ class PracticesInvoicesService
 
         $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
-        ChainableJob::withChain($jobs)
+        Bus::chain($jobs)
+//        ChainableJob::withChain($jobs)
             ->dispatch()
             ->allOnQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
