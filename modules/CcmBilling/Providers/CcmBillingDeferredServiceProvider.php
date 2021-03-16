@@ -84,7 +84,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             GenerateEndOfMonthCcmStatusLogsCommand::class,
             ProcessAllPracticePatientMonthlyServicesCommand::class,
             CheckPatientSummariesHaveBeenCreatedCommand::class,
-            CheckPatientEndOfMonthCcmStatusLogsExistForMonthCommand::class
+            CheckPatientEndOfMonthCcmStatusLogsExistForMonthCommand::class,
         ]);
     }
 }

@@ -15,81 +15,11 @@ class PatientMonthlyBillingDTO
 {
     protected AvailableServiceProcessors $availableServiceProcessors;
 
-    protected PatientMonthlyBillingStatusDTO $billingStatus;
-
-    protected int $successfulCalls = 0;
-
-    protected ?string $ccmStatusForMonth = null;
-
-    /**
-     * @return string|null
-     */
-    public function getCcmStatusForMonth(): ?string
-    {
-        return $this->ccmStatusForMonth;
-    }
-
-    /**
-     * @param string|null $ccmStatusForMonth
-     */
-    public function setCcmStatusForMonth(?string $ccmStatusForMonth): self
-    {
-        $this->ccmStatusForMonth = $ccmStatusForMonth;
-        return $this;
-    }
-
     protected bool $billingProviderExists = false;
 
-    /**
-     * @return bool
-     */
-    public function billingProviderExists(): bool
-    {
-        return $this->billingProviderExists;
-    }
+    protected PatientMonthlyBillingStatusDTO $billingStatus;
 
-    /**
-     * @param bool $billingProviderExists
-     */
-    public function setBillingProviderExists(bool $billingProviderExists): self
-    {
-        $this->billingProviderExists = $billingProviderExists;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSuccessfulCallsCount(): int
-    {
-        return $this->successfulCalls;
-    }
-
-    /**
-     * @param int $successfulCalls
-     */
-    public function setSuccessfulCalls(int $successfulCalls): self
-    {
-        $this->successfulCalls = $successfulCalls;
-        return $this;
-    }
-
-    /**
-     * @return PatientMonthlyBillingStatusDTO
-     */
-    public function getBillingStatus(): PatientMonthlyBillingStatusDTO
-    {
-        return $this->billingStatus;
-    }
-
-    /**
-     * @param PatientMonthlyBillingStatusDTO $billingStatus
-     */
-    public function setBillingStatus(PatientMonthlyBillingStatusDTO $billingStatus): self
-    {
-        $this->billingStatus = $billingStatus;
-        return $this;
-    }
+    protected ?string $ccmStatusForMonth = null;
 
     protected Carbon $chargeableMonth;
 
@@ -108,6 +38,13 @@ class PatientMonthlyBillingDTO
     protected array $patientTimes = [];
 
     protected array $practiceServiceCodes = [];
+
+    protected int $successfulCalls = 0;
+
+    public function billingProviderExists(): bool
+    {
+        return $this->billingProviderExists;
+    }
 
     public function billingStatusIsTouched(): bool
     {
@@ -128,16 +65,6 @@ class PatientMonthlyBillingDTO
         return $this;
     }
 
-    public function withPatientMonthlyTimes(PatientTimeForProcessing... $times) : self
-    {
-        $this->patientTimes = $times;
-        return $this;
-    }
-
-    public function getPatientTimes():array{
-        return $this->patientTimes;
-    }
-
     public static function generateFromUser(User $patient, Carbon $month): self
     {
         return (new self())
@@ -148,16 +75,15 @@ class PatientMonthlyBillingDTO
             ->setBillingStatus(
                 PatientMonthlyBillingStatusDTO::fromModel(
                     $patient->monthlyBillingStatus
-                ->filter(fn(PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
-                ->first()
+                        ->filter(fn (PatientMonthlyBillingStatus $mbs) => $mbs->chargeable_month->equalTo($month))
+                        ->first()
                 )
             )
-            ->setBillingProviderExists(! is_null($patient->billingProviderUser()))
+            ->setBillingProviderExists( ! is_null($patient->billingProviderUser()))
             ->setCcmStatusForMonth($patient->getCcmStatusForMonth($month->copy()))
             ->setSuccessfulCalls($patient->inboundSuccessfulCalls->count())
             ->withLocationServices(
-                ...
-                LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
             )
             ->withPracticeServiceCodes($patient->primaryPractice->chargeableServices->pluck('code')->toArray())
             ->withPatientServices(
@@ -173,6 +99,16 @@ class PatientMonthlyBillingDTO
     public function getAvailableServiceProcessors(): AvailableServiceProcessors
     {
         return $this->availableServiceProcessors;
+    }
+
+    public function getBillingStatus(): PatientMonthlyBillingStatusDTO
+    {
+        return $this->billingStatus;
+    }
+
+    public function getCcmStatusForMonth(): ?string
+    {
+        return $this->ccmStatusForMonth;
     }
 
     public function getChargeableMonth(): Carbon
@@ -210,9 +146,19 @@ class PatientMonthlyBillingDTO
         return $this->patientServices;
     }
 
+    public function getPatientTimes(): array
+    {
+        return $this->patientTimes;
+    }
+
     public function getPracticeCodes(): array
     {
         return $this->practiceServiceCodes;
+    }
+
+    public function getSuccessfulCallsCount(): int
+    {
+        return $this->successfulCalls;
     }
 
     public function ofLocation(int $locationId): self
@@ -222,11 +168,32 @@ class PatientMonthlyBillingDTO
         return $this;
     }
 
-    public function updateOrPushServiceFromOutput(PatientServiceProcessorOutputDTO $output): void
+    public function setBillingProviderExists(bool $billingProviderExists): self
     {
-        $this->patientServices = collect($this->getPatientServices())->filter(function (PatientSummaryForProcessing $s) use ($output) {
-                return $s->getCode() != $output->getCode();
-            })->push($output->toPatientChargeableServiceForProcessingDTO())->toArray();
+        $this->billingProviderExists = $billingProviderExists;
+
+        return $this;
+    }
+
+    public function setBillingStatus(PatientMonthlyBillingStatusDTO $billingStatus): self
+    {
+        $this->billingStatus = $billingStatus;
+
+        return $this;
+    }
+
+    public function setCcmStatusForMonth(?string $ccmStatusForMonth): self
+    {
+        $this->ccmStatusForMonth = $ccmStatusForMonth;
+
+        return $this;
+    }
+
+    public function setSuccessfulCalls(int $successfulCalls): self
+    {
+        $this->successfulCalls = $successfulCalls;
+
+        return $this;
     }
 
     public function subscribe(AvailableServiceProcessors $availableServiceProcessors): self
@@ -234,6 +201,13 @@ class PatientMonthlyBillingDTO
         $this->availableServiceProcessors = $availableServiceProcessors;
 
         return $this;
+    }
+
+    public function updateOrPushServiceFromOutput(PatientServiceProcessorOutputDTO $output): void
+    {
+        $this->patientServices = collect($this->getPatientServices())->filter(function (PatientSummaryForProcessing $s) use ($output) {
+            return $s->getCode() != $output->getCode();
+        })->push($output->toPatientChargeableServiceForProcessingDTO())->toArray();
     }
 
     /**
@@ -254,6 +228,13 @@ class PatientMonthlyBillingDTO
     public function withLocationServices(LocationChargeableServicesForProcessing ...$locationServices): self
     {
         $this->locationServices = $locationServices;
+
+        return $this;
+    }
+
+    public function withPatientMonthlyTimes(PatientTimeForProcessing ...$times): self
+    {
+        $this->patientTimes = $times;
 
         return $this;
     }

@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceForTimeTrackerDTO;
 use Illuminate\Http\Resources\Json\JsonResource;
 

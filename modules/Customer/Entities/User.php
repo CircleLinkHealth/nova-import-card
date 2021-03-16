@@ -2267,8 +2267,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->pluck('name');
 
         if ($userRoles->isEmpty()) {
-
-        return false;
+            return false;
         }
 
         return Cache::remember("{$this->id}_user_is_allowed_to_bubble_chat", 30, function () use ($userRoles, $rolesAllowedToChat) {

@@ -54,12 +54,12 @@ trait ApprovablePatientUsersQuery
                     ->where(fn ($q)   => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
                     ->orWhere(fn ($q) => $q->where('chargeable_month', null));
             },
-            'inboundSuccessfulCalls' => function ($q) use ($monthYear){
+            'inboundSuccessfulCalls' => function ($q) use ($monthYear) {
                 $q->createdInMonth($monthYear, 'called_date');
             },
-            'monthlyBillingStatus' => function ($status) use ($monthYear){
+            'monthlyBillingStatus' => function ($status) use ($monthYear) {
                 $status->createdOnIfNotNull($monthYear, 'chargeable_month');
-            } 
+            },
         ];
 
         $notesControllerRelationships = [

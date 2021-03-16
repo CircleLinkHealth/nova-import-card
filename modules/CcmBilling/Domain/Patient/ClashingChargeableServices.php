@@ -68,6 +68,21 @@ class ClashingChargeableServices
         ],
     ];
 
+    public static function arrayOfCodesContainsClashes(array $codes): bool
+    {
+        foreach ($codes as $code) {
+            $clashes = self::getClashesOfService($code);
+
+            foreach ($clashes as $clash) {
+                if (in_array($clash, $codes)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * This is replicating the behavior of {@link ApprovableBillablePatient}, i.e. the result of $pms->getBillableCcmCs.
      */
@@ -132,20 +147,5 @@ class ClashingChargeableServices
                 return $key;
             })
             ->toArray();
-    }
-
-    public static function arrayOfCodesContainsClashes(array $codes):bool
-    {
-        foreach ($codes as $code){
-            $clashes = self::getClashesOfService($code);
-
-            foreach ($clashes as $clash){
-                if (in_array($clash, $codes)){
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

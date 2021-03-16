@@ -18,11 +18,11 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLo
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStatusDTO;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStatusDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Tests\TestCase;
@@ -182,10 +182,11 @@ class PatientSummaryProcessingTest extends TestCase
                     ->setCode(ChargeableService::BHI)
                     ->setIsFulfilled(false)
             )
-            ->withPatientMonthlyTimes((new PatientTimeForProcessing())
-                ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
-                ->setChargeableMonth($startOfMonth)
-                ->setTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
+            ->withPatientMonthlyTimes(
+                (new PatientTimeForProcessing())
+                    ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
+                    ->setChargeableMonth($startOfMonth)
+                    ->setTime(CpmConstants::TWENTY_MINUTES_IN_SECONDS)
             )
             ->withProblems(
                 (new PatientProblemForProcessing())

@@ -23,13 +23,6 @@ class ForcePatientChargeableService
         $this->repo  = app(PatientServiceProcessorRepository::class);
     }
 
-    public static function executeQuietly(ForceAttachInputDTO $input) : void
-    {
-        $dispatcher = PatientForcedChargeableService::getEventDispatcher();
-        PatientForcedChargeableService::unsetEventDispatcher();
-        self::execute($input);
-        PatientForcedChargeableService::setEventDispatcher($dispatcher);
-    }
     public static function execute(ForceAttachInputDTO $input): void
     {
         $repo = app(PatientServiceProcessorRepository::class);
@@ -47,6 +40,14 @@ class ForcePatientChargeableService
                 $input->getActionType(),
                 $input->getReason()
             );
+    }
+
+    public static function executeQuietly(ForceAttachInputDTO $input): void
+    {
+        $dispatcher = PatientForcedChargeableService::getEventDispatcher();
+        PatientForcedChargeableService::unsetEventDispatcher();
+        self::execute($input);
+        PatientForcedChargeableService::setEventDispatcher($dispatcher);
     }
 
     public static function handleObserverEvents(ForceAttachInputDTO $input): void

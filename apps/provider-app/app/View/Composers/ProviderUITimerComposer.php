@@ -7,12 +7,10 @@
 namespace App\View\Composers;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceForTimeTrackerDTO;
 use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
@@ -204,17 +202,16 @@ class ProviderUITimerComposer extends ServiceProvider
         if ( ! empty($patientId)) {
             $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
         } else {
-            $record1                        = PatientServiceForTimeTrackerDTO::fromArray([
-                'patient_id' => (int)$patientId,
-                'chargeable_service_id' => -1,
-                'chargeable_service_code' => 'NONE',
+            $record1 = PatientServiceForTimeTrackerDTO::fromArray([
+                'patient_id'                      => (int) $patientId,
+                'chargeable_service_id'           => -1,
+                'chargeable_service_code'         => 'NONE',
                 'chargeable_service_display_name' => 'NONE',
             ]);
 
-
             if ($isForEnrollment) {
                 /** @var User $user */
-                $user                = auth()->user();
+                $user = auth()->user();
                 $record1->setTotalTime(optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0);
             } else {
                 $record1->setTotalTime(0);

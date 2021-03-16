@@ -63,6 +63,17 @@ class ApproveBillablePatientsServiceV3
         return true;
     }
 
+    public function patientChargeableServicesInputContainsClashes(array $input): bool
+    {
+        $filtered = collect($input)
+            ->filter(fn ($item)    => PatientForcedChargeableService::FORCE_ACTION_TYPE === $item['action_type'])
+            ->transform(fn ($item) => ChargeableService::getChargeableServiceCodeUsingId($item['id']))
+            ->flatten()
+            ->toArray();
+
+        return ClashingChargeableServices::arrayOfCodesContainsClashes($filtered);
+    }
+
     public function setPatientBillingStatus(int $reportId, string $newStatus)
     {
         /** @var PatientMonthlyBillingStatus $billingStatus */
@@ -74,7 +85,7 @@ class ApproveBillablePatientsServiceV3
         }
 
         $billingStatus->status   = $newStatus;
-        $billingStatus->actor_id = $newStatus !== PatientMonthlyBillingStatus::NEEDS_QA ? auth()->id() : null;
+        $billingStatus->actor_id = PatientMonthlyBillingStatus::NEEDS_QA !== $newStatus ? auth()->id() : null;
         $billingStatus->save();
 
         $counts = $this->counts($billingStatus->patientUser->primaryProgramId(), $billingStatus->chargeable_month)->toArray();
@@ -123,18 +134,17 @@ class ApproveBillablePatientsServiceV3
         (app(ProcessPatientSummaries::class))->execute($billingStatus->patient_user_id, $billingStatus->chargeable_month);
 
         $billingStatus = PatientMonthlyBillingStatus::with([
-            'patientUser' => function ($p)  use ($billingStatus) {
-            $p->with(['chargeableMonthlySummaries' => fn($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month)
-                      , 'chargeableMonthlyTime' => fn($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month)
-            ]);
-        }
+            'patientUser' => function ($p) use ($billingStatus) {
+                $p->with(['chargeableMonthlySummaries' => fn ($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month), 'chargeableMonthlyTime' => fn ($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month),
+                ]);
+            },
         ])->find($reportId);
 
         return SetPatientChargeableServicesResponse::make([
             'approved'            => $billingStatus->isApproved(),
             'rejected'            => $billingStatus->isRejected(),
-            'qa'            => $billingStatus->needsQA(),
-            'ccm_time'      => ClashingChargeableServices::getCcmTimeForLegacyReportsInPriority($billingStatus->patientUser),
+            'qa'                  => $billingStatus->needsQA(),
+            'ccm_time'            => ClashingChargeableServices::getCcmTimeForLegacyReportsInPriority($billingStatus->patientUser),
             'chargeable_services' => ChargeableServiceForAbp::collectionFromChargeableMonthlySummaries($billingStatus->patientUser),
         ]);
     }
@@ -155,16 +165,5 @@ class ApproveBillablePatientsServiceV3
             ->toArray();
 
         return PatientSuccessfulCallsCountForMonth::collection($arr);
-    }
-
-    public function patientChargeableServicesInputContainsClashes(array $input):bool
-    {
-        $filtered = collect($input)
-            ->filter(fn($item) => $item['action_type'] === PatientForcedChargeableService::FORCE_ACTION_TYPE)
-            ->transform(fn($item) => ChargeableService::getChargeableServiceCodeUsingId($item['id']))
-            ->flatten()
-            ->toArray();
-
-        return ClashingChargeableServices::arrayOfCodesContainsClashes($filtered);
     }
 }

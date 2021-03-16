@@ -1937,12 +1937,10 @@ if ( ! function_exists('measureTime')) {
         $ms       = $endTime->diffInMilliseconds($startTime);
         $startStr = $startTime->toTimeString();
         $endStr   = $endTime->toTimeString();
-        if(! \Illuminate\Support\Facades\Auth::check())
-        {
+        if ( ! \Illuminate\Support\Facades\Auth::check()) {
             //has been interfering with ajax call responses
             echo "$desc: $ms ms | Start: $startStr | End: $endStr\n";
         }
-
 
         return $result;
     }

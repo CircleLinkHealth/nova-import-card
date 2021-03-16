@@ -6,11 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Policies;
 
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -26,7 +21,6 @@ class UserPolicy
     {
         return true;
     }
-
 
     public function update()
     {

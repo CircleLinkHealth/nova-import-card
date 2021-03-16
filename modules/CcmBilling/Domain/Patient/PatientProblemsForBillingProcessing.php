@@ -86,8 +86,9 @@ class PatientProblemsForBillingProcessing
                             ->attestedProblems
                             ->where('ccd_problem_id', $p->id)
                             ->where('chargeable_month', Carbon::now()->startOfMonth())
-                        ->first()
-                    ));
+                            ->first()
+                    )
+                );
         })
             ->filter();
     }
@@ -114,9 +115,9 @@ class PatientProblemsForBillingProcessing
 
         $practiceHasRhc = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
 
-        if ($practiceHasRhc){
+        if ($practiceHasRhc) {
             return [
-                ChargeableService::GENERAL_CARE_MANAGEMENT
+                ChargeableService::GENERAL_CARE_MANAGEMENT,
             ];
         }
 

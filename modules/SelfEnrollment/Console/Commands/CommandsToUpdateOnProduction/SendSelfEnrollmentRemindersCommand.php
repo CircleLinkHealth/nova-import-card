@@ -7,8 +7,6 @@
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction;
 
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandHelpers;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -48,7 +46,7 @@ class SendSelfEnrollmentRemindersCommand extends Command
         $enrolleeIds = $this->argument('enrolleeIds');
         Enrollee::with('user.patientInfo')
             ->where('practice_id', $this->argument('practiceId'))
-            ->when(!empty($enrolleeIds), function ($enrollee) use ($enrolleeIds){
+            ->when( ! empty($enrolleeIds), function ($enrollee) use ($enrolleeIds) {
                 $enrollee->whereIn('id', $enrolleeIds);
             })
             ->whereHas(

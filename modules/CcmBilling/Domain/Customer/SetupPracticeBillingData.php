@@ -26,15 +26,15 @@ class SetupPracticeBillingData
             new MigrateChargeableServicesFromChargeablesToLocationSummariesTable(),
         ];
 
-        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
             $jobs = new SeedCpmProblemChargeableServicesFromLegacyTables();
         }
 
-        $jobs[] =  new ProcessAllPracticePatientMonthlyServices();
+        $jobs[] = new ProcessAllPracticePatientMonthlyServices();
 
         Bus::chain($jobs)
-           ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
-           ->dispatch();
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
+            ->dispatch();
     }
 
     public static function forPractice(int $practiceId)
@@ -43,14 +43,14 @@ class SetupPracticeBillingData
             new MigratePracticeServicesFromChargeablesToLocationSummariesTable($practiceId),
         ];
 
-        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
             $jobs[] = new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId);
         }
 
         $jobs[] = new ProcessPracticePatientMonthlyServices($practiceId);
         Bus::chain($jobs)
-           ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
-           ->dispatch();
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
+            ->dispatch();
     }
 
     public static function sync(int $practiceId)
@@ -60,14 +60,13 @@ class SetupPracticeBillingData
             new MigratePracticeServicesFromChargeablesToLocationSummariesTable($practiceId),
         ];
 
-        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
             $jobs[] = new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId);
         }
 
         $jobs[] = new ProcessPracticePatientMonthlyServices($practiceId);
         Bus::chain($jobs)
-           ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
-           ->dispatch();
-
+            ->onQueue(getCpmQueueName(CpmConstants::HIGH_QUEUE))
+            ->dispatch();
     }
 }

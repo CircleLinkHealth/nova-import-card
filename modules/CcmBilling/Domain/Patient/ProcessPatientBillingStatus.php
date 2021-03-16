@@ -7,30 +7,29 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
-use CircleLinkHealth\Customer\Entities\Chargeable;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\User;
-use Exception;
-use function Composer\Autoload\includeFile;
 
 class ProcessPatientBillingStatus
 {
-    private ?string $status = null;
-    private ?Carbon $month                              = null;
     private PatientMonthlyBillingDTO $dto;
+    private ?Carbon $month  = null;
+    private ?string $status = null;
 
-
-    private function setDto(?PatientMonthlyBillingDTO $dto) : self
+    public static function fromDTO(PatientMonthlyBillingDTO $dto)
     {
-        $this->dto = $dto;
-
-        return $this;
+        if ($dto->billingStatusIsTouched()) {
+            return;
+        }
+        (new static())
+            ->setDto($dto)
+            ->autoAttestIfYouShould()
+            ->determineBillingStatus()
+            ->updateOrCreateModel();
     }
 
     public function setMonth(Carbon $month): ProcessPatientBillingStatus
@@ -47,33 +46,37 @@ class ProcessPatientBillingStatus
         return $this;
     }
 
-    public static function fromDTO(PatientMonthlyBillingDTO $dto)
+    private function attestedCountForService(string $service): int
     {
-        if ($dto->billingStatusIsTouched()){
-            return;
+        if (ChargeableService::CCM === $service && ! $this->fulfilledSummaryForService(ChargeableService::BHI)) {
+            $service = null;
         }
-        (new static())
-            ->setDto($dto)
-            ->autoAttestIfYouShould()
-            ->determineBillingStatus()
-            ->updateOrCreateModel();
 
+        return collect($this->dto->getPatientProblems())
+            ->filter(function (PatientProblemForProcessing $p) use ($service) {
+                if (is_null($service)) {
+                    return $p->isAttestedForMonth();
+                }
+
+                return in_array($service, $p->getServiceCodes()) && $p->isAttestedForMonth();
+            })
+            ->count();
     }
 
-    private function updateOrCreateModel()
+    private function autoAttestIfYouShould(): self
     {
-        PatientMonthlyBillingStatus::updateOrCreate([
-            'patient_user_id' => $this->dto->getPatientId(),
-            'chargeable_month' => $this->dto->getChargeableMonth()
-        ],[
-            'status' => $this->status
-        ]);
+        //todo: optimise or remove
+        AutoPatientAttestation::fromId($this->dto->getPatientId())
+            ->setMonth($this->dto->getChargeableMonth())
+            ->executeIfYouShould();
+
+        return $this;
     }
 
-    private function determineBillingStatus():self
+    private function determineBillingStatus(): self
     {
         if ($this->unAttestedProblems()
-            || $this->dto->getSuccessfulCallsCount() === 0
+            || 0 === $this->dto->getSuccessfulCallsCount()
             || ! $this->dto->billingProviderExists()
             || in_array($this->dto->getCcmStatusForMonth(), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])
         ) {
@@ -81,27 +84,33 @@ class ProcessPatientBillingStatus
         } else {
             $this->status = PatientMonthlyBillingStatus::APPROVED;
         }
+
         return $this;
     }
 
-    private function autoAttestIfYouShould():self
+    private function fulfilledSummaryForService(string $service): bool
     {
-        //todo: optimise or remove
-        AutoPatientAttestation::fromId($this->dto->getPatientId())
-            ->setMonth($this->dto->getChargeableMonth())
-            ->executeIfYouShould();
+        return collect($this->dto->getPatientServices())
+            ->filter(fn (PatientSummaryForProcessing $s) => $s->getCode() === $service && $s->isFulfilled())
+            ->isNotEmpty();
+    }
+
+    private function setDto(?PatientMonthlyBillingDTO $dto): self
+    {
+        $this->dto = $dto;
+
         return $this;
     }
 
-    private function unAttestedProblems():bool
+    private function unAttestedProblems(): bool
     {
         foreach ([
             ChargeableService::BHI,
             ChargeableService::CCM,
             ChargeableService::PCM,
-            ChargeableService::GENERAL_CARE_MANAGEMENT
-        ] as $service){
-            if ($this->unAttestedService($service)){
+            ChargeableService::GENERAL_CARE_MANAGEMENT,
+        ] as $service) {
+            if ($this->unAttestedService($service)) {
                 return true;
             }
         }
@@ -109,29 +118,19 @@ class ProcessPatientBillingStatus
         return false;
     }
 
-    private function attestedCountForService(string $service): int
-    {
-        if ($service === ChargeableService::CCM && ! $this->fulfilledSummaryForService(ChargeableService::BHI)){
-            $service = null;
-        }
-        return collect($this->dto->getPatientProblems())
-            ->filter(function(PatientProblemForProcessing $p) use ($service){
-                if (is_null($service)){
-                    return $p->isAttestedForMonth();
-                }
-                return in_array($service, $p->getServiceCodes()) && $p->isAttestedForMonth();})
-            ->count();
-    }
-
-    private function fulfilledSummaryForService(string $service):bool{
-        return collect($this->dto->getPatientServices())
-            ->filter(fn(PatientSummaryForProcessing $s) => $s->getCode() === $service && $s->isFulfilled())
-            ->isNotEmpty();
-    }
-
-    private function unAttestedService(string $service):bool
+    private function unAttestedService(string $service): bool
     {
         return $this->fulfilledSummaryForService($service)
                && $this->attestedCountForService($service) < (optional(ChargeableService::getProcessorForCode($service))->minimumNumberOfProblems() ?? 0);
+    }
+
+    private function updateOrCreateModel()
+    {
+        PatientMonthlyBillingStatus::updateOrCreate([
+            'patient_user_id'  => $this->dto->getPatientId(),
+            'chargeable_month' => $this->dto->getChargeableMonth(),
+        ], [
+            'status' => $this->status,
+        ]);
     }
 }

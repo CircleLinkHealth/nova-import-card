@@ -317,7 +317,7 @@ class OpsDashboardReport
                 //todo: revisit asap. Basically we count time to see if they are complete. That would mean false data for PCM patients right?
                 //we should measuring fulfilled services per patient
                 $patientSummaries = $this->billingRevampIsEnabled()
-                    ? $patient->chargeableMonthlyTime->filter(fn($time) => ! is_null($time->chargeable_service_id))
+                    ? $patient->chargeableMonthlyTime->filter(fn ($time) => ! is_null($time->chargeable_service_id))
                     : $patient->patientSummaries;
 
                 if ($patientSummaries->isNotEmpty()) {

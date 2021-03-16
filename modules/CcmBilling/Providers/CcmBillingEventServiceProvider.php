@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
@@ -24,20 +25,20 @@ class CcmBillingEventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        LocationServicesAttached::class     => [
+        LocationServicesAttached::class => [
             ProcessLocationPatientServices::class,
             ProcessLocationProblemServices::class,
         ],
-        PatientProblemsChanged::class       => [
+        PatientProblemsChanged::class => [
             ProcessPatientServices::class,
         ],
-        PatientActivityCreated::class       => [
+        PatientActivityCreated::class => [
             ProcessPatientServices::class,
         ],
         PatientSuccessfulCallCreated::class => [
             ProcessPatientServices::class,
         ],
-        PatientConsentedToService::class    => [
+        PatientConsentedToService::class => [
             SetPatientConsented::class,
         ],
     ];

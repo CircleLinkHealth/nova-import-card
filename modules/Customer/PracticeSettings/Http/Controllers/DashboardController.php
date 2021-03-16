@@ -7,9 +7,6 @@
 namespace CircleLinkHealth\Customer\PracticeSettings\Http\Controllers;
 
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
-use CircleLinkHealth\Customer\PracticeSettings\Http\Requests\UpdatePracticeSettingsAndNotifications;
-use CircleLinkHealth\Customer\PracticeSettings\Http\Resources\SAAS\PracticeChargeableServices;
-use CircleLinkHealth\Customer\PracticeSettings\Services\OnboardingService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -17,6 +14,9 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Settings;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
+use CircleLinkHealth\Customer\PracticeSettings\Http\Requests\UpdatePracticeSettingsAndNotifications;
+use CircleLinkHealth\Customer\PracticeSettings\Http\Resources\SAAS\PracticeChargeableServices;
+use CircleLinkHealth\Customer\PracticeSettings\Services\OnboardingService;
 use CircleLinkHealth\SharedModels\Entities\PracticeEnrollmentTips;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

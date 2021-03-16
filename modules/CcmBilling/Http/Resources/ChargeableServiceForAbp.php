@@ -24,8 +24,9 @@ class ChargeableServiceForAbp extends JsonResource
 
         $services = $user->chargeableMonthlySummaries
             ->map(function (ChargeablePatientMonthlySummary $item) use ($user, $forcedServices) {
-                $patientForcedCs = $forcedServices->firstWhere('chargeable_service_id', $csId =
-                    ChargeableServiceModel::getChargeableServiceIdUsingCode(
+                $patientForcedCs = $forcedServices->firstWhere(
+                    'chargeable_service_id',
+                    $csId = ChargeableServiceModel::getChargeableServiceIdUsingCode(
                         ChargeableServiceModel::getBaseCode(
                             $item->chargeableService->code
                         )
@@ -39,8 +40,8 @@ class ChargeableServiceForAbp extends JsonResource
                     'id'           => $item->chargeable_service_id,
                     'is_fulfilled' => $item->is_fulfilled,
                     'total_time'   => optional($time)->total_time ?? 0,
-                    'is_blocked'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::BLOCK_ACTION_TYPE,
-                    'is_forced'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::FORCE_ACTION_TYPE
+                    'is_blocked'   => PatientForcedChargeableService::BLOCK_ACTION_TYPE === optional($patientForcedCs)->action_type,
+                    'is_forced'    => PatientForcedChargeableService::FORCE_ACTION_TYPE === optional($patientForcedCs)->action_type,
                 ];
             })
             ->values();
@@ -53,8 +54,8 @@ class ChargeableServiceForAbp extends JsonResource
                     'id'           => $time->chargeable_service_id,
                     'is_fulfilled' => false,
                     'total_time'   => $time->total_time,
-                    'is_blocked'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::BLOCK_ACTION_TYPE,
-                    'is_forced'   => optional($patientForcedCs)->action_type === PatientForcedChargeableService::FORCE_ACTION_TYPE
+                    'is_blocked'   => PatientForcedChargeableService::BLOCK_ACTION_TYPE === optional($patientForcedCs)->action_type,
+                    'is_forced'    => PatientForcedChargeableService::FORCE_ACTION_TYPE === optional($patientForcedCs)->action_type,
                 ]);
             }
         });
@@ -73,8 +74,8 @@ class ChargeableServiceForAbp extends JsonResource
                     'id'           => $cs->id,
                     'is_fulfilled' => true,
                     'total_time'   => ChargeableServiceModel::BHI === $cs->code ? $pms->bhi_time : $pms->getBillableCcmCs(),
-                    'is_forced' => null,
-                    'is_blocked' => null
+                    'is_forced'    => null,
+                    'is_blocked'   => null,
                 ];
             })
             ->values()
@@ -97,7 +98,7 @@ class ChargeableServiceForAbp extends JsonResource
             'total_time'   => $this['total_time'],
             'is_fulfilled' => $this['is_fulfilled'],
             'is_blocked'   => $this['is_blocked'],
-            'is_forced'    => $this['is_forced']
+            'is_forced'    => $this['is_forced'],
         ];
     }
 }

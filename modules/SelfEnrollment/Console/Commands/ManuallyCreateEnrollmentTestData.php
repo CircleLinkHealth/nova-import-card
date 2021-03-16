@@ -45,9 +45,8 @@ class ManuallyCreateEnrollmentTestData extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      * @throws \Exception
-     *
+     * @return int
      */
     public function handle()
     {
@@ -67,7 +66,7 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         $practice = Practice::whereName($practiceName)->first();
 
-        if (!$practice && !App::environment('production')) {
+        if ( ! $practice && ! App::environment('production')) {
             $this->info("Practice $practiceName to test not found. Creating practice with Location now...");
             $practice = $this->selfEnrollmentTestPractice($practiceName);
             $this->selfEnrollmentTestLocation($practice->id, $practiceName);
@@ -75,7 +74,7 @@ class ManuallyCreateEnrollmentTestData extends Command
 
         $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
 
-        if (!$letter && !App::environment('production')) {
+        if ( ! $letter && ! App::environment('production')) {
             $this->info("$practiceName practice letter not found. Generating Letter for $practiceName now...");
             Artisan::call(GenerateSelfEnrollmentLetters::class, ['--forPractice' => $practiceName]);
             $letter->fresh();

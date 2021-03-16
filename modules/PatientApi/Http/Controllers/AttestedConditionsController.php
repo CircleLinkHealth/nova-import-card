@@ -12,7 +12,6 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;
 use Illuminate\Routing\Controller;
@@ -83,7 +82,6 @@ class AttestedConditionsController extends Controller
             ->problemsToAttest($attestedProblems)
             ->setSyncing(true)
             ->createRecords();
-
 
         return response()->json([
             'status'            => 200,

@@ -6,16 +6,14 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\ValueObjects\ForcedPatientChargeableServicesForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\LocationChargeableServicesForProcessing;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceProcessorOutputDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
@@ -257,10 +255,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this;
     }
 
-    private function timeForService():int
+    private function timeForService(): int
     {
         return optional(collect($this->input->getPatientTimes())
-            ->filter(fn(PatientTimeForProcessing $time) => $time->getCode() === $this->baseCode())
+            ->filter(fn (PatientTimeForProcessing $time) => $time->getCode() === $this->baseCode())
             ->first())->getTime() ?? 0;
     }
 }

@@ -24,7 +24,6 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
-use CircleLinkHealth\Core\Tests\TestCase;
 
 class LocationSummaryProcessingTest extends CustomerTestCase
 {
@@ -69,11 +68,12 @@ class LocationSummaryProcessingTest extends CustomerTestCase
             ->andReturn($builderMock);
 
         $chunkJobPartiallyMocked->shouldReceive('getDtoFromPatient')
-            ->andReturn((new PatientMonthlyBillingDTO())->subscribe(AvailableServiceProcessors::push([
-                new CCM(),
-                new BHI(),
-                new PCM()
-            ]))->forMonth($startOfMonth)
+            ->andReturn(
+                (new PatientMonthlyBillingDTO())->subscribe(AvailableServiceProcessors::push([
+                    new CCM(),
+                    new BHI(),
+                    new PCM(),
+                ]))->forMonth($startOfMonth)
             );
 
         $chunkJobPartiallyMocked->makePartial();

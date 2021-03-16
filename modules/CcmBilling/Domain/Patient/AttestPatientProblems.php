@@ -19,28 +19,6 @@ class AttestPatientProblems
 {
     protected ?Addendum $addendum;
     protected ?int $addendumId = null;
-
-    protected bool $syncing = false;
-
-    /**
-     * @return bool
-     */
-    public function isSyncing(): bool
-    {
-        return $this->syncing;
-    }
-
-    /**
-     * @param bool $syncing
-     *
-     * @return AttestPatientProblems
-     */
-    public function setSyncing(bool $syncing): AttestPatientProblems
-    {
-        $this->syncing = $syncing;
-
-        return $this;
-    }
     //add in Job too
     protected ?int $attestorId = null;
 
@@ -59,7 +37,9 @@ class AttestPatientProblems
     //todo: deprecate
     protected ?PatientMonthlySummary $pms;
 
-    protected ?int $pmsId =null;
+    protected ?int $pmsId = null;
+
+    protected bool $syncing = false;
 
     public function createRecords(): void
     {
@@ -69,21 +49,13 @@ class AttestPatientProblems
             return;
         }
 
-        if ($this->isSyncing()){
+        if ($this->isSyncing()) {
             $this->removeRecords();
         }
 
         foreach ($this->getProblems() as $problem) {
             $this->createRecordForProblem($problem);
         }
-    }
-
-    public function removeRecords():void
-    {
-        AttestedProblem::where('chargeable_month', $this->getChargeableMonth())
-            ->whereNotIn('ccd_problem_id', $this->getCcdProblemIds())
-            ->where('patient_user_id', $this->getPatientUserId())
-            ->delete();
     }
 
     public function forAddendum(?int $addendumId): self
@@ -122,6 +94,11 @@ class AttestPatientProblems
         return $this;
     }
 
+    public function isSyncing(): bool
+    {
+        return $this->syncing;
+    }
+
     public function problemsToAttest(array $ccdProblemIds): self
     {
         $this->ccdProblemIds = $ccdProblemIds;
@@ -129,13 +106,28 @@ class AttestPatientProblems
         return $this;
     }
 
+    public function removeRecords(): void
+    {
+        AttestedProblem::where('chargeable_month', $this->getChargeableMonth())
+            ->whereNotIn('ccd_problem_id', $this->getCcdProblemIds())
+            ->where('patient_user_id', $this->getPatientUserId())
+            ->delete();
+    }
+
+    public function setSyncing(bool $syncing): AttestPatientProblems
+    {
+        $this->syncing = $syncing;
+
+        return $this;
+    }
+
     private function createRecordForProblem(Problem $problem): void
     {
         AttestedProblem::updateOrCreate([
-            'patient_user_id'            => $this->getPatientUserId(),
-            'chargeable_month'           => $this->getChargeableMonth(),
-            'ccd_problem_id'             => $problem->id,
-        ],[
+            'patient_user_id'  => $this->getPatientUserId(),
+            'chargeable_month' => $this->getChargeableMonth(),
+            'ccd_problem_id'   => $problem->id,
+        ], [
             'call_id'                    => $this->callId,
             'patient_monthly_summary_id' => $this->pmsId ?? $this->getPms()->id ?? null,
             'addendum_id'                => $this->addendumId,

@@ -1,12 +1,11 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\CcmBilling\Console;
 
-
-use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Traits\TakesDateAsArgument;
 use Illuminate\Console\Command;
@@ -27,7 +26,6 @@ class ProcessAllPracticePatientMonthlyServicesCommand extends Command
      * @var string
      */
     protected $signature = 'billing:check-patient-summaries-created {month? : YYYY-MM-DD}';
-
 
     /**
      * Execute the console command.

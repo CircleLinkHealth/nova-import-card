@@ -31,11 +31,11 @@ class AthenaApiCallsTest extends TestCase
         parent::setUp();
 
         $this->api = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
-    
+
         $activeVersion = config('services.athena.active_version');
-    
+
         $prefix = "services.athena.$activeVersion";
-        
+
         $this->athenaPracticeId   = config("$prefix.practice_id");
         $this->athenaDepartmentId = 1;
         $this->fakePatient        = $this->fakePatient();

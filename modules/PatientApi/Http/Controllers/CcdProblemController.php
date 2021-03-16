@@ -6,10 +6,8 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use Carbon\Carbon;
 use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientBillingStatus;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use CircleLinkHealth\SharedModels\Services\CCD\CcdProblemService;

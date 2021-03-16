@@ -8,9 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\HasUniqueIdentifierForDebounce;
-use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientBillingStatus;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
-use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 

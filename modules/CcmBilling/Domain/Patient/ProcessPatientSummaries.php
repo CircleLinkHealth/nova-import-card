@@ -63,7 +63,7 @@ class ProcessPatientSummaries
         );
     }
 
-    private function process():self
+    private function process(): self
     {
         if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             sendSlackMessage('#billing_alerts', "Warning! (ProcessPatientSummaries:) Patient({$this->patientId}) Billing Data are invalid. (DTO is null)");
@@ -71,10 +71,11 @@ class ProcessPatientSummaries
             return $this;
         }
         $this->patientDTO = $this->processor->process($this->patientDTO);
+
         return $this;
     }
 
-    private function processPatientBillingStatus():void
+    private function processPatientBillingStatus(): void
     {
         if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             return;

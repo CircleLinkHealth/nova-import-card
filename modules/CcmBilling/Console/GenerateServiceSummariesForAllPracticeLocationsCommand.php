@@ -1,13 +1,11 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\CcmBilling\Console;
 
-
-use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
-use CircleLinkHealth\CcmBilling\Jobs\GenerateLocationSummaries;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations;
 use CircleLinkHealth\Core\Traits\TakesDateAsArgument;
 use Illuminate\Console\Command;
