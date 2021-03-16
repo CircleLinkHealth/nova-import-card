@@ -8,9 +8,15 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 
 use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
+use CircleLinkHealth\CcmBilling\Console\CheckLocationSummariesHaveBeenCreatedCommand;
+use CircleLinkHealth\CcmBilling\Console\CheckPatientEndOfMonthCcmStatusLogsExistForMonthCommand;
+use CircleLinkHealth\CcmBilling\Console\CheckPatientSummariesHaveBeenCreatedCommand;
 use CircleLinkHealth\CcmBilling\Console\CompareAbpV2vsV3;
+use CircleLinkHealth\CcmBilling\Console\GenerateEndOfMonthCcmStatusLogsCommand;
 use CircleLinkHealth\CcmBilling\Console\GenerateFakeDataForApproveBillablePatientsPage;
+use CircleLinkHealth\CcmBilling\Console\GenerateServiceSummariesForAllPracticeLocationsCommand;
 use CircleLinkHealth\CcmBilling\Console\ModifyPatientActivityAndReprocessTime;
+use CircleLinkHealth\CcmBilling\Console\ProcessAllPracticePatientMonthlyServicesCommand;
 use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
 use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
@@ -72,6 +78,13 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
             ModifyPatientActivityAndReprocessTime::class,
+
+            CheckLocationSummariesHaveBeenCreatedCommand::class,
+            GenerateServiceSummariesForAllPracticeLocationsCommand::class,
+            GenerateEndOfMonthCcmStatusLogsCommand::class,
+            ProcessAllPracticePatientMonthlyServicesCommand::class,
+            CheckPatientSummariesHaveBeenCreatedCommand::class,
+            CheckPatientEndOfMonthCcmStatusLogsExistForMonthCommand::class
         ]);
     }
 }

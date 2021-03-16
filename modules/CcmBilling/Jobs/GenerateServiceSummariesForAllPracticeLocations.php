@@ -38,7 +38,6 @@ class GenerateServiceSummariesForAllPracticeLocations extends Job implements Sho
     public function handle()
     {
         Practice::with('locations')
-            ->get()
             ->each(function (Practice $p) {
                 foreach ($p->locations as $location) {
                     GenerateLocationSummaries::dispatch($location->id, $this->month);

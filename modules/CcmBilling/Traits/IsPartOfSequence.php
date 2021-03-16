@@ -10,7 +10,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 
 trait IsPartOfSequence
 {
-    //todo:deprecate?
+    //todo:deprecate
     abstract public function next(): ?PatientServiceProcessor;
 
     abstract public function previous(): ?PatientServiceProcessor;

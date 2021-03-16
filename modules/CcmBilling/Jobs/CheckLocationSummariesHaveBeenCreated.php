@@ -15,16 +15,14 @@ class CheckLocationSummariesHaveBeenCreated extends Job implements ShouldBeEncry
 {
     protected Carbon $month;
 
-    public function __construct(Carbon $month = null)
+    public function __construct(Carbon $month)
     {
         $this->month = $month;
     }
 
     public static function fromParameters(string ...$parameters)
     {
-        $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
-
-        return new static($date);
+        return new static(Carbon::parse($parameters[0]));
     }
 
     public function getMonth(): Carbon

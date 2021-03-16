@@ -8,6 +8,8 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,7 +28,7 @@ class CheckPatientSummariesHaveBeenCreatedForPractice implements ShouldQueue, Sh
 
     protected int $practiceId;
 
-    protected PracticeProcessorRepository $repo;
+    protected LocationProcessorEloquentRepository $repo;
 
     /**
      * Create a new job instance.
@@ -58,15 +60,15 @@ class CheckPatientSummariesHaveBeenCreatedForPractice implements ShouldQueue, Sh
     {
         if ( ! $this->summariesExistForMonth()) {
             $readableMonth = $this->getMonth()->format('M, Y');
-            sendSlackMessage('#cpm_general_alerts', "Summaries have not been created for Practice with ID: {$this->getPracticeId()}, for month: {$readableMonth}");
+            sendSlackMessage('#billing_alerts', "Summaries have not been created for Practice with ID: {$this->getPracticeId()}, for month: {$readableMonth}");
             ProcessPracticePatientMonthlyServices::dispatch($this->getPracticeId(), $this->getMonth());
         }
     }
 
-    private function repo(): PracticeProcessorRepository
+    private function repo(): LocationProcessorEloquentRepository
     {
         if ( ! isset($this->repo)) {
-            $this->repo = app(PracticeProcessorRepository::class);
+            $this->repo = app(LocationProcessorEloquentRepository::class);
         }
 
         return $this->repo;
@@ -74,8 +76,10 @@ class CheckPatientSummariesHaveBeenCreatedForPractice implements ShouldQueue, Sh
 
     private function summariesExistForMonth(): bool
     {
+        $locationIds = Location::where('practice_id', $this->getPracticeId())->pluck('id')->toArray();
+
         return $this->repo()
-            ->patientServices($this->getPracticeId(), $this->getMonth())
+            ->patientServices($locationIds, $this->getMonth())
             ->exists();
     }
 }

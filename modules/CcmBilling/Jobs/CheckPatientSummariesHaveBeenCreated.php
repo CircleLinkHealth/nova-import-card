@@ -44,7 +44,6 @@ class CheckPatientSummariesHaveBeenCreated extends Job implements ShouldBeEncryp
      */
     public function handle()
     {
-        Practice::get()
-            ->each(fn (Practice $p) => CheckPatientSummariesHaveBeenCreatedForPractice::dispatch($p->id, $this->getMonth()));
+        Practice::each(fn (Practice $p) => CheckPatientSummariesHaveBeenCreatedForPractice::dispatch($p->id, $this->getMonth()));
     }
 }
