@@ -24,6 +24,11 @@ Route::group([
         'auth',
     ],
 ], function () {
+    Route::get('hospitalisation-notes-dashboard', [
+        'uses' => 'LivewireDatatablesController@hospitalisationNotes',
+        'as'   => 'hospitalization-notes.table',
+    ])->middleware(['permission:hospitalisation-notes-dashboard.view']);
+    
     Route::get('home', 'HomeController@index');
 
     Route::get('patient/{patientId}/note/{noteId}', [
@@ -59,11 +64,6 @@ Route::group([
     ],
 ], function () {
     Route::get('home', 'HomeController@index');
-
-    Route::get('hospitalisation-notes-dashboard', [
-        'uses' => 'LivewireDatatablesController@hospitalisationNotes',
-        'as'   => 'hospitalization-notes.table',
-    ]);
 
     Route::get('message-dispatch-messages-dashboard', [
         'uses' => 'LivewireDatatablesController@messageDispatchMessages',

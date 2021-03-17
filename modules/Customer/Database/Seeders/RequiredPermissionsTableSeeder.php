@@ -110,6 +110,10 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'display_name' => 'Can view Patient Activity Management page.',
             ],
             [
+                'name'         => 'hospitalisation-notes-dashboard.view',
+                'display_name' => 'Can view Hospitalization Notes Dashboard.',
+            ],
+            [
                 'name'         => 'pam.export',
                 'display_name' => 'Can view Patient Activity Management page.',
             ],
