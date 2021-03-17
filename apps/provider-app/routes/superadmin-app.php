@@ -31,27 +31,43 @@ Route::group([
     ]);
 });
 
-Route::get('calls-v2', [
-    'uses' => 'RedirectToAdminApp@getPAM',
-    'as'   => 'patientCallManagement.v2.provider.index',
-]);
+Route::group([[
+    'middleware' => [
+        'auth',
+    ],
+]], function () {
+    Route::get('calls-v2', [
+        'uses' => 'RedirectToAdminApp@getPAM',
+        'as'   => 'patientCallManagement.v2.provider.index',
+    ]);
 
-Route::get('ca/index', [
-    'uses' => 'RedirectToAdminApp@getCADirectorIndex',
-    'as'   => 'ca-director.provider.index',
-]);
+    Route::get('hospitalisation-notes-dashboard', [
+        'uses' => 'RedirectToAdminApp@getHospitalisationNotesDashboard',
+        'as'   => 'hospitalisation-notes-dashboard.view',
+    ]);
 
-Route::get('admin/nurses/windows', [
-    'uses' => 'RedirectToAdminApp@getAdminNurseSchedules',
-    'as'   => 'get.admin.nurse.schedules',
-]);
+    Route::get('calls-v2', [
+        'uses' => 'RedirectToAdminApp@getPAM',
+        'as'   => 'patientCallManagement.v2.provider.index',
+    ]);
 
-Route::get('admin/users/{id}/destroy', [
-    'uses' => 'RedirectToAdminApp@destroyUser',
-    'as'   => 'admin.users.destroy',
-])->middleware('permission:user.delete');
+    Route::get('ca/index', [
+        'uses' => 'RedirectToAdminApp@getCADirectorIndex',
+        'as'   => 'ca-director.provider.index',
+    ]);
 
-Route::get('direct-mail/show/{dmId}', [
-    'uses' => 'RedirectToAdminApp@dmShow',
-    'as'   => 'direct-mail.show',
-]);
+    Route::get('admin/nurses/windows', [
+        'uses' => 'RedirectToAdminApp@getAdminNurseSchedules',
+        'as'   => 'get.admin.nurse.schedules',
+    ]);
+
+    Route::get('admin/users/{id}/destroy', [
+        'uses' => 'RedirectToAdminApp@destroyUser',
+        'as'   => 'admin.users.destroy',
+    ])->middleware('permission:user.delete');
+
+    Route::get('direct-mail/show/{dmId}', [
+        'uses' => 'RedirectToAdminApp@dmShow',
+        'as'   => 'direct-mail.show',
+    ]);
+});

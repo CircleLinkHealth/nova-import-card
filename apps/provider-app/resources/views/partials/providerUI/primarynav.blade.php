@@ -200,6 +200,11 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                             <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                         </li>
                                         <li>
+                                            <a href="{{ route('hospitalisation-notes-dashboard.view') }}">
+                                                Hospitalization notes dashboard
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a href="{{ route('patientCallManagement.v2.provider.index') }}">
                                                 Patient Activity Management
                                             </a>

@@ -1375,6 +1375,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan.read',
                     'patient.read',
                     'pam.view',
+                    'hospitalisation-notes-dashboard.view',
                     'location.read',
                     'provider.read',
                     'nurse.read',
