@@ -43,6 +43,11 @@ class RedirectToAdminApp extends Controller
         return $this->redirectToAdmin("practices/$practiceSlug/staff");
     }
 
+    public function getHospitalisationNotesDashboard()
+    {
+        return $this->redirectToAdmin('hospitalisation-notes-dashboard');
+    }
+
     public function getPAM()
     {
         return $this->redirectToAdmin('pam');
