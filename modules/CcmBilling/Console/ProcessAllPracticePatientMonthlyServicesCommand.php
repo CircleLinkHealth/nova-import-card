@@ -25,7 +25,7 @@ class ProcessAllPracticePatientMonthlyServicesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'billing:check-patient-summaries-created {month? : YYYY-MM-DD}';
+    protected $signature = 'billing:process-all-patient-services {month? : YYYY-MM-DD}';
 
     /**
      * Execute the console command.

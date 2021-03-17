@@ -24,7 +24,7 @@ class GenerateEndOfMonthCcmStatusLogsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'billing:check-patient-summaries-created {month? : YYYY-MM-DD}';
+    protected $signature = 'billing:check-ccm-status-logs {month? : YYYY-MM-DD}';
 
     /**
      * Execute the console command.
