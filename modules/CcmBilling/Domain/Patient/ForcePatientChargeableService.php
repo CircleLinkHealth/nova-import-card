@@ -93,7 +93,7 @@ class ForcePatientChargeableService
             ->where('action_type', $opposingActionType)
             ->first();
 
-        if ($this->input->isDetaching() && $this->input->isPermanent()) {
+        if ($this->input->isDetaching()) {
             $endingMonth = Carbon::now()->startOfMonth();
             if ( ! is_null($opposingPermanentAction) && $this->input->getEntryCreatedAt()->lessThan($opposingPermanentAction->created_at)) {
                 $endingMonth = $opposingPermanentAction->created_at->startOfMonth();
@@ -108,7 +108,7 @@ class ForcePatientChargeableService
             return $this;
         }
 
-        if ($this->input->isPermanent() && ! is_null($opposingPermanentAction)) {
+        if (! is_null($opposingPermanentAction)) {
             $this->repo->detachForcedChargeableService(
                 $this->input->getPatientUserId(),
                 $this->input->getChargeableServiceId(),

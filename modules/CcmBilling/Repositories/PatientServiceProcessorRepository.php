@@ -30,16 +30,17 @@ class PatientServiceProcessorRepository implements Repository
 
     public function attachForcedChargeableService(int $patientId, int $chargeableServiceId, Carbon $month = null, string $actionType = PatientForcedChargeableService::FORCE_ACTION_TYPE, ?string $reason = null): void
     {
-        if (is_null($month)) {
-            PatientForcedChargeableService::create([
-                'patient_user_id'       => $patientId,
-                'chargeable_service_id' => $chargeableServiceId,
-                'action_type'           => $actionType,
-                'reason'                => $reason,
-            ]);
-
-            return;
-        }
+        //todo: revisit historical records accuracy from ABP edits
+//        if (is_null($month)) {
+//            PatientForcedChargeableService::create([
+//                'patient_user_id'       => $patientId,
+//                'chargeable_service_id' => $chargeableServiceId,
+//                'action_type'           => $actionType,
+//                'reason'                => $reason,
+//            ]);
+//
+//            return;
+//        }
         PatientForcedChargeableService::updateOrCreate(
             [
                 'patient_user_id'       => $patientId,

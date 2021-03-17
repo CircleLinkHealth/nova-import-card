@@ -129,7 +129,7 @@ class ApproveBillablePatientsServiceV3
                 ->setChargeableServiceId($service['id'])
                 ->setActionType($service['action_type']);
 
-            ForcePatientChargeableService::executeQuietly($input);
+            ForcePatientChargeableService::execute($input);
         }
         (app(ProcessPatientSummaries::class))->execute($billingStatus->patient_user_id, $billingStatus->chargeable_month);
 

@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -88,21 +89,26 @@ class ClashingChargeableServices
      */
     public static function getCcmTimeForLegacyReportsInPriority(User $user): int
     {
-        $fulfilledCsIds = $user->chargeableMonthlySummaries
+        $fulfilledCs = $user->chargeableMonthlySummaries
             ->where('is_fulfilled', '=', true)
-            ->where('chargeable_service_id', '!=', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
-            ->pluck('chargeable_service_id');
+            ->where('chargeable_service_id', '!=', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI));
 
-        $ccmTime = 0;
-        if ($fulfilledCsIds->isNotEmpty()) {
-            $ccmTime = $user->chargeableMonthlyTime
-                ->whereIn('chargeable_service_id', $fulfilledCsIds)
-                ->sum('total_time');
+
+        if ($fulfilledCs->isNotEmpty()) {
+            foreach (self::CCM_SERVICES_ORDER_OF_PRIORITY as $serviceCode){
+                $summary = $fulfilledCs->filter(fn(ChargeablePatientMonthlySummary $summary) => $summary->chargeableService->code === $serviceCode)->first();
+                if (is_null($summary)){
+                    continue;
+                }
+                $ccmTime = $user->chargeableMonthlyTime
+                    ->whereIn('chargeable_service_id', $summary->chargeable_service_id)
+                    ->sum('total_time');
+                if ($ccmTime > 0){
+                    return $ccmTime;
+                }
+            }
         }
 
-        if ($ccmTime > 0) {
-            return $ccmTime;
-        }
 
         foreach (self::CCM_SERVICES_ORDER_OF_PRIORITY as $serviceCode) {
             $ccmTime = $user->chargeableMonthlyTime
