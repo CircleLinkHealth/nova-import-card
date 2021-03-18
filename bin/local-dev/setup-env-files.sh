@@ -7,7 +7,7 @@ for SUBDOMAIN in $(ls "$PWD/apps/")
 do
     APP_PATH="$PWD/apps/$SUBDOMAIN"
     BLUEPRINT_ENV_FILE=".env.example"
-    ENV_FILE = ".env"
+    ENV_FILE=".env"
 
     if [ ! -f "$APP_PATH/$ENV_FILE" ]; then
         echo "$APP_PATH: .env not found!"
