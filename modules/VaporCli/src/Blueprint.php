@@ -140,6 +140,7 @@ APP_NAME=$this->app";
             'SESSION_DOMAIN'      => "$this->app-$this->environment.clh-$this->blueprintEnv.com",
             'SCOUT_MONITOR'       => 'false',
             'UNIQUE_ENV_NAME'     => $this->environment,
+            "SHORT_URL_BASE"      => "https://$this->app-$this->environment.clh-$this->blueprintEnv.com/e",
         ];
     }
 
