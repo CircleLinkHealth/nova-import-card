@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEncrypted
 {
@@ -38,6 +39,7 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
 
     public function handle()
     {
+        Log::info("Invoices: Creating Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
         $batchRepo           = app(BatchableStoreRepository::class);
         $batch               = $batchRepo->get($this->batchId);
         $practicePatientData = collect($batch)
@@ -52,6 +54,7 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
             ->setPatientsData($practicePatientData)
             ->execute();
         $batchRepo->store($this->batchId, $this->practiceId, BatchableStoreRepository::MEDIA_TYPE, $media->id);
+        Log::info("Invoices: Ending creation Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
     }
 
     public function tags(): array

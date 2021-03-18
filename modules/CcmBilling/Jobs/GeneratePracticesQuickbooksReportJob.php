@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class GeneratePracticesQuickbooksReportJob implements ShouldQueue, ShouldBeEncrypted
 {
@@ -43,6 +44,8 @@ class GeneratePracticesQuickbooksReportJob implements ShouldQueue, ShouldBeEncry
 
     public function handle()
     {
+        $practiceIds = implode(',', $this->practices);
+        Log::info("Invoices: Generating Complete Practice Patient Report from batch for practices: {$practiceIds}, for batch: {$this->batchId}");
         (new GeneratePracticesQuickbooksReport())
             ->setBatchId($this->batchId)
             ->setPractices($this->practices)
@@ -50,6 +53,7 @@ class GeneratePracticesQuickbooksReportJob implements ShouldQueue, ShouldBeEncry
             ->setFormat($this->format)
             ->setRequestedUserId($this->requestedByUserId)
             ->execute();
+        Log::info("Invoices: Ending Generation of Complete Practice Patient Report from batch for practices: {$practiceIds}, for batch: {$this->batchId}");
     }
 
     public function tags(): array

@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
 {
@@ -56,11 +57,13 @@ class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
      */
     public function handle()
     {
+        Log::info("Invoices: Creating Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}");
         $data = $this->getBuilder()
             ->get()
             ->map(fn (PatientMonthlyBillingStatus $billingStatus) => (new GeneratePracticePatientReport())->setBillingStatus($billingStatus)->execute()->toCsvRow());
 
         $this->storeIntoCache($data);
+        Log::info("Invoices: Ending creation of Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}");
     }
 
     /**
