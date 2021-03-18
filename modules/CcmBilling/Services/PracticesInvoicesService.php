@@ -51,7 +51,6 @@ class PracticesInvoicesService
         $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
         Bus::chain($jobs)
-//        ChainableJob::withChain($jobs)
             ->dispatch()
             ->allOnQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }

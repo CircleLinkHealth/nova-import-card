@@ -86,6 +86,13 @@ class ForcePatientChargeableService
             ])
             ->findOrFail($this->input->getPatientUserId());
 
+        $sameActionForCurrentMonth = $patient->forcedChargeableServices->where('chargeable_month', Carbon::now()->startOfMonth())
+                ->where('chargeable_service_id', $this->input->getChargeableServiceId())
+                ->first();
+        if (! is_null($sameActionForCurrentMonth)){
+            $sameActionForCurrentMonth->delete();
+        }
+
         $opposingActionType      = PatientForcedChargeableService::getOpposingActionType($this->input->getActionType());
         $opposingPermanentAction = $patient->forcedChargeableServices
             ->whereNull('chargeable_month')
