@@ -12,8 +12,7 @@ The monorepo is created by mirroring all CPM repositories into one, while mainta
 1. Clone the monorepo locally
 2. Make sure all apps and modules in the monorepo have branch `master`
 3. When running `git checkout master`. This will chekout branch `master` for **all** apps and modules in the monorepo. Branch `master` contains the head of development.
-4. Add .env files to all apps.
-5. Run `sh bin/local-dev/install.sh`
+4. Run `sh bin/local-dev/install.sh`. This will also add .env files in each app based on .env.example files. Please make sure to adjust these vars for your local environment.
 
 ### Starting work on a new feature
 1. Create a new branch in the monorepo with a descriptive name, using command below.

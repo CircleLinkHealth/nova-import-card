@@ -3,6 +3,7 @@
 set -x
 
 bash "$PWD/bin/local-dev/setup-gitconfig.sh"
+bash "$PWD/bin/local-dev/setup-env-files.sh"
 bash "$PWD/bin/local-dev/setup-valet.sh"
 bash "$PWD/bin/local-dev/setup-vapor-cli.sh"
 bash "$PWD/bin/local-dev/composer.sh" install
