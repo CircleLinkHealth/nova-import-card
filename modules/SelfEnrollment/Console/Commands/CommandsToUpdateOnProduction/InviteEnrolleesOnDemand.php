@@ -2,7 +2,6 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction;
 
-use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandHelpers;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationsBatch;
 use CircleLinkHealth\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
