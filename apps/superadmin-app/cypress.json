@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://superadmin-app.clh.test",
+  "retries": {
+    "runMode": 2,
+    "openMode": 1
+  }
+}
