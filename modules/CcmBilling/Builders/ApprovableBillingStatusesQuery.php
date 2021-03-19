@@ -14,7 +14,12 @@ trait ApprovableBillingStatusesQuery
 {
     public function approvableBillingStatusesQuery(array $locationIds, Carbon $monthYear, $withRelations = false): Builder
     {
-        return PatientMonthlyBillingStatus::orderByRaw('FIELD(status, "needs_qa", "rejected", "approved")')
+        //note: due to issues with Laravel Pagination and orderByRaw, please make sure ABP works if for some reason you're editing
+        return PatientMonthlyBillingStatus::orderByRaw("CASE
+            WHEN status = 'needs_qa' THEN 1
+            WHEN status = 'rejected' THEN 2
+            ELSE 3
+            END ASC, patient_user_id ASC")
             ->where('chargeable_month', '=', $monthYear)
             ->whereHas('patientUser', fn ($q) => $q->patientInLocations($locationIds))
             ->whereHas('patientUser.chargeableMonthlySummaries', fn ($q) => $q->createdOnIfNotNull($monthYear, 'chargeable_month')->where('is_fulfilled', '=', true))
