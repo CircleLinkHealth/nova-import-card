@@ -25,7 +25,9 @@ describe('Tests Successful Login for Users', () => {
 	it('should allow Nurse Login', () => {
 		loginPage.Uilogin(NURSE_USERNAME, NURSE_PASSWORD);
 		cy.wait(3000);
-		navbar.nurseLogout();
+		cy.contains('care-center User MD').click();
+		cy.contains('Logout').click();
+		// navbar.nurseLogout();
 		basePage.logMessage('Nurse successfully logs in and logs out');
 	});
 
@@ -37,14 +39,8 @@ describe('Tests Successful Login for Users', () => {
 		basePage.logMessage('Provider successfully logs in and logs out');
 	});
 
-	it('should allow Admin Login', () => {
-		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
-		cy.wait(3000);
-		navbar.adminLogout();
-		basePage.logMessage('Admin successfully logs in and logs out');
-	});
 
-	it('should allow Care Ambassador Login', () => {
+	it.only('should allow Care Ambassador Login', () => {
 		loginPage.Uilogin(CARE_AMBASSADOR_USERNAME, CARE_AMBASSADOR_PASSWORD);
 		cy.wait(3000);
 		navbar.careAmbassadorLogout();
