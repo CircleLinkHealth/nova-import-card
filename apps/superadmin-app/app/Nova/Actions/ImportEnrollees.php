@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
-use Laravel\Nova\Fields\VaporFile;
+use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
 
