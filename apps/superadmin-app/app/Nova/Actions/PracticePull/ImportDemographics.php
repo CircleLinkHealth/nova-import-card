@@ -13,8 +13,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
-use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\VaporFile;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImportDemographics extends Action
@@ -55,7 +55,7 @@ class ImportDemographics extends Action
             ->toArray();
 
         return [
-            File::make('File')
+            VaporFile::make('File')
                 ->rules('required'),
             Select::make('Practice', 'practice_id')->options($practices)->withModel(Practice::class),
         ];
