@@ -21,6 +21,5 @@ describe('Tests that inactivity modal pops up after 2 minutes of inactivity time
 		cy.isVisible('.modal-cancel-button');
 		cy.isVisible('.modal-ok-button');
 		cy.get('.modal-ok-button').click();
-		navbar.nurseLogout();
 	});
 });
