@@ -40,7 +40,7 @@ describe('Tests Successful Login for Users', () => {
 	});
 
 
-	it.only('should allow Care Ambassador Login', () => {
+	it('should allow Care Ambassador Login', () => {
 		loginPage.Uilogin(CARE_AMBASSADOR_USERNAME, CARE_AMBASSADOR_PASSWORD);
 		cy.wait(3000);
 		navbar.careAmbassadorLogout();
