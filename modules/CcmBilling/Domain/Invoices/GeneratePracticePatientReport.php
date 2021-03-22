@@ -59,7 +59,7 @@ class GeneratePracticePatientReport
     private function getBhiTime(): int
     {
         return $this->billingStatus->patientUser->chargeableMonthlyTime
-            ->where('chargeable_service_id', '!=', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
+            ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
             ->sum('total_time');
     }
 
