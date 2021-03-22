@@ -71,7 +71,7 @@ class EpicSsoController extends Controller
 
     private function getClientId()
     {
-        return isProductionEnv() ? config('epicsso.app_client_id') : config('epicsso.non_prod_client_id');
+        return isProductionEnv() ? config('epicsso.app_client_id') : config('epicsso.app_staging_client_id');
     }
 
     private function getMetadataCacheKey(): string
