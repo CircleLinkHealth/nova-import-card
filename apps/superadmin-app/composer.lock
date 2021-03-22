@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23a1ddeb5e49b9417406b68cb2e30db5",
+    "content-hash": "12e0dbf2c003fcd3ab12a1444384ae83",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -15230,6 +15230,65 @@
             "time": "2020-05-27T16:41:55+00:00"
         },
         {
+            "name": "laracasts/cypress",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laracasts/cypress.git",
+                "reference": "c9b8bdabbea70fae85c0a32cda24d861c983ff0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laracasts/cypress/zipball/c9b8bdabbea70fae85c0a32cda24d861c983ff0f",
+                "reference": "c9b8bdabbea70fae85c0a32cda24d861c983ff0f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "laravel/legacy-factories": "^1.0",
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Laracasts\\Cypress\\CypressServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laracasts\\Cypress\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeffrey Way",
+                    "email": "jeffrey@laracasts.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel Cypress Boilerplate",
+            "homepage": "https://github.com/laracasts/cypress",
+            "keywords": [
+                "cypress",
+                "laracasts"
+            ],
+            "support": {
+                "issues": "https://github.com/laracasts/cypress/issues",
+                "source": "https://github.com/laracasts/cypress/tree/1.3.0"
+            },
+            "time": "2021-01-21T15:52:04+00:00"
+        },
+        {
             "name": "laravel/vapor-cli",
             "version": "dev-master",
             "dist": {
@@ -18201,5 +18260,5 @@
         "ext-zend-opcache": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }
