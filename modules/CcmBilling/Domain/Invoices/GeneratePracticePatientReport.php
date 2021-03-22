@@ -60,7 +60,7 @@ class GeneratePracticePatientReport
     {
         return $this->billingStatus->patientUser->chargeableMonthlyTime
             ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
-            ->sum('total_time');
+            ->sum('total_time') ?? 0;
     }
 
     private function getBillableCcmCs(): int
