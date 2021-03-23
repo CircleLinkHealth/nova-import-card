@@ -604,7 +604,7 @@ class Practice extends BaseModel implements HasMedia
                 $p->with([
                     'patientSummaries'                      => fn ($pms)                      => $pms->createdOn($startOfMonth, 'month_year'),
                     'chargeableMonthlySummaries'            => fn ($s)            => $s->createdOn($startOfMonth, 'chargeable_month'),
-                    'chargeableMonthlyTime'                 => fn ($s)                 => $s->createdInMonthFromDateTimeField('performed_at', $startOfMonth),
+                    'chargeableMonthlyTime'                 => fn ($s)                 => $s->createdInMonthFromDateTimeField($startOfMonth, 'performed_at'),
                     'patientInfo.patientCcmStatusRevisions' => fn ($r) => $r->ofDate($startOfMonth, Carbon::now()),
                 ])
                     ->isNotDemo();
