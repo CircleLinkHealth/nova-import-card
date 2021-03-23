@@ -156,7 +156,7 @@ class PatientObserver
             return;
         }
 
-        if ($this->locationChanged($patient) || $this->statusChangedToEnrolled($patient)) {
+        if ($this->locationChanged($patient) || $this->statusChangedToOrFromEnrolled($patient)) {
             ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
@@ -184,16 +184,15 @@ class PatientObserver
         $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
     }
 
-    private function statusChangedToEnrolled(Patient $patient): bool
+    private function statusChangedToOrFromEnrolled(Patient $patient): bool
     {
         $oldValue = $patient->getOriginal('ccm_status');
         $newValue = $patient->ccm_status;
 
-        if (Patient::ENROLLED != $newValue) {
-            return false;
-        }
-
-        if (Patient::ENROLLED == $oldValue) {
+        if (! in_array(Patient::ENROLLED, [
+            $oldValue,
+            $newValue
+        ])){
             return false;
         }
 
