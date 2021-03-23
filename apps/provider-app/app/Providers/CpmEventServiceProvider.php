@@ -28,6 +28,7 @@ use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Listeners\CreateAttestationRecords;
+use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\Core\Listeners\CheckBeforeSendMessageListener;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
@@ -112,19 +113,23 @@ class CpmEventServiceProvider extends ServiceProvider
         CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
             UpdateCcdaStatus::class,
+            ProcessPatientServices::class
         ],
         CarePlanWasQAApproved::class => [
             AddPatientConsentNote::class,
+            ProcessPatientServices::class
         ],
         CarePlanWasRNApproved::class => [
             AutoApproveCarePlan::class,
             UPG0506Handler::class, //auto approve for UPG0506 - why not in AutoApproveCarePlan then?
             NotifyPatientOfCarePlanApproval::class,
             SendCarePlanForDMProviderApproval::class,
+            ProcessPatientServices::class
         ],
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,
             NotifyPatientOfCarePlanApproval::class,
+            ProcessPatientServices::class
         ],
         ScheduledTaskStarting::class => [
             LogScheduledTask::class,
