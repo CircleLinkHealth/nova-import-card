@@ -38,4 +38,3 @@ CircleLinkHealth/*/vendor
 CircleLinkHealth/*/node_modules
 CircleLinkHealth.env.review-clh-messenger
 CircleLinkHealth/
-.env.feature-billing-revamp
