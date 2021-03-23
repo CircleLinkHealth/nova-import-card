@@ -129,6 +129,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_password',
     ];
 
+    //todo: deprecate in favor of AvailableServiceProcessors::fromModel()
     public function availableServiceProcessors(?Carbon $month = null, bool $excludeLocked = true): AvailableServiceProcessors
     {
         $month ??= Carbon::now()->startOfMonth()->startOfDay();

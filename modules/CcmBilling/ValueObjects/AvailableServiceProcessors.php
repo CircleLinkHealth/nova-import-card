@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV1;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV2;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -17,29 +19,45 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM60;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
 class AvailableServiceProcessors implements Arrayable
 {
-    private ?AWV1 $awv1;
+    private ?AWV1 $awv1 = null;
 
-    private ?AWV2 $awv2;
+    private ?AWV2 $awv2 = null;
 
-    private ?BHI $bhi;
+    private ?BHI $bhi = null;
 
-    private ?CCM $ccm;
-    private ?CCM40 $ccm40;
-    private ?CCM60 $ccm60;
+    private ?CCM $ccm = null;
+    private ?CCM40 $ccm40 = null;
+    private ?CCM60 $ccm60 = null;
 
-    private ?PCM $pcm;
+    private ?PCM $pcm = null;
 
-    private ?RHC $rhc;
+    private ?RHC $rhc = null;
 
-    private ?RPM $rpm;
-    private ?RPM40 $rpm40;
-    private ?RPM60 $rpm60;
+    private ?RPM $rpm = null;
+    private ?RPM40 $rpm40 = null;
+    private ?RPM60 $rpm60 = null;
 
+    public static function fromModel(?Location $location = null, ?Carbon $month = null):self
+    {
+        if (is_null($location)){
+            return new static();
+        }
+
+        return self::push($location->chargeableServiceSummaries
+            ->where('chargeable_month', $month)
+            ->map(function (ChargeableLocationMonthlySummary $summary) {
+                return $summary->chargeableService->processor();
+            })
+            ->filter()
+            ->toArray()
+        );
+    }
     public static function classMap(): array
     {
         return [
