@@ -37,6 +37,20 @@ trait DateScopesTrait
         });
     }
 
+    public function scopeCreatedInMonthFromDateTimeField(
+        $builder,
+        Carbon $date,
+        $field = 'created_at'
+    ) {
+        $builder->where(function ($q) use (
+            $field,
+            $date
+        ) {
+            $dateStr = $date->copy()->startOfMonth()->toDateString();
+            $q->whereRaw("date_format($field,'%Y-%m-01') = '$dateStr'");
+        });
+    }
+
     /**
      * Scope a query to only include activities created on a day. Defaults to created_at field, but a different field may
      * be specified.

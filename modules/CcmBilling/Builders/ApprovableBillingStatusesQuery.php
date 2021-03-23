@@ -60,7 +60,7 @@ trait ApprovableBillingStatusesQuery
             'chargeableMonthlySummaries' => fn ($q) => $q->createdOnIfNotNull($monthYear, 'chargeable_month'),
             'forcedChargeableServices'   => fn ($q)   => $q->where('chargeable_month', $monthYear->copy()->startOfMonth()->toDateString())->orWhereNull('chargeable_month'),
             'patientSummaries'           => fn ($q)           => $q->with(['allChargeableServices'])->createdOnIfNotNull($monthYear, 'month_year'),
-            'chargeableMonthlyTime'      => fn ($q)      => $q->createdOnIfNotNull($monthYear, 'chargeable_month'),
+            'chargeableMonthlyTime'      => fn ($q)      => $q->createdInMonthFromDateTimeField($monthYear, 'performed_at'),
             'patientInfo'                => fn ($q)                => $q->with(['location']),
             'attestedProblems'           => function ($q) use ($monthYear) {
                 $q->with('ccdProblem.cpmProblem')

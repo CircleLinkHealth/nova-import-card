@@ -47,7 +47,7 @@ trait ApprovablePatientUsersQuery
             },
             'chargeableMonthlyTime' => function ($q) use ($monthYear) {
                 $q->with(['chargeableService'])
-                    ->createdOnIfNotNull($monthYear, 'chargeable_month');
+                    ->createdInMonthFromDateTimeField($monthYear, 'performed_at');
             },
             'forcedChargeableServices' => function ($f) use ($monthYear) {
                 $f->with(['chargeableService'])

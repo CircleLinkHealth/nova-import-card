@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class PatientTimeForProcessing
@@ -20,7 +19,7 @@ class PatientTimeForProcessing
 
     public static function fromCollection(EloquentCollection $monthlyTimes): array
     {
-        return $monthlyTimes->map(function (ChargeablePatientMonthlyTime $monthlyTimeEntity) {
+        return $monthlyTimes->map(function ($monthlyTimeEntity) {
             return (new self())->setChargeableServiceId($monthlyTimeEntity->chargeable_service_id)
                 ->setCode(optional($monthlyTimeEntity->chargeableService)->code)
                 ->setChargeableMonth($monthlyTimeEntity->chargeable_month)

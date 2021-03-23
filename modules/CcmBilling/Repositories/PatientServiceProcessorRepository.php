@@ -120,15 +120,16 @@ class PatientServiceProcessorRepository implements Repository
 
     public function getChargeablePatientTimesView(int $patientId, Carbon $month): EloquentCollection
     {
-        return new EloquentCollection(ChargeablePatientMonthlyTime::where('patient_user_id', $patientId)
-            ->with('chargeableService')
-            ->where('chargeable_month', $month)
-            ->get());
+        $query = Activity::selectRaw("patient_id, patient_id AS patient_user_id, chargeable_service_id, cast(date_format(performed_at,'%Y-%m-01') as date) AS chargeable_month, sum(duration) AS total_time")
+            ->where('patient_id', $patientId)
+            ->createdInMonthFromDateTimeField($month, 'performed_at')
+            ->groupBy(['patient_user_id', 'chargeable_service_id', 'chargeable_month']);
+        return new EloquentCollection($query->get());
     }
 
     public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
     {
-        return $this
+        return $q = $this
             ->approvablePatientUserQuery($patientId, $month)
             ->first();
     }

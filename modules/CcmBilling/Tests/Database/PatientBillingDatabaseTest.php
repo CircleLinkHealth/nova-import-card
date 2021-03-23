@@ -180,7 +180,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         /** @var ChargeablePatientMonthlyTime $monthlyTime */
         $monthlyTime = $this->patient()->chargeableMonthlyTime()
             ->where('chargeable_service_id', $ccmCodeId)
-            ->where('chargeable_month', $month)
+            ->createdInMonthFromDateTimeField($month, 'performed_at')
             ->first();
 
         self::assertNotNull($monthlyTime);

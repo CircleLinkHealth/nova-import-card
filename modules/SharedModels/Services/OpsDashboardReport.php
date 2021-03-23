@@ -8,7 +8,6 @@ namespace CircleLinkHealth\SharedModels\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -324,7 +323,7 @@ class OpsDashboardReport
                     if ($this->billingRevampIsEnabled()) {
                         $bhiCodeId                     = ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id;
                         [$ccmSummaries, $bhiSummaries] = $patientSummaries
-                            ->partition(fn (ChargeablePatientMonthlyTime $summary) => $bhiCodeId !== $summary->chargeable_service_id);
+                            ->partition(fn ($summary) => $bhiCodeId !== $summary->chargeable_service_id);
                         $ccmTime = $ccmSummaries->sum('total_time');
                         $bhiTime = $bhiSummaries->sum('total_time');
                     } else {
