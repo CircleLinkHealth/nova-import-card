@@ -85,7 +85,8 @@ class PatientMonthlyBillingDTO
             ->withLocationServices(
                 ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
             )
-            ->withPracticeServiceCodes($patient->primaryPractice->chargeableServices->pluck('code')->toArray())
+            ->withPracticeServiceCodes(
+                $patient->getPracticeServiceCodesArray())
             ->withPatientServices(
                 ...PatientSummaryForProcessing::fromCollection($patient->chargeableMonthlySummaries)
             )
@@ -249,9 +250,9 @@ class PatientMonthlyBillingDTO
         return $this;
     }
 
-    public function withPracticeServiceCodes(array $serviceCodes): self
+    public function withPracticeServiceCodes(array $serviceCodes = null): self
     {
-        $this->practiceServiceCodes = $serviceCodes;
+        $this->practiceServiceCodes = $serviceCodes ?? [];
 
         return $this;
     }

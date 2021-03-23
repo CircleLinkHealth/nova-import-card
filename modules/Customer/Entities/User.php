@@ -1911,6 +1911,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $validCellNumbers->first() ?? '';
     }
 
+    public function getPracticeServiceCodesArray():array
+    {
+        if (! $this->primaryPractice){
+            return [];
+        }
+
+        return $this->primaryPractice->chargeableServices->pluck('code')->toArray();
+    }
+
     public function getPreferredCcContactDays()
     {
         if ( ! $this->patientInfo) {
