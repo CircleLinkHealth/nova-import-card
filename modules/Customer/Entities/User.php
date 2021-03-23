@@ -13,7 +13,6 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
@@ -893,7 +892,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function chargeableMonthlyTime()
     {
-        return $this->hasMany(ChargeablePatientMonthlyTime::class, 'patient_user_id');
+        return $this->activities()
+            ->groupBy(['patient_user_id', 'chargeable_service_id', 'chargeable_month'])
+            ->selectRaw("patient_id, patient_id AS patient_user_id, chargeable_service_id, cast(date_format(performed_at,'%Y-%m-01') as date) AS chargeable_month, sum(duration) AS total_time");
     }
 
     public function chargeableServices()
@@ -1911,9 +1912,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $validCellNumbers->first() ?? '';
     }
 
-    public function getPracticeServiceCodesArray():array
+    public function getPracticeServiceCodesArray(): array
     {
-        if (! $this->primaryPractice){
+        if ( ! $this->primaryPractice) {
             return [];
         }
 

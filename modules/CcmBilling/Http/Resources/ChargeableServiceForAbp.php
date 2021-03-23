@@ -46,7 +46,7 @@ class ChargeableServiceForAbp extends JsonResource
             })
             ->values();
 
-        $user->chargeableMonthlyTime->each(function (ChargeablePatientMonthlyTime $time) use ($services, $forcedServices) {
+        $user->chargeableMonthlyTime->each(function ($time) use ($services, $forcedServices) {
             $patientForcedCs = $forcedServices->firstWhere('chargeable_service_id', $time->chargeable_service_id);
             $entry = $services->firstWhere('chargeable_service_id', $time->chargeable_service_id);
             if ( ! $entry) {

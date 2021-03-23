@@ -135,7 +135,9 @@ class ApproveBillablePatientsServiceV3
 
         $billingStatus = PatientMonthlyBillingStatus::with([
             'patientUser' => function ($p) use ($billingStatus) {
-                $p->with(['chargeableMonthlySummaries' => fn ($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month), 'chargeableMonthlyTime' => fn ($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month),
+                $p->with([
+                    'chargeableMonthlySummaries' => fn ($sq) => $sq->where('chargeable_month', $billingStatus->chargeable_month),
+                    'chargeableMonthlyTime' => fn ($sq) => $sq->createdInMonthFromDateTimeField($billingStatus->chargeable_month, 'performed_at'),
                 ]);
             },
         ])->find($reportId);

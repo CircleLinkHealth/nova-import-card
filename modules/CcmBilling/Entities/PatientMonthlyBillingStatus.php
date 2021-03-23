@@ -57,11 +57,6 @@ class PatientMonthlyBillingStatus extends BaseModel
 
     protected $table = 'patient_monthly_billing_statuses';
 
-    public function chargeableMonthlyTime()
-    {
-        return $this->hasMany(ChargeablePatientMonthlyTime::class, 'patient_user_id', 'patient_user_id');
-    }
-
     public function isApproved(): bool
     {
         return self::APPROVED === $this->status;

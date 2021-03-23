@@ -88,7 +88,7 @@ class Activity extends BaseModel
 {
     use DateScopesTrait;
 
-    protected $appends = ['performed_at_year_month'];
+    protected $appends = ['performed_at_year_month', 'chargeable_month'];
 
     protected $dates = ['deleted_at'];
 
@@ -166,6 +166,15 @@ class Activity extends BaseModel
         }
 
         return false;
+    }
+
+    public function getChargeableMonthAttribute(): ?Carbon
+    {
+        if ( ! empty($this->attributes['chargeable_month'])) {
+            return Carbon::parse($this->attributes['chargeable_month']);
+        }
+
+        return null;
     }
 
     public function getCommentForActivity()
