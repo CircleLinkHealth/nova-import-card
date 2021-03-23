@@ -68,7 +68,7 @@ class PatientMonthlyBillingDTO
     public static function generateFromUser(User $patient, Carbon $month): self
     {
         return (new self())
-            ->subscribe(AvailableServiceProcessors::fromModel($patient->patientInfo->location))
+            ->subscribe(AvailableServiceProcessors::fromModel($patient->patientInfo->location, $month))
             ->forPatient($patient->id)
             ->ofLocation(optional($patient->patientInfo->location)->id)
             ->forMonth($month->copy()->startOfMonth())
