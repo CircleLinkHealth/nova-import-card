@@ -38,25 +38,27 @@ class CreatePatientMonthlyBillingStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('patient_monthly_billing_statuses', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('patient_user_id');
-            $table->date('chargeable_month');
-            $table->unsignedInteger('actor_id')->nullable();
-            $table->enum('status', ['approved', 'rejected', 'needs_qa'])->nullable()->default(null);
+        if (! Schema::hasTable('patient_monthly_billing_statuses')){
+            Schema::create('patient_monthly_billing_statuses', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedInteger('patient_user_id');
+                $table->date('chargeable_month');
+                $table->unsignedInteger('actor_id')->nullable();
+                $table->enum('status', ['approved', 'rejected', 'needs_qa'])->nullable()->default(null);
 
-            $table->timestamps();
+                $table->timestamps();
 
-            $table->foreign('patient_user_id', 'pmbs_patient_user_id_foreign')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
+                $table->foreign('patient_user_id', 'pmbs_patient_user_id_foreign')
+                      ->references('id')
+                      ->on('users')
+                      ->onDelete('cascade');
 
-            $table->foreign('actor_id', 'pmbs_actor_id_foreign')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
-        });
+                $table->foreign('actor_id', 'pmbs_actor_id_foreign')
+                      ->references('id')
+                      ->on('users')
+                      ->onDelete('set null');
+            });
+        }
 
         if (Schema::hasColumn('chargeable_patient_monthly_summaries', 'actor_id')) {
             Schema::table('chargeable_patient_monthly_summaries', function (Blueprint $table) {
