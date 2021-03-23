@@ -184,6 +184,22 @@ class PatientObserver
         $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
     }
 
+    private function statusChangedToEnrolled(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('ccm_status');
+        $newValue = $patient->ccm_status;
+
+        if (Patient::ENROLLED != $newValue) {
+            return false;
+        }
+
+        if (Patient::ENROLLED == $oldValue) {
+            return false;
+        }
+
+        return true;
+    }
+
     private function statusChangedToOrFromEnrolled(Patient $patient): bool
     {
         $oldValue = $patient->getOriginal('ccm_status');
@@ -198,4 +214,5 @@ class PatientObserver
 
         return true;
     }
+
 }
