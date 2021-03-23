@@ -25,7 +25,7 @@ class PatientMonthlyBillingDTO
 
     protected array $forcedPatientServices = [];
 
-    protected int $locationId;
+    protected ?int $locationId;
 
     protected array $locationServices = [];
 
@@ -70,7 +70,7 @@ class PatientMonthlyBillingDTO
         return (new self())
             ->subscribe(AvailableServiceProcessors::fromModel($patient->patientInfo->location))
             ->forPatient($patient->id)
-            ->ofLocation($patient->patientInfo->location->id)
+            ->ofLocation(optional($patient->patientInfo->location)->id)
             ->forMonth($month->copy()->startOfMonth())
             ->setBillingStatus(
                 PatientMonthlyBillingStatusDTO::fromModel(
@@ -83,7 +83,7 @@ class PatientMonthlyBillingDTO
             ->setCcmStatusForMonth($patient->getCcmStatusForMonth($month->copy()))
             ->setSuccessfulCalls($patient->inboundSuccessfulCalls->count())
             ->withLocationServices(
-                ...LocationChargeableServicesForProcessing::fromCollection($patient->patientInfo->location->chargeableServiceSummaries)
+                ...LocationChargeableServicesForProcessing::fromModel($patient->patientInfo->location)
             )
             ->withPracticeServiceCodes(
                 $patient->getPracticeServiceCodesArray())
@@ -162,7 +162,7 @@ class PatientMonthlyBillingDTO
         return $this->successfulCalls;
     }
 
-    public function ofLocation(int $locationId): self
+    public function ofLocation(?int $locationId = null): self
     {
         $this->locationId = $locationId;
 
