@@ -28,7 +28,7 @@ Route::group([
         'uses' => 'LivewireDatatablesController@hospitalisationNotes',
         'as'   => 'hospitalization-notes.table',
     ])->middleware(['permission:hospitalisation-notes-dashboard.view']);
-    
+
     Route::get('home', 'HomeController@index');
 
     Route::get('patient/{patientId}/note/{noteId}', [
