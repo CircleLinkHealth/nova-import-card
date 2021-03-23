@@ -152,6 +152,10 @@ class PatientObserver
             return;
         }
 
+        if ( ! $patient->user->isParticipant()){
+            return;
+        }
+
         if ($this->locationChanged($patient) || $this->statusChangedToEnrolled($patient)) {
             ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
