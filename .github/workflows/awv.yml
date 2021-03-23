@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
-      - name: Commit message
-        run: echo ${{ github.event.head_commit.message }}
-
       - name: Check out code
         uses: actions/checkout@v2
 
