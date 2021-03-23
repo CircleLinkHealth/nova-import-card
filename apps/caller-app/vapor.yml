@@ -8,9 +8,9 @@ environments:
     queue-memory: 512
     runtime: docker
     queues:
-    - cpm-caller-low-production
-    - cpm-caller-high-production
-    - cpm-caller-revisionable-production
+      - caller-low-production
+      - caller-high-production
+      - caller-revisionable-production
     scheduler: false
     mail: false
     concurrency: 50
@@ -18,15 +18,15 @@ environments:
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
   staging:
-    domain: cpm-caller-laravel.clh-staging.com
+    domain: caller-laravel.clh-staging.com
     memory: 512
     cli-memory: 512
     queue-memory: 512
     runtime: docker
     queues:
-    - cpm-caller-low-staging
-    - cpm-caller-high-staging
-    - cpm-caller-revisionable-staging
+      - caller-low-staging
+      - caller-high-staging
+      - caller-revisionable-staging
     scheduler: false
     concurrency: 5
     mail: false
