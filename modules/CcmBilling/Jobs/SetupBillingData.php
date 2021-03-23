@@ -20,6 +20,6 @@ class SetupBillingData extends Job implements ShouldBeEncrypted
      */
     public function handle()
     {
-        Practice::activeBillable()->each(fn ($p) => SetupPracticeBillingData::sync($p->id));
+        Practice::each(fn ($p) => SetupPracticeBillingData::sync($p->id));
     }
 }
