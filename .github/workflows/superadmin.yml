@@ -66,8 +66,26 @@ jobs:
         with:
           env-file: apps/superadmin-app/.env
 
+      - name: Create env files to connect to S3 after deployment - production
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        run: |
+          echo ENV_TYPE=$ENV_TYPE >> production-deploy-s3.env
+          echo APP_NAME=$APP_NAME >> production-deploy-s3.env
+          echo S3_SECRETS_BUCKET=$S3_SECRETS_BUCKET >> production-deploy-s3.env
+          echo S3_SECRETS_KEY=$S3_SECRETS_KEY >> production-deploy-s3.env
+          echo S3_SECRETS_SECRET=$S3_SECRETS_SECRET >> production-deploy-s3.env
+          echo S3_SECRETS_REGION=$S3_SECRETS_REGION >> production-deploy-s3.env
+        shell: bash
+        env:
+          ENV_TYPE: production
+          APP_NAME: superadmin
+          S3_SECRETS_BUCKET: ${{ secrets.PRODUCTION_S3_SECRETS_BUCKET }}
+          S3_SECRETS_KEY: ${{ secrets.PRODUCTION_S3_SECRETS_KEY }}
+          S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
+          S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
+
       - name: Create env files to connect to S3 after deployment - staging
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         run: |
           echo ENV_TYPE=$ENV_TYPE >> staging-deploy-s3.env
           echo APP_NAME=$APP_NAME >> staging-deploy-s3.env
@@ -88,41 +106,73 @@ jobs:
         if: ${{ env.CI_SKIP == 'false' }}
         run: sudo chmod -R 777 ./vendor/laravel/vapor-cli/src/BuildProcess
 
+      - name: Deploy - production
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        env:
+          VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
+          ENV_TYPE: production
+          APP_ENV: production
+
       - name: Deploy - staging
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
         env:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: staging
           APP_ENV: staging
 
-      - name: Notify Slack - Success
-        if: ${{ env.CI_SKIP == 'false' && success()  }}
+      - name: Notify Slack - Success (production)
+        if: ${{ env.CI_SKIP == 'false' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#39C16C'
-          SLACK_TITLE: Deployment successful for superadmin app (monorepo staging)
+          SLACK_TITLE: Deployment successful for superadmin app - PRODUCTION
           SLACK_MESSAGE: 🚀
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':suspect:'
 
-      - name: Notify Slack - Failure
-        if: ${{ env.CI_SKIP == 'false' && failure()  }}
+      - name: Notify Slack - Success
+        if: ${{ env.CI_SKIP == 'false' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#39C16C'
+          SLACK_TITLE: Deployment successful for superadmin app - STAGING
+          SLACK_MESSAGE: 🚀
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':suspect:'
+
+      - name: Notify Slack - Failure (production)
+        if: ${{ env.CI_SKIP == 'false' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#ff0033'
-          SLACK_TITLE: Deployment failed for superadmin app (monorepo staging)
+          SLACK_TITLE: Deployment failed for superadmin app - PRODUCTION
+          SLACK_MESSAGE: 💣
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':scream_cat:'
+
+      - name: Notify Slack - Failure (staging)
+        if: ${{ env.CI_SKIP == 'false' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#ff0033'
+          SLACK_TITLE: Deployment failed for superadmin app - STAGING
           SLACK_MESSAGE: 💣
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':scream_cat:'
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
-        if: ${{ env.CI_SKIP == 'false' && failure()  }}
+        if: ${{ env.CI_SKIP == 'false' && failure() }}
         with:
           name: Logs
           path: ./storage/logs
