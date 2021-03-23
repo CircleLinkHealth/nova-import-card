@@ -11,21 +11,14 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class RPM40 extends AbstractProcessor
 {
-    public function clashesWith(): array
+    public function baseCode(): string
     {
-        return [
-            new RHC(),
-        ];
+        return ChargeableService::RPM;
     }
 
     public function code(): string
     {
         return ChargeableService::RPM40;
-    }
-
-    public function codeForProblems(): string
-    {
-        return ChargeableService::RPM;
     }
 
     public function featureIsEnabled(): bool
@@ -45,7 +38,7 @@ class RPM40 extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return CpmConstants::TWENTY_MINUTES_IN_SECONDS;
+        return CpmConstants::FORTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool

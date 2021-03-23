@@ -22,6 +22,8 @@ interface BillingCache
 
     public function patientWasQueried(int $patientId): bool;
 
+    public function setBillingRevampIsEnabled(bool $isEnabled): void;
+
     public function setPatientInCache(User $patientUser): void;
 
     public function setQueriedPatient(int $patientId): void;

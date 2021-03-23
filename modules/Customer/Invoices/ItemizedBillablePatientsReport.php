@@ -91,8 +91,6 @@ class ItemizedBillablePatientsReport
                                 $this->getCcmAttestedConditions($summary, $u)
                             );
 
-                            $patientData->setAllCcmProblemCodes($summary);
-
                             $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions(

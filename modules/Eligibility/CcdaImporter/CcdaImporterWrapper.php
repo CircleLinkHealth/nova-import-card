@@ -325,8 +325,8 @@ class CcdaImporterWrapper
         $provider = User::where(function ($q) use ($term) {
             $q->whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\")")
                 ->orWhere(function ($q) use ($term) {
-                  $q->whereColumnOrSynonym('display_name', $term);
-              });
+                    $q->whereColumnOrSynonym('display_name', $term);
+                });
         })->ofPractice($practiceId)->ofType('provider')->without('roles.pers')->first();
 
         if ( ! $provider) {

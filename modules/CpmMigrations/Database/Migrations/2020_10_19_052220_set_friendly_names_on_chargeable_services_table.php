@@ -9,16 +9,16 @@ use Illuminate\Database\Migrations\Migration;
 class SetFriendlyNamesOnChargeableServicesTable extends Migration
 {
     const FRIENDLY_NAMES = [
-        'CPT 99490'      => 'CCM',
-        'G2058(>40mins)' => 'CCM40',
-        'G2058(>60mins)' => 'CCM60',
-        'CPT 99484'      => 'BHI',
-        'G0511'          => 'CCM (RHC/FQHC)',
-        'AWV: G0438'     => 'AWV1',
-        'AWV: G0439'     => 'AWV2+',
-        'G2065'          => 'PCM',
-        'CPT 99457'      => 'RPM',
-        'CPT 99458'      => 'RPM40',
+        'CPT 99490'          => 'CCM',
+        'CPT 99439(>40mins)' => 'CCM40',
+        'CPT 99439(>60mins)' => 'CCM60',
+        'CPT 99484'          => 'BHI',
+        'G0511'              => 'CCM (RHC/FQHC)',
+        'AWV: G0438'         => 'AWV1',
+        'AWV: G0439'         => 'AWV2+',
+        'G2065'              => 'PCM',
+        'CPT 99457'          => 'RPM',
+        'CPT 99458'          => 'RPM40',
     ];
 
     /**

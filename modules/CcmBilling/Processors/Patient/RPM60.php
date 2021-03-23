@@ -11,12 +11,9 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class RPM60 extends AbstractProcessor
 {
-    //todo: change fulfillment to happen with base service time
-    public function clashesWith(): array
+    public function baseCode(): string
     {
-        return [
-            new RHC(),
-        ];
+        return ChargeableService::RPM;
     }
 
     public function code(): string
@@ -24,16 +21,12 @@ class RPM60 extends AbstractProcessor
         return ChargeableService::RPM60;
     }
 
-    public function codeForProblems(): string
-    {
-        return ChargeableService::RPM;
-    }
-
     public function featureIsEnabled(): bool
     {
         return true;
     }
 
+    //TODO: remove call counts for here not needed
     public function minimumNumberOfCalls(): int
     {
         return 1;
@@ -46,7 +39,7 @@ class RPM60 extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return CpmConstants::TWENTY_MINUTES_IN_SECONDS;
+        return CpmConstants::SIXTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool

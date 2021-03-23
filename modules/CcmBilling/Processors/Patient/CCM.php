@@ -15,16 +15,6 @@ class CCM extends AbstractProcessor
 {
     use IsPartOfSequence;
 
-    public function clashesWith(): array
-    {
-        return [
-            new RHC(),
-            new RPM(),
-            new RPM40(),
-            new RPM60(),
-        ];
-    }
-
     public function code(): string
     {
         return ChargeableService::CCM;

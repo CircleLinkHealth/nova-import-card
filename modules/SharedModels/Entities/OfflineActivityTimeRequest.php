@@ -152,12 +152,12 @@ class OfflineActivityTimeRequest extends Model
         if ($nurse) {
             ProcessNurseMonthlyLogs::dispatchNow($activity);
         }
-        event(new PatientActivityCreated($this->patient_id));
 
         $this->is_approved = true;
         $this->activity_id = $activity->id;
-
         $this->save();
+
+        event(new PatientActivityCreated($this->patient_id, false));
     }
 
     public function chargeableService()

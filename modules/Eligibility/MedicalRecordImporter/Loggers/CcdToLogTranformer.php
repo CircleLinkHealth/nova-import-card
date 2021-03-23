@@ -211,22 +211,22 @@ class CcdToLogTranformer
             return $provider;
         })->filter()
             ->unique(function ($provider) {
-              return "{$provider['first_name']} {$provider['last_name']}";
-          })->values()
+                return "{$provider['first_name']} {$provider['last_name']}";
+            })->values()
             ->sortByDesc(function ($provider) use ($practiceId) {
-              $providerName = "{$provider['first_name']} {$provider['last_name']}";
+                $providerName = "{$provider['first_name']} {$provider['last_name']}";
 
-              if (empty($providerName)) {
-                  return 0;
-              }
-              $provider = CcdaImporterWrapper::mysqlMatchProvider($providerName, $practiceId);
+                if (empty($providerName)) {
+                    return 0;
+                }
+                $provider = CcdaImporterWrapper::mysqlMatchProvider($providerName, $practiceId);
 
-              if ($provider) {
-                  return $provider->id;
-              }
+                if ($provider) {
+                    return $provider->id;
+                }
 
-              return 0;
-          });
+                return 0;
+            });
     }
 
     /**

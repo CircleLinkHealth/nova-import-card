@@ -65,6 +65,7 @@ class ChargeableService extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
+
             Text::make('code'),
         ];
     }

@@ -129,13 +129,14 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_password',
     ];
 
-    public function availableServiceProcessors(?Carbon $month = null): AvailableServiceProcessors
+    public function availableServiceProcessors(?Carbon $month = null, bool $excludeLocked = true): AvailableServiceProcessors
     {
         $month ??= Carbon::now()->startOfMonth()->startOfDay();
 
         return AvailableServiceProcessors::push(
             $this->chargeableServiceSummaries
                 ->where('chargeable_month', $month)
+                ->when($excludeLocked, fn ($q) => $q->where('is_locked', false))
                 ->map(function (ChargeableLocationMonthlySummary $summary) {
                     return $summary->chargeableService->processor();
                 })

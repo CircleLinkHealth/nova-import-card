@@ -1,32 +1,17 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace Laravel\VaporCli\Commands\Monorepo;
 
-
 use Laravel\VaporCli\Path;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
 
 class DeleteReviewAppsCommand extends InParallelCommand
 {
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('delete-review-apps')
-            ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
-            ->addArgument('apps', InputArgument::IS_ARRAY, 'The apps to run the command for', self::CPM_APPS)
-            ->setDescription('Delete a review environment for the given apps');
-    }
-
     public function createProcess(string $app): Process
     {
         $args = [
@@ -42,5 +27,19 @@ class DeleteReviewAppsCommand extends InParallelCommand
             null,
             null
         );
+    }
+
+    /**
+     * Configure the command options.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('delete-review-apps')
+            ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
+            ->addArgument('apps', InputArgument::IS_ARRAY, 'The apps to run the command for', self::CPM_APPS)
+            ->setDescription('Delete a review environment for the given apps');
     }
 }

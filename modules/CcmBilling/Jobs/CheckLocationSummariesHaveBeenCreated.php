@@ -9,21 +9,20 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class CheckLocationSummariesHaveBeenCreated extends Job
+class CheckLocationSummariesHaveBeenCreated extends Job implements ShouldBeEncrypted
 {
     protected Carbon $month;
 
-    public function __construct(Carbon $month = null)
+    public function __construct(Carbon $month)
     {
         $this->month = $month;
     }
 
     public static function fromParameters(string ...$parameters)
     {
-        $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
-
-        return new static($date);
+        return new static(Carbon::parse($parameters[0]));
     }
 
     public function getMonth(): Carbon

@@ -14,6 +14,7 @@ class ChargeableLocationMonthlySummaryStub
     public ?float $amount;
     public Carbon $chargeable_month;
     public int $chargeable_service_id;
+    public bool $isLocked = false;
     public int $location_id;
 
     public function getAmount(): ?float
@@ -36,6 +37,11 @@ class ChargeableLocationMonthlySummaryStub
         return $this->location_id;
     }
 
+    public function isLocked(): bool
+    {
+        return $this->isLocked;
+    }
+
     public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
@@ -53,6 +59,13 @@ class ChargeableLocationMonthlySummaryStub
     public function setChargeableServiceId(int $chargeable_service_id): self
     {
         $this->chargeable_service_id = $chargeable_service_id;
+
+        return $this;
+    }
+
+    public function setIsLocked(bool $isLocked): self
+    {
+        $this->isLocked = $isLocked;
 
         return $this;
     }

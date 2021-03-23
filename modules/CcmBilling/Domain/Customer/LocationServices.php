@@ -14,7 +14,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class LocationServices
@@ -45,7 +44,7 @@ class LocationServices
             return new Collection();
         }
 
-        return $this->repo->getLocationSummaries($locationId, $month)
+        return $this->repo->getLocationSummaries([$locationId], $month)
             ->transform(fn (ChargeableLocationMonthlySummary $summary) => $summary->chargeableService)
             ->filter();
     }
@@ -53,28 +52,6 @@ class LocationServices
     public static function getUsingServiceId(User $user, int $serviceId, ?Carbon $month = null): ?ChargeableService
     {
         return (app(self::class))->getChargeableServices($user, $month)->firstWhere('id', $serviceId);
-    }
-
-    public function hasCcmPlusCodes(?int $locationId): bool
-    {
-        return $this->hasServicesForMonth($locationId, ChargeableService::CCM_PLUS_CODES);
-    }
-
-    public static function hasCCMPlusServiceCode(?int $locationId, $cacheIt = false): bool
-    {
-        $static = app(self::class);
-
-        if ($cacheIt) {
-            return Cache::remember(
-                "location:{$locationId}:hasCcmPlus",
-                2,
-                function () use ($static, $locationId) {
-                    return $static->hasCcmPlusCodes($locationId);
-                }
-            );
-        }
-
-        return $static->hasCcmPlusCodes($locationId);
     }
 
     public static function hasServiceCodesForMonth(?int $locationId, array $chargeableServiceCodes, Carbon $month = null): bool
@@ -89,6 +66,6 @@ class LocationServices
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month = null): bool
     {
-        return $this->repo->hasServicesForMonth($locationId, $chargeableServiceCodes, $month ?? Carbon::now()->startOfMonth());
+        return $this->repo->hasServicesForMonth([$locationId], $chargeableServiceCodes, $month ?? Carbon::now()->startOfMonth());
     }
 }

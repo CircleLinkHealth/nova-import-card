@@ -7,13 +7,14 @@
 namespace App\View\Composers;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceForTimeTrackerDTO;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -201,18 +202,19 @@ class ProviderUITimerComposer extends ServiceProvider
         if ( ! empty($patientId)) {
             $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
         } else {
-            $record1                          = new ChargeablePatientMonthlySummaryView();
-            $record1->patient_user_id         = $patientId;
-            $record1->chargeable_service_id   = -1;
-            $record1->chargeable_service_code = 'NONE';
-            $record1->chargeable_service_name = 'NONE';
+            $record1 = PatientServiceForTimeTrackerDTO::fromArray([
+                'patient_id'                      => (int) $patientId,
+                'chargeable_service_id'           => -1,
+                'chargeable_service_code'         => 'NONE',
+                'chargeable_service_display_name' => 'NONE',
+            ]);
 
             if ($isForEnrollment) {
                 /** @var User $user */
-                $user                = auth()->user();
-                $record1->total_time = optional(\CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+                $user = auth()->user();
+                $record1->setTotalTime(optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0);
             } else {
-                $record1->total_time = 0;
+                $record1->setTotalTime(0);
             }
             $chargeableServices = new PatientChargeableSummaryCollection(collect([
                 new PatientChargeableSummary($record1),

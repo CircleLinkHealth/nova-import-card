@@ -1,5 +1,9 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <VueCodeStyleSettings>
+      <option name="INDENT_CHILDREN_OF_TOP_LEVEL" value="template, script" />
+      <option name="UNIFORM_INDENT" value="false" />
+    </VueCodeStyleSettings>
     <codeStyleSettings language="PHP">
       <option name="WRAP_ON_TYPING" value="0" />
       <indentOptions>

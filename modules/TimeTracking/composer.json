@@ -14,7 +14,6 @@
         },
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
             ],
             "aliases": {
                 

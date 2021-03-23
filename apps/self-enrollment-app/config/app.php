@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
-use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerServiceProvider;
@@ -207,7 +206,6 @@ return [
         CustomerAuthServiceProvider::class,
         CpmMigrationsServiceProvider::class,
         VaporUiServiceProvider::class,
-        BillingServiceProvider::class,
         CustomerAuthServiceProvider::class,
         CustomerDeferrableServiceProvider::class,
         CustomerServiceProvider::class,

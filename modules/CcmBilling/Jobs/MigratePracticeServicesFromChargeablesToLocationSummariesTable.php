@@ -11,9 +11,10 @@ use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Support\Facades\Log;
 
-class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
+class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job implements ShouldBeEncrypted
 {
     protected Carbon $month;
 
@@ -59,6 +60,7 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
             return [
                 'chargeable_service_id' => $cs->id,
                 'chargeable_month'      => $this->month,
+                'amount'                => $cs->pivot->amount,
             ];
         })
             ->filter()

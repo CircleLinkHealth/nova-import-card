@@ -32,6 +32,7 @@ class CpmConstants
     ];
     const CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS = ['participant', 'survey-only'];
     const FIVE_MINUTES_IN_SECONDS               = 300;
+    const FORTY_MINUTES_IN_SECONDS              = 2400;
     public const FROM_CALLBACK_EMAIL_DOMAIN     = 'callcenterusa.net';
     public const FROM_CALLBACK_MAIL             = 'message.dispatch@callcenterusa.net';
     public const FROM_ETHAN_MAIL                = 'ethan@circlelinkhealth.com';
@@ -84,6 +85,7 @@ class CpmConstants
     ];
     const SAAS_INTERNAL_USER_ROLE_NAMES          = ['saas-admin', 'care-center'];
     public const SCHEDULER_POSTMARK_INBOUND_MAIL = 'postmark_inbound_mail';
+    const SIXTY_MINUTES_IN_SECONDS               = 3600;
 
     const SNOMED                 = ProblemCodeSystem::SNOMED;
     const SNOMED_NAME            = ProblemCodeSystem::SNOMED_NAME;

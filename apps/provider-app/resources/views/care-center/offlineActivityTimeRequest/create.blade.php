@@ -99,13 +99,13 @@
                                        name="chargeable_service_id"
                                        required
                                        style="display:inline"
-                                       value="{{ $chargeableService->chargeable_service_id  }}"
+                                       value="{{ $chargeableService->getChargeableServiceId()  }}"
                                         {{
-                                            $chargeableService->chargeable_service_id == old('chargeable_service_id') ||
+                                            $chargeableService->getChargeableServiceId() == old('chargeable_service_id') ||
                                             (empty(old('chargeable_service_id')) && $loop->index === 0)
                                             ? 'checked' : ''
                                         }}/>
-                                {{ $chargeableService->chargeable_service_name  }}
+                                {{ $chargeableService->getChargeableServiceDisplayName() }}
                             </div>
                         @endforeach
                     </div>
