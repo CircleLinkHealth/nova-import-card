@@ -62,7 +62,12 @@ class CreatePatientMonthlyBillingStatusesTable extends Migration
 
         if (Schema::hasColumn('chargeable_patient_monthly_summaries', 'actor_id')) {
             Schema::table('chargeable_patient_monthly_summaries', function (Blueprint $table) {
-                $table->dropForeign('cpms_actor_id_foreign');
+                try {
+                    $table->dropForeign('cpms_actor_id_foreign');
+                }catch (\Exception $exception){
+                    echo $exception->getMessage();
+                }
+
                 $table->dropColumn('actor_id');
             });
         }
