@@ -129,7 +129,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
     {
-        return $q = $this
+        return $this
             ->approvablePatientUserQuery($patientId, $month)
             ->first();
     }
