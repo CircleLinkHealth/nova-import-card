@@ -48,7 +48,8 @@ class ProcessPatientSummaries
     {
         measureTime("ProcessPatientSummaries::fromDTO:{$dto->getPatientId()}", function () use ($dto) {
             $this->setPatientDto($dto)
-                ->process();
+                ->process()
+                ->processPatientBillingStatus();
         });
     }
 
