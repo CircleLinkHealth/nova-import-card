@@ -78,6 +78,10 @@ class ProcessPatientBillingStatus
     {
         $needsQA = [];
 
+        if (! $this->hasAnyFulfilledServices()){
+            $needsQA[] = 'Patient does not have any fulfilled Chargeable Service Summaries';
+        }
+
         if ($this->unAttestedProblems()) {
             $needsQA[] = 'Patient does not have enough attested conditions.';
         }
@@ -149,5 +153,12 @@ class ProcessPatientBillingStatus
         ], [
             'status' => $this->status,
         ]);
+    }
+
+    private function hasAnyFulfilledServices() : bool
+    {
+        return collect($this->dto->getPatientServices())
+            ->filter(fn (PatientSummaryForProcessing $s) => $s->isFulfilled())
+            ->isNotEmpty();
     }
 }
