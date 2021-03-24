@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientSummaryForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use Illuminate\Support\Facades\Log;
 
 class ProcessPatientBillingStatus
 {
@@ -75,13 +76,33 @@ class ProcessPatientBillingStatus
 
     private function determineBillingStatus(): self
     {
-        if ($this->unAttestedProblems()
-            || 0 === $this->dto->getSuccessfulCallsCount()
-            || ! $this->dto->billingProviderExists()
-            || in_array($this->dto->getCcmStatusForMonth(), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])
-        ) {
+        $needsQA = [];
+
+        if (! $this->hasAnyFulfilledServices()){
+            $needsQA[] = 'Patient does not have any fulfilled Chargeable Service Summaries';
+        }
+
+        if ($this->unAttestedProblems()) {
+            $needsQA[] = 'Patient does not have enough attested conditions.';
+        }
+
+        if (0 === $this->dto->getSuccessfulCallsCount()) {
+            $needsQA[] = '0 successful calls';
+        }
+
+        if ( ! $this->dto->billingProviderExists()) {
+            $needsQA[] = 'No billing provider';
+        }
+
+        if (in_array($this->dto->getCcmStatusForMonth(), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])) {
+            $needsQA[] = 'Patient not enrolled.';
+        }
+
+        if (! empty($needsQA)){
+            $reasonsString = implode(',', $needsQA);
+            Log::info("Billing: Patient {$this->dto->getPatientId()} needs QA for month {$this->dto->getChargeableMonth()->toDateString()} for the following reasons: $reasonsString");
             $this->status = PatientMonthlyBillingStatus::NEEDS_QA;
-        } else {
+        }else {
             $this->status = PatientMonthlyBillingStatus::APPROVED;
         }
 
@@ -132,5 +153,12 @@ class ProcessPatientBillingStatus
         ], [
             'status' => $this->status,
         ]);
+    }
+
+    private function hasAnyFulfilledServices() : bool
+    {
+        return collect($this->dto->getPatientServices())
+            ->filter(fn (PatientSummaryForProcessing $s) => $s->isFulfilled())
+            ->isNotEmpty();
     }
 }

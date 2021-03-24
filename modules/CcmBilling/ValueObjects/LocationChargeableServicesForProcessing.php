@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Database\Eloquent\Collection;
 
 class LocationChargeableServicesForProcessing
@@ -24,6 +25,16 @@ class LocationChargeableServicesForProcessing
                 ->setCode($summary->chargeableService->code);
         })
             ->toArray();
+    }
+
+    public static function fromModel(?Location $location = null):array
+    {
+        if (is_null($location))
+        {
+            return [];
+        }
+
+        return self::fromCollection($location->chargeableServiceSummaries);
     }
 
     public function getCode(): string
