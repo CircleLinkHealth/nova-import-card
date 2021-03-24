@@ -159,6 +159,11 @@ class SamlLoginEventListener
             throw new AuthenticationException('Could not find user from saml attributes', [], '/saml2/not-auth');
         }
 
+        $userId = $attributes[$userIdMapping];
+        if (is_array($userId)) {
+            $userId = reset($userId);
+        }
+
         $patientId = $attributes[$patientIdMapping] ?? null;
         if (is_array($patientId)) {
             $patientId = reset($patientId);
@@ -169,6 +174,6 @@ class SamlLoginEventListener
             Log::warning("SAML Attributes: $stringified");
         }
 
-        return new SamlResponseAttributes($attributes[$userIdMapping], $patientId);
+        return new SamlResponseAttributes($userId, $patientId);
     }
 }
