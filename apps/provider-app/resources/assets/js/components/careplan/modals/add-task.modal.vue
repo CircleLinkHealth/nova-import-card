@@ -35,6 +35,13 @@
                             <th class="notes">
                                 Activity Note
                             </th>
+                            <th class="family-override">
+                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="Tick to confirm family call override">
+                                    <i class='glyphicon glyphicon-info-sign'></i>
+                                </a>
+                            </th>
                             <th class="remove">
                                 &nbsp;
                             </th>
@@ -90,6 +97,15 @@
                             <td>
                                 <input class="form-control" type="text" name="text" v-model="action.data.text"
                                        :disabled="action.disabled"/>
+                            </td>
+                            <td>
+                                <div v-show="action.showFamilyOverride">
+                                    <input type="checkbox" id="family_override"
+                                           name="family_override"
+                                           style="display: block; margin-top: -1px"
+                                           v-model="action.data.familyOverride"
+                                           :disabled="action.disabled"/>
+                                </div>
                             </td>
                             <td>
                                 <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
@@ -539,6 +555,10 @@
     }
 
     .modal-add-task table.add-actions th.notes {
+        width: 22%;
+    }
+
+    .modal-add-task table.add-actions th.family-override {
         width: 22%;
     }
 

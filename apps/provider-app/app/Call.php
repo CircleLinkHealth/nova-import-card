@@ -61,6 +61,7 @@ namespace App;
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call scheduled()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call unassigned()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Call createdInMonthFromDateTimeField(\Carbon\Carbon $date, $field = 'created_at')
  */
 class Call extends \CircleLinkHealth\SharedModels\Entities\Call
 {
