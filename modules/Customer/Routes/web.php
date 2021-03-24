@@ -245,6 +245,11 @@ Route::group([
     ]);
 });
 
+Route::get('ehrs', [
+    'uses' => 'EhrController@index',
+    'as'   => 'ehrs.get',
+])->middleware('permission:practice.read');
+
 Route::get('practice/{practice}/locations', [
     'uses' => 'API\PracticeLocationsController@index',
     'as'   => 'practice.locations.index',

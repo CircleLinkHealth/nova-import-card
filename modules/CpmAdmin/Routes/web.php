@@ -666,11 +666,6 @@ Route::group([
             'as'   => 'ca-director.test-enrollees',
         ]);
     });
-
-    Route::get('ehrs', [
-        'uses' => 'EhrController@index',
-        'as'   => 'ehrs.get',
-    ])->middleware('permission:practice.read');
 });
 
 Route::post('send-sample-direct-mail', [
