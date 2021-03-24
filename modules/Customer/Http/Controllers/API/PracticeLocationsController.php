@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
+namespace CircleLinkHealth\Customer\Http\Controllers\API;
 
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\CpmAdmin\Http\Requests\UpdatePracticeLocation;

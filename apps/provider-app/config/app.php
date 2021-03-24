@@ -216,7 +216,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         \App\Providers\RouteServiceProvider::class,
-        \CircleLinkHealth\CpmAdmin\Providers\RouteServiceProvider::class,
         AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,

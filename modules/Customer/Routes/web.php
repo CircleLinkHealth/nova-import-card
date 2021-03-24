@@ -245,6 +245,29 @@ Route::group([
     ]);
 });
 
+Route::get('practice/{practice}/locations', [
+    'uses' => 'API\PracticeLocationsController@index',
+    'as'   => 'practice.locations.index',
+])->middleware(['permission:location.read']);
+Route::delete('practice/{practice}/locations/{location}', [
+    'uses' => 'API\PracticeLocationsController@destroy',
+    'as'   => 'practice.locations.destroy',
+])->middleware('permission:location.delete');
+Route::patch('practice/{practice}/locations/{location}', [
+    'uses' => 'API\PracticeLocationsController@update',
+    'as'   => 'practice.locations.update',
+])->middleware('permission:location.create,location.update');
+
+Route::resource(
+    'practice.locations',
+    'API\PracticeLocationsController'
+)->middleware('permission:location.create,location.read,location.update,location.delete');
+
+Route::resource(
+    'practice.users',
+    'API\PracticeStaffController'
+)->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete')->only(['destroy', 'index', 'update']);
+
 Route::group([
     'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
