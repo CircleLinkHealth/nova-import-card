@@ -28,7 +28,6 @@ use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Listeners\CreateAttestationRecords;
-use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\Core\Listeners\CheckBeforeSendMessageListener;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;

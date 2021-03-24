@@ -91,6 +91,7 @@ mix.combine([
 
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-enrollment-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
 
 if (mix.inProduction()) {
     const ASSET_URL = process.env.ASSET_URL + "/";

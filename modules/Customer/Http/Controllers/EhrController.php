@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
+namespace CircleLinkHealth\Customer\Http\Controllers;
 
 use CircleLinkHealth\Customer\Entities\Ehr;
 use Illuminate\Http\Request;
