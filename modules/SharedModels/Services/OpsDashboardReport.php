@@ -334,8 +334,7 @@ class OpsDashboardReport
 
                     $this->report->incrementTimeRangeCount($ccmTime, $bhiTime);
                 } else {
-                    $toggle = $this->billingRevampIsEnabled() ? 'on' : 'off';
-                    sendSlackMessage('#billing_alerts', "Warning! (OpsDashboard Report:) No summaries found for Patient:{$patient->id}. Billing Revamp is {$toggle}");
+                    //todo:revisit need for alert
                     $this->report->incrementZeroMinsCount();
                 }
             }
