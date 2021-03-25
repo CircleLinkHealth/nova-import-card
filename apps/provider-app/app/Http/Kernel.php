@@ -25,7 +25,6 @@ use Illuminate\Http\Middleware\FrameGuard;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
 use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
 use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
@@ -63,7 +62,6 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             LogoutIfAccessDisabled::class,
-            CreateFreshApiToken::class,
             AuthyMiddleware::class,
         ],
         'sessions' => [

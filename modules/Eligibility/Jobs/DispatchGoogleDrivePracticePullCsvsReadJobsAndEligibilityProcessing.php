@@ -21,7 +21,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
-
 class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
@@ -30,9 +29,11 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
     use SerializesModels;
 
     protected int $batchId;
-
+    
     /**
      * Create a new job instance.
+     *
+     * @param int $batchId
      */
     public function __construct(int $batchId)
     {

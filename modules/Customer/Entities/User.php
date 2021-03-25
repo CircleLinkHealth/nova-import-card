@@ -82,7 +82,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
-use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
@@ -340,7 +339,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use CanResetPassword;
     use CerberusSiteUserTrait;
     use Filterable;
-    use HasApiTokens;
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
