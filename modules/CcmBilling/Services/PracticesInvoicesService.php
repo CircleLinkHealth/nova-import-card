@@ -51,8 +51,8 @@ class PracticesInvoicesService
         $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
         Bus::chain($jobs)
-            ->dispatch()
-            ->allOnQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+            ->dispatch();
     }
 
     private function getLocations(array $practiceIds): Collection
