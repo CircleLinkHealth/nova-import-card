@@ -77,6 +77,42 @@ class ProcessEligibilityService
     }
 
     /**
+     * @param $folder
+     * @param $fileName
+     * @param $filterLastEncounter
+     * @param $filterInsurance
+     * @param $filterProblems
+     * @param bool $finishedReadingFile
+     * @param null $filePath
+     *
+     * @return \Illuminate\Database\Eloquent\Model|ProcessEligibilityService
+     */
+    public function createCreatePracticePullBatch(
+        $folder,
+        int $practiceId,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems,
+        $finishedReadingFile = false
+    ) {
+        return $this->createBatch(
+            EligibilityBatch::PRACTICE_CSV_PULL_TEMPLATE,
+            $practiceId,
+            [
+                'folder'               => $folder,
+                'filterLastEncounter'  => (bool) $filterLastEncounter,
+                'filterInsurance'      => (bool) $filterInsurance,
+                'filterProblems'       => (bool) $filterProblems,
+                'finishedReadingFile'  => (bool) $finishedReadingFile,
+                'allergiesCSVFiles'    => [],
+                'problemsCSVFiles'     => [],
+                'demographicsCSVFiles' => [],
+                'medicationsCSVFiles'  => [],
+            ]
+        );
+    }
+
+    /**
      * @param $patientListCsvFilePath
      *
      * @throws \Exception

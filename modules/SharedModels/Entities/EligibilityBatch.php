@@ -50,6 +50,7 @@ class EligibilityBatch extends BaseModel
 {
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
+    const PRACTICE_CSV_PULL_TEMPLATE = 'practice_csv_pull_template';
 
     const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
     const REPROCESS_FROM_SCRATCH    = 'from_scratch';
@@ -170,6 +171,9 @@ class EligibilityBatch extends BaseModel
                 break;
             case self::CLH_MEDICAL_RECORD_TEMPLATE:
                 return 'CLH Template';
+                break;
+            case self::PRACTICE_CSV_PULL_TEMPLATE:
+                return 'Practice Pull CSVs';
                 break;
             default:
                 return '';

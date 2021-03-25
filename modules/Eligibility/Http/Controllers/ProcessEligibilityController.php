@@ -25,9 +25,9 @@ class ProcessEligibilityController extends Controller
 
     public function fromGoogleDrive(Request $request)
     {
+        $practice = Practice::whereName($request['practiceName'])->firstOrFail();
+        
         if ((bool) $request->get('file')) {
-            $practice = Practice::whereName($request['practiceName'])->firstOrFail();
-
             $batch = $this->processEligibilityService
                 ->createClhMedicalRecordTemplateBatch(
                     $request['dir'],
@@ -37,9 +37,18 @@ class ProcessEligibilityController extends Controller
                     $request['filterInsurance'],
                     $request['filterProblems']
                 );
-        } else {
-            $practice = Practice::whereName($request['practiceName'])->firstOrFail();
-
+        }
+        elseif ($request['isPracticePull']){
+            $batch = $this->processEligibilityService
+                ->createCreatePracticePullBatch(
+                    $request['dir'],
+                    $practice->id,
+                    $request['filterLastEncounter'],
+                    $request['filterInsurance'],
+                    $request['filterProblems']
+                );
+        }
+        else {
             $batch = $this->processEligibilityService
                 ->createGoogleDriveCcdsBatch(
                     $request['dir'],

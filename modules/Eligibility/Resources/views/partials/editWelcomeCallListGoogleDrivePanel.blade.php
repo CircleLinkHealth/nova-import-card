@@ -14,8 +14,7 @@
 
                     <br>
 
-                    <label for="file">Filename as appears in Drive (eg `CircleLink.json`). Only fill in if input is in
-                        json format.</label>
+                    <label for="file">Only if processing json format: Enter the filename as it appears in Drive (eg `CircleLink.json`)</label>
                     <input class="" type="text" name="file" id="file" value="{{$batch->options['fileName'] ?? ''}}">
 
                     <br>
