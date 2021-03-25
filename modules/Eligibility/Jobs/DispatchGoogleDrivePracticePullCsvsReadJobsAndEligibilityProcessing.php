@@ -55,6 +55,7 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
         $dir        = $batch->options['folder'];
 
         if ($batch->isFinishedFetchingPracticePullCsvs()) {
+            \Log::debug("EligibilityBatch[{$this->batchId}] isFinishedFetchingPracticePullCsvs");
             return null;
         }
 
@@ -73,12 +74,13 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
                         'xlsx',
                         'csv',
                     ])->map(function ($driveFile) use (&$filesToImport, $driveFolder) {
+                        \Log::debug("EligibilityBatch[{$this->batchId}] create read job[{$driveFolder['name']}][{$driveFile['name']}]");
                         return new ImportPracticePullCsvsFromGoogleDrive($this->batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
                     });
             })->flatten();
 
         $jobs->push(new DispatchPracticePullEligibilityBatch($this->batchId));
-
+    
         Bus::chain($jobs->all())
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
             ->dispatch();

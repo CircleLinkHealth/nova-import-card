@@ -153,6 +153,8 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     private function queuePracticePullCsvFromGoogleDrive(EligibilityBatch $batch): EligibilityBatch
     {
         DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing::dispatch($batch->id);
+    
+        return $batch;
     }
 
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch

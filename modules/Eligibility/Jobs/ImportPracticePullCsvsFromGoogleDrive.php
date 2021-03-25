@@ -62,8 +62,13 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
     
         foreach (parseCsvToArray($targetFile) as $row) {
             $model = $importer->model($row);
-            $stored = app(get_class($model))->updateOrCreate($model->toArray());
-            ++$count;
+            try {
+                $stored = app(get_class($model))->updateOrCreate($model->toArray());
+                ++$count;
+            } catch(\Exception $e) {
+                \Log::error("EligibilityBatchException[{$this->batchId}] {$e->getMessage()} || {$e->getErrorCode()} || {$e->getTraceAsString()}");
+                continue;
+            }
         }
         
         $this->file->setFinishedProcessingAt(now());
