@@ -18,14 +18,13 @@ use Illuminate\Database\Eloquent\Collection;
 class AttestPatientProblems
 {
     protected ?Addendum $addendum;
-    protected ?int $addendumId;
-
+    protected ?int $addendumId = null;
     //add in Job too
-    protected ?int $attestorId;
+    protected ?int $attestorId = null;
 
-    protected ?Call $call;
+    protected ?Call $call = null;
 
-    protected ?int $callId;
+    protected ?int $callId = null;
 
     protected array $ccdProblemIds;
 
@@ -38,7 +37,9 @@ class AttestPatientProblems
     //todo: deprecate
     protected ?PatientMonthlySummary $pms;
 
-    protected ?int $pmsId;
+    protected ?int $pmsId = null;
+
+    protected bool $syncing = false;
 
     public function createRecords(): void
     {
@@ -46,6 +47,10 @@ class AttestPatientProblems
             sendSlackMessage('#billing_alerts', "Warning! (AttestPatientProblems:) No ccd problems for Patient:{$this->patientUserId}");
 
             return;
+        }
+
+        if ($this->isSyncing()) {
+            $this->removeRecords();
         }
 
         foreach ($this->getProblems() as $problem) {
@@ -89,6 +94,11 @@ class AttestPatientProblems
         return $this;
     }
 
+    public function isSyncing(): bool
+    {
+        return $this->syncing;
+    }
+
     public function problemsToAttest(array $ccdProblemIds): self
     {
         $this->ccdProblemIds = $ccdProblemIds;
@@ -96,15 +106,31 @@ class AttestPatientProblems
         return $this;
     }
 
+    public function removeRecords(): void
+    {
+        AttestedProblem::where('chargeable_month', $this->getChargeableMonth())
+            ->whereNotIn('ccd_problem_id', $this->getCcdProblemIds())
+            ->where('patient_user_id', $this->getPatientUserId())
+            ->delete();
+    }
+
+    public function setSyncing(bool $syncing): AttestPatientProblems
+    {
+        $this->syncing = $syncing;
+
+        return $this;
+    }
+
     private function createRecordForProblem(Problem $problem): void
     {
-        AttestedProblem::create([
-            'patient_user_id'            => $this->getPatientUserId(),
+        AttestedProblem::updateOrCreate([
+            'patient_user_id'  => $this->getPatientUserId(),
+            'chargeable_month' => $this->getChargeableMonth(),
+            'ccd_problem_id'   => $problem->id,
+        ], [
             'call_id'                    => $this->callId,
             'patient_monthly_summary_id' => $this->pmsId ?? $this->getPms()->id ?? null,
-            'chargeable_month'           => $this->getChargeableMonth(),
             'addendum_id'                => $this->addendumId,
-            'ccd_problem_id'             => $problem->id,
             'ccd_problem_name'           => $problem->name,
             'ccd_problem_icd_10_code'    => $problem->icd10Code(),
             'attestor_id'                => $this->getAttestorId(),

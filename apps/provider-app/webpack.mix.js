@@ -43,6 +43,7 @@ const webpackConfig = {
         alias: {
             SharedVueComponents: path.resolve(__dirname, 'vendor/circlelinkhealth/sharedvuecomponents-module'),
             TwoFA: path.resolve(__dirname, 'vendor/circlelinkhealth/twofa-module'),
+            CcmBilling: path.resolve(__dirname, 'vendor/circlelinkhealth/ccm-billing-module'),
         },
         modules: [
             path.resolve(__dirname, 'node_modules'),
@@ -90,6 +91,7 @@ mix.combine([
 
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-enrollment-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
 
 if (mix.inProduction()) {
     const ASSET_URL = process.env.ASSET_URL + "/";

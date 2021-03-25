@@ -57,7 +57,7 @@ class GitIgnore
         $gitIgnoreArray = explode(PHP_EOL, $contents);
 
         foreach ($paths as $path) {
-            foreach ($gitIgnoreArray as $index => $ignored){
+            foreach ($gitIgnoreArray as $index => $ignored) {
                 if ($ignored == $path) {
                     unset($gitIgnoreArray[$index]);
                 }

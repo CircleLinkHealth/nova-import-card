@@ -10,9 +10,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\RenewLocationSummaries;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
-use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class Location implements CustomerProcessor
 {
@@ -23,21 +26,61 @@ class Location implements CustomerProcessor
         $this->repo = $repo;
     }
 
-    public function fetchApprovablePatients(int $locationId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
+    public function closeMonth(array $locationIds, Carbon $month, int $actorId): void
     {
-        return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
+        $this->repo->closeMonth($locationIds, $month, $actorId);
     }
 
-    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
+    public function counts(array $locationIds, Carbon $month): BillablePatientsCountForMonthDTO
+    {
+        /** @var Collection|PatientMonthlyBillingStatus[] $statuses */
+        $statuses = $this->repo->approvableBillingStatuses($locationIds, $month)->get();
+        $approved = $statuses->where('status', '=', 'approved')->count();
+        $rejected = $statuses->where('status', '=', 'rejected')->count();
+        $needQa   = $statuses->where('status', '=', 'needs_qa')->count();
+        $other    = $statuses->whereNull('status')->count();
+
+        return new BillablePatientsCountForMonthDTO($approved, $needQa, $rejected, $other);
+    }
+
+    public function fetchApprovablePatients(array $locationIds, Carbon $month, int $pageSize = 30): LengthAwarePaginator
+    {
+        $collection = $this->repo
+            ->approvableBillingStatuses($locationIds, $month, true)
+            ->paginate($pageSize);
+
+        $rawArray = collect($collection->items())
+            ->map(fn (PatientMonthlyBillingStatus $billingStatus) => ApprovablePatient::make($billingStatus)->toArray(null));
+
+        return new LengthAwarePaginator(
+            $rawArray,
+            $collection->total(),
+            $collection->perPage(),
+            $collection->currentPage(),
+            ['path' => request()->url()]
+        );
+    }
+
+    public function isLockedForMonth(array $locationIds, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return $this->repo->isLockedForMonth($locationIds, $chargeableServiceCode, $month);
+    }
+
+    public function openMonth(array $locationIds, Carbon $month): void
+    {
+        $this->repo->openMonth($locationIds, $month);
+    }
+
+    public function processServicesForAllPatients(array $locationIds, Carbon $chargeableMonth): void
     {
         $this->repo()
-            ->patientsQuery($locationId, $chargeableMonth, Patient::ENROLLED)
+            ->processableLocationPatientsForMonth($locationIds, $chargeableMonth)
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(
-                    $locationId,
+                    $locationIds,
                     $this->repo->availableLocationServiceProcessors(
-                        $locationId,
+                        $locationIds,
                         $chargeableMonth
                     ),
                     $chargeableMonth
@@ -45,16 +88,17 @@ class Location implements CustomerProcessor
             );
     }
 
-    public function processServicesForLocation(int $locationId, Carbon $month)
+    public function processServicesForLocations(array $locationIds, Carbon $month)
     {
-        if ($this->repo()->servicesExistForMonth($locationId, $month)) {
+        if ($this->repo()->servicesExistForMonth($locationIds, $month)) {
             return;
         }
 
-        $pastMonthSummaries = $this->repo()->pastMonthSummaries($locationId, $month);
+        $pastMonthSummaries = $this->repo()->pastMonthSummaries($locationIds, $month);
 
         if ($pastMonthSummaries->isEmpty()) {
-            sendSlackMessage('#cpm_general_alerts', "Processing summaries for Location with ID:$locationId failed - no past summaries exist.
+            $str = implode(', ', $locationIds);
+            sendSlackMessage('#cpm_general_alerts', "Processing summaries for Location with ID:$str failed - no past summaries exist.
             Please head to Location Chargeable Service management and assign chargeable services this location.");
 
             return;

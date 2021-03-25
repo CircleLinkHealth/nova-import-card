@@ -156,11 +156,11 @@ class SchedulerService
             ->when(
                 $excludeToday,
                 function ($query) {
-                           $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
-                       },
+                    $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
+                },
                 function ($query) {
-                           $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-                       }
+                    $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+                }
             )
             ->orderBy('scheduled_date', 'desc');
     }
@@ -170,13 +170,13 @@ class SchedulerService
         return self::getNextScheduledActivities($patientId, $excludeToday)
             ->where(
                 function ($q) {
-                           $q->whereNull('type')
-                               ->orWhere(
-                                   'type',
-                                   '=',
-                                   \CircleLinkHealth\SharedModels\Services\SchedulerService::CALL_TYPE
-                               );
-                       }
+                    $q->whereNull('type')
+                        ->orWhere(
+                            'type',
+                            '=',
+                            \CircleLinkHealth\SharedModels\Services\SchedulerService::CALL_TYPE
+                        );
+                }
             )
             ->first();
     }
@@ -245,8 +245,8 @@ class SchedulerService
             ->when(
                 $authorId,
                 function ($q) use ($authorId) {
-                            return $q->where('outbound_cpm_id', $authorId);
-                        }
+                    return $q->where('outbound_cpm_id', $authorId);
+                }
             )
             ->orderBy('updated_at', 'desc');
 
@@ -292,13 +292,13 @@ class SchedulerService
                 ->whereHas(
                     'patientInfo',
                     function ($q) use (
-                                   $row
-                               ) {
-                                   $q->where(
-                                       'birth_date',
-                                       Carbon::parse($row['DOB'])->toDateString()
-                                   );
-                               }
+                        $row
+                    ) {
+                        $q->where(
+                            'birth_date',
+                            Carbon::parse($row['DOB'])->toDateString()
+                        );
+                    }
                 )
                 ->first();
 
@@ -511,11 +511,11 @@ class SchedulerService
         )
             ->where(
                 function ($q) use (
-                           $patient
-                       ) {
-                           $q->where('outbound_cpm_id', $patient->id)
-                               ->orWhere('inbound_cpm_id', $patient->id);
-                       }
+                    $patient
+                ) {
+                    $q->where('outbound_cpm_id', $patient->id)
+                        ->orWhere('inbound_cpm_id', $patient->id);
+                }
             )
             ->where('status', '=', Call::SCHEDULED)
             ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
@@ -624,8 +624,8 @@ class SchedulerService
             ->whereHas(
                 'roles',
                 function ($q) {
-                                $q->where('name', '=', 'care-center');
-                            }
+                    $q->where('name', '=', 'care-center');
+                }
             )
             ->pluck('id')
             ->all();

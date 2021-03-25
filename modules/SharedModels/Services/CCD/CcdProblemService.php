@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\SharedModels\Services\CCD;
 
 use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
@@ -44,8 +43,6 @@ class CcdProblemService
                 return $this->problem($problem['id']);
             }
 
-            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
-
             return $problem;
         }
         throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
@@ -53,14 +50,10 @@ class CcdProblemService
 
     public function deletePatientCcdProblem(CcdProblemInput $ccdProblem): bool
     {
-        $success = CcdProblem::where([
+        return CcdProblem::where([
             'patient_id' => $ccdProblem->getUserId(),
             'id'         => $ccdProblem->getCcdProblemId(),
         ])->delete();
-
-        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
-
-        return $success;
     }
 
     public function editPatientCcdProblem(
@@ -108,8 +101,6 @@ class CcdProblemService
 
             return $this->problem($problem['id']);
         }
-
-        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
 
         return $problem;
     }

@@ -52,7 +52,7 @@ use Illuminate\Support\Str;
 class ConnectionV2 implements AthenaApiConnection
 {
     const ATHENA_CACHE_KEY = 'athena_api_token';
-    public  $practiceId;
+    public $practiceId;
     private $key;
     private $secret;
     private $token;
@@ -61,15 +61,15 @@ class ConnectionV2 implements AthenaApiConnection
     /**
      * Connects to the host, authenticates to the specified API version using key and secret.
      *
-     * @param string     $version    the specified API version to access
-     * @param string     $key        the client key (also known as id)
-     * @param string     $secret     the client secret
+     * @param string $version the specified API version to access
+     * @param string $key     the client key (also known as id)
+     * @param string $secret  the client secret
      */
     public function __construct(string $version, string $key, string $secret)
     {
-        $this->version    = $version;
-        $this->key        = $key;
-        $this->secret     = $secret;
+        $this->version = $version;
+        $this->key     = $key;
+        $this->secret  = $secret;
     }
 
     /**
@@ -218,7 +218,7 @@ class ConnectionV2 implements AthenaApiConnection
     public function setPracticeId($practiceId)
     {
         $this->practiceId = $practiceId;
-        
+
         return $this;
     }
 
@@ -251,7 +251,7 @@ class ConnectionV2 implements AthenaApiConnection
 
         $this->token      = $result['access_token'];
         $this->expires_in = $result['expires_in'];
-        
+
         if (isProductionEnv()) {
             $ttl = $this->expires_in;
         } else {

@@ -12,15 +12,6 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class BHI extends AbstractProcessor
 {
-    public function clashesWith(): array
-    {
-        return [
-            new RHC(),
-            new RPM(),
-            new RPM40(),
-        ];
-    }
-
     public function code(): string
     {
         return ChargeableService::BHI;

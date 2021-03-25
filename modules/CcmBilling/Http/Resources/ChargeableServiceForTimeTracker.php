@@ -6,16 +6,20 @@
 
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientServiceForTimeTrackerDTO;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ChargeableServiceForTimeTracker extends JsonResource
 {
     public function toArray($request)
     {
+        /** @var PatientServiceForTimeTrackerDTO $resource */
+        $resource = $this->resource;
+
         return [
-            'id'           => $this->chargeable_service_id,
-            'code'         => $this->chargeable_service_code,
-            'display_name' => $this->chargeable_service_name,
+            'id'           => $resource->getChargeableServiceId(),
+            'code'         => $resource->getChargeableServiceCode(),
+            'display_name' => $resource->getChargeableServiceDisplayName(),
         ];
     }
 }

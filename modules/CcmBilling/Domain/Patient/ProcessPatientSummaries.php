@@ -34,27 +34,55 @@ class ProcessPatientSummaries
 
     public function execute(int $patientId, Carbon $month): void
     {
-        $this->setPatientId($patientId)
-            ->setMonth($month)
-            ->setPatientUser()
-            ->setPatientDto()
-            ->process();
+        measureTime("ProcessPatientSummaries::execute:$patientId", function () use ($patientId, $month) {
+            $this->setPatientId($patientId)
+                ->setMonth($month)
+                ->setPatientUser()
+                ->setPatientDto()
+                ->process()
+                ->processPatientBillingStatus();
+        });
     }
 
     public function fromDTO(PatientMonthlyBillingDTO $dto): void
     {
-        $this->setPatientDto($dto)
-            ->process();
+        measureTime("ProcessPatientSummaries::fromDTO:{$dto->getPatientId()}", function () use ($dto) {
+            $this->setPatientDto($dto)
+                ->process()
+                ->processPatientBillingStatus();
+        });
     }
 
-    private function process()
+    //todo: change name - remove wipe
+    public static function wipeAndReprocessForMonth(int $patientUserId, Carbon $month): void
+    {
+        app(self::class)->fromDTO(
+            PatientMonthlyBillingDTO::generateFromUser(
+                (app(PatientServiceProcessorRepository::class))->getPatientWithBillingDataForMonth($patientUserId, $month),
+                $month
+            )
+        );
+    }
+
+    private function process(): self
     {
         if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             sendSlackMessage('#billing_alerts', "Warning! (ProcessPatientSummaries:) Patient({$this->patientId}) Billing Data are invalid. (DTO is null)");
 
+            return $this;
+        }
+        $this->patientDTO = $this->processor->process($this->patientDTO);
+
+        return $this;
+    }
+
+    private function processPatientBillingStatus(): void
+    {
+        if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             return;
         }
-        $this->processor->process($this->patientDTO);
+
+        ProcessPatientBillingStatus::fromDto($this->patientDTO);
     }
 
     private function setMonth(Carbon $month): self
@@ -84,12 +112,7 @@ class ProcessPatientSummaries
             return $this;
         }
 
-        $this->patientDTO = (new PatientMonthlyBillingDTO())
-            //todo: preload available service processors on repo property? or will hey exist in patientWithBilling Data array
-            ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
-            ->forPatient($this->patientUser->id)
-            ->forMonth($this->month)
-            ->withProblems(...PatientProblemsForBillingProcessing::getArray($this->patientId));
+        $this->patientDTO = PatientMonthlyBillingDTO::generateFromUser($this->patientUser, $this->month);
 
         return $this;
     }

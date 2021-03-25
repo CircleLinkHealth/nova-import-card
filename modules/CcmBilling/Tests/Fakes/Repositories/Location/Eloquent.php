@@ -11,7 +11,6 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -23,6 +22,22 @@ class Eloquent implements LocationProcessorRepository
 
     protected Collection $locationAvailableServiceProcessors;
     protected Collection $summaries;
+
+    public function __construct()
+    {
+        $this->locationAvailableServiceProcessors = collect();
+        $this->summaries                          = collect();
+    }
+
+    public function approvableBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder
+    {
+        // TODO: Implement approvableBillingStatuses() method.
+    }
+
+    public function approvedBillingStatuses(array $locationIds, Carbon $month, bool $withRelations = false): Builder
+    {
+        // TODO: Implement approvedBillingStatuses() method.
+    }
 
     public function assertChargeableSummaryCreated(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): void
     {
@@ -38,70 +53,110 @@ class Eloquent implements LocationProcessorRepository
         );
     }
 
-    public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
+    public function availableLocationServiceProcessors(array $locationIds, Carbon $chargeableMonth): AvailableServiceProcessors
     {
         if ( ! isset($this->locationAvailableServiceProcessors)) {
             return new AvailableServiceProcessors();
         }
         $locationProcessorsForMonth = $this->locationAvailableServiceProcessors
-            ->where('location_id', $locationId)
+            ->whereIn('location_id', $locationIds)
             ->where('chargeable_month', $chargeableMonth)
             ->first();
 
         return $locationProcessorsForMonth['available_service_processors'] ?? new AvailableServiceProcessors();
     }
 
-    public function enrolledPatients(int $locationId, Carbon $monthYear): EloquentCollection
+    public function closeMonth(array $locationIds, Carbon $month, int $actorId): void
+    {
+        // TODO: Implement closeMonth() method.
+    }
+
+    public function enrolledPatients(array $locationIds, Carbon $monthYear): EloquentCollection
     {
         // TODO: Implement enrolledPatients() method.
     }
 
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
+    public function getLocationSummaries(array $locationIds, ?Carbon $month = null, bool $excludeLocked = true): ?EloquentCollection
     {
-        // TODO: Implement getLocationSummaries() method.
+        return $this->toEloquentCollection(
+            $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationIds, $month, $excludeLocked) {
+                $passes = in_array($s->getLocationId(), $locationIds) && $s->getChargeableMonth()->equalTo($month);
+
+                if ($excludeLocked) {
+                    $passes = false === $s->isLocked();
+                }
+
+                return $passes;
+            })
+        );
     }
 
-    public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
+    public function hasServicesForMonth(array $locationIds, array $chargeableServiceCodes, Carbon $month): bool
     {
-        return $this->summaries->where('location_id', $locationId)
+        return $this->summaries->whereIn('location_id', $locationIds)
             ->whereIn('chargeableService.code', $chargeableServiceCodes)
             ->where('chargeable_month', $month)
             ->isNotEmpty();
     }
 
-    public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function isLockedForMonth(array $locationIds, string $chargeableServiceCode, Carbon $month): bool
+    {
+        $summaries = $this->getLocationSummaries($locationIds, $month, false);
+
+        return $summaries->isNotEmpty() && $summaries->every(function (ChargeableLocationMonthlySummary $summary) {
+            return $summary->is_locked;
+        });
+    }
+
+    public function locationPatients($locationId, ?string $ccmStats = null): Builder
+    {
+        // TODO: Implement locationPatients() method.
+    }
+
+    public function openMonth(array $locationIds, Carbon $month): void
+    {
+        // TODO: Implement openMonth() method.
+    }
+
+    public function paginatePatients(array $locationIds, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         // TODO: Implement paginatePatients() method.
     }
 
-    public function pastMonthSummaries(int $locationId, Carbon $month): EloquentCollection
+    public function pastMonthSummaries(array $locationIds, Carbon $month): EloquentCollection
     {
         return $this->toEloquentCollection(
-            $this->summaries->where('location_id', $locationId)
+            $this->summaries->whereIn('location_id', $locationIds)
                 ->where('chargeable_month', '<', $month)
         );
     }
 
-    public function patients(int $customerModelId, Carbon $monthYear): EloquentCollection
+    public function patients(array $locationIds, Carbon $monthYear): EloquentCollection
     {
         // TODO: Implement patients() method.
     }
 
-    public function patientServices(int $customerModelId, Carbon $monthYear): Builder
+    public function patientServices(array $locationIds, Carbon $monthYear): Builder
     {
         // TODO: Implement patientServices() method.
     }
 
-    public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder
+    public function patientsQuery(array $locationIds, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
         return $this->builder;
     }
 
-    public function servicesExistForMonth(int $locationId, Carbon $month): bool
+    public function processableLocationPatientsForMonth(array $locationIds, Carbon $month): Builder
+    {
+        return $this->builder;
+    }
+
+    public function servicesExistForMonth(array $locationIds, Carbon $month): bool
     {
         return $this->summaries
-            ->where('location_id', $locationId)
-            ->where('chargeable_month', $month)
+            ->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationIds, $month) {
+                return in_array($s->getLocationId(), $locationIds) && $month->equalTo($s->getChargeableMonth());
+            })
             ->isNotEmpty();
     }
 
@@ -130,12 +185,34 @@ class Eloquent implements LocationProcessorRepository
         $this->locationAvailableServiceProcessors->push($toPush);
     }
 
-    public function store(int $locationId, string $chargeableServiceCode, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
+    public function setLockedSummary(int $locationId, int $chargeableServiceId, Carbon $month)
+    {
+        if ( ! isset($this->summaries)) {
+            $this->summaries = collect();
+        }
+
+        $summary = $this->summaries->filter(function (ChargeableLocationMonthlySummaryStub $s) use ($locationId, $chargeableServiceId, $month) {
+            return $locationId === $s->getLocationId() && $s->getChargeableMonth()->equalTo($month) && $s->getChargeableServiceId() === $chargeableServiceId;
+        })
+            ->first();
+
+        if (is_null($summary)) {
+            $summary = (new ChargeableLocationMonthlySummaryStub())
+                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableMonth($month)
+                ->setLocationId($locationId);
+        }
+        $summary->setIsLocked(true);
+
+        $this->summaries->push($summary);
+    }
+
+    public function store(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
     {
         $this->summaries->push(
             $stub = (new ChargeableLocationMonthlySummaryStub())
                 ->setLocationId($locationId)
-                ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode))
+                ->setChargeableServiceId($chargeableServiceId)
                 ->setChargeableMonth($month)
                 ->setAmount($amount)
         );

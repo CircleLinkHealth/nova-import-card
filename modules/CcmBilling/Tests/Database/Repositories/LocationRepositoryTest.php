@@ -40,10 +40,10 @@ class LocationRepositoryTest extends CustomerTestCase
             ChargeableService::BHI,
             ChargeableService::PCM,
         ] as $code) {
-            $this->repo->store($location->id, $code, $startOfMonth);
+            $this->repo->store($location->id, ChargeableService::getChargeableServiceIdUsingCode($code), $startOfMonth);
         }
 
-        $processors = $this->repo->availableLocationServiceProcessors($location->id, $startOfMonth);
+        $processors = $this->repo->availableLocationServiceProcessors([$location->id], $startOfMonth);
 
         self::assertNotNull($processors->getCcm());
         self::assertTrue(is_a($processors->getCcm(), CCM::class));
@@ -81,12 +81,12 @@ class LocationRepositoryTest extends CustomerTestCase
             ]);
         }
 
-        self::assertTrue($this->repo->patientServices($locationId, $startOfMonth)->count() === $numberOfPatients * 2);
+        self::assertTrue($this->repo->patientServices([$locationId], $startOfMonth)->count() === $numberOfPatients * 2);
     }
 
     public function test_it_fetches_location_patients_with_billing_relationships_loaded()
     {
-        $patients = $this->repo->patients($locationId = $this->patient(5)[0]->getPreferredContactLocation(), $startOfMonth = Carbon::now()->startOfMonth());
+        $patients = $this->repo->patients([$locationId = $this->patient(5)[0]->getPreferredContactLocation()], $startOfMonth = Carbon::now()->startOfMonth());
 
         foreach ($patients as $patient) {
             self::assertTrue($patient->endOfMonthCcmStatusLogs->isEmpty());
@@ -108,7 +108,7 @@ class LocationRepositoryTest extends CustomerTestCase
             );
         }
 
-        $patients = $this->repo->patients($locationId, $startOfMonth);
+        $patients = $this->repo->patients([$locationId], $startOfMonth);
 
         foreach ($patients as $patient) {
             self::assertTrue(($logs = $patient->endOfMonthCcmStatusLogs)->isNotEmpty());
@@ -126,7 +126,7 @@ class LocationRepositoryTest extends CustomerTestCase
             'ccm_status' => Patient::PAUSED,
         ]);
 
-        $repoPatients = $this->repo->enrolledPatients($patientToPause->getPreferredContactLocation(), $startOfMonth = Carbon::now()->startOfMonth());
+        $repoPatients = $this->repo->enrolledPatients([$patientToPause->getPreferredContactLocation()], $startOfMonth = Carbon::now()->startOfMonth());
 
         self::assertNull($repoPatients->firstWhere('id', $patientToPause->id));
         self::assertTrue($repoPatients->filter(function (User $p) {

@@ -27,7 +27,7 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
         });
 
         $g2058_1 = DB::table('chargeable_services')
-            ->where('code', '=', 'G2058(>40mins)')
+            ->where('code', '=', 'CPT 99439(>40mins)')
             ->first();
 
         if ($g2058_1) {
@@ -36,7 +36,7 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
         }
 
         $g2058_2 = DB::table('chargeable_services')
-            ->where('code', '=', 'G2058(>60mins)')
+            ->where('code', '=', 'CPT 99439(>60mins)')
             ->first();
 
         if ($g2058_2) {
@@ -68,7 +68,7 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
         DB::table($dbTable)
             ->insert([
                 'order'       => 3,
-                'code'        => 'G2058(>40mins)',
+                'code'        => 'CPT 99439(>40mins)',
                 'description' => 'CCM services over 40 mins (1 month)',
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -77,7 +77,7 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
         DB::table($dbTable)
             ->insert([
                 'order'       => 4,
-                'code'        => 'G2058(>60mins)',
+                'code'        => 'CPT 99439(>60mins)',
                 'description' => 'CCM services over 60 mins (1 month)',
                 'created_at'  => now(),
                 'updated_at'  => now(),

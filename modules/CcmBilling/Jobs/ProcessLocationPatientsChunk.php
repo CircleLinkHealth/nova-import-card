@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
-use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -28,16 +27,16 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
 
     protected AvailableServiceProcessors $availableServiceProcessors;
 
-    protected int $locationId;
+    protected array $locationIds;
 
     protected Carbon $month;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $locationId, AvailableServiceProcessors $availableServiceProcessors, Carbon $month)
+    public function __construct(array $locationIds, AvailableServiceProcessors $availableServiceProcessors, Carbon $month)
     {
-        $this->locationId                 = $locationId;
+        $this->locationIds                = $locationIds;
         $this->availableServiceProcessors = $availableServiceProcessors;
         $this->month                      = $month;
     }
@@ -50,7 +49,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function getBuilder(): Builder
     {
         return $this->repo()
-            ->patientsQuery($this->locationId, $this->month, Patient::ENROLLED)
+            ->patientsQuery($this->locationIds, $this->month, Patient::ENROLLED)
             ->offset($this->getOffset())
             ->limit($this->getLimit());
     }
@@ -60,9 +59,9 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
         return $this->month;
     }
 
-    public function getLocationId(): int
+    public function getDtoFromPatient(User $patient)
     {
-        return $this->locationId;
+        return PatientMonthlyBillingDTO::generateFromUser($patient, $this->getChargeableMonth());
     }
 
     /**
@@ -73,13 +72,11 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function handle()
     {
         $this->getBuilder()->get()->each(function (User $patient) {
-            ProcessPatientMonthlyServices::dispatch(
-                (new PatientMonthlyBillingDTO())
-                    ->subscribe($this->getAvailableServiceProcessors())
-                    ->forPatient($patient->id)
-                    ->forMonth($this->getChargeableMonth())
-                    ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
-            );
+            measureTime("ProcessPatientMonthlyServices:$patient->id", function () use ($patient) {
+                ProcessPatientMonthlyServices::dispatch(
+                    $this->getDtoFromPatient($patient)
+                );
+            });
         });
     }
 

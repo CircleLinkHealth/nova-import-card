@@ -12,12 +12,13 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuilderJob
+class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuilderJob implements ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;

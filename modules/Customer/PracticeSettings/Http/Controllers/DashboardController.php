@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\PracticeSettings\Http\Controllers;
 
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -166,6 +167,8 @@ class DashboardController extends Controller
         $this->primaryPractice
             ->chargeableServices()
             ->sync($sync);
+
+        SetupPracticeBillingData::sync($this->primaryPractice->id);
 
         return redirect()->back();
     }

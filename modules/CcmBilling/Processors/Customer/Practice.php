@@ -8,30 +8,54 @@ namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
-use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\ValueObjects\BillablePatientsCountForMonthDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class Practice implements CustomerProcessor
 {
-    private PracticeProcessorRepository $repo;
+    private Location $locationProcessor;
 
-    public function __construct(PracticeProcessorRepository $repo)
+    public function __construct(Location $locationProcessor)
     {
-        $this->repo = $repo;
+        $this->locationProcessor = $locationProcessor;
     }
 
-    public function fetchApprovablePatients(int $practiceId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
+    public function closeMonth(array $practiceIds, Carbon $month, int $actorId): void
     {
-        return new ApprovablePatientCollection($this->repo->paginatePatients($practiceId, $month, $pageSize));
+        $locations = $this->getLocations($practiceIds);
+        $this->locationProcessor->closeMonth($locations, $month, $actorId);
     }
 
-    public function processServicesForAllPatients(int $practiceId, Carbon $month): void
+    public function counts(array $practiceIds, Carbon $month): BillablePatientsCountForMonthDTO
     {
-        // TODO: Implement processServicesForAllPatients() method.
+        $locations = $this->getLocations($practiceIds);
+
+        return $this->locationProcessor->counts($locations, $month);
     }
 
-    public function repo(): PracticeProcessorRepository
+    public function fetchApprovablePatients(array $practiceIds, Carbon $month, int $pageSize = 30): LengthAwarePaginator
     {
-        return $this->repo;
+        $locations = $this->getLocations($practiceIds);
+
+        return $this->locationProcessor->fetchApprovablePatients($locations, $month, $pageSize);
+    }
+
+    public function openMonth(array $practiceIds, Carbon $month): void
+    {
+        $locations = $this->getLocations($practiceIds);
+        $this->locationProcessor->openMonth($locations, $month);
+    }
+
+    public function processServicesForAllPatients(array $practiceIds, Carbon $month): void
+    {
+        $locations = $this->getLocations($practiceIds);
+        $this->locationProcessor->processServicesForAllPatients($locations, $month);
+    }
+
+    private function getLocations(array $practiceIds): array
+    {
+        return \CircleLinkHealth\Customer\Entities\Location::whereIn('practice_id', $practiceIds)
+            ->pluck('id')
+            ->toArray();
     }
 }

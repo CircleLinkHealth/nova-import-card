@@ -10,8 +10,9 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class CompareCurrentAndLegacyBillingDataForPractice extends Job
+class CompareCurrentAndLegacyBillingDataForPractice extends Job implements ShouldBeEncrypted
 {
     protected array $idsToInvestigate = [];
     protected Carbon $month;

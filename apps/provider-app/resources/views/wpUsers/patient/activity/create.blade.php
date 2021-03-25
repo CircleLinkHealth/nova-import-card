@@ -126,9 +126,9 @@
                                                required
                                                name="chargeable_service_id"
                                                style="display:inline"
-                                               value="{{ $chargeableService->chargeable_service_id  }}"
-                                                {{ $chargeableService->chargeable_service_id == old('chargeable_service_id') ? 'checked' : ''}}/>
-                                        {{ $chargeableService->chargeable_service_name  }}
+                                               value="{{ $chargeableService->getChargeableServiceId()  }}"
+                                                {{ $chargeableService->getChargeableServiceId() == old('chargeable_service_id') ? 'checked' : ''}}/>
+                                        {{ $chargeableService->getChargeableServiceDisplayName()  }}
                                     </label>
                                 </div>
                             @endforeach

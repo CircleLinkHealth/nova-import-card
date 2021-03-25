@@ -152,7 +152,11 @@ class PatientObserver
             return;
         }
 
-        if ($this->locationChanged($patient) || $this->statusChangedToEnrolled($patient)) {
+        if ( ! $patient->user->isParticipant()){
+            return;
+        }
+
+        if ($this->locationChanged($patient) || $this->statusChangedToOrFromEnrolled($patient)) {
             ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
@@ -195,4 +199,20 @@ class PatientObserver
 
         return true;
     }
+
+    private function statusChangedToOrFromEnrolled(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('ccm_status');
+        $newValue = $patient->ccm_status;
+
+        if (! in_array(Patient::ENROLLED, [
+            $oldValue,
+            $newValue
+        ])){
+            return false;
+        }
+
+        return true;
+    }
+
 }

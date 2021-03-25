@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
@@ -17,6 +18,8 @@ class PatientMonthlyServiceTime
 {
     protected int $patientId;
     protected PatientServiceProcessorRepository $repo;
+
+    /** @var ChargeablePatientMonthlyTime[]|Collection */
     protected Collection $summaries;
 
     public function __construct(PatientServiceProcessorRepository $repo)
@@ -145,7 +148,7 @@ class PatientMonthlyServiceTime
 
     private function setSummaries(Carbon $month): self
     {
-        $this->summaries = $this->repo->getChargeablePatientSummaries($this->patientId, $month);
+        $this->summaries = $this->repo->getChargeablePatientTimesView($this->patientId, $month);
 
         return $this;
     }

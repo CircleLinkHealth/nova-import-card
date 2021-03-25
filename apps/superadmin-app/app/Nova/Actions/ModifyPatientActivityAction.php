@@ -6,6 +6,7 @@
 
 namespace App\Nova\Actions;
 
+use CircleLinkHealth\CpmAdmin\Actions\ModifyPatientActivity;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -50,7 +51,7 @@ class ModifyPatientActivityAction extends Action
         $activityIds = $models->pluck('id')->toArray();
 
         try {
-            (new ModifyPatientActivity($cs, $activityIds))->execute();
+            ModifyPatientActivity::forActivityIds($cs, $activityIds)->execute();
         } catch (\Exception $e) {
             $this->markAsFailed($models->first(), $e);
         }

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Traits\DateScopesTrait;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
@@ -307,20 +308,10 @@ class PatientMonthlySummary extends BaseModel
 
     public function autoAttestConditionsIfYouShould()
     {
-        //Auto attest only for past months, to not mess with real attestations
-        if ($this->month_year && $this->month_year->gt(now()->subMonth()->endOfMonth())) {
-            return;
-        }
-
-        $this->loadMissing('attestedProblems');
-
-        if ($this->unAttestedPcm() || $this->unAttestedCcm()) {
-            $this->syncAttestedProblems($this->getCcmProblemsForAutoAttestation());
-        }
-
-        if ($this->unAttestedBhi()) {
-            $this->syncAttestedProblems($this->getBhiProblemsForAutoAttestation());
-        }
+        AutoPatientAttestation::fromId($this->patient_id)
+            ->setMonth($this->month_year)
+            ->setPmsId($this->id)
+            ->executeIfYouShould();
     }
 
     /**
@@ -617,65 +608,5 @@ class PatientMonthlySummary extends BaseModel
                 'ccm_time' => $ccmTime,
             ]
         );
-    }
-
-    private function getBhiProblemsForAutoAttestation()
-    {
-        $bhiProblem = $this->patientProblemsSortedByWeight()->filter(fn (Problem $p) => $p->isBehavioral())->first();
-
-        return [
-            optional($bhiProblem)
-                ->id,
-        ];
-    }
-
-    private function getCcmProblemsForAutoAttestation()
-    {
-        $patientProblems = $this->patientProblemsSortedByWeight();
-
-        return $this->ccmAttestedProblems()
-            ->merge(
-                $patientProblems->filter(function (Problem $p) {
-                    return ! $this->ccmAttestedProblems()->contains('id', $p->id) && ! $p->isBehavioral();
-                })
-            )
-            ->take(4)
-            ->pluck('id')
-            ->toArray();
-    }
-
-    private function patientProblemsSortedByWeight(): Collection
-    {
-        $this->loadMissing([
-            'patient.ccdProblems' => function ($problems) {
-                $problems->with(['icd10codes', 'cpmProblem']);
-            },
-        ]);
-
-        return $this->patient->ccdProblems->unique(function (Problem $p) {
-            return $p->icd10Code();
-        })
-            ->sortByDesc(function ($problem) {
-                if ( ! $problem->cpmProblem) {
-                    return null;
-                }
-
-                return $problem->cpmProblem->weight;
-            });
-    }
-
-    private function unAttestedBhi(): bool
-    {
-        return $this->hasServiceCode(ChargeableService::BHI) && $this->bhiAttestedProblems()->count() < 1;
-    }
-
-    private function unAttestedCcm(): bool
-    {
-        return $this->hasServiceCode(ChargeableService::CCM) && $this->ccmAttestedProblems()->count() < 2;
-    }
-
-    private function unAttestedPcm(): bool
-    {
-        return $this->hasServiceCode(ChargeableService::PCM) && $this->ccmAttestedProblems()->count() < 1;
     }
 }

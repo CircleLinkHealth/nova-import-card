@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 8.31.0.
+ * Generated for Laravel 8.33.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1255,6 +1255,7 @@
          * @param \Closure|string $concrete
          * @return mixed 
          * @throws \Illuminate\Contracts\Container\BindingResolutionException
+         * @throws \Illuminate\Contracts\Container\CircularDependencyException
          * @static 
          */ 
         public static function build($concrete)
@@ -1922,6 +1923,7 @@
          * @param string $password
          * @param string $attribute
          * @return bool|null 
+         * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 
         public static function logoutOtherDevices($password, $attribute = 'password')
@@ -4642,6 +4644,17 @@
                         $instance->recordsHaveBeenModified($value);
         }
                     /**
+         * Reset the record modification state.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function forgetRecordModificationState()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\MySqlConnection $instance */
+                        $instance->forgetRecordModificationState();
+        }
+                    /**
          * Is Doctrine available?
          *
          * @return bool 
@@ -6945,7 +6958,7 @@
          * Get a mailer instance by name.
          *
          * @param string|null $name
-         * @return \Illuminate\Mail\Mailer 
+         * @return \Illuminate\Contracts\Mail\Mailer 
          * @static 
          */ 
         public static function mailer($name = null)
@@ -14700,182 +14713,11 @@
      */ 
         class ShortURL {
                     /**
-         * Set the destination URL that the shortened URL
-         * will redirect to.
-         *
-         * @param string $url
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @throws ShortURLException
-         * @static 
-         */ 
-        public static function destinationUrl($url)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->destinationUrl($url);
-        }
-                    /**
-         * Set whether if the shortened URL can be accessed
-         * more than once.
-         *
-         * @param bool $isSingleUse
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function singleUse($isSingleUse = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->singleUse($isSingleUse);
-        }
-                    /**
-         * Set whether if the destination URL and shortened
-         * URL should be forced to use HTTPS.
-         *
-         * @param bool $isSecure
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function secure($isSecure = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->secure($isSecure);
-        }
-                    /**
-         * Set whether if the short URL should track some
-         * statistics of the visitors.
-         *
-         * @param bool $trackUrlVisits
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackVisits($trackUrlVisits = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackVisits($trackUrlVisits);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * IP address of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackIPAddress($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackIPAddress($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * operating system of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackOperatingSystem($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackOperatingSystem($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * operating system version of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackOperatingSystemVersion($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackOperatingSystemVersion($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * browser of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackBrowser($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackBrowser($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * browser version of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackBrowserVersion($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackBrowserVersion($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * referer URL of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackRefererURL($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackRefererURL($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * device type of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackDeviceType($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackDeviceType($track);
-        }
-                    /**
-         * Explicitly set a URL key for this short URL.
-         *
-         * @param string $key
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function urlKey($key)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->urlKey($key);
-        }
-                    /**
-         * Override the HTTP status code that will be used
-         * for redirecting the visitor.
-         *
-         * @param int $statusCode
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @throws ShortURLException
-         * @static 
-         */ 
-        public static function redirectStatusCode($statusCode)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->redirectStatusCode($statusCode);
-        }
-                    /**
          * Set the date and time that the short URL should
          * be activated and allowed to visit.
          *
-         * @param \AshAllenDesign\ShortURL\Classes\Carbon $activationTime
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @static 
          */ 
         public static function activateAt($activationTime)
@@ -14887,9 +14729,8 @@
          * Set the date and time that the short URL should
          * be deactivated and not allowed to visit.
          *
-         * @param \AshAllenDesign\ShortURL\Classes\Carbon $deactivationTime
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @static 
          */ 
         public static function deactivateAt($deactivationTime)
@@ -14898,9 +14739,21 @@
                         return $instance->deactivateAt($deactivationTime);
         }
                     /**
+         * Set the destination URL that the shortened URL
+         * will redirect to.
+         *
+         * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function destinationUrl($url)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->destinationUrl($url);
+        }
+                    /**
          * Attempt to build a shortened URL and return it.
          *
-         * @return \ShortURL 
          * @throws ShortURLException
          * @static 
          */ 
@@ -14908,6 +14761,19 @@
         {
                         /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
                         return $instance->make();
+        }
+                    /**
+         * Override the HTTP status code that will be used
+         * for redirecting the visitor.
+         *
+         * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function redirectStatusCode($statusCode)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->redirectStatusCode($statusCode);
         }
                     /**
          * Reset the options for the class. This is useful
@@ -14923,6 +14789,137 @@
         {
                         /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
                         return $instance->resetOptions();
+        }
+                    /**
+         * Set whether if the destination URL and shortened
+         * URL should be forced to use HTTPS.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function secure($isSecure = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->secure($isSecure);
+        }
+                    /**
+         * Set whether if the shortened URL can be accessed
+         * more than once.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function singleUse($isSingleUse = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->singleUse($isSingleUse);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * browser of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackBrowser($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackBrowser($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * browser version of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackBrowserVersion($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackBrowserVersion($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * device type of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackDeviceType($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackDeviceType($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * IP address of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackIPAddress($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackIPAddress($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * operating system of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackOperatingSystem($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackOperatingSystem($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * operating system version of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackOperatingSystemVersion($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackOperatingSystemVersion($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * referer URL of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackRefererURL($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackRefererURL($track);
+        }
+                    /**
+         * Set whether if the short URL should track some
+         * statistics of the visitors.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackVisits($trackUrlVisits = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackVisits($trackUrlVisits);
+        }
+                    /**
+         * Explicitly set a URL key for this short URL.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function urlKey($key)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->urlKey($key);
         }
          
     }
@@ -15497,7 +15494,7 @@
                     /**
          * 
          *
-         * @return \Jenssegers\Agent\CrawlerDetect 
+         * @return \Jaybizzle\CrawlerDetect\CrawlerDetect 
          * @static 
          */ 
         public static function getCrawlerDetect()
@@ -17522,7 +17519,7 @@
          * @param string|\Symfony\Component\HttpFoundation\File\UploadedFile $filePath
          * @param string|null $disk
          * @param string|null $readerType
-         * @return \Maatwebsite\Excel\Collection 
+         * @return \Illuminate\Support\Collection 
          * @static 
          */ 
         public static function toCollection($import, $filePath, $disk = null, $readerType = null)
@@ -17533,7 +17530,7 @@
                     /**
          * 
          *
-         * @param \Maatwebsite\Excel\ShouldQueue $import
+         * @param \Illuminate\Contracts\Queue\ShouldQueue $import
          * @param string|\Symfony\Component\HttpFoundation\File\UploadedFile $filePath
          * @param string|null $disk
          * @param string $readerType
@@ -17657,7 +17654,7 @@
                     /**
          * 
          *
-         * @param \Mpbarlow\LaravelQueueDebouncer\CacheKeyProvider|\Closure $provider
+         * @param \Mpbarlow\LaravelQueueDebouncer\Contracts\CacheKeyProvider|\Closure $provider
          * @return \Mpbarlow\LaravelQueueDebouncer\Debouncer 
          * @static 
          */ 
@@ -17669,7 +17666,7 @@
                     /**
          * 
          *
-         * @param \Mpbarlow\LaravelQueueDebouncer\UniqueIdentifierProvider|\Closure $provider
+         * @param \Mpbarlow\LaravelQueueDebouncer\Contracts\UniqueIdentifierProvider|\Closure $provider
          * @return \Mpbarlow\LaravelQueueDebouncer\Debouncer 
          * @static 
          */ 
@@ -17681,7 +17678,7 @@
                     /**
          * 
          *
-         * @param \Mpbarlow\LaravelQueueDebouncer\Dispatchable|\Illuminate\Foundation\Bus\PendingChain|\Closure $job
+         * @param \Illuminate\Foundation\Bus\Dispatchable|\Illuminate\Foundation\Bus\PendingChain|\Closure $job
          * @param \DateTimeInterface|\DateInterval|int|null $wait
          * @return \Illuminate\Foundation\Bus\PendingDispatch 
          * @static 
@@ -18164,7 +18161,7 @@
                     /**
          * Binds the given client to the current scope.
          *
-         * @param \Sentry\State\ClientInterface $client The client
+         * @param \Sentry\ClientInterface $client The client
          * @static 
          */ 
         public static function bindClient($client)
@@ -18176,8 +18173,8 @@
          * Captures a message event and sends it to Sentry.
          *
          * @param string $message The message
-         * @param \Sentry\State\Severity|null $level The severity level of the message
-         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
+         * @param \Sentry\Severity|null $level The severity level of the message
+         * @param \Sentry\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
         public static function captureMessage($message, $level = null, $hint = null)
@@ -18189,7 +18186,7 @@
          * Captures an exception event and sends it to Sentry.
          *
          * @param \Throwable $exception The exception
-         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
+         * @param \Sentry\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
         public static function captureException($exception, $hint = null)
@@ -18201,7 +18198,7 @@
          * Captures a new event using the provided data.
          *
          * @param \Event $event The event being captured
-         * @param \Sentry\State\EventHint|null $hint May contain additional information about the event
+         * @param \Sentry\EventHint|null $hint May contain additional information about the event
          * @static 
          */ 
         public static function captureEvent($event, $hint = null)
@@ -18212,7 +18209,7 @@
                     /**
          * Captures an event that logs the last occurred error.
          *
-         * @param \Sentry\State\EventHint|null $hint Object that can contain additional information about the event
+         * @param \Sentry\EventHint|null $hint Object that can contain additional information about the event
          * @static 
          */ 
         public static function captureLastError($hint = null)
@@ -18225,7 +18222,7 @@
          * will be added to subsequent events to provide more context on user's
          * actions prior to an error or crash.
          *
-         * @param \Sentry\State\Breadcrumb $breadcrumb The breadcrumb to record
+         * @param \Sentry\Breadcrumb $breadcrumb The breadcrumb to record
          * @return bool Whether the breadcrumb was actually added to the current scope
          * @static 
          */ 
@@ -18264,7 +18261,7 @@
          * Sentry.
          *
          * @param \Sentry\State\array<string,  mixed> $customSamplingContext Additional context that will be passed to the {@see SamplingContext}
-         * @param \Sentry\State\TransactionContext $context Properties of the new transaction
+         * @param \Sentry\Tracing\TransactionContext $context Properties of the new transaction
          * @param \Sentry\State\array<string,  mixed> $customSamplingContext Additional context that will be passed to the {@see SamplingContext}
          * @static 
          */ 
@@ -18288,7 +18285,7 @@
                     /**
          * Sets the span on the Hub.
          *
-         * @param \Sentry\State\Span|null $span The span
+         * @param \Sentry\Tracing\Span|null $span The span
          * @static 
          */ 
         public static function setSpan($span)

@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -15,7 +14,6 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class PatientBillingHelpersTest extends CustomerTestCase
 {
@@ -35,8 +33,7 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
     public function test_patient_is_bhi_helper_uses_new_summaries()
     {
-        BillingCache::clearPatients();
-        BillingCache::clearLocations();
+        BillingCache::setBillingRevampIsEnabled(true);
         $bhiPatient = $this->setupPatient($this->practice, true);
 
         $bhiPatient->notes()->create([
@@ -46,17 +43,19 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
         event(new PatientConsentedToService($bhiPatient->id, $bhiCode = ChargeableService::BHI));
 
-        self::assertTrue(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));
+        $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode);
+
+        self::assertTrue(BillingCache::billingRevampIsEnabled());
         self::assertTrue($bhiPatient->isBhi());
         self::assertTrue(
-            $bhiPatient->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', $bhiCode)
+            $bhiPatient->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', $bhiCodeId)
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
                 ->exists()
         );
         self::assertFalse(
-            $bhiPatient->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', ChargeableService::PCM)
+            $bhiPatient->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM))
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
                 ->exists()
         );
@@ -64,27 +63,26 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
     public function test_patient_is_pcm_helper_uses_new_summaries()
     {
-        BillingCache::clearPatients();
-        BillingCache::clearLocations();
+        BillingCache::setBillingRevampIsEnabled(true);
         $patient = $this->setupPatient($this->practice, false, true);
 
-        self::assertTrue(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));
+        self::assertTrue(BillingCache::billingRevampIsEnabled());
         self::assertTrue($patient->isPcm());
         self::assertTrue(
-            $patient->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', ChargeableService::PCM)
+            $patient->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM))
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
                 ->exists()
         );
         self::assertFalse(
-            $patient->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', ChargeableService::BHI)
+            $patient->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI))
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
                 ->exists()
         );
         self::assertFalse(
-            $patient->chargeableMonthlySummariesView()
-                ->where('chargeable_service_code', ChargeableService::CCM)
+            $patient->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM))
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
                 ->exists()
         );

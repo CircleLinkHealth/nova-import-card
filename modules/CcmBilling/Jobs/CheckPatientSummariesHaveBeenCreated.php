@@ -9,8 +9,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class CheckPatientSummariesHaveBeenCreated extends Job
+class CheckPatientSummariesHaveBeenCreated extends Job implements ShouldBeEncrypted
 {
     protected Carbon $month;
 
@@ -43,7 +44,6 @@ class CheckPatientSummariesHaveBeenCreated extends Job
      */
     public function handle()
     {
-        Practice::get()
-            ->each(fn (Practice $p) => CheckPatientSummariesHaveBeenCreatedForPractice::dispatch($p->id, $this->getMonth()));
+        Practice::each(fn (Practice $p) => CheckPatientSummariesHaveBeenCreatedForPractice::dispatch($p->id, $this->getMonth()));
     }
 }

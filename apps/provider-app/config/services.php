@@ -77,8 +77,8 @@ return [
     ],
 
     'serverless-pdf-generator' => [
-        'api-url'         => env('SERVERLESS_PDF_GENERATOR_API_URL'),
-        'api-key'         => env('SERVERLESS_PDF_GENERATOR_API_KEY'),
+        'api-url'         => env('SERVERLESS_PDF_GENERATOR_API_URL', ''),
+        'api-key'         => env('SERVERLESS_PDF_GENERATOR_API_KEY', ''),
         'default-options' => [
             'format' => 'Letter',
             'scale'  => 0.8,

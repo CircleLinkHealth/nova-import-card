@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
-use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use Illuminate\Bus\Queueable;
@@ -52,8 +51,6 @@ class ProcessPatientMonthlyServices implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
-        BillingCache::clearPatients([$this->patient->getPatientId()]);
-
         (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
 }

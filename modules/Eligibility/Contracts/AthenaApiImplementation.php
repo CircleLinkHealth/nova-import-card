@@ -18,10 +18,8 @@ interface AthenaApiImplementation
      * @see: https://developer.athenahealth.com/docs/read/chart/Problems#section-0
      */
     public function addProblem(Problem $problem);
-    
+
     /**
-     * @param int $practiceId
-     *
      * @return ConnectionV2
      */
     public function api(int $practiceId);
