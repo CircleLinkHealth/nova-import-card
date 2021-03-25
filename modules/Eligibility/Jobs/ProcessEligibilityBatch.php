@@ -132,7 +132,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     {
         $jobs = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])];
 
-        if ( ! $batch->isFinishedFetchingFiles()) {
+        if ( ! $batch->isFinishedFetchingCcdas()) {
             $jobs[] = new ProcessEligibilityFromGoogleDrive($batch->id);
         }
 

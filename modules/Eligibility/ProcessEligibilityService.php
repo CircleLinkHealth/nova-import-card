@@ -24,10 +24,11 @@ class ProcessEligibilityService
     /**
      * @param $type
      * @param array $options
+     * @param mixed $stats
      *
      * @return \CircleLinkHealth\SharedModels\Entities\EligibilityBatch
      */
-    public function createBatch($type, int $practiceId, $options = [])
+    public function createBatch($type, int $practiceId, $options = [], $stats = [])
     {
         return EligibilityBatch::create(
             [
@@ -35,6 +36,7 @@ class ProcessEligibilityService
                 'practice_id' => $practiceId,
                 'status'      => EligibilityBatch::STATUSES['not_ready_to_start'],
                 'options'     => $options,
+                'stats'       => $stats,
             ]
         );
     }
@@ -99,15 +101,19 @@ class ProcessEligibilityService
             EligibilityBatch::PRACTICE_CSV_PULL_TEMPLATE,
             $practiceId,
             [
-                'folder'               => $folder,
-                'filterLastEncounter'  => (bool) $filterLastEncounter,
-                'filterInsurance'      => (bool) $filterInsurance,
-                'filterProblems'       => (bool) $filterProblems,
-                'finishedReadingFile'  => (bool) $finishedReadingFile,
-                'allergiesCSVFiles'    => [],
-                'problemsCSVFiles'     => [],
-                'demographicsCSVFiles' => [],
-                'medicationsCSVFiles'  => [],
+                'folder'              => $folder,
+                'filterLastEncounter' => (bool) $filterLastEncounter,
+                'filterInsurance'     => (bool) $filterInsurance,
+                'filterProblems'      => (bool) $filterProblems,
+                'finishedReadingFile' => (bool) $finishedReadingFile,
+            ],
+            [
+                'processedFiles' => [
+                    'Allergies'    => [],
+                    'Problems'     => [],
+                    'Demographics' => [],
+                    'Medications'  => [],
+                ],
             ]
         );
     }

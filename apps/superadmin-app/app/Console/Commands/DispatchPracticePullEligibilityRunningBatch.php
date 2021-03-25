@@ -16,7 +16,7 @@ use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Console\Command;
 
-class DispatchPracticePullEligibilityBatch extends Command
+class DispatchPracticePullEligibilityRunningBatch extends Command
 {
     use CreatesEligibilityJobFromObject;
     /**
@@ -33,16 +33,6 @@ class DispatchPracticePullEligibilityBatch extends Command
     protected $signature = 'practice:eligibility {practiceId} {--count=-1} {--create-only}';
     private $batch;
     private $practice;
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.

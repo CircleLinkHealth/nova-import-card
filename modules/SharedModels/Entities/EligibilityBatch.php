@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
 
 /**
@@ -50,10 +51,10 @@ class EligibilityBatch extends BaseModel
 {
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
-    const PRACTICE_CSV_PULL_TEMPLATE = 'practice_csv_pull_template';
 
-    const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
-    const REPROCESS_FROM_SCRATCH    = 'from_scratch';
+    const OUTCOME_NOT_PROCESSED_YET  = 'Not processed yet.';
+    const PRACTICE_CSV_PULL_TEMPLATE = 'practice_csv_pull_template';
+    const REPROCESS_FROM_SCRATCH     = 'from_scratch';
 
     const REPROCESS_SAFE = 'safe';
     /**
@@ -96,6 +97,13 @@ class EligibilityBatch extends BaseModel
         'status',
         'initiator_id',
     ];
+
+    public function addPracticePullGoogleDriveFile(PracticePullFileInGoogleDrive $file)
+    {
+        $stats       = $this->stats ?? [];
+        $stats['processedFiles'][$file->getTypeOfData()][]     = $file->toArray();
+        $this->stats = $stats;
+    }
 
     public function eligibilityJobs()
     {
@@ -262,9 +270,14 @@ class EligibilityBatch extends BaseModel
         return 'complete' === $this->getStatus();
     }
 
-    public function isFinishedFetchingFiles()
+    public function isFinishedFetchingCcdas()
     {
         return array_key_exists('numberOfFiles', $this->options) && (int) $this->options['numberOfFiles'] === (int) $this->eligibilityJobs()->count();
+    }
+
+    public function isFinishedFetchingPracticePullCsvs()
+    {
+        return (bool) $this->options['finishedReadingFile'];
     }
 
     /**
