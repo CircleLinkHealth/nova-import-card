@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://app-cpm-web.test",
+  "baseUrl": "http://provider-app.clh.test",
   "watchForFilesChanges": true,
   "chromeWebSecurity": false,
   "viewportWidth": 1000,
@@ -22,5 +22,9 @@
     "json": true,
     "reportDir": "cypress/reports/mocha"
   },
-  "projectId": "fraekr"
+  "projectId": "fraekr",
+  "retries": {
+    "runMode": 2,
+    "openMode": 1
+  }
 }

@@ -100,7 +100,7 @@
     "@sentry/webpack-plugin": "^1.12.1",
     "axios-mock-adapter": "^1.18.2",
     "babel-jest": "^21.2.0",
-    "cypress": "^5.2.0",
+    "cypress": "^6.8.0",
     "cypress-downloadfile": "^1.2.0",
     "cypress-file-upload": "^4.1.1",
     "eslint": "^5.5.0",
