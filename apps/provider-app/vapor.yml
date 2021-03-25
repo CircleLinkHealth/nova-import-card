@@ -4,6 +4,7 @@ environments:
     production:
         domain:
             - careplanmanager.com
+            - www.careplanmanager.com
             - provider.careplanmanager.com
             - worker.careplanmanager.com
             - mycpm.link
