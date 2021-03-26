@@ -13,15 +13,15 @@ class UpdateCorrectProvidersToEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'update:enrollee-providers {practiceId} {enrolleeIdsWithProviderIds}';
+    protected $signature = 'update:enrollee-providers {practiceId} {enrolleeIdsWithProviderNames}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Update the provider id of given enrolleeIds paired with WithProviderIds. {enrolleeIdsWithProviderIds} should be json_encoded
-    and passed to argument using single quotes: '{'enrolleeId1':'providerId_x', 'enrolleeId2':'providerId_y'}'.";
+    protected $description = "Update the provider id of given enrolleeIds paired with WithProviderNames. {enrolleeIdsWithProviderNames} should be json_encoded
+    and passed to argument using single quotes: '{'enrolleeId1':'provider_x', 'enrolleeId2':'provider_y'}'.";
 
     /**
      * Create a new command instance.
@@ -35,15 +35,15 @@ class UpdateCorrectProvidersToEnrollees extends Command
 
     public function decodedInputDataToUpdate():\stdClass
     {
-        return json_decode($this->argument('enrolleeIdsWithProviderIds'));
+        return json_decode($this->argument('enrolleeIdsWithProviderNames'));
     }
 
     public function getEnrolleesToUpdateGrouppedByProviders():Collection
     {
         return collect($this->decodedInputDataToUpdate())
-            ->mapToGroups(function ($providerId, $enrolleeId){
+            ->mapToGroups(function ($providerName, $enrolleeId){
                 return [
-                    $providerId => $enrolleeId
+                    $providerName => $enrolleeId
                 ];
             });
     }
@@ -56,22 +56,179 @@ class UpdateCorrectProvidersToEnrollees extends Command
         $enrolleesToUpdateGrouppedByProvider =  $this->getEnrolleesToUpdateGrouppedByProviders();
 
         if ($enrolleesToUpdateGrouppedByProvider->isEmpty()){
-            $this->info("Failed to parse enrolleeIdsWithProviderIds input data. Try: passing encoded data in single quotes.");
+            $this->info("Failed to parse enrolleeIdsWithProviderNames input data. Try: passing encoded data in single quotes.");
             return;
         }
 
-        $enrollees = Enrollee::where('practice_id', $this->argument('practiceId'));
-
-        $enrolleesToUpdateGrouppedByProvider->each(function ($enrolleeIds,$providerId) use($enrollees) {
-            $this->info("Updating enrollees for Provider $providerId");
-            $updated = $enrollees->whereIn('id', $enrolleeIds->toArray())
+        $enrolleesToUpdateGrouppedByProvider->each(function ($enrolleeIds, $providerName)  {
+            $this->info("Updating enrollees for Provider $providerName");
+            $updated = Enrollee::where('practice_id', $this->argument('practiceId'))
+                ->whereIn('id', $enrolleeIds->toArray())
                 ->update(
                     [
-                        'provider_id' => $providerId
+                        'referring_provider_name' => $providerName
                     ]);
 
             $count = $enrolleeIds->count();
-            $this->info("Attempted to update $count Enrollees for Provider $providerId and ended with status: $updated");
+            $this->info("Attempted to update $count Enrollees for Provider $providerName and ended with status: $updated");
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
