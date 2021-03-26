@@ -12,14 +12,14 @@ class UpdateCorrectProvidersToEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'update:enrollee-providers {practiceId} {enrolleeProviderIdPair}';
+    protected $signature = 'update:enrollee-providers {practiceId}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update the provider id of given [enrolleeId => providerId] array.';
+    protected $description = 'Update the provider id of given enrollee ids.';
 
     /**
      * Create a new command instance.
