@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Heading;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 
@@ -35,6 +36,8 @@ class ModifyPatientTimeAction extends Action implements ShouldQueue
     public function fields()
     {
         return [
+            Heading::make($this->getNoteMessage())->asHtml(),
+
             Select::make('Chargeable Service', 'chargeable_service')
                 ->required(true)
                 ->options([
@@ -77,5 +80,18 @@ class ModifyPatientTimeAction extends Action implements ShouldQueue
         } catch (\Exception $e) {
             $this->markAsFailed($models->first(), $e);
         }
+    }
+
+    private function getNoteMessage(): string
+    {
+        $msg = 'You can only remove time from a patient. In order to add time you will have do it from the ';
+        if (isset(request()->resourceId)) {
+            $patientId = request()->resourceId;
+            $route     = route('patient.careplan.print', ['patientId' => $patientId]);
+
+            return $msg."<a href='$route' target='_blank'>Patient's Chart</a>";
+        }
+
+        return $msg."Patient's Chart";
     }
 }
