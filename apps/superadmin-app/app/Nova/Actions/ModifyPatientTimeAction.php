@@ -72,10 +72,10 @@ class ModifyPatientTimeAction extends Action implements ShouldQueue
                 $fields->get('durationMinutes') * 60,
                 $fields->get('allow_accrued_towards', false)
             ))->execute();
+
+            $this->markAsFinished($models->first());
         } catch (\Exception $e) {
             $this->markAsFailed($models->first(), $e);
         }
-
-        $this->markAsFinished($models->first());
     }
 }
