@@ -19,8 +19,8 @@ class UpdateCorrectProvidersToEnrollees extends Command
      *
      * @var string
      */
-    protected $description = 'Update the provider id of given enrolleeIds paired with WithProviderIds. {enrolleeIdsWithProviderIds} should be json_encoded
-    and passed to argument using single quotes.';
+    protected $description = "Update the provider id of given enrolleeIds paired with WithProviderIds. {enrolleeIdsWithProviderIds} should be json_encoded
+    and passed to argument using single quotes: '{'enrolleeId1':'providerId_x', 'enrolleeId2':'providerId_y'}'.";
 
     /**
      * Create a new command instance.
