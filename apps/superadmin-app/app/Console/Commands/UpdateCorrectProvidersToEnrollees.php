@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class UpdateCorrectProvidersToEnrollees extends Command
 {
@@ -32,12 +33,12 @@ class UpdateCorrectProvidersToEnrollees extends Command
         parent::__construct();
     }
 
-    public function decodedInputDataToUpdate()
+    public function decodedInputDataToUpdate():\stdClass
     {
         return json_decode($this->argument('enrolleeIdsWithProviderIds'));
     }
 
-    public function getEnrolleesToUpdateGrouppedByProviders()
+    public function getEnrolleesToUpdateGrouppedByProviders():Collection
     {
         return collect($this->decodedInputDataToUpdate())
             ->mapToGroups(function ($providerId, $enrolleeId){
