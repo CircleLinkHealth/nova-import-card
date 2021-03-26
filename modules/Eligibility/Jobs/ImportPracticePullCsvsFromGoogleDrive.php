@@ -66,7 +66,7 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
                 $stored = app(get_class($model))->updateOrCreate($model->toArray());
                 ++$count;
             } catch(\Exception $e) {
-                \Log::error("EligibilityBatchException[{$this->batchId}] {$e->getMessage()} || {$e->getErrorCode()} || {$e->getTraceAsString()}");
+                \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
                 continue;
             }
         }
