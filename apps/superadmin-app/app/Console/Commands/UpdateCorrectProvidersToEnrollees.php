@@ -63,6 +63,7 @@ class UpdateCorrectProvidersToEnrollees extends Command
         $enrolleesToUpdateGrouppedByProvider->each(function ($enrolleeIds, $providerName)  {
             $this->info("Updating enrollees for Provider $providerName");
             $updated = Enrollee::where('practice_id', $this->argument('practiceId'))
+                ->whereNull('provider_id')
                 ->whereIn('id', $enrolleeIds->toArray())
                 ->update(
                     [
