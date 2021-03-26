@@ -69,7 +69,8 @@ class UpdateCorrectProvidersToEnrollees extends Command
                         'provider_id' => $providerId
                     ]);
 
-            $this->info("Enrollees for Provider $providerId updated: $updated");
+            $count = $enrolleeIds->count();
+            $this->info("Attempted to update $count Enrollees for Provider $providerId and ended with status: $updated");
         });
     }
 }
