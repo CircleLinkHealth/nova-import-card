@@ -316,9 +316,8 @@ class CcdaImporterWrapper
         $term = self::prepareForMysqlMatch($term);
 
         $cacheKey = "mysqlmatchprovider:$term:$practiceId";
-        $cache    = Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
 
-        if ($cached = $cache->get($cacheKey)) {
+        if ($cached = Cache::get($cacheKey)) {
             return $cached;
         }
 
@@ -409,7 +408,7 @@ class CcdaImporterWrapper
         return Location::whereRaw("MATCH(name) AGAINST(\"$term\")")->where('practice_id', $practiceId)->first();
     }
 
-    private static function prepareForMysqlMatch(string $term)
+    public static function prepareForMysqlMatch(string $term)
     {
         return collect(explode(' ', $term))->transform(function ($term) {
             return "+$term";

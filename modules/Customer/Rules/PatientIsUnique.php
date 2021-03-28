@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Rules;
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Collection;
@@ -118,7 +119,9 @@ class PatientIsUnique implements Rule
 
     private function mysqlMatchPatient(): ?Collection
     {
-        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"+$this->firstName +$this->lastName\" IN BOOLEAN MODE)")
+        $term = CcdaImporterWrapper::prepareForMysqlMatch("$this->firstName $this->lastName");
+    
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\" IN BOOLEAN MODE)")
             ->ofPractice($this->practiceId)
             ->whereHas(
                 'patientInfo',
