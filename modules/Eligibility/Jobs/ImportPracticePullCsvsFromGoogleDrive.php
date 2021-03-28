@@ -15,6 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncrypted
 {
@@ -45,35 +46,32 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
             return;
         }
         $practiceId = $batch->practice_id;
-        $cloudDisk  = Storage::disk('google');
-        $path        = $this->file->getPath();
+        
+        $media = $this->storeMedia($batch, $this->file);
 
-        if ($batch->isFinishedFetchingPracticePullCsvs()) {
-            return null;
-        }
-    
-        $readStream = $cloudDisk->getDriver()->readStream($path);
-        $targetFile = storage_path(now()->timestamp);
-        file_put_contents($targetFile, stream_get_contents($readStream), FILE_APPEND);
-        $count = 0;
-        
         $importerClass = $this->file->getImporter();
-        $importer = new $importerClass($practiceId);
-    
-        foreach (parseCsvToArray($targetFile) as $row) {
-            $model = $importer->model($row);
-            try {
-                $stored = app(get_class($model))->updateOrCreate($model->toArray());
-                ++$count;
-            } catch(\Exception $e) {
-                \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
-                continue;
-            }
+        $importer      = new $importerClass($practiceId);
+
+        try {
+            Excel::import($importer, $media->getPath(), 'media');
+        } catch (\Exception $e) {
+            \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }
-        
+
         $this->file->setFinishedProcessingAt(now());
-        
+
         $batch->addPracticePullGoogleDriveFile($this->file);
         $batch->save();
+    }
+
+    private function storeMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): \Spatie\MediaLibrary\Models\Media
+    {
+        $cloudDisk  = Storage::disk('google');
+        $readStream = $cloudDisk->getDriver()->readStream($file->getPath());
+        $targetFile = storage_path(strtolower(now()->timestamp."-batch-{$batch->id}-pull-{$file->getTypeOfData()}-data-{$file->getName()}"));
+        file_put_contents($targetFile, stream_get_contents($readStream), FILE_APPEND);
+
+        return $batch->addMedia($targetFile)
+            ->toMediaCollection($file->getTypeOfData());
     }
 }
