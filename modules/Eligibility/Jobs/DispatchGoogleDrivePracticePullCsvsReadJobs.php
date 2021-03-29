@@ -22,7 +22,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 
-class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implements ShouldQueue, ShouldBeEncrypted
+class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -86,12 +86,6 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
                         return new ImportPracticePullCsvsFromGoogleDrive($batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
                     })->filter();
             });
-        
-        $jobs->push([
-            function () use ($batchId) {
-                return (new DispatchPracticePullEligibilityBatch($batchId))->splitToBatches();
-            },
-        ]);
 
         Bus::chain($jobs->flatten()->all())
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
