@@ -6,26 +6,19 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Core\Jobs\ChunksEloquentBuilderJobV2;
 use CircleLinkHealth\Eligibility\Adapters\CreatesEligibilityJobFromObject;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeEncrypted;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Database\Eloquent\Builder;
 
-class DispatchPracticePullEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
+class DispatchPracticePullEligibilityBatch extends ChunksEloquentBuilderJobV2
 {
     use CreatesEligibilityJobFromObject;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
 
+    protected ?EligibilityBatch $batch = null;
     protected int $batchId;
 
     /**
@@ -36,22 +29,42 @@ class DispatchPracticePullEligibilityBatch implements ShouldQueue, ShouldBeEncry
         $this->batchId = $batchId;
     }
 
+    public function getBatch(): ?EligibilityBatch
+    {
+        if (is_null($this->batch)) {
+            $this->batch = EligibilityBatch::with('practice')->find($this->batchId);
+        }
+
+        return $this->batch;
+    }
+
+    public function getBatchId(): int
+    {
+        return $this->batchId;
+    }
+
+    public function getPracticeId(): int
+    {
+        return $this->getBatch()->practice_id;
+    }
+
     /**
      * Execute the job.
      */
     public function handle()
     {
-        $batch = EligibilityBatch::with('practice')->find($this->batchId);
-
-        if ( ! $batch) {
+        if ( ! $this->getBatch()) {
             return;
         }
 
-        $practiceId = $batch->practice_id;
-
-        $this->query($practiceId)->cursor()->each(function ($demos) use ($batch) {
-            $this->dispatchEligibilityJob($demos, $batch);
+        $this->getBuilder()->cursor()->each(function ($demos) {
+            $this->dispatchEligibilityJob($demos, $this->getBatch());
         });
+    }
+
+    public function query(): Builder
+    {
+        return Demographics::where('practice_id', $this->getPracticeId())->whereNull('eligibility_job_id');
     }
 
     protected function dispatchEligibilityJob(Demographics $demos, EligibilityBatch $batch)
@@ -74,10 +87,5 @@ class DispatchPracticePullEligibilityBatch implements ShouldQueue, ShouldBeEncry
         ProcessSinglePatientEligibility::dispatch($ej->id);
 
         return $ej;
-    }
-
-    private function query(int $practiceId)
-    {
-        return Demographics::where('practice_id', $practiceId)->whereNull('eligibility_job_id');
     }
 }

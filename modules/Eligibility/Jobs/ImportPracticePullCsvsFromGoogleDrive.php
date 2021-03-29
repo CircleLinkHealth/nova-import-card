@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -54,9 +55,18 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         $importer      = new $importerClass($practiceId);
 
         try {
-            Excel::import($importer, $media->getPath(), 'media');
-            $this->file->setFinishedProcessingAt(now());
-            $this->log($media, $this->file)->save();
+            Bus::chain(array_merge(
+                [
+                    Excel::queueImport($importer, $media->getPath(), 'media'),
+                ],
+                (new DispatchPracticePullEligibilityBatch($this->batchId))->splitToBatches(),
+                [
+                    function () use ($media) {
+                        $this->file->setFinishedProcessingAt(now());
+                        $this->log($media, $this->file)->save();
+                    },
+                ]
+            ))->dispatch();
         } catch (\Exception $e) {
             \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }

@@ -84,11 +84,11 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
 
                         return new ImportPracticePullCsvsFromGoogleDrive($this->batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
                     })->filter();
-            })->flatten();
+            });
 
-        $jobs->push(new DispatchPracticePullEligibilityBatch($this->batchId));
+        $jobs->push((new DispatchPracticePullEligibilityBatch($this->batchId))->splitToBatches());
 
-        Bus::chain($jobs->all())
+        Bus::chain($jobs->flatten()->all())
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
             ->dispatch();
     }
