@@ -47,16 +47,16 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         if ( ! $batch) {
             return;
         }
-        $practiceId = $batch->practice_id;
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
 
-        $importerClass = $this->file->getImporter();
-        $importer      = new $importerClass($practiceId);
-
         try {
             Bus::chain([
-                    Excel::queueImport($importer, $media->getPath(), 'media'),
+                    function () use ($media, $batch) {
+                        $importerClass = $this->file->getImporter();
+                        $importer      = new $importerClass($batch->practice_id);
+                        Excel::import($importer, $media->getPath(), 'media');
+                    },
                     function () use ($media) {
                         $this->file->setFinishedProcessingAt(now());
                         $this->log($media, $this->file)->save();
