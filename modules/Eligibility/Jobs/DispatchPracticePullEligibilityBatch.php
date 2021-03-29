@@ -53,12 +53,19 @@ class DispatchPracticePullEligibilityBatch extends ChunksEloquentBuilderJobV2
      */
     public function handle()
     {
-        if ( ! $this->getBatch()) {
+        $batch = $this->getBatch();
+    
+        if ( ! $batch) {
             return;
         }
+        
+        if ($this->getCount() > 0 && $batch->status !== EligibilityBatch::STATUSES['processing']) {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
+            $batch->save();
+        }
 
-        $this->getBuilder()->cursor()->each(function ($demos) {
-            $this->dispatchEligibilityJob($demos, $this->getBatch());
+        $this->getBuilder()->cursor()->each(function ($demos) use ($batch) {
+            $this->dispatchEligibilityJob($demos, $batch);
         });
     }
 

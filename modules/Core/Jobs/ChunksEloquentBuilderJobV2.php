@@ -28,7 +28,7 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
 
     public function dispatchInBatches(int $limit)
     {
-        $count  = $this->unsetWith($this->query())->count();
+        $count  = $this->getCount();
         $offset = 0;
 
         while ($offset < $count) {
@@ -38,6 +38,10 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
             );
             $offset = $offset + $limit;
         }
+    }
+    
+    public function getCount() {
+        return $this->unsetWith($this->query())->count();
     }
 
     public function getBuilder(): Builder
@@ -78,7 +82,7 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
      */
     public function splitToBatches(int $limit = 1000): array
     {
-        $count  = $this->unsetWith($this->query())->count();
+        $count  = $this->getCount();
         $offset = 0;
 
         $jobs = [];
