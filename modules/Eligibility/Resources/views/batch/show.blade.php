@@ -194,7 +194,7 @@
                         @if($batch->media->isNotEmpty())
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    Files
+                                    {{$batch->media->count()}} Files pulled from Google Drive
                                 </div>
                                 <div class="panel-body">
                                     @foreach($batch->media as $media)
