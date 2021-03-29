@@ -101,13 +101,6 @@ class EligibilityBatch extends BaseModel implements HasMedia
         'initiator_id',
     ];
 
-    public function addPracticePullGoogleDriveFile(PracticePullFileInGoogleDrive $file)
-    {
-        $stats       = $this->stats ?? [];
-        $stats['processedFiles'][$file->getTypeOfData()][]     = $file->toArray();
-        $this->stats = $stats;
-    }
-
     public function eligibilityJobs()
     {
         return $this->hasMany(EligibilityJob::class, 'batch_id');

@@ -38,12 +38,12 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
 
     public function batchSize(): int
     {
-        return 400;
+        return 300;
     }
 
     public function chunkSize(): int
     {
-        return 400;
+        return 300;
     }
 
     public function model(array $row)

@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
@@ -46,32 +47,46 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
             return;
         }
         $practiceId = $batch->practice_id;
-        
-        $media = $this->storeMedia($batch, $this->file);
+
+        $media = $this->firstOrCreateMedia($batch, $this->file);
 
         $importerClass = $this->file->getImporter();
         $importer      = new $importerClass($practiceId);
 
         try {
             Excel::import($importer, $media->getPath(), 'media');
+            $this->file->setFinishedProcessingAt(now());
+            $this->log($media, $this->file)->save();
         } catch (\Exception $e) {
             \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }
-
-        $this->file->setFinishedProcessingAt(now());
-
-        $batch->addPracticePullGoogleDriveFile($this->file);
-        $batch->save();
     }
 
-    private function storeMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): \Spatie\MediaLibrary\Models\Media
+    private function firstOrCreateMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): Media
     {
+        $existing = $batch->media()->where('name', $file->getName())->first();
+
+        if ($existing) {
+            return $existing;
+        }
+
         $cloudDisk  = Storage::disk('google');
         $readStream = $cloudDisk->getDriver()->readStream($file->getPath());
-        $targetFile = storage_path(strtolower(now()->timestamp."-batch-{$batch->id}-pull-{$file->getTypeOfData()}-data-{$file->getName()}"));
+        $targetFile = storage_path($file->getName());
         file_put_contents($targetFile, stream_get_contents($readStream), FILE_APPEND);
 
         return $batch->addMedia($targetFile)
             ->toMediaCollection($file->getTypeOfData());
+    }
+
+    private function log(Media $media, PracticePullFileInGoogleDrive $file): Media
+    {
+        $media->setCustomProperty('dispatchedAt', $file->getDispatchedAt());
+        $media->setCustomProperty('finishedProcessingAt', $file->getFinishedProcessingAt());
+        $media->setCustomProperty('importer', $file->getImporter());
+        $media->setCustomProperty('name', $file->getName());
+        $media->setCustomProperty('path', $file->getPath());
+
+        return $media->setCustomProperty('typeOfData', $file->getTypeOfData());
     }
 }

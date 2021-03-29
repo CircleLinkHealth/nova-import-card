@@ -39,12 +39,12 @@ class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchIn
 
     public function batchSize(): int
     {
-        return 400;
+        return 300;
     }
 
     public function chunkSize(): int
     {
-        return 400;
+        return 300;
     }
 
     public function model(array $row)
