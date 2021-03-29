@@ -21,6 +21,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+
 class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
@@ -29,11 +30,9 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
     use SerializesModels;
 
     protected int $batchId;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param int $batchId
      */
     public function __construct(int $batchId)
     {
@@ -45,17 +44,18 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
      */
     public function handle()
     {
-        $batch = EligibilityBatch::find($this->batchId);
+        $batch = EligibilityBatch::with('media')->find($this->batchId);
 
         if ( ! $batch) {
             return;
         }
-        $cloudDisk  = Storage::disk('google');
-        $recursive  = false;
-        $dir        = $batch->options['folder'];
+        $cloudDisk = Storage::disk('google');
+        $recursive = false;
+        $dir       = $batch->options['folder'];
 
         if ($batch->isFinishedFetchingPracticePullCsvs()) {
             \Log::debug("EligibilityBatch[{$this->batchId}] isFinishedFetchingPracticePullCsvs");
+
             return null;
         }
 
@@ -66,21 +66,28 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
                 'Demographics',
                 'Medications',
                 'Problems',
-            ])->map(function ($driveFolder) use ($cloudDisk) {
+            ])->map(function ($driveFolder) use ($cloudDisk, $batch) {
                 return collect($cloudDisk->listContents($driveFolder['path'], false))
                     ->where('type', '=', 'file')
                     ->whereIn('extension', [
                         'xls',
                         'xlsx',
                         'csv',
-                    ])->map(function ($driveFile) use (&$filesToImport, $driveFolder) {
+                    ])->map(function ($driveFile) use (&$filesToImport, $driveFolder, $batch) {
+                        if ($batch->media->where('file_name', str_replace(' ', '-', $driveFile['name']))->isNotEmpty()) {
+                            \Log::debug("EligibilityBatch[{$this->batchId}] read job[{$driveFolder['name']}][{$driveFile['name']}] already exists");
+
+                            return false;
+                        }
+
                         \Log::debug("EligibilityBatch[{$this->batchId}] create read job[{$driveFolder['name']}][{$driveFile['name']}]");
+
                         return new ImportPracticePullCsvsFromGoogleDrive($this->batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
-                    });
+                    })->filter();
             })->flatten();
 
         $jobs->push(new DispatchPracticePullEligibilityBatch($this->batchId));
-    
+
         Bus::chain($jobs->all())
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
             ->dispatch();
