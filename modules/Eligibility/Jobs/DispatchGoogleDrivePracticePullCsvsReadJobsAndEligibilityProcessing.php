@@ -44,7 +44,8 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
      */
     public function handle()
     {
-        $batch = EligibilityBatch::with('media')->find($this->batchId);
+        $batchId = $this->batchId;
+        $batch = EligibilityBatch::with('media')->find($batchId);
 
         if ( ! $batch) {
             return;
@@ -54,7 +55,7 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
         $dir       = $batch->options['folder'];
 
         if ($batch->isFinishedFetchingPracticePullCsvs()) {
-            \Log::debug("EligibilityBatch[{$this->batchId}] isFinishedFetchingPracticePullCsvs");
+            \Log::debug("EligibilityBatch[{$batchId}] isFinishedFetchingPracticePullCsvs");
 
             return null;
         }
@@ -66,29 +67,29 @@ class DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing implem
                 'Demographics',
                 'Medications',
                 'Problems',
-            ])->map(function ($driveFolder) use ($cloudDisk, $batch) {
+            ])->map(function ($driveFolder) use ($cloudDisk, $batch, $batchId) {
                 return collect($cloudDisk->listContents($driveFolder['path'], false))
                     ->where('type', '=', 'file')
                     ->whereIn('extension', [
                         'xls',
                         'xlsx',
                         'csv',
-                    ])->map(function ($driveFile) use (&$filesToImport, $driveFolder, $batch) {
+                    ])->map(function ($driveFile) use (&$filesToImport, $driveFolder, $batch, $batchId) {
                         if ($batch->media->where('file_name', str_replace(' ', '-', $driveFile['name']))->isNotEmpty()) {
-                            \Log::debug("EligibilityBatch[{$this->batchId}] read job[{$driveFolder['name']}][{$driveFile['name']}] already exists");
+                            \Log::debug("EligibilityBatch[{$batchId}] read job[{$driveFolder['name']}][{$driveFile['name']}] already exists");
 
                             return false;
                         }
 
-                        \Log::debug("EligibilityBatch[{$this->batchId}] create read job[{$driveFolder['name']}][{$driveFile['name']}]");
+                        \Log::debug("EligibilityBatch[{$batchId}] create read job[{$driveFolder['name']}][{$driveFile['name']}]");
 
-                        return new ImportPracticePullCsvsFromGoogleDrive($this->batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
+                        return new ImportPracticePullCsvsFromGoogleDrive($batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
                     })->filter();
             });
-
+        
         $jobs->push([
-            function () {
-                return (new DispatchPracticePullEligibilityBatch($this->batchId))->splitToBatches();
+            function () use ($batchId) {
+                return (new DispatchPracticePullEligibilityBatch($batchId))->splitToBatches();
             },
         ]);
 

@@ -49,19 +49,15 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         }
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
+    
+        $importerClass = $this->file->getImporter();
+        $importer      = new $importerClass($batch->practice_id);
+        $path = $media->getPath();
 
         try {
-            Bus::chain([
-                    function () use ($media, $batch) {
-                        $importerClass = $this->file->getImporter();
-                        $importer      = new $importerClass($batch->practice_id);
-                        Excel::import($importer, $media->getPath(), 'media');
-                    },
-                    function () use ($media) {
-                        $this->file->setFinishedProcessingAt(now());
-                        $this->log($media, $this->file)->save();
-                    },
-                ])->dispatch();
+            Excel::import($importer, $path, 'media');
+            $this->file->setFinishedProcessingAt(now());
+            $this->log($media, $this->file)->save();
         } catch (\Exception $e) {
             \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }
