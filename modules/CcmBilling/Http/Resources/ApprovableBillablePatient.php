@@ -9,7 +9,9 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
 class ApprovableBillablePatient extends JsonResource
 {
@@ -73,9 +75,28 @@ class ApprovableBillablePatient extends JsonResource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa && ! $this->approved && ! $this->rejected,
-            'attested_ccm_problems'  => $this->hasServiceCode(ChargeableServiceModel::RPM) ? $problems->pluck('id')->toArray() : $this->ccmAttestedProblems()->unique()->pluck('id')->toArray(),
-            'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-            'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id')->toArray(),
+            'attested_ccm_problems'  => $this->getCcmAttestedProblems($problems),
+            'chargeable_services'    => $this->getChargeableServices()->toArray($request),
+            'attested_bhi_problems'  => $this->getBhiAttestedProblems(),
         ];
+    }
+
+    private function getBhiAttestedProblems()
+    {
+        return $this->bhiAttestedProblems()->unique()->pluck('id')->values()->toArray();
+    }
+
+    private function getCcmAttestedProblems(Collection $allProblems)
+    {
+        if ($this->hasServiceCode(ChargeableServiceModel::RPM)) {
+            return $allProblems->pluck('id')->values()->toArray();
+        }
+
+        return $this->ccmAttestedProblems()->unique()->pluck('id')->values()->toArray();
+    }
+
+    private function getChargeableServices(): AnonymousResourceCollection
+    {
+        return ChargeableServiceForAbp::collectionFromPms($this->resource);
     }
 }

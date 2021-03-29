@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class PatientSummaryEloquentRepository
 {
@@ -131,6 +132,7 @@ class PatientSummaryEloquentRepository
         }
 
         $summary->autoAttestConditionsIfYouShould();
+        $summary->load('attestedProblems');
 
         $needsQA = [];
         $hasBhi  = $summary->hasServiceCode(ChargeableService::BHI);
@@ -169,6 +171,9 @@ class PatientSummaryEloquentRepository
 
         if ( ! empty($needsQA)) {
             $summary->needs_qa = true;
+            $summary->approved = $summary->rejected = false;
+            $reasonsString = implode(',', $needsQA);
+            Log::info("Billing: (Legacy) PMS for patient {$summary->patient_id} needs QA for month {$summary->month_year->toDateString()} for the following reasons: $reasonsString");
         } else {
             $summary->approved = true;
             $summary->needs_qa = $summary->rejected = false;

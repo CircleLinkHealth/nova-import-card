@@ -8,7 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Listeners;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 class SetPatientConsented
 {
@@ -19,11 +21,19 @@ class SetPatientConsented
      */
     public function handle(PatientConsentedToService $event)
     {
-        app(PatientServiceProcessorRepository::class)
-            ->setPatientConsented(
-                $event->getPatientId(),
-                $event->getServiceCode(),
-                Carbon::now()->startOfMonth()
-            );
+        $repo = app(PatientServiceProcessorRepository::class);
+
+        $repo->setPatientConsented(
+            $patientId = $event->getPatientId(),
+            $event->getServiceCode(),
+            $month = Carbon::now()->startOfMonth()
+        );
+
+        (app(ProcessPatientSummaries::class))->fromDTO(
+            PatientMonthlyBillingDTO::generateFromUser(
+                $repo->getPatientWithBillingDataForMonth($patientId, $month),
+                $month
+            )
+        );
     }
 }

@@ -47,14 +47,14 @@ class BillingDataCache implements BillingCache
         }
     }
 
-    public function forgetLocationSummaries(int $locationId): void
+    public function forgetLocationSummaries(array $locationIds): void
     {
         $this->locationSummaryCache = collect($this->locationSummaryCache)
-            ->filter(fn ($locationSummary) => $locationSummary->location_id != $locationId)
+            ->filter(fn ($locationSummary) => ! in_array($locationSummary->location_id, $locationIds))
             ->all();
 
         $this->queriedLocationSummaries = collect($this->queriedLocationSummaries)
-            ->filter(fn ($id) => $id != $locationId)
+            ->filter(fn ($id) => ! in_array($id, $locationIds))
             ->all();
     }
 
@@ -68,11 +68,11 @@ class BillingDataCache implements BillingCache
             ->all();
     }
 
-    public function getLocationSummaries(int $locationId): ?Collection
+    public function getLocationSummaries(array $locationIds): ?Collection
     {
         return new Collection(
             collect($this->locationSummaryCache)
-                ->where('location_id', $locationId)
+                ->whereIn('location_id', $locationIds)
                 ->all()
         );
     }

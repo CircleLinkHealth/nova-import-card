@@ -316,17 +316,16 @@ class CcdaImporterWrapper
         $term = self::prepareForMysqlMatch($term);
 
         $cacheKey = "mysqlmatchprovider:$term:$practiceId";
-        $cache    = Cache::driver(isProductionEnv() ? 'dynamodb' : config('cache.default'));
 
-        if ($cached = $cache->get($cacheKey)) {
+        if ($cached = Cache::get($cacheKey)) {
             return $cached;
         }
 
         $provider = User::where(function ($q) use ($term) {
             $q->whereRaw("MATCH(display_name, first_name, last_name) AGAINST(\"$term\")")
                 ->orWhere(function ($q) use ($term) {
-                  $q->whereColumnOrSynonym('display_name', $term);
-              });
+                    $q->whereColumnOrSynonym('display_name', $term);
+                });
         })->ofPractice($practiceId)->ofType('provider')->without('roles.pers')->first();
 
         if ( ! $provider) {
@@ -409,7 +408,7 @@ class CcdaImporterWrapper
         return Location::whereRaw("MATCH(name) AGAINST(\"$term\")")->where('practice_id', $practiceId)->first();
     }
 
-    private static function prepareForMysqlMatch(string $term)
+    public static function prepareForMysqlMatch(string $term)
     {
         return collect(explode(' ', $term))->transform(function ($term) {
             return "+$term";

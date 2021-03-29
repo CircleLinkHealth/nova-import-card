@@ -7,28 +7,31 @@
 namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\User;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
 {
-    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear = null): Builder
+    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear = null, bool $includeNotesControllerRalationships = false): Builder
     {
-        return $this->approvablePatientUsersQuery($monthYear)
+        return $this->approvablePatientUsersQuery($monthYear, $includeNotesControllerRalationships)
             ->where('id', $patientId);
     }
 
-    public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
+    public function approvablePatientUsersQuery(Carbon $monthYear = null, bool $includeNotesControllerRalationships = false): Builder
     {
         $relations = [
-            'primaryPractice'         => fn ($p)         => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
+            'primaryPractice' => function ($p) use ($includeNotesControllerRalationships) {
+                $p->when($includeNotesControllerRalationships, fn ($pr) => $pr->with(['settings']))
+                    ->with(['chargeableServices', 'pcmProblems', 'rpmProblems']);
+            },
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
+            //todo: remove eager loads after refactor
             'attestedProblems' => function ($q) use ($monthYear) {
-                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
+                $q->with('ccdProblem.cpmProblem')
+                    ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'billingProvider.user',
             'patientInfo.location.chargeableServiceSummaries' => function ($q) use ($monthYear) {
@@ -42,14 +45,43 @@ trait ApprovablePatientUsersQuery
                 $q->with(['chargeableService'])
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
+            'chargeableMonthlyTime' => function ($q) use ($monthYear) {
+                $q->with(['chargeableService'])
+                    ->createdInMonthFromDateTimeField($monthYear, 'performed_at');
+            },
+            'forcedChargeableServices' => function ($f) use ($monthYear) {
+                $f->with(['chargeableService'])
+                    ->where(fn ($q)   => $q->when( ! is_null($monthYear), fn ($q) => $q->where('chargeable_month', $monthYear)))
+                    ->orWhere(fn ($q) => $q->where('chargeable_month', null));
+            },
+            'inboundSuccessfulCalls' => function ($q) use ($monthYear) {
+                $q->createdInMonth($monthYear, 'called_date');
+            },
+            'monthlyBillingStatus' => function ($status) use ($monthYear) {
+                $status->createdOnIfNotNull($monthYear, 'chargeable_month');
+            },
         ];
 
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
-            $relations['chargeableMonthlySummariesView'] = function ($q) use ($monthYear) {
-                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
-            };
-        }
+        $notesControllerRelationships = [
+            'carePlan' => function ($q) {
+                return $q->select(['id', 'user_id', 'status', 'created_at']);
+            },
+            'patientSummaries' => function ($q) {
+                return $q->where('month_year', Carbon::now()->startOfMonth());
+            },
+            'patientInfo' => function ($q) {
+                return $q->with(['contactWindows']);
+            },
+            'careTeamMembers' => function ($q) {
+                return $q->with([
+                    'user' => function ($q) {
+                        return $q->select(['id', 'first_name', 'last_name', 'suffix']);
+                    },
+                ])->has('user');
+            }, ];
 
-        return User::with($relations);
+        return User::with($relations)
+            ->when($includeNotesControllerRalationships, fn ($user) => $user->with($notesControllerRelationships))
+            ->ofType('participant');
     }
 }

@@ -11,17 +11,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class PCM extends AbstractProcessor
 {
-    public function clashesWith(): array
-    {
-        return [
-            new CCM(),
-            new RHC(),
-            new RPM(),
-            new RPM40(),
-            new RPM60(),
-        ];
-    }
-
     public function code(): string
     {
         return ChargeableService::PCM;

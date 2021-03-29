@@ -18,29 +18,30 @@
 
                     <br>
 
-                    <label for="file">Filename as appears in Drive (eg `CircleLink.json`). Only fill in if input is in
-                        json format.</label>
+                    <label for="file">Only if processing json format: Enter the filename as it appears in Drive (eg `CircleLink.json`)</label>
                     <input class="" type="text" name="file" id="file">
 
                     <br>
 
                     <input class="" type="checkbox" name="filterLastEncounter" id="filterLastEncounter">
-                    <label for="">filterLastEncounter</label>
+                    <label for="">Filter Last Encounter</label>
 
                     <br>
 
                     <input class="" type="checkbox" name="filterProblems" id="filterProblems" checked>
-                    <label for="">filterProblems</label>
+                    <label for="">Filter Problems</label>
 
                     <br>
 
                     <input class="" type="checkbox" name="filterInsurance" id="filterInsurance">
-                    <label for="">filterInsurance</label>
+                    <label for="">Filter Insurance</label>
 
                     <br>
 
-                    {{--<input class="" type="checkbox" name="localDir" id="localDir">--}}
-                    {{--<label for="localDir">localDir</label>--}}
+                    <input class="" type="checkbox" name="isPracticePull" id="isPracticePull">
+                    <label for="isPracticePull">"Practice CSV Pull" Format</label>
+
+                    <br>
 
                     <input type="submit" class="btn btn-default" value="Generate" name="submit">
                 </div>

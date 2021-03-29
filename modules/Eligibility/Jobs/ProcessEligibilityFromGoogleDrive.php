@@ -48,7 +48,7 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue, ShouldBeEncrypte
         $recursive = false; // Get subdirectories also?
         $dir       = $batch->options['dir'];
 
-        if ($batch->isFinishedFetchingFiles()) {
+        if ($batch->isFinishedFetchingCcdas()) {
             return null;
         }
 

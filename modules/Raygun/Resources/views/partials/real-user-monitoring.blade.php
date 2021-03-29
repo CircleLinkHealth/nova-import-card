@@ -13,7 +13,7 @@
                     e: g
                 })
             }
-        }(window, document, "script", "//cdn.raygun.io/raygun4js/raygun.min.js", "rg4js");
+        }(window, document, "script", "//cdn.raygun.io/raygun4js/2.21.1/raygun.min.js", "rg4js");
     </script>
 
     <script type="text/javascript">
@@ -38,6 +38,7 @@
                 });
             }
         }
+
         addLogoutListener();
         @endif
     </script>

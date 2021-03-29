@@ -37,7 +37,7 @@ Vue.use(VueForm, {
         invalid: 'form-control-danger'
     }
 })
-const BillingComponent = () => import(/* webpackChunkName: "chunk-provider" */ '../../../vendor/circlelinkhealth/customer-module/Billing/Resources/assets/js/billing')
+const BillingComponent = () => import(/* webpackChunkName: "chunk-provider" */ 'CcmBilling/Resources/assets/js/billing')
 const ComponentProxy = () => import(/* webpackChunkName: "chunk-careplan" */ 'SharedVueComponents/Resources/assets/js/components/shared/component-proxy')
 const CareTeamComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/pages/view-care-plan/care-team')
 const CreateAppointmentsAddCarePerson = () => import(/* webpackChunkName: "chunk-careplan" */ './components/CareTeam/create-appointments-add-care-person')
@@ -90,7 +90,8 @@ const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-provi
 const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
 const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-patient" */  './components/attest-call-conditions.modal');
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-nurse" */ 'SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
-const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
+const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-agent-contact" */  './components/edit-patient-agent-contact');
+const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
 const SchedulePatientActivity = () => import(/* webpackChunkName: "chunk-callbacks-admin" */  'SharedVueComponents/Resources/assets/js/admin/calls/comps/schedule-patient-activity.vue');
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-provider" */ 'SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications')
 
@@ -152,6 +153,7 @@ Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 Vue.component('calendar-daily-report', CalendarDailyReport);
 Vue.component('edit-patient-alternate-contact', EditPatientAlternateContact);
 Vue.component('schedule-patient-activity', SchedulePatientActivity);
+Vue.component('edit-patient-number', EditPatientNumber);
 
 
 const App = new Vue({

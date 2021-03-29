@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction;
 
-use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandHelpers;
 use CircleLinkHealth\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -44,16 +43,16 @@ class MakeSurveyOnlyUsersForEnrollees extends Command
     public function handle()
     {
         $enrolleeIds = $this->argument('enrolleeIds');
-        $limit = $this->argument('limit') ?? null;
+        $limit       = $this->argument('limit') ?? null;
 
         Enrollee::whereNull('user_id')
             ->where('practice_id', $this->argument('practiceId'))
             ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
             ->whereNotNull('provider_id')
-            ->when(!empty($enrolleeIds), function ($enrollees) use ($enrolleeIds){
+            ->when( ! empty($enrolleeIds), function ($enrollees) use ($enrolleeIds) {
                 $enrollees->whereIn('id', $enrolleeIds);
             })
-            ->when($limit, function ($query) use($limit){
+            ->when($limit, function ($query) use ($limit) {
                 $query->limit(intval($limit));
             })
             ->select('id')

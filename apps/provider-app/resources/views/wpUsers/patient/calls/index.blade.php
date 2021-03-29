@@ -1,7 +1,7 @@
 @extends('layouts.provider')
 
-@section('title', 'Call Patient Page')
-@section('activity', 'Call Patient Page')
+@section('title', 'Initiate Call Page')
+@section('activity', 'Initiate Call Page')
 
 @section('app')
 

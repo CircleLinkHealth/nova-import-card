@@ -8,8 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class MigrateAttestationDataToNewBillingColumns extends Job
+class MigrateAttestationDataToNewBillingColumns extends Job implements ShouldBeEncrypted
 {
     /**
      * Create a new job instance.

@@ -25,10 +25,6 @@
         }
     ],
     "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.x-dev",
-            "dev-road_547_ccmBilling": "2.1.x-dev"
-        },
         "laravel": {
             "providers": [
 

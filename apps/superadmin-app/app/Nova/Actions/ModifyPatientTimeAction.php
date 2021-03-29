@@ -6,6 +6,7 @@
 
 namespace App\Nova\Actions;
 
+use CircleLinkHealth\CpmAdmin\Actions\ModifyPatientTime;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,6 +16,7 @@ use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Heading;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 
@@ -34,6 +36,8 @@ class ModifyPatientTimeAction extends Action implements ShouldQueue
     public function fields()
     {
         return [
+            Heading::make($this->getNoteMessage())->asHtml(),
+
             Select::make('Chargeable Service', 'chargeable_service')
                 ->required(true)
                 ->options([
@@ -71,10 +75,23 @@ class ModifyPatientTimeAction extends Action implements ShouldQueue
                 $fields->get('durationMinutes') * 60,
                 $fields->get('allow_accrued_towards', false)
             ))->execute();
+
+            $this->markAsFinished($models->first());
         } catch (\Exception $e) {
             $this->markAsFailed($models->first(), $e);
         }
+    }
 
-        $this->markAsFinished($models->first());
+    private function getNoteMessage(): string
+    {
+        $msg = 'You can only remove time from a patient. In order to add time you will have do it from the ';
+        if (isset(request()->resourceId)) {
+            $patientId = request()->resourceId;
+            $route     = route('patient.careplan.print', ['patientId' => $patientId]);
+
+            return $msg."<a href='$route' target='_blank'>Patient's Chart</a>";
+        }
+
+        return $msg."Patient's Chart";
     }
 }

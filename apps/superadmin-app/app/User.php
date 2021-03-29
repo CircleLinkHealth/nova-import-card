@@ -229,25 +229,34 @@ use Laravel\Nova\Actions\Actionable;
  * @method   static                                                                                                                  \Illuminate\Database\Eloquent\Builder|User withCareTeamOfType($type)
  * @method   static                                                                                                                  \Illuminate\Database\Eloquent\Builder|User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings|null                                   $emailSettings
- * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection $foreignId
- * @property int|null                                                                                     $foreign_id_count
- * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection   $inboundMessages
- * @property int|null                                                                                     $inbound_messages_count
- * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection   $outboundMessages
- * @property int|null                                                                                     $outbound_messages_count
- * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
- * @property \CircleLinkHealth\SharedModels\Entities\Comment[]|\Illuminate\Database\Eloquent\Collection   $comment
- * @property int|null                                                                                     $comment_count
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure|null                                $cpmBloodPressure
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar|null                                   $cpmBloodSugar
- * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking|null                                      $cpmSmoking
- * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight|null                                       $cpmWeight
- * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User activeNurses()
- * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User uniquePatients()
- * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection       $synonyms
- * @property int|null                                                                                     $synonyms_count
- * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
+ * @property \CircleLinkHealth\SharedModels\Entities\EmailSettings|null                                                      $emailSettings
+ * @property \CircleLinkHealth\SharedModels\Entities\ForeignId[]|\Illuminate\Database\Eloquent\Collection                    $foreignId
+ * @property int|null                                                                                                        $foreign_id_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $inboundMessages
+ * @property int|null                                                                                                        $inbound_messages_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Message[]|\Illuminate\Database\Eloquent\Collection                      $outboundMessages
+ * @property int|null                                                                                                        $outbound_messages_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User ofTypePatients()
+ * @property \CircleLinkHealth\SharedModels\Entities\Comment[]|\Illuminate\Database\Eloquent\Collection                      $comment
+ * @property int|null                                                                                                        $comment_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure|null                                                   $cpmBloodPressure
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar|null                                                      $cpmBloodSugar
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking|null                                                         $cpmSmoking
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight|null                                                          $cpmWeight
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User activeNurses()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User uniquePatients()
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection                          $synonyms
+ * @property int|null                                                                                                        $synonyms_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
+ * @property \CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime[]|\Illuminate\Database\Eloquent\Collection   $chargeableMonthlyTime
+ * @property int|null                                                                                                        $chargeable_monthly_time_count
+ * @property \CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService[]|\Illuminate\Database\Eloquent\Collection $forcedChargeableServices
+ * @property int|null                                                                                                        $forced_chargeable_services_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundSuccessfulCalls
+ * @property int|null                                                                                                        $inbound_successful_calls_count
+ * @property \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[]|\Illuminate\Database\Eloquent\Collection    $monthlyBillingStatus
+ * @property int|null                                                                                                        $monthly_billing_status_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

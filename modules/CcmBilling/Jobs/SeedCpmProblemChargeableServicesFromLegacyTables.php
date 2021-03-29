@@ -8,8 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class SeedCpmProblemChargeableServicesFromLegacyTables extends Job
+class SeedCpmProblemChargeableServicesFromLegacyTables extends Job implements ShouldBeEncrypted
 {
     /**
      * Create a new job instance.

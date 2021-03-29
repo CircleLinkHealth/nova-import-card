@@ -19,7 +19,8 @@ trait PracticeHelpers
         bool $addCcmPlusServices = false,
         bool $addBhiService = false,
         bool $addPcmService = false,
-        bool $addRpmService = false
+        bool $addRpmService = false,
+        bool $addRhcService = false
     ) {
         if ( ! Location::where('practice_id', $practice->id)->exists()) {
             factory(Location::class)->create(['practice_id' => $practice->id]);
@@ -56,6 +57,11 @@ trait PracticeHelpers
             $rpm40            = $cached->where('code', '=', ChargeableService::RPM40)->first();
             $sync[$rpm->id]   = ['amount' => 29.0];
             $sync[$rpm40->id] = ['amount' => 29.0];
+        }
+
+        if ($addRhcService) {
+            $rhc            = $cached->where('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)->first();
+            $sync[$rhc->id] = ['amount' => 25.0];
         }
 
         $practice->chargeableServices()->sync($sync);

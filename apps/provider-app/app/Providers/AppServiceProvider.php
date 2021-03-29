@@ -126,6 +126,29 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
+        EloquentBuilder::macro(
+            'chunkIntoJobsAndGetArray',
+            function (int $limit, ShouldQueue $job) {
+                if ( ! $job instanceof ChunksEloquentBuilder) {
+                    throw new \Exception('The Query Builder macro "chunkIntoJobsAndGetArray" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
+                }
+
+                $count = $this->count();
+                $offset = 0;
+
+                $jobs = [];
+
+                while ($offset < $count) {
+                    $job->setOffset($offset);
+                    $job->setLimit($limit);
+                    $jobs[] = $job;
+                    $offset = $offset + $limit;
+                }
+
+                return $jobs;
+            }
+        );
+
         EloquentCollection::macro('forgetUsingModelKey', function (string $key, $value) {
             foreach ($this as $index => $model) {
                 if ($model->$key === $value) {

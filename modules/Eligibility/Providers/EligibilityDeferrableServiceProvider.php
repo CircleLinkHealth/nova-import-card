@@ -20,7 +20,6 @@ use CircleLinkHealth\Eligibility\Console\RestoreEnrolleeProvidersFromRevisions;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV1;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\ConnectionV2;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -78,13 +77,13 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
 
         $this->app->singleton(AthenaApiConnection::class, function () {
             $activeVersion = config('services.athena.active_version');
-            
+
             $prefix = "services.athena.$activeVersion";
-            
+
             $key = config("$prefix.key");
             $secret = config("$prefix.secret");
             $version = config("$prefix.version");
-            
+
             return new ConnectionV2($version, $key, $secret);
         });
     }

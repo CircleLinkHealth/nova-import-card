@@ -15,6 +15,7 @@ use App\Rules\PatientEmailDoesNotContainPhi;
 use App\Rules\ValidatePatientCustomEmail;
 use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestationRequirements;
 use CircleLinkHealth\Core\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -72,27 +73,8 @@ class NotesController extends Controller
 
         // patient view
         /** @var User $patient */
-        $patient = User::with([
-            'carePlan' => function ($q) {
-                return $q->select(['id', 'user_id', 'status', 'created_at']);
-            },
-            'patientSummaries' => function ($q) {
-                return $q->where('month_year', Carbon::now()->startOfMonth());
-            },
-            'primaryPractice' => function ($q) {
-                return $q->with(['settings']);
-            },
-            'patientInfo' => function ($q) {
-                return $q->with(['contactWindows']);
-            },
-            'careTeamMembers' => function ($q) {
-                return $q->with([
-                    'user' => function ($q) {
-                        return $q->select(['id', 'first_name', 'last_name', 'suffix']);
-                    },
-                ])->has('user');
-            },
-        ])->find($patientId);
+        $patient = app(PatientServiceProcessorRepository::class)
+            ->getPatientWithBillingDataForNotesController($patientId);
         if ( ! $patient) {
             return response('User not found', 401);
         }
@@ -229,7 +211,7 @@ class NotesController extends Controller
             'cpmProblems'                     => (new CpmProblemService())->all(),
             'patientRequestToKnow'            => $answerFromMoreInfo,
             'hasSuccessfulCall'               => $hasSuccessfulCall,
-            'attestationRequirements'         => AttestationRequirements::get($patientId)->toArray(),
+            'attestationRequirements'         => AttestationRequirements::get($patient)->toArray(),
             'shouldShowForwardNoteSummaryBox' => is_null($existingNote) || 'draft' === optional($existingNote)->status,
             'shouldRnApprove'                 => $shouldRnApprove,
             'hasRnApprovedCarePlan'           => $hasRnApprovedCp,

@@ -9,8 +9,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Jobs\EncryptedLaravelJob as Job;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
-class GenerateServiceSummariesForAllPracticeLocations extends Job
+class GenerateServiceSummariesForAllPracticeLocations extends Job implements ShouldBeEncrypted
 {
     protected $month;
 
@@ -37,7 +38,6 @@ class GenerateServiceSummariesForAllPracticeLocations extends Job
     public function handle()
     {
         Practice::with('locations')
-            ->get()
             ->each(function (Practice $p) {
                 foreach ($p->locations as $location) {
                     GenerateLocationSummaries::dispatch($location->id, $this->month);

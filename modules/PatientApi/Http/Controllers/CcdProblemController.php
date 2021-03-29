@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use Carbon\Carbon;
 use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
@@ -46,7 +45,7 @@ class CcdProblemController extends Controller
                     ->setCcdProblemId($ccdProblemId)
             );
 
-            (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
+            $this->doMonthlyProcessing($userId);
 
             return \response()->json([
                 'success'             => $success,
@@ -86,7 +85,7 @@ class CcdProblemController extends Controller
                 ->setUserId($userId)
         );
 
-        (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
+        $this->doMonthlyProcessing($userId);
 
         return \response()->json([
             'problem'             => $problem,
@@ -112,7 +111,7 @@ class CcdProblemController extends Controller
                     ->setCcdProblemId($ccdProblemId)
             );
 
-            (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
+            $this->doMonthlyProcessing($userId);
 
             return \response()->json([
                 'problem'             => $problem,
@@ -121,6 +120,12 @@ class CcdProblemController extends Controller
         }
 
         return \response()->json('"userId" and "ccdProblemId" are important', 400);
+    }
+
+    private function doMonthlyProcessing($userId)
+    {
+        $month = now()->startOfMonth();
+        (app(ProcessPatientSummaries::class))->execute($userId, $month);
     }
 
     private function getChargeableServices($patientId)

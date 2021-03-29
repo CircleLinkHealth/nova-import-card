@@ -8,7 +8,7 @@
                                     'alert-danger': types.error.includes(note.type)
                                 }">
                 <slot :note="note">
-                    {{note.text}}
+                    <span v-html="note.text"></span>
                 </slot>
 
                 <span class="close" @click="note.close()">x</span>

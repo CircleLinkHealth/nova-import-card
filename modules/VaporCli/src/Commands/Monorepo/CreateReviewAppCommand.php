@@ -12,10 +12,8 @@ use Laravel\VaporCli\Dockerfile;
 use Laravel\VaporCli\GitIgnore;
 use Laravel\VaporCli\Helpers;
 use Laravel\VaporCli\Manifest;
-use Laravel\VaporCli\Path;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Yaml\Yaml;
 
 class CreateReviewAppCommand extends Command
 {
@@ -71,7 +69,7 @@ class CreateReviewAppCommand extends Command
             $blueprint->getEnvironmentVariables()
         );
 
-        GitIgnore::add(['.env.' . $blueprint->environment]);
+        GitIgnore::add(['.env.'.$blueprint->environment]);
 
         Helpers::info('Environment created successfully.');
     }
@@ -88,8 +86,12 @@ class CreateReviewAppCommand extends Command
             ->addArgument('environment', InputArgument::REQUIRED, 'The review app name')
             ->addArgument('blueprint-env', InputArgument::REQUIRED, 'The blueprint env name. I.e. Staging or production')
             ->addArgument('allApps', InputArgument::REQUIRED, 'All apps that we are creating environment for')
-            ->addOption('docker', null, InputOption::VALUE_NONE,
-                'Indicate that the environment will use Docker images as its runtime')
+            ->addOption(
+                'docker',
+                null,
+                InputOption::VALUE_NONE,
+                'Indicate that the environment will use Docker images as its runtime'
+            )
             ->setDescription('Create a new review app');
     }
 }

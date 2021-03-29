@@ -51,7 +51,7 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
-    
+
     public function api(int $practiceId)
     {
         if ( ! $this->connection instanceof AthenaApiConnection) {
@@ -149,15 +149,15 @@ class Calls implements AthenaApiImplementation
     public function createNewPatient(Patient $patient)
     {
         $practiceId = $patient->getPracticeId();
-    
+
         $this->api($practiceId)->setPracticeId($practiceId);
-    
+
         if ( ! $practiceId) {
             throw new \Exception('practiceid is required.', 422);
         }
 
         $response = $this->api($practiceId)->POST(
-            "/patients",
+            '/patients',
             [
                 'departmentid' => $patient->getDepartmentId(),
                 'dob'          => $patient->getDob(),
@@ -207,7 +207,7 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
-    
+
     public function getAppointmentReasons(
         int $practiceId,
         int $departmentId,
@@ -216,11 +216,11 @@ class Calls implements AthenaApiImplementation
         $this->api($practiceId)->setPracticeId($practiceId);
 
         $response = $this->api($practiceId)->GET(
-            "/patientappointmentreasons",
+            '/patientappointmentreasons',
             [
-                'practiceid' => $practiceId,
+                'practiceid'   => $practiceId,
                 'departmentid' => $departmentId,
-                'providerid' => $providerId,
+                'providerid'   => $providerId,
             ]
         );
 
@@ -237,7 +237,7 @@ class Calls implements AthenaApiImplementation
     public function getAvailablePractices($practiceId = 1)
     {
         $response = $this->api($practiceId)->GET(
-            "practiceinfo",
+            'practiceinfo',
             [
                 'practiceid' => $practiceId,
             ]
@@ -664,7 +664,7 @@ class Calls implements AthenaApiImplementation
         $departmentId = null
     ) {
         $response = $this->api($practiceId)->GET(
-            "/patients",
+            '/patients',
             [
                 'firstname'    => $patientFirstName,
                 'middlename'   => $patientMiddleName,

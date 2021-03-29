@@ -16,6 +16,11 @@ use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 use Spatie\MediaLibrary\Models\Media;
 
+/**
+ * @deprecated To be replaced by {@link PracticeInvoiceService}.
+ *
+ * Class PracticeReportsService
+ */
 class PracticeReportsService
 {
     /**

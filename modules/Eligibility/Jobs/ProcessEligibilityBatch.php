@@ -74,6 +74,9 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             case EligibilityBatch::RUNNING:
                 $this->batch = $this->queueSingleEligibilityJobs($this->batch);
                 break;
+            case EligibilityBatch::PRACTICE_CSV_PULL_TEMPLATE:
+                $this->batch = $this->queuePracticePullCsvFromGoogleDrive($this->batch);
+                break;
         }
     }
 
@@ -132,7 +135,7 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
     {
         $jobs = [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing'])];
 
-        if ( ! $batch->isFinishedFetchingFiles()) {
+        if ( ! $batch->isFinishedFetchingCcdas()) {
             $jobs[] = new ProcessEligibilityFromGoogleDrive($batch->id);
         }
 
@@ -144,6 +147,13 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
             ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
             ->dispatch();
 
+        return $batch;
+    }
+
+    private function queuePracticePullCsvFromGoogleDrive(EligibilityBatch $batch): EligibilityBatch
+    {
+        DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing::dispatch($batch->id);
+    
         return $batch;
     }
 

@@ -10,7 +10,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\EligibilityBatch.
@@ -46,13 +49,15 @@ use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
  */
-class EligibilityBatch extends BaseModel
+class EligibilityBatch extends BaseModel implements HasMedia
 {
+    use HasMediaTrait;
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 
-    const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
-    const REPROCESS_FROM_SCRATCH    = 'from_scratch';
+    const OUTCOME_NOT_PROCESSED_YET  = 'Not processed yet.';
+    const PRACTICE_CSV_PULL_TEMPLATE = 'practice_csv_pull_template';
+    const REPROCESS_FROM_SCRATCH     = 'from_scratch';
 
     const REPROCESS_SAFE = 'safe';
     /**
@@ -171,6 +176,9 @@ class EligibilityBatch extends BaseModel
             case self::CLH_MEDICAL_RECORD_TEMPLATE:
                 return 'CLH Template';
                 break;
+            case self::PRACTICE_CSV_PULL_TEMPLATE:
+                return 'Practice Pull CSVs';
+                break;
             default:
                 return '';
         }
@@ -258,9 +266,14 @@ class EligibilityBatch extends BaseModel
         return 'complete' === $this->getStatus();
     }
 
-    public function isFinishedFetchingFiles()
+    public function isFinishedFetchingCcdas()
     {
         return array_key_exists('numberOfFiles', $this->options) && (int) $this->options['numberOfFiles'] === (int) $this->eligibilityJobs()->count();
+    }
+
+    public function isFinishedFetchingPracticePullCsvs()
+    {
+        return (bool) $this->options['finishedReadingFile'];
     }
 
     /**

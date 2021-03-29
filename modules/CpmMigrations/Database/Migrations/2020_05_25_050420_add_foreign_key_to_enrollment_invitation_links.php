@@ -40,6 +40,16 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
             });
         }
 
+        Schema::table('enrollables_invitation_links', function (Blueprint $table) {
+            $table->foreign('batch_id')
+                ->references('id')
+                ->on('enrollment_invitations_batches');
+        });
+
+        if ( ! isCpm()) {
+            return;
+        }
+
         EnrollableInvitationLink::whereNull('batch_id')->orWhere('batch_id', '<', 1)->chunk(100, function ($links) {
             foreach ($links as $link) {
                 if (User::class === $link->invitationable_type) {
@@ -63,12 +73,6 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                 $link->batch_id = $batch->id;
                 $link->save();
             }
-        });
-
-        Schema::table('enrollables_invitation_links', function (Blueprint $table) {
-            $table->foreign('batch_id')
-                ->references('id')
-                ->on('enrollment_invitations_batches');
         });
     }
 }
