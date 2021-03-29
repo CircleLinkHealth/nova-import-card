@@ -45,7 +45,7 @@ class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, Should
     public function handle()
     {
         $batchId = $this->batchId;
-        $batch = EligibilityBatch::with('media')->find($batchId);
+        $batch   = EligibilityBatch::with('media')->find($batchId);
 
         if ( ! $batch) {
             return;
@@ -87,9 +87,11 @@ class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, Should
                     })->filter();
             });
 
-        Bus::chain($jobs->flatten()->all())
-            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
-            ->dispatch();
+        if ($jobs->isNotEmpty()) {
+            Bus::chain($jobs->flatten()->all())
+                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+                ->dispatch();
+        }
     }
 
     private function importers(string $for)
