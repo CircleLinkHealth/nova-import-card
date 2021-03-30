@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Database\Seeders\CreateEnrolleesSurveySeeder;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\CreateEnrolleesSurveySeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 

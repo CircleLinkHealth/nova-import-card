@@ -152,7 +152,17 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
 
     private function queuePracticePullCsvFromGoogleDrive(EligibilityBatch $batch): EligibilityBatch
     {
-        DispatchGoogleDrivePracticePullCsvsReadJobsAndEligibilityProcessing::dispatch($batch->id);
+        Bus::chain(array_merge(
+                       [
+                           new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['processing']),
+                           new DispatchGoogleDrivePracticePullCsvsReadJobs($batch->id),
+                       ],
+                       (new DispatchPracticePullEligibilityBatch($batch->id))->splitToBatches(2000),
+                       $batch->orchestratePendingJobsProcessing(2000),
+                       [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+                   ))
+           ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+           ->dispatch();
     
         return $batch;
     }

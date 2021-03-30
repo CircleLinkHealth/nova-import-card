@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
@@ -14,7 +15,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncrypted
 {
@@ -44,36 +47,47 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         if ( ! $batch) {
             return;
         }
-        $practiceId = $batch->practice_id;
-        $cloudDisk  = Storage::disk('google');
-        $path        = $this->file->getPath();
 
-        if ($batch->isFinishedFetchingPracticePullCsvs()) {
-            return null;
-        }
+        $media = $this->firstOrCreateMedia($batch, $this->file);
     
-        $readStream = $cloudDisk->getDriver()->readStream($path);
-        $targetFile = storage_path(now()->timestamp);
-        file_put_contents($targetFile, stream_get_contents($readStream), FILE_APPEND);
-        $count = 0;
-        
         $importerClass = $this->file->getImporter();
-        $importer = new $importerClass($practiceId);
-    
-        foreach (parseCsvToArray($targetFile) as $row) {
-            $model = $importer->model($row);
-            try {
-                $stored = app(get_class($model))->updateOrCreate($model->toArray());
-                ++$count;
-            } catch(\Exception $e) {
-                \Log::error("EligibilityBatchException[{$this->batchId}] {$e->getMessage()} || {$e->getErrorCode()} || {$e->getTraceAsString()}");
-                continue;
-            }
+        $importer      = new $importerClass($batch->practice_id);
+        $path = $media->getPath();
+
+        try {
+            Excel::import($importer, $path, 'media');
+            $this->file->setFinishedProcessingAt(now());
+            $this->log($media, $this->file)->save();
+        } catch (\Exception $e) {
+            \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }
-        
-        $this->file->setFinishedProcessingAt(now());
-        
-        $batch->addPracticePullGoogleDriveFile($this->file);
-        $batch->save();
+    }
+
+    private function firstOrCreateMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): Media
+    {
+        $existing = $batch->media()->where('name', $file->getName())->first();
+
+        if ($existing) {
+            return $existing;
+        }
+
+        $cloudDisk  = Storage::disk('google');
+        $readStream = $cloudDisk->getDriver()->readStream($file->getPath());
+        $targetFile = storage_path($file->getName());
+        file_put_contents($targetFile, stream_get_contents($readStream), FILE_APPEND);
+
+        return $batch->addMedia($targetFile)
+            ->toMediaCollection($file->getTypeOfData());
+    }
+
+    private function log(Media $media, PracticePullFileInGoogleDrive $file): Media
+    {
+        $media->setCustomProperty('dispatchedAt', $file->getDispatchedAt());
+        $media->setCustomProperty('finishedProcessingAt', $file->getFinishedProcessingAt());
+        $media->setCustomProperty('importer', $file->getImporter());
+        $media->setCustomProperty('name', $file->getName());
+        $media->setCustomProperty('path', $file->getPath());
+
+        return $media->setCustomProperty('typeOfData', $file->getTypeOfData());
     }
 }

@@ -37,12 +37,12 @@ class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchI
 
     public function batchSize(): int
     {
-        return 400;
+        return 300;
     }
 
     public function chunkSize(): int
     {
-        return 400;
+        return 300;
     }
 
     public function model(array $row)

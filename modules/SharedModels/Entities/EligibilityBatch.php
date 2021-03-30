@@ -12,6 +12,8 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\EligibilityBatch.
@@ -47,8 +49,9 @@ use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
  */
-class EligibilityBatch extends BaseModel
+class EligibilityBatch extends BaseModel implements HasMedia
 {
+    use HasMediaTrait;
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 
@@ -97,13 +100,6 @@ class EligibilityBatch extends BaseModel
         'status',
         'initiator_id',
     ];
-
-    public function addPracticePullGoogleDriveFile(PracticePullFileInGoogleDrive $file)
-    {
-        $stats       = $this->stats ?? [];
-        $stats['processedFiles'][$file->getTypeOfData()][]     = $file->toArray();
-        $this->stats = $stats;
-    }
 
     public function eligibilityJobs()
     {

@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SharedModels\Entities\PracticePull;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 
 /**
  * App\Models\PracticePull\Demographics.
@@ -95,5 +96,10 @@ class Demographics extends BaseModel
             ->where('practice_id', $practiceId)
             ->where('dob', $dob)
             ->orderByDesc('updated_at');
+    }
+    
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
     }
 }

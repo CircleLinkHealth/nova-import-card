@@ -450,7 +450,10 @@ class EligibilityBatchController extends Controller
             \Session::put('message', 'The batch will resume processing. If there are more patients to process the counts will update. Otherwise, nothing will happen.');
         }
 
-        $batch->load('practice');
+        $batch->loadMissing([
+                         'practice',
+                         'media',
+                     ]);
 
         $initiatorUser   = $batch->initiatorUser;
         $validationStats = $batch->getValidationStats();
