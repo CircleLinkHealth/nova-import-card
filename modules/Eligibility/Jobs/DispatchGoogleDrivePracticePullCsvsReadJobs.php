@@ -85,10 +85,10 @@ class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, Should
 
                         return new ImportPracticePullCsvsFromGoogleDrive($batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
                     })->filter();
-            });
+            })->flatten();
 
         if ($jobs->isNotEmpty()) {
-            Bus::chain($jobs->flatten()->all())
+            Bus::chain($jobs->all())
                 ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
                 ->dispatch();
         }
