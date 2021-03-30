@@ -25,6 +25,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create Sentry release - production
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: circlelinkhealth
+          SENTRY_PROJECT: provider
+        with:
+          environment: production
+
+      - name: Create Sentry release - staging
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: circlelinkhealth
+          SENTRY_PROJECT: provider
+        with:
+          environment: staging
+
       - name: Copy .env
         if: ${{ env.CI_SKIP == 'false' }}
         run: php -r "copy('.env.githubactions', '.env');"
