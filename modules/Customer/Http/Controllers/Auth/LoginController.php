@@ -139,7 +139,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $samlIdp = session(SamlLoginEventListener::SESSION_IDP_NAME_KEY, null);
-        if ( ! empty($samlIdp)) {
+        if ( ! empty($samlIdp) && Route::has('saml2_logout')) {
             try {
                 return redirect(route('saml2_logout', ['idpName' => $samlIdp]));
             } catch (Error $e) {
