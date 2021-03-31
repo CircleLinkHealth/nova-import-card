@@ -120,14 +120,13 @@ class ModifyPatientActivity
 
     private function fillPatientIds()
     {
-        $sourceCsId       = $this->getSourceCsId();
-        $targetCsId       = $this->getTargetCsId();
-        $this->patientIds = Activity::whereBetween('performed_at', [$this->month->copy()->startOfMonth(), $this->month->copy()->endOfMonth()])
-            ->when( ! is_null($sourceCsId) && is_null($targetCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
-            ->when( ! is_null($targetCsId) && is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $targetCsId))
-            ->when( ! is_null($targetCsId) && !is_null($sourceCsId), fn ($q) => $q->whereIn('chargeable_service_id',  [$targetCsId, $sourceCsId]))
-            ->pluck('patient_id')
-            ->toArray();
+        if (! empty($this->activityIds)){
+            $this->patientIds = Activity::whereIn('id', $this->activityIds)
+                                        ->pluck('patient_id')
+                                        ->toArray();
+            return;
+        }
+        $this->fillActivityIds();
     }
 
     private function generateNurseInvoices()
