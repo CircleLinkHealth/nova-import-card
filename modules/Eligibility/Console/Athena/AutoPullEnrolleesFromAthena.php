@@ -163,10 +163,10 @@ class AutoPullEnrolleesFromAthena extends Command
                 $offset,
                 $batch->id,
             ),
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['not_started'])],
+            [new ChangeBatchStatus($batch->id, $practice->id, EligibilityBatch::STATUSES['not_started'])],
             (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
                 ->splitToBatches(),
-            [new ChangeBatchStatus($batch->id, EligibilityBatch::STATUSES['complete'])],
+            [new ChangeBatchStatus($batch->id, $practice->id, EligibilityBatch::STATUSES['complete'])],
         );
     }
 }

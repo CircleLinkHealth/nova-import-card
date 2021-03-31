@@ -29,16 +29,18 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
 
     protected int    $batchId;
     protected string $status;
-
+    protected int    $practiceId;
+    
     /**
      * ChangeBatchStatus constructor.
      *
      * @param int $id
      */
-    public function __construct(int $batchId, string $status)
+    public function __construct(int $batchId, int $practiceId, string $status)
     {
         $this->batchId = $batchId;
         $this->status  = $status;
+        $this->practiceId = $practiceId;
     }
 
     public function handle()
@@ -83,7 +85,7 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
 
     private function hasPendingPracticePullDemographics(int $batchId)
     {
-        return Demographics::where('practice_id', $this->getPracticeId())->whereNull('eligibility_job_id')
+        return Demographics::where('practice_id', $this->practiceId)->whereNull('eligibility_job_id')
             ->exists();
     }
 
