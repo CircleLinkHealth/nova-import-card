@@ -529,19 +529,20 @@ class NoteService
 
         $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
 
-        if ($bypassedAllAttestationValidation) {
-            sendPatientBypassedAttestationWarning($patientId);
-        }
+        //todo: will be revisited in Click-up ticket: #gh4bkk
+//        if ($bypassedAllAttestationValidation) {
+//            sendPatientBypassedAttestationWarning($patientId);
+//        }
 
         if ( ! $bypassedAllAttestationValidation && empty($attestedProblems)) {
             \Log::critical("Attestation Validation failed for patient: {$patientId}");
 
-            sendPatientAttestationValidationFailedWarning($patientId);
+//            sendPatientAttestationValidationFailedWarning($patientId);
         }
 
-        if (isset($input['bypassed_bhi_validation'])) {
-            sendPatientBhiUnattestedWarning($patientId);
-        }
+//        if (isset($input['bypassed_bhi_validation'])) {
+//            sendPatientBhiUnattestedWarning($patientId);
+//        }
     }
 
     public function wasForwardedToCareTeam(Note $note)
