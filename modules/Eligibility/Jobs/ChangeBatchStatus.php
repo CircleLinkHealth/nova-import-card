@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -80,6 +81,12 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
             ->exists();
     }
 
+    private function hasPendingPracticePullDemographics(int $batchId)
+    {
+        return Demographics::where('practice_id', $this->getPracticeId())->whereNull('eligibility_job_id')
+            ->exists();
+    }
+
     private function hasPendingTargetPatients(int $batchId)
     {
         return TargetPatient::where('status', '=', TargetPatient::STATUS_TO_PROCESS)
@@ -94,6 +101,10 @@ class ChangeBatchStatus implements ShouldBeEncrypted, ShouldQueue
         }
 
         if ($this->hasPendingEligibilityJobs($batchId)) {
+            return true;
+        }
+
+        if ($this->hasPendingPracticePullDemographics($batchId)) {
             return true;
         }
 

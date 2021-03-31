@@ -128,8 +128,8 @@ class AutoPullEnrolleesFromAthena extends Command
 
     private function orchestrateEligibilityPull($practice)
     {
-        $to   = Carbon::now()->format('y-m-d');
-        $from = Carbon::now()->subMonth()->format('y-m-d');
+        $to   = Carbon::now()->format('Y-m-d');
+        $from = Carbon::now()->subMonth()->format('Y-m-d');
 
         $offset = true;
 
