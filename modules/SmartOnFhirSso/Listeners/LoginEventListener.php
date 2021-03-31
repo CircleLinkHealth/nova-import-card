@@ -4,60 +4,55 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\EpicSso\Listeners;
+namespace CircleLinkHealth\SmartOnFhirSso\Listeners;
 
-use CircleLinkHealth\EpicSso\Events\EpicSsoLoginEvent;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
+use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class EpicSsoLoginEventListener
+class LoginEventListener
 {
     /**
      * @throws AuthenticationException
      */
-    public function handle(EpicSsoLoginEvent $event)
+    public function handle(LoginEvent $event)
     {
         /** @var SamlUser $samlUser */
         $samlUser = SamlUser::with('cpmUser')
-            ->where('idp', '=', 'epic')
-            ->where('idp_user_id', '=', $event->epicUserId)
+            ->where('idp', '=', $event->platform)
+            ->where('idp_user_id', '=', $event->ehrUserId)
             ->first();
 
         if ( ! $samlUser || ! $samlUser->cpmUser) {
-            Log::warning("Could not find ehr user[$event->epicUserId] to cpm user mapping from epic");
+            Log::warning("Could not find ehr user[$event->ehrUserId] to cpm user mapping from epic");
 
             throw new AuthenticationException('Could not find cpm user mapping', [], route('login'));
         }
 
         if ($samlUser->cpmUser->isParticipant()) {
-            Log::warning("Will not authenticate ehr user[$event->epicUserId] | cpm user[$samlUser->cpm_user_id] because they are a patient");
+            Log::warning("Will not authenticate ehr user[$event->ehrUserId] | cpm user[$samlUser->cpm_user_id] because they are a patient");
 
             throw new AuthenticationException('Will not authenticate patient into CPM from epic', [], route('login'));
         }
 
         Auth::login($samlUser->cpmUser);
 
-        $patientRedirectUrl = $this->getPatientRedirectUrl();
+        $patientRedirectUrl = $this->getPatientRedirectUrl($event);
         if (empty($patientRedirectUrl)) {
             Log::warning('Could not get a url to redirect to patient from Epic SSO');
             $patientRedirectUrl = '/';
-
-            return;
         }
 
         session()->put('url.intended', $patientRedirectUrl);
     }
 
-    private function getPatientRedirectUrl(): ?string
+    private function getPatientRedirectUrl(LoginEvent $event): ?string
     {
-        // todo (get from request?)
-        $ehrPatientId = 326;
-
         $ehr = DB::table('ehrs')
-            ->where('name', '=', 'epic')
+            ->where('name', '=', $event->platform)
             ->first();
 
         if ( ! $ehr) {
@@ -68,11 +63,11 @@ class EpicSsoLoginEventListener
 
         $targetPatientId = optional(DB::table('target_patients')
             ->where('ehr_id', '=', $ehr->id)
-            ->where('ehr_patient_id', '=', $ehrPatientId)
+            ->where('ehr_patient_id', '=', $event->ehrPatientId)
             ->first())->user_id;
 
         if ( ! $targetPatientId) {
-            Log::warning("Could not find cpm patient with id[$ehrPatientId] from epic");
+            Log::warning("Could not find cpm patient with id[$event->ehrPatientId] from epic");
 
             return null;
         }

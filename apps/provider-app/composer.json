@@ -28,7 +28,7 @@
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/eligibility-module": "*",
-        "circlelinkhealth/epic-sso-module": "*",
+        "circlelinkhealth/smart-on-fhir-sso-module": "*",
         "circlelinkhealth/nurseinvoices-module": "*",
         "circlelinkhealth/patientapi-module": "*",
         "circlelinkhealth/pdf-service-module": "*",
@@ -141,7 +141,7 @@
         },
         {
             "type": "path",
-            "url": "../../modules/EpicSso",
+            "url": "../../modules/SmartOnFhirSso",
             "options": {
                 "symlink": true
             }

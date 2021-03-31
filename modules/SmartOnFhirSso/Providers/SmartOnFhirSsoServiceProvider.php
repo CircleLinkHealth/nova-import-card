@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\EpicSso\Providers;
+namespace CircleLinkHealth\SmartOnFhirSso\Providers;
 
-use CircleLinkHealth\EpicSso\Events\EpicSsoLoginEvent;
-use CircleLinkHealth\EpicSso\Listeners\EpicSsoLoginEventListener;
+use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
+use CircleLinkHealth\SmartOnFhirSso\Listeners\LoginEventListener;
 use Illuminate\Support\ServiceProvider;
 
-class EpicSsoServiceProvider extends ServiceProvider
+class SmartOnFhirSsoServiceProvider extends ServiceProvider
 {
     public function boot()
     {
@@ -26,19 +26,19 @@ class EpicSsoServiceProvider extends ServiceProvider
     private function registerConfig() {
         $this->publishes(
             [
-                __DIR__.'/../Config/config.php' => config_path('epicsso.php'),
+                __DIR__.'/../Config/config.php' => config_path('smartonfhir.php'),
             ],
             'config'
         );
 
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
-            'epicsso'
+            'smartonfhir'
         );
     }
 
     private function registerListeners()
     {
-        $this->app['events']->listen(EpicSsoLoginEvent::class, EpicSsoLoginEventListener::class);
+        $this->app['events']->listen(LoginEvent::class, LoginEventListener::class);
     }
 }

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\EpicSso\Http\Requests;
+namespace CircleLinkHealth\SmartOnFhirSso\Http\Requests;
 
 use Illuminate\Support\Facades\Log;
 

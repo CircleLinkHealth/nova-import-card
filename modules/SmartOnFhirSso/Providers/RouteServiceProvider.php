@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\EpicSso\Providers;
+namespace CircleLinkHealth\SmartOnFhirSso\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +23,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $namespace = 'CircleLinkHealth\EpicSso\Http\Controllers';
+    protected $namespace = 'CircleLinkHealth\SmartOnFhirSso\Http\Controllers';
 
     /**
      * Called before routes are registered.

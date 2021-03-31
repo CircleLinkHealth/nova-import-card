@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\EpicSso\Http\Requests;
+namespace CircleLinkHealth\SmartOnFhirSso\Http\Requests;
 
 class OAuthResponse
 {
@@ -19,8 +19,12 @@ class OAuthResponse
     public ?string $state;
     public ?string $tokenType;
 
-    public function __construct(array $arr)
+    public function __construct(?array $arr)
     {
+        if (empty($arr)) {
+            return;
+        }
+
         $this->accessToken        = $arr['access_token'] ?? null;
         $this->tokenType          = $arr['token_type'] ?? null;
         $this->expiresInSecs      = $arr['expires_in'] ?? null;

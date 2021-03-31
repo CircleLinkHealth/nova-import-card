@@ -213,8 +213,8 @@ class Kernel extends ConsoleKernel
             ->at('11:00');
 
         $schedule->command(ProcessAllPracticePatientMonthlyServicesCommand::class, [Carbon::now()->startOfMonth()->toDateString()])
-                 ->monthlyOn(date('t'), '22:00')
-                 ->monitorName('ProcessAllPracticePatientMonthlyServices');
+            ->monthlyOn(date('t'), '22:00')
+            ->monitorName('ProcessAllPracticePatientMonthlyServices');
 
         $schedule->command(GenerateServiceSummariesForAllPracticeLocationsCommand::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:10')

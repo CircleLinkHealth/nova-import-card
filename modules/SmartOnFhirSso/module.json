@@ -1,6 +1,6 @@
 {
-    "name": "EpicSso",
-    "alias": "epicsso",
+    "name": "SmartOnFhirSso",
+    "alias": "smartonfhirsso",
     "description": "",
     "keywords": [],
     "active": 1,
