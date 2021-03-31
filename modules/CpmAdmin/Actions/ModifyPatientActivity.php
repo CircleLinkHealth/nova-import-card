@@ -23,7 +23,7 @@ class ModifyPatientActivity
 
     private array $patientIds = [];
 
-    private ?string $sourceChargeableService;
+    private ?string $sourceChargeableService = null;
 
     private function __construct()
     {
@@ -121,8 +121,11 @@ class ModifyPatientActivity
     private function fillPatientIds()
     {
         $sourceCsId       = $this->getSourceCsId();
+        $targetCsId       = $this->getTargetCsId();
         $this->patientIds = Activity::whereBetween('performed_at', [$this->month->copy()->startOfMonth(), $this->month->copy()->endOfMonth()])
-            ->when( ! is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
+            ->when( ! is_null($sourceCsId) && is_null($targetCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
+            ->when( ! is_null($targetCsId) && is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $targetCsId))
+            ->when( ! is_null($targetCsId) && !is_null($sourceCsId), fn ($q) => $q->whereIn('chargeable_service_id',  [$targetCsId, $sourceCsId]))
             ->pluck('patient_id')
             ->toArray();
     }
@@ -156,5 +159,18 @@ class ModifyPatientActivity
             $this->fillPatientIds();
         }
         app(ActivityService::class)->processMonthlyActivityTime($this->patientIds, $this->month);
+    }
+
+    public function setPatientIds(array $patientIds):self
+    {
+        $this->patientIds = $patientIds;
+        return $this;
+    }
+
+    private function getTargetCsId() : ?int
+    {
+        return $this->chargeableService
+            ? ChargeableService::cached()->firstWhere('code', '=', $this->chargeableService)->id
+            : null;
     }
 }
