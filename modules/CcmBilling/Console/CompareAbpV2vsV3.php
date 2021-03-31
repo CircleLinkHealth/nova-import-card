@@ -30,7 +30,6 @@ class CompareAbpV2vsV3 extends Command
         'status',
         'approve',
         'reject',
-        'report_id',
         'actor_id',
         'qa',
         'problems',

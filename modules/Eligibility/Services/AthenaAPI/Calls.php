@@ -496,15 +496,8 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
-
-    /**
-     * Get the next paginated result set.
-     *
-     * @param $url
-     *
-     * @return bool|mixed
-     */
-    public function getNextPage($url)
+    
+    public function getNextPage($url, int $practiceId)
     {
         //@todo: this is a workaround to compensate for a bug in athena
         //it always returns production urls

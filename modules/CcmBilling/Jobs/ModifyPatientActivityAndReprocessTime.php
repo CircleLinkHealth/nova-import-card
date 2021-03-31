@@ -6,8 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use App\Nova\Actions\ModifyPatientActivity;
+
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Actions\ModifyPatientActivity;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Bus\Queueable;
@@ -56,10 +57,9 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
             ->createdInMonth($this->month, 'performed_at')
             ->pluck('id');
 
-        (new ModifyPatientActivity($this->toCsCode, $activityIds->toArray()))->execute();
-
-        if ($this->legacy) {
-            (app(ActivityService::class))->processMonthlyActivityTime($this->patientIds, $this->month);
-        }
+        ModifyPatientActivity::forActivityIds($this->toCsCode, $activityIds->toArray())
+                             ->setMonth($this->month)
+                             ->setPatientIds($this->patientIds)
+                             ->execute();
     }
 }

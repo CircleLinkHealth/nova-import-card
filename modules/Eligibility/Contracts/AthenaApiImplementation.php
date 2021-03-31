@@ -202,15 +202,16 @@ interface AthenaApiImplementation
      * @return array|mixed
      */
     public function getMedications(int $patientId, int $practiceId, int $departmentId);
-
+    
     /**
      * Get the next paginated result set.
      *
      * @param $url
+     * @param int $practiceId
      *
      * @return bool|mixed
      */
-    public function getNextPage($url);
+    public function getNextPage($url, int $practiceId);
 
     /**
      * Gets Information about a single patient's appointments

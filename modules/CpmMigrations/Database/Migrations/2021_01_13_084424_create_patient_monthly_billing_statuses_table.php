@@ -22,6 +22,11 @@ class CreatePatientMonthlyBillingStatusesTable extends Migration
         if ( ! Schema::hasColumn('chargeable_patient_monthly_summaries', 'actor_id')) {
             Schema::table('chargeable_patient_monthly_summaries', function (Blueprint $table) {
                 $table->unsignedInteger('actor_id')->nullable();
+
+                $table->foreign('actor_id', 'cpms_actor_id_foreign')
+                      ->references('id')
+                      ->on('users')
+                      ->onDelete('set null');
             });
         }
     }
@@ -57,7 +62,9 @@ class CreatePatientMonthlyBillingStatusesTable extends Migration
 
         if (Schema::hasColumn('chargeable_patient_monthly_summaries', 'actor_id')) {
             Schema::table('chargeable_patient_monthly_summaries', function (Blueprint $table) {
+                $table->dropForeign('cpms_actor_id_foreign');
                 $table->dropColumn('actor_id');
+
             });
         }
     }

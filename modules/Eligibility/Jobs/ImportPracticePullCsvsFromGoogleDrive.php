@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -46,15 +47,15 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         if ( ! $batch) {
             return;
         }
-        $practiceId = $batch->practice_id;
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
-
+    
         $importerClass = $this->file->getImporter();
-        $importer      = new $importerClass($practiceId);
+        $importer      = new $importerClass($batch->practice_id);
+        $path = $media->getPath();
 
         try {
-            Excel::import($importer, $media->getPath(), 'media');
+            Excel::import($importer, $path, 'media');
             $this->file->setFinishedProcessingAt(now());
             $this->log($media, $this->file)->save();
         } catch (\Exception $e) {

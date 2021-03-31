@@ -64,7 +64,7 @@ class DashboardController extends Controller
     public function pullAthenaEnrollees(Request $request)
     {
         $practice = Practice::find($request->input('practice_id'));
-        $batchId  = $request->input('batch_id');
+        $batchId  = $request->input('batch_id', null);
 
         if ($batchId && ! EligibilityBatch::where('practice_id', $practice->id)->where('id', $batchId)->exists()) {
             return redirect()->back()->with(['pullMsg' => "Batch[$batchId] does not belong to {$practice->display_name}"]);
@@ -73,15 +73,20 @@ class DashboardController extends Controller
         $from = Carbon::parse($request->input('from'));
         $to   = Carbon::parse($request->input('to'));
 
+        $args = [
+            'athenaPracticeId' => $practice->external_id,
+            'from'             => $from->format('Y-m-d'),
+            'to'               => $to->format('Y-m-d'),
+            'offset'           => false,
+        ];
+
+        if ( ! empty($batchId)) {
+            $args['batchId'] = $batchId;
+        }
+
         Artisan::call(
             'athena:autoPullEnrolleesFromAthena',
-            [
-                'athenaPracticeId' => $practice->external_id,
-                'from'             => $from->format('y-m-d'),
-                'to'               => $to->format('y-m-d'),
-                'offset'           => false,
-                'batchId'          => $batchId,
-            ]
+            $args
         );
 
         return redirect()->back()->with(['pullMsg' => 'Batch Created!']);
