@@ -10,6 +10,7 @@ use CircleLinkHealth\CpmAdmin\Actions\ModifyPatientActivity;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
@@ -51,7 +52,7 @@ class ModifyPatientActivityAction extends Action
         $activityIds = $models->pluck('id')->toArray();
 
         try {
-            ModifyPatientActivity::forActivityIds($cs, $activityIds)->execute();
+            ModifyPatientActivity::forActivityIds($cs, $activityIds)->setMonth(Carbon::now()->startOfMonth()->startOfDay())->execute();
         } catch (\Exception $e) {
             $this->markAsFailed($models->first(), $e);
         }

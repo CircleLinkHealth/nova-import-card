@@ -23,7 +23,7 @@ class ModifyPatientActivity
 
     private array $patientIds = [];
 
-    private ?string $sourceChargeableService;
+    private ?string $sourceChargeableService = null;
 
     private function __construct()
     {
@@ -118,13 +118,15 @@ class ModifyPatientActivity
             });
     }
 
-    private function fillPatientIds()
+    private function fillPatientIds() : void
     {
-        $sourceCsId       = $this->getSourceCsId();
-        $this->patientIds = Activity::whereBetween('performed_at', [$this->month->copy()->startOfMonth(), $this->month->copy()->endOfMonth()])
-            ->when( ! is_null($sourceCsId), fn ($q) => $q->where('chargeable_service_id', '=', $sourceCsId))
-            ->pluck('patient_id')
-            ->toArray();
+        if (! empty($this->activityIds)){
+            $this->patientIds = Activity::whereIn('id', $this->activityIds)
+                                        ->pluck('patient_id')
+                                        ->toArray();
+            return;
+        }
+        $this->fillActivityIds();
     }
 
     private function generateNurseInvoices()
@@ -156,5 +158,18 @@ class ModifyPatientActivity
             $this->fillPatientIds();
         }
         app(ActivityService::class)->processMonthlyActivityTime($this->patientIds, $this->month);
+    }
+
+    public function setPatientIds(array $patientIds):self
+    {
+        $this->patientIds = $patientIds;
+        return $this;
+    }
+
+    private function getTargetCsId() : ?int
+    {
+        return $this->chargeableService
+            ? ChargeableService::cached()->firstWhere('code', '=', $this->chargeableService)->id
+            : null;
     }
 }
