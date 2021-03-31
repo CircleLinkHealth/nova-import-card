@@ -118,7 +118,7 @@ class ModifyPatientActivity
             });
     }
 
-    private function fillPatientIds()
+    private function fillPatientIds() : void
     {
         if (! empty($this->activityIds)){
             $this->patientIds = Activity::whereIn('id', $this->activityIds)
