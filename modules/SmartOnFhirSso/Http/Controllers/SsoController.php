@@ -37,6 +37,16 @@ class SsoController extends Controller
         return redirect()->to($authorizationUrl);
     }
 
+    public function showError(Request $request)
+    {
+        return view('smartonfhirsso::error');
+    }
+
+    public function showNotAuth(Request $request)
+    {
+        return view('smartonfhirsso::not-auth');
+    }
+
     private function getAuthorizationUrl(SsoIntegrationSettings $settings, string $iss, string $launchToken, MetadataResponse $metadataResponse): string
     {
         $url         = $metadataResponse->authorizeUrl;

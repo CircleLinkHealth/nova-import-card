@@ -16,6 +16,7 @@ class SmartOnFhirSsoServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerListeners();
+        $this->registerViews();
     }
 
     public function register()
@@ -28,19 +29,34 @@ class SmartOnFhirSsoServiceProvider extends ServiceProvider
     {
         $this->publishes(
             [
-                __DIR__.'/../Config/config.php' => config_path('smartonfhir.php'),
+                __DIR__.'/../Config/config.php' => config_path('smartonfhirsso.php'),
             ],
             'config'
         );
 
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
-            'smartonfhir'
+            'smartonfhirsso'
         );
     }
 
     private function registerListeners()
     {
         $this->app['events']->listen(LoginEvent::class, LoginEventListener::class);
+    }
+
+    public function registerViews()
+    {
+        $viewPath = resource_path('views/modules/smartonfhirsso');
+
+        $sourcePath = __DIR__.'/../Resources/views';
+
+        $this->publishes([
+            $sourcePath => $viewPath,
+        ], 'views');
+
+        $this->loadViewsFrom(array_merge(array_map(function ($path) {
+            return $path.'/modules/smartonfhirsso';
+        }, \Config::get('view.paths')), [$sourcePath]), 'smartonfhirsso');
     }
 }
