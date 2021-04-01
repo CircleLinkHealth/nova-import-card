@@ -220,6 +220,7 @@ return [
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
         \CircleLinkHealth\SmartOnFhirSso\Providers\SmartOnFhirSsoServiceProvider::class,
+        \CircleLinkHealth\SmartOnFhirSso\Providers\SmartOnFhirSsoDeferrableServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,

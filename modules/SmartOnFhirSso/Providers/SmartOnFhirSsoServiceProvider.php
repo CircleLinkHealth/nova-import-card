@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SmartOnFhirSso\Providers;
 
 use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use CircleLinkHealth\SmartOnFhirSso\Listeners\LoginEventListener;
+use CircleLinkHealth\SmartOnFhirSso\Services\SsoService;
 use Illuminate\Support\ServiceProvider;
 
 class SmartOnFhirSsoServiceProvider extends ServiceProvider
@@ -23,7 +24,8 @@ class SmartOnFhirSsoServiceProvider extends ServiceProvider
         $this->app->register(RouteServiceProvider::class);
     }
 
-    private function registerConfig() {
+    private function registerConfig()
+    {
         $this->publishes(
             [
                 __DIR__.'/../Config/config.php' => config_path('smartonfhir.php'),
