@@ -27,7 +27,7 @@ class EpicSsoController extends Controller implements SmartOnFhirSsoController
     {
         $response = $this->service->authenticate($this->getRedirectUrl(), $this->getClientId(), $request->input('code'));
         $decoded  = $this->service->decodeIdToken($response->openIdToken);
-        event(new LoginEvent(self::PLATFORM, $decoded->fhirUser, $response->patientFhirId));
+        event(new LoginEvent(self::PLATFORM, $decoded->sub, $response->patientFhirId));
 
         return redirect()->to(session()->get('url.intended', route('login')));
     }
