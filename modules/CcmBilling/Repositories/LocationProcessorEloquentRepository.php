@@ -125,7 +125,6 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
                 'patientInfo',
                 function ($info) use ($locationIds, $month) {
                     $info->whereIn('preferred_contact_location', $locationIds)
-                        ->enrolled()
                         ->whereHas('location', function ($location) use ($month) {
                             $location->whereHas('chargeableServiceSummaries', function ($summary) use ($month) {
                                 $summary->where('chargeable_month', $month)
