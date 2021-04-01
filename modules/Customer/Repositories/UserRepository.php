@@ -344,29 +344,36 @@ class UserRepository
         }
 
         if ($params->has('careplan_status')) {
-            $approverId = optional(auth()->user())->id;
-            $toUpdate   = [
-                'status' => $cpStatus = $params->get('careplan_status'),
-                'mode'   => $params->get('careplan_mode', CarePlan::WEB),
-            ];
+            $user->loadMissing('carePlan');
+            $cpStatus   = $params->get('careplan_status');
+            $approverId = auth()->id();
 
-            if (CarePlan::QA_APPROVED === $cpStatus) {
-                $toUpdate['qa_approver_id'] = $approverId;
-                $toUpdate['qa_date']        = Carbon::now()->toDateTimeString();
+            $carePlan         = $user->carePlan;
+            $carePlan->status = $cpStatus;
+            $carePlan->mode   = $params->get('careplan_mode', CarePlan::WEB);
+
+            switch ($cpStatus) {
+                case CarePlan::QA_APPROVED:
+                    if (empty($carePlan->qa_approver_id)) {
+                        $carePlan->qa_approver_id = $approverId;
+                        $carePlan->qa_date        = now()->toDateTimeString();
+                    }
+                    break;
+                case CarePlan::RN_APPROVED:
+                    if (empty($carePlan->rn_approver_id)) {
+                        $carePlan->rn_approver_id = $approverId;
+                        $carePlan->rn_date        = now()->toDateTimeString();
+                    }
+                    break;
+                case CarePlan::PROVIDER_APPROVED:
+                    if (empty($carePlan->provider_approver_id)) {
+                        $carePlan->provider_approver_id = $approverId;
+                        $carePlan->provider_date        = now()->toDateTimeString();
+                    }
+                    break;
             }
 
-            if (CarePlan::RN_APPROVED === $cpStatus) {
-                $toUpdate['rn_approver_id'] = $approverId;
-                $toUpdate['rn_date']        = Carbon::now()->toDateTimeString();
-            }
-
-            if (CarePlan::PROVIDER_APPROVED === $cpStatus) {
-                $toUpdate['provider_approver_id'] = $approverId;
-                $toUpdate['provider_date']        = Carbon::now()->toDateTimeString();
-            }
-            CarePlan::updateOrCreate([
-                'user_id' => $user->id,
-            ], $toUpdate);
+            $carePlan->save();
 
             $params->remove('careplan_status');
             $params->remove('careplan_mode');

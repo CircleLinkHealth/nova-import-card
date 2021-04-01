@@ -529,6 +529,7 @@ class NoteService
 
         $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
 
+        //todo: soon will be disabled, and will be revisited in Click-up ticket: #gh4bkk
         if ($bypassedAllAttestationValidation) {
             sendPatientBypassedAttestationWarning($patientId);
         }

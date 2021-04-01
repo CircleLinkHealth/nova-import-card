@@ -7,10 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Database\Eloquent\Builder;
@@ -92,5 +94,6 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
             $mismatches = implode(',', $mismatches);
             sendSlackMessage('#billing_alerts', "Warning! (From Billing Toggle Compare Job:) Patient ($patient->id), has the following code mismatches between billing revamp toggle states: {$mismatches}");
         });
+        BillingCache::setBillingRevampIsEnabled(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));
     }
 }
