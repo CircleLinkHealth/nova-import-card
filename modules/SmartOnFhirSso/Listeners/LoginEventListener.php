@@ -27,7 +27,7 @@ class LoginEventListener
             ->first();
 
         if ( ! $samlUser || ! $samlUser->cpmUser) {
-            Log::warning("Could not find ehr user[$event->ehrUserId] to cpm user mapping from epic");
+            Log::warning("Could not find ehr user[$event->ehrUserId] to cpm user mapping from $event->platform");
 
             throw new AuthenticationException('Could not find cpm user mapping', [], route('login'));
         }
@@ -35,7 +35,7 @@ class LoginEventListener
         if ($samlUser->cpmUser->isParticipant()) {
             Log::warning("Will not authenticate ehr user[$event->ehrUserId] | cpm user[$samlUser->cpm_user_id] because they are a patient");
 
-            throw new AuthenticationException('Will not authenticate patient into CPM from epic', [], route('login'));
+            throw new AuthenticationException("Will not authenticate patient into CPM from $event->platform", [], route('login'));
         }
 
         Auth::login($samlUser->cpmUser);

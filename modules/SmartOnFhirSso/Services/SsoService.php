@@ -10,6 +10,7 @@ use CircleLinkHealth\SmartOnFhirSso\Http\Controllers\EpicSsoController;
 use CircleLinkHealth\SmartOnFhirSso\Http\Controllers\SmartHealthItSsoController;
 use CircleLinkHealth\SmartOnFhirSso\Http\Requests\MetadataResponse;
 use CircleLinkHealth\SmartOnFhirSso\Http\Requests\OAuthResponse;
+use CircleLinkHealth\SmartOnFhirSso\ValueObjects\IdTokenDecoded;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -31,9 +32,15 @@ class SsoService
         return new OAuthResponse($response->json());
     }
 
-    private function getMetadataCacheKey(string $clientId): string
+    public function decodeIdToken(string $idToken): IdTokenDecoded
     {
-        return $clientId.'::metadata';
+        $arr      = collect(explode('.', $idToken));
+        $result   = [];
+        $result[] = json_decode(base64_decode($arr[0]), true);
+        $result[] = json_decode(base64_decode($arr[1]), true);
+        $result[] = $arr[2];
+
+        return new IdTokenDecoded($result);
     }
 
     public function getMetadataEndpoints(string $clientId, string $iss): MetadataResponse
@@ -48,11 +55,6 @@ class SsoService
         });
     }
 
-    private function getMetadataEndpointsFromCache(string $clientId): MetadataResponse
-    {
-        return Cache::get($this->getMetadataCacheKey($clientId));
-    }
-
     public function getPlatform(string $iss): ?string
     {
         if (Str::contains($iss, 'epic')) {
@@ -63,5 +65,15 @@ class SsoService
         }
 
         return null;
+    }
+
+    private function getMetadataCacheKey(string $clientId): string
+    {
+        return $clientId.'::metadata';
+    }
+
+    private function getMetadataEndpointsFromCache(string $clientId): MetadataResponse
+    {
+        return Cache::get($this->getMetadataCacheKey($clientId));
     }
 }
