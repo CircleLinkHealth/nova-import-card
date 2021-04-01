@@ -32,7 +32,7 @@ class AttestPatientProblems
 
     protected ?Carbon $chargeableMonth;
 
-    protected ?int $patientUserId;
+    protected ?int $patientUserId = null;
 
     //todo: deprecate
     protected ?PatientMonthlySummary $pms;
@@ -44,7 +44,7 @@ class AttestPatientProblems
     public function createRecords(): void
     {
         if (empty($this->ccdProblemIds)) {
-            sendSlackMessage('#billing_alerts', "Warning! (AttestPatientProblems:) No ccd problems for Patient:{$this->patientUserId}");
+            sendSlackMessage('#billing_alerts', "Warning! (AttestPatientProblems:) No ccd problems for Patient:{$this->getPatientUserId()}");
 
             return;
         }

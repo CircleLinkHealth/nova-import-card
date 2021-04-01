@@ -36,7 +36,7 @@ class GenerateNurseInvoice extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $models->each(function (NurseInvoice $model) {
-            \Artisan::queue('nurseinvoices:create', [
+            \Artisan::call('nurseinvoices:create', [
                 'month'   => $model->month_year->toDateString(),
                 'userIds' => $model->nurse->user_id,
             ]);

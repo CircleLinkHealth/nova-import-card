@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 
 class ClashingChargeableServices
@@ -102,6 +103,42 @@ class ClashingChargeableServices
                 }
                 $ccmTime = $user->chargeableMonthlyTime
                     ->whereIn('chargeable_service_id', $summary->chargeable_service_id)
+                    ->sum('total_time');
+                if ($ccmTime > 0){
+                    return $ccmTime;
+                }
+            }
+        }
+
+
+        foreach (self::CCM_SERVICES_ORDER_OF_PRIORITY as $serviceCode) {
+            $ccmTime = $user->chargeableMonthlyTime
+                ->where('chargeable_service_id', '=', ChargeableService::getChargeableServiceIdUsingCode($serviceCode))
+                ->sum('total_time');
+
+            if ($ccmTime > 0) {
+                return $ccmTime;
+            }
+        }
+
+        return 0;
+    }
+
+    public static function getCcmTimeForLegacyReportsInPriorityForV2(PatientMonthlySummary $summary): int
+    {
+        $summary->load(['chargeableServices',
+                        'patient.chargeableMonthlyTime' => fn($cmt) => $cmt->createdInMonthFromDateTimeField($summary->month_year, 'performed_at')]);
+        $fulfilledCs = $summary->chargeableServices;
+        $user = $summary->patient;
+
+        if ($fulfilledCs->isNotEmpty()) {
+            foreach (self::CCM_SERVICES_ORDER_OF_PRIORITY as $serviceCode){
+                $service =  $fulfilledCs->firstWhere('code', $serviceCode);
+                if (is_null($service)){
+                    continue;
+                }
+                $ccmTime = $user->chargeableMonthlyTime
+                    ->whereIn('chargeable_service_id', $service->id)
                     ->sum('total_time');
                 if ($ccmTime > 0){
                     return $ccmTime;

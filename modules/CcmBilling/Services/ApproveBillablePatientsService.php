@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\ChargeableServiceForAbp;
 use CircleLinkHealth\CcmBilling\Http\Resources\SetPatientChargeableServicesResponse;
@@ -215,8 +216,6 @@ class ApproveBillablePatientsService
             return SetPatientChargeableServicesResponse::make([]);
         }
 
-        $summary->actor_id = auth()->id();
-        $summary->save();
 
         $toSync = [];
 
@@ -227,6 +226,11 @@ class ApproveBillablePatientsService
             });
 
         $summary->chargeableServices()->sync($toSync);
+
+        $summary->actor_id = auth()->id();
+        $summary->ccm_time_for_billable_ccm_cs = ClashingChargeableServices::getCcmTimeForLegacyReportsInPriorityForV2($summary);
+        $summary->save();
+
         $summary->load('chargeableServices');
 
         $result = [

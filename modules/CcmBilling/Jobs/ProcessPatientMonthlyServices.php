@@ -34,16 +34,6 @@ class ProcessPatientMonthlyServices implements ShouldQueue, ShouldBeEncrypted
         $this->patient = $patient;
     }
 
-    public function getAvailableServiceProcessors(): AvailableServiceProcessors
-    {
-        return $this->patient->getAvailableServiceProcessors();
-    }
-
-    public function getChargeableMonth(): Carbon
-    {
-        return $this->patient->getChargeableMonth();
-    }
-
     /**
      * Execute the job.
      *
