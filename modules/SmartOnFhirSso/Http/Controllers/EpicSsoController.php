@@ -48,6 +48,6 @@ class EpicSsoController extends Controller implements SmartOnFhirSsoController
 
     public function getRedirectUrl(): string
     {
-        return urlencode(route('smart.on.fhir.sso.epic.code'));
+        return route('smart.on.fhir.sso.epic.code');
     }
 }

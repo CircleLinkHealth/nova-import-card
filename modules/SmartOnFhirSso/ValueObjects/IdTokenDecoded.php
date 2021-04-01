@@ -14,7 +14,7 @@ class IdTokenDecoded
     public string $fhirUser;
     public int $iat;
     public string $iss;
-    public string $profile;
+    public ?string $profile;
     public string $sig;
     public string $sub;
     public string $typ;
@@ -23,7 +23,7 @@ class IdTokenDecoded
     {
         $this->typ      = $object[0]['typ'];
         $this->alg      = $object[0]['alg'];
-        $this->profile  = $object[1]['profile'];
+        $this->profile  = $object[1]['profile'] ?? null;
         $this->fhirUser = $object[1]['fhirUser'];
         $this->iss      = $object[1]['iss'];
         $this->aud      = $object[1]['aud'];
