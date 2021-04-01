@@ -19,6 +19,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;
 use CircleLinkHealth\SharedModels\Rules\HasEnoughProblems;
+use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
@@ -27,6 +28,7 @@ use Tests\Helpers\CarePlanHelpers;
 class OnCarePlanProviderApprovalTest extends CustomerTestCase
 {
     use CarePlanHelpers;
+    use MakesHttpRequests;
     use UserHelpers;
 
     /**
@@ -40,7 +42,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
     protected $location;
 
     /**
-     * @var
+     * @var CircleLinkHealth\Customer\Entities\User
      */
     protected $patient;
 
@@ -66,6 +68,79 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $this->patient()->setPreferredContactLocation($this->location()->id);
 
         $this->carePlan = $this->patient()->carePlan;
+    }
+
+    public function test_approval_from_does_not_overwrite_existing_approver()
+    {
+        Phaxio::fake();
+
+        $this->carePlan->status = CarePlan::RN_APPROVED;
+        $this->carePlan->save();
+
+        $response = $this->actingAs($this->provider())->call(
+            'POST',
+            route('patient.careplan.approve', ['patientId' => $this->patient()->id])
+        );
+
+        $response->assertStatus(302);
+        $response->assertRedirect(
+            route(
+                'patient.careplan.print',
+                [
+                    'patientId'    => $this->patient()->id,
+                    'clearSession' => false,
+                ]
+            )
+        );
+
+        $this->carePlan = $this->carePlan->fresh();
+
+        $this->assertEquals($this->carePlan->status, CarePlan::PROVIDER_APPROVED);
+        $this->assertEquals($this->carePlan->provider_approver_id, $this->provider()->id);
+
+        $this->patch(route('patient.demographics.update', ['patientId' => $this->carePlan->user_id]), [
+            'user_id'                 => $this->carePlan->user_id,
+            'careplan_status'         => CarePlan::DRAFT,
+            'daily_reminder_optin'    => 'Y',
+            'daily_reminder_time'     => '19:00',
+            'daily_reminder_areas'    => 'TBD',
+            'hospital_reminder_optin' => 'Y',
+            'hospital_reminder_time'  => '19:00',
+            'hospital_reminder_areas' => 'TBD',
+            'gender'                  => $this->patient->getGender() ?? 'F',
+            'mrn_number'              => $this->patient->getMRN() ?? '777777',
+            'birth_date'              => $this->patient->getBirthDate(),
+            'consent_date'            => $this->patient->getConsentDate(),
+            'ccm_status'              => $this->patient->getCcmStatus(),
+            'program_id'              => $this->patient->program_id,
+        ]);
+
+        $this->carePlan = $this->carePlan->fresh();
+
+        $this->assertEquals($this->carePlan->status, CarePlan::DRAFT);
+        $this->assertEquals($this->carePlan->provider_approver_id, $this->provider()->id);
+
+        $this->patch(route('patient.demographics.update', ['patientId' => $this->carePlan->user_id]), [
+            'user_id'                 => $this->carePlan->user_id,
+            'careplan_status'         => CarePlan::PROVIDER_APPROVED,
+            'daily_reminder_optin'    => 'Y',
+            'daily_reminder_time'     => '19:00',
+            'daily_reminder_areas'    => 'TBD',
+            'hospital_reminder_optin' => 'Y',
+            'hospital_reminder_time'  => '19:00',
+            'hospital_reminder_areas' => 'TBD',
+            'gender'                  => $this->patient->getGender() ?? 'F',
+            'mrn_number'              => $this->patient->getMRN() ?? '777777',
+            'birth_date'              => $this->patient->getBirthDate(),
+            'consent_date'            => $this->patient->getConsentDate(),
+            'ccm_status'              => $this->patient->getCcmStatus(),
+            'program_id'              => $this->patient->program_id,
+        ]);
+
+        $this->carePlan = $this->carePlan->fresh();
+
+        $this->assertEquals($this->carePlan->status, CarePlan::PROVIDER_APPROVED);
+        $this->assertEquals($this->carePlan->provider_approver_id, $this->provider()->id);
     }
 
     public function test_careplan_validation()
