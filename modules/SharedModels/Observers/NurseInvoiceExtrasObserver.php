@@ -11,15 +11,11 @@ use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 
 class NurseInvoiceExtrasObserver
 {
-    public function saving(NurseInvoiceExtra $nurseInvoiceExtra)
+    public function saved(NurseInvoiceExtra $nurseInvoiceExtra)
     {
-        CreateNurseInvoices::dispatch(
-            $nurseInvoiceExtra->date->copy()->startOfMonth(),
-            $nurseInvoiceExtra->date->copy()->endOfMonth(),
-            [$nurseInvoiceExtra->user_id],
-            false,
-            null,
-            true
-        );
+        \Artisan::call('nurseinvoices:create', [
+            'month'   => $nurseInvoiceExtra->date->copy()->startOfMonth()->toDateString(),
+            'userIds' => $nurseInvoiceExtra->user_id,
+        ]);
     }
 }
