@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SmartOnFhirSso\Http\Controllers;
 
 use CircleLinkHealth\SmartOnFhirSso\Http\Requests\MetadataResponse;
 use CircleLinkHealth\SmartOnFhirSso\Services\SsoService;
+use CircleLinkHealth\SmartOnFhirSso\ValueObjects\SsoIntegrationSettings;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -28,24 +29,22 @@ class SsoController extends Controller
             throw new \Exception("sso not implemented: $iss");
         }
 
-        $launchToken = $request->input('launch');
-        $metadata    = $this->service->getMetadataEndpoints($platform, $iss);
-        $redirectUrl = $this->getAuthorizationUrl($platform, $iss, $launchToken, $metadata);
+        $launchToken      = $request->input('launch');
+        $ssoSettings      = $this->getSettings($platform);
+        $metadata         = $this->service->getMetadataEndpoints($ssoSettings->clientId, $iss);
+        $authorizationUrl = $this->getAuthorizationUrl($ssoSettings, $iss, $launchToken, $metadata);
 
-        return redirect()->to($redirectUrl);
+        return redirect()->to($authorizationUrl);
     }
 
-    private function getAuthorizationUrl(string $platform, string $iss, string $launchToken, MetadataResponse $metadataResponse): string
+    private function getAuthorizationUrl(SsoIntegrationSettings $settings, string $iss, string $launchToken, MetadataResponse $metadataResponse): string
     {
-        $clientId    = $this->service->getClientId($platform);
-        $redirectUrl = $this->service->getRedirectUrl($platform);
-
         $url         = $metadataResponse->authorizeUrl;
         $queryParams = [
             'aud'           => $iss,
             'response_type' => 'code',
-            'client_id'     => $clientId,
-            'redirect_uri'  => $redirectUrl,
+            'client_id'     => $settings->clientId,
+            'redirect_uri'  => $settings->redirectUrl,
             'scope'         => 'launch openid fhirUser',
             'launch'        => $launchToken,
             'state'         => 'abcde12345',
@@ -55,5 +54,24 @@ class SsoController extends Controller
         }
 
         return sprintf('%s?%s', $url, implode('&', $qs));
+    }
+
+    private function getSettings(string $platform): ?SsoIntegrationSettings
+    {
+        /** @var SmartOnFhirSsoController $controller */
+        $controller = null;
+        switch ($platform) {
+            case EpicSsoController::PLATFORM:
+                $controller = app(EpicSsoController::class);
+                break;
+            case SmartHealthItSsoController::PLATFORM:
+                $controller = app(SmartHealthItSsoController::class);
+                break;
+        }
+        if ( ! $controller) {
+            return null;
+        }
+
+        return new SsoIntegrationSettings($controller->getClientId(), $controller->getRedirectUrl());
     }
 }

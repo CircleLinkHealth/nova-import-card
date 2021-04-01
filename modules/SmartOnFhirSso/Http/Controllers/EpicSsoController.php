@@ -8,10 +8,11 @@ namespace CircleLinkHealth\SmartOnFhirSso\Http\Controllers;
 
 use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use CircleLinkHealth\SmartOnFhirSso\Services\SsoService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class EpicSsoController extends Controller
+class EpicSsoController extends Controller implements SmartOnFhirSsoController
 {
     const PLATFORM = 'epic';
 
@@ -22,11 +23,30 @@ class EpicSsoController extends Controller
         $this->service = app(SsoService::class);
     }
 
-    public function getAuthToken(Request $request)
+    public function getAuthToken(Request $request): RedirectResponse
     {
-        $response = $this->service->authenticate(self::PLATFORM, $request->input('code'));
+        $response = $this->service->authenticate($this->getRedirectUrl(), $this->getClientId(), $request->input('code'));
         event(new LoginEvent(self::PLATFORM, $response->encounter, $response->patientFhirId));
 
-        return session()->get('url.intended', route('login'));
+        return redirect()->to(session()->get('url.intended', route('login')));
+    }
+
+    public function getClientId(): string
+    {
+        if (isProductionEnv()) {
+            return config('smartonfhir.epic_app_client_id');
+        }
+
+        return config('smartonfhir.epic_app_staging_client_id');
+    }
+
+    public function getPlatform(): string
+    {
+        return self::PLATFORM;
+    }
+
+    public function getRedirectUrl(): string
+    {
+        return urlencode(route('smart.on.fhir.sso.epic.code'));
     }
 }

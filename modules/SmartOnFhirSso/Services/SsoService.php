@@ -16,11 +16,9 @@ use Illuminate\Support\Str;
 
 class SsoService
 {
-    public function authenticate(string $platform, string $code): OAuthResponse
+    public function authenticate(string $redirectUrl, string $clientId, string $code): OAuthResponse
     {
-        $metadataResponse = $this->getMetadataEndpointsFromCache($platform);
-        $clientId         = $this->getClientId($platform);
-        $redirectUrl      = $this->getRedirectUrl($platform);
+        $metadataResponse = $this->getMetadataEndpointsFromCache($clientId);
 
         $response = Http::asForm()
             ->post($metadataResponse->tokenUrl, [
@@ -33,49 +31,26 @@ class SsoService
         return new OAuthResponse($response->json());
     }
 
-    public function getClientId(string $platform)
+    private function getMetadataCacheKey(string $clientId): string
     {
-        if (isProductionEnv()) {
-            switch ($platform) {
-                case 'epic':
-                    return config('smartonfhir.epic_app_client_id');
-                case 'smarthealthit':
-                    return 'anystringisgood';
-                default:
-                    return null;
-            }
-        }
-
-        switch ($platform) {
-            case 'epic':
-                return config('smartonfhir.epic_app_staging_client_id');
-            case 'smarthealthit':
-                return 'anystringisgood';
-            default:
-                return null;
-        }
+        return $clientId.'::metadata';
     }
 
-    private function getMetadataCacheKey(string $platform): string
+    public function getMetadataEndpoints(string $clientId, string $iss): MetadataResponse
     {
-        return $this->getClientId($platform).'::metadata';
-    }
-
-    public function getMetadataEndpoints(string $platform, string $iss): MetadataResponse
-    {
-        return Cache::remember($this->getMetadataCacheKey($platform), 30, function () use ($platform, $iss) {
+        return Cache::remember($this->getMetadataCacheKey($clientId), 30, function () use ($clientId, $iss) {
             $response = Http::withHeaders([
                 'Accept'         => 'application/fhir+json',
-                'Epic-Client-ID' => $this->getClientId($platform),
+                'Epic-Client-ID' => $clientId,
             ])->get($iss.'/metadata');
 
             return new MetadataResponse($response->json());
         });
     }
 
-    private function getMetadataEndpointsFromCache(string $platform): MetadataResponse
+    private function getMetadataEndpointsFromCache(string $clientId): MetadataResponse
     {
-        return Cache::get($this->getMetadataCacheKey($platform));
+        return Cache::get($this->getMetadataCacheKey($clientId));
     }
 
     public function getPlatform(string $iss): ?string
@@ -88,17 +63,5 @@ class SsoService
         }
 
         return null;
-    }
-
-    public function getRedirectUrl(string $platform): ?string
-    {
-        switch ($platform) {
-            case EpicSsoController::PLATFORM:
-                return urlencode(route('smart.on.fhir.sso.epic.code'));
-            case SmartHealthItSsoController::PLATFORM:
-                return route('smart.on.fhir.sso.smarthealthit.code');
-            default:
-                return null;
-        }
     }
 }
