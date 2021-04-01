@@ -49,7 +49,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob
     public function getBuilder(): Builder
     {
         return $this->repo()
-            ->processableLocationPatientsForMonth($this->locationIds, $this->month)
+            ->patientsQuery($this->locationIds, $this->month)
             ->offset($this->getOffset())
             ->limit($this->getLimit());
     }
