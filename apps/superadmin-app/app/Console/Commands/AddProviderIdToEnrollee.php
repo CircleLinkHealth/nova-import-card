@@ -19,13 +19,13 @@ class AddProviderIdToEnrollee extends Command
      *
      * @var string
      */
-    protected $description = 'Fill enrollee provider ID';
+    protected $description = 'Fill enrollee provider ID. EnrolleeIds can be left empty.';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'fix:fill_enrollee_provider_id {--practice=} {--status=}';
+    protected $signature = 'fix:fill_enrollee_provider_id {--practice=} {--status=} {enrolleeIds?*}';
 
     /**
      * Execute the console command.
@@ -40,6 +40,9 @@ class AddProviderIdToEnrollee extends Command
             })
             ->when( ! empty($this->option('status')), function ($q) {
                 $q->where('status', $this->option('status'));
+            })
+            ->when( ! empty($this->argument('enrolleeIds')), function ($q) {
+                $q->whereIn('id', $this->argument('enrolleeIds'));
             })
             ->eachById(function (Enrollee $e) {
                 $this->fromEnrolleeReferringProvider($e);
