@@ -116,7 +116,7 @@ class ImportEnrollees extends Action
             ->first();
 
         if ($fileFromMedia){
-            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id),"$fileName");
+            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileName ,'media');
         }else{
             Excel::import(new $class($fields->practice_id, $file->getClientOriginalName(), $fields->ca_id), $file);
         }
