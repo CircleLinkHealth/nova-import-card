@@ -3,4 +3,4 @@
 set -e
 set -x
 
-(cd "$PWD/apps/provider-app" && php artisan migrate --force && php artisan migrate:views)
+(cd "$PWD/apps/provider-app" && php artisan key:generate && php artisan migrate:fresh --force && php artisan migrate:views)
