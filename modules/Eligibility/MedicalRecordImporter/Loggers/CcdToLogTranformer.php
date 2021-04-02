@@ -307,6 +307,8 @@ class CcdToLogTranformer
         if (is_array($provider)) {
             $provider = (object) $provider;
         }
+        
+        $providerName = (object) optional($provider)->name ?? new \stdClass();
 
         $phones = $this->getAllPhoneNumbers($provider->phones);
 
@@ -317,11 +319,11 @@ class CcdToLogTranformer
             'npi' => isset($provider->npi)
                 ? $provider->npi
                 : null,
-            'first_name' => isset($provider->name->given) && array_key_exists(0, $provider->name->given)
-                ? $provider->name->given[0]
+            'first_name' => isset($providerName->given) && array_key_exists(0, $providerName->given)
+                ? $providerName->given[0]
                 : null,
-            'last_name' => isset($provider->name->family)
-                ? $provider->name->family
+            'last_name' => isset($providerName->family)
+                ? $providerName->family
                 : null,
             'organization' => isset($provider->organization)
                 ? $provider->organization

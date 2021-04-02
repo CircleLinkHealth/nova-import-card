@@ -10,7 +10,8 @@ class FindBillingProvider
 {
     public function from($args)
     {
-        if (is_array($args)) {
+        if (! is_array($args)) {
+            return null;
         }
 
         if (isset($args['referring_provider_name'])) {
