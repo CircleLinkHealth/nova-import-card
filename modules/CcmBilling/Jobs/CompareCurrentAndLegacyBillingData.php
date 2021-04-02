@@ -15,24 +15,33 @@ class CompareCurrentAndLegacyBillingData extends Job implements ShouldBeEncrypte
 {
     protected Carbon $month;
 
+    protected array $practiceIds = [];
     /**
      * Create a new job instance.
      */
-    public function __construct(Carbon $month = null)
+    public function __construct(Carbon $month = null, array $practiceIds = [])
     {
         $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
+        $this->practiceIds = $practiceIds;
     }
 
     public static function fromParameters(...$parameters)
     {
         $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
 
-        return new self($date);
+        $practiceDelimitedIds = !isset($parameters[1]) ? [] : explode(',', $parameters[1]);
+
+        return new self($date, $practiceDelimitedIds);
     }
 
     public function getMonth(): Carbon
     {
         return $this->month;
+    }
+
+    public function getPracticeIds():array
+    {
+        return $this->practiceIds;
     }
 
     /**
@@ -42,8 +51,12 @@ class CompareCurrentAndLegacyBillingData extends Job implements ShouldBeEncrypte
      */
     public function handle()
     {
-        Practice::activeBillable()
-            ->get()
-            ->each(fn (Practice $p) => CompareCurrentAndLegacyBillingDataForPractice::dispatch($p->id, $this->getMonth()));
+        if(!empty($this->getPracticeIds())){
+            $query = Practice::whereIn('id', $this->getPracticeIds());
+        }else {
+            $query = Practice::activeBillable();
+        }
+
+        $query->each(fn (Practice $p) => CompareCurrentAndLegacyBillingDataForPractice::dispatch($p->id, $this->getMonth()));
     }
 }

@@ -17,7 +17,7 @@ class ApprovableBillablePatient extends JsonResource
 {
     public function allCcdProblems(User $patient)
     {
-        return $patient->ccdProblems->map(function ($prob) {
+        return $patient->ccdProblems->sortByDesc('is_monitored')->map(function ($prob) {
             return [
                 'id'            => $prob->id,
                 'name'          => $prob->name,
