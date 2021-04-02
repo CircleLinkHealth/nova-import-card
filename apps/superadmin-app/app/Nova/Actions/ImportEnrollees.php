@@ -97,6 +97,7 @@ class ImportEnrollees extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
+        /** @var UploadedFile $file */
         $file = $fields->file;
 
         $class = $this->getImporter($actionType = $fields->action_type);
@@ -106,9 +107,10 @@ class ImportEnrollees extends Action
         }
 
         $fileName = "mark_for_self_enrollment_list_for_practice:$fields->practice_id.{$file->getClientOriginalName()}";
-        $this->uploadFileToMedia($file,  $fileName);
 
-        /** @var Media $x */
+        $this->uploadFileToMedia($file->getRealPath(),  $fileName);
+
+        /** @var Media $fileFromMedia */
         $fileFromMedia = SaasAccount::whereSlug('circlelink-health')
             ->first()
             ->getMedia($fileName)
@@ -116,7 +118,7 @@ class ImportEnrollees extends Action
             ->first();
 
         if ($fileFromMedia){
-            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileName ,'media');
+            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileFromMedia->getPath(),'media', \Maatwebsite\Excel\Excel::XLSX);
         }else{
             Excel::import(new $class($fields->practice_id, $file->getClientOriginalName(), $fields->ca_id), $file);
         }
@@ -124,21 +126,11 @@ class ImportEnrollees extends Action
         return Action::message('It worked!');
     }
 
-    private function uploadFileToMedia(UploadedFile $file,  string $fileName)
+    private function uploadFileToMedia(string $filePath,  string $fileName)
     {
-        $path  = storage_path($fileName);
-        $saved = file_put_contents($path, $file);
-
-        if (!$saved){
-            if (isProductionEnv()) {
-                Log::error("Failed to save $fileName to $path");
-                return;
-            }
-        }
-
         SaasAccount::whereSlug('circlelink-health')
             ->first()
-            ->addMedia($path)
+            ->addMedia($filePath)
             ->toMediaCollection($fileName);
     }
 
