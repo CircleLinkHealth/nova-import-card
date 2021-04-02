@@ -15,7 +15,7 @@ The monorepo is created by mirroring all CPM repositories into one, while mainta
 4. Laravel Valet
 
 ### Install Laravel Valet
-1. Add the `~/.composer/vendor/bin` directory to your system path if is doesn't already exist;
+1. Add the `~/.composer/vendor/bin` directory to your system path if it doesn't already exist;
    - `export PATH="$HOME/.composer/vendor/bin:$PATH"`
 2. Run `composer global require laravel/valet`
 3. Run `valet install`
