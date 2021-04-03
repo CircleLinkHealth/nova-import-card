@@ -7,8 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -51,8 +53,15 @@ class ApprovableBillablePatient extends JsonResource
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
         $problems = $this->allCcdProblems($this->patient);
-        $ccmAttestedProblemIds = $this->ccmAttestedProblems()->unique()->pluck('id')->values()->toArray();
-        $bhiAttestedProblemIds = $this->bhiAttestedProblems()->unique()->pluck('id')->values()->toArray();
+        $attestedConditions = AttestedProblem::with(['ccdProblem.cpmProblem'])
+            ->where('patient_user_id', $this->patient->id)
+            ->where(function($sq){
+                $sq->where('chargeable_month', $this->month_year)
+                    ->orWhere('patient_monthly_summary_id', $this->id);
+            })
+        ->get();
+        $ccmAttestedProblemIds = $this->getCcmAttestedProblemIds($attestedConditions);
+        $bhiAttestedProblemIds = $this->getBhiAttestedProblemIds($attestedConditions);
         $ccmAttestedProblems = $problems->whereIn('id', $ccmAttestedProblemIds);
         $bhiAttestedProblems = $problems->whereIn('id', $bhiAttestedProblemIds);
         $problems = $ccmAttestedProblems->merge($bhiAttestedProblems)->merge($problems)->unique('code')->filter()->values();
@@ -85,6 +94,44 @@ class ApprovableBillablePatient extends JsonResource
             'attested_bhi_problems'  => $bhiAttestedProblemIds,
         ];
     }
+
+    private function getCcmAttestedProblemIds(Collection $attestations) : array
+    {
+        $filtered = ! $this->hasServiceCode(ChargeableServiceModel::BHI)
+        ? $attestations
+        : $attestations->filter(function (AttestedProblem $ap) {
+            $cpmProblem = $ap->ccdProblem->cpmProblem;
+            if (is_null($cpmProblem)) {
+                return true;
+            }
+
+            return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+        });
+
+        return $filtered->unique('ccd_problem_id')
+                        ->pluck('ccd_problem_id')
+                        ->values()
+                        ->toArray();
+    }
+
+    private function getBhiAttestedProblemIds(Collection $attestations) : array
+    {
+        if ( ! $this->hasServiceCode(ChargeableServiceModel::BHI)) {
+            return [];
+        }
+
+        return $attestations->filter(function(AttestedProblem $ap){
+            $cpmProblem = $ap->ccdProblem->cpmProblem;
+            if (is_null($cpmProblem)){
+                return false;
+            }
+            return $cpmProblem->is_behavioral;
+        })->unique('ccd_problem_id')
+          ->pluck('ccd_problem_id')
+          ->values()
+          ->toArray();
+    }
+
 
     private function getChargeableServices(): AnonymousResourceCollection
     {
