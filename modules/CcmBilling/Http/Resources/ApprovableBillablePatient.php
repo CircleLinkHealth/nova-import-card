@@ -50,7 +50,12 @@ class ApprovableBillablePatient extends JsonResource
         if (null == $status) {
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
-        $problems = $this->allCcdProblems($this->patient)->unique('code')->filter()->values();
+        $problems = $this->allCcdProblems($this->patient);
+        $ccmAttestedProblemIds = $this->ccmAttestedProblems()->unique()->pluck('id')->values()->toArray();
+        $bhiAttestedProblemIds = $this->bhiAttestedProblems()->unique()->pluck('id')->values()->toArray();
+        $ccmAttestedProblems = $problems->whereIn('id', $ccmAttestedProblemIds);
+        $bhiAttestedProblems = $problems->whereIn('id', $bhiAttestedProblemIds);
+        $problems = $ccmAttestedProblems->merge($bhiAttestedProblems)->merge($problems)->unique('code')->filter()->values();
 
         return [
             'id'       => $this->patient->id,
@@ -75,24 +80,10 @@ class ApprovableBillablePatient extends JsonResource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa && ! $this->approved && ! $this->rejected,
-            'attested_ccm_problems'  => $this->getCcmAttestedProblems($problems),
+            'attested_ccm_problems'  => $this->hasServiceCode(ChargeableServiceModel::RPM) ? $problems->pluck('id')->values()->toArray() : $ccmAttestedProblemIds,
             'chargeable_services'    => $this->getChargeableServices()->toArray($request),
-            'attested_bhi_problems'  => $this->getBhiAttestedProblems(),
+            'attested_bhi_problems'  => $bhiAttestedProblemIds,
         ];
-    }
-
-    private function getBhiAttestedProblems()
-    {
-        return $this->bhiAttestedProblems()->unique()->pluck('id')->values()->toArray();
-    }
-
-    private function getCcmAttestedProblems(Collection $allProblems)
-    {
-        if ($this->hasServiceCode(ChargeableServiceModel::RPM)) {
-            return $allProblems->pluck('id')->values()->toArray();
-        }
-
-        return $this->ccmAttestedProblems()->unique()->pluck('id')->values()->toArray();
     }
 
     private function getChargeableServices(): AnonymousResourceCollection
