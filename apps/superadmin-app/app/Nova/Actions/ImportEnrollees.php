@@ -108,14 +108,7 @@ class ImportEnrollees extends Action
 
         $fileName = "mark_for_self_enrollment_list_for_practice:$fields->practice_id.{$file->getClientOriginalName()}";
 
-        $this->uploadFileToMedia($file->getRealPath(),  $fileName);
-
-        /** @var Media $fileFromMedia */
-        $fileFromMedia = SaasAccount::whereSlug('circlelink-health')
-            ->first()
-            ->getMedia($fileName)
-            ->sortByDesc('created_at')
-            ->first();
+        $fileFromMedia =   $this->uploadFileToMedia($file->getRealPath(),  $fileName);
 
         if ($fileFromMedia){
             Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileFromMedia->getPath(),'media', \Maatwebsite\Excel\Excel::XLSX);
@@ -126,9 +119,9 @@ class ImportEnrollees extends Action
         return Action::message('It worked!');
     }
 
-    private function uploadFileToMedia(string $filePath,  string $fileName)
+    private function uploadFileToMedia(string $filePath,  string $fileName): Media
     {
-        SaasAccount::whereSlug('circlelink-health')
+        return SaasAccount::whereSlug('circlelink-health')
             ->first()
             ->addMedia($filePath)
             ->toMediaCollection($fileName);
