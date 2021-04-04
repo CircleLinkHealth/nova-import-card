@@ -107,10 +107,16 @@ class VariablePayCalculator
                     $query->select('patient_user_id')
                         ->from($nurseCareRateLogTable)
                         ->whereIn('nurse_id', $this->nurseInfoIds)
-                        ->whereBetween('created_at', [$this->startDate, $this->endDate])
+                        ->where(function ($q) {
+                            $q->whereBetween('created_at', [$this->startDate, $this->endDate])
+                                ->orWhereBetween('performed_at', [$this->startDate, $this->endDate]);
+                        })
                         ->groupBy('patient_user_id');
                 })
-                ->whereBetween("$nurseCareRateLogTable.created_at", [$this->startDate, $this->endDate])
+                ->where(function ($q) use ($nurseCareRateLogTable) {
+                    $q->whereBetween("$nurseCareRateLogTable.created_at", [$this->startDate, $this->endDate])
+                        ->orWhereBetween("$nurseCareRateLogTable.performed_at", [$this->startDate, $this->endDate]);
+                })
                 ->where(function ($q) use ($nurseCareRateLogTable, $nurseInfoTable) {
                     $q->whereNull("$nurseInfoTable.start_date")
                         ->orWhere(DB::raw("DATE($nurseCareRateLogTable.performed_at)"), '>=', DB::raw("DATE($nurseInfoTable.start_date)"));
