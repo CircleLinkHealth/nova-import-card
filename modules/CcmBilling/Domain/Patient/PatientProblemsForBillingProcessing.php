@@ -30,6 +30,7 @@ class PatientProblemsForBillingProcessing
     ];
     protected ?User $patient;
     protected int $patientId;
+    protected ?Carbon $month = null;
 
     protected PatientServiceProcessorRepository $repo;
 
@@ -44,9 +45,9 @@ class PatientProblemsForBillingProcessing
             ->toArray();
     }
 
-    public static function getArrayFromPatient(User $patient): array
+    public static function getArrayFromPatient(User $patient, ?Carbon $month = null): array
     {
-        return self::getCollectionFromPatient($patient)
+        return self::getCollectionFromPatient($patient, $month)
             ->toArray();
     }
 
@@ -57,10 +58,17 @@ class PatientProblemsForBillingProcessing
             ->getProblems();
     }
 
-    public static function getCollectionFromPatient(User $patient): Collection
+    public static function getCollectionFromPatient(User $patient, ?Carbon $month = null): Collection
     {
         return (new static($patient->id))->setPatient($patient)
+            ->setMonth($month)
             ->getProblems();
+    }
+
+    public function setMonth(Carbon $month):self
+    {
+        $this->month = $month;
+        return $this;
     }
 
     public static function getForCodes(int $patientId, array $codes): Collection
@@ -75,7 +83,9 @@ class PatientProblemsForBillingProcessing
             return collect();
         }
 
-        return $this->patient->ccdProblems->map(function (Problem $p) {
+        $month = $this->month ?? Carbon::now()->startOfMonth();
+
+        return $this->patient->ccdProblems->map(function (Problem $p) use ($month){
             return (new PatientProblemForProcessing())
                 ->setId($p->id)
                 ->setCode($p->icd10Code())
@@ -85,7 +95,7 @@ class PatientProblemsForBillingProcessing
                         $this->patient
                             ->attestedProblems
                             ->where('ccd_problem_id', $p->id)
-                            ->where('chargeable_month', Carbon::now()->startOfMonth())
+                            ->where('chargeable_month', $month)
                             ->first()
                     )
                 );
