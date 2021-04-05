@@ -1276,10 +1276,11 @@
             "dist": {
                 "type": "path",
                 "url": "../../modules/SmartOnFhirSso",
-                "reference": "ba79b966755cd9723a1e1f1d7b8931cfe4ce591c"
+                "reference": "fe529fccf328c8fa5020f7b1fa529be3751a91b1"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/saml-sp-module": "*",
                 "ext-json": "*"
             },
             "type": "laravel-module",

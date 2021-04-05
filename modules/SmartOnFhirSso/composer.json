@@ -23,12 +23,18 @@
     },
     "require": {
         "ext-json": "*",
-        "circlelinkhealth/customer-module": "*"
+        "circlelinkhealth/customer-module": "*",
+        "circlelinkhealth/saml-sp-module": "*"
+
     },
     "repositories": [
         {
             "type": "path",
             "url": "../Customer"
+        },
+        {
+            "type": "path",
+            "url": "../SamlSp"
         }
     ]
 }
