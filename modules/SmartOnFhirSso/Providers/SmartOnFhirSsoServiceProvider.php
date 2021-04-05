@@ -8,7 +8,6 @@ namespace CircleLinkHealth\SmartOnFhirSso\Providers;
 
 use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use CircleLinkHealth\SmartOnFhirSso\Listeners\LoginEventListener;
-use CircleLinkHealth\SmartOnFhirSso\Services\SsoService;
 use Illuminate\Support\ServiceProvider;
 
 class SmartOnFhirSsoServiceProvider extends ServiceProvider

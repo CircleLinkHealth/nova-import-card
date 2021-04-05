@@ -45,7 +45,7 @@ class SsoService
 
     public function getMetadataEndpoints(string $clientId, string $iss): MetadataResponse
     {
-        return Cache::remember($this->getMetadataCacheKey($clientId), 30, function () use ($clientId, $iss) {
+        return $this->getCache()->remember($this->getMetadataCacheKey($clientId), 30, function () use ($clientId, $iss) {
             $response = Http::withHeaders([
                 'Accept'         => 'application/fhir+json',
                 'Epic-Client-ID' => $clientId,
@@ -67,6 +67,13 @@ class SsoService
         return null;
     }
 
+    private function getCache()
+    {
+        $store = app()->environment('local') ? null : 'dynamodb';
+
+        return Cache::store($store);
+    }
+
     private function getMetadataCacheKey(string $clientId): string
     {
         return $clientId.'::metadata';
@@ -74,6 +81,6 @@ class SsoService
 
     private function getMetadataEndpointsFromCache(string $clientId): MetadataResponse
     {
-        return Cache::get($this->getMetadataCacheKey($clientId));
+        return $this->getCache()->get($this->getMetadataCacheKey($clientId));
     }
 }
