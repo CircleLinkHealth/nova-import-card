@@ -9,5 +9,6 @@ bash "$PWD/bin/local-dev/setup-vapor-cli.sh"
 bash "$PWD/bin/local-dev/composer.sh" install
 bash "$PWD/bin/local-dev/npm.sh"
 bash "$PWD/bin/local-dev/migrate.sh"
+bash "$PWD/bin/local-dev/prepare-test-suite-db.sh"
 
 echo "CLH Monorepo installation finished! Build something awesome!"
