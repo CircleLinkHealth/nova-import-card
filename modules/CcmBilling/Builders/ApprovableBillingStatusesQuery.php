@@ -59,6 +59,7 @@ trait ApprovableBillingStatusesQuery
                 $q->with('ccdProblem.cpmProblem')
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
+            'ccdProblems'=> fn($q) => $q->with(['cpmProblem', 'codes'])
         ];
     }
 }
