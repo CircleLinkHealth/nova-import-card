@@ -8,11 +8,31 @@ The monorepo is created by mirroring all CPM repositories into one, while mainta
 
 **Make sure you only have the monorepo in PHPStorm's VCS settings otherwise things can go seriously wrong.**
 
-### Getting Started
+### Prerequisites
+1. PHP version v7.4
+2. MySQL v5.7
+3. Composer v1
+4. Laravel Valet
+
+### Install Laravel Valet
+1. Add the `~/.composer/vendor/bin` directory to your system path if it doesn't already exist;
+   - `export PATH="$HOME/.composer/vendor/bin:$PATH"`
+2. Run `composer global require laravel/valet`
+3. Run `valet install`
+
+### Local Database Setup
+1. Login to mysql console with: mysql -u root -p
+2. Then execute the following SQL commands:
+   - `CREATE DATABASE cpm;`
+   - `GRANT ALL PRIVILEGES ON cpm.* TO 'root'@'localhost';`
+   - `FLUSH PRIVILEGES;`
+
+### Local Project Setup
 1. Clone the monorepo locally
 2. Make sure all apps and modules in the monorepo have branch `master`
 3. When running `git checkout master`. This will chekout branch `master` for **all** apps and modules in the monorepo. Branch `master` contains the head of development.
-4. Run `sh bin/local-dev/install.sh`. This will also add .env files in each app based on .env.example files. Please make sure to adjust these vars for your local environment.
+4. In `apps/provider-app` update the `DB_USERNAME` and `DB_PASSWORD` in the `.env.testing` file to that of your local MySQL user (root).
+5. Run `sh bin/local-dev/install.sh`. This will also add .env files in each app based on .env.example files. **Please make sure to adjust these vars for your local environment while the script runs**.
 
 ### Starting work on a new feature
 1. Create a new branch in the monorepo with a descriptive name, using command below.
