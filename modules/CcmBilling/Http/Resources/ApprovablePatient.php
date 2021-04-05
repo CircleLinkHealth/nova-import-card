@@ -137,7 +137,7 @@ class ApprovablePatient extends JsonResource
                 'code'          => $prob->icd10Code(),
                 'is_behavioral' => $prob->isBehavioral(),
             ];
-        })->unique('code')->filter()->values();
+        })->unique('code')->filter();
     }
 
     private function getProviderName(): ?string
