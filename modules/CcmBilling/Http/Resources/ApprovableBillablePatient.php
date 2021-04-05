@@ -54,10 +54,10 @@ class ApprovableBillablePatient extends JsonResource
         }
         $problems = $this->allCcdProblems($this->patient);
         $attestedConditions = AttestedProblem::with(['ccdProblem.cpmProblem'])
-            ->where('patient_user_id', $this->patient->id)
-            ->where(function($sq){
+            ->where('patient_monthly_summary_id', $this->id)
+            ->orWhere(function($sq){
                 $sq->where('chargeable_month', $this->month_year)
-                    ->orWhere('patient_monthly_summary_id', $this->id);
+                    ->where('patient_user_id', $this->patient_id);
             })
         ->get();
         $ccmAttestedProblemIds = $this->getCcmAttestedProblemIds($attestedConditions);
