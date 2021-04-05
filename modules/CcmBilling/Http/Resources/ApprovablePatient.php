@@ -128,7 +128,7 @@ class ApprovablePatient extends JsonResource
         $bhiAttestedProblemIds = $attestation->getBhiAttestedProblems();
         $ccmAttestedProblems = $problems->whereIn('id', $ccmAttestedProblemIds);
         $bhiAttestedProblems = $problems->whereIn('id', $bhiAttestedProblemIds);
-        $problems = $ccmAttestedProblems->merge($bhiAttestedProblems)->merge($problems)->unique('code')->filter()->values();
+        $problems = $ccmAttestedProblems->merge($bhiAttestedProblems)->merge($problems);
 
         return $problems->map(function ($prob) {
             return [
@@ -137,7 +137,7 @@ class ApprovablePatient extends JsonResource
                 'code'          => $prob->icd10Code(),
                 'is_behavioral' => $prob->isBehavioral(),
             ];
-        })->unique('code')->filter();
+        })->unique('code')->filter()->values();
     }
 
     private function getProviderName(): ?string
