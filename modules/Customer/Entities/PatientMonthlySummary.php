@@ -21,24 +21,24 @@ use Illuminate\Support\Collection;
 /**
  * CircleLinkHealth\Customer\Entities\PatientMonthlySummary.
  *
- * @property int                                         $id
- * @property int                                         $patient_id
- * @property int                                         $ccm_time
- * @property int                                         $bhi_time
- * @property \Carbon\Carbon                              $month_year
- * @property int                                         $no_of_calls
- * @property int                                         $no_of_successful_calls
- * @property string                                      $billable_problem1
- * @property string                                      $billable_problem1_code
- * @property string                                      $billable_problem2
- * @property string                                      $billable_problem2_code
- * @property int                                         $approved
- * @property int                                         $rejected
- * @property int|null                                    $actor_id
- * @property \Carbon\Carbon|null                         $created_at
- * @property \Carbon\Carbon|null                         $updated_at
- * @property int                                         $total_time
- * @property \CircleLinkHealth\Customer\Entities\User    $actor
+ * @property int $id
+ * @property int $patient_id
+ * @property int $ccm_time
+ * @property int $bhi_time
+ * @property \Carbon\Carbon $month_year
+ * @property int $no_of_calls
+ * @property int $no_of_successful_calls
+ * @property string $billable_problem1
+ * @property string $billable_problem1_code
+ * @property string $billable_problem2
+ * @property string $billable_problem2_code
+ * @property int $approved
+ * @property int $rejected
+ * @property int|null $actor_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property int $total_time
+ * @property \CircleLinkHealth\Customer\Entities\User $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     getCurrent()
@@ -75,11 +75,11 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null                                          $closed_ccm_status
- * @property int|null                                             $problem_1
- * @property int|null                                             $problem_2
- * @property int                                                  $is_ccm_complex
- * @property int|null                                             $needs_qa
+ * @property string|null $closed_ccm_status
+ * @property int|null $problem_1
+ * @property int|null $problem_2
+ * @property int $is_ccm_complex
+ * @property int|null $needs_qa
  * @property \CircleLinkHealth\SharedModels\Entities\Problem|null $billableProblem1
  * @property \CircleLinkHealth\SharedModels\Entities\Problem|null $billableProblem2
  * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection
@@ -113,21 +113,22 @@ use Illuminate\Support\Collection;
  *     whereProblem2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereTotalTime($value)
- * @property int|null                                                                                         $billable_problems_count
- * @property int|null                                                                                         $chargeable_services_count
- * @property int|null                                                                                         $revision_history_count
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                               $attestedProblems
- * @property int|null                                                                                         $attested_problems_count
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
- * @property int|null                                                                                         $all_chargeable_services_count
- * @property int                                                                                              $should_process
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdThisMonth($field = 'created_at')
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
- * @property int                                                                                              $ccm_time_for_billable_ccm_cs
+ * @property int|null $billable_problems_count
+ * @property int|null $chargeable_services_count
+ * @property int|null $revision_history_count
+ * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
+ * @property int|null $attested_problems_count
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
+ *     $allChargeableServices
+ * @property int|null $all_chargeable_services_count
+ * @property int $should_process
+ * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdInMonth(\Carbon\Carbon $date,$field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @property int $ccm_time_for_billable_ccm_cs
  */
 class PatientMonthlySummary extends BaseModel
 {
@@ -167,14 +168,14 @@ class PatientMonthlySummary extends BaseModel
     public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
     {
         return $this->billableProblems()
-            ->attach(
-                $problemId,
-                [
-                    'type'        => $type,
-                    'name'        => $name,
-                    'icd_10_code' => $icd10Code,
-                ]
-            );
+                    ->attach(
+                        $problemId,
+                        [
+                            'type'        => $type,
+                            'name'        => $name,
+                            'icd_10_code' => $icd10Code,
+                        ]
+                    );
     }
 
     /**
@@ -189,10 +190,10 @@ class PatientMonthlySummary extends BaseModel
 
         if ( ! $lastMonthsSummary) {
             $lastMonthsSummary = PatientMonthlySummary::with('chargeableServices')
-                ->where('patient_id', $this->patient_id)
-                ->where('month_year', '!=', Carbon::now()->startOfMonth())
-                ->orderBy('month_year', 'desc')
-                ->first();
+                                                      ->where('patient_id', $this->patient_id)
+                                                      ->where('month_year', '!=', Carbon::now()->startOfMonth())
+                                                      ->orderBy('month_year', 'desc')
+                                                      ->first();
         }
 
         if ( ! $lastMonthsSummary || $lastMonthsSummary->chargeableServices->isEmpty()) {
@@ -270,17 +271,17 @@ class PatientMonthlySummary extends BaseModel
             $cpmProblemNames = $patientProblems->pluck('cpmProblem.name')->filter()->toArray();
 
             $pcmEligible = PcmProblem::where('practice_id', $practice->id)
-                ->where(
-                    function ($q) use ($cpmProblemNames, $icd10Codes) {
-                        $q->whereIn(
-                            'code',
-                            $icd10Codes
-                        )->orWhereIn(
-                            'description',
-                            $cpmProblemNames
-                        );
-                    }
-                )->exists();
+                                     ->where(
+                                         function ($q) use ($cpmProblemNames, $icd10Codes) {
+                                             $q->whereIn(
+                                                 'code',
+                                                 $icd10Codes
+                                             )->orWhereIn(
+                                                 'description',
+                                                 $cpmProblemNames
+                                             );
+                                         }
+                                     )->exists();
 
             if ($practicePcmCode && $pcmEligible) {
                 $this->chargeableServices()->attach($practicePcmCode->id, ['is_fulfilled' => false]);
@@ -305,15 +306,15 @@ class PatientMonthlySummary extends BaseModel
     {
         //todo: deprecate
         return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id')
-            ->withTimestamps();
+                    ->withTimestamps();
     }
 
     public function autoAttestConditionsIfYouShould()
     {
         AutoPatientAttestation::fromId($this->patient_id)
-            ->setMonth($this->month_year)
-            ->setPmsId($this->id)
-            ->executeIfYouShould();
+                              ->setMonth($this->month_year)
+                              ->setPmsId($this->id)
+                              ->executeIfYouShould();
     }
 
     /**
@@ -326,22 +327,24 @@ class PatientMonthlySummary extends BaseModel
         if ( ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)) {
             return collect([]);
         }
-         return AttestedProblem::with(['ccdProblem.cpmProblem'])
-                       ->where('patient_user_id', $this->patient->id)
-                       ->where(function($sq){
-                           $sq->where('chargeable_month', $this->month_year)
-                              ->orWhere('patient_monthly_summary_id', $this->id);
-                       })
-                       ->get()
-                       ->unique('ccd_problem_id')
-                       ->transform(fn(AttestedProblem $ap) => $ap->ccdProblem)
-                       ->filter(function(Problem $p){
-                 $cpmProblem = $p->cpmProblem;
-                 if (is_null($cpmProblem)){
-                     return false;
-                 }
-                 return $cpmProblem->is_behavioral;
-             });
+
+        return AttestedProblem::with(['ccdProblem.cpmProblem'])
+                              ->where('patient_monthly_summary_id', $this->id)
+                              ->orWhere(function ($sq) {
+                                  $sq->where('chargeable_month', $this->month_year)
+                                     ->where('patient_user_id', $this->patient_id);
+                              })
+                              ->get()
+                              ->unique('ccd_problem_id')
+                              ->transform(fn(AttestedProblem $ap) => $ap->ccdProblem)
+                              ->filter(function (Problem $p) {
+                                  $cpmProblem = $p->cpmProblem;
+                                  if (is_null($cpmProblem)) {
+                                      return false;
+                                  }
+
+                                  return $cpmProblem->is_behavioral;
+                              });
     }
 
     public function billableBhiProblems()
@@ -370,8 +373,8 @@ class PatientMonthlySummary extends BaseModel
     public function billableProblems()
     {
         return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
-            ->withPivot('name', 'icd_10_code', 'type')
-            ->withTimestamps();
+                    ->withPivot('name', 'icd_10_code', 'type')
+                    ->withTimestamps();
     }
 
     /**
@@ -382,14 +385,14 @@ class PatientMonthlySummary extends BaseModel
     public function ccmAttestedProblems($includeUnfulfilledChargeableServices = false)
     {
         $attestedProblems = AttestedProblem::with(['ccdProblem.cpmProblem'])
-                                           ->where('patient_user_id', $this->patient->id)
-                                           ->where(function($sq){
+                                           ->where('patient_monthly_summary_id', $this->id)
+                                           ->orWhere(function ($sq) {
                                                $sq->where('chargeable_month', $this->month_year)
-                                                  ->orWhere('patient_monthly_summary_id', $this->id);
+                                                  ->where('patient_user_id', $this->patient_id);
                                            })
                                            ->get()
-        ->unique('ccd_problem_id')
-        ->transform(fn(AttestedProblem $ap) => $ap->ccdProblem);
+                                           ->unique('ccd_problem_id')
+                                           ->transform(fn(AttestedProblem $ap) => $ap->ccdProblem);
 
         return ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)
             ? $attestedProblems
@@ -399,7 +402,8 @@ class PatientMonthlySummary extends BaseModel
                     return true;
                 }
 
-                return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+                return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name,
+                        CpmProblem::DUAL_CCM_BHI_CONDITIONS);
             });
     }
 
@@ -408,20 +412,20 @@ class PatientMonthlySummary extends BaseModel
         $monthYear = Carbon::now()->startOfMonth()->toDateString();
 
         $patients = User::select('id')->ofType('participant')
-            ->get()
-            ->map(
-                function ($patient) use ($monthYear) {
-                    PatientMonthlySummary::create(
-                        [
-                            'patient_id'             => $patient->id,
-                            'ccm_time'               => 0,
-                            'month_year'             => $monthYear,
-                            'no_of_calls'            => 0,
-                            'no_of_successful_calls' => 0,
-                        ]
-                    );
-                }
-            );
+                        ->get()
+                        ->map(
+                            function ($patient) use ($monthYear) {
+                                PatientMonthlySummary::create(
+                                    [
+                                        'patient_id'             => $patient->id,
+                                        'ccm_time'               => 0,
+                                        'month_year'             => $monthYear,
+                                        'no_of_calls'            => 0,
+                                        'no_of_successful_calls' => 0,
+                                    ]
+                                );
+                            }
+                        );
     }
 
     /**
@@ -433,7 +437,7 @@ class PatientMonthlySummary extends BaseModel
         $month->startOfMonth();
 
         $summary = PatientMonthlySummary::where('patient_id', '=', $userId)
-            ->orderBy('month_year', 'desc')->first();
+                                        ->orderBy('month_year', 'desc')->first();
 
         //if we have already summary for this month, then we skip this
         if ($summary && $month->isSameMonth($summary->month_year)) {
@@ -477,13 +481,15 @@ class PatientMonthlySummary extends BaseModel
     public static function existsForCurrentMonthForPatientId($patientId): bool
     {
         return (new static())->where('patient_id', $patientId)
-            ->where('month_year', Carbon::now()->startOfMonth())
-            ->exists();
+                             ->where('month_year', Carbon::now()->startOfMonth())
+                             ->exists();
     }
 
     public function getBillableCcmCs()
     {
-        return 0 !== $this->ccm_time_for_billable_ccm_cs ? $this->ccm_time_for_billable_ccm_cs : $this->ccm_time;
+        return 0 !== $this->ccm_time_for_billable_ccm_cs
+            ? $this->ccm_time_for_billable_ccm_cs
+            : $this->ccm_time;
     }
 
     public static function getPatientQACountForPracticeForMonth(
@@ -491,12 +497,12 @@ class PatientMonthlySummary extends BaseModel
         Carbon $month
     ) {
         $patients = User::where('program_id', $practice->id)
-            ->whereHas(
-                'roles',
-                function ($q) {
-                    $q->where('name', '=', 'participant');
-                }
-            )->get();
+                        ->whereHas(
+                            'roles',
+                            function ($q) {
+                                $q->where('name', '=', 'participant');
+                            }
+                        )->get();
 
         $count['approved'] = 0;
         $count['toQA']     = 0;
@@ -510,16 +516,16 @@ class PatientMonthlySummary extends BaseModel
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
-                ->where('patient_id', $p->id)->first();
+                                           ->where('patient_id', $p->id)->first();
 
             if ( ! $report) {
                 continue;
             }
 
             $emptyProblemOrCode = ('' == $report->billable_problem1_code)
-                || ('' == $report->billable_problem2_code)
-                || ('' == $report->billable_problem2)
-                || ('' == $report->billable_problem1);
+                                  || ('' == $report->billable_problem2_code)
+                                  || ('' == $report->billable_problem2)
+                                  || ('' == $report->billable_problem1);
 
             if ((0 == $report->rejected && 0 == $report->approved) || $emptyProblemOrCode) {
                 ++$count['toQA'];
@@ -540,12 +546,12 @@ class PatientMonthlySummary extends BaseModel
         Carbon $month
     ) {
         $patients = User::where('program_id', $practice->id)
-            ->whereHas(
-                'roles',
-                function ($q) {
-                    $q->where('name', '=', 'participant');
-                }
-            )->get();
+                        ->whereHas(
+                            'roles',
+                            function ($q) {
+                                $q->where('name', '=', 'participant');
+                            }
+                        )->get();
 
         $count = 0;
 
@@ -565,7 +571,7 @@ class PatientMonthlySummary extends BaseModel
 
     public function practiceHasServiceCode($code): bool
     {
-        return (bool) optional($this->patient->primaryPractice)->hasServiceCode($code);
+        return (bool)optional($this->patient->primaryPractice)->hasServiceCode($code);
     }
 
     /**
@@ -612,11 +618,11 @@ class PatientMonthlySummary extends BaseModel
      */
     public function timeFromClhCareCoaches(): int
     {
-        return (int) Activity::createdInMonth($this->month_year, 'performed_at')
-            ->where('patient_id', $this->patient_id)
-            ->whereHas('provider', function ($q) {
-                $q->ofType('care-center');
-            })->sum('duration');
+        return (int)Activity::createdInMonth($this->month_year, 'performed_at')
+                            ->where('patient_id', $this->patient_id)
+                            ->whereHas('provider', function ($q) {
+                                $q->ofType('care-center');
+                            })->sum('duration');
     }
 
     public static function updateCCMInfoForPatient(
