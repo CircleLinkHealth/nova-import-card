@@ -25,10 +25,7 @@ The default middleware name is `saml`, in case you don't want to publish the con
 
 ## Add new integration:
 1. Get a client id from the EHR you want to integrate with. You should probably pass this into the app using env variables. See `config.php`.
-2. Create a controller `MyControlerName` that implements `SmartOnFhirSsoController`. You will have to provider clientId, redirectUrl and a route that will get an authorization code. See example in `EpicSsoController::getAuthToken()`.
+2. Create a controller `MyControlerName` that implements `SmartOnFhirSsoController`. You will have to provide clientId, redirectUrl and a route that will get an authorization code. See example in `EpicSsoController::getAuthToken()`.
 3. Add a route in `web.php` that points to `MyControllerName::getAuthToken()`.
-
-## TODO:
-- tests
 
 ### Read more [here](http://hl7.org/fhir/smart-app-launch/index.html).
