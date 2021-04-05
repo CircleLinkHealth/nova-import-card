@@ -43,7 +43,41 @@
                      style="border-top: 3px solid #50b2e2">
                     @if($activity_json)
                         <div id="obs_alerts_container" class=""></div><br/>
-                        <div id="paging_container"></div>
+                        <div class="row">
+                        <div id="paging_container" class="col-md-6"></div>
+                        @if( (auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) ) )
+                            <div class="col-md-6 text-right">
+                                <input type="button" value="Export as PDF" class="btn btn-primary btn-sm"
+                                       style='margin:15px;'
+                                       onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                               header: 'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->getBillingProviderName() . " as of " . Carbon\Carbon::now()->toDateString() }}',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               columns:{
+                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
+
+                                               }});">
+
+                                <input type="button" value="Export as Excel" class="btn btn-primary btn-sm"
+                                       style='margin:15px;'
+                                       onclick="webix.toExcel($$(obs_alerts_dtable), {
+                                               header:'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->getBillingProviderName() . " as of " . Carbon\Carbon::now()->toDateString() }}',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
+
+                                               columns:{
+                                               'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
+
+                                               }});">
+                            </div>
+                        @endif
+                        </div>
                         <br/>
 
                         @push('styles')
@@ -147,7 +181,10 @@
                                             css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
                                             header: ["Status",],
                                             width: 110,
-                                            sort: 'string'
+                                            sort: 'string',
+                                            tooltip: function (obj) {
+                                                return obj.status_tooltip;
+                                            }
                                         },
                                         {
                                             id: "comment",
@@ -226,7 +263,7 @@
                             </script>
                         @endpush
 
-                        <div class="row">
+
                             @push('styles')
                                 <style>
                                     li {
@@ -234,81 +271,15 @@
                                     }
                                 </style>
                             @endpush
-                            <div class="col-sm-6" style="padding: 10px; top: -14px">
-                                <li>
-                                    <div class="label label-info" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-                                    </div>
-                                    Patient Reached
-                                </li>
 
-                                <li>
-                                    <div class="label label-danger" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-flag"></span>
-                                    </div>
-                                    Patient recently in ER or Hospital
-                                </li>
 
-                                <li>
-                                    <div class="label label-warning" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-envelope"></span>
-                                    </div>
-                                    Forwarded To Provider
-                                </li>
+                @else
+                    <div style="text-align:center;margin:50px;">There are no patient Notes/Offline
+                        Activities to
+                        display for this month.
+                    </div>
+                @endif
 
-                                <li>
-                                    <div class="label label-warning" style="margin-right: 4px; text-align: right; background-color: #9865f2">
-                                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                                    </div>
-                                    Success Story
-                                </li>
-
-                                <li>
-                                    <div class="label label-success" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-eye-open"></span>
-                                    </div>
-                                    Forward Seen By Provider
-                                </li>
-
-                            </div>
-                            @if( (auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) ) )
-
-                                <input type="button" value="Export as PDF" class="btn btn-primary"
-                                       style='margin:15px;'
-                                       onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header: 'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->getBillingProviderName() . " as of " . Carbon\Carbon::now()->toDateString() }}',
-                                               orientation:'landscape',
-                                               autowidth:true,
-                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
-                                               columns:{
-                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
-                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
-
-                                               }});">
-
-                                <input type="button" value="Export as Excel" class="btn btn-primary"
-                                       style='margin:15px;'
-                                       onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->getBillingProviderName() . " as of " . Carbon\Carbon::now()->toDateString() }}',
-                                               orientation:'landscape',
-                                               autowidth:true,
-                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
-
-                                               columns:{
-                                               'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
-                                               'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
-
-                                               }});">
-                            @endif
-                            @else
-                                <div style="text-align:center;margin:50px;">There are no patient Notes/Offline
-                                    Activities to
-                                    display for this month.
-                                </div>
-                            @endif
-                        </div>
                 </div>
             </div>
         </div>

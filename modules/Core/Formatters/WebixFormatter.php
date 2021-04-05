@@ -48,6 +48,7 @@ class WebixFormatter implements ReportFormatter
                     'date_for_sorting' => $note->performed_at,
                     'provider_name'    => $billingProvider,
                     'tags'             => '',
+                    'status_tooltip'   => '',
                     'status'           => $note->status,
                     'success_story'    => $note->success_story,
                 ];
@@ -76,25 +77,30 @@ class WebixFormatter implements ReportFormatter
                 if ($note->notifications->count() > 0) {
                     if ($this->noteService->wasForwardedToCareTeam($note)) {
                         $result['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                        $result['status_tooltip'] .= 'Forwarded to Provider. ';
                     }
                 }
 
                 if ($note->call && 'reached' == $note->call->status) {
                     $result['tags'] .= '<div class="label label-info" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                    $result['status_tooltip'] .= 'Patient Reached. ';
                 }
 
                 if ($note->isTCM) {
                     $result['tags'] .= '<div class="label label-danger" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                    $result['status_tooltip'] .= 'Patient recently in ER or Hospital. ';
                 }
 
                 $was_seen = $this->noteService->wasSeenByBillingProvider($note);
 
                 if ($was_seen) {
                     $result['tags'] .= '<div class="label label-success" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+                    $result['status_tooltip'] .= 'Forward Seen By Provider. ';
                 }
 
                 if ($note->success_story) {
                     $result['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative; background-color: #9865f2" ><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></div> ';
+                    $result['status_tooltip'] .= 'Success Story. ';
                 }
 
                 return $result;
@@ -117,6 +123,7 @@ class WebixFormatter implements ReportFormatter
                     'date_for_sorting' => $appointment->date,
                     'provider_name'    => $billingProvider,
                     'tags'             => '',
+                    'status_tooltip'             => '',
                 ];
             }
         );
@@ -137,6 +144,7 @@ class WebixFormatter implements ReportFormatter
                     'date_for_sorting' => $activity->performed_at,
                     'provider_name'    => $billingProvider,
                     'tags'             => '',
+                    'status_tooltip'             => '',
                 ];
             }
         );
