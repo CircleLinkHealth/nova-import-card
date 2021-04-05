@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Traits\DateScopesTrait;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
@@ -302,6 +303,7 @@ class PatientMonthlySummary extends BaseModel
 
     public function attestedProblems()
     {
+        //todo: deprecate
         return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id')
             ->withTimestamps();
     }
@@ -324,8 +326,22 @@ class PatientMonthlySummary extends BaseModel
         if ( ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)) {
             return collect([]);
         }
-
-        return $this->attestedProblems->where('cpmProblem.is_behavioral', '=', true);
+         return AttestedProblem::with(['ccdProblem.cpmProblem'])
+                       ->where('patient_user_id', $this->patient->id)
+                       ->where(function($sq){
+                           $sq->where('chargeable_month', $this->month_year)
+                              ->orWhere('patient_monthly_summary_id', $this->id);
+                       })
+                       ->get()
+                       ->unique('ccd_problem_id')
+                       ->transform(fn(AttestedProblem $ap) => $ap->ccdProblem)
+                       ->filter(function(Problem $p){
+                 $cpmProblem = $p->cpmProblem;
+                 if (is_null($cpmProblem)){
+                     return false;
+                 }
+                 return $cpmProblem->is_behavioral;
+             });
     }
 
     public function billableBhiProblems()
@@ -365,9 +381,19 @@ class PatientMonthlySummary extends BaseModel
      */
     public function ccmAttestedProblems($includeUnfulfilledChargeableServices = false)
     {
+        $attestedProblems = AttestedProblem::with(['ccdProblem.cpmProblem'])
+                                           ->where('patient_user_id', $this->patient->id)
+                                           ->where(function($sq){
+                                               $sq->where('chargeable_month', $this->month_year)
+                                                  ->orWhere('patient_monthly_summary_id', $this->id);
+                                           })
+                                           ->get()
+        ->unique('ccd_problem_id')
+        ->transform(fn(AttestedProblem $ap) => $ap->ccdProblem);
+
         return ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)
-            ? $this->attestedProblems
-            : $this->attestedProblems->filter(function ($p) {
+            ? $attestedProblems
+            : $attestedProblems->filter(function (Problem $p) {
                 $cpmProblem = $p->cpmProblem;
                 if (is_null($cpmProblem)) {
                     return true;
