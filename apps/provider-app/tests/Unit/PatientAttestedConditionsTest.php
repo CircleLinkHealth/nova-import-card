@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use Carbon\Carbon;
 use CircleLinkHealth\ApiPatient\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Tests\TestCase;
@@ -394,6 +395,26 @@ class PatientAttestedConditionsTest extends TestCase
 //        }
     }
 
+    public function test_patient_summeries_fetch_all_attested_conditions_regardless_of_pms_id()
+    {
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->with('cpmProblem')->get()->where('cpmProblem.is_behavioral', false);
+
+        AttestedProblem::create([
+            'ccd_problem_id' => $patientProblems->first()->id,
+            'patient_user_id' => $this->patient->id,
+            'chargeable_month' => $pms->month_year,
+            'patient_monthly_summary_id' => $pms->id
+        ]);
+
+        AttestedProblem::create([
+            'ccd_problem_id' => $patientProblems->last()->id,
+            'patient_user_id' => $this->patient->id,
+            'chargeable_month' => $pms->month_year,
+        ]);
+
+        self::assertEquals($pms->ccmAttestedProblems()->count(), 2);
+    }
     /**
      * This is to test passing null on PMS::attachLastMonthsChargeableServicesIfYouShould.
      *
