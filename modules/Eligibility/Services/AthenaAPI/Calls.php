@@ -52,7 +52,7 @@ class Calls implements AthenaApiImplementation
         return $this->response($response);
     }
 
-    public function api(int $practiceId)
+    public function api(?string $practiceId)
     {
         if ( ! $this->connection instanceof AthenaApiConnection) {
             $this->connection = app(AthenaApiConnection::class);
@@ -209,9 +209,9 @@ class Calls implements AthenaApiImplementation
     }
 
     public function getAppointmentReasons(
-        int $practiceId,
-        int $departmentId,
-        int $providerId
+        ?string $practiceId,
+        ?string $departmentId,
+        ?string $providerId
     ) {
         $this->api($practiceId)->setPracticeId($practiceId);
 
@@ -315,7 +315,7 @@ class Calls implements AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getCareTeam(int $patientId, int $practiceId, int $departmentId)
+    public function getCareTeam(?string $patientId, ?string $practiceId, ?string $departmentId)
     {
         $this->api($practiceId)->setPracticeId($practiceId);
 
@@ -429,7 +429,7 @@ class Calls implements AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getEncounters(int $patientId, int $practiceId, int $departmentId, string $startDate = null, string $endDate = null)
+    public function getEncounters(?string $patientId, ?string $practiceId, ?string $departmentId, string $startDate = null, string $endDate = null)
     {
         $args = [
             'departmentid' => $departmentId,
@@ -460,7 +460,7 @@ class Calls implements AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId)
+    public function getMedicalHistory(?string $patientId, ?string $practiceId, ?string $departmentId)
     {
         $this->api($practiceId)->setPracticeId($practiceId);
 
@@ -483,7 +483,7 @@ class Calls implements AthenaApiImplementation
      *
      * @return array|mixed
      */
-    public function getMedications(int $patientId, int $practiceId, int $departmentId)
+    public function getMedications(?string $patientId, ?string $practiceId, ?string $departmentId)
     {
         $response = $this->api($practiceId)->GET(
             "/chart/${patientId}/medications",
@@ -496,8 +496,8 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
-    
-    public function getNextPage($url, int $practiceId)
+
+    public function getNextPage($url, ?string $practiceId)
     {
         //@todo: this is a workaround to compensate for a bug in athena
         //it always returns production urls
@@ -546,8 +546,8 @@ class Calls implements AthenaApiImplementation
      * @return mixed
      */
     public function getPatientAppointments(
-        ?int $practiceId,
-        ?int $patientId,
+        ?string $practiceId,
+        ?string $patientId,
         $showPast = true,
         $showCancelled = false
     ) {

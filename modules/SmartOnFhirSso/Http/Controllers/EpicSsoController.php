@@ -43,14 +43,6 @@ class EpicSsoController extends Controller implements SmartOnFhirSsoController
         return redirect()->to(session()->get('url.intended', route('login')));
     }
 
-    public function showNotAuth() {
-        return view('smartonfhirsso::not-auth');
-    }
-
-    public function showError() {
-        return view('smartonfhirsso::error');
-    }
-
     public function getClientId(): string
     {
         if (isProductionEnv()) {

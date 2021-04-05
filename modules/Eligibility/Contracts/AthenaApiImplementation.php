@@ -22,7 +22,7 @@ interface AthenaApiImplementation
     /**
      * @return ConnectionV2
      */
-    public function api(int $practiceId);
+    public function api(?string $practiceId);
 
     /**
      * @param $practiceId
@@ -131,7 +131,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getCareTeam(int $patientId, int $practiceId, int $departmentId);
+    public function getCareTeam(?string $patientId, ?string $practiceId, ?string $departmentId);
 
     /**
      * Get a patient's CCDA record.
@@ -170,17 +170,19 @@ interface AthenaApiImplementation
     /**
      * Get a patient's medical history.
      *
-     * @param string $startDate
-     * @param string $endDate
-     *
-     * @throws \Exception
+     * @param string|null $patientId
+     * @param string|null $practiceId
+     * @param string|null $departmentId
+     * @param string|null $startDate
+     * @param string|null $endDate
      *
      * @return mixed
+     * @throws \Exception
      */
     public function getEncounters(
-        int $patientId,
-        int $practiceId,
-        int $departmentId,
+        ?string $patientId,
+        ?string $practiceId,
+        ?string $departmentId,
         string $startDate = null,
         string $endDate = null
     );
@@ -192,7 +194,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
+    public function getMedicalHistory(?string $patientId, ?string $practiceId, ?string $departmentId);
 
     /**
      * Get patient medications.
@@ -201,17 +203,17 @@ interface AthenaApiImplementation
      *
      * @return array|mixed
      */
-    public function getMedications(int $patientId, int $practiceId, int $departmentId);
-    
+    public function getMedications(?string $patientId, ?string $practiceId, ?string $departmentId);
+
     /**
      * Get the next paginated result set.
      *
      * @param $url
-     * @param int $practiceId
+     * @param ?string $practiceId
      *
      * @return bool|mixed
      */
-    public function getNextPage($url, int $practiceId);
+    public function getNextPage($url, ?string $practiceId);
 
     /**
      * Gets Information about a single patient's appointments
@@ -226,7 +228,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getPatientAppointments(?int $practiceId, ?int $patientId, $showPast = true, $showCancelled = false);
+    public function getPatientAppointments(?string $practiceId, ?string $patientId, $showPast = true, $showCancelled = false);
 
     /**
      * Get the patient's custom fields.

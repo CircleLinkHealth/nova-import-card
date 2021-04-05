@@ -348,16 +348,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.176.5",
+            "version": "3.176.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "45d69a8da4f55879f8a24b0b659a5bc7ad077725"
+                "reference": "734dd0535f8e70ebb59be37f522af4e45d006ace"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45d69a8da4f55879f8a24b0b659a5bc7ad077725",
-                "reference": "45d69a8da4f55879f8a24b0b659a5bc7ad077725",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/734dd0535f8e70ebb59be37f522af4e45d006ace",
+                "reference": "734dd0535f8e70ebb59be37f522af4e45d006ace",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-03-31T18:15:22+00:00"
+            "time": "2021-04-02T18:16:40+00:00"
         },
         {
             "name": "brick/math",
@@ -1758,12 +1758,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarkGhostHunter/Laraload.git",
-                "reference": "80d2120683db7b27dd8c8c404cabbe96eef4852a"
+                "reference": "25236cf4abda16837434a199a5e4201bfc55e880"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarkGhostHunter/Laraload/zipball/80d2120683db7b27dd8c8c404cabbe96eef4852a",
-                "reference": "80d2120683db7b27dd8c8c404cabbe96eef4852a",
+                "url": "https://api.github.com/repos/DarkGhostHunter/Laraload/zipball/25236cf4abda16837434a199a5e4201bfc55e880",
+                "reference": "25236cf4abda16837434a199a5e4201bfc55e880",
                 "shasum": ""
             },
             "require": {
@@ -1823,7 +1823,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2021-03-22T01:56:50+00:00"
+            "time": "2021-04-01T17:59:51+00:00"
         },
         {
             "name": "darkghosthunter/preloader",
@@ -3181,7 +3181,7 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.166.0",
+            "version": "v0.167.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
@@ -13103,16 +13103,16 @@
         },
         {
             "name": "barryvdh/laravel-ide-helper",
-            "version": "v2.9.1",
+            "version": "v2.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "8d8302ff6adb55f8b844c798b8b1ffdee142f7e5"
+                "reference": "2f61602e7a7f88ad29b0f71355b4bb71396e923b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/8d8302ff6adb55f8b844c798b8b1ffdee142f7e5",
-                "reference": "8d8302ff6adb55f8b844c798b8b1ffdee142f7e5",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/2f61602e7a7f88ad29b0f71355b4bb71396e923b",
+                "reference": "2f61602e7a7f88ad29b0f71355b4bb71396e923b",
                 "shasum": ""
             },
             "require": {
@@ -13185,7 +13185,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-15T19:22:08+00:00"
+            "time": "2021-04-02T14:32:13+00:00"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -15565,16 +15565,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.82",
+            "version": "0.12.83",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "3920f0fb0aff39263d3a4cb0bca120a67a1a6a11"
+                "reference": "4a967cec6efb46b500dd6d768657336a3ffe699f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3920f0fb0aff39263d3a4cb0bca120a67a1a6a11",
-                "reference": "3920f0fb0aff39263d3a4cb0bca120a67a1a6a11",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4a967cec6efb46b500dd6d768657336a3ffe699f",
+                "reference": "4a967cec6efb46b500dd6d768657336a3ffe699f",
                 "shasum": ""
             },
             "require": {
@@ -15617,7 +15617,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-19T06:08:17+00:00"
+            "time": "2021-04-03T15:35:45+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
