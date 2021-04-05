@@ -395,26 +395,6 @@ class PatientAttestedConditionsTest extends TestCase
 //        }
     }
 
-    public function test_patient_summeries_fetch_all_attested_conditions_regardless_of_pms_id()
-    {
-        $pms             = $this->patient->patientSummaryForMonth();
-        $patientProblems = $this->patient->ccdProblems()->with('cpmProblem')->get()->where('cpmProblem.is_behavioral', false);
-
-        AttestedProblem::create([
-            'ccd_problem_id' => $patientProblems->first()->id,
-            'patient_user_id' => $this->patient->id,
-            'chargeable_month' => $pms->month_year,
-            'patient_monthly_summary_id' => $pms->id
-        ]);
-
-        AttestedProblem::create([
-            'ccd_problem_id' => $patientProblems->last()->id,
-            'patient_user_id' => $this->patient->id,
-            'chargeable_month' => $pms->month_year,
-        ]);
-
-        self::assertEquals($pms->ccmAttestedProblems()->count(), 2);
-    }
     /**
      * This is to test passing null on PMS::attachLastMonthsChargeableServicesIfYouShould.
      *
@@ -455,6 +435,27 @@ class PatientAttestedConditionsTest extends TestCase
 //        foreach ($charggeableServiceIds as $id) {
 //            $this->assertTrue(1 == $currentChargeableServices->where('id', $id)->count());
 //        }
+    }
+
+    public function test_patient_summeries_fetch_all_attested_conditions_regardless_of_pms_id()
+    {
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->with('cpmProblem')->get()->where('cpmProblem.is_behavioral', false);
+
+        AttestedProblem::create([
+            'ccd_problem_id'             => $patientProblems->first()->id,
+            'patient_user_id'            => $this->patient->id,
+            'chargeable_month'           => $pms->month_year,
+            'patient_monthly_summary_id' => $pms->id,
+        ]);
+
+        AttestedProblem::create([
+            'ccd_problem_id'   => $patientProblems->last()->id,
+            'patient_user_id'  => $this->patient->id,
+            'chargeable_month' => $pms->month_year,
+        ]);
+
+        self::assertEquals($pms->ccmAttestedProblems()->count(), 2);
     }
 
     public function test_patient_with_attested_conditions_can_be_deleted()
