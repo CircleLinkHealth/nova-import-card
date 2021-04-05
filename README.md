@@ -10,8 +10,8 @@ The monorepo is created by mirroring all CPM repositories into one, while mainta
 
 ### Prerequisites
 1. PHP version v7.4
-2. MySQL
-3. Composer
+2. MySQL v5.7
+3. Composer v1
 4. Laravel Valet
 
 ### Install Laravel Valet
