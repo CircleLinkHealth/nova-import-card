@@ -16,11 +16,12 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class AutoPatientAttestation
 {
     private bool $billingRevamp = false;
-    //todo:this class needs cleanup and optimisation. It's performing un-needed queries despite the fact that it's been called by a resource
+    //todo:this class needs cleanup and optimisation. It may performing un-needed queries despite the fact that it's been called by a resource. It contains logic that could be elsewhere
     private ?Carbon $month  = null;
     private ?User $patient  = null;
     private ?int $patientId = null;
@@ -145,7 +146,7 @@ class AutoPatientAttestation
 
         $hasRpm = $this->hasServiceCode(ChargeableService::RPM);
         if ($hasRpm) {
-            return $this->patient->ccdProblems->map(function ($prob) {
+            return $this->patient->ccdProblems->sortByDesc('is_monitored')->map(function ($prob) {
                 return [
                     'id'            => $prob->id,
                     'name'          => $prob->name,

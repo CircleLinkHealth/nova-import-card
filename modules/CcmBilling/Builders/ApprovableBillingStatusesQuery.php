@@ -25,14 +25,7 @@ trait ApprovableBillingStatusesQuery
             ->whereHas('patientUser.chargeableMonthlySummaries', fn ($q) => $q->createdOnIfNotNull($monthYear, 'chargeable_month')->where('is_fulfilled', '=', true))
             ->when($withRelations, function ($q) use ($monthYear) {
                 return $q->with([
-                    'patientUser' => fn ($q) => $q->with(array_merge($this->sharedUserRelations($monthYear), [
-                        'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
-                            $q->createdOnIfNotNull($monthYear, 'chargeable_month');
-                        },
-                        'ccdProblems' => function ($problem) {
-                            $problem->forBilling();
-                        },
-                    ])),
+                    'patientUser' => fn ($q) => $q->with($this->sharedUserRelations($monthYear)),
                 ]);
             });
     }
