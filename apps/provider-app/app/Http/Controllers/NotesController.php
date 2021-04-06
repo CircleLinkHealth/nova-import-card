@@ -178,12 +178,11 @@ class NotesController extends Controller
             $answerFromMoreInfo = $this->getAnswerFromSelfEnrolmentSurvey($patientId);
         }
 
-        // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
+        // RN Approval Flow
         $shouldRnApprove = optional($patient->carePlan)->shouldRnApprove($author);
         $hasRnApprovedCp = false;
         if ($shouldRnApprove) {
-            $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
-            $hasRnApprovedCp = $approvedId && $approvedId == $author->id;
+            $hasRnApprovedCp = ProviderController::isSessionRnApproved($request, (int) $author_id, (int) $patientId);
         }
 
         $view_data = [
@@ -572,12 +571,11 @@ class NotesController extends Controller
         }
         $successfulClinicalCall = isset($input['call_status']) && Call::REACHED === $input['call_status'];
 
-        // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
+        // RN Approval Flow
         $hasRnApprovedCp = false;
         if (optional($patient->carePlan)->shouldRnApprove($author) &&
             $successfulClinicalCall) {
-            $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
-            $hasRnApprovedCp = $approvedId && $approvedId == auth()->id();
+            $hasRnApprovedCp = ProviderController::isSessionRnApproved($request, $author->id, (int) $patientId);
             if ( ! $hasRnApprovedCp) {
                 $errors = ['Cannot save note. Please click on Ready For Dr. in View Care Plan.'];
                 try {

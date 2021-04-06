@@ -9,15 +9,12 @@ namespace App\Http\Controllers;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Events\CarePlanWasApproved;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Services\ProviderInfoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 
 class ProviderController extends Controller
 {
-    public const SESSION_RN_APPROVED_KEY = 'rn_approved';
-
     private $providerInfoService;
 
     public function __construct(ProviderInfoService $providerInfoService)
@@ -42,8 +39,7 @@ class ProviderController extends Controller
 
             // this will be used when creating a note
             // the care plan status will be changed only when the note is saved
-            $session = $request->session();
-            $session->put(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
+            $this->sessionRnApprove($request, auth()->id(), $patientId);
 
             // should redirect to the draft note
             return redirect()->to(route('patient.note.create', [
@@ -91,6 +87,13 @@ class ProviderController extends Controller
     public function index()
     {
         return $this->providerInfoService->providers();
+    }
+
+    public static function isSessionRnApproved(Request $request, int $authorId, int $patientId): bool
+    {
+        $str = $request->session()->get(self::getSessionRnApproveKey($authorId, $patientId), null);
+
+        return ! is_null($str);
     }
 
     public function list()
@@ -170,5 +173,15 @@ class ProviderController extends Controller
         }
 
         return null;
+    }
+
+    private static function getSessionRnApproveKey(int $authorId, int $patientId): string
+    {
+        return "rn_approve_${authorId}_${patientId}";
+    }
+
+    private function sessionRnApprove(Request $request, int $authorId, int $patientId)
+    {
+        $request->session()->put(self::getSessionRnApproveKey($authorId, $patientId), '1');
     }
 }
