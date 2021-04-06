@@ -82,7 +82,7 @@ class UpdateBankHolidaysForYear extends Command
             self::NEW_YEARS_DAY => "$year-$newYearsConstantDate",
             self::MEMORIAL_DAY  => "$year-05-31",
             self::JULY_4TH      => "$year-$july4thConstantDate",
-            self::LABOR_DAY     => "$year-09-06",
+            self::LABOR_DAY     => "$year-06-09",
             self::THANKSGIVING  => "$year-11-25",
             self::CHRISTMAS     => "$year-$xmasConstantDate",
         ]);
