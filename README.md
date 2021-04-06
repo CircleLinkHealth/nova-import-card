@@ -160,6 +160,26 @@ Now that we've copied the necessary files, we can build the mono repo by running
 ```bash
 sh ../build.sh
 ```
+
+### Deploy Review App
+1. `monovapor review-apps {review-app-name} {blueprint-env=staging or production} {apps, space separated}`
+
+   Example: `monovapor review-apps test-app staging superadmin provider`
+   This command will take care of everything we need: 
+   1. Environments in Vapor 
+   2. Correct details in vapor.yml on each app 
+   3. Uploading .env vars in Vapor 
+   4. Create a staging-deploy-s3.env if it doesn’t exist for each app, if production review app the developer must create it 
+   5. Add git ignore entries 
+   6. Create Docker file with the correct credentials. Basically, it should be ready to deploy.
+
+2. `monovapor deploy:cpm {review-app-name} staging provider superadmin`
+   
+3. To make sure all of the above are reset when we’re done with our work, please run:
+   
+   `monovapor delete-review-apps {review-app-name} {apps, space separated}`
+   
+   Example: `monovapor delete-review-apps test-app superadmin provider`
  
 ### Credits
 The monorepo is powered by
