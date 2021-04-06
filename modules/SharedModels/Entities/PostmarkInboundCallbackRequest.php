@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 class PostmarkInboundCallbackRequest
 {
     const INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS = 16;
+    const INBOUND_CALLER_ID = 'Clr ID:';
 
     /**
      * @return string[]
@@ -30,7 +31,7 @@ class PostmarkInboundCallbackRequest
             'Primary:',
             'Msg ID:',
             'IS Rec #:',
-            'Clr ID:',
+            self::INBOUND_CALLER_ID,
             'Taken:',
             'Msg:',
         ];
@@ -42,10 +43,6 @@ class PostmarkInboundCallbackRequest
     public function process(string $inboundCallback, int $postmarkId): PostmarkCallbackInboundData
     {
         $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback);
-        if (count($inboundCallbackArray) > self::INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS) {
-            throw new DailyCallbackReportException();
-        }
-
         $inboundDataArray = $this->inboundDataInArray($inboundCallbackArray);
         if (empty($inboundDataArray)) {
             sendSlackMessage('#carecoach_ops_alerts', "Email body is empty for inbound_postmark_mail [$postmarkId]");

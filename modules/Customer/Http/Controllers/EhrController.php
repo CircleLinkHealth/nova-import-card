@@ -14,6 +14,7 @@ class EhrController extends Controller
 {
     const SSO_INTEGRATIONS = [
         'athena',
+        'epic'
     ];
 
     public function index(Request $request)
