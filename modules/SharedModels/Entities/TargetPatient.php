@@ -21,9 +21,9 @@ use CircleLinkHealth\SharedModels\Traits\BelongsToCcda;
  * @property int                                                                                         $ehr_id
  * @property int|null                                                                                    $user_id
  * @property int|null                                                                                    $enrollee_id
- * @property int                                                                                         $ehr_patient_id
- * @property int                                                                                         $ehr_practice_id
- * @property int                                                                                         $ehr_department_id
+ * @property string|null                                                                                 $ehr_patient_id
+ * @property string|null                                                                                 $ehr_practice_id
+ * @property string|null                                                                                 $ehr_department_id
  * @property string|null                                                                                 $status
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at

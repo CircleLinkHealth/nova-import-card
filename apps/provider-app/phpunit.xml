@@ -24,6 +24,9 @@
     <testsuite name="SamlSpModule">
       <directory suffix="Test.php">./vendor/circlelinkhealth/saml-sp-module/Tests</directory>
     </testsuite>
+    <testsuite name="SmartOnFhirSsoModule">
+      <directory suffix="Test.php">./vendor/circlelinkhealth/smart-on-fhir-sso-module/Tests</directory>
+    </testsuite>
     <testsuite name="Feature">
       <directory suffix="Test.php">./tests/Feature</directory>
     </testsuite>
