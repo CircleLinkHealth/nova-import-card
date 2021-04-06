@@ -14,24 +14,17 @@ use Illuminate\Routing\Controller;
 
 class SsoController extends Controller
 {
-    private SsoService $service;
-
-    public function __construct()
-    {
-        $this->service = app(SsoService::class);
-    }
-
-    public function launch(Request $request)
+    public function launch(Request $request, SsoService $service)
     {
         $iss      = $request->input('iss');
-        $platform = $this->service->getPlatform($iss);
+        $platform = $service->getPlatform($iss);
         if ( ! $platform) {
             throw new \Exception("sso not implemented: $iss");
         }
 
         $launchToken      = $request->input('launch');
         $ssoSettings      = $this->getSettings($platform);
-        $metadata         = $this->service->getMetadataEndpoints($ssoSettings->clientId, $iss);
+        $metadata         = $service->getMetadataEndpoints($ssoSettings->clientId, $iss);
         $authorizationUrl = $this->getAuthorizationUrl($ssoSettings, $iss, $launchToken, $metadata);
 
         return redirect()->to($authorizationUrl);
