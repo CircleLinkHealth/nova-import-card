@@ -43,7 +43,6 @@ class PostmarkInboundCallbackRequest
     public function process(string $inboundCallback, int $postmarkId): PostmarkCallbackInboundData
     {
         $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback);
-
         $inboundDataArray = $this->inboundDataInArray($inboundCallbackArray);
         if (empty($inboundDataArray)) {
             sendSlackMessage('#carecoach_ops_alerts', "Email body is empty for inbound_postmark_mail [$postmarkId]");

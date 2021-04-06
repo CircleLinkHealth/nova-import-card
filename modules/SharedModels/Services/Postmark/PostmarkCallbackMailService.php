@@ -36,6 +36,14 @@ class PostmarkCallbackMailService
             return null;
         }
 
+        if (substr_count($postmarkRecord->body, PostmarkInboundCallbackRequest::INBOUND_CALLER_ID) === 0) {
+            $message = "Inbound Callback: [$postmarkRecordId] is missing [Clr Id]. It cannot be processed.";
+            Log::error($message);
+            sendSlackMessage('#carecoach_ops_alerts', $message);
+
+            return null;
+        }
+
         if (substr_count($postmarkRecord->body, PostmarkInboundCallbackRequest::INBOUND_CALLER_ID) > 1) {
             throw new DailyCallbackReportException();
         }
