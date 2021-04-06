@@ -9,6 +9,7 @@ namespace CircleLinkHealth\SharedModels\Services\Postmark;
 use CircleLinkHealth\SharedModels\DTO\PostmarkCallbackInboundData;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundCallbackRequest;
 use CircleLinkHealth\SharedModels\Entities\PostmarkInboundMail;
+use CircleLinkHealth\SharedModels\Exceptions\CallBackMissingCallerIdException;
 use CircleLinkHealth\SharedModels\Exceptions\CannotParseCallbackException;
 use CircleLinkHealth\SharedModels\Exceptions\DailyCallbackReportException;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,7 @@ class PostmarkCallbackMailService
 {
     /**
      * @throws CannotParseCallbackException|DailyCallbackReportException
+     * @throws CallBackMissingCallerIdException
      */
     public function getInboundData(int $postmarkRecordId): ?PostmarkCallbackInboundData
     {
@@ -39,11 +41,7 @@ class PostmarkCallbackMailService
         $callerIdCountInString = substr_count($postmarkRecord->body, PostmarkInboundCallbackRequest::INBOUND_CALLER_ID);
 
         if ($callerIdCountInString === 0) {
-            $message = "Inbound Callback: [$postmarkRecordId] is missing [Clr Id]. It cannot be processed.";
-            Log::error($message);
-            sendSlackMessage('#carecoach_ops_alerts', $message);
-
-            return null;
+          throw new CallBackMissingCallerIdException();
         }
 
         if ($callerIdCountInString > 1) {
