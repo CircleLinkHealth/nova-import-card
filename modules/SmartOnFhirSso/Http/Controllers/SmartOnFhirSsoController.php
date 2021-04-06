@@ -12,4 +12,5 @@ interface SmartOnFhirSsoController
     function getRedirectUrl(): string;
     function getPlatform(): string;
     function getClientId(): string;
+    function getUserIdPropertyName(): string;
 }

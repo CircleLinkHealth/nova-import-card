@@ -82,6 +82,6 @@ class SsoController extends Controller
             return null;
         }
 
-        return new SsoIntegrationSettings($controller->getClientId(), $controller->getRedirectUrl());
+        return new SsoIntegrationSettings($controller->getPlatform(), $controller->getUserIdPropertyName(), $controller->getClientId(), $controller->getRedirectUrl());
     }
 }

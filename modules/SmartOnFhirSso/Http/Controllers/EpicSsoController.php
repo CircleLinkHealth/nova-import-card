@@ -6,17 +6,16 @@
 
 namespace CircleLinkHealth\SmartOnFhirSso\Http\Controllers;
 
-use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use CircleLinkHealth\SmartOnFhirSso\Services\SsoService;
-use Exception;
-use Illuminate\Auth\AuthenticationException;
+use CircleLinkHealth\SmartOnFhirSso\ValueObjects\SsoIntegrationSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class EpicSsoController extends Controller implements SmartOnFhirSsoController
 {
-    const PLATFORM = 'epic';
+    const PLATFORM              = 'epic';
+    const USER_ID_PROPERTY_NAME = 'sub';
 
     private SsoService $service;
 
@@ -27,20 +26,9 @@ class EpicSsoController extends Controller implements SmartOnFhirSsoController
 
     public function getAuthToken(Request $request): RedirectResponse
     {
-        $response = $this->service->authenticate($this->getRedirectUrl(), $this->getClientId(), $request->input('code'));
-        $decoded  = $this->service->decodeIdToken($response->openIdToken);
-        try {
-            event(new LoginEvent(self::PLATFORM, $decoded->sub, $response->patientFhirId));
-        }
-        catch (AuthenticationException $e) {
-            return redirect(route('smart.on.fhir.sso.not.auth'));
-        }
-        catch (Exception $e) {
-            session()->put('error_message', $e->getMessage());
-            return redirect(route('smart.on.fhir.sso.error'));
-        }
+        $options = new SsoIntegrationSettings(self::PLATFORM, self::USER_ID_PROPERTY_NAME, $this->getRedirectUrl(), $this->getClientId());
 
-        return redirect()->to(session()->get('url.intended', route('login')));
+        return $this->service->authenticate($options, $request->input('code'));
     }
 
     public function getClientId(): string
@@ -60,5 +48,10 @@ class EpicSsoController extends Controller implements SmartOnFhirSsoController
     public function getRedirectUrl(): string
     {
         return route('smart.on.fhir.sso.epic.code');
+    }
+
+    public function getUserIdPropertyName(): string
+    {
+        return self::USER_ID_PROPERTY_NAME;
     }
 }

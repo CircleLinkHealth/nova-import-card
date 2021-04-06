@@ -6,15 +6,16 @@
 
 namespace CircleLinkHealth\SmartOnFhirSso\Http\Controllers;
 
-use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use CircleLinkHealth\SmartOnFhirSso\Services\SsoService;
+use CircleLinkHealth\SmartOnFhirSso\ValueObjects\SsoIntegrationSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class SmartHealthItSsoController extends Controller implements SmartOnFhirSsoController
 {
-    const PLATFORM = 'smarthealthit';
+    const PLATFORM              = 'smarthealthit';
+    const USER_ID_PROPERTY_NAME = 'fhirUser';
 
     private SsoService $service;
 
@@ -25,12 +26,9 @@ class SmartHealthItSsoController extends Controller implements SmartOnFhirSsoCon
 
     public function getAuthToken(Request $request): RedirectResponse
     {
-        $response = $this->service->authenticate($this->getRedirectUrl(), $this->getClientId(), $request->input('code'));
-        $decoded  = $this->service->decodeIdToken($response->openIdToken);
+        $options = new SsoIntegrationSettings(self::PLATFORM, self::USER_ID_PROPERTY_NAME, $this->getRedirectUrl(), $this->getClientId());
 
-        event(new LoginEvent(self::PLATFORM, $decoded->fhirUser, $response->patientFhirId));
-
-        return redirect()->to(session()->get('url.intended', route('login')));
+        return $this->service->authenticate($options, $request->input('code'));
     }
 
     public function getClientId(): string
@@ -46,5 +44,10 @@ class SmartHealthItSsoController extends Controller implements SmartOnFhirSsoCon
     public function getRedirectUrl(): string
     {
         return route('smart.on.fhir.sso.smarthealthit.code');
+    }
+
+    public function getUserIdPropertyName(): string
+    {
+        return self::USER_ID_PROPERTY_NAME;
     }
 }

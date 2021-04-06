@@ -87,7 +87,7 @@ class SmartOnFhirSsoTest extends CustomerTestCase
 
     private function setUpMocks()
     {
-        $repo = Mockery::mock(SsoService::class);
+        $repo = Mockery::mock(SsoService::class)->makePartial();
         $this->instance(SsoService::class, $repo);
 
         $repo->shouldReceive('getMetadataEndpoints')
@@ -116,12 +116,12 @@ class SmartOnFhirSsoTest extends CustomerTestCase
 
         $epicController = app(EpicSsoController::class);
         $repo->shouldReceive('getSettings')
-            ->andReturn(new SsoIntegrationSettings($epicController->getClientId(), $epicController->getRedirectUrl()));
+            ->andReturn(new SsoIntegrationSettings($epicController->getPlatform(), $epicController->getUserIdPropertyName(), $epicController->getClientId(), $epicController->getRedirectUrl()));
 
         $repo->shouldReceive('getPlatform')
-            ->andReturn(EpicSsoController::PLATFORM);
+            ->andReturn($epicController->getPlatform());
 
-        $repo->shouldReceive('authenticate')
+        $repo->shouldReceive('getOAuthToken')
             ->andReturn(new OAuthResponse([
                 'id_token' => 'id_token',
                 'patient'  => self::EHR_PATIENT,

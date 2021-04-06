@@ -6,30 +6,37 @@
 
 namespace CircleLinkHealth\SmartOnFhirSso\Services;
 
+use CircleLinkHealth\SmartOnFhirSso\Events\LoginEvent;
 use CircleLinkHealth\SmartOnFhirSso\Http\Controllers\EpicSsoController;
 use CircleLinkHealth\SmartOnFhirSso\Http\Controllers\SmartHealthItSsoController;
 use CircleLinkHealth\SmartOnFhirSso\Http\Requests\MetadataResponse;
 use CircleLinkHealth\SmartOnFhirSso\Http\Requests\OAuthResponse;
 use CircleLinkHealth\SmartOnFhirSso\ValueObjects\IdTokenDecoded;
+use CircleLinkHealth\SmartOnFhirSso\ValueObjects\SsoIntegrationSettings;
+use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class SsoService
 {
-    public function authenticate(string $redirectUrl, string $clientId, string $code): OAuthResponse
+    public function authenticate(SsoIntegrationSettings $options, string $code)
     {
-        $metadataResponse = $this->getMetadataEndpointsFromCache($clientId);
+        $response = $this->getOAuthToken($options->redirectUrl, $options->clientId, $code);
+        $decoded  = $this->decodeIdToken($response->openIdToken);
+        try {
+            $prop = $options->userIdPropertyName;
+            event(new LoginEvent($options->platform, $decoded->$prop, $response->patientFhirId));
+        } catch (AuthenticationException $e) {
+            return redirect(route('smart.on.fhir.sso.not.auth'));
+        } catch (Exception $e) {
+            session()->put('error_message', $e->getMessage());
 
-        $response = Http::asForm()
-            ->post($metadataResponse->tokenUrl, [
-                'grant_type'   => 'authorization_code',
-                'code'         => $code,
-                'redirect_uri' => $redirectUrl,
-                'client_id'    => $clientId,
-            ]);
+            return redirect(route('smart.on.fhir.sso.error'));
+        }
 
-        return new OAuthResponse($response->json());
+        return redirect()->to(session()->get('url.intended', route('login')));
     }
 
     public function decodeIdToken(string $idToken): IdTokenDecoded
@@ -53,6 +60,21 @@ class SsoService
 
             return new MetadataResponse($response->json());
         });
+    }
+
+    public function getOAuthToken(string $redirectUrl, string $clientId, string $code): OAuthResponse
+    {
+        $metadataResponse = $this->getMetadataEndpointsFromCache($clientId);
+
+        $response = Http::asForm()
+            ->post($metadataResponse->tokenUrl, [
+                'grant_type'   => 'authorization_code',
+                'code'         => $code,
+                'redirect_uri' => $redirectUrl,
+                'client_id'    => $clientId,
+            ]);
+
+        return new OAuthResponse($response->json());
     }
 
     public function getPlatform(string $iss): ?string
