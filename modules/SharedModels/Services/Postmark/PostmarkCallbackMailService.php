@@ -36,6 +36,10 @@ class PostmarkCallbackMailService
             return null;
         }
 
+        if (substr_count($postmarkRecord->body, PostmarkInboundCallbackRequest::INBOUND_CALLER_ID) > 1) {
+            throw new DailyCallbackReportException();
+        }
+
         return (new PostmarkInboundCallbackRequest())->process($postmarkRecord->body, $postmarkRecordId);
     }
 }
