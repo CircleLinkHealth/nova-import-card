@@ -32,6 +32,8 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
             CreateLocationsFromAthenaApi::class,
             HasDatabaseNotifications::class,
+            ProcessPostmarkInboundMailCommand::class,
+            EraseTestEnrollees::class,
             Notifiable::class,
             DatabaseNotification::class,
         ];

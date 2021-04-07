@@ -249,40 +249,20 @@ class TimeTracker extends Resource
             return $fields;
         }
 
-        $patientTime        = PatientTime::getForPatient($pageTimer->patient, $chargeableServices);
-        $modifiableCsCode   = null;
-        $modifiableDuration = null;
         for ($i = 0; $i < $len; ++$i) {
             $activity = $pageTimer->activities[$i];
             $csCode   = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
             $fields[] = Text::make("Activity for $csCode", function () use ($activity) {
                 return $activity->duration;
             });
-            if ($i === ($len - 1) && $this->isModifiable($patientTime, $csCode)) {
-                $modifiableCsCode   = $csCode;
-                $modifiableDuration = $activity->duration;
-            }
         }
 
-        if ( ! $modifiableCsCode) {
+        if (sizeof($fields) > 1) {
             $fields[] = Text::make('NOTE', function () {
-                return 'You cannot modify this time tracker entry, because it has time tracked for already fulfilled chargeable services. Please try a more recent one for this patient.';
-            });
-        } elseif (sizeof($fields) > 1) {
-            $fields[] = Text::make('NOTE', function () use ($modifiableCsCode, $modifiableDuration) {
-                return "This time tracker entry has activities for multiple chargeable services. You can only modify duration of $modifiableCsCode. Maximum $modifiableDuration seconds.";
+                return "You cannot modify this time tracker entry because it has activities for multiple chargeable services.";
             });
         }
 
         return $fields;
-    }
-
-    private function isModifiable(PatientTime $patientTime, string $csCode)
-    {
-        if (\CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60 === $csCode) {
-            return true;
-        }
-
-        return ! $patientTime->isFulFilled($csCode);
     }
 }

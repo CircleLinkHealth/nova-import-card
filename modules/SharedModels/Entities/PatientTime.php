@@ -22,7 +22,6 @@ class PatientTime
 
     public static function getForPatient(User $patient, Collection $chargeableServices): PatientTime
     {
-        //todo: this should be done with the new ChargeablePatientMonthlySummaryView model
         $result = new PatientTime();
         if ( ! $patient) {
             return $result;

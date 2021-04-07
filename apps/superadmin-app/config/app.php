@@ -201,6 +201,8 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
+        CircleLinkHealth\TimeTracking\Providers\TimeTrackingDeferredServiceProvider::class,
+        \CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider::class,
         LaravelJobServiceProvider::class,
         CcmBillingServiceProvider::class,
         \CircleLinkHealth\CcmBilling\Providers\CcmBillingDeferredServiceProvider::class,
