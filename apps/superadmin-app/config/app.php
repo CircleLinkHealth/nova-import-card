@@ -6,6 +6,7 @@
 
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider;
+use CircleLinkHealth\ConditionCodeLookup\Providers\ConditionCodeLookupServiceProvider;
 use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
@@ -216,6 +217,7 @@ return [
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
         TwilioIntegrationServiceProvider::class,
         NurseInvoicesServiceProvider::class,
+        ConditionCodeLookupServiceProvider::class,
     ],
 
     /*
