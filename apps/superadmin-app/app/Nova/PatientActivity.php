@@ -159,7 +159,7 @@ class PatientActivity extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return parent::indexQuery($request, $query)
-                     ->where('performed_at', '>=', now()->startOfMonth());
+            ->where('performed_at', '>=', now()->startOfMonth());
     }
 
     /**

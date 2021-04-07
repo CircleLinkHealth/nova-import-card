@@ -79,6 +79,7 @@ namespace App;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PageTimer whereUrlShort($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|PageTimer whereUserAgent($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdInMonthFromDateTimeField(\Carbon\Carbon $date, $field = 'created_at')
  */
 class PageTimer extends \CircleLinkHealth\SharedModels\Entities\PageTimer
 {

@@ -259,7 +259,7 @@ class TimeTracker extends Resource
 
         if (sizeof($fields) > 1) {
             $fields[] = Text::make('NOTE', function () {
-                return "You cannot modify this time tracker entry because it has activities for multiple chargeable services.";
+                return 'You cannot modify this time tracker entry because it has activities for multiple chargeable services.';
             });
         }
 

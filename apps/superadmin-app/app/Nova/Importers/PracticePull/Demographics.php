@@ -34,7 +34,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
         ini_set('post_max_size', '200M');
         ini_set('max_input_time', 900);
         ini_set('max_execution_time', 900);
-    
+
         $this->practiceId = $practiceId;
     }
 
