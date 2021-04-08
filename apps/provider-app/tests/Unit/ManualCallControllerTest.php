@@ -12,6 +12,8 @@ use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Contracts\CallHandler;
 use App\Http\Controllers\ManualCallController;
 use App\ValueObjects\CreateManualCallAfterNote;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -19,6 +21,8 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 class ManualCallControllerTest extends CustomerTestCase
 {
     use WithoutMiddleware;
+
+    private int $userIdIncrement = 0;
 
     public function test_it_fails_if_message_is_not_the_correct_instance()
     {
@@ -61,7 +65,7 @@ class ManualCallControllerTest extends CustomerTestCase
     private function fakeNurse()
     {
         return factory(User::class)->make([
-            'id'           => 123456789,
+            'id'           => $this->getUserId(),
             'display_name' => 'Soulla Masoulla',
             'program_id'   => 8,
         ]);
@@ -70,9 +74,18 @@ class ManualCallControllerTest extends CustomerTestCase
     private function fakePatient()
     {
         return factory(User::class)->make([
-            'id'         => 8451251256,
+            'id'         => $this->getUserId(),
             'program_id' => 8,
         ]);
+    }
+
+    private function getUserId()
+    {
+        if (0 === $this->userIdIncrement) {
+            $this->userIdIncrement = User::orderBy('id', 'desc')->first()->id;
+        }
+
+        return ++$this->userIdIncrement;
     }
 
     private function mockSuggestor(CallHandler $handler)
@@ -80,9 +93,14 @@ class ManualCallControllerTest extends CustomerTestCase
         $patient = $this->fakePatient();
         $nurse   = $this->fakeNurse();
 
+        $this->mock(PatientServicesForTimeTracker::class, function ($m) {
+            $m->shouldReceive('get')
+                ->andReturn(new PatientChargeableSummaryCollection(collect()));
+        });
+
         $this->mock(Suggestor::class, function ($m) use ($patient, $handler) {
             $m->shouldReceive('handle')
-                ->with($patient, $handler)
+                // ->with($patient, $handler)
                 ->once()
                 ->andReturn(new Suggestion());
         });

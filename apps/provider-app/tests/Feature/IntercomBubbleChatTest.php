@@ -23,9 +23,11 @@ class IntercomBubbleChatTest extends CustomerTestCase
         parent::setUp();
         AppConfig::remove(self::CONFIG_KEY);
         AppConfig::clearCache();
-        $fakePractice     = \factory(Practice::class)->make();
-        $fakePractice->id = 8;
-        $fakePractice->save();
+        if ( ! Practice::where('id', 8)->exists()) {
+            $fakePractice     = \factory(Practice::class)->make();
+            $fakePractice->id = 8;
+            $fakePractice->save();
+        }
     }
 
     public function test_if_app_config_is_empty_no_user_can_see_bubble_chat()

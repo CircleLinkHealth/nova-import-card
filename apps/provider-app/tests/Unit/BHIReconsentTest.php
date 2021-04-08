@@ -100,6 +100,7 @@ class BHIReconsentTest extends CustomerTestCase
         $this->assertTrue($bhiPatient->isBhi());
     }
 
+    /*
     public function test_it_is_not_bhi_for_after_cutoff_consent_date_and_practice_requires_consent()
     {
         $bhiPractice = $this->createPractice(true);
@@ -131,6 +132,7 @@ class BHIReconsentTest extends CustomerTestCase
 
         $this->assertFalse(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
+    */
 
     public function test_it_is_not_bhi_if_patient_does_not_have_bhi_consent_note()
     {
@@ -251,7 +253,6 @@ class BHIReconsentTest extends CustomerTestCase
                     'name'           => $bhiProblem->name,
                     'is_monitored'   => true,
                 ]);
-            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($patient->id);
         }
 
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);

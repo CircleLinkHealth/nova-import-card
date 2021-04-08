@@ -45,15 +45,13 @@ class PatientServicesForTimeTracker
 
     protected PatientServiceProcessorRepository $repo;
 
-    public function __construct(int $patientId, Carbon $month)
+    public function __construct()
     {
-        $this->patientId = $patientId;
-        $this->month     = $month->startOfMonth();
     }
 
-    public function get(): PatientChargeableSummaryCollection
+    public function get(int $patientId, Carbon $month): PatientChargeableSummaryCollection
     {
-        return $this->setPatientData()
+        return $this->setPatientData($patientId, $month)
             ->consolidateSummaryData()
             ->createAndReturnResource();
     }
@@ -210,8 +208,10 @@ class PatientServicesForTimeTracker
         return $this->repo;
     }
 
-    private function setPatientData(): self
+    private function setPatientData(int $patientId, Carbon $month): self
     {
+        $this->patientId    = $patientId;
+        $this->month        = $month->startOfMonth();
         $this->patient      = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $this->month);
         $this->dto          = PatientMonthlyBillingDTO::generateFromUser($this->patient, $this->month);
         $this->monthlyTimes = $this->newBillingIsEnabled()
