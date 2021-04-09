@@ -13,6 +13,7 @@ class AddUniqueKeyInPatientMonthlyBillingStatusTable extends Migration
      */
     public function up()
     {
+        \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus::truncate();
         Schema::table('patient_monthly_billing_statuses', function (Blueprint $table) {
             $table->unique(['patient_user_id', 'chargeable_month'], 'billing_statuses_patient_id_month_unique');
         });
@@ -25,7 +26,6 @@ class AddUniqueKeyInPatientMonthlyBillingStatusTable extends Migration
      */
     public function down()
     {
-        \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus::truncate();
         Schema::table('patient_monthly_billing_statuses', function (Blueprint $table) {
             $table->dropForeign('pmbs_patient_user_id_foreign');
             $table->dropUnique('billing_statuses_patient_id_month_unique');
