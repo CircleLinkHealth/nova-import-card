@@ -11,7 +11,7 @@ jobs:
     name: Deploy
     timeout-minutes: 40
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/feature_#ff0bkf_test_suite'
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -67,7 +67,7 @@ jobs:
           env-file: apps/provider-app/.env
 
       - name: Run tests
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') && !contains(github.event.head_commit.message, 'skip tests') }}
+        if: ${{ env.CI_SKIP == 'false' && !startsWith(github.event.head_commit.message, 'deploy prod') && !contains(github.event.head_commit.message, 'skip tests') }}
         run: composer test
 
       - name: Create Sentry release - production
@@ -127,7 +127,7 @@ jobs:
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
       - name: Set permissions to allow creating env files
-        if: ${{ env.CI_SKIP == 'false' }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
         run: sudo chmod -R 777 ./vendor/laravel/vapor-cli/src/BuildProcess
 
       - name: Deploy - production
@@ -147,7 +147,7 @@ jobs:
           APP_ENV: staging
 
       - name: Notify Slack - Success (production)
-        if: ${{ env.CI_SKIP == 'false' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -159,7 +159,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Success (staging)
-        if: ${{ env.CI_SKIP == 'false' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -171,7 +171,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Failure (production)
-        if: ${{ env.CI_SKIP == 'false' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -183,7 +183,7 @@ jobs:
           SLACK_ICON_EMOJI: ':scream_cat:'
 
       - name: Notify Slack - Failure (staging)
-        if: ${{ env.CI_SKIP == 'false' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -196,7 +196,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
-        if: ${{ env.CI_SKIP == 'false' && failure()  }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && failure()  }}
         with:
           name: Logs
           path: ./storage/logs
