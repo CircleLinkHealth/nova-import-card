@@ -359,7 +359,7 @@
             "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors"
         ],
         "test": [
-            "php artisan --env=testing test:prepare-test_suite-db",
+            "php artisan --env=testing test:prepare-test_suite-db cpm_tests",
             "php artisan --env=testing migrate:fresh",
             "php artisan --env=testing migrate:views",
             "php artisan --env=testing db:seed --class=CircleLinkHealth\\\\Customer\\\\Database\\\\Seeders\\\\TestSuiteSeeder",

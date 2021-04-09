@@ -14,13 +14,16 @@ class CpmAppMySqlConfig
     public static function toArray()
     {
         $mysqlDBName = env('DB_DATABASE', 'nothing');
+        echo "\nCpmAppMySqlConfig [1]: $mysqlDBName\n";
 
         if ('nothing' === $mysqlDBName) {
             $mysqlDBName = Str::snake(getenv('HEROKU_BRANCH'));
+            echo "\nCpmAppMySqlConfig [2.a]: $mysqlDBName\n";
         }
 
         if (getenv('CI')) {
             $mysqlDBName = getenv('HEROKU_TEST_RUN_ID');
+            echo "\nCpmAppMySqlConfig [2.b]: $mysqlDBName\n";
         }
 
         $mysqlConfig = [
