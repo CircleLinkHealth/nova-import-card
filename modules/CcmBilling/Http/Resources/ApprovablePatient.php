@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\AutoPatientAttestation;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ClashingChargeableServices;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -51,14 +52,14 @@ class ApprovablePatient extends JsonResource
             'bhi_time'   => $bhiTime,
             'ccm_time'   => $ccmTime,
 
-            'problems'               => $this->getProblems()->values()->toArray(),
+            'problems'               => $this->getProblems($autoAttestation)->values()->toArray(),
             'no_of_successful_calls' => 0,
             'status'                 => $user->getCcmStatusForMonth($billingStatus->chargeable_month),
-            'approve'                => 'approved' === $billingStatus->status,
-            'reject'                 => 'rejected' === $billingStatus->status,
+            'approve'                => PatientMonthlyBillingStatus::APPROVED === $billingStatus->status,
+            'reject'                 => PatientMonthlyBillingStatus::REJECTED === $billingStatus->status,
             'report_id'              => $billingStatus->id,
             'actor_id'               => $billingStatus->actor_id,
-            'qa'                     => 'needs_qa' === $billingStatus->status,
+            'qa'                     => PatientMonthlyBillingStatus::NEEDS_QA === $billingStatus->status,
             'chargeable_services'    => $this->getChargeableServices()->values()->toArray($request),
             'attested_ccm_problems'  => $autoAttestation->getCcmAttestedProblems()->values()->toArray(),
             'attested_bhi_problems'  => $autoAttestation->getBhiAttestedProblems()->values()->toArray(),
@@ -105,19 +106,38 @@ class ApprovablePatient extends JsonResource
         return ChargeableServiceForAbp::collectionFromChargeableMonthlySummaries($user);
     }
 
-    private function getProblems(): Collection
+    /**
+     * @param AutoPatientAttestation $attestation
+     *
+     * Todo: cleanup in the future.
+     * We've had issues where a patient has a duplicate problem i.e. 3 Cholesterol problems. One of those was attested for.
+     * But during the unique('code') check (which is done for the attestation modal), it gets filtered out.
+     * So we put the attested problems first in the collection so we make sure they're there for ABP and they appear attested.
+     *
+     *
+     * @return Collection
+     * @throws \Exception
+     */
+    private function getProblems(AutoPatientAttestation $attestation): Collection
     {
         /** @var User $user */
         $user = $this->resource->patientUser;
+        $problems = $user->ccdProblems->sortByDesc('is_monitored');
 
-        return $user->ccdProblems->map(function ($prob) {
+        $ccmAttestedProblemIds = $attestation->getCcmAttestedProblems();
+        $bhiAttestedProblemIds = $attestation->getBhiAttestedProblems();
+        $ccmAttestedProblems = $problems->whereIn('id', $ccmAttestedProblemIds);
+        $bhiAttestedProblems = $problems->whereIn('id', $bhiAttestedProblemIds);
+        $problems = $ccmAttestedProblems->merge($bhiAttestedProblems)->merge($problems);
+
+        return $problems->map(function ($prob) {
             return [
                 'id'            => $prob->id,
                 'name'          => $prob->name,
                 'code'          => $prob->icd10Code(),
                 'is_behavioral' => $prob->isBehavioral(),
             ];
-        })->unique('code')->filter()->values();
+        })->unique('code')->filter();
     }
 
     private function getProviderName(): ?string
