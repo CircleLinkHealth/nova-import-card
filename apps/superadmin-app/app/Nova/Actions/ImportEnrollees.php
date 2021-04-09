@@ -8,16 +8,20 @@ namespace App\Nova\Actions;
 
 use App\Nova\Importers\Enrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\MediaLibrary\Models\Media;
 
 class ImportEnrollees extends Action
 {
@@ -93,6 +97,7 @@ class ImportEnrollees extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
+        /** @var UploadedFile $file */
         $file = $fields->file;
 
         $class = $this->getImporter($actionType = $fields->action_type);
@@ -101,9 +106,25 @@ class ImportEnrollees extends Action
             return Action::message("Something went wrong. Action: $actionType not found.");
         }
 
-        Excel::import(new $class($fields->practice_id, $file->getClientOriginalName(), $fields->ca_id), $file);
+        $fileName = "mark_for_self_enrollment_list_for_practice:$fields->practice_id.{$file->getClientOriginalName()}";
+
+        $fileFromMedia =   $this->uploadAndReturnFile($file->getRealPath(),  $fileName);
+
+        if ($fileFromMedia){
+            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileFromMedia->getPath(),'media', \Maatwebsite\Excel\Excel::XLSX);
+        }else{
+            Excel::import(new $class($fields->practice_id, $file->getClientOriginalName(), $fields->ca_id), $file);
+        }
 
         return Action::message('It worked!');
+    }
+
+    private function uploadAndReturnFile(string $filePath, string $fileName): Media
+    {
+        return SaasAccount::whereSlug('circlelink-health')
+            ->first()
+            ->addMedia($filePath)
+            ->toMediaCollection($fileName);
     }
 
     /**
