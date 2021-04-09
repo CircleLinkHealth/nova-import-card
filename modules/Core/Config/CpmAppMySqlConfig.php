@@ -6,24 +6,17 @@
 
 namespace CircleLinkHealth\Core\Config;
 
-use Illuminate\Support\Str;
 use PDO;
 
 class CpmAppMySqlConfig
 {
     public static function toArray()
     {
-        $mysqlDBName = env('DB_DATABASE', 'nothing');
-        echo "\nCpmAppMySqlConfig [1]: $mysqlDBName\n";
-
-        $ciVal = json_encode(getenv('CI'));
-        echo "\nCpmAppMySqlConfig getenv('CI'): $ciVal\n";
-
         $mysqlConfig = [
             'driver'         => 'mysql',
             'url'            => env('DATABASE_URL'),
             'port'           => env('DB_PORT', '3306'),
-            'database'       => $mysqlDBName,
+            'database'       => env('DB_DATABASE', 'nothing'),
             'username'       => env('DB_USERNAME', 'forge'),
             'password'       => env('DB_PASSWORD', ''),
             'unix_socket'    => env('DB_SOCKET', ''),
@@ -49,9 +42,6 @@ class CpmAppMySqlConfig
         } else {
             $mysqlConfig['host'] = env('DB_HOST', '127.0.0.1');
         }
-
-        $json_string = json_encode($mysqlConfig, JSON_PRETTY_PRINT);
-        echo "\n$json_string\n";
 
         return $mysqlConfig;
     }
