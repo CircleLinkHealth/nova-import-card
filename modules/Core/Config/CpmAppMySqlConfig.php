@@ -54,6 +54,9 @@ class CpmAppMySqlConfig
             $mysqlConfig['host'] = env('DB_HOST', '127.0.0.1');
         }
 
+        $json_string = json_encode($mysqlConfig, JSON_PRETTY_PRINT);
+        echo "\n$json_string\n";
+
         return $mysqlConfig;
     }
 }

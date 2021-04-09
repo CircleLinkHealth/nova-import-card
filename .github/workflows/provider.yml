@@ -69,6 +69,12 @@ jobs:
       - name: Run tests
         if: ${{ env.CI_SKIP == 'false' && !startsWith(github.event.head_commit.message, 'deploy prod') && !contains(github.event.head_commit.message, 'skip tests') }}
         run: composer test
+        env:
+          DB_HOST: ${{ secrets.TEST_DB_HOST }}
+          DB_PORT: ${{ secrets.TEST_DB_PORT }}
+          DB_DATABASE: ${{ secrets.TEST_DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
 
       - name: Create Sentry release - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
