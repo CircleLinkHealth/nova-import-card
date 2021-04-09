@@ -94,7 +94,7 @@ class PatientMonthlyBillingDTO
             ->withForcedPatientServices(
                 ...ForcedPatientChargeableServicesForProcessing::fromCollection($patient->forcedChargeableServices)
             )
-            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient));
+            ->withProblems(...PatientProblemsForBillingProcessing::getArrayFromPatient($patient, $month->copy()->startOfMonth()));
     }
 
     public function getAvailableServiceProcessors(): AvailableServiceProcessors

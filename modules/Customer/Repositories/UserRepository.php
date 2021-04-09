@@ -348,7 +348,7 @@ class UserRepository
             $cpStatus   = $params->get('careplan_status');
             $approverId = auth()->id();
 
-            $carePlan         = $user->carePlan;
+            $carePlan         = $user->carePlan ?? CarePlan::updateOrCreate(['user_id' => $user->id]);
             $carePlan->status = $cpStatus;
             $carePlan->mode   = $params->get('careplan_mode', CarePlan::WEB);
 
