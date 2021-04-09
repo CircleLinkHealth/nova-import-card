@@ -67,7 +67,7 @@ jobs:
           env-file: apps/provider-app/.env
 
       - name: Run tests
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'skip tests') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') && !contains(github.event.head_commit.message, 'skip tests') }}
         run: composer test
 
       - name: Create Sentry release - production
