@@ -46,6 +46,8 @@ class CareTeamReceivesAlertsTest extends CustomerTestCase
         $this->provider = $this->provider();
 
         auth()->login($this->provider);
+
+        // this->patient() also associates a care team member for the patient
         $this->patient = $this->patient();
 
         foreach ($this->provider->locations as $location) {
@@ -64,7 +66,7 @@ class CareTeamReceivesAlertsTest extends CustomerTestCase
         ]);
 
         //add second care person
-        $cp2        = $this->createUser($this->practice->id);
+        $cp2 = $this->createUser($this->practice->id);
         CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -92,6 +94,8 @@ class CareTeamReceivesAlertsTest extends CustomerTestCase
 
     public function test_it_returns_empty_collection_if_no_care_team()
     {
+        $this->patient->careTeamMembers()->delete();
+        $this->patient->load('careTeamMembers');
         $this->assertEmpty($this->patient->getCareTeamReceivesAlerts());
     }
 
@@ -106,7 +110,7 @@ class CareTeamReceivesAlertsTest extends CustomerTestCase
         ]);
 
         //add second care person
-        $cp2        = $this->createUser($this->practice->id);
+        $cp2 = $this->createUser($this->practice->id);
         CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -128,13 +132,7 @@ class CareTeamReceivesAlertsTest extends CustomerTestCase
 
     public function test_it_returns_location_contacts_person_in_addition_to_bp()
     {
-        $cp2        = $this->createUser($this->practice->id);
-        CarePerson::create([
-            'alert'          => true,
-            'type'           => 'member',
-            'user_id'        => $this->patient->id,
-            'member_user_id' => $cp2->id,
-        ]);
+        $cp2 = $this->createUser($this->practice->id);
 
         $this->patient->locations[0]->clinicalEmergencyContact()->attach($this->provider->id, [
             'name' => CarePerson::IN_ADDITION_TO_BILLING_PROVIDER,
@@ -146,7 +144,7 @@ class CareTeamReceivesAlertsTest extends CustomerTestCase
 
     public function test_it_returns_only_location_contacts_person_instead_of_bp()
     {
-        $cp2        = $this->createUser($this->practice->id);
+        $cp2 = $this->createUser($this->practice->id);
         CarePerson::create([
             'alert'          => true,
             'type'           => 'member',

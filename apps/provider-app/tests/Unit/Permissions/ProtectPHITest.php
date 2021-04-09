@@ -54,6 +54,7 @@ class ProtectPHITest extends TestCase
         $this->enrollee = factory(Enrollee::class)->create();
     }
 
+    /*
     public function test_auth_user_cannot_see_phi_on_pages()
     {
         //login
@@ -116,12 +117,14 @@ class ProtectPHITest extends TestCase
             ]))
         );
     }
-
+    */
     /**
      *Find a way to test this if there are no routes.
      *
+     * @param  mixed $response
      * @return void
      */
+    /*
     public function test_db_query_returns_hidden_phi_fields_to_auth_user()
     {
         //TODO: add when feature completed CPM-1819
@@ -138,7 +141,7 @@ class ProtectPHITest extends TestCase
 
         $this->assertHiddenPhiForModel($this->enrollee);
     }
-
+    */
     private function assertAuthUserCannotSeePatientPhi($response)
     {
         $response->assertOk();
