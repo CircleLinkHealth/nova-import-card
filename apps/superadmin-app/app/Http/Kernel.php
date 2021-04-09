@@ -46,7 +46,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled::class,
-            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
             \CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware::class,
         ],
         'sessions' => [

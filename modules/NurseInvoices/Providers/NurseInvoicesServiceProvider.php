@@ -6,31 +6,10 @@
 
 namespace CircleLinkHealth\NurseInvoices\Providers;
 
-use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
-use CircleLinkHealth\NurseInvoices\Console\Commands\ManualInvoiceDownloadCommand;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
-use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Support\ServiceProvider;
 
 class NurseInvoicesServiceProvider extends ServiceProvider
 {
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            GenerateMonthlyInvoicesForNonDemoNurses::class,
-            SendMonthlyNurseInvoiceFAN::class,
-            SendMonthlyNurseInvoiceLAN::class,
-            SendResolveInvoiceDisputeReminder::class,
-            ManualInvoiceDownloadCommand::class,
-        ];
-    }
-
     /**
      * Register the service provider.
      */
@@ -40,16 +19,6 @@ class NurseInvoicesServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->register(RouteServiceProvider::class);
-
-        $this->commands(
-            [
-                GenerateMonthlyInvoicesForNonDemoNurses::class,
-                SendMonthlyNurseInvoiceFAN::class,
-                SendMonthlyNurseInvoiceLAN::class,
-                SendResolveInvoiceDisputeReminder::class,
-                ManualInvoiceDownloadCommand::class,
-            ]
-        );
     }
 
     /**

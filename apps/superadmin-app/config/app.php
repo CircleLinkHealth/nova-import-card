@@ -6,6 +6,7 @@
 
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider;
+use CircleLinkHealth\ConditionCodeLookup\Providers\ConditionCodeLookupServiceProvider;
 use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
@@ -201,6 +202,8 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerServiceProvider::class,
+        CircleLinkHealth\TimeTracking\Providers\TimeTrackingDeferredServiceProvider::class,
+        \CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider::class,
         LaravelJobServiceProvider::class,
         CcmBillingServiceProvider::class,
         \CircleLinkHealth\CcmBilling\Providers\CcmBillingDeferredServiceProvider::class,
@@ -214,6 +217,7 @@ return [
         CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
         TwilioIntegrationServiceProvider::class,
         NurseInvoicesServiceProvider::class,
+        ConditionCodeLookupServiceProvider::class,
     ],
 
     /*

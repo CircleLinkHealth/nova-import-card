@@ -26,8 +26,10 @@ use CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
+use CircleLinkHealth\TimeTracking\Providers\TimeTrackingDeferredServiceProvider;
 use Collective\Html\HtmlServiceProvider;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
 use Illuminate\Support\Arr;
@@ -238,6 +240,7 @@ return [
         PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,
+        NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityDeferrableServiceProvider::class,
         EligibilityServiceProvider::class,
         CcdaParserProcessorProvider::class,
@@ -257,6 +260,7 @@ return [
         CustomerAuthServiceProvider::class,
         CustomerDeferrableServiceProvider::class,
         CustomerServiceProvider::class,
+        TimeTrackingDeferredServiceProvider::class,
         ServiceProvider::class,
         LaravelJobServiceProvider::class,
         CoreServiceProvider::class,

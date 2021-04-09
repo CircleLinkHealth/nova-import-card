@@ -467,8 +467,7 @@ class ReportsController extends Controller
                 ->where('successful_clinical_call', '=', 1)
                 ->exists();
 
-            $approvedBy                     = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
-            $readyForDrButtonAlreadyClicked = $approvedBy && $approvedBy == $user->id;
+            $readyForDrButtonAlreadyClicked = ProviderController::isSessionRnApproved($request, $user->id, (int) $patientId);
         }
 
 //        To phase out

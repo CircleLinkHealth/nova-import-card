@@ -1,4 +1,4 @@
-[Jira Ticket](https://circlelinkhealth.atlassian.net/browse/ROAD-)
+[ClickUp Ticket](https://app.clickup.com/t/[ticket id])
 
 ### What is the change?
 -

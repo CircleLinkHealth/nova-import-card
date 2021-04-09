@@ -250,6 +250,7 @@
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/clh-nova-theme": "*",
+        "circlelinkhealth/condition-code-lookup-module": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/cpm-admin-module": "*",
         "circlelinkhealth/cpm-migrations-module": "*",
