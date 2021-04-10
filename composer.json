@@ -182,6 +182,7 @@
     }
   ],
   "require": {
+    "ext-json": "*"
   },
   "require-dev": {
     "circlelinkhealth/app-cpm-admin": "*",
