@@ -18,7 +18,8 @@
                     </p>
                 </div>
 
-                <button class="waves-effect btn call-me-btn" >Call Me</button>
+
+                <a href="{{route('patient.requests.callback', $userId ?? '')}}" class="waves-effect btn call-me-btn" >Call Me</a>
 
             </div>
 
@@ -59,5 +60,6 @@
         width: 207px;
         height: 42px !important;
         text-transform: none !important;
+        padding-top: 4px !important;
     }
 </style>

@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class SelfEnrollmentController extends Controller
 {
@@ -251,8 +252,17 @@ class SelfEnrollmentController extends Controller
             $message = $exception->getMessage();
             Log::critical("[Self Enrollment Survey] User [$userId] could not login. EXCEPTION: $message");
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', compact('userId'));
         }
+    }
+
+    protected function requestCallback(int $userId)
+    {
+        $enrollee = Enrollee::whereUserId($userId)->firstOrFail();
+
+        $enrollee->update(['status' => 'call_queue', 'requested_callback' => Carbon::now(), 'auto_enrollment_triggered' => true]);
+
+        return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
     }
 
     protected function logoutEnrollee(Request $request)
