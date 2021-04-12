@@ -15,7 +15,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
@@ -108,23 +107,15 @@ class ImportEnrollees extends Action
 
         $fileName = "mark_for_self_enrollment_list_for_practice:$fields->practice_id.{$file->getClientOriginalName()}";
 
-        $fileFromMedia =   $this->uploadAndReturnFile($file->getRealPath(),  $fileName);
+        $fileFromMedia = $this->uploadAndReturnFile($file->getRealPath(), $fileName);
 
-        if ($fileFromMedia){
-            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileFromMedia->getPath(),'media', \Maatwebsite\Excel\Excel::XLSX);
-        }else{
+        if ($fileFromMedia) {
+            Excel::import(new $class($fields->practice_id, $fileName, $fields->ca_id), $fileFromMedia->getPath(), 'media', \Maatwebsite\Excel\Excel::XLSX);
+        } else {
             Excel::import(new $class($fields->practice_id, $file->getClientOriginalName(), $fields->ca_id), $file);
         }
 
         return Action::message('It worked!');
-    }
-
-    private function uploadAndReturnFile(string $filePath, string $fileName): Media
-    {
-        return SaasAccount::whereSlug('circlelink-health')
-            ->first()
-            ->addMedia($filePath)
-            ->toMediaCollection($fileName);
     }
 
     /**
@@ -156,5 +147,13 @@ class ImportEnrollees extends Action
     private function getImporter(string $actionType): ?string
     {
         return $this->actionImporterClassmap()[$actionType] ?? null;
+    }
+
+    private function uploadAndReturnFile(string $filePath, string $fileName): Media
+    {
+        return SaasAccount::whereSlug('circlelink-health')
+            ->first()
+            ->addMedia($filePath)
+            ->toMediaCollection($fileName);
     }
 }
