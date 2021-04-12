@@ -260,7 +260,7 @@ class SelfEnrollmentController extends Controller
     {
         $enrollee = Enrollee::whereUserId($userId)->firstOrFail();
 
-        $enrollee->update(['status' => 'call_queue', 'requested_callback' => Carbon::now(), 'auto_enrollment_triggered' => true]);
+        $enrollee->update(['status' => Enrollee::TO_CALL, 'requested_callback' => Carbon::now(), 'auto_enrollment_triggered' => true]);
 
         return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
     }
