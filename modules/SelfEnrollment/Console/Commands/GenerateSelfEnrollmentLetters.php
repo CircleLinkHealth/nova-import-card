@@ -16,6 +16,7 @@ use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateDemoLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateMarillacHealthLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateNbiLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GeneratePrimaryCare360;
+use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateSouthEastTexasLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoClinicLetter;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateToledoSignatures;
 use CircleLinkHealth\SelfEnrollment\Database\Seeders\GenerateWoodlandInternistsClinicLetter;
@@ -177,6 +178,12 @@ class GenerateSelfEnrollmentLetters extends Command
 
             return;
         }
+
+        if (GenerateSouthEastTexasLetter::SOUTHEAST_TEXAS_PRACTICE_NAME === $practiceName) {
+            Artisan::call('db:seed', ['--class' => GenerateSouthEastTexasLetter::class]);
+
+            return;
+        }
     }
 
     /**
@@ -205,6 +212,7 @@ class GenerateSelfEnrollmentLetters extends Command
             GenerateDemoLetter::DEMO_PRACTICE_NAME,
             GeneratePrimaryCare360::PRIMARY_CARE_360_PRACTICE_NAME,
             GenerateContinuumFamilyCareLetter::CONTINUUM_FAMILY_PRACTICE_NAME,
+            GenerateSouthEastTexasLetter::SOUTHEAST_TEXAS_PRACTICE_NAME,
         ];
     }
 }
