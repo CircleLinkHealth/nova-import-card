@@ -31,7 +31,7 @@ class UpdateEnrolleeStatusCommand extends Command
         parent::__construct();
     }
 
-    public function getValidatedStatus()
+    public function getValidatedStatus():string
     {
         if (! in_array($this->argument('status'), [
             Enrollee::QUEUE_AUTO_ENROLLMENT,
@@ -43,6 +43,8 @@ class UpdateEnrolleeStatusCommand extends Command
             $this->error("Given Status input is not valid.");
             abort(422);
         }
+
+        return $this->argument('status');
     }
 
     public function handle()
