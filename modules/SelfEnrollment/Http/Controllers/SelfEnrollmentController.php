@@ -258,11 +258,17 @@ class SelfEnrollmentController extends Controller
 
     protected function requestCallback(int $userId)
     {
-        $enrollee = Enrollee::whereUserId($userId)->firstOrFail();
+        $enrollee = Enrollee::whereUserId($userId)->first();
 
-        $enrollee->update(['status' => Enrollee::TO_CALL, 'requested_callback' => Carbon::now(), 'auto_enrollment_triggered' => true]);
+        if($enrollee){
+            $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
+            return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
+        }
 
-        return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
+        $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed, Enrolle with user id [$userId] could not be found.";
+        Log::error($message);
+        sendSlackMessage('#self_enrollment_logs', $message);
+
     }
 
     protected function logoutEnrollee(Request $request)
