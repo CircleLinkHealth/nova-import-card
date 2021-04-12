@@ -13,9 +13,6 @@ use App\Contracts\CallHandler;
 use App\Http\Controllers\ManualCallController;
 use App\ValueObjects\CreateManualCallAfterNote;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
-use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -86,18 +83,17 @@ class ManualCallControllerTest extends CustomerTestCase
         $patient = $this->fakePatient();
         $nurse   = $this->fakeNurse();
 
-        $this->mock(Suggestor::class, function ($m) use ($patient, $handler) {
+        $this->mock(Suggestor::class, function ($m) {
             $m->shouldReceive('handle')
                 ->with(Mockery::type(User::class), Mockery::type(CallHandler::class))
                 ->once()
                 ->andReturn(new Suggestion());
         });
 
-        $this->mock(PatientServiceProcessorRepository::class, function ($m) use ($patient){
+        $this->mock(PatientServiceProcessorRepository::class, function ($m) use ($patient) {
             $m->shouldReceive('getPatientWithBillingDataForMonth')
                 ->andReturn($patient);
         });
-
 
         return [$nurse, $patient];
     }

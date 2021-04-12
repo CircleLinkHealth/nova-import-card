@@ -7,7 +7,6 @@
 namespace Tests\Unit;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
@@ -105,7 +104,6 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
-
 
         $bhiPatient->chargeableMonthlySummaries()->delete();
         app(ProcessPatientSummaries::class)->execute($bhiPatient->id, Carbon::now()->startOfMonth());

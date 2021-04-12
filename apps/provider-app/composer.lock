@@ -70,20 +70,29 @@
         {
             "name": "amnuts/opcache-gui",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amnuts/opcache-gui.git",
+                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/OpcacheGui",
-                "reference": "133e2162d28c7a05f4db4b5a89b02ddb3416590c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/d660fbee43ad12a1a5114bdedad88625cf4db91c",
+                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c",
+                "shasum": ""
             },
             "require": {
-                "php": ">=5.4"
+                "ext-json": "*",
+                "ext-zend-opcache": "*",
+                "php": ">=7.1.0"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "OpcacheGui\\": "/"
+                    "Amnuts\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -101,20 +110,13 @@
             ],
             "description": "A clean, effective and responsive interface for Zend OPcache, with real(ish)-time monitoring, filtering and the ability to invalidate files",
             "keywords": [
+                "Opcache",
                 "cache",
                 "gui",
                 "interface",
-                "opcache",
                 "opcodes"
             ],
-            "support": {
-                "email": "andy@amnuts.com",
-                "issues": "https://github.com/amnuts/opcache-gui/issues"
-            },
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2020-12-16T15:55:55+00:00"
         },
         {
             "name": "appstract/laravel-opcache",
@@ -177,10 +179,16 @@
         {
             "name": "ashallendesign/short-url",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ash-jc-allen/short-url.git",
+                "reference": "f53c1f2016771fb31f24b4f7fc11f90c20a15de9"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/ShortUrl",
-                "reference": "29422f9eb639ea7e66200a34400d2b0d17ad81f2"
+                "type": "zip",
+                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/f53c1f2016771fb31f24b4f7fc11f90c20a15de9",
+                "reference": "f53c1f2016771fb31f24b4f7fc11f90c20a15de9",
+                "shasum": ""
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -188,7 +196,7 @@
                 "illuminate/database": "^6.0|^7.0|^8.0",
                 "jenssegers/agent": "^2.6",
                 "nesbot/carbon": "~2.0",
-                "php": "^7.2"
+                "php": "^7.2|^8.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
@@ -211,11 +219,7 @@
                     "AshAllenDesign\\ShortURL\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "AshAllenDesign\\ShortURL\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -228,16 +232,13 @@
             "description": "A Laravel package for creating shortened URLs for your web apps.",
             "homepage": "https://github.com/ash-jc-allen/short-url",
             "keywords": [
+                "URL-Shortener",
                 "ashallendesign",
                 "laravel",
                 "laravel-package",
-                "short-urls",
-                "url-shortener"
+                "short-urls"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2021-04-12T18:41:07+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -347,16 +348,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.1",
+            "version": "3.178.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "45692b97e12a2eed540c0afd106f143aad15e622"
+                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45692b97e12a2eed540c0afd106f143aad15e622",
-                "reference": "45692b97e12a2eed540c0afd106f143aad15e622",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ba05bc572302c124960c2b0a9813169e790fcac6",
+                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6",
                 "shasum": ""
             },
             "require": {
@@ -428,7 +429,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-04-09T18:13:02+00:00"
+            "time": "2021-04-12T18:16:30+00:00"
         },
         {
             "name": "brick/math",
@@ -586,10 +587,16 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/CerberusGatekeeper",
-                "reference": "4ab4d6c6bb08fd6088a142a755b702c3ada2464b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/e3c52367160b364b74fdd285b082bfd96acc6f7d",
+                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "*",
@@ -622,11 +629,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -662,10 +665,7 @@
                 "permission",
                 "roles"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2021-01-04T23:50:45+00:00"
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
@@ -5471,16 +5471,16 @@
         },
         {
             "name": "lorisleiva/cron-translator",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lorisleiva/cron-translator.git",
-                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011"
+                "reference": "764996770558dddc7def8619095391a4ec8048f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
-                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
+                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/764996770558dddc7def8619095391a4ec8048f2",
+                "reference": "764996770558dddc7def8619095391a4ec8048f2",
                 "shasum": ""
             },
             "require-dev": {
@@ -5510,7 +5510,13 @@
                 "expression",
                 "human"
             ],
-            "time": "2020-03-01T14:44:47+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/lorisleiva",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-20T10:55:08+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -9387,14 +9393,20 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
+                "reference": "715ff63157234cce660151956cb6dd6c7af12ea3"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/LaravelScheduleMonitor",
-                "reference": "53fc45f75209b529f0b4891fe7aa57acf60d2586"
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/715ff63157234cce660151956cb6dd6c7af12ea3",
+                "reference": "715ff63157234cce660151956cb6dd6c7af12ea3",
+                "shasum": ""
             },
             "require": {
                 "illuminate/bus": "^8.0",
-                "lorisleiva/cron-translator": "^0.1.1",
+                "lorisleiva/cron-translator": "^0.2.0",
                 "nesbot/carbon": "^2.41.3",
                 "php": "^7.4|^8.0"
             },
@@ -9424,25 +9436,7 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "psalm": [
-                    "vendor/bin/psalm"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ],
-                "format": [
-                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -9460,10 +9454,13 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-03-29T10:44:13+00:00"
         },
         {
             "name": "spatie/laravel-slack-slash-command",

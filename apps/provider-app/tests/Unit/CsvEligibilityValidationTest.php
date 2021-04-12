@@ -56,7 +56,7 @@ class CsvEligibilityValidationTest extends TestCase
         $jobs = $batch->eligibilityJobs()->get();
         $this->assertEquals(6, $jobs->count());
 
-        $jobs->each(function ($job) use ($batch) {
+        $jobs->each(function ($job) {
             (new ProcessSinglePatientEligibility($job->id, true))
                 ->handle();
         });
@@ -97,7 +97,7 @@ class CsvEligibilityValidationTest extends TestCase
         $jobs = $batch->eligibilityJobs()->get();
         $this->assertEquals(5, $jobs->count());
 
-        $jobs->each(function ($job) use ($batch) {
+        $jobs->each(function ($job) {
             (new ProcessSinglePatientEligibility($job->id, true))
                 ->handle();
         });

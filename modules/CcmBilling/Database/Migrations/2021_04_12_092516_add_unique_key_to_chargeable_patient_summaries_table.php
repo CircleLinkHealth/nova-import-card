@@ -20,11 +20,6 @@ class AddUniqueKeyToChargeablePatientSummariesTable extends Migration
         Schema::table(self::TABLE_NAME, function (Blueprint $table) {
             $table->unique(['patient_user_id', 'chargeable_month', 'chargeable_service_id'], self::UNIQUE_KEY_NAME);
         });
-
-        \Illuminate\Support\Facades\Bus::chain([
-            new \CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices(),
-            new \CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated()
-        ]);
     }
 
     /**
