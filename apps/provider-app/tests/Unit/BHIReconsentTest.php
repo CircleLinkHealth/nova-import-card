@@ -251,7 +251,6 @@ class BHIReconsentTest extends CustomerTestCase
                     'name'           => $bhiProblem->name,
                     'is_monitored'   => true,
                 ]);
-            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($patient->id);
         }
 
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);

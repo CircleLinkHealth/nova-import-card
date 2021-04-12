@@ -158,7 +158,7 @@ class PatientObserver
         }
 
         if ($this->locationChanged($patient) || $this->statusChangedToOrFromEnrolled($patient)) {
-            event(new PatientInfoUpdated($patient->user_id, Carbon::now()->startOfMonth()));
+            event(new PatientInfoUpdated($patient->user_id));
         }
     }
 
