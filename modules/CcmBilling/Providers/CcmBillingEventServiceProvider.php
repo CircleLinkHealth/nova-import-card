@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\CcmBilling\Events\PatientCarePlanAllowsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
 use CircleLinkHealth\CcmBilling\Events\PatientInfoUpdated;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
@@ -39,11 +40,14 @@ class CcmBillingEventServiceProvider extends ServiceProvider
         PatientActivityCreated::class => [
             ProcessPatientServices::class,
         ],
+        PatientCarePlanAllowsForBillingProcessing::class => [
+            ProcessPatientServices::class
+        ],
         PatientSuccessfulCallCreated::class => [
             ProcessPatientServices::class,
         ],
         PatientConsentedToService::class => [
             SetPatientConsented::class,
-        ],
+        ]
     ];
 }
