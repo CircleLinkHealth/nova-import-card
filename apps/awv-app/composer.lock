@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f96cdc06da67712e513e7e9d91886f0b",
+    "content-hash": "f08002153768414e4a1ecc745f6d5c94",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -79,29 +79,20 @@
         {
             "name": "amnuts/opcache-gui",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amnuts/opcache-gui.git",
-                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/d660fbee43ad12a1a5114bdedad88625cf4db91c",
-                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c",
-                "shasum": ""
+                "type": "path",
+                "url": "../../modules/OpcacheGui",
+                "reference": "133e2162d28c7a05f4db4b5a89b02ddb3416590c"
             },
             "require": {
-                "ext-json": "*",
-                "ext-zend-opcache": "*",
-                "php": ">=7.1.0"
+                "php": ">=5.4"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Amnuts\\": "src/"
+                    "OpcacheGui\\": "/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -119,13 +110,20 @@
             ],
             "description": "A clean, effective and responsive interface for Zend OPcache, with real(ish)-time monitoring, filtering and the ability to invalidate files",
             "keywords": [
-                "Opcache",
                 "cache",
                 "gui",
                 "interface",
+                "opcache",
                 "opcodes"
             ],
-            "time": "2020-12-16T15:55:55+00:00"
+            "support": {
+                "email": "andy@amnuts.com",
+                "issues": "https://github.com/amnuts/opcache-gui/issues"
+            },
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "appstract/laravel-opcache",
@@ -13376,16 +13374,16 @@
         },
         {
             "name": "facade/flare-client-php",
-            "version": "1.6.1",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/flare-client-php.git",
-                "reference": "f2b0969f2d9594704be74dbeb25b201570a98098"
+                "reference": "6bf380035890cb0a09b9628c491ae3866b858522"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/f2b0969f2d9594704be74dbeb25b201570a98098",
-                "reference": "f2b0969f2d9594704be74dbeb25b201570a98098",
+                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/6bf380035890cb0a09b9628c491ae3866b858522",
+                "reference": "6bf380035890cb0a09b9628c491ae3866b858522",
                 "shasum": ""
             },
             "require": {
@@ -13433,7 +13431,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-04-08T08:50:01+00:00"
+            "time": "2021-04-12T09:30:36+00:00"
         },
         {
             "name": "facade/ignition",

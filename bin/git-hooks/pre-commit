@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const moduleNames = [];
+const errors = [];
+const MODULES_PATH = './modules';
+const LOCK_FILES = [
+    './composer.lock',
+    './apps/awv-app/composer.lock',
+    './apps/caller-app/composer.lock',
+    './apps/provider-app/composer.lock',
+    './apps/self-enrollment-app/composer.lock',
+    './apps/superadmin-app/composer.lock',
+];
+const MODULES_TO_IGNORE = [
+];
+
+function setModules() {
+    const paths = fs.readdirSync(MODULES_PATH);
+    paths.forEach(filePath => {
+        const fullPath = `${MODULES_PATH}/${filePath}`;
+        const stats = fs.statSync(fullPath);
+        if (!stats.isDirectory()) {
+            return;
+        }
+        const composer = fs.readFileSync(`${fullPath}/composer.json`, 'utf8');
+        const parsed = JSON.parse(composer);
+        const moduleName = parsed['name'];
+        if (MODULES_TO_IGNORE.indexOf(moduleName) > -1) {
+            return;
+        }
+        moduleNames.push(moduleName);
+    });
+}
+
+function checkPackages(filePath, packagesArr) {
+    packagesArr.forEach((pack) => {
+        const packageName = pack['name'];
+        if (moduleNames.indexOf(packageName) === -1) {
+            return;
+        }
+        if (pack['dist']['type'] !== 'path') {
+            errors.push(`${filePath}[${packageName}]`);
+        }
+    });
+}
+
+function parseLockFiles() {
+    LOCK_FILES.forEach((filePath) => {
+        const file = fs.readFileSync(filePath, 'utf8');
+        const parsed = JSON.parse(file);
+        checkPackages(filePath, parsed['packages']);
+        checkPackages(filePath, parsed['packages-dev']);
+    });
+}
+
+setModules();
+parseLockFiles();
+
+if (errors.length) {
+    console.error('The following modules do not point to the local installation path:')
+    errors.forEach(err => console.error(err));
+    process.exit(1);
+    return;
+}
+
+console.log('Pre-Commit checks passed.');
+process.exit(0);
