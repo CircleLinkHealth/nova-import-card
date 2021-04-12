@@ -152,6 +152,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/ShortUrl",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {
