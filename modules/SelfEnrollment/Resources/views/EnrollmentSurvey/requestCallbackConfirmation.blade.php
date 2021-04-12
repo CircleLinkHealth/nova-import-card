@@ -36,11 +36,4 @@
     .message-content-1{
         font-size: 36px;
     }
-    .call-me-btn{
-        background: #2D9CDB !important;
-        font-size: 18px !important;
-        width: 207px;
-        height: 42px !important;
-        text-transform: none !important;
-    }
 </style>
