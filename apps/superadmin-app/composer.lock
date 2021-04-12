@@ -727,16 +727,10 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/e3c52367160b364b74fdd285b082bfd96acc6f7d",
-                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d",
-                "shasum": ""
+                "type": "path",
+                "url": "../../modules/CerberusGatekeeper",
+                "reference": "4ab4d6c6bb08fd6088a142a755b702c3ada2464b"
             },
             "require": {
                 "illuminate/cache": "*",
@@ -769,7 +763,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -805,7 +803,10 @@
                 "permission",
                 "roles"
             ],
-            "time": "2021-01-04T23:50:45+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -6070,16 +6071,16 @@
         },
         {
             "name": "lorisleiva/cron-translator",
-            "version": "v0.2.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lorisleiva/cron-translator.git",
-                "reference": "764996770558dddc7def8619095391a4ec8048f2"
+                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/764996770558dddc7def8619095391a4ec8048f2",
-                "reference": "764996770558dddc7def8619095391a4ec8048f2",
+                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
+                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
                 "shasum": ""
             },
             "require-dev": {
@@ -6109,13 +6110,7 @@
                 "expression",
                 "human"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/lorisleiva",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-01-20T10:55:08+00:00"
+            "time": "2020-03-01T14:44:47+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -9984,20 +9979,14 @@
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
-                "reference": "715ff63157234cce660151956cb6dd6c7af12ea3"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/715ff63157234cce660151956cb6dd6c7af12ea3",
-                "reference": "715ff63157234cce660151956cb6dd6c7af12ea3",
-                "shasum": ""
+                "type": "path",
+                "url": "../../modules/LaravelScheduleMonitor",
+                "reference": "53fc45f75209b529f0b4891fe7aa57acf60d2586"
             },
             "require": {
                 "illuminate/bus": "^8.0",
-                "lorisleiva/cron-translator": "^0.2.0",
+                "lorisleiva/cron-translator": "^0.1.1",
                 "nesbot/carbon": "^2.41.3",
                 "php": "^7.4|^8.0"
             },
@@ -10027,7 +10016,25 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "psalm": [
+                    "vendor/bin/psalm"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ],
+                "format": [
+                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -10045,13 +10052,10 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-03-29T10:44:13+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "spatie/laravel-view-models",
