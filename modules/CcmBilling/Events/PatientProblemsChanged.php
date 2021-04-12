@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Events;
 
 use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Queue\SerializesModels;
 
 class PatientProblemsChanged implements CanDebounceJobForPatient
@@ -15,14 +16,18 @@ class PatientProblemsChanged implements CanDebounceJobForPatient
 
     protected int $patientUserId;
 
+    protected bool $shouldDebounce;
+
     /**
      * Create a new event instance.
      *
+     * @param  mixed $shouldDebounce
      * @return void
      */
-    public function __construct(int $patientUserId)
+    public function __construct(int $patientUserId, $shouldDebounce = true)
     {
-        $this->patientUserId = $patientUserId;
+        $this->patientUserId  = $patientUserId;
+        $this->shouldDebounce = $shouldDebounce;
     }
 
     /**
@@ -37,7 +42,7 @@ class PatientProblemsChanged implements CanDebounceJobForPatient
 
     public function debounceDuration(): int
     {
-        return 5;
+        return CpmConstants::FIVE_MINUTES_IN_SECONDS;
     }
 
     public function getPatientId(): int
@@ -47,6 +52,6 @@ class PatientProblemsChanged implements CanDebounceJobForPatient
 
     public function shouldDebounce(): bool
     {
-        return false;
+        return $this->shouldDebounce;
     }
 }
