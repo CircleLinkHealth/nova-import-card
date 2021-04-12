@@ -271,6 +271,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/OpcacheGui",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require-dev": {
