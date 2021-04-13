@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4226e45bbf18ff891804a724aa530288",
+    "content-hash": "d9d35da7c53e2d2da697cc0bbbda89e8",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -178,7 +178,7 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/ShortUrl",
@@ -213,7 +213,11 @@
                     "AshAllenDesign\\ShortURL\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "AshAllenDesign\\ShortURL\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -226,11 +230,11 @@
             "description": "A Laravel package for creating shortened URLs for your web apps.",
             "homepage": "https://github.com/ash-jc-allen/short-url",
             "keywords": [
-                "URL-Shortener",
                 "ashallendesign",
                 "laravel",
                 "laravel-package",
-                "short-urls"
+                "short-urls",
+                "url-shortener"
             ],
             "transport-options": {
                 "symlink": true,
@@ -345,16 +349,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.1",
+            "version": "3.178.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "45692b97e12a2eed540c0afd106f143aad15e622"
+                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45692b97e12a2eed540c0afd106f143aad15e622",
-                "reference": "45692b97e12a2eed540c0afd106f143aad15e622",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ba05bc572302c124960c2b0a9813169e790fcac6",
+                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6",
                 "shasum": ""
             },
             "require": {
@@ -426,7 +430,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-04-09T18:13:02+00:00"
+            "time": "2021-04-12T18:16:30+00:00"
         },
         {
             "name": "brick/math",
@@ -593,7 +597,7 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcmBilling",
@@ -651,17 +655,11 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a"
-            },
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
-                "reference": "79cf04faef74aa9b2d3f1f3e71106576ecdc933a",
-                "shasum": ""
+                "type": "path",
+                "url": "../../modules/CerberusGatekeeper",
+                "reference": "4ab4d6c6bb08fd6088a142a755b702c3ada2464b"
             },
             "require": {
                 "illuminate/cache": "*",
@@ -694,7 +692,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -730,11 +732,14 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-12-28T01:46:18+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Core",
@@ -791,7 +796,7 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CpmMigrations",
@@ -822,7 +827,7 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Customer",
@@ -872,7 +877,7 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Eligibility",
@@ -910,7 +915,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -946,7 +951,7 @@
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/PdfService",
@@ -991,7 +996,7 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Raygun",
@@ -1081,7 +1086,7 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SamlSp",
@@ -1122,7 +1127,7 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SelfEnrollment",
@@ -1147,7 +1152,7 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedModels",
@@ -1175,7 +1180,7 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SqlViews",
@@ -1214,7 +1219,7 @@
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Synonyms",
@@ -1286,7 +1291,7 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/TwoFA",
@@ -9223,7 +9228,7 @@
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/LaravelScheduleMonitor",
@@ -12910,7 +12915,7 @@
         },
         {
             "name": "circlelinkhealth/vapor-devops-helpers-module",
-            "version": "dev-master",
+            "version": "dev-hotfix-billing-debouncing-and-duplicates",
             "dist": {
                 "type": "path",
                 "url": "../../modules/VaporDevopsHelpers",

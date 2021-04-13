@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Observers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientInfoUpdated;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -157,7 +158,7 @@ class PatientObserver
         }
 
         if ($this->locationChanged($patient) || $this->statusChangedToOrFromEnrolled($patient)) {
-            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
+            event(new PatientInfoUpdated($patient->user_id));
         }
     }
 

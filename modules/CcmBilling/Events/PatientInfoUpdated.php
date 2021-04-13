@@ -1,16 +1,16 @@
 <?php
-
-/*
+/**
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
+
 use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
 use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Queue\SerializesModels;
 
-class PatientProblemsChanged implements CanDebounceJobForPatient
+class PatientInfoUpdated implements CanDebounceJobForPatient
 {
     use SerializesModels;
 
