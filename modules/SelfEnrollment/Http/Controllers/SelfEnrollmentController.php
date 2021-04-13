@@ -54,9 +54,9 @@ class SelfEnrollmentController extends Controller
      *
      * @return mixed
      */
-    public function createEnrollenrollableInfoRequest($enrollable)
+    public function createEnrollenrollableInfoRequest($enrollable, $experienced_error = false)
     {
-        return $enrollable->enrollableInfoRequest()->create();
+        return $enrollable->enrollableInfoRequest()->create(['experienced_error' => $experienced_error]);
     }
 
     /**
@@ -258,19 +258,23 @@ class SelfEnrollmentController extends Controller
 
     protected function requestCallback(int $userId)
     {
-        $enrollee_updated = Enrollee::whereUserId($userId)->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT)
-                             ->update(['status' => Enrollee::TO_CALL,
-                                     'requested_callback' => Carbon::now(),
-                                     'auto_enrollment_triggered' => true]);
+        $enrollee = Enrollee::whereUserId($userId)->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT)->first();
 
-        if(!$enrollee_updated){
-            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed for Enrolle with user id [$userId].";
+        if($enrollee){
+            $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
+
+            if ( ! $enrollee->enrollableInfoRequest()->where('experienced_error',true)->exists()) {
+                $this->createEnrollenrollableInfoRequest($enrollee,true);
+            }
+
+        } else{
+            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with 
+                         user id :  [$userId] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT." was not found.";
             Log::error($message);
             sendSlackMessage('#self_enrollment_logs', $message);
         }
 
         return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
-
     }
 
     protected function logoutEnrollee(Request $request)
@@ -384,7 +388,13 @@ class SelfEnrollmentController extends Controller
     {
         $user->loadMissing(['enrollee.enrollableInfoRequest', 'enrollee.practice', 'enrollee.provider']);
 
-        if ( ! is_null($user->enrollee->enrollableInfoRequest)) {
+        $enrollableInfoRequest = $user->enrollee->enrollableInfoRequest;
+        if ( ! is_null($enrollableInfoRequest)) {
+
+            if ($enrollableInfoRequest->where('experienced_error',true)->exists()) {
+                return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
+            }
+
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 
