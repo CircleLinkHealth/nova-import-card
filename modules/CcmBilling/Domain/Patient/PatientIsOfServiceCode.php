@@ -104,9 +104,20 @@ class PatientIsOfServiceCode
             return true;
         }
 
-        return collect($this->dto->getPatientServices())
+        /** @var PatientSummaryForProcessing */
+        $summary = collect($this->dto->getPatientServices())
             ->filter(fn (PatientSummaryForProcessing $service) => $service->getCode() === $this->serviceCode)
-            ->isNotEmpty();
+            ->first();
+
+        if (is_null($summary)){
+            return false;
+        }
+
+        if ($summary->requiresConsent()){
+            return false;
+        }
+
+        return true;
     }
 
     private function isAClashForForcedService(): bool

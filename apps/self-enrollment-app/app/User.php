@@ -241,9 +241,16 @@ namespace App;
  * @method   static                                                                                                                        \Illuminate\Database\Eloquent\Builder|User withCareTeamOfType($type)
  * @method   static                                                                                                                        \Illuminate\Database\Eloquent\Builder|User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection $synonyms
- * @property int|null                                                                               $synonyms_count
- * @method   static                                                                                 \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection                          $synonyms
+ * @property int|null                                                                                                        $synonyms_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User whereColumnOrSynonym($column, $synonym)
+ * @property \CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService[]|\Illuminate\Database\Eloquent\Collection $forcedChargeableServices
+ * @property int|null                                                                                                        $forced_chargeable_services_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                         $inboundSuccessfulCalls
+ * @property int|null                                                                                                        $inbound_successful_calls_count
+ * @property \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[]|\Illuminate\Database\Eloquent\Collection    $monthlyBillingStatus
+ * @property int|null                                                                                                        $monthly_billing_status_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

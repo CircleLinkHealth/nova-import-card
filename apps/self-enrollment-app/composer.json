@@ -152,6 +152,27 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/ShortUrl",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/CerberusGatekeeper",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/OpcacheGui",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {

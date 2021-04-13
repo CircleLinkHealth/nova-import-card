@@ -7,11 +7,10 @@
 namespace Tests\Unit;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
-use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
@@ -106,10 +105,8 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
-        //todo next iteration: is this a realistic scenario to happen say in the middle of the month? I think not, still try and cleanup either code or test
         $bhiPatient->chargeableMonthlySummaries()->delete();
-        BillingCache::clearPatients();
-        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
+        app(ProcessPatientSummaries::class)->execute($bhiPatient->id, Carbon::now()->startOfMonth());
         $this->assertFalse($bhiPatient->isBhi());
     }
 
@@ -126,8 +123,6 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
-
-        BillingCache::clearPatients();
 
         $this->assertFalse(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
@@ -251,7 +246,6 @@ class BHIReconsentTest extends CustomerTestCase
                     'name'           => $bhiProblem->name,
                     'is_monitored'   => true,
                 ]);
-            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($patient->id);
         }
 
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);

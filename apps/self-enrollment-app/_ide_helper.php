@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 8.33.1.
+ * Generated for Laravel 8.36.2.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1736,6 +1736,29 @@
                         return $instance->hasResolvedGuards();
         }
                     /**
+         * Forget all of the resolved guard instances.
+         *
+         * @return \Illuminate\Auth\AuthManager 
+         * @static 
+         */ 
+        public static function forgetGuards()
+        {
+                        /** @var \Illuminate\Auth\AuthManager $instance */
+                        return $instance->forgetGuards();
+        }
+                    /**
+         * Set the application instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Foundation\Application $app
+         * @return \Illuminate\Auth\AuthManager 
+         * @static 
+         */ 
+        public static function setApplication($app)
+        {
+                        /** @var \Illuminate\Auth\AuthManager $instance */
+                        return $instance->setApplication($app);
+        }
+                    /**
          * Create the user provider implementation for the driver.
          *
          * @param string|null $provider
@@ -2282,6 +2305,40 @@
                         /** @var \Illuminate\Broadcasting\BroadcastManager $instance */
                         return $instance->extend($driver, $callback);
         }
+                    /**
+         * Get the application instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Foundation\Application 
+         * @static 
+         */ 
+        public static function getApplication()
+        {
+                        /** @var \Illuminate\Broadcasting\BroadcastManager $instance */
+                        return $instance->getApplication();
+        }
+                    /**
+         * Set the application instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Foundation\Application $app
+         * @return \Illuminate\Broadcasting\BroadcastManager 
+         * @static 
+         */ 
+        public static function setApplication($app)
+        {
+                        /** @var \Illuminate\Broadcasting\BroadcastManager $instance */
+                        return $instance->setApplication($app);
+        }
+                    /**
+         * Forget all of the resolved driver instances.
+         *
+         * @return \Illuminate\Broadcasting\BroadcastManager 
+         * @static 
+         */ 
+        public static function forgetDrivers()
+        {
+                        /** @var \Illuminate\Broadcasting\BroadcastManager $instance */
+                        return $instance->forgetDrivers();
+        }
          
     }
             /**
@@ -2305,7 +2362,7 @@
                     /**
          * Dispatch a command to its appropriate handler in the current process.
          * 
-         * Queuable jobs will be dispatched to the "sync" queue.
+         * Queueable jobs will be dispatched to the "sync" queue.
          *
          * @param mixed $command
          * @param mixed $handler
@@ -3567,6 +3624,17 @@
                         return $instance->getQueuedCookies();
         }
                     /**
+         * Flush the cookies which have been queued for the next request.
+         *
+         * @return \Illuminate\Cookie\CookieJar 
+         * @static 
+         */ 
+        public static function flushQueuedCookies()
+        {
+                        /** @var \Illuminate\Cookie\CookieJar $instance */
+                        return $instance->flushQueuedCookies();
+        }
+                    /**
          * Register a custom macro.
          *
          * @param string $name
@@ -4789,6 +4857,19 @@
                         return \Illuminate\Events\Dispatcher::hasMacro($name);
         }
                     /**
+         * Assert if an event has a listener attached to it.
+         *
+         * @param string $expectedEvent
+         * @param string $expectedListener
+         * @return void 
+         * @static 
+         */ 
+        public static function assertListening($expectedEvent, $expectedListener)
+        {
+                        /** @var \Illuminate\Support\Testing\Fakes\EventFake $instance */
+                        $instance->assertListening($expectedEvent, $expectedListener);
+        }
+                    /**
          * Assert if an event was dispatched based on a truth-test callback.
          *
          * @param string|\Closure $event
@@ -5704,6 +5785,18 @@
                         /** @var \Illuminate\Auth\Access\Gate $instance */
                         return $instance->policies();
         }
+                    /**
+         * Set the container instance used by the gate.
+         *
+         * @param \Illuminate\Contracts\Container\Container $container
+         * @return \Illuminate\Auth\Access\Gate 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {
+                        /** @var \Illuminate\Auth\Access\Gate $instance */
+                        return $instance->setContainer($container);
+        }
          
     }
             /**
@@ -5844,6 +5937,40 @@
         {            //Method inherited from \Illuminate\Support\Manager         
                         /** @var \Illuminate\Hashing\HashManager $instance */
                         return $instance->getDrivers();
+        }
+                    /**
+         * Get the container instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Container\Container 
+         * @static 
+         */ 
+        public static function getContainer()
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Hashing\HashManager $instance */
+                        return $instance->getContainer();
+        }
+                    /**
+         * Set the container instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Container\Container $container
+         * @return \Illuminate\Hashing\HashManager 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Hashing\HashManager $instance */
+                        return $instance->setContainer($container);
+        }
+                    /**
+         * Forget all of the resolved driver instances.
+         *
+         * @return \Illuminate\Hashing\HashManager 
+         * @static 
+         */ 
+        public static function forgetDrivers()
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Hashing\HashManager $instance */
+                        return $instance->forgetDrivers();
         }
          
     }
@@ -6707,6 +6834,40 @@
                         return $instance->extend($driver, $callback);
         }
                     /**
+         * Get the application instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Foundation\Application 
+         * @static 
+         */ 
+        public static function getApplication()
+        {
+                        /** @var \Illuminate\Mail\MailManager $instance */
+                        return $instance->getApplication();
+        }
+                    /**
+         * Set the application instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Foundation\Application $app
+         * @return \Illuminate\Mail\MailManager 
+         * @static 
+         */ 
+        public static function setApplication($app)
+        {
+                        /** @var \Illuminate\Mail\MailManager $instance */
+                        return $instance->setApplication($app);
+        }
+                    /**
+         * Forget all of the resolved mailer instances.
+         *
+         * @return \Illuminate\Mail\MailManager 
+         * @static 
+         */ 
+        public static function forgetMailers()
+        {
+                        /** @var \Illuminate\Mail\MailManager $instance */
+                        return $instance->forgetMailers();
+        }
+                    /**
          * Assert if a mailable was sent based on a truth-test callback.
          *
          * @param string|\Closure $mailable
@@ -7048,6 +7209,40 @@
         {            //Method inherited from \Illuminate\Support\Manager         
                         /** @var \Illuminate\Notifications\ChannelManager $instance */
                         return $instance->getDrivers();
+        }
+                    /**
+         * Get the container instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Container\Container 
+         * @static 
+         */ 
+        public static function getContainer()
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Notifications\ChannelManager $instance */
+                        return $instance->getContainer();
+        }
+                    /**
+         * Set the container instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Container\Container $container
+         * @return \Illuminate\Notifications\ChannelManager 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Notifications\ChannelManager $instance */
+                        return $instance->setContainer($container);
+        }
+                    /**
+         * Forget all of the resolved driver instances.
+         *
+         * @return \Illuminate\Notifications\ChannelManager 
+         * @static 
+         */ 
+        public static function forgetDrivers()
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Notifications\ChannelManager $instance */
+                        return $instance->forgetDrivers();
         }
                     /**
          * Assert if a notification was sent based on a truth-test callback.
@@ -7398,6 +7593,29 @@
                         return $instance->getName($connection);
         }
                     /**
+         * Get the application instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Foundation\Application 
+         * @static 
+         */ 
+        public static function getApplication()
+        {
+                        /** @var \Illuminate\Queue\QueueManager $instance */
+                        return $instance->getApplication();
+        }
+                    /**
+         * Set the application instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Foundation\Application $app
+         * @return \Illuminate\Queue\QueueManager 
+         * @static 
+         */ 
+        public static function setApplication($app)
+        {
+                        /** @var \Illuminate\Queue\QueueManager $instance */
+                        return $instance->setApplication($app);
+        }
+                    /**
          * Assert if a job was pushed based on a truth-test callback.
          *
          * @param string|\Closure $job
@@ -7678,6 +7896,17 @@
         public static function createPayloadUsing($callback)
         {            //Method inherited from \Illuminate\Queue\Queue         
                         \Illuminate\Queue\SyncQueue::createPayloadUsing($callback);
+        }
+                    /**
+         * Get the container instance being used by the connection.
+         *
+         * @return \Illuminate\Container\Container 
+         * @static 
+         */ 
+        public static function getContainer()
+        {            //Method inherited from \Illuminate\Queue\Queue         
+                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        return $instance->getContainer();
         }
                     /**
          * Set the IoC container instance.
@@ -10523,6 +10752,18 @@
                         return \Illuminate\Routing\Router::uniqueMiddleware($middleware);
         }
                     /**
+         * Set the container instance used by the router.
+         *
+         * @param \Illuminate\Container\Container $container
+         * @return \Illuminate\Routing\Router 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {
+                        /** @var \Illuminate\Routing\Router $instance */
+                        return $instance->setContainer($container);
+        }
+                    /**
          * Register a custom macro.
          *
          * @param string $name
@@ -11056,6 +11297,40 @@
         {            //Method inherited from \Illuminate\Support\Manager         
                         /** @var \Illuminate\Session\SessionManager $instance */
                         return $instance->getDrivers();
+        }
+                    /**
+         * Get the container instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Container\Container 
+         * @static 
+         */ 
+        public static function getContainer()
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Session\SessionManager $instance */
+                        return $instance->getContainer();
+        }
+                    /**
+         * Set the container instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Container\Container $container
+         * @return \Illuminate\Session\SessionManager 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Session\SessionManager $instance */
+                        return $instance->setContainer($container);
+        }
+                    /**
+         * Forget all of the resolved driver instances.
+         *
+         * @return \Illuminate\Session\SessionManager 
+         * @static 
+         */ 
+        public static function forgetDrivers()
+        {            //Method inherited from \Illuminate\Support\Manager         
+                        /** @var \Illuminate\Session\SessionManager $instance */
+                        return $instance->forgetDrivers();
         }
                     /**
          * Start the session, reading the data from a handler.
@@ -12799,6 +13074,29 @@
                         /** @var \Illuminate\Validation\Factory $instance */
                         $instance->setPresenceVerifier($presenceVerifier);
         }
+                    /**
+         * Get the container instance used by the validation factory.
+         *
+         * @return \Illuminate\Contracts\Container\Container 
+         * @static 
+         */ 
+        public static function getContainer()
+        {
+                        /** @var \Illuminate\Validation\Factory $instance */
+                        return $instance->getContainer();
+        }
+                    /**
+         * Set the container instance used by the validation factory.
+         *
+         * @param \Illuminate\Contracts\Container\Container $container
+         * @return \Illuminate\Validation\Factory 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {
+                        /** @var \Illuminate\Validation\Factory $instance */
+                        return $instance->setContainer($container);
+        }
          
     }
             /**
@@ -13720,182 +14018,11 @@
      */ 
         class ShortURL {
                     /**
-         * Set the destination URL that the shortened URL
-         * will redirect to.
-         *
-         * @param string $url
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @throws ShortURLException
-         * @static 
-         */ 
-        public static function destinationUrl($url)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->destinationUrl($url);
-        }
-                    /**
-         * Set whether if the shortened URL can be accessed
-         * more than once.
-         *
-         * @param bool $isSingleUse
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function singleUse($isSingleUse = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->singleUse($isSingleUse);
-        }
-                    /**
-         * Set whether if the destination URL and shortened
-         * URL should be forced to use HTTPS.
-         *
-         * @param bool $isSecure
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function secure($isSecure = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->secure($isSecure);
-        }
-                    /**
-         * Set whether if the short URL should track some
-         * statistics of the visitors.
-         *
-         * @param bool $trackUrlVisits
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackVisits($trackUrlVisits = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackVisits($trackUrlVisits);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * IP address of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackIPAddress($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackIPAddress($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * operating system of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackOperatingSystem($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackOperatingSystem($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * operating system version of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackOperatingSystemVersion($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackOperatingSystemVersion($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * browser of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackBrowser($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackBrowser($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * browser version of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackBrowserVersion($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackBrowserVersion($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * referer URL of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackRefererURL($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackRefererURL($track);
-        }
-                    /**
-         * Set whether if the short URL should track the
-         * device type of the visitor.
-         *
-         * @param bool $track
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function trackDeviceType($track = true)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->trackDeviceType($track);
-        }
-                    /**
-         * Explicitly set a URL key for this short URL.
-         *
-         * @param string $key
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @static 
-         */ 
-        public static function urlKey($key)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->urlKey($key);
-        }
-                    /**
-         * Override the HTTP status code that will be used
-         * for redirecting the visitor.
-         *
-         * @param int $statusCode
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
-         * @throws ShortURLException
-         * @static 
-         */ 
-        public static function redirectStatusCode($statusCode)
-        {
-                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
-                        return $instance->redirectStatusCode($statusCode);
-        }
-                    /**
          * Set the date and time that the short URL should
          * be activated and allowed to visit.
          *
-         * @param \Carbon\Carbon $activationTime
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @static 
          */ 
         public static function activateAt($activationTime)
@@ -13907,9 +14034,8 @@
          * Set the date and time that the short URL should
          * be deactivated and not allowed to visit.
          *
-         * @param \Carbon\Carbon $deactivationTime
-         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
          * @static 
          */ 
         public static function deactivateAt($deactivationTime)
@@ -13918,9 +14044,21 @@
                         return $instance->deactivateAt($deactivationTime);
         }
                     /**
+         * Set the destination URL that the shortened URL
+         * will redirect to.
+         *
+         * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function destinationUrl($url)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->destinationUrl($url);
+        }
+                    /**
          * Attempt to build a shortened URL and return it.
          *
-         * @return \ShortURL 
          * @throws ShortURLException
          * @static 
          */ 
@@ -13928,6 +14066,19 @@
         {
                         /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
                         return $instance->make();
+        }
+                    /**
+         * Override the HTTP status code that will be used
+         * for redirecting the visitor.
+         *
+         * @throws ShortURLException
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function redirectStatusCode($statusCode)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->redirectStatusCode($statusCode);
         }
                     /**
          * Reset the options for the class. This is useful
@@ -13943,6 +14094,137 @@
         {
                         /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
                         return $instance->resetOptions();
+        }
+                    /**
+         * Set whether if the destination URL and shortened
+         * URL should be forced to use HTTPS.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function secure($isSecure = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->secure($isSecure);
+        }
+                    /**
+         * Set whether if the shortened URL can be accessed
+         * more than once.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function singleUse($isSingleUse = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->singleUse($isSingleUse);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * browser of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackBrowser($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackBrowser($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * browser version of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackBrowserVersion($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackBrowserVersion($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * device type of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackDeviceType($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackDeviceType($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * IP address of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackIPAddress($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackIPAddress($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * operating system of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackOperatingSystem($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackOperatingSystem($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * operating system version of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackOperatingSystemVersion($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackOperatingSystemVersion($track);
+        }
+                    /**
+         * Set whether if the short URL should track the
+         * referer URL of the visitor.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackRefererURL($track = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackRefererURL($track);
+        }
+                    /**
+         * Set whether if the short URL should track some
+         * statistics of the visitors.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function trackVisits($trackUrlVisits = true)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->trackVisits($trackUrlVisits);
+        }
+                    /**
+         * Explicitly set a URL key for this short URL.
+         *
+         * @return \AshAllenDesign\ShortURL\Classes\Builder 
+         * @static 
+         */ 
+        public static function urlKey($key)
+        {
+                        /** @var \AshAllenDesign\ShortURL\Classes\Builder $instance */
+                        return $instance->urlKey($key);
         }
          
     }
@@ -14148,23 +14430,25 @@
          * Registers a callback to use to append files to the Preloader.
          *
          * @param array|string|callable $append
+         * @return void 
          * @static 
          */ 
         public static function append($append)
         {
                         /** @var \DarkGhostHunter\Laraload\Laraload $instance */
-                        return $instance->append($append);
+                        $instance->append($append);
         }
                     /**
          * Registers a callback to use to exclude files from the Preloader.
          *
          * @param array|string|callable $exclude
+         * @return void 
          * @static 
          */ 
         public static function exclude($exclude)
         {
                         /** @var \DarkGhostHunter\Laraload\Laraload $instance */
-                        return $instance->exclude($exclude);
+                        $instance->exclude($exclude);
         }
                     /**
          * Generates the Preloader Script.
@@ -14197,6 +14481,27 @@
         public static function register($apiKey, $apiSecret = null, $contextDetector = null, $container = null)
         {
                         return \Facade\FlareClient\Flare::register($apiKey, $apiSecret, $contextDetector, $container);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function determineVersionUsing($determineVersionCallable)
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->determineVersionUsing($determineVersionCallable);
+        }
+                    /**
+         * 
+         *
+         * @return null|string 
+         * @static 
+         */ 
+        public static function version()
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->version();
         }
                     /**
          * 
@@ -14347,6 +14652,16 @@
         {
                         /** @var \Facade\FlareClient\Flare $instance */
                         return $instance->anonymizeIp();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function censorRequestBodyFields($fieldNames)
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->censorRequestBodyFields($fieldNames);
         }
                     /**
          * 
@@ -16305,7 +16620,7 @@
                     /**
          * Dispatch a command to its appropriate handler in the current process.
          * 
-         * Queuable jobs will be dispatched to the "sync" queue.
+         * Queueable jobs will be dispatched to the "sync" queue.
          *
          * @return mixed 
          * @static 
@@ -16318,6 +16633,7 @@
          * Dispatch a command to its appropriate handler in the current process.
          *
          * @return mixed 
+         * @deprecated Will be removed in a future Laravel version.
          * @static 
          */ 
         public static function dispatchNow()
@@ -18549,6 +18865,34 @@ namespace  {
             {
                                 /** @var \Illuminate\Database\Eloquent\Builder $instance */
                                 return $instance->eachById($callback, $count, $column, $alias);
+            }
+             
+                /**
+             * Query lazily, by chunks of the given size.
+             *
+             * @param int $chunkSize
+             * @return \Illuminate\Support\LazyCollection 
+             * @static 
+             */ 
+            public static function lazy($chunkSize = 1000)
+            {
+                                /** @var \Illuminate\Database\Eloquent\Builder $instance */
+                                return $instance->lazy($chunkSize);
+            }
+             
+                /**
+             * Query lazily, by chunking the results of a query by comparing IDs.
+             *
+             * @param int $count
+             * @param string|null $column
+             * @param string|null $alias
+             * @return \Illuminate\Support\LazyCollection 
+             * @static 
+             */ 
+            public static function lazyById($chunkSize = 1000, $column = null, $alias = null)
+            {
+                                /** @var \Illuminate\Database\Eloquent\Builder $instance */
+                                return $instance->lazyById($chunkSize, $column, $alias);
             }
              
                 /**

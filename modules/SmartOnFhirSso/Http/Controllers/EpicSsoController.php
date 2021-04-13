@@ -26,7 +26,7 @@ class EpicSsoController extends Controller implements SmartOnFhirSsoController
 
     public function getAuthToken(Request $request): RedirectResponse
     {
-        $options = new SsoIntegrationSettings(self::PLATFORM, self::USER_ID_PROPERTY_NAME, $this->getRedirectUrl(), $this->getClientId());
+        $options = new SsoIntegrationSettings(self::PLATFORM, self::USER_ID_PROPERTY_NAME, $this->getClientId(), $this->getRedirectUrl());
 
         return $this->service->authenticate($options, $request->input('code'));
     }

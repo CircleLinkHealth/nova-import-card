@@ -12,9 +12,11 @@ use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Contracts\CallHandler;
 use App\Http\Controllers\ManualCallController;
 use App\ValueObjects\CreateManualCallAfterNote;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery;
 
 class ManualCallControllerTest extends CustomerTestCase
 {
@@ -44,6 +46,7 @@ class ManualCallControllerTest extends CustomerTestCase
     {
         [$nurse, $patient] = $this->mockSuggestor($handler = new SuccessfulCall());
         $patient->save();
+        $patient->patientInfo()->create();
 
         $this->putMessageInSession(json_encode((new CreateManualCallAfterNote($patient->id, true))->toArray()));
 
@@ -80,11 +83,16 @@ class ManualCallControllerTest extends CustomerTestCase
         $patient = $this->fakePatient();
         $nurse   = $this->fakeNurse();
 
-        $this->mock(Suggestor::class, function ($m) use ($patient, $handler) {
+        $this->mock(Suggestor::class, function ($m) {
             $m->shouldReceive('handle')
-                ->with($patient, $handler)
+                ->with(Mockery::type(User::class), Mockery::type(CallHandler::class))
                 ->once()
                 ->andReturn(new Suggestion());
+        });
+
+        $this->mock(PatientServiceProcessorRepository::class, function ($m) use ($patient) {
+            $m->shouldReceive('getPatientWithBillingDataForMonth')
+                ->andReturn($patient);
         });
 
         return [$nurse, $patient];
