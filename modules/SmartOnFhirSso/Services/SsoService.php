@@ -91,7 +91,7 @@ class SsoService
 
     private function getCache()
     {
-        $store = app()->environment('local') ? null : 'dynamodb';
+        $store = app()->environment('local') ? 'redis' : 'dynamodb';
 
         return Cache::store($store);
     }
@@ -101,7 +101,7 @@ class SsoService
         return $clientId.'::metadata';
     }
 
-    private function getMetadataEndpointsFromCache(string $clientId): MetadataResponse
+    private function getMetadataEndpointsFromCache(string $clientId): ?MetadataResponse
     {
         return $this->getCache()->get($this->getMetadataCacheKey($clientId));
     }
