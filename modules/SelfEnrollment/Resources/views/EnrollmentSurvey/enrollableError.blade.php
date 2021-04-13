@@ -18,8 +18,9 @@
                     </p>
                 </div>
 
-
-                <a href="{{route('patient.requests.callback', $userId ?? '')}}" class="waves-effect btn call-me-btn" >Call Me</a>
+                @if(isset($userId))
+                <a href="{{route('patient.requests.callback', $userId)}}" class="waves-effect btn call-me-btn" >Call Me</a>
+                @endif
 
             </div>
 
