@@ -14,6 +14,8 @@ class PatientConsentedToService
 
     protected int $patientUserId;
 
+    protected string $serviceCode;
+
     /**
      * Create a new event instance.
      *

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Observers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientCarePlanAllowsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Events\CarePlanWasProviderApproved;
@@ -97,7 +98,7 @@ class CarePlanObserver
 
         if ($carePlan->isDirty('status')) {
             if (CarePlan::DRAFT !== $carePlan->status && $carePlan->patient->isParticipant()){
-                ProcessSinglePatientMonthlyServices::dispatch($carePlan->user_id, Carbon::now()->startOfMonth()->startOfDay());
+                event(new PatientCarePlanAllowsForBillingProcessing($carePlan->user_id));
             }
 
             if (CarePlan::RN_APPROVED == $carePlan->status) {
