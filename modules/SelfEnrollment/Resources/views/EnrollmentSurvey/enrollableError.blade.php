@@ -4,7 +4,7 @@
 @section('content')
     <div class="container">
         <div class="row message">
-            <div class="col s12"> <img class="responsive-img" src="img/sorry_image.svg" alt="sorry!"/> </div>
+            <div class="col s12"> <img class="responsive-img" src="{{asset('img/sorry_image.svg')}}" alt="sorry!"/> </div>
             <div class="col s12">
                 <h2 class="message-heading">Our apologies! There was an error.</h2>
 

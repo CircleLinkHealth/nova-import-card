@@ -266,7 +266,7 @@ class SelfEnrollmentController extends Controller
         if(!$enrollee_updated){
             $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed for Enrolle with user id [$userId].";
             Log::error($message);
-            sendSlackEnrollee::QUEUE_AUTO_ENROLLMENTMessage('#self_enrollment_logs', $message);
+            sendSlackMessage('#self_enrollment_logs', $message);
         }
 
         return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');

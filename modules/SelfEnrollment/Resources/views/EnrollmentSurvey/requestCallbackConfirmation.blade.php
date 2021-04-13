@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row message">
 
-            <img class="responsive-img" src="img/telephone.svg" alt="sorry!"/>
+            <img class="responsive-img" src="{{asset('img/telephone.svg')}}" alt="sorry!"/>
             <h2 class="message-heading">Confirmed</h2>
 
             <p class="message-content-1">
