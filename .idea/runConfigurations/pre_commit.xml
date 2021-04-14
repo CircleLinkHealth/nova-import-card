@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="pre-commit" type="NodeJSConfigurationType" nameIsGenerated="true" path-to-js-file="bin/git-hooks/pre-commit" working-dir="$PROJECT_DIR$">
+    <method v="2" />
+  </configuration>
+</component>
