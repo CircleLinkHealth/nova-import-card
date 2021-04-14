@@ -165,13 +165,6 @@
             "options": {
                 "symlink": true
             }
-        },
-        {
-            "type": "path",
-            "url": "../../modules/OpcacheGui",
-            "options": {
-                "symlink": true
-            }
         }
     ],
     "require": {
@@ -185,7 +178,6 @@
         "ext-simplexml": "*",
         "algolia/algoliasearch-client-php": "^2.6",
         "ashallendesign/short-url": "*",
-        "appstract/laravel-opcache": "4.0.2",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/cpm-migrations-module": "*",
