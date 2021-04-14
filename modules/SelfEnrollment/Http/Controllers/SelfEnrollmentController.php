@@ -256,7 +256,7 @@ class SelfEnrollmentController extends Controller
         }
     }
 
-    protected function requestCallback(int $userId)
+    protected function errorRequestedCallback(int $userId)
     {
         $enrollee = Enrollee::whereUserId($userId)->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT)->first();
 
