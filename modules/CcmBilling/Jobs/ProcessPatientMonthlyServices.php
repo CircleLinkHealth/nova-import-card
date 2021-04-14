@@ -43,4 +43,22 @@ class ProcessPatientMonthlyServices implements ShouldQueue, ShouldBeEncrypted
     {
         (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
+
+    /**
+     * Added this for the tests
+     *
+     * @return Carbon
+     */
+    public function getChargeableMonth(): Carbon {
+        return $this->patient->getChargeableMonth();
+    }
+
+    /**
+     * Added this for the tests
+     *
+     * @return AvailableServiceProcessors
+     */
+    public function getAvailableServiceProcessors(): AvailableServiceProcessors {
+        return $this->patient->getAvailableServiceProcessors();
+    }
 }

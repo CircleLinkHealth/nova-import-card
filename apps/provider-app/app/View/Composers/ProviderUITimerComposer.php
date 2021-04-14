@@ -200,7 +200,7 @@ class ProviderUITimerComposer extends ServiceProvider
     private function getChargeableServices($patientId, bool $isForEnrollment = false)
     {
         if ( ! empty($patientId)) {
-            $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
+            $chargeableServices = app(PatientServicesForTimeTracker::class)->get((int) $patientId, now());
         } else {
             $record1 = PatientServiceForTimeTrackerDTO::fromArray([
                 'patient_id'                      => (int) $patientId,

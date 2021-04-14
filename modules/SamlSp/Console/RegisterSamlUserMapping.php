@@ -41,10 +41,10 @@ class RegisterSamlUserMapping extends Command
         SamlUser::updateOrCreate(
             [
                 'idp'         => $this->argument('idp'),
-                'cpm_user_id' => $this->argument('cpmUserId'),
+                'idp_user_id' => $this->argument('idpUserId'),
             ],
             [
-                'idp_user_id' => $this->argument('idpUserId'),
+                'cpm_user_id' => $this->argument('cpmUserId'),
             ]
         );
         $this->info('Done');

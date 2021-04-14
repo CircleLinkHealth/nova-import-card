@@ -130,6 +130,6 @@ class CcdProblemController extends Controller
 
     private function getChargeableServices($patientId)
     {
-        return (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
+        return app(PatientServicesForTimeTracker::class)->get((int) $patientId, now());
     }
 }

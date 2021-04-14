@@ -199,16 +199,6 @@ class Eloquent implements PatientServiceProcessorRepository
         });
     }
 
-    public function reloadPatientChargeableMonthlyTimes(int $patientId, Carbon $month): void
-    {
-        // TODO: Implement reloadPatientChargeableMonthlyTimes() method.
-    }
-
-    public function reloadPatientProblems(int $patientId): void
-    {
-        // TODO: Implement reloadPatientProblems() method.
-    }
-
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         $this->summariesCreated->where('patient_user_id', $patientId)

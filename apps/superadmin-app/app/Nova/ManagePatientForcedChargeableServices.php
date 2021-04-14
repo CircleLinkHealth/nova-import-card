@@ -121,7 +121,7 @@ class ManagePatientForcedChargeableServices extends Resource
             HasMany::make('Forced Chargeable Services', 'forcedChargeableServices', \App\Nova\PatientForcedChargeableService::class),
 
             Text::make('Patient Eligible Chargeable Services', function () {
-                $summaries = (new PatientServicesForTimeTracker($this->id, Carbon::now()->startOfMonth()))
+                $summaries = app(PatientServicesForTimeTracker::class)->get($this->id, now()->startOfMonth())
                     ->getRaw()
                     ->map(function (PatientServiceForTimeTrackerDTO $s) {
                         $minutes = secondsToMMSS($s->getTotalTime());
