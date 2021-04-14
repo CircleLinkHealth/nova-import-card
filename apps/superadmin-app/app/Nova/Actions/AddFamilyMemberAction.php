@@ -30,7 +30,10 @@ class AddFamilyMemberAction extends Action
     public function fields()
     {
         return [
-            SearchableSelect::make('Patient', 'patient_id')->resource(PatientUser::class),
+            SearchableSelect::make('Patient', 'patient_id')
+                ->label('display_name')
+                ->labelPrefix('id')
+                ->resource(PatientUser::class),
         ];
     }
 

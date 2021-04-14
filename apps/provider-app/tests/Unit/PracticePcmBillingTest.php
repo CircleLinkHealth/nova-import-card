@@ -6,13 +6,13 @@
 
 namespace Tests\Unit;
 
-use App\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\SharedModels\Services\ApproveBillablePatientsService;
 
 class PracticePcmBillingTest extends TestCase
 {
@@ -39,7 +39,7 @@ class PracticePcmBillingTest extends TestCase
         $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
-        $summaries = collect($patients['summaries']->toArray()['data']);
+        $summaries = collect($patients->summaries->items());
 
         $patientId    = $patient->id;
         $billedForCcm = false;
@@ -50,11 +50,12 @@ class PracticePcmBillingTest extends TestCase
                 return;
             }
 
-            $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if (ChargeableService::CCM === $service->code) {
+            collect($arr['chargeable_services'])->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
+                $code = ChargeableService::getChargeableServiceCodeUsingId($service['id']);
+                if (ChargeableService::CCM === $code) {
                     $billedForCcm = true;
                 }
-                if (ChargeableService::PCM === $service->code) {
+                if (ChargeableService::PCM === $code) {
                     $billedForPcm = true;
                 }
             });
@@ -70,10 +71,10 @@ class PracticePcmBillingTest extends TestCase
         $nurse    = $this->getNurse($practice->id);
         $patient  = $this->setupPatient($practice);
 
-        $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM));
+        $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
-        $summaries = collect($patients['summaries']->toArray()['data']);
+        $summaries = collect($patients->summaries->items());
 
         $patientId    = $patient->id;
         $billedForCcm = false;
@@ -84,11 +85,12 @@ class PracticePcmBillingTest extends TestCase
                 return;
             }
 
-            $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if (ChargeableService::CCM === $service->code) {
+            collect($arr['chargeable_services'])->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
+                $code = ChargeableService::getChargeableServiceCodeUsingId($service['id']);
+                if (ChargeableService::CCM === $code) {
                     $billedForCcm = true;
                 }
-                if (ChargeableService::PCM === $service->code) {
+                if (ChargeableService::PCM === $code) {
                     $billedForPcm = true;
                 }
             });
@@ -107,7 +109,7 @@ class PracticePcmBillingTest extends TestCase
         $this->addTime($nurse, $patient, 28, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
-        $summaries = collect($patients['summaries']->toArray()['data']);
+        $summaries = collect($patients->summaries->items());
 
         $patientId    = $patient->id;
         $billedForCcm = false;
@@ -118,11 +120,12 @@ class PracticePcmBillingTest extends TestCase
                 return;
             }
 
-            $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if (ChargeableService::CCM === $service->code) {
+            collect($arr['chargeable_services'])->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
+                $code = ChargeableService::getChargeableServiceCodeUsingId($service['id']);
+                if (ChargeableService::CCM === $code) {
                     $billedForCcm = true;
                 }
-                if (ChargeableService::PCM === $service->code) {
+                if (ChargeableService::PCM === $code) {
                     $billedForPcm = true;
                 }
             });
@@ -141,7 +144,7 @@ class PracticePcmBillingTest extends TestCase
         $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
-        $summaries = collect($patients['summaries']->toArray()['data']);
+        $summaries = collect($patients->summaries->items());
 
         $patientId    = $patient->id;
         $billedForCcm = false;
@@ -152,11 +155,12 @@ class PracticePcmBillingTest extends TestCase
                 return;
             }
 
-            $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if (ChargeableService::CCM === $service->code) {
+            collect($arr['chargeable_services'])->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
+                $code = ChargeableService::getChargeableServiceCodeUsingId($service['id']);
+                if (ChargeableService::CCM === $code) {
                     $billedForCcm = true;
                 }
-                if (ChargeableService::PCM === $service->code) {
+                if (ChargeableService::PCM === $code) {
                     $billedForPcm = true;
                 }
             });

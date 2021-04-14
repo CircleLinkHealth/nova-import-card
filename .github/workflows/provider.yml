@@ -9,7 +9,7 @@ jobs:
       run:
         working-directory: apps/provider-app
     name: Deploy
-    timeout-minutes: 30
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
@@ -24,26 +24,6 @@ jobs:
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Sentry release - production
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: circlelinkhealth
-          SENTRY_PROJECT: provider
-        with:
-          environment: production
-
-      - name: Create Sentry release - staging
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: circlelinkhealth
-          SENTRY_PROJECT: provider
-        with:
-          environment: staging
 
       - name: Copy .env
         if: ${{ env.CI_SKIP == 'false' }}
@@ -86,6 +66,40 @@ jobs:
         with:
           env-file: apps/provider-app/.env
 
+      - name: Tests Requirements
+        if: ${{ env.CI_SKIP == 'false' && !startsWith(github.event.head_commit.message, 'deploy prod') && contains(github.event.head_commit.message, 'run tests') }}
+        run: sudo apt-get install poppler-utils
+
+      - name: Run tests
+        if: ${{ env.CI_SKIP == 'false' && !startsWith(github.event.head_commit.message, 'deploy prod') && contains(github.event.head_commit.message, 'run tests') }}
+        run: composer test
+        env:
+          DB_HOST: ${{ secrets.TEST_DB_HOST }}
+          DB_PORT: ${{ secrets.TEST_DB_PORT }}
+          DB_DATABASE: cpm_tests_provider
+          DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+
+      - name: Create Sentry release - production
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: circlelinkhealth
+          SENTRY_PROJECT: provider
+        with:
+          environment: production
+
+      - name: Create Sentry release - staging
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: circlelinkhealth
+          SENTRY_PROJECT: provider
+        with:
+          environment: staging
+
       - name: Create env files to connect to S3 after deployment - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
         run: |
@@ -123,7 +137,7 @@ jobs:
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
       - name: Set permissions to allow creating env files
-        if: ${{ env.CI_SKIP == 'false' }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' }}
         run: sudo chmod -R 777 ./vendor/laravel/vapor-cli/src/BuildProcess
 
       - name: Deploy - production
@@ -143,7 +157,7 @@ jobs:
           APP_ENV: staging
 
       - name: Notify Slack - Success (production)
-        if: ${{ env.CI_SKIP == 'false' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -155,7 +169,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Success (staging)
-        if: ${{ env.CI_SKIP == 'false' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -167,7 +181,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Failure (production)
-        if: ${{ env.CI_SKIP == 'false' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -179,7 +193,7 @@ jobs:
           SLACK_ICON_EMOJI: ':scream_cat:'
 
       - name: Notify Slack - Failure (staging)
-        if: ${{ env.CI_SKIP == 'false' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -192,7 +206,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
-        if: ${{ env.CI_SKIP == 'false' && failure()  }}
+        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && failure()  }}
         with:
           name: Logs
           path: ./storage/logs

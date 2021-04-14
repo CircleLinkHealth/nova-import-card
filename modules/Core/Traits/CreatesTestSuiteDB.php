@@ -20,6 +20,8 @@ trait CreatesTestSuiteDB
             $dbName = getenv('HEROKU_TEST_RUN_ID');
         }
 
+        echo "\nCreatesTestSuiteDB: $dbName\n";
+
         $this->createDatabase($dbName ?? 'cpm_tests', ! $isCi);
     }
 

@@ -32,6 +32,12 @@ class CreateAndSeedTestSuiteDB extends Command
         $start = microtime(true);
 
         $dbName = $this->argument('dbName');
+        if (empty($dbName)) {
+            $dbName = 'cpm_tests';
+        }
+
+        echo "\nprepare-test_suite-db: $dbName\n";
+
         $this->createDB($dbName);
 
         $duration = round((microtime(true) - $start) * 1000);
