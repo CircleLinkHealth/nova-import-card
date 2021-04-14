@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class SelfEnrollmentTest extends CustomerTestCase
 {
@@ -848,6 +849,92 @@ class SelfEnrollmentTest extends CustomerTestCase
 
         self::assertTrue(User::whereDisplayName($displayName)->count() === $count);
         self::assertTrue(1 === $countUnique, "$countUnique patients found instead of 1");
+    }
+
+    public function test_patient_has_correct_request_info_and_enrolle_record()
+    {
+        $enrollee = $this->createEnrollees(1);
+
+        self::assertTrue($enrollee->status == Enrollee::QUEUE_AUTO_ENROLLMENT);
+
+        Log::shouldReceive('error')->never();
+
+        $response = $this->call('get', "/call-me/$enrollee->user_id");
+
+        $this->assertDatabaseHas('enrollees', [
+            'id' => $enrollee->id,
+            'requested_callback' => Carbon::now()->toDateString(),
+            'status'   => 'call_queue',
+            'auto_enrollment_triggered' => true
+        ]);
+
+        $this->assertDatabaseHas('enrollees_request_info', [
+            'enrollable_id'   => $enrollee->id,
+            'enrollable_type' => get_class($enrollee),
+            'experienced_error' => true
+        ]);
+
+
+        $response->assertViewIs('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
+    }
+
+    public function test_error_is_loogged_when_enrolle_is_not_found()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $enrollee->update(['status' => Enrollee::TO_CALL]);
+
+        self::assertTrue($enrollee->fresh()->status == Enrollee::TO_CALL);
+
+        $to = '#self_enrollment_logs';
+        $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with user id : [$enrollee->user_id] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT." was not found.";
+
+        Log::shouldReceive('error')
+            ->with($message)
+            ->once();
+
+        Log::shouldReceive('info')
+            ->once()
+            ->with("$to: $message");
+
+        $response = $this->call('get', "/call-me/$enrollee->user_id");
+
+        $response->assertViewIs('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
+    }
+
+    public function test_enrollment_error_view_is_returned_when_error_occurs_during_enrollment()
+    {
+
+        $enrollee = $this->createEnrollees(1);
+
+        $response = $this->call('post', "/auth/login-enrollment-survey", [
+            'is_survey_only' => '1',
+            'birth_date_day' => ($enrollee->dob)->day,
+            'birth_date_month' => ($enrollee->dob)->month,
+            'birth_date_year' => ($enrollee->dob)->year,
+            'user_id' => $enrollee->user_id
+
+        ]);
+
+        $response->assertViewIs('selfEnrollment::EnrollmentSurvey.enrollableError')->assertViewHas('userId',$enrollee->user_id);
+
+    }
+
+    public function test_enrollment_confirmation_view_is_returned_when_patient_has_previously_requested_callback_after_enrollment_error()
+    {
+        $enrollee = $this->createEnrollees(1);
+
+        $this->call('get', "/call-me/$enrollee->user_id");
+
+        $response = $this->call('post', "/auth/login-enrollment-survey", [
+            'is_survey_only' => '1',
+            'birth_date_day' => ($enrollee->dob)->day,
+            'birth_date_month' => ($enrollee->dob)->month,
+            'birth_date_year' => ($enrollee->dob)->year,
+            'user_id' => $enrollee->user_id
+
+        ]);
+
+        $response->assertViewIs('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
     }
 
     private function createEnrollees(int $number = 1, array $arguments = [])

@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class SelfEnrollmentController extends Controller
 {
@@ -268,8 +267,7 @@ class SelfEnrollmentController extends Controller
             }
 
         } else{
-            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with 
-                         user id :  [$userId] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT." was not found.";
+            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with user id : [$userId] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT." was not found.";
             Log::error($message);
             sendSlackMessage('#self_enrollment_logs', $message);
         }
