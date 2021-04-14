@@ -187,10 +187,6 @@
         {
             "type": "path",
             "url": "./modules/VaporDevopsHelpers"
-        },
-        {
-            "type": "path",
-            "url": "./modules/OpcacheGui"
         }
     ],
     "require": {

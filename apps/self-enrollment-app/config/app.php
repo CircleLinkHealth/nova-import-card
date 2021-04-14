@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingDeferredServiceProvider;
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use CircleLinkHealth\Core\DirectMail\Providers\DirectMailServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
@@ -200,6 +201,7 @@ return [
         EligibilityDeferrableServiceProvider::class,
         EligibilityServiceProvider::class,
         CcmBillingServiceProvider::class,
+        CcmBillingDeferredServiceProvider::class,
 
         SynonymsServiceProvider::class,
         FeatureFlagsProvider::class,

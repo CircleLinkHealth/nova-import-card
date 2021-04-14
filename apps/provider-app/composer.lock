@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "326d1e137b505b7587b4f6c2d4650aca",
+    "content-hash": "1ad2dcb32bf4c98d6dc12e0f3acfec76",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -68,117 +68,8 @@
             "time": "2019-10-01T23:05:14+00:00"
         },
         {
-            "name": "amnuts/opcache-gui",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amnuts/opcache-gui.git",
-                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/d660fbee43ad12a1a5114bdedad88625cf4db91c",
-                "reference": "d660fbee43ad12a1a5114bdedad88625cf4db91c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-zend-opcache": "*",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Amnuts\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andrew Collington",
-                    "email": "andy@amnuts.com",
-                    "homepage": "http://www.amnuts.com/",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Contributors",
-                    "homepage": "https://github.com/amnuts/opcache-gui/graphs/contributors"
-                }
-            ],
-            "description": "A clean, effective and responsive interface for Zend OPcache, with real(ish)-time monitoring, filtering and the ability to invalidate files",
-            "keywords": [
-                "Opcache",
-                "cache",
-                "gui",
-                "interface",
-                "opcodes"
-            ],
-            "time": "2020-12-16T15:55:55+00:00"
-        },
-        {
-            "name": "appstract/laravel-opcache",
-            "version": "4.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/appstract/laravel-opcache.git",
-                "reference": "d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3",
-                "reference": "d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^6.3.1|^7.0",
-                "laravel/framework": ">=7.0",
-                "php": ">=7.2.5"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^5.0",
-                "phpunit/phpunit": "^8.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Appstract\\Opcache\\OpcacheServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Appstract\\Opcache\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Olav van Schie",
-                    "email": "mail@appstract.nl",
-                    "homepage": "https://appstract.nl",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP OPcache Artisan commands for Laravel.",
-            "homepage": "https://github.com/appstract/laravel-opcache",
-            "keywords": [
-                "Opcache",
-                "appstract",
-                "laravel",
-                "php"
-            ],
-            "time": "2020-12-01T16:12:14+00:00"
-        },
-        {
             "name": "ashallendesign/short-url",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/ShortUrl",
@@ -349,16 +240,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.2",
+            "version": "3.178.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6"
+                "reference": "cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ba05bc572302c124960c2b0a9813169e790fcac6",
-                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369",
+                "reference": "cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369",
                 "shasum": ""
             },
             "require": {
@@ -430,7 +321,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-04-12T18:16:30+00:00"
+            "time": "2021-04-13T18:16:44+00:00"
         },
         {
             "name": "brick/math",
@@ -486,7 +377,7 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcdaParser",
@@ -529,7 +420,7 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcmBilling",
@@ -587,7 +478,7 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CerberusGatekeeper",
@@ -671,7 +562,7 @@
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/ConditionCodeLookup",
@@ -710,15 +601,13 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Core",
-                "reference": "980e9c1359f2652636f6f826e83988f768e17ab3"
+                "reference": "ed4bfdfb9a4629057f36a3278a7524520ada4228"
             },
             "require": {
-                "amnuts/opcache-gui": "dev-master",
-                "appstract/laravel-opcache": "^4.0",
                 "darkghosthunter/laraload": "dev-master",
                 "friendsofcat/laravel-feature-flag": "^3.2",
                 "genealabs/laravel-caffeine": "^8.0",
@@ -825,7 +714,7 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CpmMigrations",
@@ -856,7 +745,7 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Customer",
@@ -906,7 +795,7 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Eligibility",
@@ -980,7 +869,7 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/PatientApi",
@@ -1013,7 +902,7 @@
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/PdfService",
@@ -1058,7 +947,7 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Raygun",
@@ -1148,7 +1037,7 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SamlSp",
@@ -1189,7 +1078,7 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SelfEnrollment",
@@ -1214,7 +1103,7 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedModels",
@@ -1242,7 +1131,7 @@
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedVueComponents",
@@ -1273,7 +1162,7 @@
         },
         {
             "name": "circlelinkhealth/smart-on-fhir-sso-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SmartOnFhirSso",
@@ -1309,7 +1198,7 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SqlViews",
@@ -1348,7 +1237,7 @@
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Synonyms",
@@ -1457,7 +1346,7 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/TwoFA",
@@ -4244,16 +4133,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.36.2",
+            "version": "v8.37.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "0debd8ad6b5aa1f61ccc73910adf049af4ca0444"
+                "reference": "cf4082973abc796ec285190f0603380021f6d26f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/0debd8ad6b5aa1f61ccc73910adf049af4ca0444",
-                "reference": "0debd8ad6b5aa1f61ccc73910adf049af4ca0444",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/cf4082973abc796ec285190f0603380021f6d26f",
+                "reference": "cf4082973abc796ec285190f0603380021f6d26f",
                 "shasum": ""
             },
             "require": {
@@ -4404,7 +4293,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-04-07T12:37:22+00:00"
+            "time": "2021-04-13T13:49:49+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -6941,16 +6830,16 @@
         },
         {
             "name": "paragonie/sodium_compat",
-            "version": "v1.14.0",
+            "version": "v1.15.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "a1cfe0b21faf9c0b61ac0c6188c4af7fd6fd0db3"
+                "reference": "efcecfbceac1bf014b1ede38f4588931fef92586"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/a1cfe0b21faf9c0b61ac0c6188c4af7fd6fd0db3",
-                "reference": "a1cfe0b21faf9c0b61ac0c6188c4af7fd6fd0db3",
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/efcecfbceac1bf014b1ede38f4588931fef92586",
+                "reference": "efcecfbceac1bf014b1ede38f4588931fef92586",
                 "shasum": ""
             },
             "require": {
@@ -7019,7 +6908,7 @@
                 "secret-key cryptography",
                 "side-channel resistant"
             ],
-            "time": "2020-12-03T16:26:19+00:00"
+            "time": "2021-04-14T06:07:47+00:00"
         },
         {
             "name": "phaxio/phaxio",
@@ -9388,7 +9277,7 @@
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "dev-hotfix-billing-debouncing-and-duplicates",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "../../modules/LaravelScheduleMonitor",
@@ -12645,16 +12534,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.17.2",
+            "version": "v9.17.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "a970ba1159df6940a87fabcf44f571ef14b57927"
+                "reference": "61263567c9ab8a175be5f44f28b7f9163aaec6e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/a970ba1159df6940a87fabcf44f571ef14b57927",
-                "reference": "a970ba1159df6940a87fabcf44f571ef14b57927",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/61263567c9ab8a175be5f44f28b7f9163aaec6e2",
+                "reference": "61263567c9ab8a175be5f44f28b7f9163aaec6e2",
                 "shasum": ""
             },
             "require": {
@@ -12722,7 +12611,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2021-04-12T04:03:34+00:00"
+            "time": "2021-04-14T01:46:23+00:00"
         }
     ],
     "packages-dev": [
