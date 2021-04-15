@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Customer\MediaLibrary;
 
-use Spatie\MediaLibrary\UrlGenerator\S3UrlGenerator;
 
-class CPMURLGenerator extends S3UrlGenerator
+
+class CPMURLGenerator extends \Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator
 {
     /**
      * Get the url for the profile of a media item.
