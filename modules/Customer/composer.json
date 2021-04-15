@@ -40,7 +40,7 @@
         "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
         "propaganistas/laravel-phone": "^4.2.2",
-        "spatie/laravel-medialibrary": "^8.0.0",
+        "spatie/laravel-medialibrary": "^9.0.0",
         "jenssegers/agent": "^2.5",
         "league/flysystem-aws-s3-v3": "*"
     },
