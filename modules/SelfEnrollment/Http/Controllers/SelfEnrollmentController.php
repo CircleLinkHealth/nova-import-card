@@ -53,9 +53,9 @@ class SelfEnrollmentController extends Controller
      *
      * @return mixed
      */
-    public function createEnrollenrollableInfoRequest($enrollable, $experienced_error = false)
+    public function createEnrollenrollableInfoRequest($enrollable, $experiencedError = false)
     {
-        return $enrollable->enrollableInfoRequest()->create(['experienced_error' => $experienced_error]);
+        return $enrollable->enrollableInfoRequest()->create(['experienced_error' => $experiencedError]);
     }
 
     /**
