@@ -240,16 +240,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.3",
+            "version": "3.178.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369"
+                "reference": "fc3667c6054c941ae8cd8b8750f7c5c892d5a87b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369",
-                "reference": "cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fc3667c6054c941ae8cd8b8750f7c5c892d5a87b",
+                "reference": "fc3667c6054c941ae8cd8b8750f7c5c892d5a87b",
                 "shasum": ""
             },
             "require": {
@@ -321,7 +321,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-04-13T18:16:44+00:00"
+            "time": "2021-04-14T18:16:00+00:00"
         },
         {
             "name": "brick/math",
@@ -12586,16 +12586,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.17.3",
+            "version": "v9.17.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "61263567c9ab8a175be5f44f28b7f9163aaec6e2"
+                "reference": "6d8b2fbf36a6eb4626f51fdd88b5dd068c712e7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/61263567c9ab8a175be5f44f28b7f9163aaec6e2",
-                "reference": "61263567c9ab8a175be5f44f28b7f9163aaec6e2",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/6d8b2fbf36a6eb4626f51fdd88b5dd068c712e7b",
+                "reference": "6d8b2fbf36a6eb4626f51fdd88b5dd068c712e7b",
                 "shasum": ""
             },
             "require": {
@@ -12663,7 +12663,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2021-04-14T01:46:23+00:00"
+            "time": "2021-04-15T04:29:52+00:00"
         }
     ],
     "packages-dev": [

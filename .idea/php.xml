@@ -237,7 +237,6 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/patientapi-module" />
       <path value="$PROJECT_DIR$/vendor/algolia/algoliasearch-client-php" />
       <path value="$PROJECT_DIR$/vendor/willdurand/email-reply-parser" />
-      <path value="$PROJECT_DIR$/vendor/appstract/laravel-opcache" />
       <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
       <path value="$PROJECT_DIR$/vendor/php-cs-fixer/diff" />
       <path value="$PROJECT_DIR$/vendor/friendsofphp/php-cs-fixer" />
