@@ -14,3 +14,4 @@ CircleLinkHealth/*
 *-deploy-s3.env*
 .vapor
 storage/preload.php
+.phpstorm.meta.php
