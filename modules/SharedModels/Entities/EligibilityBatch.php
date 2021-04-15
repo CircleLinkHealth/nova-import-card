@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**

@@ -84,7 +84,7 @@ use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**

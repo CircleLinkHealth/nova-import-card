@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
