@@ -1,6 +1,0 @@
-[
-  {
-    "s3": "$envType-common-secrets.env",
-    "local": "$vaporBuildAppPath/$envType-common-secrets.env"
-  }
-]
