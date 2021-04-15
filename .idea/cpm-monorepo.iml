@@ -3,7 +3,6 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/apps/admin-app/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth" />
       <excludeFolder url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
