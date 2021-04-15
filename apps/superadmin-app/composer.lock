@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aeb87e6d5df5deb19093f839190441a0",
+    "content-hash": "552a8e5dc3d9157ca40e43a5da84bdc1",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -618,10 +618,16 @@
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/CerberusGatekeeper",
-                "reference": "4ab4d6c6bb08fd6088a142a755b702c3ada2464b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/e3c52367160b364b74fdd285b082bfd96acc6f7d",
+                "reference": "e3c52367160b364b74fdd285b082bfd96acc6f7d",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "*",
@@ -654,11 +660,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -694,10 +696,7 @@
                 "permission",
                 "roles"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2021-01-04T23:50:45+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -956,11 +955,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Customer",
-                "reference": "def4fae236bbad49f6348c9702230fbbdbe29dc5"
+                "reference": "787c6ee93a71e4f151681f714e1890699bf523b6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -975,7 +974,7 @@
                 "laravel/ui": "^3.0",
                 "league/flysystem-aws-s3-v3": "*",
                 "propaganistas/laravel-phone": "^4.2.2",
-                "spatie/laravel-medialibrary": "^7.0.0"
+                "spatie/laravel-medialibrary": "^9.0.0"
             },
             "type": "laravel-module",
             "extra": {
@@ -5960,16 +5959,16 @@
         },
         {
             "name": "lorisleiva/cron-translator",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lorisleiva/cron-translator.git",
-                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011"
+                "reference": "764996770558dddc7def8619095391a4ec8048f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
-                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
+                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/764996770558dddc7def8619095391a4ec8048f2",
+                "reference": "764996770558dddc7def8619095391a4ec8048f2",
                 "shasum": ""
             },
             "require-dev": {
@@ -5999,7 +5998,13 @@
                 "expression",
                 "human"
             ],
-            "time": "2020-03-01T14:44:47+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/lorisleiva",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-01-20T10:55:08+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -9771,50 +9776,54 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "7.19.5",
+            "version": "9.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "70082a769683cf192d4dc987392042cb502b9305"
+                "reference": "0521fe8ce82c3b66f1f9fbab424904aea8153622"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/70082a769683cf192d4dc987392042cb502b9305",
-                "reference": "70082a769683cf192d4dc987392042cb502b9305",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/0521fe8ce82c3b66f1f9fbab424904aea8153622",
+                "reference": "0521fe8ce82c3b66f1f9fbab424904aea8153622",
                 "shasum": ""
             },
             "require": {
+                "ext-exif": "*",
                 "ext-fileinfo": "*",
                 "ext-json": "*",
-                "illuminate/bus": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/console": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/database": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/pipeline": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/support": "~5.8.35|^6.0|^7.0|^8.0",
-                "league/flysystem": "^1.0.8",
+                "illuminate/bus": "^7.0|^8.0",
+                "illuminate/console": "^7.0|^8.0",
+                "illuminate/database": "^7.0|^8.0",
+                "illuminate/pipeline": "^7.0|^8.0",
+                "illuminate/support": "^7.0|^8.0",
+                "league/flysystem": "^1.0.64",
                 "maennchen/zipstream-php": "^1.0|^2.0",
-                "php": "^7.2",
+                "php": "^7.4|^8.0",
                 "spatie/image": "^1.4.0",
-                "spatie/pdf-to-image": "^2.0",
-                "spatie/temporary-directory": "^1.1",
-                "symfony/console": "^4.4|^5.1"
+                "spatie/temporary-directory": "^1.1|^2.0",
+                "symfony/console": "^4.4|^5.0"
             },
             "conflict": {
                 "php-ffmpeg/php-ffmpeg": "<0.6.1"
             },
             "require-dev": {
+                "aws/aws-sdk-php": "^3.133.11",
                 "doctrine/dbal": "^2.5.2",
                 "ext-pdo_sqlite": "*",
-                "guzzlehttp/guzzle": "^6.3|^7.0.1",
-                "league/flysystem-aws-s3-v3": "^1.0.13",
-                "mockery/mockery": "^1.0",
-                "orchestra/testbench": "^3.8|^4.0|^5.0|^6.0",
-                "phpunit/phpunit": "^8.0|^9.0",
-                "spatie/phpunit-snapshot-assertions": "^2.0"
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "league/flysystem-aws-s3-v3": "^1.0.23",
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^5.0|^6.0",
+                "phpunit/phpunit": "^9.1",
+                "spatie/pdf-to-image": "^2.0",
+                "spatie/phpunit-snapshot-assertions": "^4.0"
             },
             "suggest": {
                 "league/flysystem-aws-s3-v3": "Required to use AWS S3 file storage",
-                "php-ffmpeg/php-ffmpeg": "Required for generating video thumbnails"
+                "php-ffmpeg/php-ffmpeg": "Required for generating video thumbnails",
+                "spatie/pdf-to-image": "Required for generating thumbsnails of PDFs and SVGs"
             },
             "type": "library",
             "extra": {
@@ -9837,7 +9846,7 @@
                 {
                     "name": "Freek Van der Herten",
                     "email": "freek@spatie.be",
-                    "homepage": "https://murze.be",
+                    "homepage": "https://spatie.be",
                     "role": "Developer"
                 }
             ],
@@ -9863,19 +9872,25 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-04T21:08:45+00:00"
+            "time": "2021-04-13T19:03:20+00:00"
         },
         {
             "name": "spatie/laravel-schedule-monitor",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
+                "reference": "715ff63157234cce660151956cb6dd6c7af12ea3"
+            },
             "dist": {
-                "type": "path",
-                "url": "../../modules/LaravelScheduleMonitor",
-                "reference": "53fc45f75209b529f0b4891fe7aa57acf60d2586"
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/715ff63157234cce660151956cb6dd6c7af12ea3",
+                "reference": "715ff63157234cce660151956cb6dd6c7af12ea3",
+                "shasum": ""
             },
             "require": {
                 "illuminate/bus": "^8.0",
-                "lorisleiva/cron-translator": "^0.1.1",
+                "lorisleiva/cron-translator": "^0.2.0",
                 "nesbot/carbon": "^2.41.3",
                 "php": "^7.4|^8.0"
             },
@@ -9905,25 +9920,7 @@
                     "Spatie\\ScheduleMonitor\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\Tests\\": "tests"
-                }
-            },
-            "scripts": {
-                "psalm": [
-                    "vendor/bin/psalm"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ],
-                "format": [
-                    "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -9941,10 +9938,13 @@
                 "laravel-schedule-monitor",
                 "spatie"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-03-29T10:44:13+00:00"
         },
         {
             "name": "spatie/laravel-view-models",
@@ -10068,62 +10068,6 @@
                 }
             ],
             "time": "2020-10-29T18:22:10+00:00"
-        },
-        {
-            "name": "spatie/pdf-to-image",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/pdf-to-image.git",
-                "reference": "ea81a2d5f4fb0ca9f4c4fc0d4f8813135e993b2d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/ea81a2d5f4fb0ca9f4c4fc0d4f8813135e993b2d",
-                "reference": "ea81a2d5f4fb0ca9f4c4fc0d4f8813135e993b2d",
-                "shasum": ""
-            },
-            "require": {
-                "ext-imagick": "*",
-                "php": "^7.2|^8.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.0|^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\PdfToImage\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Convert a pdf to an image",
-            "homepage": "https://github.com/spatie/pdf-to-image",
-            "keywords": [
-                "convert",
-                "image",
-                "pdf",
-                "pdf-to-image",
-                "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.patreon.com/spatie",
-                    "type": "patreon"
-                }
-            ],
-            "time": "2020-11-12T11:27:19+00:00"
         },
         {
             "name": "spatie/temporary-directory",
