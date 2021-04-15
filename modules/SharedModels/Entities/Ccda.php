@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\Ccda.
@@ -102,7 +102,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 class Ccda extends BaseModel implements HasMedia, MedicalRecord
 {
     use BelongsToPatientUser;
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use SoftDeletes;
     const API = 'api';
 

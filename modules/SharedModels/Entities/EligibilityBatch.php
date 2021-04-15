@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessPendingEligibilityJobs;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\EligibilityBatch.
@@ -51,7 +51,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class EligibilityBatch extends BaseModel implements HasMedia
 {
-    use HasMediaTrait;
+    use InteractsWithMedia;
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 

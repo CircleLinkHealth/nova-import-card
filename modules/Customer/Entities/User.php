@@ -85,7 +85,7 @@ use Lab404\Impersonate\Models\Impersonate;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * CircleLinkHealth\Customer\Entities\User.
@@ -340,7 +340,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use CerberusSiteUserTrait;
     use Filterable;
     use HasEmrDirectAddress;
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use Impersonate;
     use MakesOrReceivesCalls;
     use Notifiable;

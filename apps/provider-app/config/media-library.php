@@ -74,10 +74,10 @@ return [
      * When urls to files get generated, this class will be called. Leave empty
      * if your files are stored locally above the site root or on s3.
      */
-    'url_generator' => CPMURLGenerator::class,
+    'url_generator' => Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator::class,
 
     // The class that contains the strategy for determining a media file's path.
-    'path_generator' => null,
+    'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
 
     /*
      * Medialibrary will try to optimize all converted images by removing
