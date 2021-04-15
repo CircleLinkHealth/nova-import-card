@@ -8,7 +8,7 @@ namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**

@@ -15,7 +15,7 @@ use CircleLinkHealth\PdfService\Services\PdfService;
 use CircleLinkHealth\SharedModels\Traits\Disputable;
 use CircleLinkHealth\SharedModels\Traits\Nursable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
