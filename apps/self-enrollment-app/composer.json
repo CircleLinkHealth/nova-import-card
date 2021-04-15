@@ -201,6 +201,7 @@
         "laravel/vapor-core": "*",
         "ohdearapp/ohdear-php-sdk": "^3.0",
         "sentry/sentry-laravel": "^2.3",
+        "spatie/laravel-medialibrary": "^9.0",
         "spatie/laravel-schedule-monitor": "*"
     },
     "require-dev": {
