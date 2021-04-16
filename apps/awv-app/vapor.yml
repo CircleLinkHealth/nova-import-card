@@ -27,6 +27,72 @@ environments:
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
+    review-spatie-update:
+        domain: awv-review-spatie-update-v2.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        queue-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        timeout: 45
+        mail: false
+        queues:
+            - awv-review-spatie-update-low-staging
+            - awv-review-spatie-update-high-staging
+            - awv-review-spatie-update-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+    review-spatie-update2:
+        domain: awv-review-spatie-update2-v2.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        queue-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        timeout: 45
+        mail: false
+        queues:
+            - awv-review-spatie-update2-low-staging
+            - awv-review-spatie-update2-high-staging
+            - awv-review-spatie-update2-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+    review-spatie-update3:
+        domain: awv-review-spatie-update3-v2.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        queue-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        timeout: 45
+        mail: false
+        queues:
+            - awv-review-spatie-update3-low-staging
+            - awv-review-spatie-update3-high-staging
+            - awv-review-spatie-update3-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod && rm -rf node_modules'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
     staging:
         domain: awv-v2.clh-staging.com
         storage: cpm-staging-vapor-storage

@@ -52,6 +52,81 @@ environments:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
             - 'php artisan schedule-monitor:sync'
+    review-spatie-update:
+        domain: superadmin-review-spatie-update.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        concurrency: 5
+        scheduler: false
+        mail: false
+        timeout: 60
+        cli-timeout: 600
+        queues:
+            - superadmin-review-spatie-update-low-staging
+            - superadmin-review-spatie-update-high-staging
+            - superadmin-review-spatie-update-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
+    review-spatie-update2:
+        domain: superadmin-review-spatie-update2.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        concurrency: 5
+        scheduler: false
+        mail: false
+        timeout: 60
+        cli-timeout: 600
+        queues:
+            - superadmin-review-spatie-update2-low-staging
+            - superadmin-review-spatie-update2-high-staging
+            - superadmin-review-spatie-update2-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
+    review-spatie-update3:
+        domain: superadmin-review-spatie-update3.clh-staging.com
+        storage: cpm-staging-vapor-storage
+        memory: 512
+        cli-memory: 512
+        runtime: docker
+        queue-timeout: 600
+        concurrency: 5
+        scheduler: false
+        mail: false
+        timeout: 60
+        cli-timeout: 600
+        queues:
+            - superadmin-review-spatie-update3-low-staging
+            - superadmin-review-spatie-update3-high-staging
+            - superadmin-review-spatie-update3-revisionable-staging
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
+            - 'php artisan event:cache'
+            - 'npm ci && npm run prod'
+            - 'php artisan route:cache'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+            - 'php artisan schedule-monitor:sync'
     staging:
         domain: superadmin.clh-staging.com
         storage: cpm-staging-vapor-storage

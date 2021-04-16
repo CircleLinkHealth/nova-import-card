@@ -15,3 +15,6 @@ CircleLinkHealth/*
 .vapor
 storage/preload.php
 .phpstorm.meta.php
+.env.review-spatie-update
+.env.review-spatie-update2
+.env.review-spatie-update3
