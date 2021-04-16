@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Repositories\CCDImporterRepository;
 use Illuminate\Http\Request;
-use Spatie\MediaLibrary\MediaStream;
+use Spatie\MediaLibrary\Support\MediaStream;
 
 class CCDViewerController extends Controller
 {
