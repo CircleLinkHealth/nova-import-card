@@ -36,6 +36,3 @@ lsp/log/*
 staging-deploy-s3.env
 production-deploy-s3.env.env.feature-billing-revamp
 .env.billing-attestation-hotfixes
-.env.review-spatie-update
-.env.review-spatie-update2
-.env.review-spatie-update3

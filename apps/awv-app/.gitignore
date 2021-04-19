@@ -18,6 +18,3 @@ CircleLinkHealth/*
 /.vapor/
 lsp/
 *-deploy-s3.env*
-.env.review-spatie-update
-.env.review-spatie-update2
-.env.review-spatie-update3

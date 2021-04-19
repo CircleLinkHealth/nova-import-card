@@ -39,7 +39,3 @@ CircleLinkHealth/*/node_modules
 CircleLinkHealth.env.review-clh-messenger
 CircleLinkHealth/
 .env.billing-attestation-hotfixes
-.env.review-spatie-update3
-.env.test-app
-.env.review-spatie-update4
-.env.review-spatie-update5
