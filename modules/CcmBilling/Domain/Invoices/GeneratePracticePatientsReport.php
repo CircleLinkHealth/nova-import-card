@@ -9,7 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Invoices;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Spatie\MediaLibrary\Models\Media;
+use CircleLinkHealth\Customer\Entities\Media;
 
 class GeneratePracticePatientsReport
 {

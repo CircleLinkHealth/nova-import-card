@@ -17,7 +17,7 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Spatie\MediaLibrary\Models\Media;
+use CircleLinkHealth\Customer\Entities\Media;
 
 class GeneratePracticesQuickbooksReport
 {
