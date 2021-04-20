@@ -62,7 +62,8 @@ class FixToledoMakeSureProviderMatchesPracticePull extends Command
             ->join('practice_pull_demographics', function ($join) {
                 $join->on('practice_pull_demographics.mrn', '=', 'patient_info.mrn_number')
                     ->where('practice_id', '=', 235);
-            })->whereRaw('patient_care_team_members.member_user_id != practice_pull_demographics.billing_provider_user_id')
+            })
+            ->whereRaw('patient_care_team_members.member_user_id != practice_pull_demographics.billing_provider_user_id')
             ->chunkById(500, function ($users) {
                 \DB::transaction(function () use ($users) {
                     foreach ($users as $user) {
@@ -85,6 +86,6 @@ class FixToledoMakeSureProviderMatchesPracticePull extends Command
                         $this->info("$updated CCDAs updated for Patient[{$carePerson->user_id}]");
                     }
                 });
-            }, 'users.id');
+            }, 'id');
     }
 }
