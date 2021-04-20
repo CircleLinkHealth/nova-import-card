@@ -13,9 +13,11 @@
                         Don’t worry, our care team is working to fix this. Please try enrolling again in a few hours. A care coach will contact you soon if the issue is not resolved.
                     </p>
 
-                    <p class="message-content-2">
-                        Want us to give you a call to finish your enrollment?
-                    </p>
+                    @if(isset($userId))
+                        <p class="message-content-2">
+                            Want us to give you a call to finish your enrollment?
+                        </p>
+                    @endif
                 </div>
 
                 @if(isset($userId))

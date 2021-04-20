@@ -50,6 +50,7 @@ class SelfEnrollmentController extends Controller
     /**
      * @param $enrollable
      * @param $responseStatus
+     * @param mixed $experiencedError
      *
      * @return mixed
      */
@@ -104,7 +105,7 @@ class SelfEnrollmentController extends Controller
         } catch (\Exception $e) {
             Log::error(json_encode($e));
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError',compact(['userId' => $request->input('enrollable_id')]));
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', compact(['userId' => $request->input('enrollable_id')]));
         }
 
         return view(
@@ -148,7 +149,7 @@ class SelfEnrollmentController extends Controller
             $message = $e->getMessage();
             Log::critical("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError',compact('userId'));
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', compact('userId'));
         }
     }
 
@@ -259,15 +260,14 @@ class SelfEnrollmentController extends Controller
     {
         $enrollee = Enrollee::whereUserId($userId)->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT)->first();
 
-        if($enrollee){
+        if ($enrollee) {
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
 
-            if ( ! $enrollee->enrollableInfoRequest()->where('experienced_error',true)->exists()) {
-                $this->createEnrollenrollableInfoRequest($enrollee,true);
+            if ( ! $enrollee->enrollableInfoRequest()->where('experienced_error', true)->exists()) {
+                $this->createEnrollenrollableInfoRequest($enrollee, true);
             }
-
-        } else{
-            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with user id : [$userId] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT." was not found.";
+        } else {
+            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with user id : [$userId] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT.' was not found.';
             Log::error($message);
             sendSlackMessage('#self_enrollment_logs', $message);
         }
@@ -388,8 +388,7 @@ class SelfEnrollmentController extends Controller
 
         $enrollableInfoRequest = $user->enrollee->enrollableInfoRequest;
         if ( ! is_null($enrollableInfoRequest)) {
-
-            if ($enrollableInfoRequest->where('experienced_error',true)->exists()) {
+            if ($enrollableInfoRequest->where('experienced_error', true)->exists()) {
                 return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
             }
 
