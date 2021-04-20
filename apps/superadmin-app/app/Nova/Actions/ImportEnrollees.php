@@ -20,7 +20,7 @@ use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\MediaLibrary\Models\Media;
+use CircleLinkHealth\Customer\Entities\Media;
 
 class ImportEnrollees extends Action
 {

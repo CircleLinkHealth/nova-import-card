@@ -8,8 +8,8 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * CircleLinkHealth\Customer\Entities\SaasAccount.
@@ -48,7 +48,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class SaasAccount extends BaseModel implements HasMedia
 {
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $fillable = [

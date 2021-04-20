@@ -15,8 +15,8 @@ use CircleLinkHealth\PdfService\Services\PdfService;
 use CircleLinkHealth\SharedModels\Traits\Disputable;
 use CircleLinkHealth\SharedModels\Traits\Nursable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\NurseInvoice.
@@ -64,7 +64,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 class NurseInvoice extends BaseModel implements HasMedia, Pdfable
 {
     use Disputable;
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use NotificationAttachable;
     use Nursable;
     const CSV_DOWNLOAD_FORMAT = 'csv';

@@ -93,12 +93,12 @@ class CustomerServiceProvider extends ServiceProvider
         );
 
         $this->publishes([
-            __DIR__.'/../Config/medialibrary.php' => config_path('medialibrary.php'),
-        ], 'medialibrary');
+            __DIR__.'/../Config/media-library.php' => config_path('media-library.php'),
+        ], 'media-library');
 
         $this->mergeConfigFrom(
-            __DIR__.'/../Config/medialibrary.php',
-            'medialibrary'
+            __DIR__.'/../Config/media-library.php',
+            'media-library'
         );
     }
 }

@@ -210,7 +210,8 @@
         "laravel/vapor-core": "*",
         "sentry/sentry-laravel": "2.x-dev",
         "squizlabs/php_codesniffer": "^3.5",
-        "twilio/sdk": "6.0.0"
+        "twilio/sdk": "6.0.0",
+        "spatie/laravel-medialibrary": "^9.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6.7",
