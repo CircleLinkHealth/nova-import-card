@@ -13,5 +13,11 @@ return [
 
     // Only show notifications of the following classes in Live Notifications count.
     'classes' => [
+        \CircleLinkHealth\Core\Notifications\AddendumCreated::class,
+        \CircleLinkHealth\SharedModels\Notifications\CallCreated::class,
+        \CircleLinkHealth\CpmAdmin\Notifications\InvoicesCreatedNotification::class,
+        \CircleLinkHealth\Customer\Notifications\PracticeStaffCreatedNote::class,
+        \CircleLinkHealth\Customer\Notifications\SendSignedUrlToDownloadPracticeReport::class,
+        App\Notifications\CarePlansGeneratedNotification::class,
     ],
 ];

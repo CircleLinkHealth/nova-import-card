@@ -90,7 +90,7 @@ class CoreServiceProvider extends ServiceProvider
         ], 'config');
         $this->publishes([
             __DIR__.'/../Config/live-notifications.php' => config_path('live-notifications.php'),
-        ], 'live-notifications');
+        ], 'config');
     }
 
     /**
