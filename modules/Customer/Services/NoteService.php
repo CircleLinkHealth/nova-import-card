@@ -396,6 +396,7 @@ class NoteService
         return $note->notifications()
             ->hasNotifiableType(User::class)
             ->with('notifiable')
+            ->has('notifiable')
             ->whereNotNull('read_at')
             ->get()
             ->mapWithKeys(function ($notification) {
