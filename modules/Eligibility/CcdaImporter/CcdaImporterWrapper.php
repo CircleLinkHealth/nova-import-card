@@ -337,6 +337,18 @@ class CcdaImporterWrapper
         });
     }
 
+    public static function prepareForMysqlMatch(string $term)
+    {
+        // need to escape each term to cover cases such as Mary "Dee" Wilson
+        return collect(explode(' ', $term))
+            ->transform(function ($term) {
+                $escaped = str_replace('"', '\"', $term);
+
+                return "+$escaped";
+            })
+            ->implode(' ');
+    }
+
     /**
      * Search for a Billing Provider using a search term.
      *
@@ -406,13 +418,6 @@ class CcdaImporterWrapper
         $term = self::prepareForMysqlMatch($term);
 
         return Location::whereRaw("MATCH(name) AGAINST(\"$term\")")->where('practice_id', $practiceId)->first();
-    }
-
-    public static function prepareForMysqlMatch(string $term)
-    {
-        return collect(explode(' ', $term))->transform(function ($term) {
-            return "+$term";
-        })->implode(' ');
     }
 
     private function replaceCommonAddressVariations($providerAddress)
