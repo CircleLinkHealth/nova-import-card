@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ad2dcb32bf4c98d6dc12e0f3acfec76",
+    "content-hash": "922022125056f8b626e2b72caf723288",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -69,7 +69,7 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/ShortUrl",
@@ -240,16 +240,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.3",
+            "version": "3.178.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369"
+                "reference": "5a268a20272c0c9171570ed57f68b629e966deab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369",
-                "reference": "cfeed02f14b0fb3cba8bb75f2ae28cb8c9807369",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5a268a20272c0c9171570ed57f68b629e966deab",
+                "reference": "5a268a20272c0c9171570ed57f68b629e966deab",
                 "shasum": ""
             },
             "require": {
@@ -321,7 +321,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2021-04-13T18:16:44+00:00"
+            "time": "2021-04-15T18:12:46+00:00"
         },
         {
             "name": "brick/math",
@@ -377,7 +377,7 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcdaParser",
@@ -420,7 +420,7 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcmBilling",
@@ -478,7 +478,7 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CerberusGatekeeper",
@@ -562,7 +562,7 @@
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/ConditionCodeLookup",
@@ -601,7 +601,7 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Core",
@@ -714,7 +714,7 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CpmMigrations",
@@ -745,11 +745,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Customer",
-                "reference": "def4fae236bbad49f6348c9702230fbbdbe29dc5"
+                "reference": "787c6ee93a71e4f151681f714e1890699bf523b6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -764,7 +764,7 @@
                 "laravel/ui": "^3.0",
                 "league/flysystem-aws-s3-v3": "*",
                 "propaganistas/laravel-phone": "^4.2.2",
-                "spatie/laravel-medialibrary": "^7.0.0"
+                "spatie/laravel-medialibrary": "^9.0.0"
             },
             "type": "laravel-module",
             "extra": {
@@ -795,7 +795,7 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Eligibility",
@@ -869,7 +869,7 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/PatientApi",
@@ -902,7 +902,7 @@
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/PdfService",
@@ -947,7 +947,7 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Raygun",
@@ -1037,7 +1037,7 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SamlSp",
@@ -1078,7 +1078,7 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SelfEnrollment",
@@ -1103,7 +1103,7 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedModels",
@@ -1131,7 +1131,7 @@
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedVueComponents",
@@ -1162,7 +1162,7 @@
         },
         {
             "name": "circlelinkhealth/smart-on-fhir-sso-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SmartOnFhirSso",
@@ -1198,7 +1198,7 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SqlViews",
@@ -1237,7 +1237,7 @@
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Synonyms",
@@ -1346,7 +1346,7 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/TwoFA",
@@ -6830,16 +6830,16 @@
         },
         {
             "name": "paragonie/sodium_compat",
-            "version": "v1.15.2",
+            "version": "v1.15.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "efcecfbceac1bf014b1ede38f4588931fef92586"
+                "reference": "69ac8357b0b5916e997226143a401ce2c09f5585"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/efcecfbceac1bf014b1ede38f4588931fef92586",
-                "reference": "efcecfbceac1bf014b1ede38f4588931fef92586",
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/69ac8357b0b5916e997226143a401ce2c09f5585",
+                "reference": "69ac8357b0b5916e997226143a401ce2c09f5585",
                 "shasum": ""
             },
             "require": {
@@ -6908,7 +6908,7 @@
                 "secret-key cryptography",
                 "side-channel resistant"
             ],
-            "time": "2021-04-14T06:07:47+00:00"
+            "time": "2021-04-14T21:40:16+00:00"
         },
         {
             "name": "phaxio/phaxio",
@@ -9181,50 +9181,54 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "7.19.5",
+            "version": "9.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "70082a769683cf192d4dc987392042cb502b9305"
+                "reference": "0521fe8ce82c3b66f1f9fbab424904aea8153622"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/70082a769683cf192d4dc987392042cb502b9305",
-                "reference": "70082a769683cf192d4dc987392042cb502b9305",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/0521fe8ce82c3b66f1f9fbab424904aea8153622",
+                "reference": "0521fe8ce82c3b66f1f9fbab424904aea8153622",
                 "shasum": ""
             },
             "require": {
+                "ext-exif": "*",
                 "ext-fileinfo": "*",
                 "ext-json": "*",
-                "illuminate/bus": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/console": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/database": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/pipeline": "~5.8.35|^6.0|^7.0|^8.0",
-                "illuminate/support": "~5.8.35|^6.0|^7.0|^8.0",
-                "league/flysystem": "^1.0.8",
+                "illuminate/bus": "^7.0|^8.0",
+                "illuminate/console": "^7.0|^8.0",
+                "illuminate/database": "^7.0|^8.0",
+                "illuminate/pipeline": "^7.0|^8.0",
+                "illuminate/support": "^7.0|^8.0",
+                "league/flysystem": "^1.0.64",
                 "maennchen/zipstream-php": "^1.0|^2.0",
-                "php": "^7.2",
+                "php": "^7.4|^8.0",
                 "spatie/image": "^1.4.0",
-                "spatie/pdf-to-image": "^2.0",
-                "spatie/temporary-directory": "^1.1",
-                "symfony/console": "^4.4|^5.1"
+                "spatie/temporary-directory": "^1.1|^2.0",
+                "symfony/console": "^4.4|^5.0"
             },
             "conflict": {
                 "php-ffmpeg/php-ffmpeg": "<0.6.1"
             },
             "require-dev": {
+                "aws/aws-sdk-php": "^3.133.11",
                 "doctrine/dbal": "^2.5.2",
                 "ext-pdo_sqlite": "*",
-                "guzzlehttp/guzzle": "^6.3|^7.0.1",
-                "league/flysystem-aws-s3-v3": "^1.0.13",
-                "mockery/mockery": "^1.0",
-                "orchestra/testbench": "^3.8|^4.0|^5.0|^6.0",
-                "phpunit/phpunit": "^8.0|^9.0",
-                "spatie/phpunit-snapshot-assertions": "^2.0"
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "league/flysystem-aws-s3-v3": "^1.0.23",
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^5.0|^6.0",
+                "phpunit/phpunit": "^9.1",
+                "spatie/pdf-to-image": "^2.0",
+                "spatie/phpunit-snapshot-assertions": "^4.0"
             },
             "suggest": {
                 "league/flysystem-aws-s3-v3": "Required to use AWS S3 file storage",
-                "php-ffmpeg/php-ffmpeg": "Required for generating video thumbnails"
+                "php-ffmpeg/php-ffmpeg": "Required for generating video thumbnails",
+                "spatie/pdf-to-image": "Required for generating thumbsnails of PDFs and SVGs"
             },
             "type": "library",
             "extra": {
@@ -9247,7 +9251,7 @@
                 {
                     "name": "Freek Van der Herten",
                     "email": "freek@spatie.be",
-                    "homepage": "https://murze.be",
+                    "homepage": "https://spatie.be",
                     "role": "Developer"
                 }
             ],
@@ -9273,11 +9277,11 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-04T21:08:45+00:00"
+            "time": "2021-04-13T19:03:20+00:00"
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/LaravelScheduleMonitor",
@@ -9481,62 +9485,6 @@
                 }
             ],
             "time": "2020-11-30T15:27:50+00:00"
-        },
-        {
-            "name": "spatie/pdf-to-image",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/pdf-to-image.git",
-                "reference": "ea81a2d5f4fb0ca9f4c4fc0d4f8813135e993b2d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/ea81a2d5f4fb0ca9f4c4fc0d4f8813135e993b2d",
-                "reference": "ea81a2d5f4fb0ca9f4c4fc0d4f8813135e993b2d",
-                "shasum": ""
-            },
-            "require": {
-                "ext-imagick": "*",
-                "php": "^7.2|^8.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.0|^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\PdfToImage\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Convert a pdf to an image",
-            "homepage": "https://github.com/spatie/pdf-to-image",
-            "keywords": [
-                "convert",
-                "image",
-                "pdf",
-                "pdf-to-image",
-                "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.patreon.com/spatie",
-                    "type": "patreon"
-                }
-            ],
-            "time": "2020-11-12T11:27:19+00:00"
         },
         {
             "name": "spatie/pdf-to-text",
@@ -12534,16 +12482,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.17.3",
+            "version": "v9.17.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "61263567c9ab8a175be5f44f28b7f9163aaec6e2"
+                "reference": "6d8b2fbf36a6eb4626f51fdd88b5dd068c712e7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/61263567c9ab8a175be5f44f28b7f9163aaec6e2",
-                "reference": "61263567c9ab8a175be5f44f28b7f9163aaec6e2",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/6d8b2fbf36a6eb4626f51fdd88b5dd068c712e7b",
+                "reference": "6d8b2fbf36a6eb4626f51fdd88b5dd068c712e7b",
                 "shasum": ""
             },
             "require": {
@@ -12611,7 +12559,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2021-04-14T01:46:23+00:00"
+            "time": "2021-04-15T04:29:52+00:00"
         }
     ],
     "packages-dev": [

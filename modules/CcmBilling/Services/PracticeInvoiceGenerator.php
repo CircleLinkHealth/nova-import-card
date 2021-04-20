@@ -91,7 +91,6 @@ class PracticeInvoiceGenerator
 
     /**
      * @param $reportName
-     *
      * @return \Spatie\MediaLibrary\Models\Media
      */
     public function makePatientReportCsv($reportName)

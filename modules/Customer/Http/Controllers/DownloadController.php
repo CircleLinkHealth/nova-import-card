@@ -22,7 +22,7 @@ use CircleLinkHealth\Customer\Reports\PatientDailyAuditReport;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\MediaStream;
+use Spatie\MediaLibrary\Support\MediaStream;
 
 class DownloadController extends Controller
 {

@@ -8,8 +8,8 @@ namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * App\DirectMailMessage.
@@ -50,7 +50,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class DirectMailMessage extends Model implements HasMedia
 {
-    use HasMediaTrait;
+    use InteractsWithMedia;
     const DIRECTION_RECEIVED = 'received';
     const DIRECTION_SENT     = 'sent';
     const STATUS_FAIL        = 'fail';

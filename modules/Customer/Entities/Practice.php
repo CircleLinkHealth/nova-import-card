@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * CircleLinkHealth\Customer\Entities\Practice.
@@ -151,7 +151,7 @@ class Practice extends BaseModel implements HasMedia
 {
     use HasChargeableServices;
     use HasImportingHooks;
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use HasNotificationContactPreferences;
     use HasSettings;
     use Notifiable;

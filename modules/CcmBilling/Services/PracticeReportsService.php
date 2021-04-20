@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\InvalidConversion;
-use Spatie\MediaLibrary\Models\Media;
+use CircleLinkHealth\Customer\Entities\Media;
 
 /**
  * @deprecated To be replaced by {@link PracticeInvoiceService}.
