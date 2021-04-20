@@ -29,6 +29,9 @@ return [
         'cpm-provider' => [
             'url' => env('CPM_PROVIDER_APP_URL', ''),
         ],
+        'self-enrollment' => [
+            'url' => env('CPM_SELF_ENROLLMENT_APP_URL', ''),
+        ]
     ],
 
     'services' => [

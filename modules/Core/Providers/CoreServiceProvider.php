@@ -18,7 +18,7 @@ class CoreServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->registerConfig();
+        $this->publishConfig();
     }
 
     /**
@@ -26,6 +26,8 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerConfig();
+
         Relation::morphMap([
             Call::class                                     => 'App\Call',
             PatientUnsuccessfulCallNotification::class      => 'App\Notifications\PatientUnsuccessfulCallNotification',
@@ -81,24 +83,25 @@ class CoreServiceProvider extends ServiceProvider
         }, \Config::get('view.paths')), [$sourcePath]), 'core');
     }
 
+    protected function publishConfig()
+    {
+        $this->publishes([
+            __DIR__.'/../Config/config.php' => config_path('core.php'),
+        ], 'config');
+        $this->publishes([
+            __DIR__.'/../Config/live-notifications.php' => config_path('live-notifications.php'),
+        ], 'live-notifications');
+    }
+
     /**
      * Register config.
      */
     protected function registerConfig()
     {
-        $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('core.php'),
-        ], 'config');
-
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
             'core'
         );
-
-        $this->publishes([
-            __DIR__.'/../Config/live-notifications.php' => config_path('live-notifications.php'),
-        ], 'live-notifications');
-
         $this->mergeConfigFrom(
             __DIR__.'/../Config/live-notifications.php',
             'live-notifications'
