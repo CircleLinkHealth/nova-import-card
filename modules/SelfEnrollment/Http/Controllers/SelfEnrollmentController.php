@@ -104,7 +104,7 @@ class SelfEnrollmentController extends Controller
         } catch (\Exception $e) {
             Log::error(json_encode($e));
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError',compact(['userId' => $request->input('enrollable_id')]));
         }
 
         return view(
@@ -148,7 +148,7 @@ class SelfEnrollmentController extends Controller
             $message = $e->getMessage();
             Log::critical("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError',compact('userId'));
         }
     }
 
