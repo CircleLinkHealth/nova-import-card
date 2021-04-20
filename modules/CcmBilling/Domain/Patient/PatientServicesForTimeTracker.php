@@ -56,9 +56,9 @@ class PatientServicesForTimeTracker
             ->createAndReturnResource();
     }
 
-    public function getRaw(): Collection
+    public function getRaw(int $patientId, Carbon $month): Collection
     {
-        return $this->setPatientData()
+        return $this->setPatientData($patientId, $month)
             ->consolidateSummaryData()
             ->monthlyTimes;
     }
