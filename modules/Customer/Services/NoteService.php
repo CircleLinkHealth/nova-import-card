@@ -396,9 +396,12 @@ class NoteService
         return $note->notifications()
             ->hasNotifiableType(User::class)
             ->with('notifiable')
-            ->has('notifiable')
+            //->has('notifiable')
             ->whereNotNull('read_at')
             ->get()
+            ->reject(function ($notification) {
+                return empty($notification->notifiable);
+            })
             ->mapWithKeys(function ($notification) {
                 return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
             });
