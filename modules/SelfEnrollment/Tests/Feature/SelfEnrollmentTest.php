@@ -44,10 +44,6 @@ class SelfEnrollmentTest extends CustomerTestCase
     use EnrollableNotificationContent;
     use SelfEnrollmentTestHelpers;
     use WithFaker;
-//    /**
-//     * @var
-//     */
-//    private $factory;
 
     public function test_it_assigns_same_user_id_to_same_person_enrollee()
     {
