@@ -20,7 +20,7 @@ use Laravel\Nova\Fields\Trix;
 use OptimistDigital\MultiselectField\Multiselect;
 use R64\NovaFields\JSON;
 
-class CreateSelfEnrollmentLetter extends Resource
+class SelfEnrollmentLetterV2 extends Resource
 {
     /**
      * The model the resource corresponds to.
@@ -147,6 +147,10 @@ class CreateSelfEnrollmentLetter extends Resource
         return \CircleLinkHealth\Customer\Entities\Practice::getProviders($practiceId)
             ->pluck('display_name', 'id')
             ->all();
+    }
+
+    public static function label() {
+        return 'Create Self Enrollment Letter';
     }
 
     /**
