@@ -66,7 +66,7 @@ class CommonwealthPainAssociatesPllcLetter extends EnrollmentLetterDefaultConfig
             'isSurveyOnlyUser'       => $this->isSurveyOnlyUser,
             'letterPages'            => $this->letterPages,
             'practiceDisplayName'    => $this->practice->display_name,
-            'practiceLogoSrc'        => $this->baseLetter['letter']->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
+            'surveyPracticeLogo'        => $this->baseLetter['letter']->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
             'signatoryNameForHeader' => $this->provider->display_name,
             'dateLetterSent'         => $baseLetterConfigs['dateLetterSent'],
             'hideButtons'            => $this->hideButtons,

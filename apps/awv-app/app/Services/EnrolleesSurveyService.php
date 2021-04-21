@@ -10,6 +10,9 @@ use App\Helpers\PlaceholderEmailsVerifier;
 use App\Survey;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SelfEnrollment\AppConfig\SelfEnrollmentLetterVersionSwitch;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 
 class EnrolleesSurveyService
 {
@@ -47,6 +50,15 @@ class EnrolleesSurveyService
     public function getSurveyData($patientId)
     {
         return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
+    }
+
+    public function getSurveyLogoPath(int $practiceId): ?string
+    {
+        if (SelfEnrollmentLetterVersionSwitch::loadNewVersionIfModelExists($practiceId)) {
+            return EnrollmentInvitationLetterV2::getLetterLogoAndRememberV2($practiceId);
+        }
+
+        return EnrollmentInvitationLetter::getLetterLogoAndRememberV1($practiceId);
     }
 
     /**

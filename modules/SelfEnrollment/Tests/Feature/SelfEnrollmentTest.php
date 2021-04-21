@@ -42,11 +42,12 @@ use Illuminate\Support\Str;
 class SelfEnrollmentTest extends CustomerTestCase
 {
     use EnrollableNotificationContent;
+    use SelfEnrollmentTestHelpers;
     use WithFaker;
-    /**
-     * @var
-     */
-    private $factory;
+//    /**
+//     * @var
+//     */
+//    private $factory;
 
     public function test_it_assigns_same_user_id_to_same_person_enrollee()
     {
@@ -850,21 +851,6 @@ class SelfEnrollmentTest extends CustomerTestCase
         self::assertTrue(1 === $countUnique, "$countUnique patients found instead of 1");
     }
 
-    private function createEnrollees(int $number = 1, array $arguments = [])
-    {
-        if (1 === $number) {
-            return $this->factory()->createEnrollee($this->practice(), $this->provider(), $arguments);
-        }
-
-        $coll = collect();
-
-        for ($i = 0; $i < $number; ++$i) {
-            $coll->push($this->factory()->createEnrollee($this->practice(), $this->provider()));
-        }
-
-        return $coll;
-    }
-
     private function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
     {
         DB::table('users_surveys')->insert(
@@ -902,15 +888,6 @@ class SelfEnrollmentTest extends CustomerTestCase
                 'config_value' => $practiceName,
             ]
         );
-    }
-
-    private function factory()
-    {
-        if (is_null($this->factory)) {
-            $this->factory = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class);
-        }
-
-        return $this->factory;
     }
 
     private function firstOrCreateEnrollmentSurvey()

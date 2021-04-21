@@ -6,14 +6,9 @@
     </include>
   </coverage>
   <testsuites>
-    <testsuite name="Unit">
-      <directory suffix="Test.php">./tests/Unit</directory>
-    </testsuite>
-    <testsuite name="Feature">
-      <directory suffix="Test.php">./tests/Feature</directory>
-    </testsuite>
+
     <testsuite name="SelfEnrollment">
-      <directory suffix="Test.php">./CircleLinkHealth/SelfEnrollment/Tests/Feature</directory>
+      <directory suffix="Test.php">./vendor/circlelinkhealth/self-enrollment-module/Tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

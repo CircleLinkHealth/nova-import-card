@@ -60,7 +60,7 @@ class LettersHelper
             'isSurveyOnlyUser'         => $model->isSurveyOnlyUser,
             'letterPages'              => $model->letterPages,
             'practiceDisplayName'      => $model->practice->display_name,
-            'practiceLogoSrc'          => $model->baseLetter['letter']->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
+            'surveyPracticeLogo'          => $model->baseLetter['letter']->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
             'signatoryNameForHeader'   => $model->provider->display_name,
             'dateLetterSent'           => $baseLetterConfigs['dateLetterSent'],
             'hideButtons'              => $model->hideButtons,

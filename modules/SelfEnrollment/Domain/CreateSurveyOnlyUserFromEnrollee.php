@@ -218,6 +218,7 @@ class CreateSurveyOnlyUserFromEnrollee
                 'type'       => PhoneNumber::MOBILE,
                 'number'     => $cellPhone,
                 'is_primary' => true,
+                'user_id' => $userCreatedFromEnrollee->id
             ]);
         }
 
@@ -227,6 +228,7 @@ class CreateSurveyOnlyUserFromEnrollee
                 'type'       => PhoneNumber::HOME,
                 'number'     => $primaryPhone,
                 'is_primary' => false,
+                'user_id' => $userCreatedFromEnrollee->id
             ]);
         }
 
@@ -236,6 +238,7 @@ class CreateSurveyOnlyUserFromEnrollee
                 'type'       => PhoneNumber::HOME,
                 'number'     => $homePhone,
                 'is_primary' => false,
+                'user_id' => $userCreatedFromEnrollee->id
             ]);
         }
 
@@ -244,6 +247,7 @@ class CreateSurveyOnlyUserFromEnrollee
             $userCreatedFromEnrollee->phoneNumbers()->create([
                 'number'     => $otherPhone,
                 'is_primary' => false,
+                'user_id' => $userCreatedFromEnrollee->id
             ]);
         }
     }

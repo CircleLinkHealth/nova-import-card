@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Entities;
 
+use Cache;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereId($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereLetter($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wherePracticeId($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wherePracticeLogoSrc($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wheresurveyPracticeLogo($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereSignatoryName($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -56,4 +57,17 @@ class EnrollmentInvitationLetter extends Model
         'letter',
         'ui_requests',
     ];
+
+    public static function getLetterLogoAndRememberV1(int $practiceId)
+    {
+        return Cache::remember("letter_logo_for_practice_$practiceId", 5, function () use($practiceId){
+            $practiceLetter = EnrollmentInvitationLetter::wherePracticeId($practiceId)->first();
+
+            if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
+                return $practiceLetter->practice_logo_src;
+            }
+
+            return '';
+        });
+    }
 }

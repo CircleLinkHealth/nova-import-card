@@ -5,7 +5,7 @@
     <div class="container">
         <div class="practice-logo">
             <div class="logo">
-                @include('selfEnrollment::enrollment-letters.practiceLogo', compact('practiceLogoSrc'))
+                @include('selfEnrollment::enrollment-letters.practiceLogo', compact('surveyPracticeLogo'))
             </div>
         </div>
        <div class="message">

@@ -1,6 +1,6 @@
-@if(isset($practiceLogoSrc) && isset($practiceDisplayName))
+@if(isset($surveyPracticeLogo) && isset($practiceDisplayName))
     <div class="practice-logo">
-        <img src="{{asset($practiceLogoSrc)}}"
+        <img src="{{asset($surveyPracticeLogo)}}"
              alt="{{asset($practiceDisplayName)}}"/>
     </div>
 @endif

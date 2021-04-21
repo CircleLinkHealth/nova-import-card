@@ -59,6 +59,6 @@ return [
     ],
 
     'selfEnrollment' => [
-        'url' => env('SELF_ENROLLMENT_URL', null),
+        'url' => env('CPM_SELF_ENROLLMENT_APP_URL', null),
     ],
 ];

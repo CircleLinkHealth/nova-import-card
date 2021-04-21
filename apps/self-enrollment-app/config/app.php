@@ -183,6 +183,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         \CircleLinkHealth\SelfEnrollment\Providers\EventServiceProvider::class,
+        CcmBillingDeferredServiceProvider::class,
 
         // Package Service Providers...
 
