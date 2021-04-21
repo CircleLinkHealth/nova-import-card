@@ -59,3 +59,5 @@ Route::post('enrollee-login-viewed', [
 ])->middleware('guest');
 
 Route::get('/short/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');
+
+Route::get('/call-me/{userId}', '\CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController@errorRequestedCallback')->name('patient.error.requests.callback');

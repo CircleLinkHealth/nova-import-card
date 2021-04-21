@@ -32,6 +32,7 @@ class EnrollableRequestInfo extends Model
     protected $fillable = [
         'enrollable_id',
         'enrollable_type',
+        'experienced_error',
     ];
 
     protected $table = 'enrollees_request_info';
