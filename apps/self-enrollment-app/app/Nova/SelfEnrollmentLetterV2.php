@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\PreviewLetter;
-use App\Rules\SaveNewSelfEnrollmentDiyLetter;
+use App\Rules\CanSaveNewSelfEnrollmentDiyLetter;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Http\Request;
@@ -93,7 +93,7 @@ class SelfEnrollmentLetterV2 extends Resource
                 ->searchable(),
 
             Boolean::make('Active', 'is_active')
-                ->rules(new SaveNewSelfEnrollmentDiyLetter(optional($resource->practice)->id, $letterId)),
+                ->rules(new CanSaveNewSelfEnrollmentDiyLetter(optional($resource->practice)->id, $letterId)),
 
             Images::make(EnrollmentInvitationLetterV2::MEDIA_COLLECTION_LOGO_NAME)
                 ->setFileName(function ($originalFilename, $extension, $letterModel) {

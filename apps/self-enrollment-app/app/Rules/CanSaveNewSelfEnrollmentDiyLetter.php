@@ -9,7 +9,7 @@ namespace App\Rules;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 use Illuminate\Contracts\Validation\Rule;
 
-class SaveNewSelfEnrollmentDiyLetter implements Rule
+class CanSaveNewSelfEnrollmentDiyLetter implements Rule
 {
     private ?int $letterId;
     private ?int $practiceId;
