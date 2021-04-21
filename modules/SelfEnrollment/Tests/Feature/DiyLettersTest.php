@@ -2,23 +2,17 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Tests\Feature;
 
-use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\SelfEnrollment\AppConfig\SelfEnrollmentLetterVersionSwitch;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 use CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SelfEnrollment\Services\SelfEnrollmentLetterService;
 use CircleLinkHealth\SelfEnrollment\ValueObjects\PracticeLetterData;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
-use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Mockery;
+
 
 class DiyLettersTest extends CustomerTestCase
 {
