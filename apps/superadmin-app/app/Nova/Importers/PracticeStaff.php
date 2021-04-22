@@ -11,6 +11,7 @@ use App\User;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -147,7 +148,7 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
 
         $locations = [];
         foreach ($locationNames as $locationName) {
-            $location = LocationByName::first($locationName);
+            $location = CcdaImporterWrapper::mysqlMatchLocation($locationName, $this->practice->id);
 
             if ( ! $location) {
                 throw new \Exception("Location: '{$locationName}' not found. ");
