@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\SendCareDocument;
 use CircleLinkHealth\Customer\Notifications\SendPatientEmail;
+use Illuminate\Support\Facades\Log;
 use Notification;
 
 class PatientCustomEmail extends SendsNotification
@@ -81,6 +82,7 @@ class PatientCustomEmail extends SendsNotification
      */
     public function getNotification(): \Illuminate\Notifications\Notification
     {
+        Log::debug("Patient email: Sending email to patient:{$this->patient->id}");
         return new SendPatientEmail(
             $this->patient,
             $this->senderId,
