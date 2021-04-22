@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SelfEnrollment\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class NotifyEnrollableSurveyCompletedService
 {
@@ -19,6 +20,9 @@ class NotifyEnrollableSurveyCompletedService
 
     private function getUrlInProvider(string $url)
     {
-        return rtrim(config('core.apps.cpm-provider.url'), '/')."/$url";
+        $result = rtrim(config('core.apps.cpm-provider.url'), '/')."/$url";
+        Log::debug("Ready to call url: $result");
+
+        return $result;
     }
 }
