@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Validator;
@@ -985,6 +986,7 @@ class NotesController extends Controller
 
     private function sendPatientEmail($input, $patient, $note)
     {
+        Log::debug("Patient email: Attempting to send email to patient:$patient->id");
         $address = $patient->email;
 
         if (isset($input['custom-patient-email'])) {
@@ -996,6 +998,7 @@ class NotesController extends Controller
             }
         }
 
+        Log::debug("Patient email: Sending email to address $address");
         if (Str::contains($address, CcdaImporter::FAMILY_EMAIL_SUFFIX)) {
             $address = CcdaImporter::convertFamilyEmailToValidEmail($address);
         }
