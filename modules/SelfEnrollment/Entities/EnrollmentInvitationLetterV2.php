@@ -69,11 +69,15 @@ class EnrollmentInvitationLetterV2 extends Model implements HasMedia
                     ->first();
             }
 
-            return self::getLetterMedia($letter);
+            if (! $letter){
+                return '';
+            }
+
+            return self::getLetterMediaUrl($letter);
         });
     }
 
-    public static function getLetterMedia(?EnrollmentInvitationLetterV2 $letter)
+    public static function getLetterMediaUrl(?EnrollmentInvitationLetterV2 $letter)
     {
         $logoMedia = optional($letter->getMedia(self::MEDIA_COLLECTION_LOGO_NAME))->first();
         return optional($logoMedia)->getUrl() ?? '';
