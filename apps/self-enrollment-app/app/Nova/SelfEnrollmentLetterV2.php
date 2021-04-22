@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Nova\Actions\PreviewLetter;
 use App\Rules\CanSaveNewSelfEnrollmentDiyLetter;
+use Cache;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Http\Request;
@@ -144,9 +145,11 @@ class SelfEnrollmentLetterV2 extends Resource
 
     public function getProviders(int $practiceId): array
     {
-        return \CircleLinkHealth\Customer\Entities\Practice::getProviders($practiceId)
-            ->pluck('display_name', 'id')
-            ->all();
+        return Cache::remember("providers_of_practice_$practiceId", 5, function () use($practiceId) {
+            return \CircleLinkHealth\Customer\Entities\Practice::getProviders($practiceId)
+                ->pluck('display_name', 'id')
+                ->all();
+        });
     }
 
     public static function label()
