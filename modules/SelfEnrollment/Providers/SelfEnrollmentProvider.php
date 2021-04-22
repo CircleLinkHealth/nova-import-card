@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Providers;
 
-use App\Console\Commands\ImportCompletedCalvaryPatientsMissed;
-use App\Console\Commands\ManuallyImportSurveyDonePatientsCommand;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\InviteEnrolleesOnDemand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\MakeSurveyOnlyUsersForEnrollees;
@@ -17,7 +15,9 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentLetters;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\ImportCompletedCalvaryPatientsMissed;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyImportSurveyDonePatientsCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
@@ -69,7 +69,6 @@ class SelfEnrollmentProvider extends ServiceProvider
             UpdateEnrolmentLettersSignatoryName::class,
         ]);
         $this->app->register(RouteServiceProvider::class);
-        $this->app->register(CoreServiceProvider::class);
     }
 
     private function publishConfigurations()
