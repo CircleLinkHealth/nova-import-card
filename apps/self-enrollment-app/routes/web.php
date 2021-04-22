@@ -24,4 +24,3 @@ Route::group([
 ], function () {
     Route::get('/home', 'HomeController@showHomepage');
 });
-

@@ -149,7 +149,8 @@ class SelfEnrollmentLetterV2 extends Resource
             ->all();
     }
 
-    public static function label() {
+    public static function label()
+    {
         return 'Create Self Enrollment Letter';
     }
 
