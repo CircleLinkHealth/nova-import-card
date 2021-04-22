@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class TrixMailable extends Mailable
@@ -41,6 +42,7 @@ class TrixMailable extends Mailable
         $mailAttachments = [],
         $emailSubject
     ) {
+        Log::debug("Patient email: Constructing mailable for email to patient:{$patient->id}");
         $this->patient         = $patient;
         $this->content         = $content;
         $this->mailAttachments = $mailAttachments;
