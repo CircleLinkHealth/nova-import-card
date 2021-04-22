@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction;
 
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
@@ -21,7 +20,8 @@ class ManuallyImportSurveyDonePatientsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Manually import enrollees that have survey completed and triggered status update to consented.';
+    protected $description = 'Manually import enrollees that have survey completed and status consented 
+    and triggered by Self Enrollment process.';
     /**
      * The name and signature of the console command.
      *
