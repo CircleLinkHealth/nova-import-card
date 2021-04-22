@@ -62,7 +62,7 @@ class ManuallyImportSurveyDonePatientsCommand extends Command
 
         $this->info("Will attempt to manually import $countUserIds self enrollment users");
 
-        $filteredUserIds = $this->filterSurveyStatusOfUsers($userIds,$countUserIds);
+        $filteredUserIds = $this->filterUsersToBeImported($userIds,$countUserIds);
 
         if ($filteredUserIds->isEmpty()){
             $this->error('Aborting! [$filteredUserIds] is empty');
@@ -102,7 +102,7 @@ class ManuallyImportSurveyDonePatientsCommand extends Command
      * @param int $countUserIdsUnfiltered
      * @return Collection
      */
-    public function filterSurveyStatusOfUsers(array $userIds, int $countUserIdsUnfiltered):Collection
+    public function filterUsersToBeImported(array $userIds, int $countUserIdsUnfiltered):Collection
     {
         $userIdsFilteredBySurveyAndEnrolleeStatus = DB::table('users_surveys')
             ->whereIn('users_surveys.user_id', $userIds)
