@@ -55,12 +55,13 @@ class SelfEnrollmentController extends Controller
     /**
      * @param $enrollable
      * @param $responseStatus
+     * @param mixed $experiencedError
      *
      * @return mixed
      */
-    public function createEnrollenrollableInfoRequest($enrollable)
+    public function createEnrollenrollableInfoRequest($enrollable, $experiencedError = false)
     {
-        return $enrollable->enrollableInfoRequest()->create();
+        return $enrollable->enrollableInfoRequest()->create(['experienced_error' => $experiencedError]);
     }
 
     /**
@@ -109,7 +110,7 @@ class SelfEnrollmentController extends Controller
         } catch (\Exception $e) {
             Log::error(json_encode($e));
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', compact(['userId' => $request->input('enrollable_id')]));
         }
 
         return view(
@@ -153,7 +154,7 @@ class SelfEnrollmentController extends Controller
             $message = $e->getMessage();
             Log::critical("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', compact('userId'));
         }
     }
 
@@ -260,8 +261,27 @@ class SelfEnrollmentController extends Controller
             $message = $exception->getMessage();
             Log::critical("[Self Enrollment Survey] User [$userId] could not login. EXCEPTION: $message");
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', compact('userId'));
         }
+    }
+
+    protected function errorRequestedCallback(int $userId)
+    {
+        $enrollee = Enrollee::whereUserId($userId)->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT)->first();
+
+        if ($enrollee) {
+            $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
+
+            if ( ! $enrollee->enrollableInfoRequest()->where('experienced_error', true)->exists()) {
+                $this->createEnrollenrollableInfoRequest($enrollee, true);
+            }
+        } else {
+            $message = "[SelfEnrollmentController#requestCallback] Callback Request Failed. Enrolle with user id : [$userId] and status : ".Enrollee::QUEUE_AUTO_ENROLLMENT.' was not found.';
+            Log::error($message);
+            sendSlackMessage('#self_enrollment_logs', $message);
+        }
+
+        return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
     }
 
     protected function logoutEnrollee(Request $request)
@@ -375,7 +395,12 @@ class SelfEnrollmentController extends Controller
     {
         $user->loadMissing(['enrollee.enrollableInfoRequest', 'enrollee.practice', 'enrollee.provider']);
 
-        if ( ! is_null($user->enrollee->enrollableInfoRequest)) {
+        $enrollableInfoRequest = $user->enrollee->enrollableInfoRequest;
+        if ( ! is_null($enrollableInfoRequest)) {
+            if ($enrollableInfoRequest->where('experienced_error', true)->exists()) {
+                return view('selfEnrollment::EnrollmentSurvey.requestCallbackConfirmation');
+            }
+
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 

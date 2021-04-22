@@ -12,12 +12,16 @@ use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProductio
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\SendSelfEnrollmentRemindersCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\CommandsToUpdateOnProduction\UpdateSelfEnrollmentEnrolleeStatus;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\EnrollmentFinalAction;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateNbiLetterCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentLetters;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\GenerateSelfEnrollmentSurveyCommand;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\ImportCompletedCalvaryPatientsMissed;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyCreateEnrollmentTestData;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\ManuallyImportSurveyDonePatientsCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentManualInviteCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SelfEnrollmentSendErrorFixedCommand;
 use CircleLinkHealth\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
+use CircleLinkHealth\SelfEnrollment\Console\Commands\UpdateEnrolmentLettersSignatoryName;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Observers\EnrolleeObserver;
 use Illuminate\Support\ServiceProvider;
@@ -48,20 +52,23 @@ class SelfEnrollmentProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            SelfEnrollmentManualInviteCommand::class,
-            SendSelfEnrollmentReminders::class,
-            ManuallyCreateEnrollmentTestData::class,
+            InviteEnrolleesOnDemand::class,
+            MakeSurveyOnlyUsersForEnrollees::class,
+            SendSelfEnrollmentRemindersCommand::class,
+            UpdateSelfEnrollmentEnrolleeStatus::class,
             EnrollmentFinalAction::class,
+            GenerateNbiLetterCommand::class,
             GenerateSelfEnrollmentLetters::class,
             GenerateSelfEnrollmentSurveyCommand::class,
+            ImportCompletedCalvaryPatientsMissed::class,
+            ManuallyCreateEnrollmentTestData::class,
+            ManuallyImportSurveyDonePatientsCommand::class,
+            SelfEnrollmentManualInviteCommand::class,
             SelfEnrollmentSendErrorFixedCommand::class,
-            SendSelfEnrollmentRemindersCommand::class,
-            MakeSurveyOnlyUsersForEnrollees::class,
-            InviteEnrolleesOnDemand::class,
-            UpdateSelfEnrollmentEnrolleeStatus::class,
+            SendSelfEnrollmentReminders::class,
+            UpdateEnrolmentLettersSignatoryName::class,
         ]);
         $this->app->register(RouteServiceProvider::class);
-        $this->app->register(CoreServiceProvider::class);
     }
 
     private function publishConfigurations()

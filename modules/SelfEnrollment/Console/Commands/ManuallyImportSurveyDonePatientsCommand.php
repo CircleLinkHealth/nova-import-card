@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\SelfEnrollment\Console\Commands;
 
 use CircleLinkHealth\SelfEnrollment\Helpers;
 use CircleLinkHealth\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
@@ -44,13 +44,13 @@ class ManuallyImportSurveyDonePatientsCommand extends Command
     {
         $userId = $this->argument('userId');
         if (is_null($userId)) {
-            return info('User id of survey done user is required');
+            return $this->info('User id of survey done user is required');
         }
 
-        $surveyInstance = Helpers::getEnrolleeSurvey()->id;
+        $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance()->id;
 
         if (empty($surveyInstance)) {
-            return info('Could not find survey instance for enrollees survey');
+            return $this->info('Could not find survey instance for enrollees survey');
         }
 
         $data = [

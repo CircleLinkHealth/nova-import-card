@@ -413,7 +413,7 @@ class CcdaImporterWrapper
         return true;
     }
 
-    private static function mysqlMatchLocation(string $term, int $practiceId): ?Location
+    public static function mysqlMatchLocation(string $term, int $practiceId): ?Location
     {
         $term = self::prepareForMysqlMatch($term);
 
@@ -562,7 +562,7 @@ class CcdaImporterWrapper
         $location = Location::where('name', $enrollee->facility_name)->first();
 
         if ( ! $location) {
-            $location = LocationByName::first($enrollee->facility_name);
+            $location = self::mysqlMatchLocation($enrollee->facility_name, $enrollee->practice_id);
 
             if ($location && $location->practice_id !== $ccda->practice_id) {
                 $location = null;
