@@ -10,6 +10,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Mail\TrixMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class SendPatientEmail extends Notification
 {
@@ -38,6 +39,7 @@ class SendPatientEmail extends Notification
      */
     public function __construct(User $patient, $senderId, string $content, $attachments, $noteId = null, $emailSubject)
     {
+        Log::debug("Patient email: Constructing email to patient:{$patient->id}");
         $this->senderId     = $senderId;
         $this->patient      = $patient;
         $this->content      = $content;
