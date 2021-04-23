@@ -64,7 +64,8 @@ class FixToledoMakeSureProviderMatchesPracticePull extends Command
                     ->where('practice_id', '=', 235);
             })
             ->whereRaw('patient_care_team_members.member_user_id != practice_pull_demographics.billing_provider_user_id')
-            ->chunkById(500, function ($users) {
+            ->orderBy('users.id', 'asc')
+            ->chunk(500, function ($users) {
                 \DB::transaction(function () use ($users) {
                     foreach ($users as $user) {
                         $carePerson = CarePerson::updateOrCreate([
@@ -86,6 +87,6 @@ class FixToledoMakeSureProviderMatchesPracticePull extends Command
                         $this->info("$updated CCDAs updated for Patient[{$carePerson->user_id}]");
                     }
                 });
-            }, 'id');
+            });
     }
 }

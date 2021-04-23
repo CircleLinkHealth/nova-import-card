@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Spatie\MediaLibrary\Helpers\RemoteFile;
+use Spatie\MediaLibrary\Support\RemoteFile;
 
 class NurseDailyReport implements FromCollection, Responsable, WithHeadings
 {

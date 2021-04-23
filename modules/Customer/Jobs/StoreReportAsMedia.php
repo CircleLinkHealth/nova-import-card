@@ -21,7 +21,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Spatie\MediaLibrary\Helpers\RemoteFile;
+use Spatie\MediaLibrary\Support\RemoteFile;
 
 class StoreReportAsMedia implements ShouldQueue, ShouldBeEncrypted
 {
