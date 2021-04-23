@@ -4,9 +4,12 @@
 namespace CircleLinkHealth\SelfEnrollment\Services;
 
 
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 use CircleLinkHealth\SelfEnrollment\Helpers;
+use CircleLinkHealth\SelfEnrollment\ValueObjects\LetterSignaturesValueObject;
+use CircleLinkHealth\SelfEnrollment\ValueObjects\LetterSignatureValueObject;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
@@ -38,7 +41,7 @@ class LetterSignaturesConstructor
         }
 
 
-        if ($signatures->count() === 1 &&  empty($signatures->first()['providers_under_same_signature'])){
+        if ($signatures->count() === 1 &&  empty($signatures->first()->providersUnderSameSignature())){
             return $signatures;
         }
 
@@ -46,7 +49,7 @@ class LetterSignaturesConstructor
         $anAdminReviewingLetter = $patient->isAdmin();
 
         if ($anAdminReviewingLetter){
-            $patientBillingProviderUser = $signatures->first()['provider'];
+            $patientBillingProviderUser = $signatures->first()->signatoryProvider();
         }
 
         if (! $patientBillingProviderUser){
@@ -57,9 +60,9 @@ class LetterSignaturesConstructor
         $signaturesForLetterView = collect();
 
         foreach ($signatures as $signature){
-            if ((! empty($signature['providers_under_same_signature'])
-                    && in_array($patientBillingProviderUser->id, $signature['providers_under_same_signature']))
-                || intval($signature['provider_id']) === $patientBillingProviderUser->id){
+            if ((! empty($signature->providersUnderSameSignature())
+                    && in_array($patientBillingProviderUser->id, $signature->providersUnderSameSignature()))
+                || intval($signature->providerId()) === $patientBillingProviderUser->id){
                 $signaturesForLetterView->push($signature);
             }
         }
@@ -70,31 +73,20 @@ class LetterSignaturesConstructor
     private function constructSignaturesCollection(MediaCollection $signaturesMedia):Collection
     {
         $signatures = collect();
+        /** @var Media $signature */
         foreach ($signaturesMedia as $signature){
-            $collectedSignatures = [];
+            $signatureObjectsCollection = collect();
 
             if (! $signature->hasCustomProperty('provider_signature_id')) {
                 return $signatures;
             }
 
             $providerId = $signature->custom_properties['provider_signature_id'];
-
-            $collectedSignatures['signature_url'] = $signature->getUrl() ?? '';
             $provider = User::find($providerId);
-            $collectedSignatures['provider'] = $provider;
-            $collectedSignatures['provider_name'] = optional($provider)->display_name ?? '';
-            $collectedSignatures['provider_id'] = $providerId;
-            $collectedSignatures['provider_specialty'] = $provider ? Helpers::providerMedicalType($provider->suffix) : '';
 
-            if ($signature->hasCustomProperty('providers_under_same_signature')){
-                $collectedSignatures['providers_under_same_signature'] = $signature->custom_properties['providers_under_same_signature'];
-            }
+            $signatureObjectsCollection->push(new LetterSignatureValueObject($signature, $provider));
 
-            if ($signature->hasCustomProperty('signatory_title_attributes')){
-                $collectedSignatures['signatory_title_attributes'] = $signature->custom_properties['signatory_title_attributes'];
-            }
-
-            $signatures->push($collectedSignatures);
+            $signatures->push(...$signatureObjectsCollection);
         }
 
         return $signatures;

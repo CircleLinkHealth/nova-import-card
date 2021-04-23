@@ -22,13 +22,13 @@
 
                 @foreach($letter->signatures() as $signature)
                     <div>
-                        <img src="{{$signature['signature_url']}}" style="height: 86px;" alt="{{$practiceName}}"/>
+                        <img src="{{$signature->signatureUrl()}}" style="height: 86px;" alt="{{$practiceName}}"/>
                     </div>
                     <div>
-                        {{$signature['provider_name']}} {{$signature['provider_specialty']}}
+                        {{$signature->providerName()}} {{$signature->providerSpecialty()}}
                     </div>
                     <div>
-                       {!! $signature['signatory_title_attributes'] !!}
+                       {!! $signature->signatoryTitleAttributes() !!}
                     </div>
                 @endforeach
 
