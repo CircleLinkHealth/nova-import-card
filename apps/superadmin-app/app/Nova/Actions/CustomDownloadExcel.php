@@ -12,7 +12,7 @@ use Laravel\Nova\Http\Requests\ActionRequest;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\LaravelNovaExcel\Actions\ExportToExcel;
-use Spatie\MediaLibrary\Helpers\RemoteFile;
+use Spatie\MediaLibrary\Support\RemoteFile;
 
 class CustomDownloadExcel extends ExportToExcel implements WithHeadings
 {
