@@ -58,6 +58,11 @@
         text-align: center;
     }
 
+    .letter-body ul{
+        display: list-item;
+        list-style-type: unset !important;
+    }
+
     @media (max-width: 490px) {
         .practice-logo img{
             max-height: 80px;
