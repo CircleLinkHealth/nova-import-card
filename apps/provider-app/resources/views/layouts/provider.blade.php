@@ -167,7 +167,7 @@
     })(jQuery);
 </script>
     @if($user->isAllowedToBubbleChat())
-        @include('intercom-chat.clh-chat-bubble', compact(['user' => $user]));
+        @include('intercom-chat.clh-chat-bubble', ['user' => $user, 'alignment' => 'left']);
     @endif
 @endif
 

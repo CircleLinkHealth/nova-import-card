@@ -28,7 +28,7 @@
     </div>
 
     @if($user->isAllowedToBubbleChat())
-        @include('intercom-chat.clh-chat-bubble', compact(['user' => $user]));
+        @include('intercom-chat.clh-chat-bubble', ['user' => $user, 'alignment'=>'right'])
     @endif
 
     <script src="{{asset('compiled/js/app-enrollment-ui.js')}}"></script>
