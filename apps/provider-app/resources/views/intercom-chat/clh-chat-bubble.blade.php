@@ -1,6 +1,7 @@
 @php
     $intercomAppId = config('services.intercom.intercom_app_id');
 @endphp
+
 <script>
     if (window.innerWidth > 700){
         window.intercomSettings = {
@@ -8,7 +9,7 @@
             name: {!! @json_encode($user->display_name) !!},
             email: {!! @json_encode($user->email) !!},
             created_at: "{!! strtotime($user->created_at) !!}",
-            alignment:'left',
+            alignment:{!! @json_encode($alignment) !!},
             vertical_padding: 50
         }
     }
