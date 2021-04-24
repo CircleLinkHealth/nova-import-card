@@ -58,8 +58,12 @@
         text-align: center;
     }
 
-    .letter-body ul{
+    .letter-body ul {
         display: list-item;
+        list-style-type: unset !important;
+    }
+
+    .letter-body ul > li {
         list-style-type: unset !important;
     }
 
