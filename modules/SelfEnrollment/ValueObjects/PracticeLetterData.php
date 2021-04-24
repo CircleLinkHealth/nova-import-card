@@ -17,6 +17,7 @@ class PracticeLetterData
      * @var Collection|null
      */
     private ?Collection $signatures;
+    private ?Collection $signatoryProvidersIds;
 
 
     /**
@@ -32,6 +33,7 @@ class PracticeLetterData
         $this->options = $options;
         $this->logoUrl = $logoUrl;
         $this->signatures = $signatures;
+        $this->signatoryProvidersIds = $this->signatoryProvidersIds();
     }
 
     /**
@@ -91,5 +93,20 @@ class PracticeLetterData
     public function signatures()
     {
         return $this->signatures;
+    }
+
+
+    public function signatoryProvidersIds(): ?Collection
+    {
+        $providerIds = collect();
+
+        $this->signatures()->each(function ($signature) use($providerIds){
+            $providerId = $signature->providerId();
+            if ($providerId){
+                $providerIds->push($providerId);
+            }
+        });
+
+        return $providerIds;
     }
 }
