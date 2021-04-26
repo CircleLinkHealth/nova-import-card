@@ -71,6 +71,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
             RestoreEnrolleeProvidersFromRevisions::class,
+            UpdateHealthCenterOfSouthEastTexasLocationNames::class
         ]);
 
         $this->app->singleton(AthenaApiImplementation::class, function () {
