@@ -13,11 +13,12 @@ class PracticeLetterData
     public string $body;
     public string $options;
     private ?string $logoUrl;
-    /**
-     * @var Collection|null
-     */
+
     private ?Collection $signatures;
-    private ?Collection $signatoryProvidersIds;
+    private Collection $mainSignatoryProvidersIds;
+    private Collection $childSignatoryProvidersIds;
+
+    private Collection $allSignatoryProvidersIds;
 
 
     /**
@@ -33,7 +34,9 @@ class PracticeLetterData
         $this->options = $options;
         $this->logoUrl = $logoUrl;
         $this->signatures = $signatures;
-        $this->signatoryProvidersIds = $this->signatoryProvidersIds();
+        $this->mainSignatoryProvidersIds = $this->mainSignatoryProvidersIds();
+        $this->childSignatoryProvidersIds = $this->childSignatoryProvidersIds();
+        $this->allSignatoryProvidersIds = $this->allSignatoryProvidersIds();
     }
 
     /**
@@ -96,7 +99,7 @@ class PracticeLetterData
     }
 
 
-    public function signatoryProvidersIds(): ?Collection
+    public function mainSignatoryProvidersIds(): Collection
     {
         $providerIds = collect();
 
@@ -108,5 +111,33 @@ class PracticeLetterData
         });
 
         return $providerIds;
+    }
+
+    public function childSignatoryProvidersIds(): Collection
+    {
+        $childProviderIds = collect();
+
+        $this->signatures()->each(function ($signature) use($childProviderIds){
+            /** @var LetterSignatureValueObject $signature */
+            $providersIds = $signature->providersUnderSameSignature();
+            if (!empty($providersIds)){
+                $childProviderIds->push($providersIds);
+            }
+        });
+
+        return $childProviderIds;
+    }
+
+    public function allSignatoryProvidersIds(): Collection
+    {
+        $parentSignatoryIds = $this->mainSignatoryProvidersIds;
+        $childSignatoryIds = $this->childSignatoryProvidersIds;
+
+        if($parentSignatoryIds->isNotEmpty() && $childSignatoryIds->isNotEmpty()){
+            return $parentSignatoryIds->merge(...$childSignatoryIds)->unique();
+        }
+
+        return collect();
+
     }
 }

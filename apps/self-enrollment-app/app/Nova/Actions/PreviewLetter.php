@@ -7,6 +7,7 @@
 namespace App\Nova\Actions;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
@@ -40,6 +41,7 @@ class PreviewLetter extends Action
             $enrollees =  User::ofPractice($this->practiceId)
                 ->ofType('survey-only')
                 ->whereHas('enrollee', function ($q) {
+                    /** @var Enrollee $q */
                     $q->canSendSelfEnrollmentInvitation(true);
                 })
                 ->uniquePatients()

@@ -51,22 +51,8 @@ class DiyLettersTest extends CustomerTestCase
     {
         $childSignatoryProviderId = $this->createUser($this->enrollee->practice_id, 'provider')->id;
         $parentSignatoryProviderId = $this->enrollee->provider_id;
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = UploadedFile::fake()->image('image-1.png');
-        $signature = $this->letter->addMedia($uploadedFile->getRealPath())
-            ->withCustomProperties(['provider_signature_id' => $parentSignatoryProviderId,
-                'providers_under_same_signature' => [$parentSignatoryProviderId, $childSignatoryProviderId],
-                'signatory_title_attributes' => null
-            ])
-            ->toMediaCollection($uploadedFile->getClientOriginalName(), 'media');
 
-        $signature->update([
-            'collection_name' => EnrollmentInvitationLetterV2::MEDIA_COLLECTION_SIGNATURE_NAME,
-            'name' => "{$this->enrollee->practice->name}_signature",
-            'file_name'=> "{$this->enrollee->practice_id}-signature.png",
-            'mime_type'=> $uploadedFile->getClientMimeType(),
-            'disk'=> 'media'
-        ]);
+        $this->createMediaSiganture($parentSignatoryProviderId, [$parentSignatoryProviderId, $childSignatoryProviderId]);
 
         $letterService = app(SelfEnrollmentLetterService::class);
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
@@ -79,14 +65,29 @@ class DiyLettersTest extends CustomerTestCase
     public function test_it_will_show_the_correct_provider_signature_on_letter_depending_on_enrollee_provider_id()
     {
         $mainSignatoryProvider = $this->createUser($this->enrollee->practice_id, 'provider');
+
+        $this->createMediaSiganture($mainSignatoryProvider->id, [$this->enrollee->provider_id]);
+
+        $letterService = app(SelfEnrollmentLetterService::class);
+        $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
+
+        $signaturesFromLetter = $letterForView->signatures();
+        self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
+        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->providersUnderSameSignature()));
+        self::assertTrue($signaturesFromLetter->first()->providerId() ===  $mainSignatoryProvider->id);
+    }
+    
+    public function createMediaSiganture(int $parentSignatoryId, array $childSignatoryIds)
+    {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = UploadedFile::fake()->image('image-1.png');
-        $signature = $this->letter->addMedia($uploadedFile->getRealPath())
-            ->withCustomProperties(['provider_signature_id' => $mainSignatoryProvider->id,
-                'providers_under_same_signature' => [$this->enrollee->provider_id],
+        
+        $signature =  $this->letter->addMedia($uploadedFile->getRealPath())
+            ->withCustomProperties(['provider_signature_id' => $parentSignatoryId,
+                'providers_under_same_signature' => $childSignatoryIds,
                 'signatory_title_attributes' => null
             ])
-            ->toMediaCollection($uploadedFile->getClientOriginalName(), 'media');
+            ->toMediaCollection($uploadedFile->getClientOriginalName(), 'media'); 
 
         $signature->update([
             'collection_name' => EnrollmentInvitationLetterV2::MEDIA_COLLECTION_SIGNATURE_NAME,
@@ -95,13 +96,25 @@ class DiyLettersTest extends CustomerTestCase
             'mime_type'=> $uploadedFile->getClientMimeType(),
             'disk'=> 'media'
         ]);
+        
+        return $signature;
+    }
+
+    public function test_if_enrollee_provider_belongs_to_child_signature_it_will_be_rendered_to_the_letter()
+    {
+        $mainSignatoryProvider = $this->createUser($this->enrollee->practice_id, 'provider');
+        $childRandomPovider  = $this->createUser($this->enrollee->practice_id, 'provider');
+
+        $this->createMediaSiganture($mainSignatoryProvider->id, [$this->enrollee->provider_id, $childRandomPovider->id]);
 
         $letterService = app(SelfEnrollmentLetterService::class);
+        /** @var PracticeLetterData $letterForView */
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
 
-        $signaturesFromLetter = $letterForView->signatures();
-        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->providersUnderSameSignature()));
-        self::assertTrue($signaturesFromLetter->first()->providerId() ===  $mainSignatoryProvider->id);
+        self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
+        self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->signatures()->first()->providersUnderSameSignature()));
+        self::assertTrue(in_array($mainSignatoryProvider->id, $letterForView->mainSignatoryProvidersIds()->toArray()));
+        self::assertTrue($letterForView->signatures()->first()->providerId() ===  $mainSignatoryProvider->id);
     }
 
     public function test_it_will_fetch_letter_with_logo_from_media()

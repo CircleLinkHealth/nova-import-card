@@ -452,7 +452,7 @@ class SelfEnrollmentController extends Controller
 
         $letterForView = $letterService->createLetterToRender($userEnrollee, $letter, $dateLetterSent);
 
-        if (! in_array(optional($userEnrollee->billingProviderUser())->id, $letterForView->signatoryProvidersIds()->toArray())){
+        if (! in_array(optional($userEnrollee->billingProviderUser())->id, $letterForView->allSignatoryProvidersIds()->toArray())){
             $message = "Patient with user_id:$userEnrollee->id and practice: [$enrollablePracticeId] has no billing provider match with the letter.
             Patient has been redirected to the ERROR page";
             sendSlackMessage('#self_enrollment_logs', $message);
