@@ -133,11 +133,12 @@ class PracticeLetterData
         $parentSignatoryIds = $this->mainSignatoryProvidersIds;
         $childSignatoryIds = $this->childSignatoryProvidersIds;
 
-        if($parentSignatoryIds->isNotEmpty() && $childSignatoryIds->isNotEmpty()){
-            return $parentSignatoryIds->merge(...$childSignatoryIds)->unique();
+        if($parentSignatoryIds->isEmpty() && $childSignatoryIds->isEmpty()){
+            return collect();
         }
 
-        return collect();
+        return $parentSignatoryIds->merge(...$childSignatoryIds)->unique();
+
 
     }
 }
