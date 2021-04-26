@@ -11,6 +11,7 @@ use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAt
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
 use CircleLinkHealth\Eligibility\Console\Athena\UpdatePracticeAppointments;
+use CircleLinkHealth\Eligibility\Console\Commands\UpdateHealthCenterOfSouthEastTexasLocationNames;
 use CircleLinkHealth\Eligibility\Console\CreatePCMListForCommonWealth;
 use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
@@ -48,6 +49,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
             RestoreEnrolleeProvidersFromRevisions::class,
+            UpdateHealthCenterOfSouthEastTexasLocationNames::class
         ];
     }
 
