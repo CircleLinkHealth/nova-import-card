@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Console\Commands\ToledoPracticeProviders\UpdateProvidersFromExcel;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class UpdateHealthCenterOfSouthEastTexasLocationNames extends Command
@@ -42,6 +43,13 @@ class UpdateHealthCenterOfSouthEastTexasLocationNames extends Command
      */
     public function handle()
     {
-
+        $this->info('Updating enrollees');
+        $practiceNameToReplace = 'Health Center of Southeast Texas';
+        $locationName = 'Cleveland';
+        $updated = Enrollee::where('facility_name', $practiceNameToReplace)
+            ->update([
+                'facility_name' => $practiceNameToReplace . ' ' . $locationName
+            ]);
+        $this->info("Updated $updated enrollees.");
     }
 }
