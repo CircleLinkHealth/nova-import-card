@@ -74,12 +74,14 @@ class LetterSignaturesConstructor
         /** @var Media $signature */
         foreach ($signaturesMedia as $signature){
             if (! $signature->hasCustomProperty('provider_signature_id')) {
-                return $signatures;
+                $message = "[Media Signature] provider_signature_id NOT FOUND in custom properties for media:[$signature->id].";
+                Log::error($message);
+                sendSlackMessage('#self_enrollment_logs', $message);
+            }else{
+                $providerId = $signature->custom_properties['provider_signature_id'];
+                $provider = User::find($providerId);
+                $signatures->push(new LetterSignatureValueObject($signature, $provider));
             }
-
-            $providerId = $signature->custom_properties['provider_signature_id'];
-            $provider = User::find($providerId);
-            $signatures->push(new LetterSignatureValueObject($signature, $provider));
         }
 
         return $signatures;
