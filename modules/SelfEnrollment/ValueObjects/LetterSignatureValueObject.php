@@ -77,7 +77,13 @@ class LetterSignatureValueObject
             return [];
         }
 
-        return collect($this->signature->custom_properties['providers_under_same_signature'])->map(function($signatoryId){
+        $signatureCustomProperties = $this->signature->custom_properties['providers_under_same_signature'];
+
+        if (is_string($signatureCustomProperties)){
+            $signatureCustomProperties = json_decode($signatureCustomProperties);
+        }
+
+        return collect($signatureCustomProperties)->map(function($signatoryId){
             return intval($signatoryId);
         })->toArray();
     }

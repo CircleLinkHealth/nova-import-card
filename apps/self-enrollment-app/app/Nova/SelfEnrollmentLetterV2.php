@@ -108,8 +108,7 @@ class SelfEnrollmentLetterV2 extends Resource
 
                     Multiselect::make('Providers Under Same Signature')
                         ->options($practiceProviders)
-                        ->reorderable()
-                        ->saveAsJSON(),
+                        ->reorderable(),
 
                     Trix::make('Signatory title attributes', 'signatory_title_attributes'),
                 ])
