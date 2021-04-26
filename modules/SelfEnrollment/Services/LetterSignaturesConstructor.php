@@ -7,8 +7,6 @@ namespace CircleLinkHealth\SelfEnrollment\Services;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
-use CircleLinkHealth\SelfEnrollment\Helpers;
-use CircleLinkHealth\SelfEnrollment\ValueObjects\LetterSignaturesValueObject;
 use CircleLinkHealth\SelfEnrollment\ValueObjects\LetterSignatureValueObject;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;

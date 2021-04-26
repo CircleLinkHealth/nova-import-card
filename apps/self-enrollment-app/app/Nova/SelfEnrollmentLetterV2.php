@@ -54,10 +54,10 @@ class SelfEnrollmentLetterV2 extends Resource
     public function actions(Request $request)
     {
         return [
-            (new PreviewLetter())->showOnTableRow()
+            (new PreviewLetter($this->resource->practice_id))->showOnTableRow()
                 ->confirmText('Continue to letter review?')
-                ->confirmButtonText('Yes')
-                ->cancelButtonText('No'),
+                ->confirmButtonText('Continue')
+                ->cancelButtonText('Cancel'),
         ];
     }
 
