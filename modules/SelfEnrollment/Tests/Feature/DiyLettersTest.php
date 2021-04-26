@@ -70,10 +70,10 @@ class DiyLettersTest extends CustomerTestCase
 
         $letterService = app(SelfEnrollmentLetterService::class);
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
-
         $signaturesFromLetter = $letterForView->signatures();
-        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()['providers_under_same_signature']));
-        self::assertTrue($signaturesFromLetter->first()['provider_id'] ===  $parentSignatoryProviderId);
+
+        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->providersUnderSameSignature()));
+        self::assertTrue($signaturesFromLetter->first()->providerId() ===  $parentSignatoryProviderId);
     }
 
     public function test_it_will_show_the_correct_provider_signature_on_letter_depending_on_enrollee_provider_id()
@@ -100,8 +100,8 @@ class DiyLettersTest extends CustomerTestCase
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
 
         $signaturesFromLetter = $letterForView->signatures();
-        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()['providers_under_same_signature']));
-        self::assertTrue($signaturesFromLetter->first()['provider_id'] ===  $mainSignatoryProvider->id);
+        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->providersUnderSameSignature()));
+        self::assertTrue($signaturesFromLetter->first()->providerId() ===  $mainSignatoryProvider->id);
     }
 
     public function test_it_will_fetch_letter_with_logo_from_media()

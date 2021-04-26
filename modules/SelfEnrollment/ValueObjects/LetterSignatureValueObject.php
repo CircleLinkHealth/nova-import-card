@@ -17,7 +17,7 @@ class LetterSignatureValueObject
     private string $providerName;
     private string $providerSpecialty;
     private ?array $providersUnderSameSignature;
-    private string $signatoryTitleAttributes;
+    private ?string $signatoryTitleAttributes;
     private ?int $providerId;
 
     /**
@@ -37,10 +37,10 @@ class LetterSignatureValueObject
         $this->signatoryTitleAttributes = $this->signatoryTitleAttributes();
     }
 
-    public function signatoryTitleAttributes(): string
+    public function signatoryTitleAttributes(): ?string
     {
         if (! $this->signature->hasCustomProperty('signatory_title_attributes')){
-            return '';
+            return null;
         }
 
         return $this->signature->custom_properties['signatory_title_attributes'];
