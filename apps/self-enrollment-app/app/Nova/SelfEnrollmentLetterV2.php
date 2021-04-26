@@ -144,7 +144,7 @@ class SelfEnrollmentLetterV2 extends Resource
 
     public function getProviders(int $practiceId): array
     {
-        return Cache::remember("providers_of_practice_$practiceId", 5, function () use($practiceId) {
+        return Cache::remember("providers_of_practice_$practiceId", 5, function () use ($practiceId) {
             return \CircleLinkHealth\Customer\Entities\Practice::getProviders($practiceId)
                 ->pluck('display_name', 'id')
                 ->all();

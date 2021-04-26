@@ -24,30 +24,10 @@ class PreviewLetter extends Action
 
     /**
      * PreviewLetter constructor.
-     * @param int|null $practiceId
      */
     public function __construct(?int $practiceId)
     {
         $this->practiceId = $practiceId;
-    }
-
-    /**
-     * @return Collection
-     */
-    private function enrolleesForDropdown(): Collection
-    {
-        if (! $this->practiceId){
-            return collect();
-        }
-
-        return User::ofPractice($this->practiceId)
-            ->ofType('survey-only')
-            ->whereHas('enrollee', function ($q) {
-                /** @var Enrollee $q */
-                $q->canSendSelfEnrollmentInvitation(true);
-            })
-            ->uniquePatients()
-            ->pluck('display_name','id');
     }
 
     /**
@@ -57,10 +37,10 @@ class PreviewLetter extends Action
      */
     public function fields()
     {
-        $enrollees = $this->enrolleesForDropdown();
+        $enrollees   = $this->enrolleesForDropdown();
         $placeholder = 'Choose patient to review letter for';
 
-        if ($enrollees->isEmpty()){
+        if ($enrollees->isEmpty()) {
             $placeholder = 'No patients marked for self enrollment. Use my user as patient avatar';
         }
 
@@ -68,7 +48,7 @@ class PreviewLetter extends Action
             Select::make('Enrollee to review letter for')
                 ->options($enrollees)
                 ->withMeta([
-                    'placeholder' => $placeholder
+                    'placeholder' => $placeholder,
                 ]),
         ];
     }
@@ -80,18 +60,17 @@ class PreviewLetter extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $count  = $models->count();
-        $authId = auth()->id();
+        $count      = $models->count();
+        $authId     = auth()->id();
         $practiceId = $models->first()->practice_id;
 
-        if (! $authId || !$practiceId){
+        if ( ! $authId || ! $practiceId) {
             return Action::message('Error! Authenticated id or practice id not found.');
         }
 
         if ($count > 1) {
             return Action::message('Forbidden! Should not execute action for more than one letter.');
         }
-
 
         $idForUrl = $authId;
 
@@ -100,5 +79,21 @@ class PreviewLetter extends Action
         }
 
         return Action::openInNewTab(url("self-enrollment-review/$practiceId/$idForUrl"));
+    }
+
+    private function enrolleesForDropdown(): Collection
+    {
+        if ( ! $this->practiceId) {
+            return collect();
+        }
+
+        return User::ofPractice($this->practiceId)
+            ->ofType('survey-only')
+            ->whereHas('enrollee', function ($q) {
+                // @var Enrollee $q
+                $q->canSendSelfEnrollmentInvitation(true);
+            })
+            ->uniquePatients()
+            ->pluck('display_name', 'id');
     }
 }
