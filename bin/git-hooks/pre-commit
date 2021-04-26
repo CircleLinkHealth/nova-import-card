@@ -12,8 +12,7 @@ const LOCK_FILES = [
     './apps/self-enrollment-app/composer.lock',
     './apps/superadmin-app/composer.lock',
 ];
-const MODULES_TO_IGNORE = [
-];
+const MODULES_TO_IGNORE = [];
 
 function setModules() {
     const paths = fs.readdirSync(MODULES_PATH);
@@ -23,13 +22,16 @@ function setModules() {
         if (!stats.isDirectory()) {
             return;
         }
-        const composer = fs.readFileSync(`${fullPath}/composer.json`, 'utf8');
-        const parsed = JSON.parse(composer);
-        const moduleName = parsed['name'];
-        if (MODULES_TO_IGNORE.indexOf(moduleName) > -1) {
-            return;
+        try {
+            const composer = fs.readFileSync(`${fullPath}/composer.json`, 'utf8');
+            const parsed = JSON.parse(composer);
+            const moduleName = parsed['name'];
+            if (MODULES_TO_IGNORE.indexOf(moduleName) > -1) {
+                return;
+            }
+            moduleNames.push(moduleName);
+        } catch (e) {
         }
-        moduleNames.push(moduleName);
     });
 }
 
