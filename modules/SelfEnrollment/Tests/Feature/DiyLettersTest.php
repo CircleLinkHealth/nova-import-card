@@ -59,7 +59,7 @@ class DiyLettersTest extends CustomerTestCase
         $signaturesFromLetter = $letterForView->getSignatures();
 
         self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->getProvidersUnderSameSignature()));
-        self::assertTrue($signaturesFromLetter->first()->providerId() ===  $parentSignatoryProviderId);
+        self::assertTrue($signaturesFromLetter->first()->getProviderId() ===  $parentSignatoryProviderId);
     }
 
     public function test_it_will_show_the_correct_provider_signature_on_letter_depending_on_enrollee_provider_id()
@@ -74,7 +74,7 @@ class DiyLettersTest extends CustomerTestCase
         $signaturesFromLetter = $letterForView->getSignatures();
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
         self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->getProvidersUnderSameSignature()));
-        self::assertTrue($signaturesFromLetter->first()->providerId() ===  $mainSignatoryProvider->id);
+        self::assertTrue($signaturesFromLetter->first()->getProviderId() ===  $mainSignatoryProvider->id);
     }
     
     public function createMediaSiganture(int $parentSignatoryId, array $childSignatoryIds)
@@ -114,7 +114,7 @@ class DiyLettersTest extends CustomerTestCase
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->getSignatures()->first()->getProvidersUnderSameSignature()));
         self::assertTrue(in_array($mainSignatoryProvider->id, $letterForView->mainSignatoryProvidersIds()->toArray()));
-        self::assertTrue($letterForView->getSignatures()->first()->providerId() ===  $mainSignatoryProvider->id);
+        self::assertTrue($letterForView->getSignatures()->first()->getProviderId() ===  $mainSignatoryProvider->id);
     }
 
     public function test_it_will_render_siganture_with_empty_child_signature_array()
@@ -130,7 +130,7 @@ class DiyLettersTest extends CustomerTestCase
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
         self::assertFalse(in_array($this->enrollee->provider_id, $letterForView->getSignatures()->first()->getProvidersUnderSameSignature()));
         self::assertTrue(in_array($mainSignatoryProvider->id, $letterForView->mainSignatoryProvidersIds()->toArray()));
-        self::assertTrue($letterForView->getSignatures()->first()->providerId() ===  $mainSignatoryProvider->id);
+        self::assertTrue($letterForView->getSignatures()->first()->getProviderId() ===  $mainSignatoryProvider->id);
     }
 
     public function test_it_will_fetch_letter_with_logo_from_media()
