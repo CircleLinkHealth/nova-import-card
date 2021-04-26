@@ -73,18 +73,13 @@ class LetterSignaturesConstructor
         $signatures = collect();
         /** @var Media $signature */
         foreach ($signaturesMedia as $signature){
-            $signatureObjectsCollection = collect();
-
             if (! $signature->hasCustomProperty('provider_signature_id')) {
                 return $signatures;
             }
 
             $providerId = $signature->custom_properties['provider_signature_id'];
             $provider = User::find($providerId);
-
-            $signatureObjectsCollection->push(new LetterSignatureValueObject($signature, $provider));
-
-            $signatures->push(...$signatureObjectsCollection);
+            $signatures->push(new LetterSignatureValueObject($signature, $provider));
         }
 
         return $signatures;
