@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\TwilioIntegration\Providers;
 
+use CircleLinkHealth\TwilioIntegration\Commands\DownloadTwilioRecordings;
+use CircleLinkHealth\TwilioIntegration\Commands\LookupNumberCommand;
+use CircleLinkHealth\TwilioIntegration\Commands\ProcessTwilioInboundSmsCommand;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioCall;
 use CircleLinkHealth\TwilioIntegration\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\TwilioIntegration\Observers\TwilioCallObserver;
@@ -29,5 +32,11 @@ class TwilioIntegrationServiceProvider extends ServiceProvider
 
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(TwilioClientServiceProvider::class);
+
+        $this->commands([
+            DownloadTwilioRecordings::class,
+            LookupNumberCommand::class,
+            ProcessTwilioInboundSmsCommand::class,
+        ]);
     }
 }
