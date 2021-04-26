@@ -29,7 +29,7 @@ class LetterSignaturesConstructor
             return collect();
         }
 
-        $signatures = $this->constructSignaturesCollection($signaturesMedia);
+        $signatures = $this->constructSignaturesCollection($signaturesMedia, $letter->practice_id);
 
         if ($signatures->isEmpty()){
             $message = "constructSignaturesCollection() return empty collection for letter:[$letter->id].";
@@ -68,7 +68,7 @@ class LetterSignaturesConstructor
         return $signaturesForLetterView;
     }
 
-    private function constructSignaturesCollection(MediaCollection $signaturesMedia):Collection
+    private function constructSignaturesCollection(MediaCollection $signaturesMedia, int $practiceId):Collection
     {
         $signatures = collect();
         /** @var Media $signature */
@@ -77,9 +77,9 @@ class LetterSignaturesConstructor
                 $message = "[Media Signature] provider_signature_id NOT FOUND in custom properties for media:[$signature->id].";
                 Log::error($message);
                 sendSlackMessage('#self_enrollment_logs', $message);
-            }else{
+            } else{
                 $providerId = $signature->custom_properties['provider_signature_id'];
-                $provider = User::find($providerId);
+                $provider = User::where('program_id', $practiceId)->find($providerId);
                 $signatures->push(new LetterSignatureValueObject($signature, $provider));
             }
         }
