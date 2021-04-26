@@ -39,7 +39,7 @@ class LetterSignaturesConstructor
         }
 
 
-        if ($signatures->count() === 1 &&  empty($signatures->first()->providersUnderSameSignature())){
+        if ($signatures->count() === 1 &&  empty($signatures->first()->getProvidersUnderSameSignature())){
             return $signatures;
         }
 
@@ -58,9 +58,9 @@ class LetterSignaturesConstructor
         $signaturesForLetterView = collect();
 
         foreach ($signatures as $signature){
-            if ((! empty($signature->providersUnderSameSignature())
-                    && in_array($patientBillingProviderUser->id, $signature->providersUnderSameSignature()))
-                || intval($signature->providerId()) === $patientBillingProviderUser->id){
+            if ((! empty($signature->getProvidersUnderSameSignature())
+                    && in_array($patientBillingProviderUser->id, $signature->getProvidersUnderSameSignature()))
+                || intval($signature->getProviderId()) === $patientBillingProviderUser->id){
                 $signaturesForLetterView->push($signature);
             }
         }

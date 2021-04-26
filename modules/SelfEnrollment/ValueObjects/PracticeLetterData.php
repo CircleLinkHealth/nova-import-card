@@ -85,7 +85,7 @@ class PracticeLetterData
     /**
      * @return string
      */
-    public function logoUrl()
+    public function getLogoUrl()
     {
         return $this->logoUrl;
     }
@@ -93,7 +93,7 @@ class PracticeLetterData
     /**
      * @return Collection
      */
-    public function signatures()
+    public function getSignatures()
     {
         return $this->signatures;
     }
@@ -103,8 +103,8 @@ class PracticeLetterData
     {
         $providerIds = collect();
 
-        $this->signatures()->each(function ($signature) use($providerIds){
-            $providerId = $signature->providerId();
+        $this->getSignatures()->each(function ($signature) use($providerIds){
+            $providerId = $signature->getProviderId();
             if ($providerId){
                 $providerIds->push($providerId);
             }
@@ -117,9 +117,9 @@ class PracticeLetterData
     {
         $childProviderIds = collect();
 
-        $this->signatures()->each(function ($signature) use($childProviderIds){
+        $this->getSignatures()->each(function ($signature) use($childProviderIds){
             /** @var LetterSignatureValueObject $signature */
-            $providersIds = $signature->providersUnderSameSignature();
+            $providersIds = $signature->getProvidersUnderSameSignature();
             if (!empty($providersIds)){
                 $childProviderIds->push($providersIds);
             }

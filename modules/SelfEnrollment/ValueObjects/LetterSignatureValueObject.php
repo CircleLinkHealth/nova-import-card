@@ -29,15 +29,15 @@ class LetterSignatureValueObject
     {
         $this->signature = $signature;
         $this->provider = $provider;
-        $this->signatureUrl = $this->signatureUrl();
-        $this->providerName = $this->providerName();
-        $this->providerId = $this->providerId();
-        $this->providerSpecialty = $this->providerSpecialty();
-        $this->providersUnderSameSignature = $this->providersUnderSameSignature();
-        $this->signatoryTitleAttributes = $this->signatoryTitleAttributes();
+        $this->signatureUrl = $this->getSignatureUrl();
+        $this->providerName = $this->getProviderName();
+        $this->providerId = $this->getProviderId();
+        $this->providerSpecialty = $this->getProviderSpecialty();
+        $this->providersUnderSameSignature = $this->getProvidersUnderSameSignature();
+        $this->signatoryTitleAttributes = $this->getSignatoryTitleAttributes();
     }
 
-    public function signatoryTitleAttributes(): ?string
+    public function getSignatoryTitleAttributes(): ?string
     {
         if (! $this->signature->hasCustomProperty('signatory_title_attributes')){
             return null;
@@ -46,32 +46,32 @@ class LetterSignatureValueObject
         return $this->signature->custom_properties['signatory_title_attributes'];
     }
 
-    public function signatoryProvider(): ?User
+    public function getSignatoryProvider(): ?User
     {
         return $this->provider;
     }
 
-    public function providerId(): ?int
+    public function getProviderId(): ?int
     {
-        return optional($this->signatoryProvider())->id ?? null;
+        return optional($this->getSignatoryProvider())->id ?? null;
     }
 
-    public function signatureUrl(): string
+    public function getSignatureUrl(): string
     {
         return $this->signature->getUrl() ?? '';
     }
 
-    public function providerName(): string
+    public function getProviderName(): string
     {
-        return optional($this->signatoryProvider())->display_name ?? '';
+        return optional($this->getSignatoryProvider())->display_name ?? '';
     }
 
-    public function providerSpecialty(): string
+    public function getProviderSpecialty(): string
     {
-        return $this->signatoryProvider() ? Helpers::providerMedicalType($this->signatoryProvider()->suffix) : '';
+        return $this->getSignatoryProvider() ? Helpers::providerMedicalType($this->getSignatoryProvider()->suffix) : '';
     }
 
-    public function providersUnderSameSignature(): ?array
+    public function getProvidersUnderSameSignature(): ?array
     {
         if (! $this->signature->hasCustomProperty('providers_under_same_signature')){
             return [];

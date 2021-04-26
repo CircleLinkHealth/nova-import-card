@@ -11,7 +11,7 @@
             @endif
             <br>
                 <div class="practice-logo" style="text-align: {{$letter->logoPosition()}}; height: {{$letter->logoDistanceFromText()}}">
-                    <img src="{{$letter->logoUrl()}}" alt="{{$practiceName}}" style="height: {{$letter->logoSize()}}"/>
+                    <img src="{{$letter->getLogoUrl()}}" alt="{{$practiceName}}" style="height: {{$letter->logoSize()}}"/>
                     <br>
                 </div>
 
@@ -20,15 +20,15 @@
                     <br>
                 </div>
 
-                @foreach($letter->signatures() as $signature)
+                @foreach($letter->getSignatures() as $signature)
                     <div>
-                        <img src="{{$signature->signatureUrl()}}" style="height: 86px;" alt="{{$practiceName}}"/>
+                        <img src="{{$signature->getSignatureUrl()}}" style="height: 86px;" alt="{{$practiceName}}"/>
                     </div>
                     <div>
-                        {{$signature->providerName()}} {{$signature->providerSpecialty()}}
+                        {{$signature->getProviderName()}} {{$signature->getProviderSpecialty()}}
                     </div>
                     <div>
-                       {!! $signature->signatoryTitleAttributes() !!}
+                       {!! $signature->getSignatoryTitleAttributes() !!}
                     </div>
                 @endforeach
 

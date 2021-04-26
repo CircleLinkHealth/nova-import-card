@@ -56,9 +56,9 @@ class DiyLettersTest extends CustomerTestCase
 
         $letterService = app(SelfEnrollmentLetterService::class);
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
-        $signaturesFromLetter = $letterForView->signatures();
+        $signaturesFromLetter = $letterForView->getSignatures();
 
-        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->providersUnderSameSignature()));
+        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->getProvidersUnderSameSignature()));
         self::assertTrue($signaturesFromLetter->first()->providerId() ===  $parentSignatoryProviderId);
     }
 
@@ -71,9 +71,9 @@ class DiyLettersTest extends CustomerTestCase
         $letterService = app(SelfEnrollmentLetterService::class);
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
 
-        $signaturesFromLetter = $letterForView->signatures();
+        $signaturesFromLetter = $letterForView->getSignatures();
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
-        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->providersUnderSameSignature()));
+        self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->getProvidersUnderSameSignature()));
         self::assertTrue($signaturesFromLetter->first()->providerId() ===  $mainSignatoryProvider->id);
     }
     
@@ -112,9 +112,9 @@ class DiyLettersTest extends CustomerTestCase
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
 
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
-        self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->signatures()->first()->providersUnderSameSignature()));
+        self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->getSignatures()->first()->getProvidersUnderSameSignature()));
         self::assertTrue(in_array($mainSignatoryProvider->id, $letterForView->mainSignatoryProvidersIds()->toArray()));
-        self::assertTrue($letterForView->signatures()->first()->providerId() ===  $mainSignatoryProvider->id);
+        self::assertTrue($letterForView->getSignatures()->first()->providerId() ===  $mainSignatoryProvider->id);
     }
 
     public function test_it_will_render_siganture_with_empty_child_signature_array()
@@ -128,9 +128,9 @@ class DiyLettersTest extends CustomerTestCase
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
 
         self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
-        self::assertFalse(in_array($this->enrollee->provider_id, $letterForView->signatures()->first()->providersUnderSameSignature()));
+        self::assertFalse(in_array($this->enrollee->provider_id, $letterForView->getSignatures()->first()->getProvidersUnderSameSignature()));
         self::assertTrue(in_array($mainSignatoryProvider->id, $letterForView->mainSignatoryProvidersIds()->toArray()));
-        self::assertTrue($letterForView->signatures()->first()->providerId() ===  $mainSignatoryProvider->id);
+        self::assertTrue($letterForView->getSignatures()->first()->providerId() ===  $mainSignatoryProvider->id);
     }
 
     public function test_it_will_fetch_letter_with_logo_from_media()
@@ -153,8 +153,8 @@ class DiyLettersTest extends CustomerTestCase
         /** @var PracticeLetterData $letterForView */
         $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
 
-        self::assertNotEmpty($letterForView->logoUrl());
-        self::assertTrue($letterForView->logoUrl() === $logo->getUrl());
+        self::assertNotEmpty($letterForView->getLogoUrl());
+        self::assertTrue($letterForView->getLogoUrl() === $logo->getUrl());
 
         $view = $this->view('selfEnrollment::enrollment-letterV2',[
             'letter' => $letterForView,
@@ -166,7 +166,7 @@ class DiyLettersTest extends CustomerTestCase
             'disableButtons' => false
         ]);
 
-        $view->assertSee($letterForView->logoUrl());
+        $view->assertSee($letterForView->getLogoUrl());
         $view->assertSee($letterForView->body());
 
     }
@@ -198,7 +198,7 @@ class DiyLettersTest extends CustomerTestCase
             'practiceName' => $this->enrollee->practice->display_name,
             'disableButtons'=>true
         ]);
-        $view->assertSee($letterToRender->logoUrl());
+        $view->assertSee($letterToRender->getLogoUrl());
         $view->assertSee($letterToRender->body());
 
     }

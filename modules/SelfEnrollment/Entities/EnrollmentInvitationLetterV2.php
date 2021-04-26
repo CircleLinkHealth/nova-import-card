@@ -2,10 +2,9 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Entities;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Cache;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\HasMedia;
@@ -20,7 +19,7 @@ use Spatie\MediaLibrary\HasMedia;
  * @method static \Illuminate\Database\Eloquent\Builder|EnrollmentInvitationLetterV2 query()
  * @mixin \Eloquent
  */
-class EnrollmentInvitationLetterV2 extends Model implements HasMedia
+class EnrollmentInvitationLetterV2 extends BaseModel implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;

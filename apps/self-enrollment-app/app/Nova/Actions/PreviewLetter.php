@@ -36,19 +36,18 @@ class PreviewLetter extends Action
      */
     private function enrolleesForDropdown(): Collection
     {
-        $enrollees = collect();
-        if ($this->practiceId){
-            $enrollees =  User::ofPractice($this->practiceId)
-                ->ofType('survey-only')
-                ->whereHas('enrollee', function ($q) {
-                    /** @var Enrollee $q */
-                    $q->canSendSelfEnrollmentInvitation(true);
-                })
-                ->uniquePatients()
-                ->pluck('display_name','id');
+        if (! $this->practiceId){
+            return collect();
         }
 
-        return $enrollees;
+        return User::ofPractice($this->practiceId)
+            ->ofType('survey-only')
+            ->whereHas('enrollee', function ($q) {
+                /** @var Enrollee $q */
+                $q->canSendSelfEnrollmentInvitation(true);
+            })
+            ->uniquePatients()
+            ->pluck('display_name','id');
     }
 
     /**

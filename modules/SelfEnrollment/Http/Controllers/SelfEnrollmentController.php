@@ -224,7 +224,7 @@ class SelfEnrollmentController extends Controller
 
         if ($user->isSurveyOnly()) {
             if (SelfEnrollmentLetterVersionSwitch::loadNewVersionIfModelExists($user->primaryProgramId())){
-                return $this->prepareLetterViewAndRedirect2($user, true,  true);
+                return $this->prepareLetterViewAndRedirectV2($user, true,  true);
             }
 
             return $this->prepareLetterViewAndRedirect($user, true,  true);
@@ -416,14 +416,14 @@ class SelfEnrollmentController extends Controller
         }
 
         if (SelfEnrollmentLetterVersionSwitch::loadNewVersionIfModelExists($user->primaryProgramId())){
-            return $this->prepareLetterViewAndRedirect2($user, true,  false);
+            return $this->prepareLetterViewAndRedirectV2($user, true,  false);
         }
 
         return $this->prepareLetterViewAndRedirect($user, true,  false);
     }
 
 
-    private function prepareLetterViewAndRedirect2(User $userEnrollee, $isSurveyOnlyUser, $hideButtons)
+    private function prepareLetterViewAndRedirectV2(User $userEnrollee, $isSurveyOnlyUser, $hideButtons)
     {
         $invitationLink = $userEnrollee->enrollee->getLastEnrollmentInvitationLink();
 
