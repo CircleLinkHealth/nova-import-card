@@ -117,6 +117,22 @@ class DiyLettersTest extends CustomerTestCase
         self::assertTrue($letterForView->signatures()->first()->providerId() ===  $mainSignatoryProvider->id);
     }
 
+    public function test_it_will_render_siganture_with_empty_child_signature_array()
+    {
+        $mainSignatoryProvider = $this->enrollee->user->billingProviderUser();
+
+        $this->createMediaSiganture($mainSignatoryProvider->id, []);
+
+        $letterService = app(SelfEnrollmentLetterService::class);
+        /** @var PracticeLetterData $letterForView */
+        $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
+
+        self::assertTrue(in_array($this->enrollee->provider_id, $letterForView->allSignatoryProvidersIds()->toArray()));
+        self::assertFalse(in_array($this->enrollee->provider_id, $letterForView->signatures()->first()->providersUnderSameSignature()));
+        self::assertTrue(in_array($mainSignatoryProvider->id, $letterForView->mainSignatoryProvidersIds()->toArray()));
+        self::assertTrue($letterForView->signatures()->first()->providerId() ===  $mainSignatoryProvider->id);
+    }
+
     public function test_it_will_fetch_letter_with_logo_from_media()
     {
         /** @var UploadedFile $uploadedFile */
