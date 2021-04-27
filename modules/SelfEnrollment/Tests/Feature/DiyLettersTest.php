@@ -76,18 +76,18 @@ class DiyLettersTest extends CustomerTestCase
         self::assertTrue(in_array($this->enrollee->provider_id, $signaturesFromLetter->first()->getProvidersUnderSameSignature()));
         self::assertTrue($signaturesFromLetter->first()->getProviderId() ===  $mainSignatoryProvider->id);
     }
-    
+
     public function createMediaSiganture(int $parentSignatoryId, array $childSignatoryIds)
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = UploadedFile::fake()->image('image-1.png');
-        
+
         $signature =  $this->letter->addMedia($uploadedFile->getRealPath())
             ->withCustomProperties(['provider_signature_id' => $parentSignatoryId,
                 'providers_under_same_signature' => $childSignatoryIds,
                 'signatory_title_attributes' => null
             ])
-            ->toMediaCollection($uploadedFile->getClientOriginalName(), 'media'); 
+            ->toMediaCollection($uploadedFile->getClientOriginalName(), 'media');
 
         $signature->update([
             'collection_name' => EnrollmentInvitationLetterV2::MEDIA_COLLECTION_SIGNATURE_NAME,
@@ -96,7 +96,7 @@ class DiyLettersTest extends CustomerTestCase
             'mime_type'=> $uploadedFile->getClientMimeType(),
             'disk'=> 'media'
         ]);
-        
+
         return $signature;
     }
 
@@ -201,5 +201,28 @@ class DiyLettersTest extends CustomerTestCase
         $view->assertSee($letterToRender->getLogoUrl());
         $view->assertSee($letterToRender->body());
 
+    }
+
+    public function test_a_letter_can_have_multiple_signatures()
+    {
+        $mainSignatoryProviderId1 = $this->enrollee->provider_id;
+        $this->createMediaSiganture($mainSignatoryProviderId1, []);
+
+        $enrolleeUser2 = $this->createUser($this->enrollee->practice_id, 'participant');
+        $mainSignatoryProviderId2 = $enrolleeUser2->billingProviderUser()->id;
+
+        $this->createMediaSiganture($mainSignatoryProviderId2, []);
+
+        $letterService = app(SelfEnrollmentLetterService::class);
+        /** @var PracticeLetterData $letterForView */
+        $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
+
+        self::assertTrue($letterForView->getSignatures()->count() === 2);
+
+        self::assertTrue(in_array($mainSignatoryProviderId1, $letterForView->allSignatoryProvidersIds()->toArray()));
+        self::assertTrue(in_array($mainSignatoryProviderId1, $letterForView->mainSignatoryProvidersIds()->toArray()));
+
+        self::assertTrue(in_array($mainSignatoryProviderId2, $letterForView->allSignatoryProvidersIds()->toArray()));
+        self::assertTrue(in_array($mainSignatoryProviderId2, $letterForView->mainSignatoryProvidersIds()->toArray()));
     }
 }
