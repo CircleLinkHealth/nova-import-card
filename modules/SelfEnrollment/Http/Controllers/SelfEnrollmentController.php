@@ -499,7 +499,8 @@ class SelfEnrollmentController extends Controller
     public function adminLetterReview(int $practiceId, int $userId)
     {
         $user = User::findOrFail($userId);
-        $letter = EnrollmentInvitationLetterV2::where('is_active', true)
+        $letter = EnrollmentInvitationLetterV2::with('media','practice')
+            ->where('is_active', true)
             ->where('practice_id', $practiceId)
             ->first();
 
@@ -512,8 +513,6 @@ class SelfEnrollmentController extends Controller
         $letterToRender = app(SelfEnrollmentLetterService::class)
             ->createLetterToRender($user, $letter, Carbon::now()->toDateString());
 
-        $practice = Practice::findOrFail($practiceId);
-
         return view('selfEnrollment::enrollment-letterV2', [
             'letter' => $letterToRender,
             'hideButtons' => false,
@@ -521,7 +520,7 @@ class SelfEnrollmentController extends Controller
             'isSurveyOnlyUser' => true,
             'buttonColor'=>SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             'dateLetterSent' => now()->toDateString(),
-            'practiceName' => $practice->display_name,
+            'practiceName' => $letter->practice->display_name,
             'disableButtons'=>true
         ]);
     }

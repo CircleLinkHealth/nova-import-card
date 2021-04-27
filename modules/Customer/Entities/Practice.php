@@ -256,11 +256,6 @@ class Practice extends BaseModel implements HasMedia
         return $data;
     }
 
-    public function enrollmentLetter()
-    {
-        return $this->hasOne(EnrollmentInvitationLetter::class);
-    }
-
     /**
      * @return \CircleLinkHealth\SharedModels\Entities\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
      */

@@ -29,7 +29,7 @@ class LetterSignaturesConstructor
             return collect();
         }
 
-        $signatures = $this->constructSignaturesCollection($signaturesMedia, $letter->practice_id);
+        $signatures = $this->constructSignaturesCollection($signaturesMedia, $letter);
 
         if ($signatures->isEmpty()){
             $message = "constructSignaturesCollection() return empty collection for letter:[$letter->id].";
@@ -68,20 +68,37 @@ class LetterSignaturesConstructor
         return $signaturesForLetterView;
     }
 
-    private function constructSignaturesCollection(MediaCollection $signaturesMedia, int $practiceId):Collection
+    private function constructSignaturesCollection(MediaCollection $signaturesMedia, EnrollmentInvitationLetterV2 $letter):Collection
     {
+
         $signatures = collect();
+        $practiceProviders = $letter->practice->loadMissing(['users' => function($users){
+                $users->whereHas('providerInfo');
+        }])
+            ->users;
+
+
+
         /** @var Media $signature */
         foreach ($signaturesMedia as $signature){
             if (! $signature->hasCustomProperty('provider_signature_id')) {
                 $message = "[Media Signature] provider_signature_id NOT FOUND in custom properties for media:[$signature->id].";
                 Log::error($message);
                 sendSlackMessage('#self_enrollment_logs', $message);
-            } else{
-                $providerId = $signature->custom_properties['provider_signature_id'];
-                $provider = User::where('program_id', $practiceId)->find($providerId);
-                $signatures->push(new LetterSignatureValueObject($signature, $provider));
+                continue;
             }
+
+            $providerUserId = $signature->custom_properties['provider_signature_id'];
+            $mainSignatoryProvider = $practiceProviders->where('id', $providerUserId)->first();
+
+            if (! $mainSignatoryProvider){
+                $message = "Signatory Provider NOT FOUND in users. [user_id:$providerUserId].";
+                Log::error($message);
+                sendSlackMessage('#self_enrollment_logs', $message);
+                continue;
+            }
+
+            $signatures->push(new LetterSignatureValueObject($signature, $mainSignatoryProvider));
         }
 
         return $signatures;
