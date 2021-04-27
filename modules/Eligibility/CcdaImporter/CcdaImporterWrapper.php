@@ -343,6 +343,10 @@ class CcdaImporterWrapper
             ->transform(function ($term) {
                 $escaped = str_replace('"', '\"', $term);
 
+                if (starts_with($escaped, '-')){
+                    $escaped = str_replace('-', '', $escaped);
+                }
+
                 return "+$escaped";
             })
             ->implode(' ');
