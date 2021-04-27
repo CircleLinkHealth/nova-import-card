@@ -129,12 +129,12 @@
 
 <style scoped>
     .fab {
-        z-index: 999;
-        position: fixed;
-        bottom: 30px;
-        right: 60px;
-        width: 56px;
-        height: 60px;
+      z-index: 999;
+      position: fixed;
+      bottom: 37px;
+      right: 85px;
+      width: 56px;
+      height: 60px;
     }
 
     .fab .action-button, .fab .mini-action-button {

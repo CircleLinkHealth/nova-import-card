@@ -10,7 +10,7 @@
             email: {!! @json_encode($user->email) !!},
             created_at: "{!! strtotime($user->created_at) !!}",
             alignment:{!! @json_encode($alignment) !!},
-            vertical_padding: 50
+            vertical_padding: 20
         }
     }
 </script>
