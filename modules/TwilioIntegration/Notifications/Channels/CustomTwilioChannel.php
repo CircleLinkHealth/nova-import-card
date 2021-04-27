@@ -13,6 +13,7 @@ use CircleLinkHealth\TwilioIntegration\Services\TwilioInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use NotificationChannels\Twilio\Exceptions\CouldNotSendNotification;
 use NotificationChannels\Twilio\Twilio;
 use NotificationChannels\Twilio\TwilioChannel;
@@ -33,6 +34,23 @@ class CustomTwilioChannel extends TwilioChannel
     {
         $this->twilio = $twilio;
         $this->events = $events;
+    }
+
+    public function canReceiveSms(?string $to): bool
+    {
+        $resp = $this->twilio->lookup($to);
+        if ( ! empty($resp->errorDetails)) {
+            Log::error("CustomTwilioChannel::canReceiveSms => $resp->errorDetails[$resp->errorCode]");
+
+            // number could still be a mobile
+            return true;
+        }
+
+        if (is_null($resp->isMobile)) {
+            return true;
+        }
+
+        return $resp->isMobile;
     }
 
     /**
@@ -56,7 +74,11 @@ class CustomTwilioChannel extends TwilioChannel
                 throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
             }
 
-            $to        = $this->getTo($notifiable);
+            $to = $this->getTo($notifiable);
+            if (empty($to) || ! $this->canReceiveSms($to)) {
+                throw new CannotSendNotificationException("Cannot send SMS to $to. Phone number[$to] is not mobile.");
+            }
+
             $message   = $notification->toTwilio($notifiable);
             $useSender = $this->canReceiveAlphanumericSender($notifiable);
 
