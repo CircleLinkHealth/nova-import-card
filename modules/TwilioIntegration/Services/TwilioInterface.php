@@ -6,10 +6,13 @@
 
 namespace CircleLinkHealth\TwilioIntegration\Services;
 
+use CircleLinkHealth\TwilioIntegration\Http\Requests\LookupResponse;
 use NotificationChannels\Twilio\TwilioMessage;
 
 interface TwilioInterface
 {
+    public function lookup(string $e164PhoneNumber): LookupResponse;
+
     /**
      * Send a TwilioMessage to the a phone number.
      *
