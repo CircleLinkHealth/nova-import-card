@@ -12,6 +12,7 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use function PHPUnit\Framework\assertFalse;
 
 
 class DiyLettersTest extends CustomerTestCase
@@ -77,7 +78,7 @@ class DiyLettersTest extends CustomerTestCase
         self::assertTrue($signaturesFromLetter->first()->getProviderId() ===  $mainSignatoryProvider->id);
     }
 
-    public function createMediaSiganture(int $parentSignatoryId, array $childSignatoryIds)
+    public function createMediaSiganture(?int $parentSignatoryId, array $childSignatoryIds)
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = UploadedFile::fake()->image('image-1.png');
@@ -224,5 +225,29 @@ class DiyLettersTest extends CustomerTestCase
 
         self::assertTrue(in_array($mainSignatoryProviderId2, $letterForView->allSignatoryProvidersIds()->toArray()));
         self::assertTrue(in_array($mainSignatoryProviderId2, $letterForView->mainSignatoryProvidersIds()->toArray()));
+    }
+
+    public function test_if_one_signatory_provider_is_not_found_signatures_processing_will_still_continue()
+    {
+        $mainSignatoryProviderId = $this->enrollee->provider_id;
+        $signatureToSucceed = $this->createMediaSiganture($mainSignatoryProviderId, []);
+
+        self::assertTrue($signatureToSucceed->custom_properties['provider_signature_id'] === $mainSignatoryProviderId);
+
+        $mainSignatoryProviderIdNotFound = $this->createUser($this->enrollee->practice_id, 'provider')->id;
+
+        $signatureToFail = $this->createMediaSiganture($mainSignatoryProviderIdNotFound, []);
+
+        self::assertTrue($mainSignatoryProviderIdNotFound != $mainSignatoryProviderId);
+        self::assertTrue($signatureToFail->hasCustomProperty('provider_signature_id'));
+        self::asserttrue($signatureToFail->custom_properties['provider_signature_id'] === $mainSignatoryProviderIdNotFound);
+
+        $letterService = app(SelfEnrollmentLetterService::class);
+        /** @var PracticeLetterData $letterForView */
+        $letterForView = $letterService->createLetterToRender($this->enrollee->user, $this->letter, now()->toDateString());
+
+        self::assertTrue($letterForView->getSignatures()->count() === 1);
+        self::assertTrue(in_array($mainSignatoryProviderId, $letterForView->mainSignatoryProvidersIds()->toArray()));
+        self::assertFalse(in_array($mainSignatoryProviderIdNotFound, $letterForView->mainSignatoryProvidersIds()->toArray()));
     }
 }
