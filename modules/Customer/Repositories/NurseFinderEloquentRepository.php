@@ -21,9 +21,9 @@ class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
             'patient_user_id' => $patientUserId,
         ], [
             'nurse_user_id' => $nurseUserId,
-        ]), function ($wasAssigned) use ($patientUserId) {
+        ]), function ($wasAssigned) use ($nurseUserId, $patientUserId) {
             if ($wasAssigned) {
-                $flushed = Cache::tags(CreateNoteForPatient::cacheTags($patientUserId))->flush();
+                Cache::delete(CreateNoteForPatient::cacheKey($nurseUserId, $patientUserId));
             }
         });
     }
@@ -38,14 +38,13 @@ class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
 
     public function deleteAssignment(int $patientUserId)
     {
-        return tap(
-            (bool) PatientNurse::where('patient_user_id', $patientUserId)->delete(),
-            function ($wasDeleted) use ($patientUserId) {
-                if ($wasDeleted) {
-                    $flushed = Cache::tags(CreateNoteForPatient::cacheTags($patientUserId))->flush();
+        PatientNurse::where('patient_user_id', $patientUserId)
+            ->each(function (PatientNurse $item) {
+                $deleted = $item->delete();
+                if ($deleted) {
+                    Cache::delete(CreateNoteForPatient::cacheKey($item->nurse_user_id, $item->patient_user_id));
                 }
-            }
-        );
+            });
     }
 
     public function find(int $patientUserId): ?User
