@@ -389,6 +389,10 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     if ( ! validProblemName($problem->Name)) {
                         return false;
                     }
+    
+                    if ( ! isset($problem->Name, $problem->AddedDate, $problem->ResolveDate, $problem->Code, $problem->CodeType)) {
+                        return false;
+                    }
 
                     return (new Problem())
                         ->setName($problem->Name)
