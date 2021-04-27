@@ -58,6 +58,17 @@ class EnrollmentInvitationLetterV2 extends BaseModel implements HasMedia
         return $this->belongsTo(Practice::class);
     }
 
+    public static function scopeWithMediaAndPracticeProviders($query)
+    {
+        $query->with(['media',
+            'practice' => function($practice) {
+                $practice->with(['users' => function($users){
+                    $users->whereHas('providerInfo');
+                }]);
+            }
+        ]);
+    }
+
     public static function getLetterLogoAndRememberV2(int $practiceId, ?EnrollmentInvitationLetterV2 $letter = null): ?string
     {
         return Cache::remember("letter_logo_for_practice_$practiceId", 5, function () use($letter, $practiceId){

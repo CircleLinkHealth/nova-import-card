@@ -439,7 +439,8 @@ class SelfEnrollmentController extends Controller
         $enrollablePracticeId     = $enrollablePractice->id;
 
         $letterService = app(SelfEnrollmentLetterService::class);
-        $letter = EnrollmentInvitationLetterV2::where('practice_id', $enrollablePracticeId)
+        $letter = EnrollmentInvitationLetterV2::withMediaAndPracticeProviders()
+            ->where('practice_id', $enrollablePracticeId)
             ->where('is_active', true)
             ->first();
 
@@ -499,7 +500,7 @@ class SelfEnrollmentController extends Controller
     public function adminLetterReview(int $practiceId, int $userId)
     {
         $user = User::findOrFail($userId);
-        $letter = EnrollmentInvitationLetterV2::with('media','practice')
+        $letter = EnrollmentInvitationLetterV2::withMediaAndPracticeProviders()
             ->where('is_active', true)
             ->where('practice_id', $practiceId)
             ->first();

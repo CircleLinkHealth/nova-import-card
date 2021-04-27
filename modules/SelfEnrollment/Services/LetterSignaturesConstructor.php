@@ -39,7 +39,7 @@ class LetterSignaturesConstructor
         }
 
 
-        if ($signatures->count() === 1 &&  empty($signatures->first()->getProvidersUnderSameSignature())){
+        if ($signatures->count() === 1 && empty($signatures->first()->getProvidersUnderSameSignature())){
             return $signatures;
         }
 
@@ -72,12 +72,11 @@ class LetterSignaturesConstructor
     {
 
         $signatures = collect();
-        $practiceProviders = $letter->practice->loadMissing(['users' => function($users){
+        $practiceProviders = $letter->loadMissing([
+            'media',
+            'practice.users' => function($users){
                 $users->whereHas('providerInfo');
-        }])
-            ->users;
-
-
+        }])->practice->users;
 
         /** @var Media $signature */
         foreach ($signaturesMedia as $signature){
@@ -92,7 +91,7 @@ class LetterSignaturesConstructor
             $mainSignatoryProvider = $practiceProviders->where('id', $providerUserId)->first();
 
             if (! $mainSignatoryProvider){
-                $message = "Signatory Provider NOT FOUND in users. [user_id:$providerUserId].";
+                $message = "Signatory Provider NOT FOUND in practice's users. [user_id:$providerUserId].";
                 Log::error($message);
                 sendSlackMessage('#self_enrollment_logs', $message);
                 continue;
