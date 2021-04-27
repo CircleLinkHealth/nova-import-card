@@ -8,7 +8,11 @@ namespace CircleLinkHealth\TwilioIntegration\Services;
 
 use CircleLinkHealth\TwilioIntegration\Http\Requests\LookupResponse;
 use CircleLinkHealth\TwilioIntegration\Models\TwilioLookup;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use NotificationChannels\Twilio\Twilio;
+use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
+use Propaganistas\LaravelPhone\PhoneNumber;
 use Twilio\Exceptions\TwilioException;
 
 /**
@@ -23,7 +27,8 @@ class CustomTwilioService extends Twilio implements TwilioInterface
 
     public function lookup(string $e164PhoneNumber): LookupResponse
     {
-        $dbResult = $this->lookupInDb($e164PhoneNumber);
+        $e164PhoneNumber = $this->getNumberInE164Format($e164PhoneNumber);
+        $dbResult        = $this->lookupInDb($e164PhoneNumber);
         if ($dbResult) {
             return $dbResult;
         }
@@ -32,6 +37,21 @@ class CustomTwilioService extends Twilio implements TwilioInterface
         $this->storeResultInDb($apiResult);
 
         return $apiResult;
+    }
+
+    private function getNumberInE164Format(string $phoneNumber): string
+    {
+        try {
+            if (Str::startsWith($phoneNumber, '+')) {
+                return PhoneNumber::make($phoneNumber)->formatE164();
+            }
+
+            return PhoneNumber::make($phoneNumber, 'US')->formatE164();
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
+            Log::warning($e->getMessage()."[$phoneNumber]");
+
+            return $phoneNumber;
+        }
     }
 
     private function lookupApi(string $e164PhoneNumber): ?LookupResponse
