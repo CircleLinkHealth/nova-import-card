@@ -131,11 +131,20 @@
     .fab {
         z-index: 999;
         position: fixed;
-        bottom: 30px;
-        right: 60px;
+        bottom: 38px;
+        right: 90px;
         width: 56px;
         height: 60px;
     }
+
+    /*.fab{*/
+    /*  z-index: 999;*/
+    /*  position: fixed;*/
+    /*  bottom: 57px;*/
+    /*  left: 15px;*/
+    /*  width: 56px;*/
+    /*  height: 60px;*/
+    /*}*/
 
     .fab .action-button, .fab .mini-action-button {
         cursor: pointer;
