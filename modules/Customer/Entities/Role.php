@@ -68,7 +68,8 @@ class Role extends CerberusRole
 
     public static function allRoles()
     {
-        return \Cache::remember(
+        // can't cache all this in dynamodb
+        return \Cache::store('array')->remember(
             self::ALL_CPM_ROLES_CACHE_KEY,
             Role::CACHE_ROLES_MINUTES,
             function () {
