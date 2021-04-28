@@ -340,8 +340,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use CerberusSiteUserTrait;
     use Filterable;
     use HasEmrDirectAddress;
-    use InteractsWithMedia;
     use Impersonate;
+    use InteractsWithMedia;
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
@@ -2798,6 +2798,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         if ($role) {
+            $liteRole               = new Role();
+            $liteRole->id           = $role->id;
+            $liteRole->name         = $role->name;
+            $liteRole->display_name = $role->display_name;
+            $role                   = $liteRole;
+
             Cache::put($key, $role, 1);
         }
 
