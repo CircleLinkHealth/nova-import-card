@@ -20,9 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController@showHomepage')->name('home');
 
 Route::group([
-    'middleware' => [
-        'auth',
-    ],
+    'middleware' => ['auth'],
 ], function () {
     Route::get('/home', 'HomeController@showHomepage');
 });

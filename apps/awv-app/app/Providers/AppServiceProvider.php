@@ -41,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
             return $app->make(CustomMailChannel::class);
         });
 
+        $this->app->register(\CircleLinkHealth\Customer\Providers\RouteServiceProvider::class);
+
         // {@link EligibilityServiceProvider}
         $this->app->singleton(AthenaApiImplementation::class, function () {
             return null;

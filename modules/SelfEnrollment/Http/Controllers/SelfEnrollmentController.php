@@ -6,6 +6,10 @@
 
 namespace CircleLinkHealth\SelfEnrollment\Http\Controllers;
 
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SelfEnrollment\AppConfig\SelfEnrollmentLetterVersionSwitch;
+use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetterV2;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SelfEnrollment\Helpers;
@@ -13,6 +17,7 @@ use CircleLinkHealth\SelfEnrollment\Http\Requests\EnrollmentLinkValidation;
 use CircleLinkHealth\SelfEnrollment\Http\Requests\SelfEnrollableUserAuthRequest;
 use CircleLinkHealth\SelfEnrollment\Services\EnrollmentBaseLetter;
 use CircleLinkHealth\SelfEnrollment\Services\EnrollmentInvitationService;
+use CircleLinkHealth\SelfEnrollment\Services\SelfEnrollmentLetterService;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -218,7 +223,11 @@ class SelfEnrollmentController extends Controller
         $user = User::whereId($userId)->has('enrollee')->with('enrollee')->firstOrFail();
 
         if ($user->isSurveyOnly()) {
-            return $this->prepareLetterViewAndRedirect($user, true, $user->enrollee, true);
+            if (SelfEnrollmentLetterVersionSwitch::loadNewVersionIfModelExists($user->primaryProgramId())){
+                return $this->prepareLetterViewAndRedirectV2($user, true,  true);
+            }
+
+            return $this->prepareLetterViewAndRedirect($user, true,  true);
         }
 
         abort(403, 'Unauthorized action.');
@@ -279,7 +288,7 @@ class SelfEnrollmentController extends Controller
     {
         $practiceLetter  = null;
         $practiceName    = '';
-        $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $surveyPracticeLogo = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         // Just checking if Enrollee. Patients(usres) are not allowed here.
         if ($request->input('isSurveyOnly')) {
             $enrollee = Enrollee::with('practice')->where('id', $request->input('enrolleeId'))->first();
@@ -292,12 +301,12 @@ class SelfEnrollmentController extends Controller
         }
 
         if ( ! empty($practiceLetter) && ! empty($practiceLetter->practice_logo_src)) {
-            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+            $surveyPracticeLogo = $practiceLetter->practice_logo_src;
         }
 
         Auth::logout();
 
-        return view('selfEnrollment::EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
+        return view('selfEnrollment::EnrollmentSurvey.enrollableLogout', compact('surveyPracticeLogo', 'practiceName'));
     }
 
     /**
@@ -406,7 +415,59 @@ class SelfEnrollmentController extends Controller
             return redirect($this->getAwvInvitationLinkForUser($user)->url);
         }
 
-        return $this->prepareLetterViewAndRedirect($user, true, $user->enrollee, false);
+        if (SelfEnrollmentLetterVersionSwitch::loadNewVersionIfModelExists($user->primaryProgramId())){
+            return $this->prepareLetterViewAndRedirectV2($user, true,  false);
+        }
+
+        return $this->prepareLetterViewAndRedirect($user, true,  false);
+    }
+
+
+    private function prepareLetterViewAndRedirectV2(User $userEnrollee, $isSurveyOnlyUser, $hideButtons)
+    {
+        $invitationLink = $userEnrollee->enrollee->getLastEnrollmentInvitationLink();
+
+        if (! $invitationLink) {
+            Log::channel('database')
+                ->error('Latest enrollment link missing for user_id ['. $userEnrollee->id ."].");
+
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+        }
+
+        $dateLetterSent = Carbon::parse($invitationLink->updated_at)->toDateString();
+        $enrollablePractice     = $userEnrollee->primaryPractice;
+        $enrollablePracticeId     = $enrollablePractice->id;
+
+        $letterService = app(SelfEnrollmentLetterService::class);
+        $letter = EnrollmentInvitationLetterV2::withMediaAndPracticeProviders()
+            ->activePracticeLetter($enrollablePracticeId)
+            ->first();
+
+        if (!$letter){
+            $message = "[Self Enrollment Survey] Letter for practice_id [$enrollablePracticeId] not found.";
+            Log::channel('database')->error($message);
+            sendSlackMessage('#self_enrollment_logs', $message);
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+        }
+
+        $letterForView = $letterService->createLetterToRender($userEnrollee, $letter, $dateLetterSent);
+
+        if (! in_array(optional($userEnrollee->billingProviderUser())->id, $letterForView->allSignatoryProvidersIds()->toArray())){
+            $message = "Patient with user_id:$userEnrollee->id and practice: [$enrollablePracticeId] has no billing provider match with the letter.
+            Patient has been redirected to the ERROR page";
+            sendSlackMessage('#self_enrollment_logs', $message);
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+        }
+
+        return view('selfEnrollment::enrollment-letterV2', [
+            'letter' => $letterForView,
+            'hideButtons' => $hideButtons,
+            'userEnrolleeId' => $userEnrollee->id,
+            'isSurveyOnlyUser' => $isSurveyOnlyUser,
+            'buttonColor'=>SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            'practiceName' => $enrollablePractice->display_name,
+            'disableButtons' => false
+        ]);
     }
 
     /**
@@ -417,7 +478,7 @@ class SelfEnrollmentController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    private function prepareLetterViewAndRedirect(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
+    private function prepareLetterViewAndRedirect(User $userEnrollee, $isSurveyOnlyUser, $hideButtons)
     {
         $enrollablePrimaryPractice     = $userEnrollee->primaryPractice;
         $letterClass                   = ucfirst(self::getLetterClassName($enrollablePrimaryPractice->name));
@@ -427,7 +488,7 @@ class SelfEnrollmentController extends Controller
             $enrollablePrimaryPractice,
             $userEnrollee,
             $isSurveyOnlyUser,
-            $enrollee,
+            $userEnrollee->enrollee,
             $hideButtons,
             $practiceLetterReflectionClass
         ))->getBaseLetter();
@@ -435,6 +496,33 @@ class SelfEnrollmentController extends Controller
         return (new $practiceLetterClass($hideButtons, $baseLetter, $enrollablePrimaryPractice, $userEnrollee))->letterSpecificView();
     }
 
+    public function adminLetterReview(int $practiceId, int $userId)
+    {
+        $user = User::findOrFail($userId);
+        $letter = EnrollmentInvitationLetterV2::withMediaAndPracticeProviders()
+            ->activePracticeLetter($practiceId)
+            ->first();
+
+        if (!$letter){
+            Log::channel('database')
+                ->error("[Self Enrollment Survey] Letter for practice_id [$practiceId] not found.");
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+        }
+
+        $letterToRender = app(SelfEnrollmentLetterService::class)
+            ->createLetterToRender($user, $letter, Carbon::now()->toDateString());
+
+        return view('selfEnrollment::enrollment-letterV2', [
+            'letter' => $letterToRender,
+            'hideButtons' => false,
+            'userEnrolleeId' => $userId,
+            'isSurveyOnlyUser' => true,
+            'buttonColor'=>SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            'dateLetterSent' => now()->toDateString(),
+            'practiceName' => $letter->practice->display_name,
+            'disableButtons'=>true
+        ]);
+    }
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -448,7 +536,7 @@ class SelfEnrollmentController extends Controller
 
         $providerName        = optional($enrollee->provider)->last_name;
         $practiceDisplayName = $enrollee->practice->display_name;
-        $practiceLogoSrc     = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $surveyPracticeLogo     = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $practiceLetter      = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
 
         if (empty($providerName)) {
@@ -456,7 +544,7 @@ class SelfEnrollmentController extends Controller
         }
 
         if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
-            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+            $surveyPracticeLogo = $practiceLetter->practice_logo_src;
         }
 
         $isSurveyOnly = true;
@@ -465,7 +553,7 @@ class SelfEnrollmentController extends Controller
             'practiceNumber',
             'providerName',
             'practiceDisplayName',
-            'practiceLogoSrc',
+            'surveyPracticeLogo',
             'isSurveyOnly',
             'enrollee'
         ));

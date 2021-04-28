@@ -3,7 +3,10 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
-
+Route::get('self-enrollment-review/{practiceId}/{userId}', [
+    'uses' => '\CircleLinkHealth\SelfEnrollment\Http\Controllers\SelfEnrollmentController@adminLetterReview',
+    'as'   => 'self.enrollment.letter.review',
+]);
 Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
