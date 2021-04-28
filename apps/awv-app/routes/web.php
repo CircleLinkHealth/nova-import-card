@@ -7,7 +7,7 @@
 Route::get('/', 'HomeController@index')
     ->name('home');
 
-Auth::routes();
+// Auth::routes();
 
 Route::post('/logout', [
     'uses' => 'Auth\LoginController@logout',
