@@ -65,8 +65,7 @@ abstract class BaseScoutSearch implements ScoutSearch
 
     public function cache(callable $fn, string $term)
     {
-        return \Cache::tags($this->tags())
-            ->remember(
+        return \Cache::remember(
                 self::key($term),
                 $this->duration(),
                 $fn

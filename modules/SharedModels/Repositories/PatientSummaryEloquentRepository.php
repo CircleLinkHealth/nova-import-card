@@ -76,7 +76,7 @@ class PatientSummaryEloquentRepository
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
-            Cache::tags(['practice.chargeable.services'])->forget("${class}:{$summary->id}:chargeableServices");
+            Cache::forget("${class}:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
 

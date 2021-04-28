@@ -60,7 +60,7 @@ class DetermineEnrollmentEligibility
         $offset = false,
         $batchId = null
     ) {
-        $departments = \Cache::tags(['athena_api', "ehr_practice_id:$ehrPracticeId"])->remember("athena_api:$ehrPracticeId:department_ids", 5, function () use ($ehrPracticeId) {
+        $departments = \Cache::remember("athena_api:$ehrPracticeId:department_ids", 5, function () use ($ehrPracticeId) {
             return $this->api->getDepartments($ehrPracticeId);
         });
 
