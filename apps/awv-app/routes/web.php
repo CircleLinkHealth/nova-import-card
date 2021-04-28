@@ -7,6 +7,7 @@
 Route::get('/', 'HomeController@index')
     ->name('home');
 
+// not needed if Customer/RouteServiceProvider is registered
 // Auth::routes();
 
 Route::post('/logout', [
