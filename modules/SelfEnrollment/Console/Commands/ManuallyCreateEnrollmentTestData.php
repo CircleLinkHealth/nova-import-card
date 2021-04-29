@@ -112,5 +112,8 @@ class ManuallyCreateEnrollmentTestData extends Command
 
             $this->info($info);
         }
+
+        $this->info("Done!");
+        return 0;
     }
 }
