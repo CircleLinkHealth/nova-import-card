@@ -90,7 +90,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         if ($providers->count() < 4) {
             $this->createUser($practiceId, 'provider');
-            $this->getPracticeProviders($practiceId);
+            return $this->getPracticeProviders($practiceId);
         }
 
         return $providers;
