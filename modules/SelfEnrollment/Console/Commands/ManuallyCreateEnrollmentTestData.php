@@ -30,7 +30,7 @@ class ManuallyCreateEnrollmentTestData extends Command
      *
      * @var string
      */
-    protected $signature = 'create:selfEnrollmentTestData {practiceName}';
+    protected $signature = 'create:selfEnrollmentTestData {practiceName} {quantity?}';
 
     /**
      * Create a new command instance.
@@ -90,6 +90,27 @@ class ManuallyCreateEnrollmentTestData extends Command
             $uiRequestsForThisPractice = EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER;
         }
 
-        (new PrepareDataForReEnrollmentTestSeeder($practiceName, $uiRequestsForThisPractice))->run();
+        if($this->argument('quantity') > 20){
+            $this->warn("You cannot create more than 20 test patients.");
+            return;
+        }
+
+        $enrolleesCreated =  (new PrepareDataForReEnrollmentTestSeeder($practiceName, $uiRequestsForThisPractice))->run($this->argument('quantity'));
+
+        $this->info("Patients to test for practice: $practiceName");
+
+        if ($enrolleesCreated->isEmpty()){
+            $this->warn("Nothing created, please contact a developer to assist you.");
+        }
+
+        foreach ($enrolleesCreated as $enrolleeData){
+            $info = "Patient name:[{$enrolleeData['enrolleeName']}],
+                     dob:[{$enrolleeData['dob']}],
+                     eligible_patient_id:[{$enrolleeData['id']}],
+                     provider_name:[{$enrolleeData['providerName']}],
+                     provider_id:[{$enrolleeData['providerId']}]";
+
+            $this->info($info);
+        }
     }
 }

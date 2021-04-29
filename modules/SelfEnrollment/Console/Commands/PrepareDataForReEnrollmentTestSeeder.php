@@ -15,6 +15,8 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrol
 use CircleLinkHealth\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SelfEnrollment\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use Faker\Factory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
@@ -79,12 +81,26 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         return $enrolleeForTesting->fresh('user.billingProvider');
     }
 
+    private function getPracticeProviders(int $practiceId): Builder
+    {
+        $providers =  User::ofType('provider')
+            ->with('providerInfo')
+            ->whereHas('providerInfo')
+            ->ofPractice($practiceId);
+
+        if ($providers->count() < 4) {
+            $this->createUser($practiceId, 'provider');
+            $this->getPracticeProviders($practiceId);
+        }
+
+        return $providers;
+    }
+
     /**
-     * Run the database seeds.
-     *
-     * @return void
+     * @param int|null $quantity
+     * @return \Illuminate\Support\Collection
      */
-    public function run()
+    public function run(?int $quantity = null)
     {
         $phoneTester = AppConfig::pull('tester_phone', null) ?? config('services.tester.phone');
 
@@ -94,16 +110,24 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $n       = 1;
         $limit   = 5;
-        $testDob = \Carbon\Carbon::parse('1901-01-01');
+
+        if ($quantity){
+            $limit = $quantity;
+        }
 
         $provider                   = null;
         $this->countRandomProvider  = 0;
         $this->uiRequestedProviders = collect();
         $this->skipIds              = collect();
+        $faker = Factory::create();
 
-        $provider = $this->randomProvider($practice->id);
+        $practiceProviders = $this->getPracticeProviders($practice->id);
+        $enrolleesCreated = collect();
+
 
         while ($n <= $limit) {
+            /** @var User $provider */
+            $provider = $practiceProviders->inRandomOrder()->firstOrFail();
             if (0 === $this->countRandomProvider && EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER === $this->uiRequestsForThisPractice) {
                 $provider->providerInfo->update([
                     // We need this just for Toledo.
@@ -121,11 +145,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 $provider = $this->filterProvider();
             }
 
+            /** @var Enrollee $enrollee */
             $enrollee = $this->createEnrollee($practice, $provider, [
                 'primary_phone' => $phoneTester,
                 'home_phone'    => $phoneTester,
                 'cell_phone'    => $phoneTester,
-                'dob'           => $testDob,
+                'dob'           => $faker->date('Y-m-d','1985-11-07'),
                 'location_id'   => $location->id,
             ]);
 
@@ -135,8 +160,17 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
             $this->assignSpecificBillingProvider($enrollee->user_id, $provider->id);
 
+            $enrolleesCreated->push([
+                'enrolleeName' => "$enrollee->first_name $enrollee->last_name",
+                'id' => $enrollee->id,
+                'providerId'=>$enrollee->provider_id,
+                'dob'=>$enrollee->dob->toDateString(),
+                'providerName' => $provider->display_name
+            ]);
             ++$n;
         }
+
+        return $enrolleesCreated;
     }
 
     private function assignSpecificBillingProvider(int $enrolleeUserId, int $providerId)
@@ -163,20 +197,5 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ->whereHas('providerInfo')
             ->where('program_id', $practiceId)
             ->get();
-    }
-
-    private function randomProvider(int $practiceId)
-    {
-        $provider = User::ofType('provider')
-            ->with('providerInfo')
-            ->whereHas('providerInfo')
-            ->ofPractice($practiceId)
-            ->first();
-
-        if ( ! $provider) {
-            $provider = $this->createUser($practiceId, 'provider');
-        }
-
-        return $provider;
     }
 }
