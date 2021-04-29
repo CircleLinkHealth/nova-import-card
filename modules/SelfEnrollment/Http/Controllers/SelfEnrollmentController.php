@@ -423,7 +423,7 @@ class SelfEnrollmentController extends Controller
     }
 
 
-    private function prepareLetterViewAndRedirectV2(User $userEnrollee, $isSurveyOnlyUser, $hideButtons)
+    private function prepareLetterViewAndRedirectV2(User $userEnrollee, bool $isSurveyOnlyUser, bool $hideButtons)
     {
         $invitationLink = $userEnrollee->enrollee->getLastEnrollmentInvitationLink();
 
@@ -431,7 +431,7 @@ class SelfEnrollmentController extends Controller
             Log::channel('database')
                 ->error('Latest enrollment link missing for user_id ['. $userEnrollee->id ."].");
 
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', ['userId'=>$userEnrollee->id]);
         }
 
         $dateLetterSent = Carbon::parse($invitationLink->updated_at)->toDateString();
@@ -447,7 +447,7 @@ class SelfEnrollmentController extends Controller
             $message = "[Self Enrollment Survey] Letter for practice_id [$enrollablePracticeId] not found.";
             Log::channel('database')->error($message);
             sendSlackMessage('#self_enrollment_logs', $message);
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', ['userId'=>$userEnrollee->id]);
         }
 
         $letterForView = $letterService->createLetterToRender($userEnrollee, $letter, $dateLetterSent);
@@ -456,7 +456,7 @@ class SelfEnrollmentController extends Controller
             $message = "Patient with user_id:$userEnrollee->id and practice: [$enrollablePracticeId] has no billing provider match with the letter.
             Patient has been redirected to the ERROR page";
             sendSlackMessage('#self_enrollment_logs', $message);
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', ['userId'=>$userEnrollee->id]);
         }
 
         return view('selfEnrollment::enrollment-letterV2', [
@@ -506,7 +506,7 @@ class SelfEnrollmentController extends Controller
         if (!$letter){
             Log::channel('database')
                 ->error("[Self Enrollment Survey] Letter for practice_id [$practiceId] not found.");
-            return view('selfEnrollment::EnrollmentSurvey.enrollableError');
+            return view('selfEnrollment::EnrollmentSurvey.enrollableError', ['userId' => $userId]);
         }
 
         $letterToRender = app(SelfEnrollmentLetterService::class)
