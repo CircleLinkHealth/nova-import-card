@@ -6,11 +6,13 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -73,7 +75,7 @@ class NotificationStatusUpdateJob implements ShouldQueue, ShouldBeEncrypted
             $data['status'][$this->channel] = [];
         }
 
-        if ($this->isOutOfDateUpdate($data['status'][$this->channel]['value'] ?? null, $this->props['value'])) {
+        if ($this->isOutOfDateUpdate($data['status'][$this->channel]['value'] ?? null, $this->props['value'], $notification->updated_at)) {
             return;
         }
 
@@ -104,14 +106,17 @@ class NotificationStatusUpdateJob implements ShouldQueue, ShouldBeEncrypted
      * (i.e. pending status update from integration (twilio, sendgrid)
      * So, by the time {@link NotificationSent} is handled, we already have a status 'sent',
      * therefore we skip processing it.
+     *
+     * {@link NotificationSent event is always raised, even if NotificationFailed was raised.
+     * So we have to check if the notification failed just now.
      */
-    private function isOutOfDateUpdate(?string $currentStatus, ?string $newStatus): bool
+    private function isOutOfDateUpdate(?string $currentStatus, ?string $newStatus, ?Carbon $lastUpdate): bool
     {
         if ( ! $currentStatus) {
             return false;
         }
 
-        if ('failed' === $currentStatus && 'pending' === $newStatus) {
+        if ('failed' === $currentStatus && ! is_null($lastUpdate) && $lastUpdate->diffInMilliseconds(now()) < 1000) {
             return true;
         }
 

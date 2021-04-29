@@ -104,11 +104,11 @@ class CustomTwilioChannel extends TwilioChannel
 
             $this->events->dispatch($event);
 
+            /*
             if ($this->twilio->config->isIgnoredErrorCode($exception->getCode())) {
                 return;
             }
-
-            throw $exception;
+            */
         }
     }
 
