@@ -169,6 +169,12 @@ class DashboardController extends Controller
             ->sync($sync);
 
         SetupPracticeBillingData::sync($this->primaryPractice->id);
+        //todo: remove - temporary:
+        //Until Manage CS dashboard accomodates Location specific CS, we'll be sending message and doing manually
+        //since we're adding location specific CS for location (1091)
+        if (isProductionEnv()){
+            sendSlackMessage('#billing_alerts', "Chargeable Services for Practice ({$this->primaryPractice->id})");
+        }
 
         return redirect()->back();
     }

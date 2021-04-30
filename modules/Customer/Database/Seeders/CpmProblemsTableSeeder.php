@@ -441,7 +441,7 @@ class CpmProblemsTableSeeder extends Seeder
             31 => [
                 'id'                  => 596,
                 'default_icd_10_code' => 'F41.1',
-                'name'                => 'Anxiety and Stress',
+                'name'                => 'Anxiety',
                 'icd10from'           => '',
                 'icd10to'             => '',
                 'icd9from'            => 0.0,

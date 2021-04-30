@@ -81,6 +81,10 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     const DEPRESSION = 'Depression';
 
+    const ANXIETY = 'Anxiety';
+
+    const BIPOLAR = 'Bipolar';
+
     const DIABETES_TYPE_1 = 'Diabetes Type 1';
 
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
@@ -88,6 +92,8 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     const DUAL_CCM_BHI_CONDITIONS = [
         self::DEMENTIA,
         self::DEPRESSION,
+        self::BIPOLAR,
+        self::ANXIETY
     ];
 
     protected $guarded = [];
