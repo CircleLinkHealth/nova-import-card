@@ -19,9 +19,9 @@ class ModifyPatientActivityAndReprocessTime extends Command
      *
      * @var string
      */
-    protected $description = 'Change specific patient CS to another and transfer time from that CS to the other, for a specific month, for Legacy Billing (Inc. PMS)';
+    protected $description = 'Change specific patient CS to another and transfer time from that CS to the other, for a specific month';
 
-    protected ChargeableService $fromCs;
+    protected ?int $fromCsId;
     protected Carbon $month;
 
     protected array $patientIds;
@@ -35,9 +35,8 @@ class ModifyPatientActivityAndReprocessTime extends Command
                                                                {month : YYYY-MM-DD} 
                                                                {fromCs : ID, user friendly name or CS code} 
                                                                {toCs : ID, user friendly name or CS code}
-                                                               {--legacy} 
-                                                          ';
-    protected ChargeableService $toCs;
+                                                            ';
+    protected string $toCsCode;
 
     /**
      * Create a new command instance.
@@ -83,9 +82,8 @@ class ModifyPatientActivityAndReprocessTime extends Command
         Job::dispatch(
             $this->patientIds,
             $this->month,
-            $this->fromCs->id,
-            $this->toCs->code,
-            (bool) $this->option('legacy')
+            $this->fromCsId,
+            $this->toCsCode,
         )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
@@ -124,7 +122,9 @@ class ModifyPatientActivityAndReprocessTime extends Command
 
     private function setServices(): void
     {
-        $this->fromCs = $this->getChargeableService($this->argument('fromCs'));
-        $this->toCs   = $this->getChargeableService($this->argument('toCs'));
+        $fromCsInput = $this->argument('fromCs');
+
+        $this->fromCsId = strtolower($fromCsInput) === 'null' ? null : $this->getChargeableService($fromCsInput)->id;
+        $this->toCsCode   = $this->getChargeableService($this->argument('toCs'))->code;
     }
 }

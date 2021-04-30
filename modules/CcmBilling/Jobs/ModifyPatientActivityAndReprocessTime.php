@@ -25,8 +25,7 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
     use Queueable;
     use SerializesModels;
 
-    private int $fromCsId;
-    private bool $legacy;
+    private ?int $fromCsId;
     private Carbon $month;
     private array $patientIds;
     private string $toCsCode;
@@ -36,13 +35,12 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
      *
      * @return void
      */
-    public function __construct(array $patientIds, Carbon $month, int $fromCsId, string $toCsCode, bool $legacy = false)
+    public function __construct(array $patientIds, Carbon $month, string $toCsCode, ?int $fromCsId = null)
     {
         $this->patientIds = $patientIds;
         $this->month      = $month;
         $this->fromCsId   = $fromCsId;
         $this->toCsCode   = $toCsCode;
-        $this->legacy     = $legacy;
     }
 
     /**
@@ -53,7 +51,8 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
     public function handle()
     {
         $activityIds = Activity::whereIn('patient_id', $this->patientIds)
-            ->where('chargeable_service_id', $this->fromCsId)
+            ->when(is_null($this->fromCsId), fn($q) => $q->whereNull('chargeable_service_id'))
+            ->when(!is_null($this->fromCsId), fn($q) => $q->where('chargeable_service_id', $this->fromCsId))
             ->createdInMonth($this->month, 'performed_at')
             ->pluck('id');
 
