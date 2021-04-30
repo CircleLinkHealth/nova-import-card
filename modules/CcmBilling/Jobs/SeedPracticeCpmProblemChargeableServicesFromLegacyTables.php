@@ -86,8 +86,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                 $locationHasPcm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->pcmCodeId);
                 $locationHasRpm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->rpmCodeId);
                 foreach ($this->cpmProblems as $problem) {
-                    $isDementia = 'Dementia' === $problem->name;
-                    $isDepression = 'Depression' === $problem->name;
+                    $isDual = in_array($problem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
 
                     $isBhi = $problem->is_behavioral;
 
@@ -103,7 +102,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                         }
                     )->count() > 0;
 
-                    if (($isBhi || $isDementia || $isDementia) && $locationHasBhi) {
+                    if (($isBhi || $isDual) && $locationHasBhi) {
                         $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
                     }
 
@@ -115,7 +114,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                         $this->repo()->store($location->id, $problem->id, $this->rpmCodeId);
                     }
 
-                    if (( ! $isBhi || $isDementia || $isDepression) && $locationHasCcm) {
+                    if (( ! $isBhi || $isDual) && $locationHasCcm) {
                         $this->repo()->store($location->id, $problem->id, $this->ccmCodeId);
                     }
                 }
