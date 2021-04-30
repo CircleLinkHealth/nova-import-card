@@ -17,6 +17,7 @@ use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationProblemServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\CcmBilling\Listeners\SetPatientConsented;
+use CircleLinkHealth\Customer\Events\PatientUserCreated;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class CcmBillingEventServiceProvider extends ServiceProvider
@@ -48,6 +49,9 @@ class CcmBillingEventServiceProvider extends ServiceProvider
         ],
         PatientConsentedToService::class => [
             SetPatientConsented::class,
+        ],
+        PatientUserCreated::class => [
+            ProcessPatientServices::class
         ]
     ];
 }
