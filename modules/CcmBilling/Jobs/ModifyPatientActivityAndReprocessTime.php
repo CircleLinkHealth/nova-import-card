@@ -39,8 +39,8 @@ class ModifyPatientActivityAndReprocessTime implements ShouldQueue, ShouldBeEncr
     {
         $this->patientIds = $patientIds;
         $this->month      = $month;
-        $this->fromCsId   = $fromCsId;
         $this->toCsCode   = $toCsCode;
+        $this->fromCsId   = $fromCsId;
     }
 
     /**

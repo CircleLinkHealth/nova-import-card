@@ -82,8 +82,8 @@ class ModifyPatientActivityAndReprocessTime extends Command
         Job::dispatch(
             $this->patientIds,
             $this->month,
-            $this->fromCsId,
             $this->toCsCode,
+            $this->fromCsId
         )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
