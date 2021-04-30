@@ -9,7 +9,6 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
-use CircleLinkHealth\Customer\Entities\Chargeable;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
