@@ -182,6 +182,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
             'cpmProblem',
         ])
             ->isMonitored()
+            //todo: revisit when location-problem-services is added
 //                    ->withPatientLocationProblemChargeableServices()
         ;
     }

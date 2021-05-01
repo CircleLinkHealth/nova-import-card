@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\ExportPatientProblemCodes;
 use App\Nova\Importers\PatientConsentLetters;
 use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
@@ -52,12 +53,16 @@ class Practice extends Resource
      */
     public function actions(Request $request)
     {
+        $actions = [
+            new ExportPatientProblemCodes()
+        ];
+
         //There is a known bug when adding ->canSee and ->canRun for actions that are queueable, this is a workaround
-        return $request->user()->isAdmin()
-            ? [
-                (new Actions\FaxApprovedCarePlans())->onlyOnDetail(),
-            ]
-            : [];
+        if ($request->user()->isAdmin()){
+            $actions[] = (new Actions\FaxApprovedCarePlans())->onlyOnDetail();
+        }
+
+        return $actions;
     }
 
     /**
@@ -68,11 +73,12 @@ class Practice extends Resource
     public function cards(Request $request)
     {
         return [
-            ClhImportCardExtended::make(self::class, [
-                Text::make('email')
-                    ->withModel(\App\User::class, 'email')
-                    ->inputRules(['required', 'email']),
-            ], 'Create and Send Patient Consent Letters'),
+            //todo: seems to be breaking for the moment
+//            ClhImportCardExtended::make(self::class, [
+//                Text::make('email')
+//                    ->withModel(\App\User::class, 'email')
+//                    ->inputRules(['required', 'email']),
+//            ], 'Create and Send Patient Consent Letters'),
         ];
     }
 
