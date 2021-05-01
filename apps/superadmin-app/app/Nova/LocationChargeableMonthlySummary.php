@@ -9,9 +9,11 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary as Model;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class LocationChargeableMonthlySummary extends Resource
 {
+    use SearchesRelations;
     /**
      * The model the resource corresponds to.
      *
@@ -36,6 +38,14 @@ class LocationChargeableMonthlySummary extends Resource
     ];
 
     /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'location'  => ['id', 'name'],
+    ];
+    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -46,9 +56,9 @@ class LocationChargeableMonthlySummary extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
 
-            BelongsTo::make('location'),
-            BelongsTo::make('chargeableService'),
-            Date::make('chargeable_month'),
+            BelongsTo::make( 'Location', 'location', Location::class),
+            BelongsTo::make('Chargeable Service', 'chargeableService', ChargeableService::class),
+            Date::make('Month', 'chargeable_month'),
             Currency::make('amount')
                 ->currency('USD')
                 ->step(0.01)
