@@ -173,7 +173,7 @@ class DashboardController extends Controller
         //Until Manage CS dashboard accomodates Location specific CS, we'll be sending message and doing manually
         //since we're adding location specific CS for location (1091)
         if (isProductionEnv()){
-            sendSlackMessage('#billing_alerts', "Chargeable Services for Practice ({$this->primaryPractice->id})");
+            sendSlackMessage('#billing_alerts', "Chargeable Services (chargeables) for Practice ({$this->primaryPractice->id}) have been updated.");
         }
 
         return redirect()->back();
