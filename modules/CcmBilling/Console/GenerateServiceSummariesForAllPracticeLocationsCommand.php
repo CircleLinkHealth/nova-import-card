@@ -19,7 +19,7 @@ class GenerateServiceSummariesForAllPracticeLocationsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Check that ChargeablePatientMonthlySummaries have been created for a month.';
+    protected $description = 'Generate (renew) ChargeablePatientMonthlySummaries for a month.';
     /**
      * The name and signature of the console command.
      *
