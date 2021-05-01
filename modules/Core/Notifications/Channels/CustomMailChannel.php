@@ -32,7 +32,7 @@ class CustomMailChannel extends MailChannel
             }
 
             if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, 'mail')) {
-                throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
+                throw new CannotSendNotificationException('Notification has already been sent. Please check DB.');
             }
 
             $message = $notification->toMail($notifiable);

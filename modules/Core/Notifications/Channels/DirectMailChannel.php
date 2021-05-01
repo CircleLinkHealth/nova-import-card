@@ -38,7 +38,7 @@ class DirectMailChannel
             $message = $notification->toDirectMail($notifiable);
 
             if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, DirectMailChannel::class)) {
-                throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
+                throw new CannotSendNotificationException('Notification has already been sent. Please check DB.');
             }
 
             $this->throwExceptionIfWrongType($message, $notification);
