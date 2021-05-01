@@ -123,9 +123,15 @@ class PatientProblemsForBillingProcessing
 
         $services = [];
 
-        $practiceHasRhc = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
+        $locationHasRhc = ! is_null(
+            $this->patient
+                ->patientInfo
+                ->location
+                ->chargeableServiceSummaries
+                ->firstWhere('chargeableService.code', ChargeableService::GENERAL_CARE_MANAGEMENT)
+        );
 
-        if ($practiceHasRhc) {
+        if ($locationHasRhc) {
             return [
                 ChargeableService::GENERAL_CARE_MANAGEMENT,
             ];
