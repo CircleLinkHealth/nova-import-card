@@ -17,6 +17,7 @@ use CircleLinkHealth\CcmBilling\Console\GenerateFakeDataForApproveBillablePatien
 use CircleLinkHealth\CcmBilling\Console\GenerateServiceSummariesForAllPracticeLocationsCommand;
 use CircleLinkHealth\CcmBilling\Console\ModifyPatientActivityAndReprocessTime;
 use CircleLinkHealth\CcmBilling\Console\ProcessAllPracticePatientMonthlyServicesCommand;
+use CircleLinkHealth\CcmBilling\Console\ProcessPracticePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Console\ResetPMSChargeableServicesForMonth;
 use CircleLinkHealth\CcmBilling\Console\SeedChargeableServices;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
@@ -56,6 +57,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             SeedChargeableServices::class,
             ResetPMSChargeableServicesForMonth::class,
             ModifyPatientActivityAndReprocessTime::class,
+            ProcessPracticePatientMonthlyServices::class
         ];
     }
 
@@ -85,6 +87,7 @@ class CcmBillingDeferredServiceProvider extends ServiceProvider implements Defer
             ProcessAllPracticePatientMonthlyServicesCommand::class,
             CheckPatientSummariesHaveBeenCreatedCommand::class,
             CheckPatientEndOfMonthCcmStatusLogsExistForMonthCommand::class,
+            ProcessPracticePatientMonthlyServices::class
         ]);
     }
 }
