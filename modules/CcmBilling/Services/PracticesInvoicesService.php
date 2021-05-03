@@ -50,8 +50,8 @@ class PracticesInvoicesService
         $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
         Bus::chain($jobs)
-            ->onConnection('sqs-fifo')
-            ->onQueue(getCpmQueueName(CpmConstants::FIFO_QUEUE))
+            ->onConnection('sync')
+            // ->onQueue(getCpmQueueName(CpmConstants::FIFO_QUEUE))
             ->dispatch();
     }
 
