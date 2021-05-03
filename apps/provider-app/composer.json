@@ -19,7 +19,6 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "ext-zend-opcache": "*",
-        "ashallendesign/short-url": "*",
         "circlelinkhealth/ccda-parser-processor-php-module": "*",
         "circlelinkhealth/ccm-billing-module": "*",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -29,6 +28,7 @@
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/eligibility-module": "*",
+        "circlelinkhealth/smart-on-fhir-sso-module": "*",
         "circlelinkhealth/nurseinvoices-module": "*",
         "circlelinkhealth/patientapi-module": "*",
         "circlelinkhealth/pdf-service-module": "*",
@@ -38,7 +38,6 @@
         "circlelinkhealth/self-enrollment-module": "*",
         "circlelinkhealth/shared-models-module": "*",
         "circlelinkhealth/sharedvuecomponents-module": "*",
-        "circlelinkhealth/smart-on-fhir-sso-module": "*",
         "circlelinkhealth/sqlviews-module": "*",
         "circlelinkhealth/synonyms-module": "*",
         "circlelinkhealth/time-tracking-module": "*",
@@ -66,7 +65,8 @@
         "spatie/pdf-to-text": "^1.2",
         "titasgailius/search-relations": "^1.0",
         "wildbit/swiftmailer-postmark": "^3.1",
-        "willdurand/email-reply-parser": "^2.9"
+        "willdurand/email-reply-parser": "^2.9",
+        "ashallendesign/short-url": "*"
     },
     "repositories": [
         {
