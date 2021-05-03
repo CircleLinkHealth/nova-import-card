@@ -19,6 +19,7 @@ environments:
             - awv-low-production
             - awv-high-production
             - awv-revisionable-production
+            - awv-production.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
@@ -41,6 +42,7 @@ environments:
             - awv-low-staging
             - awv-high-staging
             - awv-revisionable-staging
+            - awv-staging.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'

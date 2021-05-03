@@ -19,6 +19,7 @@ environments:
       - self-enrollment-low-production
       - self-enrollment-high-production
       - self-enrollment-revisionable-production
+      - self-enrollment-production.fifo
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'
@@ -44,6 +45,7 @@ environments:
       - self-enrollment-low-staging
       - self-enrollment-high-staging
       - self-enrollment-revisionable-staging
+      - self-enrollment-staging.fifo
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'

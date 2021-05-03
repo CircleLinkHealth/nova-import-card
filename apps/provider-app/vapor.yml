@@ -48,6 +48,7 @@ environments:
             - provider-low-staging
             - provider-high-staging
             - provider-revisionable-staging
+            - provider-staging.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'

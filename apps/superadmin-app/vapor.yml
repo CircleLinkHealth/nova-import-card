@@ -1,31 +1,6 @@
 id: 13702
 name: superadmin
 environments:
-    billing-attestation-hotfixes:
-        domain: superadmin-billing-attestation-hotfixes.clh-staging.com
-        storage: cpm-staging-vapor-storage
-        memory: 512
-        cli-memory: 512
-        runtime: docker
-        queue-timeout: 600
-        concurrency: 5
-        scheduler: false
-        mail: false
-        timeout: 60
-        cli-timeout: 600
-        queues:
-            - superadmin-billing-attestation-hotfixes-low-staging
-            - superadmin-billing-attestation-hotfixes-high-staging
-            - superadmin-billing-attestation-hotfixes-revisionable-staging
-        build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
-            - 'php artisan event:cache'
-            - 'npm ci && npm run prod'
-            - 'php artisan route:cache'
-        deploy:
-            - 'php artisan migrate --force'
-            - 'php artisan migrate:views'
-            - 'php artisan schedule-monitor:sync'
     production:
         domain: superadmin.careplanmanager.com
         storage: cpm-production-vapor-storage
@@ -43,6 +18,7 @@ environments:
             - superadmin-low-production
             - superadmin-high-production
             - superadmin-revisionable-production
+            - superadmin-production.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
@@ -68,6 +44,7 @@ environments:
             - superadmin-low-staging
             - superadmin-high-staging
             - superadmin-revisionable-staging
+            - superadmin-staging.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
