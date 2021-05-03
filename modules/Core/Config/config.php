@@ -73,5 +73,8 @@ return [
         CpmConstants::HIGH_QUEUE => [
             'name' => env('HIGH_CPM_QUEUE_NAME', null),
         ],
+        CpmConstants::FIFO_QUEUE => [
+            'name' => env('FIFO_CPM_QUEUE_NAME', null),
+        ],
     ],
 ];

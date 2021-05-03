@@ -12,7 +12,6 @@ use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportFromBatch;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportJob;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticesQuickbooksReportJob;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Core\Jobs\ChainableJob;
 use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
@@ -51,7 +50,8 @@ class PracticesInvoicesService
         $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
         Bus::chain($jobs)
-            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+            ->onConnection('sqs-fifo')
+            ->onQueue(getCpmQueueName(CpmConstants::FIFO_QUEUE))
             ->dispatch();
     }
 

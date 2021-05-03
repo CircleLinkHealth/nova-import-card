@@ -31,6 +31,7 @@ class CpmConstants
         CpmConstants::SNOMED_NAME => 3,
     ];
     const CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS = ['participant', 'survey-only'];
+    const FIFO_QUEUE                            = 'fifo';
     const FIVE_MINUTES_IN_SECONDS               = 300;
     const FORTY_MINUTES_IN_SECONDS              = 2400;
     public const FROM_CALLBACK_EMAIL_DOMAIN     = 'callcenterusa.net';
