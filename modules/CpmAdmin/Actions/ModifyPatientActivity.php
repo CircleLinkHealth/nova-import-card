@@ -48,6 +48,12 @@ class ModifyPatientActivity
             throw new \Exception("could not find activity ids using parameters: month[$this->month] & chargeable service[$this->sourceChargeableService]");
         }
 
+        if (empty($this->month)) {
+            /** @var Activity $firstActivity */
+            $firstActivity = Activity::find($this->activityIds[0]);
+            $this->setMonth(Carbon::parse($firstActivity->performed_at)->startOfMonth());
+        }
+
         Activity::whereIn('id', $this->activityIds)
             ->update([
                 'chargeable_service_id' => $cs->id,
