@@ -35,9 +35,9 @@ class CreatePracticesInvoices implements ShouldQueue, ShouldBeEncrypted
     /**
      * Create a new job instance.
      */
-    public function __construct(string $practices, string $date, string $format, int $requestedByUserId)
+    public function __construct(array $practices, string $date, string $format, int $requestedByUserId)
     {
-        $this->practices         = [$practices];
+        $this->practices         = $practices;
         $this->date              = Carbon::parse($date);
         $this->format            = $format;
         $this->requestedByUserId = $requestedByUserId;

@@ -51,7 +51,7 @@ class BatchableStoreRepository
 
         if (self::JSON_TYPE === $dataType) {
             $uuid = $batchId.'_'.((string) Str::uuid());
-            Cache::put($uuid, $data, now()->addMinutes(60));
+            Cache::put($uuid, $data, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
             $data = $uuid;
         }
 
@@ -62,6 +62,6 @@ class BatchableStoreRepository
             'data'        => $data,
         ];
         $batch[] = $entry;
-        Cache::put($batchId, $batch, now()->addMinutes(60));
+        Cache::put($batchId, $batch, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
     }
 }
