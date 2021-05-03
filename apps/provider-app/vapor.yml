@@ -22,6 +22,7 @@ environments:
             - provider-low-production
             - provider-high-production
             - provider-revisionable-production
+            - provider-production.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'

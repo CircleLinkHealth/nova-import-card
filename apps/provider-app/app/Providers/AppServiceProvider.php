@@ -139,6 +139,7 @@ class AppServiceProvider extends ServiceProvider
                 $jobs = [];
 
                 while ($offset < $count) {
+                    $job = unserialize(serialize($job));
                     $job->setOffset($offset);
                     $job->setLimit($limit);
                     $jobs[] = $job;
