@@ -120,6 +120,7 @@ class AppServiceProvider extends ServiceProvider
                     dispatch(
                         $job->setOffset($offset)
                             ->setLimit($limit)
+                            ->setTotal($count)
                     );
                     $offset = $offset + $limit;
                 }
@@ -139,9 +140,11 @@ class AppServiceProvider extends ServiceProvider
                 $jobs = [];
 
                 while ($offset < $count) {
+                    /** @var ChunksEloquentBuilder $job */
                     $job = unserialize(serialize($job));
-                    $job->setOffset($offset);
-                    $job->setLimit($limit);
+                    $job->setTotal($count)
+                        ->setOffset($offset)
+                        ->setLimit($limit);
                     $jobs[] = $job;
                     $offset = $offset + $limit;
                 }

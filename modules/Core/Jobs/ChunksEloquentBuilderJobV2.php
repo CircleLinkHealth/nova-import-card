@@ -26,6 +26,8 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
 
     protected int $offset;
 
+    protected int $total;
+
     public function dispatchInBatches(int $limit)
     {
         $count  = $this->getCount();
@@ -39,16 +41,17 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
             $offset = $offset + $limit;
         }
     }
-    
-    public function getCount() {
-        return $this->unsetWith($this->query())->count();
-    }
 
     public function getBuilder(): Builder
     {
         return $this->query()
             ->offset($this->getOffset())
             ->limit($this->getLimit());
+    }
+
+    public function getCount()
+    {
+        return $this->unsetWith($this->query())->count();
     }
 
     public function getLimit(): int
@@ -59,6 +62,11 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
     public function getOffset(): int
     {
         return $this->offset;
+    }
+
+    public function getTotal(): int
+    {
+        return $this->total;
     }
 
     abstract public function query(): Builder;
@@ -73,6 +81,13 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
     public function setOffset(int $offset): self
     {
         $this->offset = $offset;
+
+        return $this;
+    }
+
+    public function setTotal(int $total): ChunksEloquentBuilder
+    {
+        $this->total = $total;
 
         return $this;
     }

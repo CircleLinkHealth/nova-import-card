@@ -57,13 +57,16 @@ class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
      */
     public function handle()
     {
-        Log::info("Invoices: Creating Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}");
+        $offset = $this->getOffset();
+        $limit = $this->getLimit();
+        $total = $this->getTotal();
+        Log::info("Invoices: Creating Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}. Total[$total] | Offset[$offset] | Limit[$limit]");
         $data = $this->getBuilder()
             ->get()
             ->map(fn (PatientMonthlyBillingStatus $billingStatus) => (new GeneratePracticePatientReport())->setBillingStatus($billingStatus)->execute()->toCsvRow());
 
         $this->storeIntoCache($data);
-        Log::info("Invoices: Ending creation of Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}");
+        Log::info("Invoices: Ending creation of Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}. Total[$total] | Offset[$offset] | Limit[$limit]");
     }
 
     /**

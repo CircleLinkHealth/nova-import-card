@@ -17,6 +17,8 @@ abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, Should
 
     protected int $offset;
 
+    protected int $total;
+
     abstract public function getBuilder(): Builder;
 
     public function getLimit(): int
@@ -29,6 +31,11 @@ abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, Should
         return $this->offset;
     }
 
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
     public function setLimit(int $limit): self
     {
         $this->limit = $limit;
@@ -39,6 +46,13 @@ abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, Should
     public function setOffset(int $offset): self
     {
         $this->offset = $offset;
+
+        return $this;
+    }
+
+    public function setTotal(int $total): ChunksEloquentBuilder
+    {
+        $this->total = $total;
 
         return $this;
     }

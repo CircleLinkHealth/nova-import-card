@@ -12,7 +12,11 @@ interface ChunksEloquentBuilder
 
     public function getOffset(): int;
 
+    public function getTotal(): int;
+
     public function setLimit(int $limit): self;
 
     public function setOffset(int $offset): self;
+
+    public function setTotal(int $total): self;
 }
