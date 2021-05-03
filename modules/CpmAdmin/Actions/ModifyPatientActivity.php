@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Actions;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\SharedModels\Entities\Activity;
@@ -66,7 +67,13 @@ class ModifyPatientActivity
 
         $this->generateNurseInvoices();
 
+        if (empty($this->patientIds)) {
+            $this->fillPatientIds();
+        }
+
         $this->processLegacyPms();
+
+        $this->processPms();
     }
 
     public static function forActivityIds(string $chargeableService, array $activityIds): self
@@ -105,6 +112,13 @@ class ModifyPatientActivity
         return $this;
     }
 
+    public function setPatientIds(array $patientIds): self
+    {
+        $this->patientIds = $patientIds;
+
+        return $this;
+    }
+
     public function setSourceChargeableService(?string $sourceChargeableService): ModifyPatientActivity
     {
         $this->sourceChargeableService = $sourceChargeableService;
@@ -124,12 +138,13 @@ class ModifyPatientActivity
             });
     }
 
-    private function fillPatientIds() : void
+    private function fillPatientIds(): void
     {
-        if (! empty($this->activityIds)){
+        if ( ! empty($this->activityIds)) {
             $this->patientIds = Activity::whereIn('id', $this->activityIds)
-                                        ->pluck('patient_id')
-                                        ->toArray();
+                ->pluck('patient_id')
+                ->toArray();
+
             return;
         }
         $this->fillActivityIds();
@@ -145,7 +160,7 @@ class ModifyPatientActivity
                 $nurseUserId = $nurseLog->nurse->user_id;
                 Log::debug("Ready to regenerate invoice for $nurseUserId");
                 \Artisan::call('nurseinvoices:create', [
-                    'month'   => now()->startOfMonth()->toDateString(),
+                    'month'   => $this->month->copy()->startOfMonth()->toDateString(),
                     'userIds' => $nurseUserId,
                 ]);
             });
@@ -158,24 +173,22 @@ class ModifyPatientActivity
             : null;
     }
 
-    private function processLegacyPms()
-    {
-        if (empty($this->patientIds)) {
-            $this->fillPatientIds();
-        }
-        app(ActivityService::class)->processMonthlyActivityTime($this->patientIds, $this->month);
-    }
-
-    public function setPatientIds(array $patientIds):self
-    {
-        $this->patientIds = $patientIds;
-        return $this;
-    }
-
-    private function getTargetCsId() : ?int
+    private function getTargetCsId(): ?int
     {
         return $this->chargeableService
             ? ChargeableService::cached()->firstWhere('code', '=', $this->chargeableService)->id
             : null;
+    }
+
+    private function processLegacyPms()
+    {
+        app(ActivityService::class)->processMonthlyActivityTime($this->patientIds, $this->month->copy()->startOfMonth());
+    }
+
+    private function processPms()
+    {
+        foreach ($this->patientIds as $patientId) {
+            ProcessSinglePatientMonthlyServices::dispatch($patientId, $this->month->copy()->startOfMonth());
+        }
     }
 }
