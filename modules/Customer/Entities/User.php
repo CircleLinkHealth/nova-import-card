@@ -3467,6 +3467,44 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    /**
+     * Scope a query to only include users of a given type (Role).
+     *
+     * @param $query
+     * @param $type
+     * @param mixed $excludeAwv
+     */
+    public function scopeNotOfType(
+        $query,
+        $type,
+        $excludeAwv = true
+    ) {
+        $query->whereDoesntHave(
+            'roles',
+            function ($q) use (
+                $type
+            ) {
+                if (is_array($type)) {
+                    $q->whereIn('name', $type);
+                } else {
+                    $q->where('name', '=', $type);
+                }
+            }
+        );
+
+        $query->when($excludeAwv, function ($q) {
+            // we want to exclude only if user has patient info
+            // so we have to make sure that if user does not have patientInfo,
+            // we do not exclude them
+            $q->where(function ($q2) {
+                $q2->whereHas('patientInfo', function ($q3) {
+                    $q3->where('is_awv', 0);
+                })
+                   ->orWhereDoesntHave('patientInfo');
+            });
+        });
+    }
+
     public function scopeOfTypePatients($query)
     {
         return $query->ofType(CpmConstants::CPM_PATIENTS_AND_SURVEY_ONLY_PATIENTS);
