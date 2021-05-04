@@ -41,8 +41,8 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
     {
         Log::info("Invoices: Creating Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
         $batchRepo           = app(BatchableStoreRepository::class);
-        $batch               = $batchRepo->get($this->batchId);
-        $practicePatientData = collect($batch)
+        $batch               = collect($batchRepo->get($this->batchId));
+        $practicePatientData = $batch
             ->filter(fn ($item) => $item['practice_id'] === $this->practiceId)
             ->map(fn ($item)    => $item['data'])
             ->flatten(1)
@@ -54,6 +54,11 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
             ->setPatientsData($practicePatientData)
             ->execute();
         $batchRepo->store($this->batchId, $this->practiceId, BatchableStoreRepository::MEDIA_TYPE, $media->id);
+
+        $batchItemsCount = $batch->count();
+        $patientsCount = count($practicePatientData);
+        Log::channel('database')->debug("Batch[$this->batchId]|Practice[$this->practiceId]|BatchItemsCount[$batchItemsCount]|PatientsCount[$patientsCount]|Media[$media->id]");
+
         Log::info("Invoices: Ending creation Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
     }
 
