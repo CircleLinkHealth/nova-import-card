@@ -99,7 +99,7 @@ class AutoPullEnrolleesFromAthena extends Command
                     'timeout'         => 60,
                     'connect_timeout' => 60,
                 ],
-            ], config('filesystems.disks.media')),
+            ], config('queue.connections.sqs')),
             'media',
             'https://sqs.us-east-1.amazonaws.com/670139022924/superadmin-low-production',
             Config::IF_NEEDED
