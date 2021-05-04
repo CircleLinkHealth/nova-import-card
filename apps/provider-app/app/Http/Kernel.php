@@ -17,6 +17,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled;
 use CircleLinkHealth\Core\Http\Middleware\SentryContext;
 use CircleLinkHealth\Customer\Http\Middleware\PatientProgramSecurity;
+use CircleLinkHealth\Customer\Middleware\PatientHasParticipantRole;
 use CircleLinkHealth\Customer\PracticeSettings\Http\Middleware\ProviderDashboardACL;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -53,7 +54,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [
+        'web'      => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -67,11 +68,11 @@ class Kernel extends HttpKernel
         'sessions' => [
             StartSession::class,
         ],
-        'api' => [
+        'api'      => [
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-        'saml' => [
+        'saml'     => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -87,28 +88,29 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'             => \App\Http\Middleware\Authenticate::class,
-        'auth.basic'       => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings'         => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'cache.headers'    => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can'              => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest'            => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed'           => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'auth'                      => \App\Http\Middleware\Authenticate::class,
+        'auth.basic'                => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'                  => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers'             => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can'                       => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'                     => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm'          => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'signed'                    => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle'                  => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified'                  => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         //CLH Middleware
-        'ability'                => CerberusAbility::class,
-        'permission'             => CerberusPermission::class,
-        'patientProgramSecurity' => PatientProgramSecurity::class,
-        'role'                   => CerberusRole::class,
-        'verify.invite'          => CheckOnboardingInvite::class,
-        'check.careplan.mode'    => CheckCarePlanMode::class,
-        'checkPatientUserData'   => CheckPatientUserData::class,
-        'enrollmentCenter'       => EnrollmentCenter::class,
-        'careAmbassadorAPI'      => CareAmbassadorAPI::class,
-        'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
-        'providerDashboardACL'   => ProviderDashboardACL::class,
+        'ability'                   => CerberusAbility::class,
+        'permission'                => CerberusPermission::class,
+        'patientProgramSecurity'    => PatientProgramSecurity::class,
+        'patientHasParticipantRole' => PatientHasParticipantRole::class,
+        'role'                      => CerberusRole::class,
+        'verify.invite'             => CheckOnboardingInvite::class,
+        'check.careplan.mode'       => CheckCarePlanMode::class,
+        'checkPatientUserData'      => CheckPatientUserData::class,
+        'enrollmentCenter'          => EnrollmentCenter::class,
+        'careAmbassadorAPI'         => CareAmbassadorAPI::class,
+        'adminOrPracticeStaff'      => AdminOrPracticeStaff::class,
+        'providerDashboardACL'      => ProviderDashboardACL::class,
     ];
 }
