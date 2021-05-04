@@ -33,7 +33,7 @@ class ReimportPatientMedicalRecord extends Command
      *
      * @var string
      */
-    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--clear} {--without-transaction}';
+    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--clear} {--without-transaction} {--clear-ccda}';
     /**
      * @var Ccda
      */
@@ -407,8 +407,23 @@ class ReimportPatientMedicalRecord extends Command
         }
     }
 
+    private function clearExistingCcda():void
+    {
+        $ccda = ($user = $this->getUser())->latestCcda();
+
+        if (is_null($ccda)){
+            $this->log("User[{$user->id}] could not clear CCDA because it does not exist.");
+            return;
+        }
+
+        $ccda->delete();
+    }
     private function reimport(User $user): bool
     {
+        if ($this->option('clear-ccda')){
+            $this->clearExistingCcda();
+        }
+
         if ( ! $user->ccdas()->exists()) {
             if ($this->getEnrollee($user) && $ccda = Ccda::where('practice_id', $this->enrollee->practice_id)
                 ->where('patient_mrn', $this->enrollee->mrn)
