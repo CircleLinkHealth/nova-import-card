@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Bus;
 
 class AutoPullEnrolleesFromAthena extends Command
 {
-    const MAX_DAYS_TO_PULL_AT_ONCE = 5;
+    const MAX_DAYS_TO_PULL_AT_ONCE = 1;
     /**
      * The console command description.
      *
