@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
+use AwsExtended\Config;
+use AwsExtended\SqsClient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -90,10 +92,24 @@ class AutoPullEnrolleesFromAthena extends Command
             }
         }
 
+        $client = new SqsClient(new Config(
+            array_merge([
+                'version' => 'latest',
+                'http'    => [
+                    'timeout'         => 60,
+                    'connect_timeout' => 60,
+                ],
+            ], config('filesystems.disks.media')),
+            'media',
+            'https://sqs.us-east-1.amazonaws.com/670139022924/superadmin-low-production',
+            Config::IF_NEEDED
+        ));
+
         foreach ($practices as $practice) {
-            Bus::chain($this->orchestrateEligibilityPull($practice))
-                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
-                ->dispatch();
+            $message = $client->sendMessage(json_encode($this->orchestrateEligibilityPull($practice)));
+//            Bus::chain($this->orchestrateEligibilityPull($practice))
+//                ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+//                ->dispatch();
         }
     }
 

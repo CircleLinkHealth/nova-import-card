@@ -84,7 +84,7 @@ class DashboardController extends Controller
             $args['batchId'] = $batchId;
         }
 
-        Artisan::queue(
+        Artisan::call(
             'athena:autoPullEnrolleesFromAthena',
             $args
         );
