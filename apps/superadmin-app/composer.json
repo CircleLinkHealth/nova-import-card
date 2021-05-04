@@ -273,6 +273,7 @@
         "circlelinkhealth/time-tracking-module": "*",
         "circlelinkhealth/twilio-integration-module": "*",
         "circlelinkhealth/twofa-module": "*",
+        "e0ipso/amazon-sqs-php-extended-client-lib": "^1.1",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
