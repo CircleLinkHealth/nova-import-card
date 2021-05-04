@@ -98,8 +98,8 @@ class Kernel extends ConsoleKernel
             ->doNotMonitor();
 
         $schedule->command(CheckPatientRoles::class)
-                 ->everyTwoHours()
-                 ->doNotMonitor();
+            ->everyTwoHours()
+            ->doNotMonitor();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyFifteenMinutes();

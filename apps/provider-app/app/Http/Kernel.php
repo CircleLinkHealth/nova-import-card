@@ -54,7 +54,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web'      => [
+        'web' => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -68,11 +68,11 @@ class Kernel extends HttpKernel
         'sessions' => [
             StartSession::class,
         ],
-        'api'      => [
+        'api' => [
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-        'saml'     => [
+        'saml' => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -88,16 +88,16 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'                      => \App\Http\Middleware\Authenticate::class,
-        'auth.basic'                => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings'                  => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'cache.headers'             => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can'                       => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest'                     => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm'          => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed'                    => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle'                  => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified'                  => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'auth'             => \App\Http\Middleware\Authenticate::class,
+        'auth.basic'       => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'         => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers'    => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can'              => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'            => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'signed'           => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         //CLH Middleware
         'ability'                   => CerberusAbility::class,
