@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class BatchableStoreRepository
@@ -19,9 +20,8 @@ class BatchableStoreRepository
 
     public function get(string $batchId, string $dataType = null): Collection
     {
-        $batch = Cache::get($batchId, []);
-
-        return collect($batch)
+        $batch  = collect(Cache::get($batchId, []));
+        $result = $batch
             ->when( ! is_null($dataType), fn ($coll) => $coll->where('data_type', '=', $dataType))
             ->values()
             ->map(function ($item) {
@@ -37,6 +37,12 @@ class BatchableStoreRepository
 
                 return $item;
             });
+
+        $batchItemsCount = $batch->count();
+        $jsonItemsCount  = $result->count();
+        Log::channel('database')->debug("BatchableStoreRepository::get|Batch[$batchId]|RawItemsCount[$batchItemsCount]|JsonItemsCount[$jsonItemsCount]");
+
+        return $result;
     }
 
     /**
@@ -63,5 +69,8 @@ class BatchableStoreRepository
         ];
         $batch[] = $entry;
         Cache::put($batchId, $batch, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
+
+        $batchItemsCount = sizeof($batch);
+        Log::channel('database')->debug("BatchableStoreRepository::store|Batch[$batchId]|Practice[$practiceId]|ItemsCount[$batchItemsCount]");
     }
 }
