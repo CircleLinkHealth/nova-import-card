@@ -20,15 +20,7 @@ class BatchableStoreRepository
 
     public function get(string $batchId, string $dataType = null): Collection
     {
-        $batch = null;
-        Cache::lock("BatchableStoreRepository::$batchId")->get(function () use ($batchId, &$batch) {
-            $batch = collect(Cache::get($batchId, []));
-        });
-
-        if ( ! $batch) {
-            throw new Exception('there was an error');
-        }
-
+        $batch  = collect(Cache::get($batchId, []));
         $result = $batch
             ->when( ! is_null($dataType), fn ($coll) => $coll->where('data_type', '=', $dataType))
             ->values()
@@ -69,18 +61,16 @@ class BatchableStoreRepository
             $data = $uuid;
         }
 
-        Cache::lock("BatchableStoreRepository::$batchId")->get(function () use ($batchId, $practiceId, $dataType, $data) {
-            $batch = Cache::get($batchId, []);
-            $entry = [
-                'practice_id' => $practiceId,
-                'data_type'   => $dataType,
-                'data'        => $data,
-            ];
-            $batch[] = $entry;
-            Cache::put($batchId, $batch, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
+        $batch = Cache::get($batchId, []);
+        $entry = [
+            'practice_id' => $practiceId,
+            'data_type'   => $dataType,
+            'data'        => $data,
+        ];
+        $batch[] = $entry;
+        Cache::put($batchId, $batch, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
 
-            $batchItemsCount = sizeof($batch);
-            Log::channel('database')->debug("BatchableStoreRepository::store|Batch[$batchId]|Practice[$practiceId]|ItemsCount[$batchItemsCount]");
-        });
+        $batchItemsCount = sizeof($batch);
+        Log::channel('database')->debug("BatchableStoreRepository::store|Batch[$batchId]|Practice[$practiceId]|ItemsCount[$batchItemsCount]");
     }
 }
