@@ -20,15 +20,15 @@ class PatientHasParticipantRole
         $patientId = $request->route()->parameter('patientId');
 
         if (is_null($patientId)){
-            throw new \Exception("Patient ID not found in route.");
+            return response('Something went wrong with loading this page for this patient. Please contact CLH Support.');
         }
 
-        $isParticipant = User::with(['roles', 'permissions'])
+        $isParticipant = User::with(['roles'])
                              ->findOrFail($patientId)
                              ->isParticipant();
 
-        if (! $isParticipant){
-            throw new \Exception("Patient (ID: $patientId), does not have a participant role. This will cause multiple bugs in the system. Please fix immediately.");
+        if (! $isParticipant) {
+            return response('There is an error with this patient. Please contact CLH support.');
         }
 
         return $next($request);
