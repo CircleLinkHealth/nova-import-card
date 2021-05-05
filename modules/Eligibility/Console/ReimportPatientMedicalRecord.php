@@ -409,16 +409,17 @@ class ReimportPatientMedicalRecord extends Command
 
     private function clearExistingCpmGeneratedCcda():void
     {
-        $ccda = ($user = $this->getUser())->ccdas()->whereIn('source', Ccda::GENERATED_BY_CPM)
-                                                 ->orderBy('updated_at', 'desc')
-                                                 ->first();
+        $ccda = ($user = $this->getUser())->ccdas()->withTrashed()
+                                                   ->whereIn('source', Ccda::GENERATED_BY_CPM)
+                                                   ->orderBy('updated_at', 'desc')
+                                                   ->first();
 
         if (is_null($ccda)){
             $this->log("User[{$user->id}] could not clear CPM generated CCDA because it does not exist.");
             return;
         }
 
-        $ccda->delete();
+        $ccda->forceDelete();
     }
     private function reimport(User $user): bool
     {
