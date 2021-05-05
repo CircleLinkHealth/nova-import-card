@@ -22,6 +22,8 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
     use Queueable;
     use SerializesModels;
 
+    protected int $chunkId;
+
     protected int $limit;
 
     protected int $offset;
@@ -49,6 +51,11 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
             ->limit($this->getLimit());
     }
 
+    public function getChunkId(): int
+    {
+        return $this->chunkId;
+    }
+
     public function getCount()
     {
         return $this->unsetWith($this->query())->count();
@@ -71,6 +78,13 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
 
     abstract public function query(): Builder;
 
+    public function setChunkId(int $chunkId): self
+    {
+        $this->chunkId = $chunkId;
+
+        return $this;
+    }
+
     public function setLimit(int $limit): self
     {
         $this->limit = $limit;
@@ -85,7 +99,7 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
         return $this;
     }
 
-    public function setTotal(int $total): ChunksEloquentBuilder
+    public function setTotal(int $total): self
     {
         $this->total = $total;
 

@@ -12,12 +12,12 @@ use CircleLinkHealth\CcmBilling\Repositories\BatchableStoreRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PracticeQuickbooksReportData;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\CpmAdmin\Notifications\InvoicesCreatedNotification;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use CircleLinkHealth\Customer\Entities\Media;
 
 class GeneratePracticesQuickbooksReport
 {
@@ -36,7 +36,6 @@ class GeneratePracticesQuickbooksReport
         $saasAccount = null;
         $result      = [];
         $batchRepo   = app(BatchableStoreRepository::class);
-        $batch       = $batchRepo->get($this->batchId, BatchableStoreRepository::MEDIA_TYPE);
 
         /** @var Collection|Practice[] $practices */
         $practices = Practice::with([
@@ -53,7 +52,7 @@ class GeneratePracticesQuickbooksReport
                 $saasAccount = $practice->saasAccount;
             }
 
-            $patientReportUrl = $this->getPatientReportUrl($batch, $practice->id);
+            $patientReportUrl = $this->getPatientReportUrl($batchRepo, $practice->id);
             if ( ! $patientReportUrl) {
                 Log::error("could not find patient report for $practice->id");
                 continue;
@@ -114,14 +113,16 @@ class GeneratePracticesQuickbooksReport
         return $this;
     }
 
-    private function getPatientReportUrl(Collection $batch, int $practiceId): ?string
+    private function getPatientReportUrl(BatchableStoreRepository $batchRepo, int $practiceId): ?string
     {
-        $patientReport = $batch->firstWhere('practice_id', '=', $practiceId);
+        $patientReport = $batchRepo
+            ->get($this->batchId, BatchableStoreRepository::MEDIA_TYPE, [$practiceId])
+            ->first();
         if ( ! $patientReport) {
             return null;
         }
 
-        $media            = \CircleLinkHealth\Customer\Entities\Media::find($patientReport['data']);
+        $media            = Media::find($patientReport['data']);
         $patientReportUrl = $media->getUrl();
         try {
             $patientReportUrl = shortenUrl($patientReportUrl);
