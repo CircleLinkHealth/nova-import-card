@@ -97,7 +97,7 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
     {
-        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic']) && ! empty($this->getEnrollee($user)) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
+        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic', 'health-center-of-southeast-texas']) && ! empty($this->getEnrollee($user)) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
             $this->warn(
                 $msg = "User[{$user->id}] Enrollee[{$this->getEnrollee($user)->id}]. Running 'csv-with-json' decorator."
             );
