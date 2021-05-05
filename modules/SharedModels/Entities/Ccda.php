@@ -112,6 +112,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
     const CLH_GENERATED            = 'clh_generated';
+    const CSV_WITH_JSON            = 'csv-with-json';
+    const COMMONWEALTH_PAIN_ASSOCIATES_PLLC = 'commonwealth-pain-associates-pllc';
+    const PRACTICE_PULL_TEMPLATE = 'practice_pull_template';
     const EMR_DIRECT               = 'emr_direct';
     const GOOGLE_DRIVE             = 'google_drive';
     const IMPORTER                 = 'importer';
@@ -119,6 +122,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     const IMPORTER_SELF_ENROLLMENT = 'importer_self_enrollment';
     const SFTP_DROPBOX             = 'sftp_dropbox';
     const UPLOADED                 = 'uploaded';
+
+    const GENERATED_BY_CPM  = [
+        self::CLH_GENERATED,
+        self::CSV_WITH_JSON,
+        self::COMMONWEALTH_PAIN_ASSOCIATES_PLLC,
+        self::PRACTICE_PULL_TEMPLATE
+    ];
 
     /**
      * Duplicate patient user ID.
