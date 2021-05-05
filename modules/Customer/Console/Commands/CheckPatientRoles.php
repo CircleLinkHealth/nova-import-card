@@ -17,7 +17,7 @@ class CheckPatientRoles extends Command
      *
      * @var string
      */
-    protected $description = 'Erase all test Enrollees (created by seeder)';
+    protected $description = 'Look for any enrolled patients that still have survey only roles, so we can investigate the reason and fix them.';
     /**
      * The name and signature of the console command.
      *
