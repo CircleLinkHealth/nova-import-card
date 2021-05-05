@@ -9,17 +9,18 @@ namespace CircleLinkHealth\Eligibility\Console\Athena;
 use Aws\S3\S3Client;
 use Aws\Sdk;
 use AwsExtended\Config;
-use AwsExtended\SqsClient;
+use AwsExtended\ConfigInterface;
+use AwsExtended\S3Pointer;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Jobs\Athena\ProcessTargetPatientsForEligibilityInBatches;
 use CircleLinkHealth\Eligibility\Jobs\ChangeBatchStatus;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions\DetermineEnrollmentEligibility;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
+use Ramsey\Uuid\Uuid;
 
-class AutoPullEnrolleesFromAthena extends Command
+class AutoPullEnrolleesFromAthena extends \Illuminate\Console\Command
 {
     const MAX_DAYS_TO_PULL_AT_ONCE = 1;
     /**
@@ -186,10 +187,6 @@ class AutoPullEnrolleesFromAthena extends Command
         );
     }
 }
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Bus;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Class SqsClient.
