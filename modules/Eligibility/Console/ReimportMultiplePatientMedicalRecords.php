@@ -10,21 +10,18 @@ use Illuminate\Console\Command;
 
 class ReimportMultiplePatientMedicalRecords extends Command
 {
-    private const ATTEMPTS = 2;
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Reimport patient data from one medical record decided by this command. To be used for patient that did not import correctly.';
+    protected $description = 'Reimport multiple patient data from medical records decided by this command. To be used for patients that did not import correctly.';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'patient:recreate-multiple {patientUserIds : comma delimited} {initiatorUserId?} {--clear} {--without-transaction} {--clear-ccda}';
-
-
 
     /**
      * Execute the console command.
