@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Exception;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +29,7 @@ class BatchableStoreRepository
         }
 
         foreach ($chunkIds as $chunkId) {
-            $item = Cache::get($batchId.$dataType.$chunkId, null);
+            $item = $this->cache()->get($batchId.$dataType.$chunkId, null);
             if ($item) {
                 $result->push($item);
             }
@@ -56,8 +57,15 @@ class BatchableStoreRepository
             'data'      => $data,
         ];
         $key = $batchId.$dataType.$chunkId;
-        Cache::put($key, $entry, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
+        $this->cache()->put($key, $entry, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
 
         Log::channel('database')->debug("BatchableStoreRepository::store | Key[$key]");
+    }
+
+    private function cache(): Repository
+    {
+        $store = isProductionEnv() ? 'dynamodb' : 'redis';
+
+        return Cache::store($store);
     }
 }
