@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
@@ -61,7 +62,7 @@ class ReimportPatientMedicalRecord extends Command
                 'patientUserId'   => $patientUserId,
                 'initiatorUserId' => $notifiableUserId,
             ], $args)
-        );
+        )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     /**
