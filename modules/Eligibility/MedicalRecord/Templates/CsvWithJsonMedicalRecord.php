@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 {
@@ -454,7 +455,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function getType(): string
     {
-        return 'csv-with-json';
+        return Ccda::CSV_WITH_JSON;
     }
 
     private function getAddressLine1(): string

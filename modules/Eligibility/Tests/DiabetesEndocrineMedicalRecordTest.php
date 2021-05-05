@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Customer\Tests\CustomerTestCase;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Validation\ValidationException;
 
 class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
@@ -15,7 +16,7 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
     public function expectedResult()
     {
         return [
-            'type'     => 'csv-with-json',
+            'type'     => Ccda::CSV_WITH_JSON,
             'document' => (object)
                 [
                     'custodian' => [
