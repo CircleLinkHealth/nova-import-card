@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
+use CircleLinkHealth\Customer\Console\Commands\CheckPatientRoles;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
@@ -36,6 +37,7 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             EraseTestEnrollees::class,
             Notifiable::class,
             DatabaseNotification::class,
+            CheckPatientRoles::class
         ];
     }
 
@@ -59,6 +61,7 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             CreateLocationsFromAthenaApi::class,
             ProcessPostmarkInboundMailCommand::class,
             EraseTestEnrollees::class,
+            CheckPatientRoles::class
         ]);
     }
 

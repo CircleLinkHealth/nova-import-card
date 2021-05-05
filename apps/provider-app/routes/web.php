@@ -629,7 +629,7 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => ['patientProgramSecurity'],
+        'middleware' => ['patientProgramSecurity', 'patientHasParticipantRole'],
     ], function () {
         Route::get('call', [
             'uses' => 'Patient\PatientController@showCallPatientPage',

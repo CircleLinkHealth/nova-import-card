@@ -17,6 +17,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled;
 use CircleLinkHealth\Core\Http\Middleware\SentryContext;
 use CircleLinkHealth\Customer\Http\Middleware\PatientProgramSecurity;
+use CircleLinkHealth\Customer\Middleware\PatientHasParticipantRole;
 use CircleLinkHealth\Customer\PracticeSettings\Http\Middleware\ProviderDashboardACL;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -99,16 +100,17 @@ class Kernel extends HttpKernel
         'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         //CLH Middleware
-        'ability'                => CerberusAbility::class,
-        'permission'             => CerberusPermission::class,
-        'patientProgramSecurity' => PatientProgramSecurity::class,
-        'role'                   => CerberusRole::class,
-        'verify.invite'          => CheckOnboardingInvite::class,
-        'check.careplan.mode'    => CheckCarePlanMode::class,
-        'checkPatientUserData'   => CheckPatientUserData::class,
-        'enrollmentCenter'       => EnrollmentCenter::class,
-        'careAmbassadorAPI'      => CareAmbassadorAPI::class,
-        'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
-        'providerDashboardACL'   => ProviderDashboardACL::class,
+        'ability'                   => CerberusAbility::class,
+        'permission'                => CerberusPermission::class,
+        'patientProgramSecurity'    => PatientProgramSecurity::class,
+        'patientHasParticipantRole' => PatientHasParticipantRole::class,
+        'role'                      => CerberusRole::class,
+        'verify.invite'             => CheckOnboardingInvite::class,
+        'check.careplan.mode'       => CheckCarePlanMode::class,
+        'checkPatientUserData'      => CheckPatientUserData::class,
+        'enrollmentCenter'          => EnrollmentCenter::class,
+        'careAmbassadorAPI'         => CareAmbassadorAPI::class,
+        'adminOrPracticeStaff'      => AdminOrPracticeStaff::class,
+        'providerDashboardACL'      => ProviderDashboardACL::class,
     ];
 }
