@@ -101,7 +101,7 @@ class AutoPullEnrolleesFromAthena extends \Illuminate\Console\Command
                     'connect_timeout' => 60,
                 ],
             ], config('queue.connections.sqs')),
-            'media',
+            config('filesystems.disks.media.bucket'),
             'https://sqs.us-east-1.amazonaws.com/670139022924/superadmin-low-production',
             Config::IF_NEEDED
         ));
@@ -258,7 +258,7 @@ class CustomSqsClient implements \AwsExtended\SqsClientInterface
     public function getS3Client()
     {
         if ( ! $this->s3Client) {
-            $this->s3Client = $client = new S3Client(
+            $this->s3Client = new S3Client(
                 [
                     'version'     => 'latest',
                     'credentials' => [
