@@ -191,7 +191,7 @@ class AutoPullEnrolleesFromAthena extends \Illuminate\Console\Command
 /**
  * Class SqsClient.
  */
-class CustomSqsClient implements SqsClientInterface
+class CustomSqsClient implements \AwsExtended\SqsClientInterface
 {
     /**
      * The client factory.
