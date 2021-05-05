@@ -189,7 +189,7 @@ class ImportEnrollee
             'json'        => $mr->toJson(),
             'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
-            'source'      => Ccda::CLH_GENERATED,
+            'source'      => Ccda::CSV_WITH_JSON,
         ];
 
         $enrolleeUser = $enrollee->user;
