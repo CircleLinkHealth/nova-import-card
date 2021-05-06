@@ -132,11 +132,10 @@ class MedicalRecordFactory
             return new PracticePullMedicalRecord($enrollee->mrn, $enrollee->practice_id);
         }
 
-        if (in_array($batchType, [
-            EligibilityBatch::TYPE_ONE_CSV,
-            EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE
-        ])){
-            return new CsvWithJsonMedicalRecord($enrollee->getEligibilityJob()->data);
+        $ej = $enrollee->getEligibilityJob();
+
+        if (! is_null($ej)){
+            return new CsvWithJsonMedicalRecord($ej->data);
         }
 
         return null;
