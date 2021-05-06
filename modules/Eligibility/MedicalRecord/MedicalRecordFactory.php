@@ -29,7 +29,7 @@ class MedicalRecordFactory
      */
     private $enrollee;
 
-    public static function create(User $user, ?Ccda $ccda)
+    public static function create(User $user, ?Ccda $ccda = null)
     {
         $static     = new static();
         $methodName = 'create'.ucfirst(Str::camel($user->primaryPractice->name)).'MedicalRecord';
@@ -42,7 +42,7 @@ class MedicalRecordFactory
             return $static->createDefaultMedicalRecord($user, $ccda);
         }
 
-        return $static->createMedicalRecordAccordingToEligibilityBatchType($user);
+        return $static->createMedicalRecordWithoutCcda($user);
     }
 
     public function createCameronMemorialMedicalRecord(User $user, ?Ccda $ccda)
@@ -124,7 +124,7 @@ class MedicalRecordFactory
         return $this->enrollee;
     }
 
-    private function createMedicalRecordAccordingToEligibilityBatchType(User $user)
+    private function createMedicalRecordWithoutCcda(User $user)
     {
         $enrollee = $this->getEligibilityJobWithTargetPatient($user);
 
