@@ -12,8 +12,8 @@ use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportFromBatch;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticePatientsReportJob;
 use CircleLinkHealth\CcmBilling\Jobs\GeneratePracticesQuickbooksReportJob;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Core\Jobs\ChainableJob;
 use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
@@ -44,20 +44,26 @@ class PracticesInvoicesService
                 ->approvedBillingStatuses($locationIds, $date)
                 ->chunkIntoJobsAndGetArray($patientsToProcessPerJob, new GeneratePracticePatientsReportJob($practiceId, $locationIds, $date->toDateString(), $batchId));
 
+            $chunkIds = collect($chunkedJobs)
+                ->map(fn (GeneratePracticePatientsReportJob $chunkedJob) => $chunkedJob->getChunkId())
+                ->toArray();
+
             $jobs   = array_merge($jobs, $chunkedJobs);
-            $jobs[] = new GeneratePracticePatientsReportFromBatch($practiceId, $date->toDateString(), $batchId);
+            $jobs[] = new GeneratePracticePatientsReportFromBatch($practiceId, $date->toDateString(), $batchId, $chunkIds);
         }
 
         $jobs[] = new GeneratePracticesQuickbooksReportJob($practices, $date->toDateString(), $format, $requestedByUserId, $batchId);
 
         Bus::chain($jobs)
-            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE))
+            // ->onConnection('sync')
+            ->onConnection('sqs-fifo')
+            ->onQueue(getCpmQueueName(CpmConstants::FIFO_QUEUE))
             ->dispatch();
     }
 
     private function getLocations(array $practiceIds): Collection
     {
-        return \CircleLinkHealth\Customer\Entities\Location::whereIn('practice_id', $practiceIds)
+        return Location::whereIn('practice_id', $practiceIds)
             ->get(['id', 'practice_id']);
     }
 }

@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 {
@@ -389,7 +390,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     if ( ! validProblemName($problem->Name)) {
                         return false;
                     }
-    
+
                     if ( ! isset($problem->Name, $problem->AddedDate, $problem->ResolveDate, $problem->Code, $problem->CodeType)) {
                         return false;
                     }
@@ -434,32 +435,32 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function getFirstName(): string
     {
-        return $this->data['first_name'];
+        return $this->data['first_name'] ?? '';
     }
 
     public function getLastName(): string
     {
-        return $this->data['last_name'];
+        return $this->data['last_name'] ?? '';
     }
 
     public function getMrn(): string
     {
-        return $this->data['mrn'] ?? $this->data['mrn_number'] ?? $this->data['patient_id'];
+        return $this->data['mrn'] ?? $this->data['mrn_number'] ?? $this->data['patient_id'] ?? '';
     }
 
     public function getProviderName(): string
     {
-        return $this->data['referring_provider_name'] ?? $this->data['preferred_provider'] ?? $this->data['provider'] ?? $this->data['provider_name'];
+        return $this->data['referring_provider_name'] ?? $this->data['preferred_provider'] ?? $this->data['provider'] ?? $this->data['provider_name'] ?? '';
     }
 
     public function getType(): string
     {
-        return 'csv-with-json';
+        return Ccda::CSV_WITH_JSON;
     }
 
     private function getAddressLine1(): string
     {
-        return $this->data['street'];
+        return $this->data['street'] ?? '';
     }
 
     private function getAddressLine2(): string
@@ -469,11 +470,11 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     private function getAllergyName($allergy): string
     {
-        return $allergy->Name ?? $allergy->name;
+        return $allergy->Name ?? $allergy->name ?? '';
     }
 
     private function getZipCode(): string
     {
-        return $this->data['zip'];
+        return $this->data['zip'] ?? '';
     }
 }

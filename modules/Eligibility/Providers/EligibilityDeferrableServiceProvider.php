@@ -15,6 +15,7 @@ use CircleLinkHealth\Eligibility\Console\Commands\UpdateHealthCenterOfSouthEastT
 use CircleLinkHealth\Eligibility\Console\CreatePCMListForCommonWealth;
 use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
+use CircleLinkHealth\Eligibility\Console\ReimportMultiplePatientMedicalRecords;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Console\RestoreEnrolleeProvidersFromRevisions;
@@ -44,6 +45,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,
             ReimportPatientMedicalRecord::class,
+            ReimportMultiplePatientMedicalRecords::class,
             ResetAthenaEligibilityBatch::class,
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
@@ -66,6 +68,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             GetCcds::class,
             PostPatientCarePlanAsAppointmentNote::class,
             ReimportPatientMedicalRecord::class,
+            ReimportMultiplePatientMedicalRecords::class,
             ResetAthenaEligibilityBatch::class,
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,

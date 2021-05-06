@@ -11,6 +11,7 @@ environments:
       - caller-low-production
       - caller-high-production
       - caller-revisionable-production
+      - caller-production.fifo
     scheduler: false
     mail: false
     concurrency: 50
@@ -27,6 +28,7 @@ environments:
       - caller-low-staging
       - caller-high-staging
       - caller-revisionable-staging
+      - caller-staging.fifo
     scheduler: false
     concurrency: 5
     mail: false

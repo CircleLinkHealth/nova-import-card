@@ -13,11 +13,19 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, ShouldQueue, ShouldBeEncrypted
 {
+    protected int $chunkId;
     protected int $limit;
 
     protected int $offset;
 
+    protected int $total;
+
     abstract public function getBuilder(): Builder;
+
+    public function getChunkId(): int
+    {
+        return $this->chunkId;
+    }
 
     public function getLimit(): int
     {
@@ -27,6 +35,18 @@ abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, Should
     public function getOffset(): int
     {
         return $this->offset;
+    }
+
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
+    public function setChunkId(int $chunkId): self
+    {
+        $this->chunkId = $chunkId;
+
+        return $this;
     }
 
     public function setLimit(int $limit): self
@@ -39,6 +59,13 @@ abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder, Should
     public function setOffset(int $offset): self
     {
         $this->offset = $offset;
+
+        return $this;
+    }
+
+    public function setTotal(int $total): self
+    {
+        $this->total = $total;
 
         return $this;
     }

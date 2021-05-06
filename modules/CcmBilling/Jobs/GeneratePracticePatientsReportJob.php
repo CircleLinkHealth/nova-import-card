@@ -57,13 +57,20 @@ class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
      */
     public function handle()
     {
-        Log::info("Invoices: Creating Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}");
+        $offset = $this->getOffset();
+        $limit  = $this->getLimit();
+        $total  = $this->getTotal();
+        Log::info("Invoices: Creating Practice Patient Report data for practice[{$this->practiceId}] and batch[{$this->batchId}]. Total[$total] | Offset[$offset] | Limit[$limit] | Chunk[$this->chunkId]");
         $data = $this->getBuilder()
             ->get()
             ->map(fn (PatientMonthlyBillingStatus $billingStatus) => (new GeneratePracticePatientReport())->setBillingStatus($billingStatus)->execute()->toCsvRow());
 
         $this->storeIntoCache($data);
-        Log::info("Invoices: Ending creation of Practice Patient Report data for practice: {$this->practiceId}, for batch: {$this->batchId}");
+
+        $dataCount = $data->count();
+        Log::channel('database')->debug("Batch[$this->batchId] | Practice[$this->practiceId] | Total[$total] | Offset[$offset] | Limit[$limit] | DataCount[$dataCount]");
+
+        Log::info("Invoices: Done creating Practice Patient Report data for practice[{$this->practiceId}] and batch[{$this->batchId}]. Total[$total] | Offset[$offset] | Limit[$limit] | Chunk[$this->chunkId]");
     }
 
     /**
@@ -83,6 +90,6 @@ class GeneratePracticePatientsReportJob extends ChunksEloquentBuilderJob
 
     private function storeIntoCache(Collection $data)
     {
-        app(BatchableStoreRepository::class)->store($this->batchId, $this->practiceId, BatchableStoreRepository::JSON_TYPE, $data->toArray());
+        app(BatchableStoreRepository::class)->store($this->batchId, BatchableStoreRepository::JSON_TYPE, $data->toArray(), $this->chunkId);
     }
 }

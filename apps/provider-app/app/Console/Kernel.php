@@ -40,6 +40,7 @@ use CircleLinkHealth\CcmBilling\Console\GenerateServiceSummariesForAllPracticeLo
 use CircleLinkHealth\CcmBilling\Console\ProcessAllPracticePatientMonthlyServicesCommand;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
+use CircleLinkHealth\Customer\Console\Commands\CheckPatientRoles;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -94,6 +95,10 @@ class Kernel extends ConsoleKernel
             ->when(function () {
                 return SendMonthlyNurseInvoiceLAN::shouldSend();
             })
+            ->doNotMonitor();
+
+        $schedule->command(CheckPatientRoles::class)
+            ->everyTwoHours()
             ->doNotMonitor();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)

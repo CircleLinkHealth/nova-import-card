@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
 {
@@ -135,7 +136,7 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
 
     public function getType(): string
     {
-        return 'commonwealth-pain-associates-pllc';
+        return Ccda::COMMONWEALTH_PAIN_ASSOCIATES_PLLC;
     }
 
     private function getAddressLine1(): string

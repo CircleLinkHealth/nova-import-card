@@ -48,6 +48,7 @@
     "laravel/framework": "^8.0",
     "laravel/tinker": "^2.0",
     "wildbit/swiftmailer-postmark": "*",
-    "nao-pon/flysystem-google-drive": "~1.1"
+    "nao-pon/flysystem-google-drive": "~1.1",
+    "shiftonelabs/laravel-sqs-fifo-queue": "^2.0"
   }
 }

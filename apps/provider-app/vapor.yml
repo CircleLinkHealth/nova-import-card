@@ -1,31 +1,6 @@
 id: 13482
 name: provider
 environments:
-    billing-attestation-hotfixes:
-        runtime: docker
-        domain: provider-billing-attestation-hotfixes.clh-staging.com
-        storage: cpm-staging-vapor-storage
-        memory: 512
-        cli-memory: 512
-        queue-memory: 512
-        timeout: 45
-        cli-timeout: 600
-        queue-timeout: 600
-        concurrency: 5
-        mail: false
-        queues:
-            - provider-billing-attestation-hotfixes-low-staging
-            - provider-billing-attestation-hotfixes-high-staging
-            - provider-billing-attestation-hotfixes-revisionable-staging
-        build:
-            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
-            - 'php artisan event:cache'
-            - 'npm ci && npm run prod'
-            - 'php artisan route:cache'
-        deploy:
-            - 'php artisan migrate --force'
-            - 'php artisan migrate:views'
-            - 'php artisan schedule-monitor:sync'
     production:
         domain:
             - careplanmanager.com
@@ -47,6 +22,7 @@ environments:
             - provider-low-production
             - provider-high-production
             - provider-revisionable-production
+            - provider-production.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
@@ -72,6 +48,7 @@ environments:
             - provider-low-staging
             - provider-high-staging
             - provider-revisionable-staging
+            - provider-staging.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'

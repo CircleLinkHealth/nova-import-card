@@ -7,9 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Exception;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class BatchableStoreRepository
 {
@@ -17,51 +18,54 @@ class BatchableStoreRepository
     const JSON_TYPE               = 'json';
     const MEDIA_TYPE              = 'media';
 
-    public function get(string $batchId, string $dataType = null): Collection
+    public function get(string $batchId, string $dataType, array $chunkIds = []): Collection
     {
-        $batch = Cache::get($batchId, []);
+        $batchItemsCount = sizeof($chunkIds);
 
-        return collect($batch)
-            ->when( ! is_null($dataType), fn ($coll) => $coll->where('data_type', '=', $dataType))
-            ->values()
-            ->map(function ($item) {
-                if (BatchableStoreRepository::JSON_TYPE === $item['data_type']) {
-                    $data = Cache::get($item['data']);
+        $result = collect();
+        if (empty($chunkIds)) {
+            // no chunks, just get one entry from cache
+            $chunkIds[] = '';
+        }
 
-                    return [
-                        'practice_id' => $item['practice_id'],
-                        'data_type'   => BatchableStoreRepository::JSON_TYPE,
-                        'data'        => $data,
-                    ];
-                }
+        foreach ($chunkIds as $chunkId) {
+            $item = $this->cache()->get($batchId.$dataType.$chunkId, null);
+            if ($item) {
+                $result->push($item);
+            }
+        }
 
-                return $item;
-            });
+        $jsonItemsCount = $result->count();
+        Log::channel('database')->debug("BatchableStoreRepository::get | Batch[$batchId] | RawItemsCount[$batchItemsCount] | JsonItemsCount[$jsonItemsCount]");
+
+        return $result;
     }
 
     /**
      * @param  mixed      $data
+     * @param  mixed|null $chunkId
      * @throws \Exception
      */
-    public function store(string $batchId, int $practiceId, string $dataType, $data)
+    public function store(string $batchId, string $dataType, $data, $chunkId = '')
     {
         if ( ! in_array($dataType, [self::JSON_TYPE, self::MEDIA_TYPE])) {
             throw new Exception('not supported data type');
         }
 
-        if (self::JSON_TYPE === $dataType) {
-            $uuid = $batchId.'_'.((string) Str::uuid());
-            Cache::put($uuid, $data, now()->addMinutes(60));
-            $data = $uuid;
-        }
-
-        $batch = Cache::get($batchId, []);
         $entry = [
-            'practice_id' => $practiceId,
-            'data_type'   => $dataType,
-            'data'        => $data,
+            'data_type' => $dataType,
+            'data'      => $data,
         ];
-        $batch[] = $entry;
-        Cache::put($batchId, $batch, now()->addMinutes(60));
+        $key = $batchId.$dataType.$chunkId;
+        $this->cache()->put($key, $entry, now()->addMinutes(self::EXPIRATION_TIME_MINUTES));
+
+        Log::channel('database')->debug("BatchableStoreRepository::store | Key[$key]");
+    }
+
+    private function cache(): Repository
+    {
+        $store = isProductionEnv() ? 'dynamodb' : 'redis';
+
+        return Cache::store($store);
     }
 }

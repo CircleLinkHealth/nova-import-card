@@ -8,13 +8,14 @@ namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Core\Tests\TestCase;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class MarillacMedicalRecordTest extends TestCase
 {
     public function expectedResult()
     {
         return [
-            'type'     => 'csv-with-json',
+            'type'     => Ccda::CSV_WITH_JSON,
             'document' => (object)
                 [
                     'custodian' => [

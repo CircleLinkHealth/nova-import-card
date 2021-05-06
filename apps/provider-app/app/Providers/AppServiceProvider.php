@@ -114,14 +114,18 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 $count = $this->count();
+                $index = 0;
                 $offset = 0;
 
                 while ($offset < $count) {
                     dispatch(
                         $job->setOffset($offset)
                             ->setLimit($limit)
+                            ->setTotal($count)
+                            ->setChunkId($index)
                     );
                     $offset = $offset + $limit;
+                    ++$index;
                 }
             }
         );
@@ -134,15 +138,21 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 $count = $this->count();
+                $index = 0;
                 $offset = 0;
 
                 $jobs = [];
 
                 while ($offset < $count) {
-                    $job->setOffset($offset);
-                    $job->setLimit($limit);
+                    /** @var ChunksEloquentBuilder $job */
+                    $job = unserialize(serialize($job));
+                    $job->setTotal($count)
+                        ->setOffset($offset)
+                        ->setLimit($limit)
+                        ->setChunkId($index);
                     $jobs[] = $job;
                     $offset = $offset + $limit;
+                    ++$index;
                 }
 
                 return $jobs;

@@ -114,6 +114,6 @@ class PracticeInvoiceController extends Controller
             return 12;
         }
 
-        return $startMonth->diffInMonths($oldestSummary->created_at) ?? 12;
+        return $startMonth->diffInMonths($oldestSummary->created_at->startOfMonth()) ?? 12;
     }
 }

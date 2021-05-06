@@ -26,25 +26,27 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
 
     private string $batchId;
 
+    private array $chunks;
+
     private Carbon $date;
 
     private int $practiceId;
 
-    public function __construct(int $practiceId, string $date, string $batchId)
+    public function __construct(int $practiceId, string $date, string $batchId, array $chunks)
     {
         $this->practiceId = $practiceId;
         $this->date       = Carbon::parse($date);
         $this->batchId    = $batchId;
+        $this->chunks     = $chunks;
     }
 
     public function handle()
     {
-        Log::info("Invoices: Creating Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
+        Log::info("Invoices: Creating Practice Patient Report from batch for practice[{$this->practiceId}] and batch[{$this->batchId}]");
         $batchRepo           = app(BatchableStoreRepository::class);
-        $batch               = $batchRepo->get($this->batchId);
-        $practicePatientData = collect($batch)
-            ->filter(fn ($item) => $item['practice_id'] === $this->practiceId)
-            ->map(fn ($item)    => $item['data'])
+        $batch               = collect($batchRepo->get($this->batchId, BatchableStoreRepository::JSON_TYPE, $this->chunks));
+        $practicePatientData = $batch
+            ->map(fn ($item) => $item['data'])
             ->flatten(1)
             ->toArray();
 
@@ -53,7 +55,12 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
             ->setPracticeId($this->practiceId)
             ->setPatientsData($practicePatientData)
             ->execute();
-        $batchRepo->store($this->batchId, $this->practiceId, BatchableStoreRepository::MEDIA_TYPE, $media->id);
+        $batchRepo->store($this->batchId, BatchableStoreRepository::MEDIA_TYPE, $media->id, $this->practiceId);
+
+        $batchItemsCount = $batch->count();
+        $patientsCount   = count($practicePatientData);
+        Log::channel('database')->debug("Batch[$this->batchId] | Practice[$this->practiceId] | BatchItemsCount[$batchItemsCount] | PatientsCount[$patientsCount] | Media[$media->id]");
+
         Log::info("Invoices: Ending creation Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
     }
 
