@@ -410,8 +410,8 @@ class ReimportPatientMedicalRecord extends Command
 
     private function clearExistingCpmGeneratedCcda():void
     {
-        $ccda = ($user = $this->getUser())->ccdas()->withTrashed()
-                                                   ->whereIn('source', Ccda::GENERATED_BY_CPM)
+        /** @var Ccda */
+        $ccda = ($user = $this->getUser())->ccdas()->whereIn('source', Ccda::GENERATED_BY_CPM)
                                                    ->orderBy('updated_at', 'desc')
                                                    ->first();
 
@@ -420,7 +420,7 @@ class ReimportPatientMedicalRecord extends Command
             return;
         }
 
-        $ccda->forceDelete();
+        $ccda->delete();
     }
     private function reimport(User $user): bool
     {
