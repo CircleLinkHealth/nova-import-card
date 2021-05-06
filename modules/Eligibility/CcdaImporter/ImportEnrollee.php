@@ -61,7 +61,7 @@ class ImportEnrollee
             return;
         }
 
-        if ($job = $static->eligibilityJob($enrollee)) {
+        if ($job = $enrollee->getEligibilityJob()) {
             $importedUsingMrn = $static->importCcdUsingMrnFromEligibilityJob($job, $enrollee);
 
             if (false !== $importedUsingMrn) {
@@ -80,16 +80,6 @@ class ImportEnrollee
         }
 
         Log::error("This should never be reached. enrollee: $enrollee->id");
-    }
-
-    private function eligibilityJob(Enrollee $enrollee)
-    {
-        if ($enrollee->eligibilityJob) {
-            return $enrollee->eligibilityJob;
-        }
-        $hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
-
-        return EligibilityJob::whereHash($hash)->first();
     }
 
     private function enrolleeAlreadyImported(Enrollee $enrollee)
@@ -189,7 +179,7 @@ class ImportEnrollee
             'json'        => $mr->toJson(),
             'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
-            'source'      => $mr->getType(),
+            'source'      => Ccda::CLH_GENERATED,
         ];
 
         $enrolleeUser = $enrollee->user;
