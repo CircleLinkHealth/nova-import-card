@@ -4,7 +4,10 @@
  */
 namespace CircleLinkHealth\CcmBilling\Jobs\ExportPatientProblemCodes;
 
-class ExportPatientProblemCodesForPracticeFromBatch
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class ExportPatientProblemCodesForPracticeFromBatch implements ShouldBeEncrypted, ShouldQueue
 {
 
 }
