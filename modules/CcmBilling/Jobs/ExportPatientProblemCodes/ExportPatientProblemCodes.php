@@ -63,9 +63,8 @@ class ExportPatientProblemCodes implements ShouldQueue, ShouldBeEncrypted
         $jobs[] = new GeneratePatientProblemCodesQuickbooksReportJob($this->requestorId, $batchId, $chunkIds);
 
         Bus::chain($jobs)
-             ->onConnection('sync')
-//           ->onConnection('sqs-fifo')
-//           ->onQueue(getCpmQueueName(CpmConstants::FIFO_QUEUE))
+           ->onConnection('sqs-fifo')
+           ->onQueue(getCpmQueueName(CpmConstants::FIFO_QUEUE))
            ->dispatch();
 
     }
