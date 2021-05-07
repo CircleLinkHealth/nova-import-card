@@ -6,10 +6,13 @@
 
 namespace CircleLinkHealth\Core\Providers;
 
+use CircleLinkHealth\Core\ChunksEloquentBuilder;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Notifications\PatientUnsuccessfulCallReplyNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +42,58 @@ class CoreServiceProvider extends ServiceProvider
         $this->registerFactories();
 
         $this->app->register(RouteServiceProvider::class);
+
+        EloquentBuilder::macro(
+            'chunkIntoJobsAndGetArray',
+            function (int $limit, ShouldQueue $job) {
+                if ( ! $job instanceof ChunksEloquentBuilder) {
+                    throw new \Exception('The Query Builder macro "chunkIntoJobsAndGetArray" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
+                }
+
+                $count = $this->count();
+                $index = 0;
+                $offset = 0;
+
+                $jobs = [];
+
+                while ($offset < $count) {
+                    /** @var ChunksEloquentBuilder $job */
+                    $job = unserialize(serialize($job));
+                    $job->setTotal($count)
+                        ->setOffset($offset)
+                        ->setLimit($limit)
+                        ->setChunkId($index);
+                    $jobs[] = $job;
+                    $offset = $offset + $limit;
+                    ++$index;
+                }
+
+                return $jobs;
+            }
+        );
+        EloquentBuilder::macro(
+            'chunkIntoJobs',
+            function (int $limit, ShouldQueue $job) {
+                if ( ! $job instanceof ChunksEloquentBuilder) {
+                    throw new \Exception('The Query Builder macro "chunkIntoJobs" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
+                }
+
+                $count = $this->count();
+                $index = 0;
+                $offset = 0;
+
+                while ($offset < $count) {
+                    dispatch(
+                        $job->setOffset($offset)
+                            ->setLimit($limit)
+                            ->setTotal($count)
+                            ->setChunkId($index)
+                    );
+                    $offset = $offset + $limit;
+                    ++$index;
+                }
+            }
+        );
     }
 
     /**

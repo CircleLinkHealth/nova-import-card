@@ -59,8 +59,9 @@ class GeneratePracticePatientsReportFromBatch implements ShouldQueue, ShouldBeEn
 
         $batchItemsCount = $batch->count();
         $patientsCount   = count($practicePatientData);
-        Log::channel('database')->debug("Batch[$this->batchId] | Practice[$this->practiceId] | BatchItemsCount[$batchItemsCount] | PatientsCount[$patientsCount] | Media[$media->id]");
 
+        Log::channel('database')
+           ->debug("Batch[$this->batchId] | Practice[$this->practiceId] | BatchItemsCount[$batchItemsCount] | PatientsCount[$patientsCount] | Media[$media->id]");
         Log::info("Invoices: Ending creation Practice Patient Report from batch for practice: {$this->practiceId}, for batch: {$this->batchId}");
     }
 

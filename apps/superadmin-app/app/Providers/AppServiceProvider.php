@@ -31,25 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //todo:move to core
-        EloquentBuilder::macro(
-            'chunkIntoJobs',
-            function (int $limit, ShouldQueue $job) {
-                if ( ! $job instanceof ChunksEloquentBuilder) {
-                    throw new \Exception('The Query Builder macro "chunkIntoJobs" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
-                }
 
-                $count = $this->count();
-                $offset = 0;
-
-                while ($offset < $count) {
-                    dispatch(
-                        $job->setOffset($offset)
-                            ->setLimit($limit)
-                    );
-                    $offset = $offset + $limit;
-                }
-            }
-        );
     }
 }

@@ -106,58 +106,6 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
-        EloquentBuilder::macro(
-            'chunkIntoJobs',
-            function (int $limit, ShouldQueue $job) {
-                if ( ! $job instanceof ChunksEloquentBuilder) {
-                    throw new \Exception('The Query Builder macro "chunkIntoJobs" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
-                }
-
-                $count = $this->count();
-                $index = 0;
-                $offset = 0;
-
-                while ($offset < $count) {
-                    dispatch(
-                        $job->setOffset($offset)
-                            ->setLimit($limit)
-                            ->setTotal($count)
-                            ->setChunkId($index)
-                    );
-                    $offset = $offset + $limit;
-                    ++$index;
-                }
-            }
-        );
-
-        EloquentBuilder::macro(
-            'chunkIntoJobsAndGetArray',
-            function (int $limit, ShouldQueue $job) {
-                if ( ! $job instanceof ChunksEloquentBuilder) {
-                    throw new \Exception('The Query Builder macro "chunkIntoJobsAndGetArray" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
-                }
-
-                $count = $this->count();
-                $index = 0;
-                $offset = 0;
-
-                $jobs = [];
-
-                while ($offset < $count) {
-                    /** @var ChunksEloquentBuilder $job */
-                    $job = unserialize(serialize($job));
-                    $job->setTotal($count)
-                        ->setOffset($offset)
-                        ->setLimit($limit)
-                        ->setChunkId($index);
-                    $jobs[] = $job;
-                    $offset = $offset + $limit;
-                    ++$index;
-                }
-
-                return $jobs;
-            }
-        );
 
         EloquentCollection::macro('forgetUsingModelKey', function (string $key, $value) {
             foreach ($this as $index => $model) {

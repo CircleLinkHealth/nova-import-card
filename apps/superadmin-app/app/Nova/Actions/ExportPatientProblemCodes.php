@@ -15,15 +15,7 @@ class ExportPatientProblemCodes extends Action
     use InteractsWithQueue;
     use Queueable;
 
-    protected $headings = [
-        'Practice',
-        'Patient ID',
-        'Patient Name',
-        'Problem Codes',
-    ];
-
     protected $filename;
-
 
     /**
      * Get the fields available on the action.
@@ -35,15 +27,15 @@ class ExportPatientProblemCodes extends Action
         return [];
     }
 
-
     /**
      * Perform the action on the given models.
      *
      * @return mixed
+     * @throws \Exception
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        Job::dispatch($models->pluck('id')->toArray())
+        Job::dispatch($models->pluck('id')->toArray(), auth()->user()->id)
            ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
 
         return Action::message('Generating Patient Problem Codes report. A link to the report will be sent via email when job is completed.');
