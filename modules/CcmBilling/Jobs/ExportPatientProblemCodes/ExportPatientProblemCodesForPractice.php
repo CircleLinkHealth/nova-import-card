@@ -57,10 +57,10 @@ class ExportPatientProblemCodesForPractice extends ChunksEloquentBuilderJob
                      ->get()
                      ->map(function (User $user) {
                          return [
-                             $user->getPrimaryPracticeName(),
-                             $user->id,
-                             $user->display_name,
-                             $this->formatProblemCodesForReport($user->ccdProblems),
+                             'Practice Name' => $user->getPrimaryPracticeName(),
+                             'Patient ID'    => $user->id,
+                             'Patient Name'  => $user->display_name,
+                             'Problem Codes' => $this->formatProblemCodesForReport($user->ccdProblems),
                          ];
                      });
 
