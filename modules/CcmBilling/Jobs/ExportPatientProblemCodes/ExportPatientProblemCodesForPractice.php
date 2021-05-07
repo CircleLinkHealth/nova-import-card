@@ -35,7 +35,7 @@ class ExportPatientProblemCodesForPractice extends ChunksEloquentBuilderJob
 
     public function getBuilder(): Builder
     {
-        return User::select(['id', 'display_name'])
+        return User::select(['id', 'display_name', 'program_id'])
                    ->ofPractice($this->practiceId)
                    ->ofType('participant')
                    ->whereHas('patientInfo', fn($q) => $q->enrolled())
