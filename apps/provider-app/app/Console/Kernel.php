@@ -97,10 +97,6 @@ class Kernel extends ConsoleKernel
             })
             ->doNotMonitor();
 
-        $schedule->command(CheckPatientRoles::class)
-            ->everyTwoHours()
-            ->doNotMonitor();
-
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyFifteenMinutes();
 
@@ -209,6 +205,10 @@ class Kernel extends ConsoleKernel
                 return SendResolveInvoiceDisputeReminder::shouldSkip();
             })
             ->doNotMonitor();
+
+        $schedule->command(CheckPatientRoles::class)
+                 ->dailyAt('09:00')
+                 ->doNotMonitor();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00');
