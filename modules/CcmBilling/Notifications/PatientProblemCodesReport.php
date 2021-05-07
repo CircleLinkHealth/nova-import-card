@@ -64,8 +64,7 @@ class PatientProblemCodesReport extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('CLH Patient Problem Codes Report')
-            ->greeting('Hello!')
-            ->line('Your report is ready for download!')
+            ->line('Your report is ready for download.')
             ->action('Download Report', $this->getSignedUrl($notifiable))
             ->line('Thank you for your patience!');
 
