@@ -37,16 +37,14 @@ class ExportPatientProblemCodes implements ShouldQueue, ShouldBeEncrypted
     public function handle()
     {
         $batchId                 = 'practices_invoices'.((string) Str::orderedUuid());
-
         $jobs = [];
-
 
         foreach ($this->practiceIds as $practiceId) {
             $chunkedJobs =  User::select(['id', 'display_name'])
                       ->ofPractice($practiceId)
                       ->ofType('participant')
                       ->whereHas('patientInfo', fn($q) => $q->enrolled())
-                      ->chunkIntoJobsAndGetArray(100, new ExportPatientProblemCodesForPractice());
+                      ->chunkIntoJobsAndGetArray(100, new ExportPatientProblemCodesForPractice($practiceId, $batchId));
 
             $chunkIds = collect($chunkedJobs)
                 ->map(fn (ExportPatientProblemCodesForPractice $chunkedJob) => $chunkedJob->getChunkId())
