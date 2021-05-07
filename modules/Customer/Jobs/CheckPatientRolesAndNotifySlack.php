@@ -30,7 +30,7 @@ class CheckPatientRolesAndNotifySlack implements ShouldQueue, ShouldBeEncrypted
 
         if (! empty($patientIds)){
             $string = implode(',', $patientIds);
-            sendSlackMessage('#cpm_general_alerts', "The following patients do are enrolled and do not have participant role: \n $string");
+            sendSlackMessage('#cpm_general_alerts', "The following patients are enrolled and do not have participant role: \n $string");
         }
     }
 }
