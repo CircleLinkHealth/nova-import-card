@@ -118,7 +118,6 @@ class AppServiceProvider extends ServiceProvider
                 $offset = 0;
 
                 while ($offset < $count) {
-                    $job = unserialize(serialize($job));
                     dispatch(
                         $job->setOffset($offset)
                             ->setLimit($limit)

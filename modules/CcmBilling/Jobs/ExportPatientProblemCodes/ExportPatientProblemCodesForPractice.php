@@ -66,7 +66,7 @@ class ExportPatientProblemCodesForPractice extends ChunksEloquentBuilderJob
 
         $this->storeIntoCache($data);
 
-        Log::info("Patient Problem Codes Report: Creating Patient Problem Codes report for practice[{$this->practiceId}] and batch[{$this->batchId}]. Total[$total] | Offset[$offset] | Limit[$limit] | Chunk[$this->chunkId]");
+        Log::info("Patient Problem Codes Report: Ending creation Patient Problem Codes report for practice[{$this->practiceId}] and batch[{$this->batchId}]. Total[$total] | Offset[$offset] | Limit[$limit] | Chunk[$this->chunkId]");
     }
 
     private function storeIntoCache(Collection $data): void

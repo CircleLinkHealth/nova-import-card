@@ -51,7 +51,7 @@ class ExportPatientProblemCodes implements ShouldQueue, ShouldBeEncrypted
                 ->toArray();
 
             $jobs   = array_merge($jobs, $chunkedJobs);
-            $jobs[] = new ExportPatientProblemCodesForPracticeFromBatch();
+            $jobs[] = new ExportPatientProblemCodesForPracticeFromBatch($practiceId, $batchId, $chunkIds);
         }
 
         $jobs[] = new GeneratePatientProblemCodesQuickbooksReportJob();
