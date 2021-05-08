@@ -7,14 +7,15 @@
 namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 
-class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
+class Medications implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
 {
     use Importable;
 
@@ -46,19 +47,6 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
         return 300;
     }
 
-    public function model(array $row)
-    {
-        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Medication([
-            'practice_id' => $this->practiceId,
-            'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['rx']),
-            'sig'         => $this->nullOrValue($row['sig']),
-            'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
-            'stop'        => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
-            'status'      => $this->nullOrValue($row['medstatus']),
-        ]);
-    }
-
     /**
      * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
      *
@@ -87,6 +75,20 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
             '#N/A',
             '-',
         ];
+    }
+
+    public function onRow(Row $row)
+    {
+        $created = Medication::updateOrCreate([
+            'practice_id' => $this->practiceId,
+            'mrn'         => $this->nullOrValue($row['patientid']),
+            'name'        => $this->nullOrValue($row['rx']),
+            'sig'         => $this->nullOrValue($row['sig']),
+            'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
+        ], [
+            'stop'   => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
+            'status' => $this->nullOrValue($row['medstatus']),
+        ]);
     }
 
     public function rules(): array
