@@ -49,6 +49,11 @@ class PracticePullFileInGoogleDrive implements Arrayable
     {
         return $this->name;
     }
+    
+    public function getFileNameWithoutExtension(): string
+    {
+        return pathinfo($this->getName())['filename'];
+    }
 
     public function getPath(): string
     {

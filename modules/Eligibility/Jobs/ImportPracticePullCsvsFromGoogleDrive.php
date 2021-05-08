@@ -65,7 +65,7 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
 
     private function firstOrCreateMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): Media
     {
-        $existing = $batch->media()->where('name', $file->getName())->first();
+        $existing = $batch->media()->where('name', $file->getFileNameWithoutExtension())->first();
 
         if ($existing) {
             return $existing;
