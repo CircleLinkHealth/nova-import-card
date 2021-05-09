@@ -8,8 +8,11 @@ namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
+use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
+use CircleLinkHealth\Eligibility\Jobs\ImportPracticePullCsvsFromGoogleDrive;
 use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityBatch;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -443,6 +446,20 @@ class EligibilityBatchController extends Controller
         return redirect()->route('eligibility.batch.show', [$updatedBatch->id]);
     }
 
+    public function processGoogleDrivePracticePullFile(EligibilityBatch $batch, Media $media)
+    {
+        ImportPracticePullCsvsFromGoogleDrive::dispatch(
+            $batch->id,
+            new PracticePullFileInGoogleDrive(
+                $media->getCustomProperty('name'),
+                $media->getCustomProperty('path'),
+                $media->getCustomProperty('typeOfData'),
+                $media->getCustomProperty('importer'),
+                $media->getCustomProperty('dispatchedAt'),
+            )
+        );
+    }
+
     public function show(Request $request, EligibilityBatch $batch)
     {
         if ($request->has('reprocess')) {
@@ -451,9 +468,9 @@ class EligibilityBatchController extends Controller
         }
 
         $batch->loadMissing([
-                         'practice',
-                         'media',
-                     ]);
+            'practice',
+            'media',
+        ]);
 
         $initiatorUser   = $batch->initiatorUser;
         $validationStats = $batch->getValidationStats();

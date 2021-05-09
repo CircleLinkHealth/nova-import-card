@@ -18,11 +18,11 @@ class PracticePullFileInGoogleDrive implements Arrayable
     protected string $path;
     protected string $typeOfData;
 
-    public function __construct(string $name, string $path, string $typeOfData, string $importer)
+    public function __construct(string $name, string $path, string $typeOfData, string $importer, ?Carbon $dispatchedAt = null)
     {
         $this->name         = $name;
         $this->path         = $path;
-        $this->dispatchedAt = now();
+        $this->dispatchedAt = $dispatchedAt ?? now();
         $this->typeOfData   = $typeOfData;
         $this->importer     = $importer;
     }
