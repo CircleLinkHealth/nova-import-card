@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
@@ -61,7 +62,7 @@ class ReimportPatientMedicalRecord extends Command
                 'patientUserId'   => $patientUserId,
                 'initiatorUserId' => $notifiableUserId,
             ], $args)
-        );
+        )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     /**
@@ -97,7 +98,7 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
     {
-        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic']) && ! empty($this->getEnrollee($user)) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
+        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic', 'health-center-of-southeast-texas']) && ! empty($this->getEnrollee($user)) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
             $this->warn(
                 $msg = "User[{$user->id}] Enrollee[{$this->getEnrollee($user)->id}]. Running 'csv-with-json' decorator."
             );
@@ -124,7 +125,7 @@ class ReimportPatientMedicalRecord extends Command
             if (empty($ccda ?? null)) {
                 $ccda = Ccda::create(
                     [
-                        'source'      => $mr->getType(),
+                        'source'      => Ccda::CLH_GENERATED,
                         'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
                         'patient_id'  => $user->id,
@@ -140,7 +141,7 @@ class ReimportPatientMedicalRecord extends Command
         if ($mr = MedicalRecordFactory::create($user, null)) {
             $ccda = Ccda::create(
                 [
-                    'source'      => $mr->getType(),
+                    'source'      => Ccda::CLH_GENERATED,
                     'json'        => $mr->toJson(),
                     'practice_id' => (int) $user->program_id,
                     'patient_id'  => $user->id,
@@ -409,8 +410,8 @@ class ReimportPatientMedicalRecord extends Command
 
     private function clearExistingCpmGeneratedCcda():void
     {
-        $ccda = ($user = $this->getUser())->ccdas()->withTrashed()
-                                                   ->whereIn('source', Ccda::GENERATED_BY_CPM)
+        /** @var Ccda */
+        $ccda = ($user = $this->getUser())->ccdas()->whereIn('source', Ccda::GENERATED_BY_CPM)
                                                    ->orderBy('updated_at', 'desc')
                                                    ->first();
 
@@ -419,7 +420,7 @@ class ReimportPatientMedicalRecord extends Command
             return;
         }
 
-        $ccda->forceDelete();
+        $ccda->delete();
     }
     private function reimport(User $user): bool
     {

@@ -80,15 +80,6 @@ class ProcessEligibilityBatch implements ShouldQueue, ShouldBeEncrypted
         }
     }
 
-    /**
-     * @throws \Exception
-     *
-     * @return EligibilityBatch|null
-     */
-    private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch)
-    {
-    }
-
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
         Bus::chain(array_merge(

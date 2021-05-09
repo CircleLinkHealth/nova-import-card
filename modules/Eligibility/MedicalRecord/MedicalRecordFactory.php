@@ -14,8 +14,10 @@ use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Support\Str;
@@ -27,7 +29,7 @@ class MedicalRecordFactory
      */
     private $enrollee;
 
-    public static function create(User $user, ?Ccda $ccda)
+    public static function create(User $user, ?Ccda $ccda = null)
     {
         $static     = new static();
         $methodName = 'create'.ucfirst(Str::camel($user->primaryPractice->name)).'MedicalRecord';
@@ -36,11 +38,11 @@ class MedicalRecordFactory
             return $static->{$methodName}($user, $ccda);
         }
 
-        if (is_null($ccda)) {
-            return null;
+        if (! is_null($ccda)) {
+            return $static->createDefaultMedicalRecord($user, $ccda);
         }
 
-        return $static->createDefaultMedicalRecord($user, $ccda);
+        return $static->createMedicalRecordWithoutCcda($user);
     }
 
     public function createCameronMemorialMedicalRecord(User $user, ?Ccda $ccda)
@@ -108,9 +110,10 @@ class MedicalRecordFactory
                 function ($q) use ($user) {
                     $q->whereNull('user_id')->orWhere('user_id', $user->id);
                 }
-            )->with(
-                'eligibilityJob.targetPatient.ccda'
-            )->has('eligibilityJob')->orderByRaw('care_ambassador_user_id, preferred_days, preferred_window, id desc')->firstOrFail();
+            )->with(['eligibilityJob' => fn ($q) => $q->with(['targetPatient.ccda', 'batch'])]
+            )->has('eligibilityJob')
+             ->orderByRaw('care_ambassador_user_id, preferred_days, preferred_window, id desc')
+             ->firstOrFail();
 
             if (is_null($this->enrollee->user_id)) {
                 $this->enrollee->user_id = $user->id;
@@ -119,5 +122,22 @@ class MedicalRecordFactory
         }
 
         return $this->enrollee;
+    }
+
+    private function createMedicalRecordWithoutCcda(User $user)
+    {
+        $enrollee = $this->getEligibilityJobWithTargetPatient($user);
+
+        if ($enrollee->source === Enrollee::SOURCE_PRACTICE_PULL || ($batchType = $enrollee->getBatchType()) === EligibilityBatch::PRACTICE_CSV_PULL_TEMPLATE){
+            return new PracticePullMedicalRecord($enrollee->mrn, $enrollee->practice_id);
+        }
+
+        $ej = $enrollee->getEligibilityJob();
+
+        if (! is_null($ej)){
+            return new CsvWithJsonMedicalRecord($ej->data);
+        }
+
+        return null;
     }
 }

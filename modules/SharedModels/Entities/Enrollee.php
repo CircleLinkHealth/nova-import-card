@@ -657,6 +657,24 @@ class Enrollee extends BaseModel
         return explode(',', $this->preferred_days);
     }
 
+    public function getBatchType(): ?string
+    {
+        if (is_null($this->eligibilityJob)){
+            return null;
+        }
+
+        return $this->eligibilityJob->batch->type;
+    }
+
+    public function getEligibilityJob() :? EligibilityJob
+    {
+        if ($this->eligibilityJob) {
+            return $this->eligibilityJob;
+        }
+        $hash = $this->practice->name.$this->first_name.$this->last_name.$this->mrn.$this->city.$this->state.$this->zip;
+
+        return EligibilityJob::whereHash($hash)->first();
+    }
     public function getPreferredCallTimes()
     {
         if (empty($this->preferred_window)) {
