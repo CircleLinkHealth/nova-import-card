@@ -39,12 +39,12 @@ class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachR
 
     public function batchSize(): int
     {
-        return 300;
+        return 100;
     }
 
     public function chunkSize(): int
     {
-        return 300;
+        return 100;
     }
 
     /**
