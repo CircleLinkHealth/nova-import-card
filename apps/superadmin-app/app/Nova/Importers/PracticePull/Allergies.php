@@ -6,14 +6,15 @@
 
 namespace App\Nova\Importers\PracticePull;
 
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 
-class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
+class Allergies implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
 {
     use Importable;
 
@@ -45,15 +46,6 @@ class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchI
         return 300;
     }
 
-    public function model(array $row)
-    {
-        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy([
-            'practice_id' => $this->practiceId,
-            'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['name']),
-        ]);
-    }
-
     /**
      * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
      *
@@ -82,5 +74,14 @@ class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchI
             '#N/A',
             '-',
         ];
+    }
+
+    public function onRow(Row $row)
+    {
+        Allergy::updateOrCreate([
+            'practice_id' => $this->practiceId,
+            'mrn'         => $this->nullOrValue($row['patientid']),
+            'name'        => $this->nullOrValue($row['name']),
+        ]);
     }
 }

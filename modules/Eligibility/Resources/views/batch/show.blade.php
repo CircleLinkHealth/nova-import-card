@@ -197,8 +197,19 @@
                                     {{$batch->media->count()}} Files pulled from Google Drive
                                 </div>
                                 <div class="panel-body">
-                                    @foreach($batch->media as $media)
-                                        <p>{{$media->file_name}}</p>
+                                    @foreach($batch->media->sortBy('file_name') as $media)
+                                        <div class="col-md-4">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    {{$media->file_name}}
+                                                </div>
+                                                <div class="panel-body">
+                                                    <p>Type: {{$media->getCustomProperty('typeOfData') ?? 'N/A'}}</p>
+                                                    <p>Started Processing at: {{presentDate($media->getCustomProperty('dispatchedAt'))}}</p>
+                                                    <a target="_blank" href="{{route('post.eligibility.process.google.drive.practice-pull.file', ['media' => $media->id, 'batch' => $batch->id])}}">(Re)process</a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 </div>
                                 @endif

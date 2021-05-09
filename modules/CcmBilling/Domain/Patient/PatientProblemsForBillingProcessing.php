@@ -28,9 +28,9 @@ class PatientProblemsForBillingProcessing
         ChargeableService::PCM                     => 1,
         ChargeableService::RPM                     => 1,
     ];
+    protected ?Carbon $month = null;
     protected ?User $patient;
     protected int $patientId;
-    protected ?Carbon $month = null;
 
     protected PatientServiceProcessorRepository $repo;
 
@@ -65,16 +65,17 @@ class PatientProblemsForBillingProcessing
             ->getProblems();
     }
 
-    public function setMonth(Carbon $month):self
-    {
-        $this->month = $month;
-        return $this;
-    }
-
     public static function getForCodes(int $patientId, array $codes): Collection
     {
         return self::getCollection($patientId)
             ->filter(fn (PatientProblemForProcessing $p) => 0 != count(array_intersect($codes, $p->getServiceCodes())));
+    }
+
+    public function setMonth(Carbon $month): self
+    {
+        $this->month = $month;
+
+        return $this;
     }
 
     private function getProblems(): Collection
@@ -85,7 +86,7 @@ class PatientProblemsForBillingProcessing
 
         $month = $this->month ?? Carbon::now()->startOfMonth();
 
-        return $this->patient->ccdProblems->map(function (Problem $p) use ($month){
+        return $this->patient->ccdProblems->map(function (Problem $p) use ($month) {
             return (new PatientProblemForProcessing())
                 ->setId($p->id)
                 ->setCode($p->icd10Code())
@@ -123,15 +124,7 @@ class PatientProblemsForBillingProcessing
 
         $services = [];
 
-        $locationHasRhc = ! is_null(
-            $this->patient
-                ->patientInfo
-                ->location
-                ->chargeableServiceSummaries
-                ->firstWhere('chargeableService.code', ChargeableService::GENERAL_CARE_MANAGEMENT)
-        );
-
-        if ($locationHasRhc) {
+        if ($this->locationHasRhc($this->patient)) {
             return [
                 ChargeableService::GENERAL_CARE_MANAGEMENT,
             ];
@@ -186,6 +179,25 @@ class PatientProblemsForBillingProcessing
         }
 
         return $services;
+    }
+
+    private function locationHasRhc(User $patient): bool
+    {
+        if (is_null($patient->patientInfo)) {
+            return false;
+        }
+        
+        if (is_null($patient->patientInfo->location)) {
+            return false;
+        }
+
+        return ! is_null(
+            $patient
+                ->patientInfo
+                ->location
+                ->chargeableServiceSummaries
+                ->firstWhere('chargeableService.code', ChargeableService::GENERAL_CARE_MANAGEMENT)
+        );
     }
 
     private function repo(): PatientServiceProcessorRepository

@@ -77,11 +77,9 @@ class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, Should
                     ])->map(function ($driveFile) use (&$filesToImport, $driveFolder, $batch, $batchId) {
                         if ($batch->media->where('file_name', str_replace(' ', '-', $driveFile['name']))->isNotEmpty()) {
                             \Log::debug("EligibilityBatch[{$batchId}] read job[{$driveFolder['name']}][{$driveFile['name']}] already exists");
-
-                            return false;
+                        } else {
+                            \Log::debug("EligibilityBatch[{$batchId}] create read job[{$driveFolder['name']}][{$driveFile['name']}]");
                         }
-
-                        \Log::debug("EligibilityBatch[{$batchId}] create read job[{$driveFolder['name']}][{$driveFile['name']}]");
 
                         return new ImportPracticePullCsvsFromGoogleDrive($batchId, new PracticePullFileInGoogleDrive($driveFile['name'], $driveFile['path'], $driveFolder['name'], $this->importers($driveFolder['name'])));
                     })->filter();

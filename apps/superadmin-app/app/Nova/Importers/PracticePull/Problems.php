@@ -10,12 +10,12 @@ use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 
-class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
+class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
 {
     use Importable;
 
@@ -39,26 +39,12 @@ class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchIn
 
     public function batchSize(): int
     {
-        return 300;
+        return 100;
     }
 
     public function chunkSize(): int
     {
-        return 300;
-    }
-
-    public function model(array $row)
-    {
-        return new Problem([
-            'practice_id' => $this->practiceId,
-            'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['name']),
-            'code'        => $this->nullOrValue($row['code']),
-            'code_type'   => $this->nullOrValue($row['codetype']),
-            'start'       => $row['addeddate'] ? Carbon::parse($row['addeddate']) : null,
-            'stop'        => $row['resolvedate'] ? Carbon::parse($row['resolvedate']) : null,
-            'status'      => $this->nullOrValue($row['status']),
-        ]);
+        return 100;
     }
 
     /**
@@ -89,6 +75,28 @@ class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchIn
             '#N/A',
             '-',
         ];
+    }
+
+    public function onRow(Row $row)
+    {
+        Problem::updateOrCreate(
+            [
+                'practice_id' => $this->practiceId,
+                'mrn'         => $this->nullOrValue($row['patientid']),
+                'name'        => $this->nullOrValue($row['name']),
+                'code'        => $this->nullOrValue($row['code']),
+                'code_type'   => $this->nullOrValue($row['codetype']),
+                'start'       => $row['addeddate']
+                    ? Carbon::parse($row['addeddate'])
+                    : null,
+            ],
+            [
+                'stop' => $row['resolvedate']
+                    ? Carbon::parse($row['resolvedate'])
+                    : null,
+                'status' => $this->nullOrValue($row['status']),
+            ]
+        );
     }
 
     public function rules(): array
