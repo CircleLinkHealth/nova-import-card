@@ -6,7 +6,6 @@
 
 namespace App\Nova\Importers;
 
-use App\Search\LocationByName;
 use App\User;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;

@@ -7,6 +7,7 @@
 namespace App\Nova\Actions;
 
 use App\Nova\Importers\Enrollees;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
@@ -20,7 +21,6 @@ use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
-use CircleLinkHealth\Customer\Entities\Media;
 
 class ImportEnrollees extends Action
 {

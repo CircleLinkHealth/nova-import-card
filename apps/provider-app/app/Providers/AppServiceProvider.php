@@ -8,7 +8,6 @@ namespace App\Providers;
 
 use App\Notifications\Channels\FaxChannel;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\ChunksEloquentBuilder;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\NotificationStrategies\SendsNotification;
 use CircleLinkHealth\Core\Providers\EmailArrayValidatorServiceProvider;
@@ -18,7 +17,6 @@ use CircleLinkHealth\SharedModels\Services\AWV\EmailPatientDocument;
 use CircleLinkHealth\SharedModels\Services\AWV\FaxPatientDocument;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factory;
@@ -105,7 +103,6 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
-
 
         EloquentCollection::macro('forgetUsingModelKey', function (string $key, $value) {
             foreach ($this as $index => $model) {

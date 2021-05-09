@@ -6,9 +6,6 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\Core\ChunksEloquentBuilder;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +28,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
 }
