@@ -454,8 +454,7 @@ class EligibilityBatchController extends Controller
                 $media->getCustomProperty('name'),
                 $media->getCustomProperty('path'),
                 $media->getCustomProperty('typeOfData'),
-                $media->getCustomProperty('importer'),
-                $media->getCustomProperty('dispatchedAt'),
+                $media->getCustomProperty('importer')
             )
         );
     }
