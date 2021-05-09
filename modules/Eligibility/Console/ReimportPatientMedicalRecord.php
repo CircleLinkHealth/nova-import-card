@@ -125,7 +125,7 @@ class ReimportPatientMedicalRecord extends Command
             if (empty($ccda ?? null)) {
                 $ccda = Ccda::create(
                     [
-                        'source'      => $mr->getType(),
+                        'source'      => Ccda::CLH_GENERATED,
                         'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
                         'patient_id'  => $user->id,
@@ -141,7 +141,7 @@ class ReimportPatientMedicalRecord extends Command
         if ($mr = MedicalRecordFactory::create($user, null)) {
             $ccda = Ccda::create(
                 [
-                    'source'      => $mr->getType(),
+                    'source'      => Ccda::CLH_GENERATED,
                     'json'        => $mr->toJson(),
                     'practice_id' => (int) $user->program_id,
                     'patient_id'  => $user->id,
