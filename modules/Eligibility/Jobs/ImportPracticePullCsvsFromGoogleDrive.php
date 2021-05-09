@@ -15,7 +15,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -49,18 +48,24 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         }
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
-    
+
         $importerClass = $this->file->getImporter();
         $importer      = new $importerClass($batch->practice_id);
-        $path = $media->getPath();
+        $path          = $media->getPath();
 
         try {
+            $this->startLog($media, $this->file)->save();
             Excel::import($importer, $path, 'media');
             $this->file->setFinishedProcessingAt(now());
-            $this->log($media, $this->file)->save();
+            $this->endLog($media, $this->file)->save();
         } catch (\Exception $e) {
             \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }
+    }
+
+    private function endLog(Media $media, PracticePullFileInGoogleDrive $file): Media
+    {
+        return $media->setCustomProperty('finishedProcessingAt', $file->getFinishedProcessingAt());
     }
 
     private function firstOrCreateMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): Media
@@ -80,10 +85,9 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
             ->toMediaCollection($file->getTypeOfData());
     }
 
-    private function log(Media $media, PracticePullFileInGoogleDrive $file): Media
+    private function startLog(Media $media, PracticePullFileInGoogleDrive $file): Media
     {
         $media->setCustomProperty('dispatchedAt', $file->getDispatchedAt());
-        $media->setCustomProperty('finishedProcessingAt', $file->getFinishedProcessingAt());
         $media->setCustomProperty('importer', $file->getImporter());
         $media->setCustomProperty('name', $file->getName());
         $media->setCustomProperty('path', $file->getPath());

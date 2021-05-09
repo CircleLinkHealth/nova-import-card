@@ -95,7 +95,6 @@ class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachR
                     ? Carbon::parse($row['resolvedate'])
                     : null,
                 'status' => $this->nullOrValue($row['status']),
-
             ]
         );
     }
