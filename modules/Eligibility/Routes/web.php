@@ -118,6 +118,11 @@ Route::prefix('eligibility')->group(function () {
                     'uses' => 'EligibilityBatchController@postReprocess',
                     'as'   => 'post.eligibility.reprocess',
                 ])->middleware('permission:enrollee.read');
+                
+                Route::get('/process-google-drive-practice-pull-file/{media}', [
+                    'uses' => 'EligibilityBatchController@processGoogleDrivePracticePullFile',
+                    'as'   => 'post.eligibility.process.google.drive.practice-pull.file',
+                ])->middleware('permission:enrollee.read');
 
                 Route::get('/last-import-session-logs', [
                     'uses' => 'EligibilityBatchController@getLastImportLog',
