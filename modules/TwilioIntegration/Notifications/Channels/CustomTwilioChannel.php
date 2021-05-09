@@ -71,7 +71,7 @@ class CustomTwilioChannel extends TwilioChannel
             }
 
             if (DuplicateNotificationChecker::hasAlreadySentNotification($notifiable, $notification, 'twilio')) {
-                throw new CannotSendNotificationException('Notification has already be sent. Please check DB.');
+                throw new CannotSendNotificationException('Notification has already been sent. Please check DB.');
             }
 
             $to = $this->getTo($notifiable);
