@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\LargePayloadSqsQueue\Queue;
 
+use CircleLinkHealth\LargePayloadSqsQueue\Constants;
 use CircleLinkHealth\LargePayloadSqsQueue\Jobs\LargePayloadJob;
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Support\Facades\Storage;
@@ -14,30 +15,12 @@ use function tap;
 
 class LargePayloadSqsQueue extends SqsQueue
 {
-    /**
-     * The maximum size that SQS can accept.
-     */
-    const MAX_SQS_SIZE_KB = 256;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isTooBig($message, $max_size = null)
-    {
-        $max_size = $max_size
-            ?: static::MAX_SQS_SIZE_KB;
-
-        return strlen($message) > $max_size * 1024;
-    }
-
     public function pushRaw($payload, $queue = null, array $options = [])
     {
         $key = $this->storePayloadInS3($payload);
         $bucket = $this->payloadS3BucketName();
 
-        $s3Pointer = $this->createPayload(new LargePayloadJob($key, $bucket));
-        
-        json_encode([
+        $s3Pointer = $this->createPayload(new LargePayloadJob($key, $bucket), $this->getQueueName(), [
             's3BucketName' => $bucket,
             's3Key'        => $key,
         ]);
@@ -63,7 +46,7 @@ class LargePayloadSqsQueue extends SqsQueue
 
     private function payloadS3BucketName()
     {
-        return 'media';
+        return Constants::S3_BUCKET;
     }
     
     /**
@@ -81,5 +64,12 @@ class LargePayloadSqsQueue extends SqsQueue
                 $payload
             );
         });
+    }
+    
+    private function getQueueName()
+    {
+        $driver = Constants::DRIVER;
+        
+        return config("queue.connections.$driver.queue");
     }
 }

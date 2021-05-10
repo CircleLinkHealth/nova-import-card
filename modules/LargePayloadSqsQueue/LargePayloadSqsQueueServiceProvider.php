@@ -67,7 +67,7 @@ class LargePayloadSqsQueueServiceProvider extends ServiceProvider
      */
     public function registerConnectors($manager)
     {
-        $manager->extend('sqs-large-payload', function () {
+        $manager->extend(Constants::DRIVER, function () {
             return new Connector();
         });
     }
