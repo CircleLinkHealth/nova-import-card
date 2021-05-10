@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\LargePayloadSqsQueue\Traits;
+namespace CircleLinkHealth\LargePayloadSqsJob\Traits;
 
-use CircleLinkHealth\LargePayloadSqsQueue\Constants;
+use CircleLinkHealth\LargePayloadSqsJob\Constants;
 use Illuminate\Support\Facades\Storage;
 
 trait LargePayloadS3Client

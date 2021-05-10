@@ -229,6 +229,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/LargePayloadSqsJob",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {
@@ -253,6 +260,7 @@
         "circlelinkhealth/condition-code-lookup-module": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/cpm-admin-module": "*",
+        "circlelinkhealth/large-payload-sqs-job-module": "*",
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/eligibility-module": "*",

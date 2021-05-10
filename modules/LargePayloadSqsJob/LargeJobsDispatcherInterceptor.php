@@ -1,11 +1,11 @@
 <?php
 
 
-namespace CircleLinkHealth\LargePayloadSqsQueue;
+namespace CircleLinkHealth\LargePayloadSqsJob;
 
 
-use CircleLinkHealth\LargePayloadSqsQueue\Jobs\LargePayloadJob;
-use CircleLinkHealth\LargePayloadSqsQueue\Traits\LargePayloadS3Client;
+use CircleLinkHealth\LargePayloadSqsJob\Jobs\JobWithLargePayload;
+use CircleLinkHealth\LargePayloadSqsJob\Traits\LargePayloadS3Client;
 use Illuminate\Support\Str;
 
 class LargeJobsDispatcherInterceptor
@@ -13,14 +13,15 @@ class LargeJobsDispatcherInterceptor
     use LargePayloadS3Client;
     
     public function handle($job) {
-        if (! $this->payloadIsTooLarge($job->payload())) {
+        $payload = $job->payload();
+        if (! $this->payloadIsTooLarge($payload)) {
             return;
         }
     
-        $key = $this->storeLargeJobInS3($job);
+        $key = $this->storeLargeJobInS3($payload);
         $job->delete();
         
-        LargePayloadJob::dispatch($key, $this->payloadS3BucketName());
+        JobWithLargePayload::dispatch($key, $this->payloadS3BucketName());
     }
     
     private function payloadIsTooLarge(array $payload) :bool {

@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\LargePayloadSqsQueue\LargeJobsDispatcherInterceptor;
+use CircleLinkHealth\LargePayloadSqsJob\LargeJobsDispatcherInterceptor;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Queue;

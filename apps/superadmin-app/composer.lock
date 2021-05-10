@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "df2b38fa8a73c3600fba9c3a32a94e5e",
+    "content-hash": "1cea93d649440f50c7b69968ec0d19de",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -516,7 +516,7 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcdaParser",
@@ -559,7 +559,7 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CcmBilling",
@@ -617,7 +617,7 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CerberusGatekeeper",
@@ -701,7 +701,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -737,7 +737,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -773,7 +773,7 @@
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/ConditionCodeLookup",
@@ -812,11 +812,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Core",
-                "reference": "14a767bd0e8f72e13378a85e5665f3863a581195"
+                "reference": "ed4bfdfb9a4629057f36a3278a7524520ada4228"
             },
             "require": {
                 "darkghosthunter/laraload": "dev-master",
@@ -835,7 +835,6 @@
                 "nao-pon/flysystem-google-drive": "~1.1",
                 "scoutapp/scout-apm-laravel": "^1.8",
                 "sentry/sentry-laravel": "^2.3",
-                "shiftonelabs/laravel-sqs-fifo-queue": "^2.0",
                 "spatie/laravel-view-models": "^1.3",
                 "wildbit/swiftmailer-postmark": "*",
                 "yajra/laravel-datatables-oracle": "~9.0"
@@ -926,7 +925,7 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/CpmMigrations",
@@ -957,7 +956,7 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Customer",
@@ -1007,7 +1006,7 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Eligibility",
@@ -1045,7 +1044,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1081,7 +1080,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1117,7 +1116,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1154,7 +1153,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -1185,6 +1184,41 @@
                 "nova"
             ],
             "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "circlelinkhealth/large-payload-sqs-job-module",
+            "version": "dev-CU-jhad78_Support-Large-AWS-Jobs_Michalis-Antoniou",
+            "dist": {
+                "type": "path",
+                "url": "../../modules/LargePayloadSqsJob",
+                "reference": "c034efead3f7d9d9e1eedb46b14f7cb58d20628a"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "ext-json": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\LargePayloadSqsJob\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "transport-options": {
+                "symlink": true,
                 "relative": true
             }
         },
@@ -1225,7 +1259,7 @@
         },
         {
             "name": "circlelinkhealth/pdf-service-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/PdfService",
@@ -1270,7 +1304,7 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Raygun",
@@ -1360,7 +1394,7 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SamlSp",
@@ -1401,7 +1435,7 @@
         },
         {
             "name": "circlelinkhealth/self-enrollment-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SelfEnrollment",
@@ -1426,7 +1460,7 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedModels",
@@ -1454,7 +1488,7 @@
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SharedVueComponents",
@@ -1485,7 +1519,7 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/SqlViews",
@@ -1524,7 +1558,7 @@
         },
         {
             "name": "circlelinkhealth/synonyms-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/Synonyms",
@@ -1633,7 +1667,7 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/TwoFA",
@@ -3497,16 +3531,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.173.0",
+            "version": "v0.174.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "9034b5ba3e25c9ad8e49b6457b9cad21fd9d9847"
+                "reference": "004c5280f5a26a8acbb6f6af6a792e4872b7648a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/9034b5ba3e25c9ad8e49b6457b9cad21fd9d9847",
-                "reference": "9034b5ba3e25c9ad8e49b6457b9cad21fd9d9847",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/004c5280f5a26a8acbb6f6af6a792e4872b7648a",
+                "reference": "004c5280f5a26a8acbb6f6af6a792e4872b7648a",
                 "shasum": ""
             },
             "require": {
@@ -3530,7 +3564,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2021-05-02T11:20:02+00:00"
+            "time": "2021-05-08T11:20:03+00:00"
         },
         {
             "name": "google/auth",
@@ -9610,71 +9644,6 @@
             "time": "2021-05-06T07:49:08+00:00"
         },
         {
-            "name": "shiftonelabs/laravel-sqs-fifo-queue",
-            "version": "2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shiftonelabs/laravel-sqs-fifo-queue.git",
-                "reference": "b9b4f6a2ad9e28381f2516cc58205007da62b987"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shiftonelabs/laravel-sqs-fifo-queue/zipball/b9b4f6a2ad9e28381f2516cc58205007da62b987",
-                "reference": "b9b4f6a2ad9e28381f2516cc58205007da62b987",
-                "shasum": ""
-            },
-            "require": {
-                "aws/aws-sdk-php": "~3.0",
-                "illuminate/queue": ">=4.1",
-                "illuminate/support": ">=4.1",
-                "php": ">=5.5.0",
-                "ramsey/uuid": ">=3.0"
-            },
-            "require-dev": {
-                "illuminate/encryption": ">=4.1",
-                "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~4.0",
-                "shiftonelabs/codesniffer-standard": "0.*",
-                "squizlabs/php_codesniffer": "2.*",
-                "vlucas/phpdotenv": "~2.2"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "ShiftOneLabs\\LaravelSqsFifoQueue\\LaravelSqsFifoQueueServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ShiftOneLabs\\LaravelSqsFifoQueue\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Patrick Carlo-Hickman",
-                    "email": "patrick@shiftonelabs.com"
-                }
-            ],
-            "description": "Adds a Laravel queue driver for Amazon SQS FIFO queues.",
-            "homepage": "https://github.com/shiftonelabs/laravel-sqs-fifo-queue",
-            "keywords": [
-                "aws",
-                "fifo",
-                "illuminate",
-                "laravel",
-                "lumen",
-                "queue",
-                "sqs"
-            ],
-            "time": "2020-09-09T22:18:22+00:00"
-        },
-        {
             "name": "sloveniangooner/searchable-select",
             "version": "1.3.2",
             "source": {
@@ -9985,7 +9954,7 @@
         },
         {
             "name": "spatie/laravel-schedule-monitor",
-            "version": "dev-master",
+            "version": "dev-updates_spatie",
             "dist": {
                 "type": "path",
                 "url": "../../modules/LaravelScheduleMonitor",
@@ -13915,16 +13884,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "dev-master",
+            "version": "2.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "649087d6de158dc4da73a06c7759dec5932be5a5"
+                "reference": "986e8b86b7b570632ad0a905c3726c33dd4c0efb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/649087d6de158dc4da73a06c7759dec5932be5a5",
-                "reference": "649087d6de158dc4da73a06c7759dec5932be5a5",
+                "url": "https://api.github.com/repos/composer/composer/zipball/986e8b86b7b570632ad0a905c3726c33dd4c0efb",
+                "reference": "986e8b86b7b570632ad0a905c3726c33dd4c0efb",
                 "shasum": ""
             },
             "require": {
@@ -13932,7 +13901,7 @@
                 "composer/metadata-minifier": "^1.0",
                 "composer/semver": "^3.0",
                 "composer/spdx-licenses": "^1.2",
-                "composer/xdebug-handler": "^2.0",
+                "composer/xdebug-handler": "^1.1",
                 "justinrainbow/json-schema": "^5.2.10",
                 "php": "^5.3.2 || ^7.0 || ^8.0",
                 "psr/log": "^1.0",
@@ -13959,7 +13928,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -14004,7 +13973,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-04T14:47:54+00:00"
+            "time": "2021-04-27T11:11:08+00:00"
         },
         {
             "name": "composer/metadata-minifier",
@@ -14223,16 +14192,16 @@
         },
         {
             "name": "composer/xdebug-handler",
-            "version": "2.0.1",
+            "version": "1.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/xdebug-handler.git",
-                "reference": "964adcdd3a28bf9ed5d9ac6450064e0d71ed7496"
+                "reference": "f27e06cd9675801df441b3656569b328e04aa37c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/964adcdd3a28bf9ed5d9ac6450064e0d71ed7496",
-                "reference": "964adcdd3a28bf9ed5d9ac6450064e0d71ed7496",
+                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/f27e06cd9675801df441b3656569b328e04aa37c",
+                "reference": "f27e06cd9675801df441b3656569b328e04aa37c",
                 "shasum": ""
             },
             "require": {
@@ -14278,7 +14247,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-05T19:37:51+00:00"
+            "time": "2021-03-25T17:01:18+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",

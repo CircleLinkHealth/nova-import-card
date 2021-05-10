@@ -1,7 +1,7 @@
 <?php
 
 
-namespace CircleLinkHealth\LargePayloadSqsQueue;
+namespace CircleLinkHealth\LargePayloadSqsJob;
 
 
 class Constants

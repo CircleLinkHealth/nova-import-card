@@ -15,6 +15,9 @@
         <testsuite name="Core">
             <directory suffix="Test.php">./vendor/circlelinkhealth/core-module/tests</directory>
         </testsuite>
+        <testsuite name="LargePayloadSqsJob">
+            <directory suffix="Test.php">./vendor/circlelinkhealth/large-payload-sqs-job-module/tests</directory>
+        </testsuite>
     </testsuites>
     <php>
         <!--BUG: Laravel does NOT pick test env during testing.-->

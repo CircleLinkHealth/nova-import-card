@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\LargePayloadSqsQueue\Jobs;
+namespace CircleLinkHealth\LargePayloadSqsJob\Jobs;
 
-use CircleLinkHealth\LargePayloadSqsQueue\Traits\LargePayloadS3Client;
+use CircleLinkHealth\LargePayloadSqsJob\Traits\LargePayloadS3Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class LargePayloadJob implements ShouldQueue
+class JobWithLargePayload implements ShouldQueue
 {
     use Dispatchable;
     use LargePayloadS3Client;
@@ -43,6 +43,10 @@ class LargePayloadJob implements ShouldQueue
      */
     public function handle()
     {
-        app(Dispatcher::class)->dispatchNow(unserialize($this->getS3Client()->get($this->key)));
+        $message = unserialize($this->getS3Client()->get($this->key));
+    
+        $job = unserialize($message['data']['command'] ?? []);
+        
+        app(Dispatcher::class)->dispatchNow($job);
     }
 }
