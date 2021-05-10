@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\Core\Utilities\JsonFixer;
 
 class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 {
@@ -28,7 +29,13 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
             return [];
         }
 
-        return collect(collect(json_decode($this->data['allergies_string']))->first())
+        $decoded = json_decode($this->data['allergies_string']);
+
+        if (is_null($decoded)){
+            $decoded = json_decode(JsonFixer::attemptFix($this->data['allergies_string']));
+        }
+
+        return collect(collect($decoded)->first())
             ->map(
                 function ($allergy) {
                     if ( ! validAllergyName($this->getAllergyName($allergy))) {
@@ -270,9 +277,20 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
             return [];
         }
 
-        return collect(collect(json_decode($this->data['medications_string']))->first())
+        $decoded = json_decode($this->data['problems_string']);
+
+        if (is_null($decoded)){
+            $decoded = json_decode(JsonFixer::attemptFix($this->data['medications_string']));
+        }
+
+        return collect(collect($decoded)->first())
             ->map(
                 function ($medication) {
+
+                    if (! isset($medication->Name)){
+                        return false;
+                    }
+
                     return [
                         'reference'       => null,
                         'reference_title' => null,
@@ -387,7 +405,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
         $decoded = json_decode($this->data['problems_string']);
 
         if (is_null($decoded)){
-            $decoded = json_decode(\CircleLinkHealth\Core\Utilities\JsonFixer::attemptFix($this->data['problems_string']));
+            $decoded = json_decode(JsonFixer::attemptFix($this->data['problems_string']));
         }
 
         return collect(collect($decoded)->first())
