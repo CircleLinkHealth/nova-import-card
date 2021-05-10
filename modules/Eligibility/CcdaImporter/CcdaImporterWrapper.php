@@ -310,8 +310,12 @@ class CcdaImporterWrapper
         });
     }
 
-    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    public static function mysqlMatchProvider(?string $term, int $practiceId): ?User
     {
+        if (empty($term)) {
+            return null;
+        }
+        
         $term = self::prepareForMysqlMatch($term);
 
         $cacheKey = "mysqlmatchprovider:$term:$practiceId";
