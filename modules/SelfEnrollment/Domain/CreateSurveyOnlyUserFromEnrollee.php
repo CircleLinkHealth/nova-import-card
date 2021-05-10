@@ -163,11 +163,13 @@ class CreateSurveyOnlyUserFromEnrollee
                 'user_id' => $userCreatedFromEnrollee->id,
             ]
         );
+
+        return $userCreatedFromEnrollee;
     }
 
     public static function execute(Enrollee $enrollee)
     {
-        (new static($enrollee))->create();
+        return (new static($enrollee))->create();
     }
 
     public static function fakeCpmFillerEmail(int $id)
