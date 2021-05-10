@@ -983,7 +983,7 @@ class EligibilityChecker
         return true;
     }
 
-    public static function fixJsonProblemsString(EligibilityJob &$eligibilityJob)
+    private static function fixJsonProblemsString(EligibilityJob &$eligibilityJob)
     {
         $fixAttempt = JsonFixer::attemptFix($eligibilityJob->getProblems());
 
