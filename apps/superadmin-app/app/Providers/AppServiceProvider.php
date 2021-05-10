@@ -24,10 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapThree();
 
-        Queue::before(function (JobProcessing $event) {
-            Log::debug("Starting Job {$event->job->resolveName()}");
-            (new LargeJobsDispatcherInterceptor())->handle($event->job);
-        });
+//        Queue::before(function (JobProcessing $event) {
+//            Log::debug("Starting Job {$event->job->resolveName()}");
+//            (new LargeJobsDispatcherInterceptor())->handle($event->job);
+//        });
     }
 
     /**
