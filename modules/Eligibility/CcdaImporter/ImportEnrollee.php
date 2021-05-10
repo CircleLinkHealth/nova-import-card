@@ -8,7 +8,9 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ApproveIfValid;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -16,6 +18,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
+use CircleLinkHealth\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
@@ -23,6 +26,8 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ImportEnrollee
 {
@@ -174,14 +179,14 @@ class ImportEnrollee
 
     private function importFromNonCcdaSource(Enrollee $enrollee)
     {
+        $enrolleeUser = $enrollee->user ?? CreateSurveyOnlyUserFromEnrollee::execute($enrollee);
+
         $ccdaArgs = [
-            'json'        => ($mr = MedicalRecordFactory::create($enrollee->user)) ? $mr->toJson() : [],
+            'json'        => ($mr = MedicalRecordFactory::create($enrolleeUser)) ? $mr->toJson() : [],
             'mrn'         => $enrollee->mrn,
             'practice_id' => $enrollee->practice_id,
             'source'      => Ccda::CLH_GENERATED,
         ];
-
-        $enrolleeUser = $enrollee->user;
 
         if ($enrolleeUser && $enrolleeUser->isSurveyOnly()) {
             $ccdaArgs['patient_id']          = $enrolleeUser->id;
