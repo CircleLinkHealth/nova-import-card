@@ -207,8 +207,8 @@ class Kernel extends ConsoleKernel
             ->doNotMonitor();
 
         $schedule->command(CheckPatientRoles::class)
-                 ->dailyAt('09:00')
-                 ->doNotMonitor();
+            ->dailyAt('09:00')
+            ->doNotMonitor();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00');

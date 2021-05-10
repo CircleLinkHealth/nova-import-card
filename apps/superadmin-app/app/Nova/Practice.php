@@ -36,7 +36,7 @@ class Practice extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'display_name'
     ];
 
     /**
@@ -54,11 +54,11 @@ class Practice extends Resource
     public function actions(Request $request)
     {
         $actions = [
-            new ExportPatientProblemCodes()
+            new ExportPatientProblemCodes(),
         ];
 
         //There is a known bug when adding ->canSee and ->canRun for actions that are queueable, this is a workaround
-        if ($request->user()->isAdmin()){
+        if ($request->user()->isAdmin()) {
             $actions[] = (new Actions\FaxApprovedCarePlans())->onlyOnDetail();
         }
 
@@ -74,11 +74,11 @@ class Practice extends Resource
     {
         return [
             //todo: seems to be breaking for the moment
-//            ClhImportCardExtended::make(self::class, [
-//                Text::make('email')
-//                    ->withModel(\App\User::class, 'email')
-//                    ->inputRules(['required', 'email']),
-//            ], 'Create and Send Patient Consent Letters'),
+            //            ClhImportCardExtended::make(self::class, [
+            //                Text::make('email')
+            //                    ->withModel(\App\User::class, 'email')
+            //                    ->inputRules(['required', 'email']),
+            //            ], 'Create and Send Patient Consent Letters'),
         ];
     }
 

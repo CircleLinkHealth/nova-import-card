@@ -249,6 +249,13 @@
       <path value="$PROJECT_DIR$/vendor/laravel/vapor-cli" />
       <path value="$PROJECT_DIR$/vendor/laravel/helpers" />
       <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/vendor/64robots/nova-fields" />
+      <path value="$PROJECT_DIR$/vendor/ebess/advanced-nova-media-library" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/care-gaps-module" />
+      <path value="$PROJECT_DIR$/vendor/optimistdigital/nova-multiselect-field" />
+      <path value="$PROJECT_DIR$/vendor/optimistdigital/nova-translations-loader" />
+      <path value="$PROJECT_DIR$/vendor/e0ipso/amazon-sqs-php-extended-client-lib" />
+      <path value="$PROJECT_DIR$/vendor/shiftonelabs/laravel-sqs-fifo-queue" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

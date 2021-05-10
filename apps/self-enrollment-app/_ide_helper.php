@@ -1567,6 +1567,22 @@
             /**
      * 
      *
+     * @method static \Illuminate\Contracts\Auth\Authenticatable loginUsingId(mixed $id, bool $remember = false)
+     * @method static \Illuminate\Contracts\Auth\Authenticatable|null user()
+     * @method static \Symfony\Component\HttpFoundation\Response|null onceBasic(string $field = 'email',array $extraConditions = [])
+     * @method static bool attempt(array $credentials = [], bool $remember = false)
+     * @method static bool check()
+     * @method static bool guest()
+     * @method static bool once(array $credentials = [])
+     * @method static bool onceUsingId(mixed $id)
+     * @method static bool validate(array $credentials = [])
+     * @method static bool viaRemember()
+     * @method static bool|null logoutOtherDevices(string $password, string $attribute = 'password')
+     * @method static int|string|null id()
+     * @method static void login(\Illuminate\Contracts\Auth\Authenticatable $user, bool $remember = false)
+     * @method static void logout()
+     * @method static void logoutCurrentDevice()
+     * @method static void setUser(\Illuminate\Contracts\Auth\Authenticatable $user)
      * @see \Illuminate\Auth\AuthManager
      * @see \Illuminate\Contracts\Auth\Factory
      * @see \Illuminate\Contracts\Auth\Guard
@@ -1765,472 +1781,6 @@
         {
                         /** @var \Illuminate\Auth\AuthManager $instance */
                         return $instance->getDefaultUserProvider();
-        }
-                    /**
-         * Log a user into the application without firing the Login event.
-         *
-         * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @return void 
-         * @static 
-         */ 
-        public static function quietLogin($user)
-        {
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->quietLogin($user);
-        }
-                    /**
-         * Logout the user without updating remember_token
-         * and without firing the Logout event.
-         *
-         * @param void
-         * @return void 
-         * @static 
-         */ 
-        public static function quietLogout()
-        {
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->quietLogout();
-        }
-                    /**
-         * Get the currently authenticated user.
-         *
-         * @return \CircleLinkHealth\Customer\Entities\User|null 
-         * @static 
-         */ 
-        public static function user()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->user();
-        }
-                    /**
-         * Get the ID for the currently authenticated user.
-         *
-         * @return int|string|null 
-         * @static 
-         */ 
-        public static function id()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->id();
-        }
-                    /**
-         * Log a user into the application without sessions or cookies.
-         *
-         * @param array $credentials
-         * @return bool 
-         * @static 
-         */ 
-        public static function once($credentials = [])
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->once($credentials);
-        }
-                    /**
-         * Log the given user ID into the application without sessions or cookies.
-         *
-         * @param mixed $id
-         * @return \CircleLinkHealth\Customer\Entities\User|false 
-         * @static 
-         */ 
-        public static function onceUsingId($id)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->onceUsingId($id);
-        }
-                    /**
-         * Validate a user's credentials.
-         *
-         * @param array $credentials
-         * @return bool 
-         * @static 
-         */ 
-        public static function validate($credentials = [])
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->validate($credentials);
-        }
-                    /**
-         * Attempt to authenticate using HTTP Basic Auth.
-         *
-         * @param string $field
-         * @param array $extraConditions
-         * @return \Symfony\Component\HttpFoundation\Response|null 
-         * @static 
-         */ 
-        public static function basic($field = 'email', $extraConditions = [])
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->basic($field, $extraConditions);
-        }
-                    /**
-         * Perform a stateless HTTP Basic login attempt.
-         *
-         * @param string $field
-         * @param array $extraConditions
-         * @return \Symfony\Component\HttpFoundation\Response|null 
-         * @static 
-         */ 
-        public static function onceBasic($field = 'email', $extraConditions = [])
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->onceBasic($field, $extraConditions);
-        }
-                    /**
-         * Attempt to authenticate a user using the given credentials.
-         *
-         * @param array $credentials
-         * @param bool $remember
-         * @return bool 
-         * @static 
-         */ 
-        public static function attempt($credentials = [], $remember = false)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->attempt($credentials, $remember);
-        }
-                    /**
-         * Attempt to authenticate a user with credentials and additional callbacks.
-         *
-         * @param array $credentials
-         * @param array|callable $callbacks
-         * @param false $remember
-         * @return bool 
-         * @static 
-         */ 
-        public static function attemptWhen($credentials = [], $callbacks = null, $remember = false)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->attemptWhen($credentials, $callbacks, $remember);
-        }
-                    /**
-         * Log the given user ID into the application.
-         *
-         * @param mixed $id
-         * @param bool $remember
-         * @return \CircleLinkHealth\Customer\Entities\User|false 
-         * @static 
-         */ 
-        public static function loginUsingId($id, $remember = false)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->loginUsingId($id, $remember);
-        }
-                    /**
-         * Log a user into the application.
-         *
-         * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @param bool $remember
-         * @return void 
-         * @static 
-         */ 
-        public static function login($user, $remember = false)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->login($user, $remember);
-        }
-                    /**
-         * Log the user out of the application.
-         *
-         * @return void 
-         * @static 
-         */ 
-        public static function logout()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->logout();
-        }
-                    /**
-         * Log the user out of the application on their current device only.
-         * 
-         * This method does not cycle the "remember" token.
-         *
-         * @return void 
-         * @static 
-         */ 
-        public static function logoutCurrentDevice()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->logoutCurrentDevice();
-        }
-                    /**
-         * Invalidate other sessions for the current user.
-         * 
-         * The application must be using the AuthenticateSession middleware.
-         *
-         * @param string $password
-         * @param string $attribute
-         * @return bool|null 
-         * @throws \Illuminate\Auth\AuthenticationException
-         * @static 
-         */ 
-        public static function logoutOtherDevices($password, $attribute = 'password')
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->logoutOtherDevices($password, $attribute);
-        }
-                    /**
-         * Register an authentication attempt event listener.
-         *
-         * @param mixed $callback
-         * @return void 
-         * @static 
-         */ 
-        public static function attempting($callback)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->attempting($callback);
-        }
-                    /**
-         * Get the last user we attempted to authenticate.
-         *
-         * @return \CircleLinkHealth\Customer\Entities\User 
-         * @static 
-         */ 
-        public static function getLastAttempted()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getLastAttempted();
-        }
-                    /**
-         * Get a unique identifier for the auth session value.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getName()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getName();
-        }
-                    /**
-         * Get the name of the cookie used to store the "recaller".
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getRecallerName()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getRecallerName();
-        }
-                    /**
-         * Determine if the user was authenticated via "remember me" cookie.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function viaRemember()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->viaRemember();
-        }
-                    /**
-         * Get the cookie creator instance used by the guard.
-         *
-         * @return \Illuminate\Contracts\Cookie\QueueingFactory 
-         * @throws \RuntimeException
-         * @static 
-         */ 
-        public static function getCookieJar()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getCookieJar();
-        }
-                    /**
-         * Set the cookie creator instance used by the guard.
-         *
-         * @param \Illuminate\Contracts\Cookie\QueueingFactory $cookie
-         * @return void 
-         * @static 
-         */ 
-        public static function setCookieJar($cookie)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->setCookieJar($cookie);
-        }
-                    /**
-         * Get the event dispatcher instance.
-         *
-         * @return \Illuminate\Contracts\Events\Dispatcher 
-         * @static 
-         */ 
-        public static function getDispatcher()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getDispatcher();
-        }
-                    /**
-         * Set the event dispatcher instance.
-         *
-         * @param \Illuminate\Contracts\Events\Dispatcher $events
-         * @return void 
-         * @static 
-         */ 
-        public static function setDispatcher($events)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->setDispatcher($events);
-        }
-                    /**
-         * Get the session store used by the guard.
-         *
-         * @return \Illuminate\Contracts\Session\Session 
-         * @static 
-         */ 
-        public static function getSession()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getSession();
-        }
-                    /**
-         * Return the currently cached user.
-         *
-         * @return \CircleLinkHealth\Customer\Entities\User|null 
-         * @static 
-         */ 
-        public static function getUser()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getUser();
-        }
-                    /**
-         * Set the current user.
-         *
-         * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @return \Lab404\Impersonate\Guard\SessionGuard 
-         * @static 
-         */ 
-        public static function setUser($user)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->setUser($user);
-        }
-                    /**
-         * Get the current request instance.
-         *
-         * @return \Symfony\Component\HttpFoundation\Request 
-         * @static 
-         */ 
-        public static function getRequest()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getRequest();
-        }
-                    /**
-         * Set the current request instance.
-         *
-         * @param \Symfony\Component\HttpFoundation\Request $request
-         * @return \Lab404\Impersonate\Guard\SessionGuard 
-         * @static 
-         */ 
-        public static function setRequest($request)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->setRequest($request);
-        }
-                    /**
-         * Determine if the current user is authenticated. If not, throw an exception.
-         *
-         * @return \CircleLinkHealth\Customer\Entities\User 
-         * @throws \Illuminate\Auth\AuthenticationException
-         * @static 
-         */ 
-        public static function authenticate()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->authenticate();
-        }
-                    /**
-         * Determine if the guard has a user instance.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasUser()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->hasUser();
-        }
-                    /**
-         * Determine if the current user is authenticated.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function check()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->check();
-        }
-                    /**
-         * Determine if the current user is a guest.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function guest()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->guest();
-        }
-                    /**
-         * Get the user provider used by the guard.
-         *
-         * @return \Illuminate\Contracts\Auth\UserProvider 
-         * @static 
-         */ 
-        public static function getProvider()
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        return $instance->getProvider();
-        }
-                    /**
-         * Set the user provider used by the guard.
-         *
-         * @param \Illuminate\Contracts\Auth\UserProvider $provider
-         * @return void 
-         * @static 
-         */ 
-        public static function setProvider($provider)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
-                        $instance->setProvider($provider);
-        }
-                    /**
-         * Register a custom macro.
-         *
-         * @param string $name
-         * @param object|callable $macro
-         * @return void 
-         * @static 
-         */ 
-        public static function macro($name, $macro)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        \Lab404\Impersonate\Guard\SessionGuard::macro($name, $macro);
-        }
-                    /**
-         * Mix another object into the class.
-         *
-         * @param object $mixin
-         * @param bool $replace
-         * @return void 
-         * @throws \ReflectionException
-         * @static 
-         */ 
-        public static function mixin($mixin, $replace = true)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        \Lab404\Impersonate\Guard\SessionGuard::mixin($mixin, $replace);
-        }
-                    /**
-         * Checks if macro is registered.
-         *
-         * @param string $name
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasMacro($name)
-        {            //Method inherited from \Illuminate\Auth\SessionGuard         
-                        return \Lab404\Impersonate\Guard\SessionGuard::hasMacro($name);
         }
          
     }
@@ -3720,6 +3270,50 @@
                         return $instance->macroCall($method, $parameters);
         }
                     /**
+         * Remove all items from the cache.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function flush()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->flush();
+        }
+                    /**
+         * Get the Filesystem instance.
+         *
+         * @return \Illuminate\Filesystem\Filesystem 
+         * @static 
+         */ 
+        public static function getFilesystem()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->getFilesystem();
+        }
+                    /**
+         * Get the working directory of the cache.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getDirectory()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->getDirectory();
+        }
+                    /**
+         * Get the cache key prefix.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getPrefix()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->getPrefix();
+        }
+                    /**
          * Get a lock instance.
          *
          * @param string $name
@@ -3730,7 +3324,7 @@
          */ 
         public static function lock($name, $seconds = 0, $owner = null)
         {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        /** @var \Illuminate\Cache\FileStore $instance */
                         return $instance->lock($name, $seconds, $owner);
         }
                     /**
@@ -3743,99 +3337,8 @@
          */ 
         public static function restoreLock($name, $owner)
         {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        /** @var \Illuminate\Cache\FileStore $instance */
                         return $instance->restoreLock($name, $owner);
-        }
-                    /**
-         * Remove all items from the cache.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function flush()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->flush();
-        }
-                    /**
-         * Get the Redis connection instance.
-         *
-         * @return \Illuminate\Redis\Connections\Connection 
-         * @static 
-         */ 
-        public static function connection()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->connection();
-        }
-                    /**
-         * Get the Redis connection instance that should be used to manage locks.
-         *
-         * @return \Illuminate\Redis\Connections\Connection 
-         * @static 
-         */ 
-        public static function lockConnection()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->lockConnection();
-        }
-                    /**
-         * Specify the name of the connection that should be used to store data.
-         *
-         * @param string $connection
-         * @return void 
-         * @static 
-         */ 
-        public static function setConnection($connection)
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        $instance->setConnection($connection);
-        }
-                    /**
-         * Specify the name of the connection that should be used to manage locks.
-         *
-         * @param string $connection
-         * @return \Illuminate\Cache\RedisStore 
-         * @static 
-         */ 
-        public static function setLockConnection($connection)
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->setLockConnection($connection);
-        }
-                    /**
-         * Get the Redis database instance.
-         *
-         * @return \Illuminate\Contracts\Redis\Factory 
-         * @static 
-         */ 
-        public static function getRedis()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->getRedis();
-        }
-                    /**
-         * Get the cache key prefix.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getPrefix()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->getPrefix();
-        }
-                    /**
-         * Set the cache key prefix.
-         *
-         * @param string $prefix
-         * @return void 
-         * @static 
-         */ 
-        public static function setPrefix($prefix)
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        $instance->setPrefix($prefix);
         }
          
     }
@@ -4180,102 +3683,6 @@
         public static function hasMacro($name)
         {
                         return \Illuminate\Cookie\CookieJar::hasMacro($name);
-        }
-         
-    }
-            /**
-     * 
-     *
-     * @see \Illuminate\Encryption\Encrypter
-     */ 
-        class Crypt {
-                    /**
-         * Determine if the given key and cipher combination is valid.
-         *
-         * @param string $key
-         * @param string $cipher
-         * @return bool 
-         * @static 
-         */ 
-        public static function supported($key, $cipher)
-        {
-                        return \Illuminate\Encryption\Encrypter::supported($key, $cipher);
-        }
-                    /**
-         * Create a new encryption key for the given cipher.
-         *
-         * @param string $cipher
-         * @return string 
-         * @static 
-         */ 
-        public static function generateKey($cipher)
-        {
-                        return \Illuminate\Encryption\Encrypter::generateKey($cipher);
-        }
-                    /**
-         * Encrypt the given value.
-         *
-         * @param mixed $value
-         * @param bool $serialize
-         * @return string 
-         * @throws \Illuminate\Contracts\Encryption\EncryptException
-         * @static 
-         */ 
-        public static function encrypt($value, $serialize = true)
-        {
-                        /** @var \Illuminate\Encryption\Encrypter $instance */
-                        return $instance->encrypt($value, $serialize);
-        }
-                    /**
-         * Encrypt a string without serialization.
-         *
-         * @param string $value
-         * @return string 
-         * @throws \Illuminate\Contracts\Encryption\EncryptException
-         * @static 
-         */ 
-        public static function encryptString($value)
-        {
-                        /** @var \Illuminate\Encryption\Encrypter $instance */
-                        return $instance->encryptString($value);
-        }
-                    /**
-         * Decrypt the given value.
-         *
-         * @param string $payload
-         * @param bool $unserialize
-         * @return mixed 
-         * @throws \Illuminate\Contracts\Encryption\DecryptException
-         * @static 
-         */ 
-        public static function decrypt($payload, $unserialize = true)
-        {
-                        /** @var \Illuminate\Encryption\Encrypter $instance */
-                        return $instance->decrypt($payload, $unserialize);
-        }
-                    /**
-         * Decrypt the given string without unserialization.
-         *
-         * @param string $payload
-         * @return string 
-         * @throws \Illuminate\Contracts\Encryption\DecryptException
-         * @static 
-         */ 
-        public static function decryptString($payload)
-        {
-                        /** @var \Illuminate\Encryption\Encrypter $instance */
-                        return $instance->decryptString($payload);
-        }
-                    /**
-         * Get the encryption key.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getKey()
-        {
-                        /** @var \Illuminate\Encryption\Encrypter $instance */
-                        return $instance->getKey();
         }
          
     }
@@ -8546,259 +7953,6 @@
             /**
      * 
      *
-     * @see \Illuminate\Routing\Redirector
-     */ 
-        class Redirect {
-                    /**
-         * Create a new redirect response to the "home" route.
-         *
-         * @param int $status
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function home($status = 302)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->home($status);
-        }
-                    /**
-         * Create a new redirect response to the previous location.
-         *
-         * @param int $status
-         * @param array $headers
-         * @param mixed $fallback
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function back($status = 302, $headers = [], $fallback = false)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->back($status, $headers, $fallback);
-        }
-                    /**
-         * Create a new redirect response to the current URI.
-         *
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function refresh($status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->refresh($status, $headers);
-        }
-                    /**
-         * Create a new redirect response, while putting the current URL in the session.
-         *
-         * @param string $path
-         * @param int $status
-         * @param array $headers
-         * @param bool|null $secure
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function guest($path, $status = 302, $headers = [], $secure = null)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->guest($path, $status, $headers, $secure);
-        }
-                    /**
-         * Create a new redirect response to the previously intended location.
-         *
-         * @param string $default
-         * @param int $status
-         * @param array $headers
-         * @param bool|null $secure
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function intended($default = '/', $status = 302, $headers = [], $secure = null)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->intended($default, $status, $headers, $secure);
-        }
-                    /**
-         * Set the intended url.
-         *
-         * @param string $url
-         * @return void 
-         * @static 
-         */ 
-        public static function setIntendedUrl($url)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        $instance->setIntendedUrl($url);
-        }
-                    /**
-         * Create a new redirect response to the given path.
-         *
-         * @param string $path
-         * @param int $status
-         * @param array $headers
-         * @param bool|null $secure
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function to($path, $status = 302, $headers = [], $secure = null)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->to($path, $status, $headers, $secure);
-        }
-                    /**
-         * Create a new redirect response to an external URL (no validation).
-         *
-         * @param string $path
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function away($path, $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->away($path, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response to the given HTTPS path.
-         *
-         * @param string $path
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function secure($path, $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->secure($path, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response to a named route.
-         *
-         * @param string $route
-         * @param mixed $parameters
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function route($route, $parameters = [], $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->route($route, $parameters, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response to a signed named route.
-         *
-         * @param string $route
-         * @param mixed $parameters
-         * @param \DateTimeInterface|\DateInterval|int|null $expiration
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function signedRoute($route, $parameters = [], $expiration = null, $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->signedRoute($route, $parameters, $expiration, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response to a signed named route.
-         *
-         * @param string $route
-         * @param \DateTimeInterface|\DateInterval|int|null $expiration
-         * @param mixed $parameters
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function temporarySignedRoute($route, $expiration, $parameters = [], $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->temporarySignedRoute($route, $expiration, $parameters, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response to a controller action.
-         *
-         * @param string|array $action
-         * @param mixed $parameters
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function action($action, $parameters = [], $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->action($action, $parameters, $status, $headers);
-        }
-                    /**
-         * Get the URL generator instance.
-         *
-         * @return \Illuminate\Routing\UrlGenerator 
-         * @static 
-         */ 
-        public static function getUrlGenerator()
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->getUrlGenerator();
-        }
-                    /**
-         * Set the active session store.
-         *
-         * @param \Illuminate\Session\Store $session
-         * @return void 
-         * @static 
-         */ 
-        public static function setSession($session)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        $instance->setSession($session);
-        }
-                    /**
-         * Register a custom macro.
-         *
-         * @param string $name
-         * @param object|callable $macro
-         * @return void 
-         * @static 
-         */ 
-        public static function macro($name, $macro)
-        {
-                        \Illuminate\Routing\Redirector::macro($name, $macro);
-        }
-                    /**
-         * Mix another object into the class.
-         *
-         * @param object $mixin
-         * @param bool $replace
-         * @return void 
-         * @throws \ReflectionException
-         * @static 
-         */ 
-        public static function mixin($mixin, $replace = true)
-        {
-                        \Illuminate\Routing\Redirector::mixin($mixin, $replace);
-        }
-                    /**
-         * Checks if macro is registered.
-         *
-         * @param string $name
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasMacro($name)
-        {
-                        return \Illuminate\Routing\Redirector::hasMacro($name);
-        }
-         
-    }
-            /**
-     * 
-     *
      * @method static mixed filterFiles(mixed $files)
      * @see \Illuminate\Http\Request
      */ 
@@ -10811,255 +9965,6 @@
         public static function hasValidRelativeSignature()
         {
                         return \Illuminate\Http\Request::hasValidRelativeSignature();
-        }
-         
-    }
-            /**
-     * 
-     *
-     * @see \Illuminate\Contracts\Routing\ResponseFactory
-     */ 
-        class Response {
-                    /**
-         * Create a new response instance.
-         *
-         * @param string $content
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\Response 
-         * @static 
-         */ 
-        public static function make($content = '', $status = 200, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->make($content, $status, $headers);
-        }
-                    /**
-         * Create a new "no content" response.
-         *
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\Response 
-         * @static 
-         */ 
-        public static function noContent($status = 204, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->noContent($status, $headers);
-        }
-                    /**
-         * Create a new response for a given view.
-         *
-         * @param string|array $view
-         * @param array $data
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\Response 
-         * @static 
-         */ 
-        public static function view($view, $data = [], $status = 200, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->view($view, $data, $status, $headers);
-        }
-                    /**
-         * Create a new JSON response instance.
-         *
-         * @param mixed $data
-         * @param int $status
-         * @param array $headers
-         * @param int $options
-         * @return \Illuminate\Http\JsonResponse 
-         * @static 
-         */ 
-        public static function json($data = [], $status = 200, $headers = [], $options = 0)
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->json($data, $status, $headers, $options);
-        }
-                    /**
-         * Create a new JSONP response instance.
-         *
-         * @param string $callback
-         * @param mixed $data
-         * @param int $status
-         * @param array $headers
-         * @param int $options
-         * @return \Illuminate\Http\JsonResponse 
-         * @static 
-         */ 
-        public static function jsonp($callback, $data = [], $status = 200, $headers = [], $options = 0)
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->jsonp($callback, $data, $status, $headers, $options);
-        }
-                    /**
-         * Create a new streamed response instance.
-         *
-         * @param \Closure $callback
-         * @param int $status
-         * @param array $headers
-         * @return \Symfony\Component\HttpFoundation\StreamedResponse 
-         * @static 
-         */ 
-        public static function stream($callback, $status = 200, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->stream($callback, $status, $headers);
-        }
-                    /**
-         * Create a new streamed response instance as a file download.
-         *
-         * @param \Closure $callback
-         * @param string|null $name
-         * @param array $headers
-         * @param string|null $disposition
-         * @return \Symfony\Component\HttpFoundation\StreamedResponse 
-         * @static 
-         */ 
-        public static function streamDownload($callback, $name = null, $headers = [], $disposition = 'attachment')
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->streamDownload($callback, $name, $headers, $disposition);
-        }
-                    /**
-         * Create a new file download response.
-         *
-         * @param \SplFileInfo|string $file
-         * @param string|null $name
-         * @param array $headers
-         * @param string|null $disposition
-         * @return \Symfony\Component\HttpFoundation\BinaryFileResponse 
-         * @static 
-         */ 
-        public static function download($file, $name = null, $headers = [], $disposition = 'attachment')
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->download($file, $name, $headers, $disposition);
-        }
-                    /**
-         * Return the raw contents of a binary file.
-         *
-         * @param \SplFileInfo|string $file
-         * @param array $headers
-         * @return \Symfony\Component\HttpFoundation\BinaryFileResponse 
-         * @static 
-         */ 
-        public static function file($file, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->file($file, $headers);
-        }
-                    /**
-         * Create a new redirect response to the given path.
-         *
-         * @param string $path
-         * @param int $status
-         * @param array $headers
-         * @param bool|null $secure
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function redirectTo($path, $status = 302, $headers = [], $secure = null)
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->redirectTo($path, $status, $headers, $secure);
-        }
-                    /**
-         * Create a new redirect response to a named route.
-         *
-         * @param string $route
-         * @param mixed $parameters
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function redirectToRoute($route, $parameters = [], $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->redirectToRoute($route, $parameters, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response to a controller action.
-         *
-         * @param string $action
-         * @param mixed $parameters
-         * @param int $status
-         * @param array $headers
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function redirectToAction($action, $parameters = [], $status = 302, $headers = [])
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->redirectToAction($action, $parameters, $status, $headers);
-        }
-                    /**
-         * Create a new redirect response, while putting the current URL in the session.
-         *
-         * @param string $path
-         * @param int $status
-         * @param array $headers
-         * @param bool|null $secure
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function redirectGuest($path, $status = 302, $headers = [], $secure = null)
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->redirectGuest($path, $status, $headers, $secure);
-        }
-                    /**
-         * Create a new redirect response to the previously intended location.
-         *
-         * @param string $default
-         * @param int $status
-         * @param array $headers
-         * @param bool|null $secure
-         * @return \Illuminate\Http\RedirectResponse 
-         * @static 
-         */ 
-        public static function redirectToIntended($default = '/', $status = 302, $headers = [], $secure = null)
-        {
-                        /** @var \Illuminate\Routing\ResponseFactory $instance */
-                        return $instance->redirectToIntended($default, $status, $headers, $secure);
-        }
-                    /**
-         * Register a custom macro.
-         *
-         * @param string $name
-         * @param object|callable $macro
-         * @return void 
-         * @static 
-         */ 
-        public static function macro($name, $macro)
-        {
-                        \Illuminate\Routing\ResponseFactory::macro($name, $macro);
-        }
-                    /**
-         * Mix another object into the class.
-         *
-         * @param object $mixin
-         * @param bool $replace
-         * @return void 
-         * @throws \ReflectionException
-         * @static 
-         */ 
-        public static function mixin($mixin, $replace = true)
-        {
-                        \Illuminate\Routing\ResponseFactory::mixin($mixin, $replace);
-        }
-                    /**
-         * Checks if macro is registered.
-         *
-         * @param string $name
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasMacro($name)
-        {
-                        return \Illuminate\Routing\ResponseFactory::hasMacro($name);
         }
          
     }
@@ -15630,6 +14535,26 @@
                     /**
          * 
          *
+         * @static 
+         */ 
+        public static function reportErrorLevels($reportErrorLevels)
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->reportErrorLevels($reportErrorLevels);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function filterExceptionsUsing($filterExceptionsCallable)
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->filterExceptionsUsing($filterExceptionsCallable);
+        }
+                    /**
+         * 
+         *
          * @return null|string 
          * @static 
          */ 
@@ -16774,711 +15699,6 @@
 }
 
     namespace Collective\Html { 
-            /**
-     * 
-     *
-     * @see \Collective\Html\FormBuilder
-     */ 
-        class FormFacade {
-                    /**
-         * Open up a new HTML form.
-         *
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function open($options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->open($options);
-        }
-                    /**
-         * Create a new model based form builder.
-         *
-         * @param mixed $model
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function model($model, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->model($model, $options);
-        }
-                    /**
-         * Set the model instance on the form builder.
-         *
-         * @param mixed $model
-         * @return void 
-         * @static 
-         */ 
-        public static function setModel($model)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        $instance->setModel($model);
-        }
-                    /**
-         * Get the current model instance on the form builder.
-         *
-         * @return mixed $model
-         * @static 
-         */ 
-        public static function getModel()
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->getModel();
-        }
-                    /**
-         * Close the current form.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function close()
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->close();
-        }
-                    /**
-         * Generate a hidden field with the current CSRF token.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function token()
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->token();
-        }
-                    /**
-         * Create a form label element.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @param bool $escape_html
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function label($name, $value = null, $options = [], $escape_html = true)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->label($name, $value, $options, $escape_html);
-        }
-                    /**
-         * Create a form input field.
-         *
-         * @param string $type
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function input($type, $name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->input($type, $name, $value, $options);
-        }
-                    /**
-         * Create a text input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function text($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->text($name, $value, $options);
-        }
-                    /**
-         * Create a password input field.
-         *
-         * @param string $name
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function password($name, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->password($name, $options);
-        }
-                    /**
-         * Create a range input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function range($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->range($name, $value, $options);
-        }
-                    /**
-         * Create a hidden input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function hidden($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->hidden($name, $value, $options);
-        }
-                    /**
-         * Create a search input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function search($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->search($name, $value, $options);
-        }
-                    /**
-         * Create an e-mail input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function email($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->email($name, $value, $options);
-        }
-                    /**
-         * Create a tel input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function tel($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->tel($name, $value, $options);
-        }
-                    /**
-         * Create a number input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function number($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->number($name, $value, $options);
-        }
-                    /**
-         * Create a date input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function date($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->date($name, $value, $options);
-        }
-                    /**
-         * Create a datetime input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function datetime($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->datetime($name, $value, $options);
-        }
-                    /**
-         * Create a datetime-local input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function datetimeLocal($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->datetimeLocal($name, $value, $options);
-        }
-                    /**
-         * Create a time input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function time($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->time($name, $value, $options);
-        }
-                    /**
-         * Create a url input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function url($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->url($name, $value, $options);
-        }
-                    /**
-         * Create a week input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function week($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->week($name, $value, $options);
-        }
-                    /**
-         * Create a file input field.
-         *
-         * @param string $name
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function file($name, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->file($name, $options);
-        }
-                    /**
-         * Create a textarea input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function textarea($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->textarea($name, $value, $options);
-        }
-                    /**
-         * Create a select box field.
-         *
-         * @param string $name
-         * @param array $list
-         * @param string|bool $selected
-         * @param array $selectAttributes
-         * @param array $optionsAttributes
-         * @param array $optgroupsAttributes
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function select($name, $list = [], $selected = null, $selectAttributes = [], $optionsAttributes = [], $optgroupsAttributes = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->select($name, $list, $selected, $selectAttributes, $optionsAttributes, $optgroupsAttributes);
-        }
-                    /**
-         * Create a select range field.
-         *
-         * @param string $name
-         * @param string $begin
-         * @param string $end
-         * @param string $selected
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function selectRange($name, $begin, $end, $selected = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->selectRange($name, $begin, $end, $selected, $options);
-        }
-                    /**
-         * Create a select year field.
-         *
-         * @param string $name
-         * @param string $begin
-         * @param string $end
-         * @param string $selected
-         * @param array $options
-         * @return mixed 
-         * @static 
-         */ 
-        public static function selectYear()
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->selectYear();
-        }
-                    /**
-         * Create a select month field.
-         *
-         * @param string $name
-         * @param string $selected
-         * @param array $options
-         * @param string $format
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function selectMonth($name, $selected = null, $options = [], $format = '%B')
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->selectMonth($name, $selected, $options, $format);
-        }
-                    /**
-         * Get the select option for the given value.
-         *
-         * @param string $display
-         * @param string $value
-         * @param string $selected
-         * @param array $attributes
-         * @param array $optgroupAttributes
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function getSelectOption($display, $value, $selected, $attributes = [], $optgroupAttributes = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->getSelectOption($display, $value, $selected, $attributes, $optgroupAttributes);
-        }
-                    /**
-         * Create a checkbox input field.
-         *
-         * @param string $name
-         * @param mixed $value
-         * @param bool $checked
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function checkbox($name, $value = 1, $checked = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->checkbox($name, $value, $checked, $options);
-        }
-                    /**
-         * Create a radio button input field.
-         *
-         * @param string $name
-         * @param mixed $value
-         * @param bool $checked
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function radio($name, $value = null, $checked = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->radio($name, $value, $checked, $options);
-        }
-                    /**
-         * Create a HTML reset input element.
-         *
-         * @param string $value
-         * @param array $attributes
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function reset($value, $attributes = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->reset($value, $attributes);
-        }
-                    /**
-         * Create a HTML image input element.
-         *
-         * @param string $url
-         * @param string $name
-         * @param array $attributes
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function image($url, $name = null, $attributes = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->image($url, $name, $attributes);
-        }
-                    /**
-         * Create a month input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function month($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->month($name, $value, $options);
-        }
-                    /**
-         * Create a color input field.
-         *
-         * @param string $name
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function color($name, $value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->color($name, $value, $options);
-        }
-                    /**
-         * Create a submit button element.
-         *
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function submit($value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->submit($value, $options);
-        }
-                    /**
-         * Create a button element.
-         *
-         * @param string $value
-         * @param array $options
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function button($value = null, $options = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->button($value, $options);
-        }
-                    /**
-         * Create a datalist box field.
-         *
-         * @param string $id
-         * @param array $list
-         * @return \Illuminate\Support\HtmlString 
-         * @static 
-         */ 
-        public static function datalist($id, $list = [])
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->datalist($id, $list);
-        }
-                    /**
-         * Get the ID attribute for a field name.
-         *
-         * @param string $name
-         * @param array $attributes
-         * @return string 
-         * @static 
-         */ 
-        public static function getIdAttribute($name, $attributes)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->getIdAttribute($name, $attributes);
-        }
-                    /**
-         * Get the value that should be assigned to the field.
-         *
-         * @param string $name
-         * @param string $value
-         * @return mixed 
-         * @static 
-         */ 
-        public static function getValueAttribute($name, $value = null)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->getValueAttribute($name, $value);
-        }
-                    /**
-         * Take Request in fill process
-         *
-         * @param bool $consider
-         * @static 
-         */ 
-        public static function considerRequest($consider = true)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->considerRequest($consider);
-        }
-                    /**
-         * Get a value from the session's old input.
-         *
-         * @param string $name
-         * @return mixed 
-         * @static 
-         */ 
-        public static function old($name)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->old($name);
-        }
-                    /**
-         * Determine if the old input is empty.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function oldInputIsEmpty()
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->oldInputIsEmpty();
-        }
-                    /**
-         * Get the session store implementation.
-         *
-         * @return \Illuminate\Contracts\Session\Session $session
-         * @static 
-         */ 
-        public static function getSessionStore()
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->getSessionStore();
-        }
-                    /**
-         * Set the session store implementation.
-         *
-         * @param \Illuminate\Contracts\Session\Session $session
-         * @return \Collective\Html\FormBuilder 
-         * @static 
-         */ 
-        public static function setSessionStore($session)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->setSessionStore($session);
-        }
-                    /**
-         * Register a custom macro.
-         *
-         * @param string $name
-         * @param object|callable $macro
-         * @return void 
-         * @static 
-         */ 
-        public static function macro($name, $macro)
-        {
-                        \Collective\Html\FormBuilder::macro($name, $macro);
-        }
-                    /**
-         * Mix another object into the class.
-         *
-         * @param object $mixin
-         * @param bool $replace
-         * @return void 
-         * @throws \ReflectionException
-         * @static 
-         */ 
-        public static function mixin($mixin, $replace = true)
-        {
-                        \Collective\Html\FormBuilder::mixin($mixin, $replace);
-        }
-                    /**
-         * Checks if macro is registered.
-         *
-         * @param string $name
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasMacro($name)
-        {
-                        return \Collective\Html\FormBuilder::hasMacro($name);
-        }
-                    /**
-         * Dynamically handle calls to the class.
-         *
-         * @param string $method
-         * @param array $parameters
-         * @return mixed 
-         * @throws \BadMethodCallException
-         * @static 
-         */ 
-        public static function macroCall($method, $parameters)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->macroCall($method, $parameters);
-        }
-                    /**
-         * Register a custom component.
-         *
-         * @param $name
-         * @param $view
-         * @param array $signature
-         * @return void 
-         * @static 
-         */ 
-        public static function component($name, $view, $signature)
-        {
-                        \Collective\Html\FormBuilder::component($name, $view, $signature);
-        }
-                    /**
-         * Check if a component is registered.
-         *
-         * @param $name
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasComponent($name)
-        {
-                        return \Collective\Html\FormBuilder::hasComponent($name);
-        }
-                    /**
-         * Dynamically handle calls to the class.
-         *
-         * @param string $method
-         * @param array $parameters
-         * @return \Illuminate\Contracts\View\View|mixed 
-         * @throws \BadMethodCallException
-         * @static 
-         */ 
-        public static function componentCall($method, $parameters)
-        {
-                        /** @var \Collective\Html\FormBuilder $instance */
-                        return $instance->componentCall($method, $parameters);
-        }
-         
-    }
             /**
      * 
      *
@@ -19368,6 +17588,27 @@
      
 }
 
+    namespace Illuminate\Database\Query { 
+            /**
+     * 
+     *
+     */ 
+        class Builder {
+                    /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @static 
+         */ 
+        public static function toRawSql()
+        {
+                        return \Illuminate\Database\Query\Builder::toRawSql();
+        }
+         
+    }
+     
+}
+
     namespace Illuminate\View { 
             /**
      * 
@@ -19507,27 +17748,6 @@
      
 }
 
-    namespace Illuminate\Database\Query { 
-            /**
-     * 
-     *
-     */ 
-        class Builder {
-                    /**
-         * 
-         *
-         * @see \App\Providers\AppServiceProvider::boot()
-         * @static 
-         */ 
-        public static function toRawSql()
-        {
-                        return \Illuminate\Database\Query\Builder::toRawSql();
-        }
-         
-    }
-     
-}
-
     namespace Laravel\Nova\Fields { 
             /**
      * 
@@ -19574,7 +17794,6 @@ namespace  {
             class Cache extends \Illuminate\Support\Facades\Cache {}
             class Config extends \Illuminate\Support\Facades\Config {}
             class Cookie extends \Illuminate\Support\Facades\Cookie {}
-            class Crypt extends \Illuminate\Support\Facades\Crypt {}
             class DB extends \Illuminate\Support\Facades\DB {}
             class Eloquent extends \Illuminate\Database\Eloquent\Model {             
                 /**
@@ -20830,6 +19049,19 @@ namespace  {
             {
                                 /** @var \Illuminate\Database\Eloquent\Builder $instance */
                                 return $instance->unless($value, $callback, $default);
+            }
+             
+                /**
+             * 
+             *
+             * @see \CircleLinkHealth\Core\Providers\CoreServiceProvider::register()
+             * @param int $limit
+             * @param \Illuminate\Contracts\Queue\ShouldQueue $job
+             * @static 
+             */ 
+            public static function chunkIntoJobsAndGetArray($limit, $job)
+            {
+                                return \Illuminate\Database\Eloquent\Builder::chunkIntoJobsAndGetArray($limit, $job);
             }
              
                 /**
@@ -22771,9 +21003,7 @@ namespace  {
             class Notification extends \Illuminate\Support\Facades\Notification {}
             class Password extends \Illuminate\Support\Facades\Password {}
             class Queue extends \Illuminate\Support\Facades\Queue {}
-            class Redirect extends \Illuminate\Support\Facades\Redirect {}
             class Request extends \Illuminate\Support\Facades\Request {}
-            class Response extends \Illuminate\Support\Facades\Response {}
             class Route extends \Illuminate\Support\Facades\Route {}
             class Schema extends \Illuminate\Support\Facades\Schema {}
             class Session extends \Illuminate\Support\Facades\Session {}
@@ -22791,7 +21021,6 @@ namespace  {
             class Agent extends \Jenssegers\Agent\Facades\Agent {}
             class Slack extends \jeremykenedy\Slack\Laravel\Facade {}
             class Nova extends \Laravel\Nova\Nova {}
-            class Form extends \Collective\Html\FormFacade {}
             class Html extends \Collective\Html\HtmlFacade {}
             class Livewire extends \Livewire\Livewire {}
             class Excel extends \Maatwebsite\Excel\Facades\Excel {}
