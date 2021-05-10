@@ -8,13 +8,15 @@ namespace CircleLinkHealth\LargePayloadSqsQueue\Queue;
 
 use CircleLinkHealth\LargePayloadSqsQueue\Constants;
 use CircleLinkHealth\LargePayloadSqsQueue\Jobs\LargePayloadJob;
+use CircleLinkHealth\LargePayloadSqsQueue\Traits\LargePayloadS3Client;
 use Illuminate\Queue\SqsQueue;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use function tap;
 
 class LargePayloadSqsQueue extends SqsQueue
 {
+    use LargePayloadS3Client;
+    
     public function pushRaw($payload, $queue = null, array $options = [])
     {
         $key = $this->storePayloadInS3($payload);
@@ -37,16 +39,6 @@ class LargePayloadSqsQueue extends SqsQueue
     protected function generateUuid()
     {
         return Str::uuid()->toString();
-    }
-
-    private function getS3Client()
-    {
-        return Storage::drive($this->payloadS3BucketName());
-    }
-
-    private function payloadS3BucketName()
-    {
-        return Constants::S3_BUCKET;
     }
     
     /**

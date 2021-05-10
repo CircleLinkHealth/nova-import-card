@@ -2,6 +2,8 @@
 
 namespace CircleLinkHealth\LargePayloadSqsQueue\Jobs;
 
+use CircleLinkHealth\LargePayloadSqsQueue\Traits\LargePayloadS3Client;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 
 class LargePayloadJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, LargePayloadS3Client, InteractsWithQueue, Queueable, SerializesModels;
     
     protected string $key;
     protected string $bucket;
@@ -34,6 +36,6 @@ class LargePayloadJob implements ShouldQueue
      */
     public function handle()
     {
-        //
+        app(Dispatcher::class)->dispatchNow(unserialize($this->getS3Client()->get($this->key)));
     }
 }
