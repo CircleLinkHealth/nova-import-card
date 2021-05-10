@@ -62,8 +62,7 @@ class ReimportPatientMedicalRecord extends Command
                 'patientUserId'   => $patientUserId,
                 'initiatorUserId' => $notifiableUserId,
             ], $args)
-        )->onConnection('sqs')
-         ->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
+        )->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
     }
 
     /**
