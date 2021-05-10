@@ -36,7 +36,7 @@ class Practice extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'display_name'
+        'id', 'display_name',
     ];
 
     /**
