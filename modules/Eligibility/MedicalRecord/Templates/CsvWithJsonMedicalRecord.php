@@ -277,7 +277,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
             return [];
         }
 
-        $decoded = json_decode($this->data['problems_string']);
+        $decoded = json_decode($this->data['medications_string']);
 
         if (is_null($decoded)){
             $decoded = json_decode(JsonFixer::attemptFix($this->data['medications_string']));
