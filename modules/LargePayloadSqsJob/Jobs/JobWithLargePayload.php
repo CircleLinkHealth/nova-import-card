@@ -13,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class JobWithLargePayload implements ShouldQueue
 {
@@ -43,6 +44,8 @@ class JobWithLargePayload implements ShouldQueue
      */
     public function handle()
     {
+        Log::debug("Running Job JobWithLargePayload {$this->bucket}:{$this->key}");
+        
         $message = unserialize($this->getS3Client()->get($this->key));
     
         $job = unserialize($message['data']['command'] ?? []);
