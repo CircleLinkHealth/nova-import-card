@@ -35,11 +35,11 @@ class ReimportMultiplePatientMedicalRecords extends Command
         $ids = explode(',', $this->argument('patientUserIds'));
 
         $params = [];
-        $command = 'patient:recreate';
 
         if (! empty($ids)){
             foreach ($ids as $id){
-                $command .= " $id";
+                $command = "patient:recreate $id";
+
                 if ($this->option('clear')){
                     $command .= ' --clear';
                 }
