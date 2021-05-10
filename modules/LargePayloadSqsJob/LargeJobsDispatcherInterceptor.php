@@ -24,7 +24,7 @@ class LargeJobsDispatcherInterceptor
         JobWithLargePayload::dispatch($key, $this->payloadS3BucketName());
     }
     
-    private function payloadIsTooLarge(array $payload) :bool {
+    private function payloadIsTooLarge($payload) :bool {
         return strlen(json_encode($payload)) > Constants::MAX_SQS_SIZE_BYTES;
     }
     
