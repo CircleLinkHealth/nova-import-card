@@ -1,11 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\LargePayloadSqsQueue\Jobs;
 
 use CircleLinkHealth\LargePayloadSqsQueue\Traits\LargePayloadS3Client;
-use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -13,11 +16,15 @@ use Illuminate\Queue\SerializesModels;
 
 class LargePayloadJob implements ShouldQueue
 {
-    use Dispatchable, LargePayloadS3Client, InteractsWithQueue, Queueable, SerializesModels;
-    
-    protected string $key;
+    use Dispatchable;
+    use LargePayloadS3Client;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected string $bucket;
-    
+
+    protected string $key;
+
     /**
      * Create a new job instance.
      *
@@ -25,7 +32,7 @@ class LargePayloadJob implements ShouldQueue
      */
     public function __construct(string $key, string $bucket)
     {
-        $this->key = $key;
+        $this->key    = $key;
         $this->bucket = $bucket;
     }
 
