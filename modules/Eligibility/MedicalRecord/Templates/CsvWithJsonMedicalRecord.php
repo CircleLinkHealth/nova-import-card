@@ -384,7 +384,13 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
             return [];
         }
 
-        return collect(collect(json_decode($this->data['problems_string']))->first())
+        $decoded = json_decode($this->data['problems_string']);
+
+        if (is_null($decoded)){
+            $decoded = json_decode(\CircleLinkHealth\Core\Utilities\JsonFixer::attemptFix($this->data['problems_string']));
+        }
+
+        return collect(collect($decoded)->first())
             ->map(
                 function ($problem) {
                     if ( ! validProblemName($problem->Name)) {
