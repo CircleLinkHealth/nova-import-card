@@ -299,13 +299,13 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                             'start' => $medication->StartDate ?? null,
                             'end'   => $medication->StopDate ?? null,
                         ],
-                        'status'  => $medication->Status,
+                        'status'  => $medication->Status ?? null,
                         'text'    => null,
                         'product' => [
                             'name'        => $medication->Name,
                             'code'        => '',
                             'code_system' => '',
-                            'text'        => $medication->Sig,
+                            'text'        => $medication->Sig ?? null,
                             'translation' => [
                                 'name'             => null,
                                 'code'             => null,
