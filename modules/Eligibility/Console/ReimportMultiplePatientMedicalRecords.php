@@ -35,9 +35,9 @@ class ReimportMultiplePatientMedicalRecords extends Command
         if (! empty($ids)){
             foreach ($ids as $id){
                 ReimportPatientMedicalRecord::for($id, $this->argument('initiatorUserId'), 'queue', [
-                    '--clear' => $this->option('clear'),
-                    '--without-transaction' => $this->option('without-transaction'),
-                    '--clear-ccda' => $this->option('clear-ccda')
+                    '--clear' => (string) $this->option('clear'),
+                    '--without-transaction' => (string) $this->option('without-transaction'),
+                    '--clear-ccda' => (string) $this->option('clear-ccda')
                 ]);
             }
         }
