@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\AttestationRequirementsDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
@@ -14,6 +15,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class AttestationRequirements
 {
@@ -61,7 +63,7 @@ class AttestationRequirements
 
     private function billingRevampIsEnabled(): bool
     {
-        return BillingCache::billingRevampIsEnabled();
+        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
     }
 
     private function getDto(): AttestationRequirementsDTO

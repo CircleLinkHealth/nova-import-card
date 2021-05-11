@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -15,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Exception;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
@@ -281,7 +283,7 @@ class AutoPatientAttestation
     private function isNewBillingEnabled(): bool
     {
         if ( ! isset($this->billingRevamp)) {
-            $this->billingRevamp = BillingCache::billingRevampIsEnabled();
+            $this->billingRevamp = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
         }
 
         return $this->billingRevamp;
