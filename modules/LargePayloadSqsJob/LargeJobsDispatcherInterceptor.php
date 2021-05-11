@@ -14,11 +14,13 @@ class LargeJobsDispatcherInterceptor
     use LargePayloadS3Client;
     
     public function handle($job) {
-        if (! $this->payloadIsTooLarge($job)) {
+        $payload = $job->payload();
+    
+        if (! $this->payloadIsTooLarge($payload)) {
+            Log::debug("Dispatching {$job->resolveName()} as the payload is within allowd size");
             return;
         }
         
-        $payload = $job->payload();
         $key = $this->storeLargeJobInS3($payload);
         $job->delete();
         

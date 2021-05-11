@@ -23,14 +23,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrapThree();
-        
-        Queue::before(
-            function (JobProcessing $event) {
-                (new LargeJobsDispatcherInterceptor())->handle($event->job);
-            }
-        );
+
+        Queue::before(function (JobProcessing $event) {
+            Log::debug("Starting Job {$event->job->resolveName()}");
+            (new LargeJobsDispatcherInterceptor())->handle($event->job);
+        });
     }
-    
+
     /**
      * Register any application services.
      *
