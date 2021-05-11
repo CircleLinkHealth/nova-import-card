@@ -28,8 +28,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (isProductionEnv()) {
+//        Nothing changed. Maybe below doesn't work?
+//        if (isProductionEnv()) {
             $this->app->instance('path.storage', sys_get_temp_dir());
-        }
+//        }
     }
 }
