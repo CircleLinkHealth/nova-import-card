@@ -41,8 +41,9 @@ class AthenaEligibilityCheckableFactory
         try {
             return app(CreateCcdaFromAthenaApi::class)->handle($targetPatient);
         } catch (CcdaWasNotFetchedFromAthenaApi $e) {
-            $targetPatient->setStatusFromException($e);
+            $targetPatient->setStatusFromException($e, __FILE__.':'.__LINE__);
             $targetPatient->save();
+            \Log::error($e);
         }
 
         return null;
