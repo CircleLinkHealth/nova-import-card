@@ -7,6 +7,7 @@
 namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\UpdateOrCreateInDb;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -79,16 +80,20 @@ class Medications implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEa
 
     public function onRow(Row $row)
     {
-        $created = Medication::updateOrCreate([
-            'practice_id' => $this->practiceId,
-            'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['rx']),
-            'sig'         => $this->nullOrValue($row['sig']),
-            'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
-        ], [
-            'stop'   => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
-            'status' => $this->nullOrValue($row['medstatus']),
-        ]);
+        UpdateOrCreateInDb::dispatch(
+            Medication::class,
+            [
+                'practice_id' => $this->practiceId,
+                'mrn'         => $this->nullOrValue($row['patientid']),
+                'name'        => $this->nullOrValue($row['rx']),
+                'sig'         => $this->nullOrValue($row['sig']),
+                'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
+            ],
+            [
+                'stop'   => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
+                'status' => $this->nullOrValue($row['medstatus']),
+            ]
+        );
     }
 
     public function rules(): array

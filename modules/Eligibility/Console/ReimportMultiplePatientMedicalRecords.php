@@ -6,7 +6,9 @@
 namespace CircleLinkHealth\Eligibility\Console;
 
 
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class ReimportMultiplePatientMedicalRecords extends Command
 {
@@ -32,13 +34,22 @@ class ReimportMultiplePatientMedicalRecords extends Command
     {
         $ids = explode(',', $this->argument('patientUserIds'));
 
+        $params = [];
+
         if (! empty($ids)){
             foreach ($ids as $id){
-                ReimportPatientMedicalRecord::for($id, $this->argument('initiatorUserId'), 'queue', [
-                    '--clear' => $this->option('clear'),
-                    '--without-transaction' => $this->option('without-transaction'),
-                    '--clear-ccda' => $this->option('clear-ccda')
-                ]);
+                $command = "patient:recreate $id";
+
+                if ($this->option('clear')){
+                    $command .= ' --clear';
+                }
+                if ($this->option('without-transaction')){
+                    $command .= ' --without-transaction';
+                }
+                if ($this->option('clear-ccda')){
+                    $command .= ' --clear-ccda';
+                }
+                Artisan::queue($command)->onQueue(getCpmQueueName(CpmConstants::LOW_QUEUE));
             }
         }
     }

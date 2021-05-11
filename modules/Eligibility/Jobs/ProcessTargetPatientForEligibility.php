@@ -86,8 +86,9 @@ class ProcessTargetPatientForEligibility implements ShouldQueue, ShouldBeEncrypt
                 }
             );
         } catch (CcdaWasNotFetchedFromAthenaApi $e) {
-            $tP->setStatusFromException($e);
+            $tP->setStatusFromException($e, __FILE__.':'.__LINE__);
             $tP->save();
+            \Log::error($e);
         } catch (\Exception $e) {
             throw $e;
         }

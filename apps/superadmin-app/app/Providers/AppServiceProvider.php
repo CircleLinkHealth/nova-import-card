@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\LargePayloadSqsJob\LargeJobsDispatcherInterceptor;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Log;
@@ -23,10 +22,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrapThree();
-
+    
         Queue::before(function (JobProcessing $event) {
             Log::debug("Starting Job {$event->job->resolveName()}");
-            (new LargeJobsDispatcherInterceptor())->handle($event->job);
         });
     }
 
@@ -37,5 +35,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
     }
 }

@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers\PracticePull;
 
+use CircleLinkHealth\Core\UpdateOrCreateInDb;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -78,10 +79,13 @@ class Allergies implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEach
 
     public function onRow(Row $row)
     {
-        Allergy::updateOrCreate([
-            'practice_id' => $this->practiceId,
-            'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['name']),
-        ]);
+        UpdateOrCreateInDb::dispatch(
+            Allergy::class,
+            [
+                'practice_id' => $this->practiceId,
+                'mrn'         => $this->nullOrValue($row['patientid']),
+                'name'        => $this->nullOrValue($row['name']),
+            ]
+        );
     }
 }

@@ -124,10 +124,10 @@ class TargetPatient extends BaseModel
         }
     }
 
-    public function setStatusFromException(\Exception $e)
+    public function setStatusFromException(\Exception $e, string $loggedFrom)
     {
         $this->status      = TargetPatient::STATUS_ERROR;
-        $this->description = $e->getMessage();
+        $this->description = $loggedFrom.':'.$e->getMessage();
     }
 
     public function user()

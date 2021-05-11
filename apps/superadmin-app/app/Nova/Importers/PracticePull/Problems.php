@@ -7,6 +7,7 @@
 namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\UpdateOrCreateInDb;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -79,7 +80,8 @@ class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachR
 
     public function onRow(Row $row)
     {
-        Problem::updateOrCreate(
+        UpdateOrCreateInDb::dispatch(
+            Problem::class,
             [
                 'practice_id' => $this->practiceId,
                 'mrn'         => $this->nullOrValue($row['patientid']),
