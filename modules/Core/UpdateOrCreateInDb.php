@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class UpdateOrCreateInDb implements ShouldQueue, ShouldBeEncrypted
 {
@@ -60,6 +61,8 @@ class UpdateOrCreateInDb implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
+        Log::debug("UpdateOrCreate[{$this->model}]");
+        
         $this->model::updateOrCreate($this->attributes, empty($this->values) ? $this->attributes : $this->values);
     }
 }
