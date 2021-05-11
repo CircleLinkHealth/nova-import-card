@@ -7,9 +7,11 @@
 namespace Laravel\Vapor\Queue;
 
 use CircleLinkHealth\LargePayloadSqsJob\Constants;
+use CircleLinkHealth\LargePayloadSqsJob\Jobs\DeletePayloadFromS3;
 use CircleLinkHealth\LargePayloadSqsJob\Jobs\JobWithLargePayload;
 use CircleLinkHealth\LargePayloadSqsJob\Traits\LargePayloadS3Client;
 use Illuminate\Queue\SqsQueue;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -57,7 +59,13 @@ class VaporQueue extends SqsQueue
 
         Log::debug("Dispatching JobWithLargePayload[{$bucket}][{$key}] instead of {$jobName}");
 
-        $jobWithLargePayload = $this->createPayload(new JobWithLargePayload($key, $bucket), $queue, [
+        $jobWithLargePayload = $this->createPayload(
+            Bus::chain([
+                           new JobWithLargePayload($key, $bucket),
+                           new DeletePayloadFromS3($key, $bucket),
+                       ])
+            ,
+            $queue, [
             's3BucketName' => $bucket,
             's3Key'        => $key,
         ]);
