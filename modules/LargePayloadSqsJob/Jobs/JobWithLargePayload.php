@@ -46,7 +46,7 @@ class JobWithLargePayload implements ShouldQueue
     {
         Log::debug("Running Job JobWithLargePayload {$this->bucket}:{$this->key}");
         
-        $message = unserialize($this->getS3Client()->get($this->key));
+        $message = json_decode($this->getS3Client()->get($this->key), true);
     
         $job = unserialize($message['data']['command'] ?? []);
         
