@@ -9,7 +9,7 @@ class Constants
     /**
      * The maximum size that SQS can accept in bytes (256 * 1024).
      */
-    const MAX_SQS_SIZE_BYTES = 62144;
+    const MAX_SQS_SIZE_BYTES = 200000;
     
     /**
      * The name of the custom SQS queue driver

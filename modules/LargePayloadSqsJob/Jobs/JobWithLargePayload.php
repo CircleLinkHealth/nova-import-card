@@ -9,17 +9,19 @@ namespace CircleLinkHealth\LargePayloadSqsJob\Jobs;
 use CircleLinkHealth\LargePayloadSqsJob\Traits\LargePayloadS3Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class JobWithLargePayload implements ShouldQueue
+class JobWithLargePayload implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
-    use LargePayloadS3Client;
     use InteractsWithQueue;
+    use LargePayloadS3Client;
     use Queueable;
     use SerializesModels;
     protected string $bucket;
@@ -45,11 +47,21 @@ class JobWithLargePayload implements ShouldQueue
     public function handle()
     {
         Log::debug("Running Job JobWithLargePayload {$this->bucket}:{$this->key}");
-        
+
         $message = json_decode($this->getS3Client()->get($this->key), true);
     
-        $job = unserialize($message['data']['command'] ?? []);
+        $command = $message['data']['command'] ?? [];
         
+        if ((bool) base64_decode($command)) {
+            $job = app(Encrypter::class)->decrypt($command);
+            
+            if (is_string($job)) {
+                $job = unserialize($job);
+            }
+        } else {
+            $job = unserialize($command);
+        }
+
         app(Dispatcher::class)->dispatchNow($job);
     }
 }
