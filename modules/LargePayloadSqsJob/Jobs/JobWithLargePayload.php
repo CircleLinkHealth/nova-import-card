@@ -49,12 +49,12 @@ class JobWithLargePayload implements ShouldQueue, ShouldBeEncrypted
         Log::debug("Running Job JobWithLargePayload {$this->bucket}:{$this->key}");
 
         $message = json_decode($this->getS3Client()->get($this->key), true);
-    
+
         $command = $message['data']['command'] ?? [];
-        
-        if ((bool) base64_decode($command)) {
+
+        if ($this->isValidBase64String($command)) {
             $job = app(Encrypter::class)->decrypt($command);
-            
+
             if (is_string($job)) {
                 $job = unserialize($job);
             }
@@ -63,5 +63,10 @@ class JobWithLargePayload implements ShouldQueue, ShouldBeEncrypted
         }
 
         app(Dispatcher::class)->dispatchNow($job);
+    }
+
+    private function isValidBase64String($command):bool
+    {
+        return base64_encode(base64_decode($command, true)) === $command;
     }
 }
