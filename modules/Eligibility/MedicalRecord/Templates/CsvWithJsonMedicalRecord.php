@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Utilities\JsonFixer;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Address;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy as AllergyResource;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Demographics as DemographicsResource;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Document;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\PersonName;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -92,98 +93,12 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillDocumentSection(): array
     {
-        return [
-            'custodian' => [
-                'name' => $this->getProviderName(),
-            ],
-            'date'   => '',
-            'title'  => '',
-            'author' => [
-                'npi'  => '',
-                'name' => [
-                    'prefix' => null,
-                    'given'  => [],
-                    'family' => null,
-                    'suffix' => null,
-                ],
-                'address' => [
-                    'street' => [
-                        0 => '',
-                    ],
-                    'city'    => '',
-                    'state'   => '',
-                    'zip'     => '',
-                    'country' => '',
-                ],
-                'phones' => [
-                    0 => [
-                        'type'   => '',
-                        'number' => '',
-                    ],
-                ],
-            ],
-            'documentation_of' => [
-                0 => [
-                    'provider_id' => null,
-                    'name'        => [
-                        'prefix' => null,
-                        'given'  => [
-                            0 => $this->getProviderName(),
-                        ],
-                        'family' => '',
-                        'suffix' => '',
-                    ],
-                    'phones' => [
-                        0 => [
-                            'type'   => '',
-                            'number' => '',
-                        ],
-                    ],
-                    'address' => [
-                        'street' => [
-                            0 => '',
-                        ],
-                        'city'    => '',
-                        'state'   => '',
-                        'zip'     => '',
-                        'country' => '',
-                    ],
-                ],
-            ],
-            'legal_authenticator' => [
-                'date'            => null,
-                'ids'             => [],
-                'assigned_person' => [
-                    'prefix' => null,
-                    'given'  => [],
-                    'family' => null,
-                    'suffix' => null,
-                ],
-                'representedOrganization' => [
-                    'ids'     => [],
-                    'name'    => null,
-                    'phones'  => [],
-                    'address' => [
-                        'street'  => [],
-                        'city'    => null,
-                        'state'   => null,
-                        'zip'     => null,
-                        'country' => null,
-                    ],
-                ],
-            ],
-            'location' => [
-                'name'    => $this->data['cpm_location_name'] ?? null,
-                'address' => [
-                    'street'  => [],
-                    'city'    => null,
-                    'state'   => null,
-                    'zip'     => null,
-                    'country' => null,
-                ],
-                'encounter_date' => null,
-            ],
-        ];
+        $documentResource = new Document();
+        $documentResource->custodianName = $this->getProviderName();
+        $documentResource->documentationOfName = $this->getProviderName();
+        $documentResource->locationName = $this->data['cpm_location_name'] ?? null;
+        
+        return $documentResource->toArray();
     }
 
     public function fillEncountersSection(): array

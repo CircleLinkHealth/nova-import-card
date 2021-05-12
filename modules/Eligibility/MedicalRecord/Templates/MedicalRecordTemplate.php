@@ -46,5 +46,5 @@ interface MedicalRecordTemplate
 
     public function toJson(): string;
 
-    public function toObject(): array;
+    public function toObject(): object;
 }
