@@ -4,11 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects;
+namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources;
 
+use Illuminate\Contracts\Support\Arrayable;
 use stdClass;
 
-class Problem
+class Problem implements Arrayable
 {
     private $age;
     private $code;

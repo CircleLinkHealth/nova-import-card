@@ -14,7 +14,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Demographics 
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Document;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Medication;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\PersonName;
-use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Problem as ProblemResource;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
@@ -194,7 +194,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return (new Problem())
+                    return (new ProblemResource())
                         ->setName($problem->Name)
                         ->setStartDate($problem->AddedDate)
                         ->setEndDate($problem->ResolveDate)

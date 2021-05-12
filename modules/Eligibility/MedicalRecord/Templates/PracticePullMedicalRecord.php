@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy as AllergyResource;
-use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem as ProblemValueObject;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Problem as ProblemResource;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
@@ -381,7 +381,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return (new ProblemValueObject())
+                    return (new ProblemResource())
                         ->setName($problem->name)
                         ->setStartDate($problem->start)
                         ->setEndDate($problem->stop)
