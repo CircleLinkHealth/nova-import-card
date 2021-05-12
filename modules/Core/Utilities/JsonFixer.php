@@ -86,10 +86,28 @@ class JsonFixer
         $exploded = explode('"', $string);
 
         $previousContainsAlphaNum = false;
+        $previousIsColon = false;
         for ($i = 0; $i < count($exploded); $i++){
             $currentString = $exploded[$i];
 
             $currentStringContainsAlphaNum = self::stringContainsAlphanum($currentString);
+
+            if (empty($currentString) && $previousIsColon){
+                $previousContainsAlphaNum = false;
+                $previousIsColon = false;
+                continue;
+            }
+
+            if (empty($currentString) && ! $previousIsColon){
+                $previousIsColon = false;
+                $previousContainsAlphaNum = false;
+                $previousString = $exploded[$i-1];
+                $exploded[$i -1] = $previousString.'\\';
+                continue;
+            }
+
+            $previousIsColon = Str::contains($currentString, ':');
+
 
             if (empty($currentString) || !$currentStringContainsAlphaNum){
                 $previousContainsAlphaNum = false;
