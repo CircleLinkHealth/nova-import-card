@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Address;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy as AllergyResource;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Demographics as DemographicsResource;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Document;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Medication;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\PersonName;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -124,75 +125,15 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     if ( ! isset($medication->Name)) {
                         return false;
                     }
+                    
+                    $medicationResource = new Medication();
+                    $medicationResource->dateRangeStart = $medication->StartDate ?? null;
+                    $medicationResource->dateRangeEnd = $medication->StopDate ?? null;
+                    $medicationResource->status = $medication->Status ?? null;
+                    $medicationResource->productName = $medication->Name;
+                    $medicationResource->productText = $medication->Sig ?? null;
 
-                    return [
-                        'reference'       => null,
-                        'reference_title' => null,
-                        'reference_sig'   => null,
-                        'date_range'      => [
-                            'start' => $medication->StartDate ?? null,
-                            'end'   => $medication->StopDate ?? null,
-                        ],
-                        'status'  => $medication->Status ?? null,
-                        'text'    => null,
-                        'product' => [
-                            'name'        => $medication->Name,
-                            'code'        => '',
-                            'code_system' => '',
-                            'text'        => $medication->Sig ?? null,
-                            'translation' => [
-                                'name'             => null,
-                                'code'             => null,
-                                'code_system'      => null,
-                                'code_system_name' => null,
-                            ],
-                        ],
-                        'dose_quantity' => [
-                            'value' => null,
-                            'unit'  => null,
-                        ],
-                        'rate_quantity' => [
-                            'value' => null,
-                            'unit'  => null,
-                        ],
-                        'precondition' => [
-                            'name'        => null,
-                            'code'        => null,
-                            'code_system' => null,
-                        ],
-                        'reason' => [
-                            'name'        => null,
-                            'code'        => null,
-                            'code_system' => null,
-                        ],
-                        'route' => [
-                            'name'             => null,
-                            'code'             => null,
-                            'code_system'      => null,
-                            'code_system_name' => null,
-                        ],
-                        'schedule' => [
-                            'type'         => null,
-                            'period_value' => null,
-                            'period_unit'  => null,
-                        ],
-                        'vehicle' => [
-                            'name'             => null,
-                            'code'             => null,
-                            'code_system'      => null,
-                            'code_system_name' => null,
-                        ],
-                        'administration' => [
-                            'name'             => null,
-                            'code'             => null,
-                            'code_system'      => null,
-                            'code_system_name' => null,
-                        ],
-                        'prescriber' => [
-                            'organization' => null,
-                            'person'       => null,
-                        ],
-                    ];
+                    return $medicationResource->toArray();
                 }
             )
             ->filter()
