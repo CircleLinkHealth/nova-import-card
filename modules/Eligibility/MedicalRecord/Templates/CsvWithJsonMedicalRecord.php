@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\Core\Utilities\JsonFixer;
@@ -41,36 +42,11 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     if ( ! validAllergyName($this->getAllergyName($allergy))) {
                         return false;
                     }
-
-                    return [
-                        'date_range' => [
-                            'start' => '',
-                            'end'   => null,
-                        ],
-                        'name'             => null,
-                        'code'             => '',
-                        'code_system'      => '',
-                        'code_system_name' => '',
-                        'status'           => null,
-                        'severity'         => '',
-                        'reaction'         => [
-                            'name'        => '',
-                            'code'        => '',
-                            'code_system' => '',
-                        ],
-                        'reaction_type' => [
-                            'name'             => '',
-                            'code'             => '',
-                            'code_system'      => '',
-                            'code_system_name' => '',
-                        ],
-                        'allergen' => [
-                            'name'             => $this->getAllergyName($allergy),
-                            'code'             => '',
-                            'code_system'      => '',
-                            'code_system_name' => '',
-                        ],
-                    ];
+                    
+                    $allergyObject = new Allergy();
+                    $allergyObject->allergenName = $this->getAllergyName($allergy);
+                    
+                    return $allergyObject->toArray();
                 }
             )
             ->filter()
