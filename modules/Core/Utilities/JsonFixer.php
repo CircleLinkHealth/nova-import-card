@@ -108,7 +108,6 @@ class JsonFixer
 
             $previousIsColon = Str::contains($currentString, ':');
 
-
             if (empty($currentString) || !$currentStringContainsAlphaNum){
                 $previousContainsAlphaNum = false;
                 continue;
