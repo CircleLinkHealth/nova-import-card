@@ -26,12 +26,12 @@ class CcdaMedicalRecord extends BaseMedicalRecordTemplate
         return (array) $this->ccda->allergies;
     }
 
-    public function fillDemographicsSection(): object
+    public function fillDemographicsSection(): array
     {
         return $this->ccda->demographics;
     }
 
-    public function fillDocumentSection(): object
+    public function fillDocumentSection(): array
     {
         return $this->ccda->document;
     }

@@ -55,7 +55,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
             ->toArray();
     }
 
-    public function fillDemographicsSection(): object
+    public function fillDemographicsSection(): array
     {
         $demos = $this->getDemographicsModel();
 
@@ -153,7 +153,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
         ];
     }
 
-    public function fillDocumentSection(): object
+    public function fillDocumentSection(): array
     {
         $demos = $this->getDemographicsModel();
 

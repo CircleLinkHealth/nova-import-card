@@ -112,7 +112,7 @@ abstract class BaseMedicalRecordTemplate implements MedicalRecordTemplate
         return json_encode($this->toArray());
     }
 
-    public function toObject(): object
+    public function toObject(): array
     {
         return (object) $this->toArray();
     }

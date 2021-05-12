@@ -32,12 +32,12 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
         return $this->ccdaMedicalRecord->fillAllergiesSection();
     }
 
-    public function fillDemographicsSection(): object
+    public function fillDemographicsSection(): array
     {
         return $this->ccdaMedicalRecord->fillDemographicsSection();
     }
 
-    public function fillDocumentSection(): object
+    public function fillDocumentSection(): array
     {
         $document = $this->ccdaMedicalRecord->fillDocumentSection();
 

@@ -17,12 +17,12 @@ class HtmlInXmlMedicalRecord extends BaseMedicalRecordTemplate
         // TODO: Implement fillAllergiesSection() method.
     }
     
-    public function fillDemographicsSection(): object
+    public function fillDemographicsSection(): array
     {
         // TODO: Implement fillDemographicsSection() method.
     }
     
-    public function fillDocumentSection(): object
+    public function fillDocumentSection(): array
     {
         // TODO: Implement fillDocumentSection() method.
     }
