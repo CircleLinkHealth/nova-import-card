@@ -55,6 +55,12 @@ class JsonFixer
             return $withoutLastLine;
         }
 
+        $escaped = self::attemptToEscapeDoubleQuotes($withoutLastLine);
+
+        if (is_json($escaped)){
+            return $escaped;
+        }
+
         return null;
     }
 
@@ -73,5 +79,36 @@ class JsonFixer
         }
 
         return 1 === $openingCount - $closingCount;
+    }
+
+    public static function attemptToEscapeDoubleQuotes(string $string)
+    {
+        $exploded = explode('"', $string);
+
+        $previousContainsAlphaNum = false;
+        for ($i = 0; $i < count($exploded); $i++){
+            $currentString = $exploded[$i];
+
+            $currentStringContainsAlphaNum = self::stringContainsAlphanum($currentString);
+
+            if (empty($currentString) || !$currentStringContainsAlphaNum){
+                $previousContainsAlphaNum = false;
+                continue;
+            }
+
+            if ($previousContainsAlphaNum && $currentStringContainsAlphaNum){
+                $previousString = $exploded[$i-1];
+                $exploded[$i -1] = $previousString.'\\';
+                continue;
+            }
+            $previousContainsAlphaNum = $currentStringContainsAlphaNum;
+        }
+
+        $imploded = implode('"', $exploded);
+        return $imploded;
+    }
+
+    public static function stringContainsAlphanum(string $string):bool{
+        return  preg_match( '/[a-zA-Z]/', $string) || preg_match( '/\d/', $string );
     }
 }
