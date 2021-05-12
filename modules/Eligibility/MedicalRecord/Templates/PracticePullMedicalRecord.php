@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy as AllergyResource;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem as ProblemValueObject;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
@@ -43,35 +44,10 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return [
-                        'date_range' => [
-                            'start' => '',
-                            'end'   => null,
-                        ],
-                        'name'             => null,
-                        'code'             => '',
-                        'code_system'      => '',
-                        'code_system_name' => '',
-                        'status'           => null,
-                        'severity'         => '',
-                        'reaction'         => [
-                            'name'        => '',
-                            'code'        => '',
-                            'code_system' => '',
-                        ],
-                        'reaction_type' => [
-                            'name'             => '',
-                            'code'             => '',
-                            'code_system'      => '',
-                            'code_system_name' => '',
-                        ],
-                        'allergen' => [
-                            'name'             => $allergy->name,
-                            'code'             => '',
-                            'code_system'      => '',
-                            'code_system_name' => '',
-                        ],
-                    ];
+                    $allergyResource = new AllergyResource();
+                    $allergyResource->allergenName = $allergy->name;
+
+                    return $allergyResource->toArray();
                 }
             )
             ->filter()

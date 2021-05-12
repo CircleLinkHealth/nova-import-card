@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy as AllergyResource;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\Core\Utilities\JsonFixer;
@@ -43,10 +43,10 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
                     
-                    $allergyObject = new Allergy();
-                    $allergyObject->allergenName = $this->getAllergyName($allergy);
+                    $allergyResource = new AllergyResource();
+                    $allergyResource->allergenName = $this->getAllergyName($allergy);
                     
-                    return $allergyObject->toArray();
+                    return $allergyResource->toArray();
                 }
             )
             ->filter()

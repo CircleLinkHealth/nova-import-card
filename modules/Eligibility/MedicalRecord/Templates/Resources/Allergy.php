@@ -10,25 +10,25 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Allergy implements Arrayable
 {
-    public string $allergenCode               = '';
-    public string $allergenCodeSystem         = '';
-    public string $allergenCodeSystemName     = '';
-    public string $allergenName               = '';
-    public string $code                       = '';
-    public string $codeSystem                 = '';
-    public string $codeSystemName             = '';
-    public string $dateRangeEnd               = '';
-    public string $dateRangeStart             = '';
-    public string $name                       = '';
-    public string $reactionCode               = '';
-    public string $reactionCodeSystem         = '';
-    public string $reactionName               = '';
-    public string $reactionTypeCode           = '';
-    public string $reactionTypeCodeSystem     = '';
-    public string $reactionTypeCodeSystemName = '';
-    public string $reactionTypeName           = '';
-    public string $severity                   = '';
-    public string $status                     = '';
+    public ?string $allergenCode               = null;
+    public ?string $allergenCodeSystem         = null;
+    public ?string $allergenCodeSystemName     = null;
+    public ?string $allergenName               = null;
+    public ?string $code                       = null;
+    public ?string $codeSystem                 = null;
+    public ?string $codeSystemName             = null;
+    public ?string $dateRangeEnd               = null;
+    public ?string $dateRangeStart             = null;
+    public ?string $name                       = null;
+    public ?string $reactionCode               = null;
+    public ?string $reactionCodeSystem         = null;
+    public ?string $reactionName               = null;
+    public ?string $reactionTypeCode           = null;
+    public ?string $reactionTypeCodeSystem     = null;
+    public ?string $reactionTypeCodeSystemName = null;
+    public ?string $reactionTypeName           = null;
+    public ?string $severity                   = null;
+    public ?string $status                     = null;
 
     public function toArray()
     {
