@@ -111,24 +111,24 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
-    const CLH_GENERATED            = 'clh_generated';
-    const CSV_WITH_JSON            = 'csv-with-json';
+    const CLH_GENERATED                     = 'clh_generated';
     const COMMONWEALTH_PAIN_ASSOCIATES_PLLC = 'commonwealth-pain-associates-pllc';
-    const PRACTICE_PULL_TEMPLATE = 'practice_pull_template';
-    const EMR_DIRECT               = 'emr_direct';
+    const CSV_WITH_JSON                     = 'csv-with-json';
+    const EMR_DIRECT                        = 'emr_direct';
+
+    const GENERATED_BY_CPM = [
+        self::CLH_GENERATED,
+        self::CSV_WITH_JSON,
+        self::COMMONWEALTH_PAIN_ASSOCIATES_PLLC,
+        self::PRACTICE_PULL_TEMPLATE,
+    ];
     const GOOGLE_DRIVE             = 'google_drive';
     const IMPORTER                 = 'importer';
     const IMPORTER_AWV             = 'importer_awv';
     const IMPORTER_SELF_ENROLLMENT = 'importer_self_enrollment';
+    const PRACTICE_PULL_TEMPLATE   = 'practice_pull_template';
     const SFTP_DROPBOX             = 'sftp_dropbox';
     const UPLOADED                 = 'uploaded';
-
-    const GENERATED_BY_CPM  = [
-        self::CLH_GENERATED,
-        self::CSV_WITH_JSON,
-        self::COMMONWEALTH_PAIN_ASSOCIATES_PLLC,
-        self::PRACTICE_PULL_TEMPLATE
-    ];
 
     /**
      * Duplicate patient user ID.
@@ -405,6 +405,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ->first();
     }
 
+    public function getXml(): string
+    {
+        $xmlMedia = $this->getMedia(self::CCD_MEDIA_COLLECTION_NAME)->first();
+
+        return $xmlMedia->getFile();
+    }
+
     /**
      * Checks the procedues section of the CCDA for codes.
      */
@@ -629,6 +636,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      */
     private function getParsedJson()
     {
-        return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
+        return optional(DB::reconnect()->table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
 }

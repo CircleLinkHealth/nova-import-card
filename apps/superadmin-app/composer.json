@@ -260,7 +260,6 @@
         "circlelinkhealth/condition-code-lookup-module": "*",
         "circlelinkhealth/core-module": "*",
         "circlelinkhealth/cpm-admin-module": "*",
-        "circlelinkhealth/large-payload-sqs-job-module": "*",
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/eligibility-module": "*",
@@ -268,6 +267,7 @@
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
         "circlelinkhealth/invoices-download": "*",
+        "circlelinkhealth/large-payload-sqs-job-module": "*",
         "circlelinkhealth/nurseinvoices-module": "*",
         "circlelinkhealth/pdf-service-module": "*",
         "circlelinkhealth/raygun-module": "*",
@@ -281,9 +281,9 @@
         "circlelinkhealth/time-tracking-module": "*",
         "circlelinkhealth/twilio-integration-module": "*",
         "circlelinkhealth/twofa-module": "*",
-        "e0ipso/amazon-sqs-php-extended-client-lib": "^1.1",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
+        "e0ipso/amazon-sqs-php-extended-client-lib": "^1.1",
         "epartment/nova-dependency-container": "^1.2",
         "fideloper/proxy": "^4.2",
         "fourstacks/nova-checkboxes": "^0.1.5",
@@ -298,15 +298,15 @@
         "ohdearapp/ohdear-php-sdk": "^3.0",
         "phaxio/phaxio": "^2.0",
         "pusher/pusher-php-server": "^4.0",
+        "shiftonelabs/laravel-sqs-fifo-queue": "^2.0",
         "sloveniangooner/searchable-select": "^1.3",
         "sparclex/nova-import-card": "^7.0.1",
-        "spatie/laravel-schedule-monitor": "*",
         "spatie/laravel-medialibrary": "^9.0",
+        "spatie/laravel-schedule-monitor": "*",
         "suenerds/nova-searchable-belongs-to-filter": "^1.0",
         "titasgailius/search-relations": "^1.0",
         "vink/nova-cache-card": "^1.0",
         "waynestate/nova-ckeditor4-field": "^0.4.0",
-        "shiftonelabs/laravel-sqs-fifo-queue": "^2.0",
         "wildbit/swiftmailer-postmark": "^3.3"
     },
     "require-dev": {
@@ -381,6 +381,13 @@
             "php artisan ide-helper:meta",
             "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs.dist",
             "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs_views.php"
+        ],
+        "test": [
+            "php artisan --env=testing test:prepare-test_suite-db cpm_tests_superadmin",
+            "php artisan --env=testing migrate:fresh",
+            "php artisan --env=testing migrate:views",
+            "php artisan --env=testing db:seed --class=CircleLinkHealth\\\\Customer\\\\Database\\\\Seeders\\\\TestSuiteSeeder",
+            "echo 'db seeded. no tests run'"
         ]
     }
 }
