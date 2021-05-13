@@ -30,6 +30,11 @@ class MedicalRecordFactory
      */
     private $enrollee;
 
+    /**
+     * @deprecated Deprecated in favor of {@link MedicalRecordFactory::createForPractice}
+     *
+     * @return CcdaMedicalRecord|CsvWithJsonMedicalRecord|PracticePullMedicalRecord|null
+     */
     public static function create(User $user, ?Ccda $ccda = null)
     {
         $static     = new static();
@@ -90,6 +95,22 @@ class MedicalRecordFactory
     public function createEstillMedicalClinicRecord(User $user, ?Ccda $ccda)
     {
         return new HtmlInXmlMedicalRecord($ccda->bluebuttonJson(true), $ccda->getXml());
+    }
+
+    public static function createForPractice(string $practiceName, ?Ccda $ccda = null)
+    {
+        $static     = new static();
+        $methodName = 'create'.ucfirst(Str::camel($practiceName)).'MedicalRecord';
+
+        if (method_exists($static, $methodName)) {
+            return $static->{$methodName}(null, $ccda);
+        }
+
+        if ( ! is_null($ccda)) {
+            return $static->createDefaultMedicalRecord(null, $ccda);
+        }
+
+        return $static->createMedicalRecordWithoutCcda(null);
     }
 
     public function createToledoClinicMedicalRecord(User $user, ?Ccda $ccda)
