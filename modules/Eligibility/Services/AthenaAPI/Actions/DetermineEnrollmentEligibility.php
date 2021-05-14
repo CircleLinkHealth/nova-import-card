@@ -77,7 +77,7 @@ class DetermineEnrollmentEligibility
 
         $count = count($departments);
 
-        \Log::info("Found $count departments", [
+        \Log::debug("Found $count departments", [
             'batch_id'        => $batchId,
             'ehr_practice_id' => $ehrPracticeId,
             'departments'     => collect($departments['departments'])->pluck('name', 'departmentid')->all(),
