@@ -251,6 +251,7 @@ namespace App;
  * @property \CircleLinkHealth\CcmBilling\Entities\PatientMonthlyBillingStatus[]|\Illuminate\Database\Eloquent\Collection    $monthlyBillingStatus
  * @property int|null                                                                                                        $monthly_billing_status_count
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User patientInLocations(array $locationIds, ?string $ccmStatus = null)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|User notOfType($type, $excludeAwv = true)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

@@ -132,6 +132,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/LargePayloadSqsJob",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "license": "MIT",
@@ -147,6 +154,7 @@
         "circlelinkhealth/revisionable-module": "*",
         "circlelinkhealth/self-enrollment-module": "*",
         "circlelinkhealth/shared-models-module": "*",
+        "circlelinkhealth/large-payload-sqs-job-module": "*",
         "circlelinkhealth/sqlviews-module": "*",
         "circlelinkhealth/twilio-integration-module": "*",
         "circlelinkhealth/pdf-service-module": "*",

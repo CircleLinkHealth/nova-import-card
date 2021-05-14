@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 8.37.0.
+ * Generated for Laravel 8.41.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1889,6 +1889,20 @@
                         return $instance->attempt($credentials, $remember);
         }
                     /**
+         * Attempt to authenticate a user with credentials and additional callbacks.
+         *
+         * @param array $credentials
+         * @param array|callable $callbacks
+         * @param false $remember
+         * @return bool 
+         * @static 
+         */ 
+        public static function attemptWhen($credentials = [], $callbacks = null, $remember = false)
+        {            //Method inherited from \Illuminate\Auth\SessionGuard         
+                        /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
+                        return $instance->attemptWhen($credentials, $callbacks, $remember);
+        }
+                    /**
          * Log the given user ID into the application.
          *
          * @param mixed $id
@@ -3706,6 +3720,50 @@
                         return $instance->macroCall($method, $parameters);
         }
                     /**
+         * Remove all items from the cache.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function flush()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->flush();
+        }
+                    /**
+         * Get the Filesystem instance.
+         *
+         * @return \Illuminate\Filesystem\Filesystem 
+         * @static 
+         */ 
+        public static function getFilesystem()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->getFilesystem();
+        }
+                    /**
+         * Get the working directory of the cache.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getDirectory()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->getDirectory();
+        }
+                    /**
+         * Get the cache key prefix.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getPrefix()
+        {
+                        /** @var \Illuminate\Cache\FileStore $instance */
+                        return $instance->getPrefix();
+        }
+                    /**
          * Get a lock instance.
          *
          * @param string $name
@@ -3716,7 +3774,7 @@
          */ 
         public static function lock($name, $seconds = 0, $owner = null)
         {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        /** @var \Illuminate\Cache\FileStore $instance */
                         return $instance->lock($name, $seconds, $owner);
         }
                     /**
@@ -3729,99 +3787,8 @@
          */ 
         public static function restoreLock($name, $owner)
         {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        /** @var \Illuminate\Cache\FileStore $instance */
                         return $instance->restoreLock($name, $owner);
-        }
-                    /**
-         * Remove all items from the cache.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function flush()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->flush();
-        }
-                    /**
-         * Get the Redis connection instance.
-         *
-         * @return \Illuminate\Redis\Connections\Connection 
-         * @static 
-         */ 
-        public static function connection()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->connection();
-        }
-                    /**
-         * Get the Redis connection instance that should be used to manage locks.
-         *
-         * @return \Illuminate\Redis\Connections\Connection 
-         * @static 
-         */ 
-        public static function lockConnection()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->lockConnection();
-        }
-                    /**
-         * Specify the name of the connection that should be used to store data.
-         *
-         * @param string $connection
-         * @return void 
-         * @static 
-         */ 
-        public static function setConnection($connection)
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        $instance->setConnection($connection);
-        }
-                    /**
-         * Specify the name of the connection that should be used to manage locks.
-         *
-         * @param string $connection
-         * @return \Illuminate\Cache\RedisStore 
-         * @static 
-         */ 
-        public static function setLockConnection($connection)
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->setLockConnection($connection);
-        }
-                    /**
-         * Get the Redis database instance.
-         *
-         * @return \Illuminate\Contracts\Redis\Factory 
-         * @static 
-         */ 
-        public static function getRedis()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->getRedis();
-        }
-                    /**
-         * Get the cache key prefix.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getPrefix()
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        return $instance->getPrefix();
-        }
-                    /**
-         * Set the cache key prefix.
-         *
-         * @param string $prefix
-         * @return void 
-         * @static 
-         */ 
-        public static function setPrefix($prefix)
-        {
-                        /** @var \Illuminate\Cache\RedisStore $instance */
-                        $instance->setPrefix($prefix);
         }
          
     }
@@ -4066,6 +4033,20 @@
         {
                         /** @var \Illuminate\Cookie\CookieJar $instance */
                         $instance->queue(...$parameters);
+        }
+                    /**
+         * Queue a cookie to expire with the next response.
+         *
+         * @param string $name
+         * @param string|null $path
+         * @param string|null $domain
+         * @return void 
+         * @static 
+         */ 
+        public static function expire($name, $path = null, $domain = null)
+        {
+                        /** @var \Illuminate\Cookie\CookieJar $instance */
+                        $instance->expire($name, $path, $domain);
         }
                     /**
          * Remove a cookie from the queue.
@@ -4399,6 +4380,18 @@
         {
                         /** @var \Illuminate\Database\DatabaseManager $instance */
                         $instance->setReconnector($reconnector);
+        }
+                    /**
+         * Set the application instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Foundation\Application $app
+         * @return \Illuminate\Database\DatabaseManager 
+         * @static 
+         */ 
+        public static function setApplication($app)
+        {
+                        /** @var \Illuminate\Database\DatabaseManager $instance */
+                        return $instance->setApplication($app);
         }
                     /**
          * Determine if the connected database is a MariaDB database.
@@ -9876,7 +9869,7 @@
          * if the proxy is trusted (see "setTrustedProxies()"), otherwise it returns
          * the latter (from the "SERVER_PROTOCOL" server parameter).
          *
-         * @return string 
+         * @return string|null 
          * @static 
          */ 
         public static function getProtocolVersion()
@@ -10148,7 +10141,7 @@
          *
          * @param string|null $key
          * @param string|array|null $default
-         * @return string|array 
+         * @return string|array|null 
          * @static 
          */ 
         public static function old($key = null, $default = null)
@@ -10888,8 +10881,8 @@
      * @method static \Illuminate\Routing\RouteRegistrar middleware(array|string|null $middleware)
      * @method static \Illuminate\Routing\RouteRegistrar name(string $value)
      * @method static \Illuminate\Routing\RouteRegistrar namespace(string|null $value)
-     * @method static \Illuminate\Routing\RouteRegistrar prefix(string  $prefix)
-     * @method static \Illuminate\Routing\RouteRegistrar where(array  $where)
+     * @method static \Illuminate\Routing\RouteRegistrar prefix(string $prefix)
+     * @method static \Illuminate\Routing\RouteRegistrar where(array $where)
      * @see \Illuminate\Routing\Router
      */ 
         class Route {
@@ -15500,6 +15493,26 @@
                     /**
          * 
          *
+         * @static 
+         */ 
+        public static function reportErrorLevels($reportErrorLevels)
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->reportErrorLevels($reportErrorLevels);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function filterExceptionsUsing($filterExceptionsCallable)
+        {
+                        /** @var \Facade\FlareClient\Flare $instance */
+                        return $instance->filterExceptionsUsing($filterExceptionsCallable);
+        }
+                    /**
+         * 
+         *
          * @return null|string 
          * @static 
          */ 
@@ -19513,6 +19526,23 @@ namespace  {
             }
              
                 /**
+             * Paginate the given query into a cursor paginator.
+             *
+             * @param int|null $perPage
+             * @param array $columns
+             * @param string $cursorName
+             * @param string|null $cursor
+             * @return \Illuminate\Contracts\Pagination\Paginator 
+             * @throws \Illuminate\Pagination\CursorPaginationException
+             * @static 
+             */ 
+            public static function cursorPaginate($perPage = null, $columns = [], $cursorName = 'cursor', $cursor = null)
+            {
+                                /** @var \Illuminate\Database\Eloquent\Builder $instance */
+                                return $instance->cursorPaginate($perPage, $columns, $cursorName, $cursor);
+            }
+             
+                /**
              * Save a new model and return the instance.
              *
              * @param array $attributes
@@ -19602,6 +19632,19 @@ namespace  {
             {
                                 /** @var \Illuminate\Database\Eloquent\Builder $instance */
                                 return $instance->without($relations);
+            }
+             
+                /**
+             * Set the relationships that should be eager loaded while removing any previously added eager loading specifications.
+             *
+             * @param mixed $relations
+             * @return \Illuminate\Database\Eloquent\Builder|static 
+             * @static 
+             */ 
+            public static function withOnly($relations)
+            {
+                                /** @var \Illuminate\Database\Eloquent\Builder $instance */
+                                return $instance->withOnly($relations);
             }
              
                 /**

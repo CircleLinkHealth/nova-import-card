@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrapThree();
-    
+
         Queue::before(function (JobProcessing $event) {
             Log::debug("Starting Job {$event->job->resolveName()}");
         });
@@ -35,6 +35,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
 }
