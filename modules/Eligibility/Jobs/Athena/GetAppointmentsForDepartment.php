@@ -168,7 +168,7 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
             .'to['.$this->end->toDateTimeString().']'.PHP_EOL
             ."department[{$this->departmentId}]".PHP_EOL
             ."practice[{$this->ehrPracticeId}]".PHP_EOL
-            ."offset[{$this->$this->offset}]".PHP_EOL
+            ."offset[{$this->offset}]".PHP_EOL
             ."pulled[$count] appointments".PHP_EOL
         );
     }
@@ -183,7 +183,7 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
             .'to['.$this->end->toDateTimeString().']'.PHP_EOL
             ."department[{$this->departmentId}]".PHP_EOL
             ."practice[{$this->ehrPracticeId}]".PHP_EOL
-            ."offset[{$this->$this->offset}]".PHP_EOL
+            ."offset[{$this->offset}]".PHP_EOL
         );
     }
 }
