@@ -53,7 +53,7 @@ class DetermineEnrollmentEligibility
      *
      * @throws AuthenticationException
      */
-    public function getPatientIdFromAppointments(
+    public function dispatchGetPatientIdFromAppointmentsJobs(
         $ehrPracticeId,
         Carbon $startDate,
         Carbon $endDate,
@@ -77,20 +77,17 @@ class DetermineEnrollmentEligibility
 
         $count = count($departments);
 
-        \Log::info("Found $count departments", [
+        \Log::debug("Found $count departments", [
             'batch_id'        => $batchId,
             'ehr_practice_id' => $ehrPracticeId,
             'departments'     => collect($departments['departments'])->pluck('name', 'departmentid')->all(),
         ]);
-
-        $jobs = [];
+        
         foreach ($departments['departments'] as $department) {
             if ( ! empty($department['departmentid'])) {
-                $jobs[] = new GetAppointmentsForDepartment($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
+                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
             }
         }
-
-        return $jobs;
     }
 
     public function getPatientInsurances($patientId, $practiceId, $departmentId)

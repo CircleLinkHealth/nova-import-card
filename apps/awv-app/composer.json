@@ -165,6 +165,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/LargePayloadSqsJob",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {
@@ -183,6 +190,7 @@
         "circlelinkhealth/cpm-migrations-module": "*",
         "circlelinkhealth/customer-module": "*",
         "circlelinkhealth/eligibility-module": "*",
+        "circlelinkhealth/large-payload-sqs-job-module": "*",
         "circlelinkhealth/cpm-admin-module": "*",
         "circlelinkhealth/revisionable-module": "*",
         "circlelinkhealth/shared-models-module": "*",
