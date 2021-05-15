@@ -166,6 +166,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../../modules/LargePayloadSqsJob",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {
@@ -183,6 +190,7 @@
         "circlelinkhealth/eligibility-module": "*",
         "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/pdf-service-module": "*",
+        "circlelinkhealth/large-payload-sqs-job-module": "*",
         "circlelinkhealth/raygun-module": "*",
         "circlelinkhealth/revisionable-module": "*",
         "circlelinkhealth/saml-sp-module": "*",

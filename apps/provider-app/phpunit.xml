@@ -15,6 +15,9 @@
     <testsuite name="CustomerModule">
       <directory suffix="Test.php">./vendor/circlelinkhealth/customer-module/Tests</directory>
     </testsuite>
+    <testsuite name="CoreModule">
+      <directory suffix="Test.php">./vendor/circlelinkhealth/core-module/Tests</directory>
+    </testsuite>
     <testsuite name="CcmBillingModule">
       <directory suffix="Test.php">./vendor/circlelinkhealth/ccm-billing-module/Tests</directory>
     </testsuite>
