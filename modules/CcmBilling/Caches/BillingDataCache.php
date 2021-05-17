@@ -13,22 +13,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BillingDataCache implements BillingCache
 {
-    protected bool $billingRevampIsEnabled;
     protected array $locationSummaryCache = [];
     protected array $patientCache         = [];
 
     protected array $queriedLocationSummaries = [];
 
     protected array $queriedPatients = [];
-
-    public function billingRevampIsEnabled(): bool
-    {
-        if ( ! isset($this->billingRevampIsEnabled)) {
-            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
-        }
-
-        return $this->billingRevampIsEnabled;
-    }
 
     public function clearLocations(): void
     {
@@ -104,11 +94,6 @@ class BillingDataCache implements BillingCache
     public function patientWasQueried(int $patientId): bool
     {
         return in_array($patientId, $this->queriedPatients);
-    }
-
-    public function setBillingRevampIsEnabled(bool $isEnabled): void
-    {
-        $this->billingRevampIsEnabled = $isEnabled;
     }
 
     public function setLocationSummariesInCache(Collection $summaries): void

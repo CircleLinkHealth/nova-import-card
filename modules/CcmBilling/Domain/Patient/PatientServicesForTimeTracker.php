@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\PatientForcedChargeableService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
@@ -19,6 +20,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientTimeForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
 
 class PatientServicesForTimeTracker
@@ -177,7 +179,7 @@ class PatientServicesForTimeTracker
 
     private function newBillingIsEnabled(): bool
     {
-        return BillingCache::billingRevampIsEnabled();
+        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
     }
 
     private function patientEligibleForRHC(): bool

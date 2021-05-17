@@ -96,10 +96,6 @@ class PatientForcedChargeableServicesTest extends CustomerTestCase
 
     public function test_system_accounts_for_forced_and_blocked_cs_when_determining_if_patient_is_of_service_code()
     {
-        //test with Billing revamp on
-        BillingCache::setBillingRevampIsEnabled(true);
-
-        BillingCache::clearPatients();
         BillingCache::clearLocations();
         $patient = $this->setupPatient($this->practice, true);
 
@@ -111,8 +107,6 @@ class PatientForcedChargeableServicesTest extends CustomerTestCase
         event(new PatientConsentedToService($patient->id, $bhiCode = ChargeableService::BHI));
         $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode);
 
-        BillingCache::clearPatients();
-        self::assertTrue(BillingCache::billingRevampIsEnabled());
         self::assertTrue($patient->isBhi());
         self::assertTrue(
             $patient->chargeableMonthlySummaries()
@@ -136,45 +130,5 @@ class PatientForcedChargeableServicesTest extends CustomerTestCase
         );
         Cache::forget("user:$patient->id:is_pcm");
         self::assertTrue($patient->isPcm());
-
-        //test with Billing revamp off
-        BillingCache::setBillingRevampIsEnabled(false);
-        BillingCache::clearPatients();
-        BillingCache::clearLocations();
-        $patient2 = $this->setupPatient($this->practice, true);
-
-        $patient2->notes()->create([
-            'type'      => Patient::BHI_CONSENT_NOTE_TYPE,
-            'author_id' => $this->careCoach()->id,
-        ]);
-
-        event(new PatientConsentedToService($patient2->id, $bhiCode = ChargeableService::BHI));
-        $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode);
-
-        BillingCache::clearPatients();
-        self::assertFalse(BillingCache::billingRevampIsEnabled());
-        self::assertTrue($patient2->isBhi());
-        self::assertTrue(
-            $patient2->chargeableMonthlySummaries()
-                ->where('chargeable_service_id', $bhiCodeId)
-                ->where('chargeable_month', $month = Carbon::now()->startOfMonth())
-                ->exists()
-        );
-        Cache::forget("user:$patient2->id:is_bhi");
-        ForcePatientChargeableService::execute(
-            (new ForceAttachInputDTO())->setChargeableServiceId($bhiCodeId)
-                ->setPatientUserId($patient2->id)
-                ->setActionType(PatientForcedChargeableService::BLOCK_ACTION_TYPE)
-        );
-
-        self::assertFalse($patient2->isBhi());
-
-        ForcePatientChargeableService::execute(
-            (new ForceAttachInputDTO())->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM))
-                ->setPatientUserId($patient2->id)
-                ->setActionType(PatientForcedChargeableService::FORCE_ACTION_TYPE)
-        );
-        Cache::forget("user:$patient2->id:is_pcm");
-        self::assertTrue($patient2->isPcm());
     }
 }
