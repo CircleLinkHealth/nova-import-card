@@ -4,17 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Core;
+namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
+use CircleLinkHealth\Eligibility\Jobs\ProcessTargetPatientForEligibility;
+use CircleLinkHealth\SharedModels\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
-class UpdateOrCreateInDb implements ShouldQueue, ShouldBeEncrypted
+class ResetAndProcessTargetPatient implements ShouldQueue, ShouldBeEncrypted
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -27,21 +28,19 @@ class UpdateOrCreateInDb implements ShouldQueue, ShouldBeEncrypted
      * @var int
      */
     public $tries = 3;
-    protected array  $attributes;
-
-    protected string $model;
-    protected array  $values;
+    protected ?int          $batchId;
+    protected TargetPatient $targetPatient;
 
     /**
      * Create a new job instance.
      *
+     * @param  mixed|null $after
      * @return void
      */
-    public function __construct(string $model, array $attributes, array $values = [])
+    public function __construct(TargetPatient $targetPatient, ?int $batchId = null)
     {
-        $this->model      = $model;
-        $this->attributes = $attributes;
-        $this->values     = $values;
+        $this->targetPatient = $targetPatient;
+        $this->batchId       = $batchId;
     }
 
     /**
@@ -61,8 +60,11 @@ class UpdateOrCreateInDb implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
-        Log::debug("UpdateOrCreate[{$this->model}]");
-        
-        $this->model::updateOrCreate($this->attributes, empty($this->values) ? $this->attributes : $this->values);
+        if (null !== $this->batchId) {
+            $this->targetPatient->batch_id = $this->batchId;
+            $this->targetPatient->status = 'to_process';
+            $this->targetPatient->save();
+            ProcessTargetPatientForEligibility::dispatch($this->targetPatient->id);
+        }
     }
 }

@@ -6,7 +6,7 @@
 
 namespace App\Nova\Importers\PracticePull;
 
-use CircleLinkHealth\Core\UpdateOrCreateInDb;
+use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;

@@ -7,7 +7,7 @@
 namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\UpdateOrCreateInDb;
+use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics as DemographicsModel;

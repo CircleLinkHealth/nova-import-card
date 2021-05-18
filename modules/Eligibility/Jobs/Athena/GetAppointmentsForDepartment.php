@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -119,24 +120,15 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
                 continue;
             }
 
-            $target = TargetPatient::updateOrCreate(
-                [
-                    'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
-                    'ehr_id'            => CpmConstants::athenaEhrId(),
-                    'ehr_patient_id'    => $ehrPatientId,
-                    'ehr_practice_id'   => $this->ehrPracticeId,
-                    'ehr_department_id' => $departmentId,
-                ]
-            );
+            $args = [
+                'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
+                'ehr_id'            => CpmConstants::athenaEhrId(),
+                'ehr_patient_id'    => $ehrPatientId,
+                'ehr_practice_id'   => $this->ehrPracticeId,
+                'ehr_department_id' => $departmentId,
+            ];
 
-            if (null !== $this->batchId) {
-                $target->batch_id = $this->batchId;
-            }
-
-            if ( ! $target->status) {
-                $target->status = 'to_process';
-                $target->save();
-            }
+            UpdateOrCreateInDb::dispatch(TargetPatient::class, $args, $args, ResetAndProcessTargetPatient::class, $this->batchId);
         }
     }
 

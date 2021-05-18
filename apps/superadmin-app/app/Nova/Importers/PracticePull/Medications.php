@@ -7,7 +7,7 @@
 namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\UpdateOrCreateInDb;
+use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
