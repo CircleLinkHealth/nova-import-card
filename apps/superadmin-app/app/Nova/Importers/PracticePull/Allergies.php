@@ -36,15 +36,10 @@ class Allergies implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEach
 
         $this->practiceId = $practiceId;
     }
-
-    public function batchSize(): int
-    {
-        return 300;
-    }
-
+    
     public function chunkSize(): int
     {
-        return 300;
+        return 500;
     }
 
     /**
