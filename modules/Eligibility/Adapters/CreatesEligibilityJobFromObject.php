@@ -151,7 +151,11 @@ trait CreatesEligibilityJobFromObject
         $lastEncounter = false;
         $patient->put('last_encounter', '');
 
-        $encounters = collect($parsedCcdObj->encounters);
+        $encounters = collect($parsedCcdObj->encounters ?? []);
+        
+        if ($encounters->isEmpty()) {
+            return $patient;
+        }
 
         $lastEncounter = $encounters->sortByDesc(function ($el) {
             return $el->date;
