@@ -36,3 +36,4 @@ lsp/log/*
 staging-deploy-s3.env
 production-deploy-s3.env.env.feature-billing-revamp
 .env.billing-attestation-hotfixes
+.env.pam-filters
