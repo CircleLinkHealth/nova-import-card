@@ -6,13 +6,27 @@
 
 namespace App\Nova\Importers\PracticePull;
 
-use Maatwebsite\Excel\Events\AfterImport;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 
 class Allergies extends AbstractImporter
 {
+    public function clearDuplicates()
+    {
+        return \DB::statement("
+                    DELETE n1
+                    FROM practice_pull_allergies n1, practice_pull_allergies n2
+                    WHERE n1.id < n2.id
+                    AND n1.mrn = n2.mrn
+                    AND n1.name = n2.name
+                    AND n1.practice_id = n2.practice_id
+                    AND n1.practice_id = {$this->practiceId}
+                    AND n2.practice_id = {$this->practiceId}
+                ");
+    }
+
     public function model(array $row)
     {
-        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy([
+        return new Allergy([
             'practice_id' => $this->practiceId,
             'mrn'         => $this->nullOrValue($row['patientid']),
             'name'        => $this->nullOrValue($row['name']),
@@ -37,19 +51,10 @@ class Allergies extends AbstractImporter
 
     public function registerEvents(): array
     {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $dupsDeleted = \DB::statement("
-                    DELETE n1
-                    FROM practice_pull_allergies n1, practice_pull_allergies n2
-                    WHERE n1.id < n2.id
-                    AND n1.mrn = n2.mrn
-                    AND n1.name = n2.name
-                    AND n1.practice_id = n2.practice_id
-                    AND n1.practice_id = {$this->practiceId}
-                    AND n2.practice_id = {$this->practiceId}
-                ");
-            },
-        ];
+        return array_merge(
+            [
+            ],
+            parent::registerEvents()
+        );
     }
 }

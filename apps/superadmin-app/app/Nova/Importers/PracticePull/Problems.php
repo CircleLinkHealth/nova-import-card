@@ -8,10 +8,23 @@ namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem;
-use Maatwebsite\Excel\Events\AfterImport;
 
 class Problems extends AbstractImporter
 {
+    public function clearDuplicates()
+    {
+        return \DB::statement("
+                    DELETE n1
+                    FROM practice_pull_problems n1, practice_pull_problems n2
+                    WHERE n1.id < n2.id
+                    AND n1.mrn = n2.mrn
+                    AND n1.name = n2.name
+                    AND n1.practice_id = n2.practice_id
+                    AND n1.practice_id = {$this->practiceId}
+                    AND n2.practice_id = {$this->practiceId}
+                ");
+    }
+
     public function model(array $row)
     {
         return new Problem([
@@ -44,20 +57,11 @@ class Problems extends AbstractImporter
 
     public function registerEvents(): array
     {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $dupsDeleted = \DB::statement("
-                    DELETE n1
-                    FROM practice_pull_problems n1, practice_pull_problems n2
-                    WHERE n1.id < n2.id
-                    AND n1.mrn = n2.mrn
-                    AND n1.name = n2.name
-                    AND n1.practice_id = n2.practice_id
-                    AND n1.practice_id = {$this->practiceId}
-                    AND n2.practice_id = {$this->practiceId}
-                ");
-            },
-        ];
+        return array_merge(
+            [
+            ],
+            parent::registerEvents()
+        );
     }
 
     public function rules(): array

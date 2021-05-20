@@ -9,13 +9,6 @@ namespace App\Nova\Importers\PracticePull;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
 
 class Demographics extends AbstractImporter
@@ -49,8 +42,6 @@ class Demographics extends AbstractImporter
         ]);
     }
 
-    
-
     /**
      * If the value of a cell is any of these we shall consider it null.
      *
@@ -69,9 +60,20 @@ class Demographics extends AbstractImporter
 
     public function registerEvents(): array
     {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $dupsDeleted = \DB::statement("
+        return array_merge([
+                           
+                           ],
+                           parent::registerEvents());
+    }
+
+    public function rules(): array
+    {
+        return $this->rules;
+    }
+    
+    public function clearDuplicates()
+    {
+        return \DB::statement("
                     DELETE n1
                     FROM practice_pull_demographics n1, practice_pull_demographics n2
                     WHERE n1.id < n2.id
@@ -80,12 +82,5 @@ class Demographics extends AbstractImporter
                     AND n1.practice_id = {$this->practiceId}
                     AND n2.practice_id = {$this->practiceId}
                 ");
-            },
-        ];
-    }
-
-    public function rules(): array
-    {
-        return $this->rules;
     }
 }

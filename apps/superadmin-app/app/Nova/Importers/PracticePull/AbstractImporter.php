@@ -16,6 +16,8 @@ use Maatwebsite\Excel\Events\AfterImport;
 
 abstract class AbstractImporter  implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
 {
+    const FINISHED_PROCESSING_AT_LABEL = 'finishedProcessingAt';
+    
     use Importable;
     
     protected int $batchId;
@@ -55,4 +57,23 @@ abstract class AbstractImporter  implements ToModel, WithChunkReading, WithHeadi
             ? null
             : $value;
     }
+    
+    public function registerEvents(): array
+    {
+        return [
+            AfterImport::class => function (AfterImport $event) {
+                $this->markMediaAsDone();
+                
+                $this->clearDuplicates();
+            },
+        ];
+    }
+    
+    protected function markMediaAsDone() {
+        $media = Media::findOrFail($this->mediaId);
+        $media->setCustomProperty(self::FINISHED_PROCESSING_AT_LABEL, now()->toDateTimeString());
+        $media->save();
+    }
+    
+    abstract function clearDuplicates();
 }

@@ -42,9 +42,22 @@ class Medications extends AbstractImporter
 
     public function registerEvents(): array
     {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $dupsDeleted = \DB::statement("
+        return array_merge(
+            [
+            
+            ],
+            parent::registerEvents()
+        );
+    }
+
+    public function rules(): array
+    {
+        return $this->rules;
+    }
+    
+    public function clearDuplicates()
+    {
+        return \DB::statement("
                     DELETE n1
                     FROM practice_pull_medications n1, practice_pull_medications n2
                     WHERE n1.id < n2.id
@@ -54,12 +67,5 @@ class Medications extends AbstractImporter
                     AND n1.practice_id = {$this->practiceId}
                     AND n2.practice_id = {$this->practiceId}
                 ");
-            },
-        ];
-    }
-
-    public function rules(): array
-    {
-        return $this->rules;
     }
 }
