@@ -335,6 +335,6 @@ return [
         | processed it.
         |
         */
-        'force_resync_remote' => true,
+        'force_resync_remote' => null,
     ],
 ];
