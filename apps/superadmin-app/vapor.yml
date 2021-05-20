@@ -17,7 +17,6 @@ environments:
             - superadmin-pam-filters-low-staging
             - superadmin-pam-filters-high-staging
             - superadmin-pam-filters-revisionable-staging
-            - superadmin-pam-filters-staging.fifo
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
             - 'php artisan event:cache'
