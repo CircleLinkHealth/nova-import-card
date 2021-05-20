@@ -91,7 +91,6 @@ class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, Should
                 ->dispatch();
         }
     }
-    
 
     private function importers(string $for)
     {

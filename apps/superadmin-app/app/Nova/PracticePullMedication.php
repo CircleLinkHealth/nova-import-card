@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\PracticePull\ImportMedications;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
 use Illuminate\Http\Request;
@@ -53,7 +52,7 @@ class PracticePullMedication extends Resource
      */
     public function actions(Request $request)
     {
-        return [new ImportMedications()];
+        return [];
     }
 
     /**
