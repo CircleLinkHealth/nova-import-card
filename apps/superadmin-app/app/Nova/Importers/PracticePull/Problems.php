@@ -37,15 +37,10 @@ class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachR
 
         $this->practiceId = $practiceId;
     }
-
-    public function batchSize(): int
-    {
-        return 100;
-    }
-
+    
     public function chunkSize(): int
     {
-        return 100;
+        return 500;
     }
 
     /**

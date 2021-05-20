@@ -38,14 +38,9 @@ class Medications implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEa
         $this->practiceId = $practiceId;
     }
 
-    public function batchSize(): int
-    {
-        return 300;
-    }
-
     public function chunkSize(): int
     {
-        return 300;
+        return 500;
     }
 
     /**

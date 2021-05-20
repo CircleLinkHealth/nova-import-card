@@ -40,14 +40,9 @@ class Demographics implements WithChunkReading, WithHeadingRow, ShouldQueue, OnE
         $this->practiceId = $practiceId;
     }
 
-    public function batchSize(): int
-    {
-        return 300;
-    }
-
     public function chunkSize(): int
     {
-        return 300;
+        return 500;
     }
 
     /**
