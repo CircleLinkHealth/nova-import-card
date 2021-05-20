@@ -6,42 +6,49 @@
 
 namespace App\Nova\Importers\PracticePull;
 
-use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
-use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Row;
 
-class Allergies implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
+class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
 {
     use Importable;
-
+    
     /**
      * @var int
      */
     private $practiceId;
-
+    
     /**
      * Medications constructor.
      */
     public function __construct(int $practiceId)
     {
-        ini_set('upload_max_filesize', '200M');
-        ini_set('post_max_size', '200M');
-        ini_set('max_input_time', 900);
-        ini_set('max_execution_time', 900);
-
         $this->practiceId = $practiceId;
+    }
+    
+    public function batchSize(): int
+    {
+        return 80;
     }
     
     public function chunkSize(): int
     {
-        return 500;
+        return 80;
     }
-
+    
+    public function model(array $row)
+    {
+        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy([
+                                                                                    'practice_id' => $this->practiceId,
+                                                                                    'mrn'         => $this->nullOrValue($row['patientid']),
+                                                                                    'name'        => $this->nullOrValue($row['name']),
+                                                                                ]);
+    }
+    
     /**
      * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
      *
@@ -55,7 +62,7 @@ class Allergies implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEach
             ? null
             : $value;
     }
-
+    
     /**
      * If the value of a cell is any of these we shall consider it null.
      *
@@ -70,17 +77,5 @@ class Allergies implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEach
             '#N/A',
             '-',
         ];
-    }
-
-    public function onRow(Row $row)
-    {
-        UpdateOrCreateInDb::dispatch(
-            Allergy::class,
-            [
-                'practice_id' => $this->practiceId,
-                'mrn'         => $this->nullOrValue($row['patientid']),
-                'name'        => $this->nullOrValue($row['name']),
-            ]
-        );
     }
 }
