@@ -48,9 +48,13 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         }
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
+        
+        if ($media->getCustomProperty('finishedAt', null)) {
+            return null;
+        }
 
         $importerClass = $this->file->getImporter();
-        $importer      = new $importerClass($batch->practice_id);
+        $importer      = new $importerClass($batch->practice_id, $batch->id, $media->id);
         $path          = $media->getPath();
 
         try {

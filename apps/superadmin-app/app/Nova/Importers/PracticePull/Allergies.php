@@ -6,65 +6,19 @@
 
 namespace App\Nova\Importers\PracticePull;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
 
-class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
+class Allergies extends AbstractImporter
 {
-    use Importable;
-    
-    /**
-     * @var int
-     */
-    private $practiceId;
-    
-    /**
-     * Medications constructor.
-     */
-    public function __construct(int $practiceId)
-    {
-        $this->practiceId = $practiceId;
-    }
-    
-    public function batchSize(): int
-    {
-        return 80;
-    }
-    
-    public function chunkSize(): int
-    {
-        return 80;
-    }
-    
     public function model(array $row)
     {
         return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy([
-                                                                                    'practice_id' => $this->practiceId,
-                                                                                    'mrn'         => $this->nullOrValue($row['patientid']),
-                                                                                    'name'        => $this->nullOrValue($row['name']),
-                                                                                ]);
+            'practice_id' => $this->practiceId,
+            'mrn'         => $this->nullOrValue($row['patientid']),
+            'name'        => $this->nullOrValue($row['name']),
+        ]);
     }
-    
-    /**
-     * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
-     *
-     * @param string $value
-     *
-     * @return string|null
-     */
-    public function nullOrValue($value)
-    {
-        return empty($value) || in_array($value, $this->nullValues())
-            ? null
-            : $value;
-    }
-    
+
     /**
      * If the value of a cell is any of these we shall consider it null.
      *
@@ -80,7 +34,7 @@ class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchI
             '-',
         ];
     }
-    
+
     public function registerEvents(): array
     {
         return [
