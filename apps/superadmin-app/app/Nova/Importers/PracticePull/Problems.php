@@ -96,6 +96,7 @@ class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchIn
                     FROM practice_pull_problems n1, practice_pull_problems n2
                     WHERE n1.id < n2.id
                     AND n1.mrn = n2.mrn
+                    AND n1.name = n2.name
                     AND n1.practice_id = n2.practice_id
                     AND n1.practice_id = {$this->practiceId}
                     AND n2.practice_id = {$this->practiceId}

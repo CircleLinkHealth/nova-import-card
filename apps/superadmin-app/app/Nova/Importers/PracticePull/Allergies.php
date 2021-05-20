@@ -90,6 +90,7 @@ class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchI
                     FROM practice_pull_allergies n1, practice_pull_allergies n2
                     WHERE n1.id < n2.id
                     AND n1.mrn = n2.mrn
+                    AND n1.name = n2.name
                     AND n1.practice_id = n2.practice_id
                     AND n1.practice_id = {$this->practiceId}
                     AND n2.practice_id = {$this->practiceId}
