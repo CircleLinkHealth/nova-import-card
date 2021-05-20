@@ -11,7 +11,6 @@ jobs:
     name: Deploy
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -104,8 +103,8 @@ jobs:
           S3_SECRETS_SECRET: ${{ secrets.PRODUCTION_S3_SECRETS_SECRET }}
           S3_SECRETS_REGION: ${{ secrets.S3_SECRETS_REGION }}
 
-      - name: Create env files to connect to S3 after deployment - staging
-        if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+      - name: Create env files to connect to S3 after deployment - staging and review apps
+        if: ${{ env.CI_SKIP == 'false' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         run: |
           echo ENV_TYPE=$ENV_TYPE >> staging-deploy-s3.env
           echo APP_NAME=$APP_NAME >> staging-deploy-s3.env
@@ -128,7 +127,7 @@ jobs:
 
       - name: Deploy - production
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
-        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} ${{ env.ENV_TYPE }} --commit="${{ github.sha }}"
         env:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: production
@@ -136,14 +135,29 @@ jobs:
 
       - name: Deploy - staging
         if: ${{ env.CI_SKIP == 'false' && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
-        run: ./vendor/bin/vapor deploy ${{ env.ENV_TYPE }} ${{ env.APP_ENV }} --commit="${{ github.sha }}"
+        run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} ${{ env.ENV_TYPE }} --commit="${{ github.sha }}"
         env:
           VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
           ENV_TYPE: staging
           APP_ENV: staging
 
+      - name: Split commit message for review apps
+        uses: jungwinter/split@v1
+        if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy review') }}
+        id: split
+        with:
+          msg: ${{ github.event.head_commit.message }}
+
+      - name: Deploy - review
+        if: ${{ env.CI_SKIP == 'false' && github.ref != 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy review') }}
+        run: ./vendor/bin/vapor deploy ${{ env.APP_ENV }} ${{ env.ENV_TYPE }} --commit="${{ github.sha }}"
+        env:
+          VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
+          ENV_TYPE: staging
+          APP_ENV: ${{ steps.split.outputs._2 }}
+
       - name: Notify Slack - Success (production)
-        if: ${{ env.CI_SKIP == 'false' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && success() && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -154,8 +168,8 @@ jobs:
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':suspect:'
 
-      - name: Notify Slack - Success
-        if: ${{ env.CI_SKIP == 'false' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+      - name: Notify Slack - Success (staging)
+        if: ${{ env.CI_SKIP == 'false' && success() && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -166,8 +180,20 @@ jobs:
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':suspect:'
 
+      - name: Notify Slack - Success (review)
+        if: ${{ env.CI_SKIP == 'false' && success() && github.ref != 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy review') }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#39C16C'
+          SLACK_TITLE: Deployment successful for superadmin app - REVIEW APP (${{ steps.split.outputs._2 }})
+          SLACK_MESSAGE: 🚀
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':suspect:'
+
       - name: Notify Slack - Failure (production)
-        if: ${{ env.CI_SKIP == 'false' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && failure() && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -179,13 +205,25 @@ jobs:
           SLACK_ICON_EMOJI: ':scream_cat:'
 
       - name: Notify Slack - Failure (staging)
-        if: ${{ env.CI_SKIP == 'false' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && failure() && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: deployments
           SLACK_COLOR: '#ff0033'
           SLACK_TITLE: Deployment failed for superadmin app - STAGING
+          SLACK_MESSAGE: 💣
+          SLACK_USERNAME: kokos
+          SLACK_ICON_EMOJI: ':scream_cat:'
+
+      - name: Notify Slack - Failure (review)
+        if: ${{ env.CI_SKIP == 'false' && failure() && startsWith(github.event.head_commit.message, 'deploy review') }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: '#ff0033'
+          SLACK_TITLE: Deployment failed for superadmin app - REVIEW APP (${{ steps.split.outputs._2 }})
           SLACK_MESSAGE: 💣
           SLACK_USERNAME: kokos
           SLACK_ICON_EMOJI: ':scream_cat:'
