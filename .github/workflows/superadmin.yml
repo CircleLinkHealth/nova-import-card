@@ -158,7 +158,7 @@ jobs:
           APP_ENV: ${{ steps.split.outputs._2 }}
 
       - name: Notify Slack - Success (production)
-        if: ${{ env.CI_SKIP == 'false' && success() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && success() && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -170,7 +170,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Success (staging)
-        if: ${{ env.CI_SKIP == 'false' && success() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && success() && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -182,7 +182,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Success (review)
-        if: ${{ env.CI_SKIP == 'false' && success() && startsWith(github.event.head_commit.message, 'deploy review') }}
+        if: ${{ env.CI_SKIP == 'false' && success() && github.ref != 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy review') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -194,7 +194,7 @@ jobs:
           SLACK_ICON_EMOJI: ':suspect:'
 
       - name: Notify Slack - Failure (production)
-        if: ${{ env.CI_SKIP == 'false' && failure() && startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && failure() && github.ref == 'refs/heads/master' && startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -206,7 +206,7 @@ jobs:
           SLACK_ICON_EMOJI: ':scream_cat:'
 
       - name: Notify Slack - Failure (staging)
-        if: ${{ env.CI_SKIP == 'false' && failure() && !startsWith(github.event.head_commit.message, 'deploy prod') }}
+        if: ${{ env.CI_SKIP == 'false' && failure() && github.ref == 'refs/heads/master' && !startsWith(github.event.head_commit.message, 'deploy prod') }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
