@@ -10,15 +10,16 @@ use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Row;
+use Maatwebsite\Excel\Events\AfterImport;
 
-class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
+class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
 {
     use Importable;
-
     /**
      * @var int
      */
@@ -40,6 +41,20 @@ class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachR
     public function chunkSize(): int
     {
         return 80;
+    }
+
+    public function model(array $row)
+    {
+        return new Problem([
+            'practice_id' => $this->practiceId,
+            'mrn'         => $this->nullOrValue($row['patientid']),
+            'name'        => $this->nullOrValue($row['name']),
+            'code'        => $this->nullOrValue($row['code']),
+            'code_type'   => $this->nullOrValue($row['codetype']),
+            'start'       => $row['addeddate'] ? Carbon::parse($row['addeddate']) : null,
+            'stop'        => $row['resolvedate'] ? Carbon::parse($row['resolvedate']) : null,
+            'status'      => $this->nullOrValue($row['status']),
+        ]);
     }
 
     /**
@@ -72,18 +87,21 @@ class Problems implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachR
         ];
     }
 
-    public function onRow(Row $row)
+    public function registerEvents(): array
     {
-        Problem::updateOrCreate([
-            'practice_id' => $this->practiceId,
-            'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['name']),
-            'code'        => $this->nullOrValue($row['code']),
-            'code_type'   => $this->nullOrValue($row['codetype']),
-            'start'       => $row['addeddate'] ? Carbon::parse($row['addeddate']) : null,
-            'stop'        => $row['resolvedate'] ? Carbon::parse($row['resolvedate']) : null,
-            'status'      => $this->nullOrValue($row['status']),
-        ]);
+        return [
+            AfterImport::class => function (AfterImport $event) {
+                $dupsDeleted = \DB::statement("
+                    DELETE n1
+                    FROM practice_pull_problems n1, practice_pull_problems n2
+                    WHERE n1.id < n2.id
+                    AND n1.mrn = n2.mrn
+                    AND n1.practice_id = n2.practice_id
+                    AND n1.practice_id = {$this->practiceId}
+                    AND n2.practice_id = {$this->practiceId}
+                ");
+            },
+        ];
     }
 
     public function rules(): array
