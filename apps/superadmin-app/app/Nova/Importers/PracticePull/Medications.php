@@ -7,16 +7,16 @@
 namespace App\Nova\Importers\PracticePull;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
-use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Row;
+use Maatwebsite\Excel\Events\AfterImport;
 
-class Medications implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
+class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
 {
     use Importable;
 
@@ -30,17 +30,30 @@ class Medications implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEa
      */
     public function __construct(int $practiceId)
     {
-        ini_set('upload_max_filesize', '200M');
-        ini_set('post_max_size', '200M');
-        ini_set('max_input_time', 900);
-        ini_set('max_execution_time', 900);
-
         $this->practiceId = $practiceId;
+    }
+
+    public function batchSize(): int
+    {
+        return 80;
     }
 
     public function chunkSize(): int
     {
-        return 500;
+        return 80;
+    }
+
+    public function model(array $row)
+    {
+        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Medication([
+            'practice_id' => $this->practiceId,
+            'mrn'         => $this->nullOrValue($row['patientid']),
+            'name'        => $this->nullOrValue($row['rx']),
+            'sig'         => $this->nullOrValue($row['sig']),
+            'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
+            'stop'        => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
+            'status'      => $this->nullOrValue($row['medstatus']),
+        ]);
     }
 
     /**
@@ -73,22 +86,22 @@ class Medications implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEa
         ];
     }
 
-    public function onRow(Row $row)
+    public function registerEvents(): array
     {
-        UpdateOrCreateInDb::dispatch(
-            Medication::class,
-            [
-                'practice_id' => $this->practiceId,
-                'mrn'         => $this->nullOrValue($row['patientid']),
-                'name'        => $this->nullOrValue($row['rx']),
-                'sig'         => $this->nullOrValue($row['sig']),
-                'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
-            ],
-            [
-                'stop'   => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
-                'status' => $this->nullOrValue($row['medstatus']),
-            ]
-        );
+        return [
+            AfterImport::class => function (AfterImport $event) {
+                $dupsDeleted = \DB::statement("
+                    DELETE n1
+                    FROM practice_pull_medications n1, practice_pull_medications n2
+                    WHERE n1.id < n2.id
+                    AND n1.mrn = n2.mrn
+                    AND n1.name = n2.name
+                    AND n1.practice_id = n2.practice_id
+                    AND n1.practice_id = {$this->practiceId}
+                    AND n2.practice_id = {$this->practiceId}
+                ");
+            },
+        ];
     }
 
     public function rules(): array
