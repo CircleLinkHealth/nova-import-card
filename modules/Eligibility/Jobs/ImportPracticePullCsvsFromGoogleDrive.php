@@ -24,6 +24,7 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const FINISHED_PROCESSING_AT_LABEL = 'finishedProcessingAt';
 
     protected int    $batchId;
     protected PracticePullFileInGoogleDrive $file;
@@ -48,9 +49,9 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
         }
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
-        
-        if ($media->getCustomProperty('finishedAt', null)) {
-            return null;
+
+        if ($media->getCustomProperty(self::FINISHED_PROCESSING_AT_LABEL, null)) {
+            return;
         }
 
         $importerClass = $this->file->getImporter();
@@ -69,7 +70,7 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
 
     private function endLog(Media $media, PracticePullFileInGoogleDrive $file): Media
     {
-        return $media->setCustomProperty('finishedProcessingAt', $file->getFinishedProcessingAt());
+        return $media->setCustomProperty(self::FINISHED_PROCESSING_AT_LABEL, $file->getFinishedProcessingAt());
     }
 
     private function firstOrCreateMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): Media

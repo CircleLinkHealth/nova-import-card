@@ -55,14 +55,4 @@ abstract class AbstractImporter  implements ToModel, WithChunkReading, WithHeadi
             ? null
             : $value;
     }
-    
-    public function registerEvents(): array
-    {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $media = Media::findOrFail($this->mediaId);
-                $media->setCustomProperty('finishedAt', now()->toDateTimeString());
-            },
-        ];
-    }
 }
