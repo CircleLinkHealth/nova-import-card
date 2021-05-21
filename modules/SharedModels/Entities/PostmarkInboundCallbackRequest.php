@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class PostmarkInboundCallbackRequest
 {
     const INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS = 16;
-    const INBOUND_CALLER_ID = 'Clr ID:';
+    const INBOUND_CALLER_ID                        = 'Clr ID:';
 
     /**
      * @return string[]
@@ -43,7 +43,7 @@ class PostmarkInboundCallbackRequest
     public function process(string $inboundCallback, int $postmarkId): PostmarkCallbackInboundData
     {
         $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback);
-        $inboundDataArray = $this->inboundDataInArray($inboundCallbackArray);
+        $inboundDataArray     = $this->inboundDataInArray($inboundCallbackArray);
         if (empty($inboundDataArray)) {
             sendSlackMessage('#carecoach_ops_alerts', "Email body is empty for inbound_postmark_mail [$postmarkId]");
         }
@@ -80,6 +80,14 @@ class PostmarkInboundCallbackRequest
                 if (Str::contains($callbackDataItem, $callbackDataKey)) {
                     $key = trim($callbackDataKey, ':');
                     $value = trim(trim(substr($callbackDataItem, strpos($callbackDataItem, $callbackDataKey) + strlen($callbackDataKey)), '|'));
+                    if ($stopper = strpos($value, '|')) {
+                        while ($stopper > 0 && ' ' !== $value[$stopper]) {
+                            --$stopper;
+                        }
+                        if ($stopper > 0) {
+                            $value = substr($value, 0, $stopper);
+                        }
+                    }
                     $callbackData[$key] = $value;
                 }
             });
