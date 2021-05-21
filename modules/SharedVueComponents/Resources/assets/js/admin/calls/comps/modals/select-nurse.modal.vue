@@ -16,7 +16,7 @@
                     <div class="text-center" v-if="!filterPatients.length">
                         No available Nurses for select patients
                     </div>
-                    <div class="row" v-for="patient in filterPatients" :key="patient.id">
+                    <div class="row" v-for="patient in filterPatients" :key="patient.id + '_' + patient.callId">
                         <div class="col-sm-6">
                             <h5>
                                 {{patient.name}} [id:{{patient.id}}] ({{patient.nurses ? patient.nurses.length : 0}})
@@ -214,14 +214,14 @@
                                         status: nurse.status
                                     }
                                 });
-                                const patient = this.patients.find(patient => patient.id === id)
-                                console.log('select-nurse:find-patient', id, patient, nurses)
-                                if (patient) {
-                                    //patient.nurses = nurses.filter(nurse => nurse.id != patient.nurse.id)
+
+                                this.patients.forEach(patient => {
+                                    if (patient.id !== id) {
+                                        return;
+                                    }
+                                    console.log('select-nurse:find-patient', id, patient, nurses)
                                     patient.nurses = nurses;
-                                    return patient.nurses;
-                                }
-                                return [];
+                                });
                             })
                             .catch((err) => {
                                 console.error("error: get-patient-available-nurses", id, err);
