@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\Nova\Importers\PracticePull\Allergies;
-use App\Nova\Importers\PracticePull\Demographics;
-use App\Nova\Importers\PracticePull\Medications;
-use App\Nova\Importers\PracticePull\Problems;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\Allergies;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\Demographics;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\Medications;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\Problems;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -91,7 +91,6 @@ class DispatchGoogleDrivePracticePullCsvsReadJobs implements ShouldQueue, Should
                 ->dispatch();
         }
     }
-    
 
     private function importers(string $for)
     {

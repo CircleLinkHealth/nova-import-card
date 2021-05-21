@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
@@ -49,23 +50,21 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
 
+        if ($media->getCustomProperty(AbstractImporter::FINISHED_PROCESSING_AT_LABEL, null)) {
+            return;
+        }
+
         $importerClass = $this->file->getImporter();
-        $importer      = new $importerClass($batch->practice_id);
+        $importer      = new $importerClass($batch->practice_id, $batch->id, $media->id);
         $path          = $media->getPath();
 
         try {
             $this->startLog($media, $this->file)->save();
             Excel::import($importer, $path, 'media');
             $this->file->setFinishedProcessingAt(now());
-            $this->endLog($media, $this->file)->save();
         } catch (\Exception $e) {
             \Log::error("EligibilityBatchException[{$this->batchId}] at {$e->getFile()}:{$e->getLine()} {$e->getMessage()} || {$e->getTraceAsString()}");
         }
-    }
-
-    private function endLog(Media $media, PracticePullFileInGoogleDrive $file): Media
-    {
-        return $media->setCustomProperty('finishedProcessingAt', $file->getFinishedProcessingAt());
     }
 
     private function firstOrCreateMedia(EligibilityBatch $batch, PracticePullFileInGoogleDrive $file): Media

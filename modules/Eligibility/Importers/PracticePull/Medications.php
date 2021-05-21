@@ -4,45 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\PracticePull;
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
 use Carbon\Carbon;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use Maatwebsite\Excel\Events\AfterImport;
 
-class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
+class Medications extends AbstractImporter
 {
-    use Importable;
-
-    /**
-     * @var int
-     */
-    private $practiceId;
-
-    /**
-     * Medications constructor.
-     */
-    public function __construct(int $practiceId)
-    {
-        $this->practiceId = $practiceId;
-    }
-
-    public function batchSize(): int
-    {
-        return 80;
-    }
-
-    public function chunkSize(): int
-    {
-        return 80;
-    }
-
     public function model(array $row)
     {
         return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Medication([
@@ -54,20 +23,6 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
             'stop'        => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
             'status'      => $this->nullOrValue($row['medstatus']),
         ]);
-    }
-
-    /**
-     * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
-     *
-     * @param string $value
-     *
-     * @return string|null
-     */
-    public function nullOrValue($value)
-    {
-        return empty($value) || in_array($value, $this->nullValues())
-            ? null
-            : $value;
     }
 
     /**
@@ -88,9 +43,22 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
 
     public function registerEvents(): array
     {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $dupsDeleted = \DB::statement("
+        return array_merge(
+            [
+            
+            ],
+            parent::registerEvents()
+        );
+    }
+
+    public function rules(): array
+    {
+        return $this->rules;
+    }
+    
+    public function clearDuplicates()
+    {
+        return \DB::statement("
                     DELETE n1
                     FROM practice_pull_medications n1, practice_pull_medications n2
                     WHERE n1.id < n2.id
@@ -100,12 +68,5 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
                     AND n1.practice_id = {$this->practiceId}
                     AND n2.practice_id = {$this->practiceId}
                 ");
-            },
-        ];
-    }
-
-    public function rules(): array
-    {
-        return $this->rules;
     }
 }

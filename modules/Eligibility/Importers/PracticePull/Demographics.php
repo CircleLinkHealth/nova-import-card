@@ -4,45 +4,26 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\PracticePull;
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Events\AfterImport;
+use function optional;
 
-class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
+class Demographics extends AbstractImporter
 {
-    use Importable;
-
-    /**
-     * @var int
-     */
-    private $practiceId;
-
-    /**
-     * Medications constructor.
-     */
-    public function __construct(int $practiceId)
+    public function clearDuplicates()
     {
-        $this->practiceId = $practiceId;
-    }
-
-    public function batchSize(): int
-    {
-        return 80;
-    }
-
-    public function chunkSize(): int
-    {
-        return 80;
+        return \DB::statement("
+                    DELETE n1
+                    FROM practice_pull_demographics n1, practice_pull_demographics n2
+                    WHERE n1.id < n2.id
+                    AND n1.mrn = n2.mrn
+                    AND n1.practice_id = n2.practice_id
+                    AND n1.practice_id = {$this->practiceId}
+                    AND n2.practice_id = {$this->practiceId}
+                ");
     }
 
     public function model(array $row)
@@ -75,20 +56,6 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
     }
 
     /**
-     * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
-     *
-     * @param string $value
-     *
-     * @return string|null
-     */
-    public function nullOrValue($value)
-    {
-        return empty($value) || in_array($value, $this->nullValues())
-            ? null
-            : $value;
-    }
-
-    /**
      * If the value of a cell is any of these we shall consider it null.
      *
      * @return array
@@ -106,19 +73,11 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
 
     public function registerEvents(): array
     {
-        return [
-            AfterImport::class => function (AfterImport $event) {
-                $dupsDeleted = \DB::statement("
-                    DELETE n1
-                    FROM practice_pull_demographics n1, practice_pull_demographics n2
-                    WHERE n1.id < n2.id
-                    AND n1.mrn = n2.mrn
-                    AND n1.practice_id = n2.practice_id
-                    AND n1.practice_id = {$this->practiceId}
-                    AND n2.practice_id = {$this->practiceId}
-                ");
-            },
-        ];
+        return array_merge(
+            [
+            ],
+            parent::registerEvents()
+        );
     }
 
     public function rules(): array

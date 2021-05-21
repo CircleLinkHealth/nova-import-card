@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\PracticePull\ImportAllergies;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 use Illuminate\Http\Request;
@@ -48,7 +47,7 @@ class PracticePullAllergies extends Resource
      */
     public function actions(Request $request)
     {
-        return [new ImportAllergies()];
+        return [];
     }
 
     /**
