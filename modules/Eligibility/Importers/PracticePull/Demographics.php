@@ -4,15 +4,28 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\PracticePull;
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use Maatwebsite\Excel\Events\AfterImport;
+use function optional;
 
 class Demographics extends AbstractImporter
 {
+    public function clearDuplicates()
+    {
+        return \DB::statement("
+                    DELETE n1
+                    FROM practice_pull_demographics n1, practice_pull_demographics n2
+                    WHERE n1.id < n2.id
+                    AND n1.mrn = n2.mrn
+                    AND n1.practice_id = n2.practice_id
+                    AND n1.practice_id = {$this->practiceId}
+                    AND n2.practice_id = {$this->practiceId}
+                ");
+    }
+
     public function model(array $row)
     {
         return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics([
@@ -60,27 +73,15 @@ class Demographics extends AbstractImporter
 
     public function registerEvents(): array
     {
-        return array_merge([
-                           
-                           ],
-                           parent::registerEvents());
+        return array_merge(
+            [
+            ],
+            parent::registerEvents()
+        );
     }
 
     public function rules(): array
     {
         return $this->rules;
-    }
-    
-    public function clearDuplicates()
-    {
-        return \DB::statement("
-                    DELETE n1
-                    FROM practice_pull_demographics n1, practice_pull_demographics n2
-                    WHERE n1.id < n2.id
-                    AND n1.mrn = n2.mrn
-                    AND n1.practice_id = n2.practice_id
-                    AND n1.practice_id = {$this->practiceId}
-                    AND n2.practice_id = {$this->practiceId}
-                ");
     }
 }

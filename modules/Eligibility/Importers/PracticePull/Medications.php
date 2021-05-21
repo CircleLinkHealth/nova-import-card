@@ -4,9 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\PracticePull;
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use Maatwebsite\Excel\Events\AfterImport;
 
 class Medications extends AbstractImporter

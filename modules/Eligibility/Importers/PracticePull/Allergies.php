@@ -4,8 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\PracticePull;
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
+use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
 
 class Allergies extends AbstractImporter

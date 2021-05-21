@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\PracticePull;
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem;

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\Nova\Importers\PracticePull\AbstractImporter;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;

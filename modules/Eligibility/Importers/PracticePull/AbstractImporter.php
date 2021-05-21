@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-namespace App\Nova\Importers\PracticePull;
-
+namespace CircleLinkHealth\Eligibility\Importers\PracticePull;
 
 use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,37 +15,39 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
+use function now;
 
-abstract class AbstractImporter  implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
+abstract class AbstractImporter implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue, WithEvents
 {
-    const FINISHED_PROCESSING_AT_LABEL = 'finishedProcessingAt';
-    
     use Importable;
-    
+    const FINISHED_PROCESSING_AT_LABEL = 'finishedProcessingAt';
+
     protected int $batchId;
     protected int $mediaId;
     protected int $practiceId;
-    
+
     /**
      * Medications constructor.
      */
     public function __construct(int $practiceId, int $batchId, int $mediaId)
     {
         $this->practiceId = $practiceId;
-        $this->batchId = $batchId;
-        $this->mediaId = $mediaId;
+        $this->batchId    = $batchId;
+        $this->mediaId    = $mediaId;
     }
-    
+
     public function batchSize(): int
     {
         return 80;
     }
-    
+
     public function chunkSize(): int
     {
         return 80;
     }
-    
+
+    abstract public function clearDuplicates();
+
     /**
      * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
      *
@@ -57,23 +61,22 @@ abstract class AbstractImporter  implements ToModel, WithChunkReading, WithHeadi
             ? null
             : $value;
     }
-    
+
     public function registerEvents(): array
     {
         return [
             AfterImport::class => function (AfterImport $event) {
                 $this->markMediaAsDone();
-                
+
                 $this->clearDuplicates();
             },
         ];
     }
-    
-    protected function markMediaAsDone() {
+
+    protected function markMediaAsDone()
+    {
         $media = Media::findOrFail($this->mediaId);
         $media->setCustomProperty(self::FINISHED_PROCESSING_AT_LABEL, now()->toDateTimeString());
         $media->save();
     }
-    
-    abstract function clearDuplicates();
 }
