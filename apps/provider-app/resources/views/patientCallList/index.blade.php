@@ -62,8 +62,6 @@ function formatTime($time)
                     fixedHeader: true,
                     dom: '<"top"fi>rt<"bottom"lp>',
                     pageLength: 50,
-
-
                 });
 
                 function addClickListener() {
@@ -289,7 +287,7 @@ function formatTime($time)
                                                                     data-target="#attemptNoteCall{{ $call->id }}"></button>
                                                         @endif
                                                     </td>
-                                                    <td>
+                                                    <td data-order="{{ $call->patient }}">
                                                         <a href="{{ $route }}"
                                                            class="patientNameLink" call-id="{{ $call->id }}"
                                                            style="font-weight:bold;"
@@ -332,7 +330,7 @@ function formatTime($time)
                                                         {{ presentDate($call->last_call) }}
                                                     </td>
 
-                                                    <td>
+                                                    <td data-order="{{ $call->getTotalPatientTime()  }}">
                                                         <a
                                                            class="patientNameLink"
                                                            style="font-weight:bold;"
@@ -342,7 +340,7 @@ function formatTime($time)
                                                            data-placement="right"
                                                            data-html="true"
                                                            title="{{$call->patientTimePerServiceToExpandedString()}}">
-                                                            {{$call->getTotalPatientTime()}}
+                                                            {{$call->getTotalPatientTimeFormatted()}}
                                                         </a>
                                                     </td>
 
