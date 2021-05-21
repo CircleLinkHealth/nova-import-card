@@ -8,6 +8,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendDailyReportToRN;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Console\Commands\NursesPerformanceDailyReport;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Illuminate\Console\Command;
