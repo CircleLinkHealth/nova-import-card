@@ -206,7 +206,7 @@
                                                 <div class="panel-body">
                                                     <p>Type: {{$media->getCustomProperty('typeOfData') ?? 'N/A'}}</p>
                                                     <p>Started Processing at: <span style="color: darkorange;">{{presentDate($media->getCustomProperty('dispatchedAt'))}}</span></p>
-                                                    <p>Finished Processing at: <span style="color: forestgreen;">{{presentDate($media->getCustomProperty(\CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter::FINISHED_PROCESSING_AT_LABEL))}}</span></p>
+                                                    <p>Finished Processing at: <span style="color: forestgreen;">{{presentDate($media->getCustomProperty(\CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter::FINISHED_PROCESSING_AT_LABEL, null))}}</span></p>
                                                     <a target="_blank" href="{{route('post.eligibility.process.google.drive.practice-pull.file', ['media' => $media->id, 'batch' => $batch->id])}}">(Re)process</a>
                                                 </div>
                                             </div>
