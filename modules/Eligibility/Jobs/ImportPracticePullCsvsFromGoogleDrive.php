@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\DTO\PracticePullFileInGoogleDrive;
+use CircleLinkHealth\Eligibility\Importers\PracticePull\AbstractImporter;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -50,7 +50,7 @@ class ImportPracticePullCsvsFromGoogleDrive implements ShouldQueue, ShouldBeEncr
 
         $media = $this->firstOrCreateMedia($batch, $this->file);
 
-        if ($media->getCustomProperty(AbstractImporter::FINISHED_PROCESSING_AT_LABEL, null)) {
+        if ( ! empty($media->getCustomProperty(AbstractImporter::FINISHED_PROCESSING_AT_LABEL, null))) {
             return;
         }
 
