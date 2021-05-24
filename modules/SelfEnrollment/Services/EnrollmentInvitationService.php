@@ -48,7 +48,7 @@ class EnrollmentInvitationService
         ]);
     }
 
-    public function putIntoCallQueue(Enrollee $enrollee, Carbon $earliestDayToCall)
+    public function putIntoCallQueue(Enrollee $enrollee, Carbon $earliestDayToCall): bool
     {
         return $enrollee->update(
             [
