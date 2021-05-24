@@ -187,6 +187,10 @@
         {
             "type": "path",
             "url": "./modules/VaporDevopsHelpers"
+        },
+        {
+            "type": "path",
+            "url": "./modules/LargePayloadSqsJob"
         }
     ],
     "require": {
@@ -199,7 +203,8 @@
         "circlelinkhealth/app-cpm-provider": "*",
         "circlelinkhealth/app-caller": "*",
         "circlelinkhealth/app-self-enrollment": "*",
-        "laravel/vapor-cli": "*"
+        "laravel/vapor-cli": "*",
+        "ashallendesign/short-url": "*"
     },
     "config": {
         "discard-changes": true,

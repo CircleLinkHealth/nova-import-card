@@ -21,7 +21,6 @@ use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
-use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
@@ -41,6 +40,7 @@ use CircleLinkHealth\CcmBilling\Console\ProcessAllPracticePatientMonthlyServices
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use CircleLinkHealth\Customer\Console\Commands\CheckPatientRoles;
+use CircleLinkHealth\Customer\Console\Commands\NursesPerformanceDailyReport;
 use CircleLinkHealth\Customer\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;

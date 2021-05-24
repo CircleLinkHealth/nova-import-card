@@ -7,9 +7,12 @@
 namespace CircleLinkHealth\SharedModels\Filters;
 
 use CircleLinkHealth\Core\Filters\QueryFilters;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CallViewFilters extends QueryFilters
 {
@@ -62,11 +65,11 @@ class CallViewFilters extends QueryFilters
         $filters = [];
 
         if ( ! auth()->user()->isAdmin()) {
-            $filters[] = 'non_admin_user';
+            $filters['non_admin_user'] = null;
         }
 
         if (auth()->user()->isCallbacksAdmin()) {
-            $filters[] = 'callbacks_admin';
+            $filters['callbacks_admin'] = null;
         }
 
         return $filters;
@@ -162,14 +165,14 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
     }
 
-    public function sort_bhi_time($term)
+    public function sort_bhi_total_time($term)
     {
-        return $this->builder->orderBy('bhi_time', $term);
+        return $this->timesQuery(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI), $term);
     }
 
-    public function sort_ccm_time($term)
+    public function sort_ccm_total_time($term)
     {
-        return $this->builder->orderBy('ccm_time', $term);
+        return $this->timesQuery(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM), $term);
     }
 
     public function sort_is_manual($term)
@@ -187,9 +190,19 @@ class CallViewFilters extends QueryFilters
         return $this->builder->orderBy('nurse', $term);
     }
 
+    public function sort_patient($term)
+    {
+        return $this->builder->orderBy('patient', $term);
+    }
+
     public function sort_patient_id($term)
     {
         return $this->builder->orderBy('patient_id', $term);
+    }
+
+    public function sort_pcm_total_time($term)
+    {
+        return $this->timesQuery(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM), $term);
     }
 
     public function sort_practice($term)
@@ -200,6 +213,16 @@ class CallViewFilters extends QueryFilters
     public function sort_preferred_contact_language($term)
     {
         return $this->builder->orderBy('preferred_contact_language', $term);
+    }
+
+    public function sort_rhc_total_time($term)
+    {
+        return $this->timesQuery(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::GENERAL_CARE_MANAGEMENT), $term);
+    }
+
+    public function sort_rpm_total_time($term)
+    {
+        return $this->timesQuery(ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::RPM), $term);
     }
 
     public function sort_scheduled_date($term)
@@ -238,5 +261,19 @@ class CallViewFilters extends QueryFilters
     public function unassigned()
     {
         return $this->builder->whereNull('nurse_id');
+    }
+
+    private function timesQuery(int $csId, $term)
+    {
+        return $this->builder
+            ->leftJoinSub(function ($q) use ($csId) {
+                $q->select(['patient_id', DB::raw('sum(duration) as `time`')])
+                    ->from((new Activity())->getTable())
+                    ->where('chargeable_service_id', '=', $csId)
+                    ->whereBetween('performed_at', [now()->startOfMonth(), now()->endOfMonth()])
+                    ->groupBy('patient_id');
+            }, 'lva', 'lva.patient_id', '=', 'calls_view.patient_id')
+            ->orderBy('lva.time', $term)
+            ->select(['calls_view.*']);
     }
 }

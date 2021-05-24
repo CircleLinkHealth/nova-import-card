@@ -441,6 +441,8 @@ class EligibilityBatchController extends Controller
                     $reprocessingMethod
                 );
                 break;
+            default:
+                ProcessEligibilityBatch::dispatch($batch->id);
         }
 
         return redirect()->route('eligibility.batch.show', [$updatedBatch->id]);

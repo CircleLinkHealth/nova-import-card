@@ -101,11 +101,10 @@ class AutoPullEnrolleesFromAthena extends Command
      * @throws \Illuminate\Auth\AuthenticationException
      * @return array                                    Array of Job objects
      */
-    private function getAppointmentsJobs(Carbon $startDate, Carbon $endDate, int $athenaPracticeId, bool $offset, int $batchId): array
+    private function dispatchAppointmentsJobs(Carbon $startDate, Carbon $endDate, int $athenaPracticeId, bool $offset, int $batchId): void
     {
         $service = app(DetermineEnrollmentEligibility::class);
         if ($startDate->diffInDays($endDate) > self::MAX_DAYS_TO_PULL_AT_ONCE) {
-            $jobs        = [];
             $currentDate = $startDate->copy();
             do {
                 $chunkStartDate = $currentDate->copy();
@@ -115,15 +114,13 @@ class AutoPullEnrolleesFromAthena extends Command
                     $chunkEndDate = $endDate;
                 }
 
-                $jobs = array_merge($jobs, $service->getPatientIdFromAppointments($athenaPracticeId, $chunkStartDate, $chunkEndDate, $offset, $batchId));
+                $service->dispatchGetPatientIdFromAppointmentsJobs($athenaPracticeId, $chunkStartDate, $chunkEndDate, $offset, $batchId);
 
                 $currentDate = $chunkEndDate->copy()->addDay();
             } while ($currentDate->lt($endDate));
-
-            return $jobs;
+        } else {
+            $service->dispatchGetPatientIdFromAppointmentsJobs($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
         }
-
-        return $service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
     }
 
     private function orchestrateEligibilityPull($practice)
@@ -154,16 +151,18 @@ class AutoPullEnrolleesFromAthena extends Command
         if ( ! $batch) {
             $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
         }
+    
+        ChangeBatchStatus::dispatch($batch->id, $practice->id, EligibilityBatch::STATUSES['not_started']);
+    
+        $this->dispatchAppointmentsJobs(
+            $from,
+            $to,
+            $practice->external_id,
+            $offset,
+            $batch->id,
+        );
 
         return array_merge(
-            $this->getAppointmentsJobs(
-                $from,
-                $to,
-                $practice->external_id,
-                $offset,
-                $batch->id,
-            ),
-            [new ChangeBatchStatus($batch->id, $practice->id, EligibilityBatch::STATUSES['not_started'])],
             (new ProcessTargetPatientsForEligibilityInBatches($batch->id))
                 ->splitToBatches(),
             [new ChangeBatchStatus($batch->id, $practice->id, EligibilityBatch::STATUSES['complete'])],

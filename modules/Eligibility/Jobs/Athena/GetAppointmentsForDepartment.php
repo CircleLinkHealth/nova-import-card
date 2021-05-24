@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Jobs\UpdateOrCreateInDb;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -17,6 +18,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
 {
@@ -77,6 +79,8 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
      */
     public function handle()
     {
+        $this->logStart();
+
         $offsetBy = 0;
 
         if ($this->offset) {
@@ -100,7 +104,11 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
             return;
         }
 
-        if (0 == count($response['appointments'])) {
+        $count = count($response['appointments']);
+
+        $this->logEnd($count);
+
+        if (0 == $count) {
             return;
         }
 
@@ -112,24 +120,15 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
                 continue;
             }
 
-            $target = TargetPatient::updateOrCreate(
-                [
-                    'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
-                    'ehr_id'            => CpmConstants::athenaEhrId(),
-                    'ehr_patient_id'    => $ehrPatientId,
-                    'ehr_practice_id'   => $this->ehrPracticeId,
-                    'ehr_department_id' => $departmentId,
-                ]
-            );
+            $args = [
+                'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
+                'ehr_id'            => CpmConstants::athenaEhrId(),
+                'ehr_patient_id'    => $ehrPatientId,
+                'ehr_practice_id'   => $this->ehrPracticeId,
+                'ehr_department_id' => $departmentId,
+            ];
 
-            if (null !== $this->batchId) {
-                $target->batch_id = $this->batchId;
-            }
-
-            if ( ! $target->status) {
-                $target->status = 'to_process';
-                $target->save();
-            }
+            UpdateOrCreateInDb::dispatch(TargetPatient::class, $args, $args, ResetAndProcessTargetPatient::class, $this->batchId);
         }
     }
 
@@ -149,5 +148,34 @@ class GetAppointmentsForDepartment implements ShouldQueue, ShouldBeEncrypted
             'offset:'.$this->offset,
             'start:'.$this->start->toDateTimeString(),
         ];
+    }
+
+    private function logEnd(int $count)
+    {
+        Log::debug(
+            'Start GetAppointmentsForDepartment'.PHP_EOL
+            .now()->toDateTimeString().PHP_EOL
+            ."Batch[{$this->batchId}]".PHP_EOL
+            .'from['.$this->start->toDateTimeString().']'.PHP_EOL
+            .'to['.$this->end->toDateTimeString().']'.PHP_EOL
+            ."department[{$this->departmentId}]".PHP_EOL
+            ."practice[{$this->ehrPracticeId}]".PHP_EOL
+            ."offset[{$this->offset}]".PHP_EOL
+            ."pulled[$count] appointments".PHP_EOL
+        );
+    }
+
+    private function logStart()
+    {
+        Log::debug(
+            'Start GetAppointmentsForDepartment'.PHP_EOL
+            .now()->toDateTimeString().PHP_EOL
+            ."Batch[{$this->batchId}]".PHP_EOL
+            .'from['.$this->start->toDateTimeString().']'.PHP_EOL
+            .'to['.$this->end->toDateTimeString().']'.PHP_EOL
+            ."department[{$this->departmentId}]".PHP_EOL
+            ."practice[{$this->ehrPracticeId}]".PHP_EOL
+            ."offset[{$this->offset}]".PHP_EOL
+        );
     }
 }

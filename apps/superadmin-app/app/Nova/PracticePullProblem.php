@@ -54,7 +54,7 @@ class PracticePullProblem extends Resource
      */
     public function actions(Request $request)
     {
-        return [new ImportProblems()];
+        return [];
     }
 
     /**

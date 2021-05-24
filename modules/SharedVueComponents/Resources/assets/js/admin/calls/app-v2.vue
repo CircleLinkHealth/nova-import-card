@@ -6,10 +6,12 @@
                     <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
                 </div>
 
-                <div v-if="isAdmin() || isSoftwareOnly()"  class="inline">
-                    <input type="button" class="btn btn-primary btn-xs" :class="{ disabled: loaders.excel }" @click="exportExcel" :value="exportCSVText">
-                    <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
-                    <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
+                <div v-if="isAdmin() || isSoftwareOnly()" class="inline">
+                    <input type="button" class="btn btn-primary btn-xs" :class="{ disabled: loaders.excel }"
+                           @click="exportExcel" :value="exportCSVText">
+                    <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients
+                    </button>
+                    <button class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
                         <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
                         <span v-else>Show Completed Tasks</span>
                     </button>
@@ -18,13 +20,19 @@
                         <span v-else>Show Patient Names</span>
                     </button>
                     <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                    <button class="btn btn-info btn-xs" @click="applyTextFilters">Apply Text Filters</button>
                     <label class="btn btn-gray btn-xs">
                         <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
                         Show Unassigned
                     </label>
                 </div>
 
-                <div v-if="isAdmin()"  class="inline">
+                <div v-if="!(isAdmin() || isSoftwareOnly())" class="inline">
+                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                    <button class="btn btn-info btn-xs" @click="applyTextFilters">Apply Text Filters</button>
+                </div>
+
+                <div v-if="isAdmin()" class="inline">
                     <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                         <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                         <span v-else>Include Demo Patients</span>
@@ -43,12 +51,14 @@
         <div>
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
-                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select"
+                           v-model="props.row.selected" @change="toggleSelect(props.row.id)"
                            :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
-                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
+                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select"
+                           v-model="selected" @change="toggleAllSelect" type="checkbox"/>
                 </template>
                 <template slot="Type" slot-scope="props">
                     <div class="container" style="width:auto;padding:0;margin:0">
@@ -65,7 +75,7 @@
                                 </template>
 
                                 <template v-else>
-                                    {{props.row['Type']}}
+                                    {{ props.row['Type'] }}
                                 </template>
 
                                 <font-awesome-icon v-if="props.row['Manual']" icon="hand-point-up"/>
@@ -81,35 +91,37 @@
                     <a :href="props.row.notesLink" :class="props.row['ccmStatus']">{{ props.row['Patient ID'] }}</a>
                 </template>
                 <template slot="Patient" slot-scope="props">
-                  <div v-if="isCallbacksAdmin()">
-                    {{ props.row['Patient'] }}
-                  </div>
-                  <div v-else>
-                    <a :href="props.row.notesLink" :class="props.row['ccmStatus']">{{ props.row['Patient'] }}</a>
-                  </div>
+                    <div v-if="isCallbacksAdmin()">
+                        {{ props.row['Patient'] }}
+                    </div>
+                    <div v-else>
+                        <a :href="props.row.notesLink" :class="props.row['ccmStatus']">{{ props.row['Patient'] }}</a>
+                    </div>
                 </template>
                 <template slot="Care Coach" slot-scope="props">
                     <div>
-                        <select-editable v-if="canScheduleCalls(props.row['Type'])" v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
+                        <select-editable v-if="canScheduleCalls(props.row['Type'])" v-model="props.row.NurseId"
+                                         :display-text="props.row['Care Coach']"
                                          :values="props.row.nurses()"
                                          :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
 
                         <div v-else>
-                            {{props.row['Care Coach']}}
+                            {{ props.row['Care Coach'] }}
                         </div>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
                     </div>
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
-                        <date-editable v-if="canScheduleCalls(props.row['Type'])" v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'"
+                        <date-editable v-if="canScheduleCalls(props.row['Type'])" v-model="props.row['Activity Day']"
+                                       :format="'YYYY-mm-DD'"
                                        :class-name="isInThePast(props.row['Activity Day']) ? 'red' : 'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
                         <div v-else>
-                            {{props.row['Activity Day']}}
+                            {{ props.row['Activity Day'] }}
                         </div>
                         <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
                     </div>
@@ -120,7 +132,7 @@
                             <loader class="in-column"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['CCM Time']}}
+                            {{ props.row['CCM Time'] }}
                         </div>
                     </div>
                 </template>
@@ -130,7 +142,7 @@
                             <loader class="in-column"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['BHI Time']}}
+                            {{ props.row['BHI Time'] }}
                         </div>
                     </div>
                 </template>
@@ -140,7 +152,7 @@
                             <loader class="in-column"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['PCM Time']}}
+                            {{ props.row['PCM Time'] }}
                         </div>
                     </div>
                 </template>
@@ -150,7 +162,7 @@
                             <loader class="in-column"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['RPM Time']}}
+                            {{ props.row['RPM Time'] }}
                         </div>
                     </div>
                 </template>
@@ -160,7 +172,7 @@
                             <loader class="in-column"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['CCM (RHC/FQHC) Time']}}
+                            {{ props.row['CCM (RHC/FQHC) Time'] }}
                         </div>
                     </div>
                 </template>
@@ -170,7 +182,7 @@
                             <loader class="successful-calls"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['Successful Calls']}}
+                            {{ props.row['Successful Calls'] }}
                         </div>
                     </div>
                 </template>
@@ -182,7 +194,7 @@
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></time-editable>
                         <div v-else>
-                            {{props.row['Activity Start']}}
+                            {{ props.row['Activity Start'] }}
                         </div>
                         <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
                     </div>
@@ -195,7 +207,7 @@
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></time-editable>
                         <div v-else>
-                            {{props.row['Activity End']}}
+                            {{ props.row['Activity End'] }}
                         </div>
                         <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
                     </div>
@@ -279,7 +291,8 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time','CCM (RHC/FQHC) Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'CCM (RHC/FQHC) Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                filterableColumns: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider'],
                 tableData: [],
                 loaders: {
                     calls: false
@@ -309,9 +322,9 @@
                     value: nurse.id
                 }));
             },
-            sanitizedProviderAppUrl(){
-                if (! this.providerAppUrl.endsWith('/')){
-                    return this.providerAppUrl+'/';
+            sanitizedProviderAppUrl() {
+                if (!this.providerAppUrl.endsWith('/')) {
+                    return this.providerAppUrl + '/';
                 }
                 return this.providerAppUrl;
             },
@@ -325,7 +338,7 @@
                         'Patient': this.patientNamesClass
                     },
                     sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'CCM (RHC/FQHC) Time', 'Practice', 'State', 'Scheduler'],
-                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
+                    filterable: this.filterableColumns,
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -386,8 +399,8 @@
                     'CCM Time': 'ccm_total_time',
                     'BHI Time': 'bhi_total_time',
                     'PCM Time': 'pcm_total_time',
-                    'RPM Time' : 'rpm_total_time',
-                    'CCM (RHC/FQHC) Time' : 'rhc_total_time',
+                    'RPM Time': 'rpm_total_time',
+                    'CCM (RHC/FQHC) Time': 'rhc_total_time',
                     'Successful Calls': 'no_of_successful_calls',
                     'Practice': 'practice',
                     'State': 'state',
@@ -403,7 +416,17 @@
                     columns[name] :
                     (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '');
             },
+            applyTextFilters() {
+                this.activateFilters();
+            },
             clearFilters() {
+                this.filterableColumns.forEach(c => {
+                    const el = document.getElementById(c + '_custom');
+                    el.value = '';
+                    if (el.oninput) {
+                        el.oninput({target: {name: $(el).attr('name'), value: ''}});
+                    }
+                });
                 Object.keys(this.$refs.tblCalls.query).forEach((key) => {
                     const obj = {}
                     obj[key] = ''
@@ -456,8 +479,8 @@
             },
             urlFilterSuffix() {
                 const $table = this.$refs.tblCalls;
-                if ($table && $table.$data) {
-                    const query = $table.$data.query;
+                if ($table) {
+                    const query = $table.serverSideQuery || {};
                     const filters = Object.keys(query).map(key => ({
                         key,
                         value: query[key]
@@ -820,28 +843,28 @@
             self = this;
         },
         mounted() {
-            BindAppEvents(this, Event);
+            BindAppEvents(this, Event, this.filterableColumns);
 
-            Event.$on('calls:data-retrieved', (tableData) =>{
-                let ids = tableData.map(function (call){
+            Event.$on('calls:data-retrieved', (tableData) => {
+                let ids = tableData.map(function (call) {
                     return call['Patient ID'];
                 });
 
-                this.axios.post(rootUrl('api/admin/calls-v2-time-and-calls'), ids).then(function (resp){
+                this.axios.post(rootUrl('api/admin/calls-v2-time-and-calls'), ids).then(function (resp) {
                     let data = resp.data;
 
                     self.tableData = self.tableData.map(function (row) {
                         let patientData = data[row['Patient ID']];
 
-                        if (! patientData){
+                        if (!patientData) {
                             return row;
                         }
 
-                        row['CCM Time']         = timeDisplay(patientData['ccm_total_time']);
-                        row['BHI Time']         = timeDisplay(patientData['bhi_total_time']);
-                        row['PCM Time']         = timeDisplay(patientData['pcm_total_time']);
-                        row['RPM Time']         = timeDisplay(patientData['rpm_total_time']);
-                        row['CCM (RHC/FQHC) Time']         = timeDisplay(patientData['rhc_total_time']);
+                        row['CCM Time'] = timeDisplay(patientData['ccm_total_time']);
+                        row['BHI Time'] = timeDisplay(patientData['bhi_total_time']);
+                        row['PCM Time'] = timeDisplay(patientData['pcm_total_time']);
+                        row['RPM Time'] = timeDisplay(patientData['rpm_total_time']);
+                        row['CCM (RHC/FQHC) Time'] = timeDisplay(patientData['rhc_total_time']);
                         row['Successful Calls'] = patientData['no_of_successful_calls'];
 
                         return row;

@@ -8,10 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlyTime;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientMonthlyServiceTime
@@ -105,7 +107,7 @@ class PatientMonthlyServiceTime
 
     private function getTimeForServiceIds(array $chargeableServiceIds, $include = true): int
     {
-        if ( ! BillingCache::billingRevampIsEnabled()) {
+        if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
             if ($include) {
                 return Activity::wherePatientId($this->patientId)
                     ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')

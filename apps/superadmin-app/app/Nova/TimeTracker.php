@@ -180,7 +180,9 @@ class TimeTracker extends Resource
             }),
 
             Text::make('Service(s)', function ($row) {
-                $csCodes = $row->activities->map(fn (Activity $a) => $a->chargeableService->code)->toArray();
+                $csCodes = $row->activities
+                    ->filter(fn (Activity $a) => ! is_null($a->chargeableService))
+                    ->map(fn (Activity $a)    => $a->chargeableService->code)->toArray();
 
                 return implode(', ', $csCodes);
             }),

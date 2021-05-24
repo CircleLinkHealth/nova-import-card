@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use CircleLinkHealth\Customer\Console\Commands\EraseTestEnrollees;
+use CircleLinkHealth\Customer\Console\Commands\NursesPerformanceDailyReport;
 use CircleLinkHealth\Customer\Console\Commands\ProcessPostmarkInboundMailCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
@@ -34,10 +35,11 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             CreateLocationsFromAthenaApi::class,
             HasDatabaseNotifications::class,
             ProcessPostmarkInboundMailCommand::class,
+            NursesPerformanceDailyReport::class,
             EraseTestEnrollees::class,
             Notifiable::class,
             DatabaseNotification::class,
-            CheckPatientRoles::class
+            CheckPatientRoles::class,
         ];
     }
 
@@ -61,7 +63,8 @@ class CustomerDeferrableServiceProvider extends ServiceProvider implements Defer
             CreateLocationsFromAthenaApi::class,
             ProcessPostmarkInboundMailCommand::class,
             EraseTestEnrollees::class,
-            CheckPatientRoles::class
+            CheckPatientRoles::class,
+            NursesPerformanceDailyReport::class,
         ]);
     }
 

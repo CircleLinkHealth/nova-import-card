@@ -94,18 +94,23 @@ class CallViewNurses extends SqlViewModel
 
     protected $table = 'calls_view_nurses';
 
-    public function getTotalPatientTime()
+    public function getTotalPatientTime(): int
     {
-        return secondsToHMS(array_sum([
+        return array_sum([
             $this->ccm_total_time ?? 0,
             $this->bhi_total_time ?? 0,
             $this->pcm_total_time ?? 0,
             $this->rpm_total_time ?? 0,
             $this->rhc_total_time ?? 0,
-        ]));
+        ]);
     }
 
-    public function patientTimePerServiceToExpandedString()
+    public function getTotalPatientTimeFormatted(): string
+    {
+        return secondsToHMS($this->getTotalPatientTime());
+    }
+
+    public function patientTimePerServiceToExpandedString(): string
     {
         $times = [];
 

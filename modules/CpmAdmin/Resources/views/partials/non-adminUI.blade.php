@@ -98,7 +98,7 @@
                                         Patient Activity Management
                                     </a>
                                 </li>
-                                @if (! auth()->user()->isClhCcmAdmin())
+                                @if (auth()->user()->hasPermission('ca-director.view'))
                                     <li>
                                         <a href="{{ route('ca-director.index') }}">
                                             Care Ambassador Panel

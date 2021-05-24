@@ -1,4 +1,4 @@
-export default (App, Event) => {
+export default (App, Event, filterableColumns) => {
 
     const getUnscheduledPatientsModalRef = () => {
         //get the component and we assume first child is the modal
@@ -26,27 +26,42 @@ export default (App, Event) => {
 
     Event.$on('vue-tables.pagination', nextPageHandler)
 
-    Event.$on('vue-tables.filter::Type', App.activateFilters)
+    const storeButNotExecuteClientSideFiltering = function (e) {
+        if (!e) {
+            return false;
+        }
 
-    Event.$on('vue-tables.filter::Care Coach', App.activateFilters)
+        console.log("client side filtering cancelled.");
 
-    Event.$on('vue-tables.filter::Patient', App.activateFilters)
+        const tableComponent = App.$refs.tblCalls;
+        let _query = tableComponent.serverSideQuery || {};
 
-    Event.$on('vue-tables.filter::Language', App.activateFilters)
+        const name = tableComponent.getName(e.target.name);
+        const value = typeof(e.target.value) === 'object' ? e.target.value : '' + e.target.value;
 
-    Event.$on('vue-tables.filter::Patient ID', App.activateFilters)
+        if (name) {
+            _query[name] = value;
+        } else {
+            _query = value;
+        }
 
-    Event.$on('vue-tables.filter::Activity Day', App.activateFilters)
+        tableComponent.serverSideQuery = _query;
+        tableComponent.updateState('serverSideQuery', _query);
 
-    Event.$on('vue-tables.filter::Last Call', App.activateFilters)
+        return false;
+    }
 
-    Event.$on('vue-tables.filter::Practice', App.activateFilters)
-
-    Event.$on('vue-tables.filter::State', App.activateFilters)
-
-    Event.$on('vue-tables.filter::Billing Provider', App.activateFilters)
-
-    Event.$on('vue-tables.filter::Scheduler', App.activateFilters)
+    for (let column of filterableColumns) {
+        const el = $(document.getElementsByName(`vf__${column}`)[0]);
+        const placeholder = el.attr('placeholder');
+        const className = el.attr('class');
+        const name = el.attr('name');
+        const parent = el.parent();
+        const newElId = column + '_custom';
+        parent.append(`<input id="${newElId}" name="${name}" placeholder="${placeholder}" class="${className}"/>`);
+        document.getElementById(newElId).oninput = storeButNotExecuteClientSideFiltering;
+        el.hide();
+    }
 
     Event.$on('vue-tables.sorted', App.activateFilters)
 

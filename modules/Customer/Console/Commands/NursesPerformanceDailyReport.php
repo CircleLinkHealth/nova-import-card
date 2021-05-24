@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\Customer\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
@@ -87,5 +87,7 @@ class NursesPerformanceDailyReport extends Command
         }
 
         $this->info("Daily Nurses Calls & Work hrs for {$date->toDateString()} uploaded to S3");
+
+        return 0;
     }
 }

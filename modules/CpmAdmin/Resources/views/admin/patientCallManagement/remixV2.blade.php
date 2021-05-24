@@ -62,7 +62,7 @@ $isAdmin = ! auth()->guest() && auth()->user()->hasPermission('admin-access');
                                     @include('core::partials.errors.messages')
                                 </div>
                                 <div>
-                                    <call-mgmt-app-v2 ref="callMgmtAppV2" provider-app-url="{{env('CPM_PROVIDER_APP_URL') ?? env('APP_URL')}}" auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"></call-mgmt-app-v2>
+                                    <call-mgmt-app-v2 ref="callMgmtAppV2" provider-app-url="{{env('CPM_PROVIDER_APP_URL') ?? env('APP_URL')}}" :auth-roles='@json(auth()->user()->roles()->pluck('name')->unique())'></call-mgmt-app-v2>
                                 </div>
                             </div>
                         </div>

@@ -22,13 +22,13 @@ abstract class ChunksEloquentBuilderJobV2 implements ChunksEloquentBuilder, Shou
     use Queueable;
     use SerializesModels;
 
-    protected int $chunkId;
+    protected int $chunkId = 0;
 
-    protected int $limit;
+    protected int $limit = 0;
 
-    protected int $offset;
+    protected int $offset = 0;
 
-    protected int $total;
+    protected int $total = 0;
 
     public function dispatchInBatches(int $limit)
     {
