@@ -53,7 +53,17 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         $data['medical_record_type'] = Ccda::class;
         $data['medical_record_id']   = $this->ccda->id;
         $eJ->data                    = $data;
-        $eJ->save();
+
+        if (count($this->ccda->bluebuttonJson()->medications) < 1) {
+            $eJ->status   = EligibilityJob::STATUSES['complete'];
+            $eJ->messages = ['medications' => 'Patient has 0 medications'];
+            $eJ->outcome  = EligibilityJob::INELIGIBLE;
+            $eJ->reason   = 'medications';
+        }
+
+        if ($eJ->isDirty()) {
+            $eJ->save();
+        }
 
         return $eJ;
     }
