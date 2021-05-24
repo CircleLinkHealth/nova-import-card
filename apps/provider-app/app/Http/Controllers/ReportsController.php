@@ -328,7 +328,12 @@ class ReportsController extends Controller
             $patients = collect();
         }
 
-        $practices        = auth()->user()->practices(true)->select(['id', 'display_name'])->get();
+        $practices = auth()
+            ->user()
+            ->practices(true)
+            ->select(['id', 'display_name'])
+            ->get()
+            ->unique('id');
         $practiceSelected = $input['selectPractice'] ?? null;
 
         $u20_patients = [];
