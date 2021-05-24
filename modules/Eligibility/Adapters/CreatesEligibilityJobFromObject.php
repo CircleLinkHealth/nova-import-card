@@ -51,10 +51,11 @@ trait CreatesEligibilityJobFromObject
         );
     }
 
-    private function createFromCcda(Ccda $ccda, EligibilityBatch $batch, Practice $practice) {
+    private function createFromCcda(Ccda &$ccda, EligibilityBatch $batch, Practice $practice) {
         $mr = MedicalRecordFactory::createForPractice($practice->name, $ccda);
         if ( ! empty($obj = $mr->toObject())) {
             $decodedCcda = $obj;
+            $ccda->json = $mr->toJson();
         } else {
             $decodedCcda = $ccda->bluebuttonJson();
         }
@@ -101,8 +102,6 @@ trait CreatesEligibilityJobFromObject
                 return $this->getCcdaTransformer()->medication($medication);
             }
         );
-        $patient = $patient->put('medications', $medications);
-    
     
         $patient = $demographics->put('referring_provider_name', '');
 
@@ -138,7 +137,8 @@ trait CreatesEligibilityJobFromObject
         }
 
         $patient = $patient->put('problems', $problems);
-
+        $patient = $patient->put('medications', $medications);
+    
         $patient = $this->adaptInsurance($patient, $this->getInsurance($decodedCcda));
 
         return $this->createEligibilityJob($patient, $batch, $practice);
