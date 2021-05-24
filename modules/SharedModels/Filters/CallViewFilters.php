@@ -65,11 +65,11 @@ class CallViewFilters extends QueryFilters
         $filters = [];
 
         if ( ! auth()->user()->isAdmin()) {
-            $filters[] = 'non_admin_user';
+            $filters['non_admin_user'] = null;
         }
 
         if (auth()->user()->isCallbacksAdmin()) {
-            $filters[] = 'callbacks_admin';
+            $filters['callbacks_admin'] = null;
         }
 
         return $filters;
