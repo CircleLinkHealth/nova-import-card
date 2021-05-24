@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c51c55e657756e1d86a66c89300d5df",
+    "content-hash": "1f722e9b0473fff7cc6716cfa1c93a66",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -2735,6 +2735,47 @@
                 "sqs"
             ],
             "time": "2021-02-01T09:10:50+00:00"
+        },
+        {
+            "name": "ebess/nova-collapsible-sidebar",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ebess/nova-collapsible-sidebar.git",
+                "reference": "b973077b9a08722972636b3e1054e873ef800fb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ebess/nova-collapsible-sidebar/zipball/b973077b9a08722972636b3e1054e873ef800fb1",
+                "reference": "b973077b9a08722972636b3e1054e873ef800fb1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ebess\\CollapsibleSidebar\\AssetServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ebess\\CollapsibleSidebar\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A collapsible sidebar for Laravel Nova.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2018-10-04T09:06:34+00:00"
         },
         {
             "name": "egulias/email-validator",
