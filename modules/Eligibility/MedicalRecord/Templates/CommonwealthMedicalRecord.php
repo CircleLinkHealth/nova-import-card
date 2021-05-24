@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Problem as ProblemResource;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
@@ -32,12 +32,12 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
         return $this->ccdaMedicalRecord->fillAllergiesSection();
     }
 
-    public function fillDemographicsSection(): object
+    public function fillDemographicsSection(): array
     {
         return $this->ccdaMedicalRecord->fillDemographicsSection();
     }
 
-    public function fillDocumentSection(): object
+    public function fillDocumentSection(): array
     {
         $document = $this->ccdaMedicalRecord->fillDocumentSection();
 
@@ -94,7 +94,7 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
         return collect(array_merge((array) $this->ccdaMedicalRecord->fillProblemsSection(), $this->getMedicalHistory(), (array) $this->data['problems'] ?? []))->unique('name')->transform(function ($problem) {
             $problem = (object) $problem;
 
-            return (new Problem())
+            return (new ProblemResource())
                 ->setName($problem->name)
                 ->setStartDate($problem->start ?? null)
                 ->setEndDate($problem->end ?? null)
@@ -167,7 +167,7 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return (new Problem())->setName(
+                    return (new ProblemResource())->setName(
                         $historyItem
                     )->toArray();
                 }

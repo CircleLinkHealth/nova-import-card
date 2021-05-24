@@ -8,7 +8,9 @@ namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\DTO\Problem;
+use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\EligibilityJob;
 use Illuminate\Support\Collection;
@@ -49,6 +51,17 @@ trait CreatesEligibilityJobFromObject
         );
     }
 
+    private function createFromCcda(Ccda &$ccda, EligibilityBatch $batch, Practice $practice) {
+        $mr = MedicalRecordFactory::createForPractice($practice->name, $ccda);
+        if ( ! empty($obj = $mr->toObject())) {
+            $decodedCcda = $obj;
+            $ccda->json = $mr->toJson();
+        } else {
+            $decodedCcda = $ccda->bluebuttonJson();
+        }
+        
+        return $this->createFromBlueButtonObject($decodedCcda, $batch, $practice);
+    }
     private function createFromBlueButtonObject(object $decodedCcda, EligibilityBatch $batch, Practice $practice)
     {
         $demographics = collect($this->getCcdaTransformer()->demographics($decodedCcda->demographics));
@@ -83,7 +96,13 @@ trait CreatesEligibilityJobFromObject
                 );
             }
         );
-
+    
+        $medications     = collect($decodedCcda->medications)->map(
+            function ($medication) {
+                return $this->getCcdaTransformer()->medication($medication);
+            }
+        );
+    
         $patient = $demographics->put('referring_provider_name', '');
 
         if ( ! $patient->get('mrn', null) && ! $patient->get('mrn_number', null)) {
@@ -118,7 +137,8 @@ trait CreatesEligibilityJobFromObject
         }
 
         $patient = $patient->put('problems', $problems);
-
+        $patient = $patient->put('medications', $medications);
+    
         $patient = $this->adaptInsurance($patient, $this->getInsurance($decodedCcda));
 
         return $this->createEligibilityJob($patient, $batch, $practice);
@@ -152,7 +172,7 @@ trait CreatesEligibilityJobFromObject
         $patient->put('last_encounter', '');
 
         $encounters = collect($parsedCcdObj->encounters ?? []);
-        
+
         if ($encounters->isEmpty()) {
             return $patient;
         }

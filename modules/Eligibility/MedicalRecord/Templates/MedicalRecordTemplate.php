@@ -10,9 +10,9 @@ interface MedicalRecordTemplate
 {
     public function fillAllergiesSection(): array;
 
-    public function fillDemographicsSection(): object;
+    public function fillDemographicsSection(): array;
 
-    public function fillDocumentSection(): object;
+    public function fillDocumentSection(): array;
 
     public function fillEncountersSection(): array;
 

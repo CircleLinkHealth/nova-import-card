@@ -7,9 +7,15 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\Core\Utilities\JsonFixer;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Address;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Allergy as AllergyResource;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Demographics as DemographicsResource;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Document;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Medication;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\PersonName;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\Resources\Problem as ProblemResource;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 {
@@ -31,7 +37,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
         $decoded = json_decode($this->data['allergies_string']);
 
-        if (is_null($decoded)){
+        if (is_null($decoded)) {
             $decoded = json_decode(JsonFixer::attemptFix($this->data['allergies_string']));
         }
 
@@ -42,35 +48,10 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return [
-                        'date_range' => [
-                            'start' => '',
-                            'end'   => null,
-                        ],
-                        'name'             => null,
-                        'code'             => '',
-                        'code_system'      => '',
-                        'code_system_name' => '',
-                        'status'           => null,
-                        'severity'         => '',
-                        'reaction'         => [
-                            'name'        => '',
-                            'code'        => '',
-                            'code_system' => '',
-                        ],
-                        'reaction_type' => [
-                            'name'             => '',
-                            'code'             => '',
-                            'code_system'      => '',
-                            'code_system_name' => '',
-                        ],
-                        'allergen' => [
-                            'name'             => $this->getAllergyName($allergy),
-                            'code'             => '',
-                            'code_system'      => '',
-                            'code_system_name' => '',
-                        ],
-                    ];
+                    $allergyResource = new AllergyResource();
+                    $allergyResource->allergenName = $this->getAllergyName($allergy);
+
+                    return $allergyResource->toArray();
                 }
             )
             ->filter()
@@ -78,192 +59,47 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
             ->toArray();
     }
 
-    public function fillDemographicsSection(): object
+    public function fillDemographicsSection(): array
     {
-        return (object) [
-            'ids' => [
-                'mrn_number' => $this->getMrn(),
-            ],
-            'name' => [
-                'prefix' => null,
-                'given'  => [
-                    $this->getFirstName(),
-                ],
-                'family' => $this->getLastName(),
-                'suffix' => null,
-            ],
-            'dob'            => $this->getDob()->toDateString(),
-            'gender'         => $this->data['gender'] ?? null,
-            'mrn_number'     => $this->getMrn(),
-            'marital_status' => '',
-            'address'        => [
-                'street' => [
-                    $this->getAddressLine1(),
-                    $this->getAddressLine2(),
-                ],
-                'city'    => $this->data['city'],
-                'state'   => $this->data['state'],
-                'zip'     => $this->getZipCode(),
-                'country' => '',
-            ],
-            'phones' => [
-                0 => [
-                    'type'   => 'home',
-                    'number' => $this->data['home_phone'] ?? '',
-                ],
-                1 => [
-                    'type'   => 'primary_phone',
-                    'number' => $this->data['primary_phone'] ?? '',
-                ],
-                2 => [
-                    'type'   => 'mobile',
-                    'number' => $this->data['cell_phone'] ?? '',
-                ],
-            ],
-            'email'      => null,
-            'language'   => null,
-            'race'       => null,
-            'ethnicity'  => null,
-            'religion'   => null,
-            'birthplace' => [
-                'state'   => null,
-                'zip'     => null,
-                'country' => null,
-            ],
-            'guardian' => [
-                'name' => [
-                    'given' => [
-                    ],
-                    'family' => null,
-                ],
-                'relationship'      => null,
-                'relationship_code' => null,
-                'address'           => [
-                    'street' => [
-                    ],
-                    'city'    => null,
-                    'state'   => null,
-                    'zip'     => null,
-                    'country' => null,
-                ],
-                'phone' => [
-                    'home' => null,
-                ],
-            ],
-            'patient_contacts' => [
-            ],
-            'provider' => [
-                'ids' => [
-                ],
-                'organization' => null,
-                'phones'       => [
-                ],
-                'address' => [
-                    'street' => [
-                    ],
-                    'city'    => null,
-                    'state'   => null,
-                    'zip'     => null,
-                    'country' => null,
-                ],
-            ],
+        $demographicsResource            = new DemographicsResource();
+        $demographicsResource->mrnNumber = $this->getMrn();
+
+        $patientName        = new PersonName();
+        $patientName->given = [
+            $this->getFirstName(),
         ];
+        $patientName->family = $this->getLastName();
+
+        $demographicsResource->patientName = $patientName;
+        $demographicsResource->dob         = $this->getDob()->toDateString();
+        $demographicsResource->gender      = $this->data['gender'] ?? null;
+        $demographicsResource->mrn_number  = $this->getMrn();
+
+        $patientAddress         = new Address();
+        $patientAddress->street = [
+            $this->getAddressLine1(),
+            $this->getAddressLine2(),
+        ];
+        $patientAddress->city  = $this->data['city'];
+        $patientAddress->state = $this->data['state'];
+        $patientAddress->zip   = $this->getZipCode();
+
+        $demographicsResource->patientAddress      = $patientAddress;
+        $demographicsResource->patientHomePhone    = $this->data['home_phone'] ?? '';
+        $demographicsResource->patientPrimaryPhone = $this->data['primary_phone'] ?? '';
+        $demographicsResource->patientMobilePhone  = $this->data['cell_phone'] ?? '';
+
+        return $demographicsResource->toArray();
     }
 
-    public function fillDocumentSection(): object
+    public function fillDocumentSection(): array
     {
-        return (object) [
-            'custodian' => [
-                'name' => $this->getProviderName(),
-            ],
-            'date'   => '',
-            'title'  => '',
-            'author' => [
-                'npi'  => '',
-                'name' => [
-                    'prefix' => null,
-                    'given'  => [],
-                    'family' => null,
-                    'suffix' => null,
-                ],
-                'address' => [
-                    'street' => [
-                        0 => '',
-                    ],
-                    'city'    => '',
-                    'state'   => '',
-                    'zip'     => '',
-                    'country' => '',
-                ],
-                'phones' => [
-                    0 => [
-                        'type'   => '',
-                        'number' => '',
-                    ],
-                ],
-            ],
-            'documentation_of' => [
-                0 => [
-                    'provider_id' => null,
-                    'name'        => [
-                        'prefix' => null,
-                        'given'  => [
-                            0 => $this->getProviderName(),
-                        ],
-                        'family' => '',
-                        'suffix' => '',
-                    ],
-                    'phones' => [
-                        0 => [
-                            'type'   => '',
-                            'number' => '',
-                        ],
-                    ],
-                    'address' => [
-                        'street' => [
-                            0 => '',
-                        ],
-                        'city'    => '',
-                        'state'   => '',
-                        'zip'     => '',
-                        'country' => '',
-                    ],
-                ],
-            ],
-            'legal_authenticator' => [
-                'date'            => null,
-                'ids'             => [],
-                'assigned_person' => [
-                    'prefix' => null,
-                    'given'  => [],
-                    'family' => null,
-                    'suffix' => null,
-                ],
-                'representedOrganization' => [
-                    'ids'     => [],
-                    'name'    => null,
-                    'phones'  => [],
-                    'address' => [
-                        'street'  => [],
-                        'city'    => null,
-                        'state'   => null,
-                        'zip'     => null,
-                        'country' => null,
-                    ],
-                ],
-            ],
-            'location' => [
-                'name'    => $this->data['cpm_location_name'] ?? null,
-                'address' => [
-                    'street'  => [],
-                    'city'    => null,
-                    'state'   => null,
-                    'zip'     => null,
-                    'country' => null,
-                ],
-                'encounter_date' => null,
-            ],
-        ];
+        $documentResource = new Document();
+        $documentResource->custodianName = $this->getProviderName();
+        $documentResource->documentationOfName = $this->getProviderName();
+        $documentResource->locationName = $this->data['cpm_location_name'] ?? null;
+        
+        return $documentResource->toArray();
     }
 
     public function fillEncountersSection(): array
@@ -279,86 +115,25 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
         $decoded = json_decode($this->data['medications_string']);
 
-        if (is_null($decoded)){
+        if (is_null($decoded)) {
             $decoded = json_decode(JsonFixer::attemptFix($this->data['medications_string']));
         }
 
         return collect(collect($decoded)->first())
             ->map(
                 function ($medication) {
-
-                    if (! isset($medication->Name)){
+                    if ( ! isset($medication->Name)) {
                         return false;
                     }
+                    
+                    $medicationResource = new Medication();
+                    $medicationResource->dateRangeStart = $medication->StartDate ?? null;
+                    $medicationResource->dateRangeEnd = $medication->StopDate ?? null;
+                    $medicationResource->status = $medication->Status ?? null;
+                    $medicationResource->productName = $medication->Name;
+                    $medicationResource->productText = $medication->Sig ?? null;
 
-                    return [
-                        'reference'       => null,
-                        'reference_title' => null,
-                        'reference_sig'   => null,
-                        'date_range'      => [
-                            'start' => $medication->StartDate ?? null,
-                            'end'   => $medication->StopDate ?? null,
-                        ],
-                        'status'  => $medication->Status ?? null,
-                        'text'    => null,
-                        'product' => [
-                            'name'        => $medication->Name,
-                            'code'        => '',
-                            'code_system' => '',
-                            'text'        => $medication->Sig ?? null,
-                            'translation' => [
-                                'name'             => null,
-                                'code'             => null,
-                                'code_system'      => null,
-                                'code_system_name' => null,
-                            ],
-                        ],
-                        'dose_quantity' => [
-                            'value' => null,
-                            'unit'  => null,
-                        ],
-                        'rate_quantity' => [
-                            'value' => null,
-                            'unit'  => null,
-                        ],
-                        'precondition' => [
-                            'name'        => null,
-                            'code'        => null,
-                            'code_system' => null,
-                        ],
-                        'reason' => [
-                            'name'        => null,
-                            'code'        => null,
-                            'code_system' => null,
-                        ],
-                        'route' => [
-                            'name'             => null,
-                            'code'             => null,
-                            'code_system'      => null,
-                            'code_system_name' => null,
-                        ],
-                        'schedule' => [
-                            'type'         => null,
-                            'period_value' => null,
-                            'period_unit'  => null,
-                        ],
-                        'vehicle' => [
-                            'name'             => null,
-                            'code'             => null,
-                            'code_system'      => null,
-                            'code_system_name' => null,
-                        ],
-                        'administration' => [
-                            'name'             => null,
-                            'code'             => null,
-                            'code_system'      => null,
-                            'code_system_name' => null,
-                        ],
-                        'prescriber' => [
-                            'organization' => null,
-                            'person'       => null,
-                        ],
-                    ];
+                    return $medicationResource->toArray();
                 }
             )
             ->filter()
@@ -404,7 +179,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
         $decoded = json_decode($this->data['problems_string']);
 
-        if (is_null($decoded)){
+        if (is_null($decoded)) {
             $decoded = json_decode(JsonFixer::attemptFix($this->data['problems_string']));
         }
 
@@ -419,7 +194,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return (new Problem())
+                    return (new ProblemResource())
                         ->setName($problem->Name)
                         ->setStartDate($problem->AddedDate)
                         ->setEndDate($problem->ResolveDate)
