@@ -8,7 +8,7 @@ namespace App\Nova;
 
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
-use CircleLinkHealth\GeneratePatientCallDataCsv\GeneratePatientCallDataCsv;
+use Circlelinkhealth\GeneratePatientCallDataCsv\GeneratePatientCallDataCsv;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
