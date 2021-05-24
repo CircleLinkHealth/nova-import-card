@@ -97,7 +97,7 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
     public function pastMonthSummaries(array $locationIds, Carbon $month): Collection
     {
         return $this->servicesForLocations($locationIds)
-            ->where('chargeable_month', '<', $month)
+            ->where('chargeable_month', $month->copy()->subMonth()->startOfMonth())
             ->get();
     }
 
