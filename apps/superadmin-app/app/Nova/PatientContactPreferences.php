@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Importers\PatientContactPreferencesImporter;
-use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
+use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
