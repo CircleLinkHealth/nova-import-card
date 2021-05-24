@@ -39,8 +39,8 @@ class CreateNonImportableEnrollees extends EnrolleeImportingAction
 
     protected function performAction(Enrollee $enrollee, array $actionInput): void
     {
-        $enrollee->first_name  = ucfirst(strtolower($actionInput['first_name']));
-        $enrollee->last_name   = ucfirst(strtolower($actionInput['last_name']));
+        $enrollee->first_name  = ucwords(strtolower($actionInput['first_name']));
+        $enrollee->last_name   = ucwords(strtolower($actionInput['last_name']));
         $enrollee->provider_id = $actionInput['provider_id'];
         $enrollee->address     = ucwords(strtolower($actionInput['address']));
         $enrollee->address_2   = ucwords(strtolower($actionInput['address_2']));
