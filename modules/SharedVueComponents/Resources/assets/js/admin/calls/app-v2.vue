@@ -27,6 +27,11 @@
                     </label>
                 </div>
 
+                <div v-if="!(isAdmin() || isSoftwareOnly())" class="inline">
+                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                    <button class="btn btn-info btn-xs" @click="applyTextFilters">Apply Text Filters</button>
+                </div>
+
                 <div v-if="isAdmin()" class="inline">
                     <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                         <span v-if="includeDemoPatients">Exclude Demo Patients</span>
