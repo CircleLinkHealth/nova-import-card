@@ -59,6 +59,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function register()
     {
+        Nova::report(function ($exception) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($exception);
+            }
+        });
+
         $this->app->singleton(BillingCache::class, BillingDataCache::class);
         $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceProcessorRepository::class);
         $this->app->singleton(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
