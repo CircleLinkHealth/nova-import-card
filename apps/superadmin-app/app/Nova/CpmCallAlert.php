@@ -88,10 +88,7 @@ class CpmCallAlert extends Resource
                 if ( ! $row->cpmCall->note_id) {
                     return '-';
                 }
-                $url = route('patient.note.view', [
-                    'patientId' => $row->cpmCall->inbound_cpm_id,
-                    'noteId'    => $row->cpmCall->note_id,
-                ]);
+                $url = rtrim(config('core.apps.cpm-provider.url'), '/')."/manage-patients/{$row->cpmCall->inbound_cpm_id}/notes/view/{$row->cpmCall->note_id}";
 
                 return "<a href='$url' target='_blank'>View Note</a>";
             })->asHtml(),
