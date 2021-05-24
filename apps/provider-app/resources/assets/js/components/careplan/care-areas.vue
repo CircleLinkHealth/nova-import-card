@@ -10,9 +10,9 @@
         <div class="row gutter">
             <div class="col-xs-12">
                 <div class="text-center" v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">No Problems at this time</div>
-                
+
                 <ul class="subareas__list" v-if="(ccdMonitoredProblems.length > 0)">
-                    <li class='subareas__item inline-block col-sm-6 print-row' :class="{ ccd: problem.type === 'ccd' }" 
+                    <li class='subareas__item inline-block col-sm-6 print-row' :class="{ ccd: problem.type === 'ccd' }"
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
                         {{problem.type === 'ccd' ? ((problem.related() || {}).name || problem.name) : problem.name}}
                         <label class="label label-primary label-popover" v-if="problem.type === 'ccd'">
@@ -27,16 +27,16 @@
                     <span v-if="!isOtherConditionsVisible" class="font-22">({{ ccdProblemsForListing.length }})</span>
                     <span v-if="isOtherConditionsVisible" class="font-22">(Click to Minimize)</span>
                 </h2>
-                
+
                 <ul class="row" v-if="isOtherConditionsVisible">
-                    <li class='top-10 col-sm-6' 
+                    <li class='top-10 col-sm-6'
                         v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}
                     </li>
                 </ul>
             </div>
         </div>
-        <care-areas-modal  v-if="!disableEditing()" ref="careAreasModal" :patient-id="patientId" :problems="problems" auth-role="authRole"></care-areas-modal>
+        <care-areas-modal  v-if="!disableEditing()" ref="careAreasModal" :patient-id="patientId" :problems="problems" :auth-role="authRole"></care-areas-modal>
     </div>
 </template>
 
