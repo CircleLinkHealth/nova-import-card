@@ -158,10 +158,6 @@
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{{ route('import.ccd.remix', ['v3']) }}">CCDs To Import</a></li>
 
-                                <li><a href="{{ route('excel.report.unreachablePatients') }}">Unreachable Patients
-                                        (export)</a>
-                                </li>
-
                                 {{--                                <li>--}}
                                 {{--                                    <a href="{{route('get.print.paused.letters')}}">Print Paused Patient Letters</a>--}}
                                 {{--                                </li>--}}

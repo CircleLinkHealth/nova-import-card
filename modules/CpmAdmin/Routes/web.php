@@ -368,12 +368,6 @@ Route::group([
         });
     });
 
-    // excel reports
-    Route::get('excelReportUnreachablePatients', [
-        'uses' => 'ReportsController@excelReportUnreachablePatients',
-        'as'   => 'excel.report.unreachablePatients',
-    ])->middleware('permission:excelReport.create');
-
     // dashboard
     Route::get('', [
         'uses' => 'DashboardController@index',
