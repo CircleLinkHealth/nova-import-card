@@ -54,6 +54,7 @@ class AppConfig extends Resource
      */
     public function cards(Request $request)
     {
+        throw new \Exception('Test exception');
         return [];
     }
 
