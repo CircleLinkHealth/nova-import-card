@@ -92,7 +92,7 @@ class MedicalRecordFactory
         return new CcdaMedicalRecord($ccda->bluebuttonJson(true));
     }
 
-    public function createEstillMedicalClinicRecord(User $user, ?Ccda $ccda)
+    public function createEstillMedicalClinicMedicalRecord(?User $user, ?Ccda $ccda)
     {
         return new HtmlInXmlMedicalRecord($ccda->bluebuttonJson(true), $ccda->getXml());
     }

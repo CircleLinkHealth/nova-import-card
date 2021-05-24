@@ -41,7 +41,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
      */
     public function adaptToEligibilityJob(): EligibilityJob
     {
-        $eJ = $this->createFromBlueButtonObject($this->ccda->bluebuttonJson(), $this->batch, $this->practice);
+        $eJ = $this->createFromCcda($this->ccda, $this->batch, $this->practice);
 
         $this->ccda->practice_id = $this->practice->id;
 
