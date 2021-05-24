@@ -50,7 +50,7 @@ class EnrollmentInvitationService
 
     public function putIntoCallQueue(Enrollee $enrollee, Carbon $earliestDayToCall)
     {
-        $enrollee->update(
+        return $enrollee->update(
             [
                 'status'                    => Enrollee::TO_CALL,
                 'auto_enrollment_triggered' => true,
