@@ -7,7 +7,7 @@
 namespace Circlelinkhealth\GeneratePatientCallDataCsv;
 
 use Carbon\Carbon;
-use Circlelinkhealth\Core\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 
 class GeneratePatientCallDataCsvController
 {
