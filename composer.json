@@ -198,6 +198,7 @@
         "ext-simplexml": "*"
     },
     "require-dev": {
+        "composer/composer": "^1.10",
         "circlelinkhealth/app-cpm-admin": "*",
         "circlelinkhealth/app-awv": "*",
         "circlelinkhealth/app-cpm-provider": "*",
