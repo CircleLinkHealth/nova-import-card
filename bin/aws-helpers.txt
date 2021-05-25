@@ -1,2 +1,0 @@
-# Create FIFO queue
-aws sqs create-queue --queue-name caller-staging.fifo --attributes FifoQueue=true,VisibilityTimeout=810
