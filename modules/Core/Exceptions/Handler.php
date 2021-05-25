@@ -16,6 +16,7 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -101,9 +102,11 @@ class Handler extends ExceptionHandler
 //            return;
         }
 
-        if (app()->bound('sentry')) {
-            app('sentry')->captureException($e);
-        }
+        $this->reportable(function (\Throwable $e) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
+        });
 
         parent::report($e);
     }

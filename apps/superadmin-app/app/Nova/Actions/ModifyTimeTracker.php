@@ -170,7 +170,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         }
 
         \Artisan::call('report:nursesAndStatesDaily', [
-            'forDate' => $startTime->copy()->toDateString()
+            'forDate' => $startTime->copy()->toDateString(),
         ]);
 
         //always re-generate invoice for nurse

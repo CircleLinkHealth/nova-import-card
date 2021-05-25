@@ -78,9 +78,10 @@ class CpmInstructable extends Resource
                 ->hideWhenUpdating(),
 
             Text::make('CpmProblem', function ($q) {
-                if (isset($q->cpmProblem[0])){
+                if (isset($q->cpmProblem[0])) {
                     return $q->cpmProblem[0]->name;
                 }
+
                 return '-';
             }),
 

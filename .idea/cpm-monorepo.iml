@@ -293,6 +293,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/yaml" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/deprecation-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/string" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/justinrainbow/json-schema" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/seld/phar-utils" />
     </content>
     <content url="file://$MODULE_DIR$/apps/admin-app/CircleLinkHealth/Customer/Jobs" />
     <orderEntry type="inheritedJdk" />

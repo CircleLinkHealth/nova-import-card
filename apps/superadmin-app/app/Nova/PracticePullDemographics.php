@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\PracticePull\ImportDemographics;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use Illuminate\Http\Request;
