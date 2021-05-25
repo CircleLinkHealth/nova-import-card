@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3be933f978f2dbec5aa4138a90685a0d",
+    "content-hash": "8fe3ac822604a5fd8f7347bec162380b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -117,48 +117,6 @@
             ],
             "abandoned": "genealabs/nova-prepopulate-searchable",
             "time": "2018-09-06T20:24:04+00:00"
-        },
-        {
-            "name": "anaseqal/nova-import",
-            "version": "0.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/anaseqal/nova-import.git",
-                "reference": "548fa4d39ea914b1a5ce82b388a9d1df1bdd857a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/anaseqal/nova-import/zipball/548fa4d39ea914b1a5ce82b388a9d1df1bdd857a",
-                "reference": "548fa4d39ea914b1a5ce82b388a9d1df1bdd857a",
-                "shasum": ""
-            },
-            "require": {
-                "maatwebsite/excel": "*",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Anaseqal\\NovaImport\\ToolServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Anaseqal\\NovaImport\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova tool.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2020-04-13T12:32:35+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -5088,16 +5046,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.42.1",
+            "version": "v8.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "41ec4897a70eb8729cf0ff34a8354413c54e42a6"
+                "reference": "3ec63771a07e251f4fb6c7ef2411a79a314bba65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/41ec4897a70eb8729cf0ff34a8354413c54e42a6",
-                "reference": "41ec4897a70eb8729cf0ff34a8354413c54e42a6",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/3ec63771a07e251f4fb6c7ef2411a79a314bba65",
+                "reference": "3ec63771a07e251f4fb6c7ef2411a79a314bba65",
                 "shasum": ""
             },
             "require": {
@@ -5248,7 +5206,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2021-05-19T13:03:18+00:00"
+            "time": "2021-05-25T13:06:44+00:00"
         },
         {
             "name": "laravel/legacy-factories",

@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use Anaseqal\NovaImport\NovaImport;
 use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
@@ -79,7 +78,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools()
     {
         return [
-            new NovaImport(),
         ];
     }
 
