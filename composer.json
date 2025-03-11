@@ -9,7 +9,7 @@
     "require": {
         "php": ">=7.1",
         "illuminate/support": "*",
-        "laravel/nova": "~2.0|~3.0|~4.0",
+        "laravel/nova": "~2.0|~3.0|~4.0|^5.0",
         "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
