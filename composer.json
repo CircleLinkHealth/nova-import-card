@@ -9,14 +9,14 @@
     "require": {
         "php": ">=7.1",
         "illuminate/support": "*",
-        "laravel/nova": "~2.0|~3.0|~4.0|^5.0",
-        "maatwebsite/excel": "^3.1"
+        "laravel/nova": "*",
+        "maatwebsite/excel": "*"
     },
     "require-dev": {
-        "mockery/mockery": "~1.0",
-        "orchestra/database": "^3.8|^4.0",
-        "orchestra/testbench": "^3.8|^4.0",
-        "phpunit/phpunit": "^8.0"
+        "mockery/mockery": "*",
+        "orchestra/database": "*",
+        "orchestra/testbench": "*",
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": {
